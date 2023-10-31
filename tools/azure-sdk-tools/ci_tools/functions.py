@@ -394,6 +394,45 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
     shutil.rmtree(os.path.join(pkg_root, ".tmp_whl_dir"))
 
 
+def replace_dev_reqs(file, pkg_root):
+    adjusted_req_lines = []
+
+    with open(file, "r") as f:
+        original_req_lines = list(line.strip() for line in f)
+
+    for line in original_req_lines:
+        args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
+        amended_line = " ".join(args)
+        extras = ""
+
+        if amended_line.endswith("]"):
+            amended_line, extras = amended_line.rsplit("[", maxsplit=1)
+            if extras:
+                extras = f"[{extras}"
+
+        adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root)}{extras}")
+
+    req_file_name = os.path.basename(file)
+    logging.info("Old {0}:{1}".format(req_file_name, original_req_lines))
+    logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
+
+    with open(file, "w") as f:
+        # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
+        # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
+        # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
+        f.write("\n".join(adjusted_req_lines))
+
+
+def is_relative_install_path(req: str, package_path: str) -> str:
+    possible_setup_path = os.path.join(package_path, req, "setup.py")
+
+    # blank lines are _allowed_ in a dev requirements. they should not resolve to the package_path erroneously
+    if not req:
+        return False
+
+    return os.path.exists(possible_setup_path)
+
+
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.
 
@@ -403,7 +442,7 @@ def build_whl_for_req(req: str, package_path: str) -> str:
     """
     from ci_tools.build import create_package
 
-    if ".." in req:
+    if is_relative_install_path(req, package_path):
         # Create temp path if it doesn't exist
         temp_dir = os.path.join(package_path, ".tmp_whl_dir")
         if not os.path.exists(temp_dir):
