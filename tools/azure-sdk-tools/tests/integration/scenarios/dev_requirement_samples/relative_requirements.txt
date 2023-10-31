@@ -4,6 +4,7 @@ tests/testserver_tests/coretestserver
 ../../identity/azure-identity
 -e ../../../tools/azure-devtools
 ../../../tools/azure-devtools
+
 ../azure-mgmt-core
 -e ../azure-mgmt-core
 ../../../tools/azure-sdk-tools[build]

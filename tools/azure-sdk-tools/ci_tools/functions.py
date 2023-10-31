@@ -425,6 +425,11 @@ def replace_dev_reqs(file, pkg_root):
 
 def is_relative_install_path(req: str, package_path: str) -> str:
     possible_setup_path = os.path.join(package_path, req, "setup.py")
+
+    # blank lines are _allowed_ in a dev requirements. they should not resolve to the package_path erroneously
+    if not req:
+        return False
+
     return os.path.exists(possible_setup_path)
 
 
