@@ -126,8 +126,8 @@ def sanitized_environment_variables(
             "AI_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
             "AI_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,
             "AI_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,
-            "AI_OPENAI_API_BASE": "fake_openai_api_base",
-            "AI_OPENAI_API_KEY": "fake_openai_api_key",
+            "OPENAI_API_BASE": "fake_openai_api_base",
+            "OPENAI_API_KEY": "fake_openai_api_key",
             "AI_OPENAI_COMPLETION_DEPLOYMENT_NAME": "fake_completion_deployment_name",
             "AI_OPENAI_COMPLETION_MODEL_NAME": "fake_completion_model_name"
         }
@@ -160,12 +160,12 @@ def e2e_project_name(sanitized_environment_variables: Dict[str, str]) -> str:
 @pytest.fixture()
 def e2e_openai_api_base(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the OpenAI API Base to use for end-to-end tests"""
-    return sanitized_environment_variables["AI_OPENAI_API_BASE"]
+    return sanitized_environment_variables["OPENAI_API_BASE"]
 
 @pytest.fixture()
 def e2e_openai_api_key(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the OpenAI API Key to use for end-to-end tests"""
-    return sanitized_environment_variables["AI_OPENAI_API_KEY"]
+    return sanitized_environment_variables["OPENAI_API_KEY"]
 
 @pytest.fixture()
 def e2e_openai_completion_deployment_name(sanitized_environment_variables: Dict[str, str]) -> str:
@@ -200,6 +200,7 @@ def qa_generator(
     model_config = dict(
         api_base=e2e_openai_api_base,
         api_key=e2e_openai_api_key,
+        api_version="2023-03-15-preview",
         deployment=e2e_openai_completion_deployment_name,
         model=e2e_openai_completion_model_name,
         max_tokens=2000,
