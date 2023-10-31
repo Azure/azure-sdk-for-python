@@ -7,7 +7,7 @@ import pytest
 import asyncio
 from datetime import datetime
 from devtools_testutils import AzureRecordedTestCase, is_live
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat.aio import (

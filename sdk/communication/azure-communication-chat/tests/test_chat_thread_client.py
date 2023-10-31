@@ -8,7 +8,7 @@ import time
 
 import calendar
 from datetime import datetime
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.chat import (

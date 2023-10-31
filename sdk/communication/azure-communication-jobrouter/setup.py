@@ -65,7 +65,6 @@ setup(
     install_requires=[
         "isodate<1.0.0,>=0.6.1",
         "azure-core<2.0.0,>=1.28.0",
-        "msrest>=0.7.1",
         "typing-extensions>=4.3.0; python_version<'3.8.0'",
     ],
     python_requires=">=3.7",
