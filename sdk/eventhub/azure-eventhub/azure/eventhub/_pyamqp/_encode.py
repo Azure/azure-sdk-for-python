@@ -773,7 +773,7 @@ def encode_filter_set(value):
                 }
             else:
                 described_filter = data
-            
+
         cast(List, fields[VALUE]).append(
             ({TYPE: AMQPTypes.symbol, VALUE: name}, described_filter)
         )
