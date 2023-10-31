@@ -1,9 +1,23 @@
 # Release History
 
-## 12.19.0b1 (Unreleased)
+## 12.19.0 (Unreleased)
 
 ### Features Added
 
+
+## 12.19.0b1 (2023-10-17)
+
+### Features Added
+- Added support for service version 2023-11-03.
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
+
+### Bugs Fixed
+- Deprecated `BlobProperties` as a valid input type to the `blob` parameter on the following APIs:
+BlobServiceClient's `get_blob_client`, ContainerClient's `delete_blob`, `download_blob`, and `get_blob_client`.
+This deprecation change also applies to the `name` parameter on ContainerClient's `upload_blob` API. This change
+applies to both sync and async packages but does not apply to the batch equivalent of any of the listed APIs. If a
+`BlobProperties` is provided, a deprecation warning is raised.
 
 ## 12.18.3 (2023-10-10)
 

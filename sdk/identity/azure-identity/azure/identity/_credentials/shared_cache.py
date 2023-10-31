@@ -22,10 +22,10 @@ class SharedTokenCacheCredential:
     :param str username: Username (typically an email address) of the user to authenticate as. This is used when the
         local cache contains tokens for multiple identities.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
+    :keyword str tenant_id: a Microsoft Entra tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
     :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
         :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`

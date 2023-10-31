@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 import re
+
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -101,9 +102,6 @@ def _validate_spark_configurations(obj):
 def _validate_compute_or_resources(compute, resources):
     # if resources is set, then ensure it is valid before
     # checking mutual exclusiveness against compute existence
-    if resources:
-        resources._validate()
-
     if compute is None and resources is None:
         msg = "One of either compute or resources must be specified for Spark job"
         raise ValidationException(

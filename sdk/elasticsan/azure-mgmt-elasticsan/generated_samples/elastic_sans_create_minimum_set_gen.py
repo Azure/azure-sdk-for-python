@@ -33,13 +33,13 @@ def main():
         resource_group_name="resourcegroupname",
         elastic_san_name="elasticsanname",
         parameters={
-            "location": "South Central US",
-            "properties": {"baseSizeTiB": 5, "extendedCapacitySizeTiB": 25, "sku": {"name": "Premium_LRS"}},
+            "location": "France Central",
+            "properties": {"baseSizeTiB": 15, "extendedCapacitySizeTiB": 27, "sku": {"name": "Premium_LRS"}},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2022-12-01-preview/examples/ElasticSans_Create_MinimumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/ElasticSans_Create_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

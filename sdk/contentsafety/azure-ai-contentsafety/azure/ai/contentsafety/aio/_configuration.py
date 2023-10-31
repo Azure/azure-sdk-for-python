@@ -8,14 +8,13 @@
 
 from typing import Any
 
-from azure.core.configuration import Configuration
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from .._version import VERSION
 
 
-class ContentSafetyClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class ContentSafetyClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for ContentSafetyClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -33,7 +32,6 @@ class ContentSafetyClientConfiguration(Configuration):  # pylint: disable=too-ma
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        super(ContentSafetyClientConfiguration, self).__init__(**kwargs)
         api_version: str = kwargs.pop("api_version", "2023-04-30-preview")
 
         if endpoint is None:
@@ -45,6 +43,7 @@ class ContentSafetyClientConfiguration(Configuration):  # pylint: disable=too-ma
         self.credential = credential
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "ai-contentsafety/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:

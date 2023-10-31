@@ -14,6 +14,8 @@ from pathlib import Path
 
 import dotenv
 
+# pylint: disable=consider-using-with
+
 
 def normalize_test_name(test_name):
     if "[" in test_name:
@@ -22,7 +24,7 @@ def normalize_test_name(test_name):
 
 
 def location_to_test_name(location):
-    test_path, line_no, test_func = location
+    test_path, _, test_func = location
     test_class_name, test_func_name = test_func.split(".", 1)
     test_class = test_path.split(os.path.sep, 3)[-1] + "::" + test_class_name
     return test_class + "::" + test_func_name
@@ -32,7 +34,7 @@ def extract_test_location(test_name):
     splitor_num = test_name.count("::")
     if splitor_num <= 1:
         return test_name, None, None
-    elif splitor_num == 2:
+    if splitor_num == 2:
         test_class, test_func_name = test_name.rsplit("::", 1)
         m = re.match(r"(\w+)\[(\w+)]", test_func_name)
         if m:
@@ -40,13 +42,12 @@ def extract_test_location(test_name):
         else:
             test_param = None
         return test_class, test_func_name, test_param
-    else:
-        raise ValueError(f"Invalid test name: {test_name}")
+    raise ValueError(f"Invalid test name: {test_name}")
 
 
 def load_tests_from_file(input_file):
     tests_to_run = set()
-    with open(input_file, "r") as f:
+    with open(input_file, "r", encoding="utf-8") as f:
         for line in f:
             if len(line) < 1 or line[0] in ["#", ";"]:
                 continue
@@ -58,12 +59,16 @@ def load_tests_from_file(input_file):
 def update_dot_env_file(env_override):
     """Update env file with env_override, and restore it after the context is exited.
     Support bool variable only for now.
+
+    :param: env_override
+    :type: dict
+    :return: None
     """
     env_file = dotenv.find_dotenv(raise_error_if_not_found=True)
     print(f"Updating env file: {env_file}")
     origin_env_content = None
     try:
-        with open(env_file, "r") as f:
+        with open(env_file, "r", encoding="utf-8") as f:
             origin_env_content = f.read()
             env_vars = [line.strip() for line in origin_env_content.splitlines() if line.strip()]
         for key, value in env_override.items():
@@ -74,12 +79,12 @@ def update_dot_env_file(env_override):
                         env_vars[i] = f"#{target_line}"
                     elif re.match(rf"# *{target_line}", line) and value:
                         env_vars[i] = f"{target_line}"
-        with open(env_file, "w") as f:
+        with open(env_file, "w", encoding="utf-8") as f:
             f.write("\n".join(env_vars))
         yield
     finally:
         if origin_env_content is not None:
-            with open(env_file, "w") as f:
+            with open(env_file, "w", encoding="utf-8") as f:
                 f.write(origin_env_content)
 
 
@@ -106,7 +111,7 @@ def run_simple(
         stdout = None
         json_log_file_path = log_file_path.with_suffix(log_file_path.suffix + ".log")
     else:
-        stdout = open(log_file_path.with_suffix(log_file_path.suffix + ".txt"), "wb")
+        stdout = open(log_file_path.with_suffix(log_file_path.suffix + ".txt"), "wb", encoding="utf-8")
         json_log_file_path = None
 
     with update_dot_env_file(
@@ -129,6 +134,7 @@ def run_simple(
                 + tmp_extra_params,
                 cwd=working_dir,
                 stdout=stdout,
+                check=True,
             )
             if log_in_json:
                 # append temp json file to the final log file
@@ -150,9 +156,9 @@ def reorganize_tests(tests_to_run):
             # Register all tests in test_class
             reorganized_tests[test_class] = None
             continue
-        elif test_class not in reorganized_tests:
+        if test_class not in reorganized_tests:
             reorganized_tests[test_class] = {}
-        elif reorganized_tests[test_class] is None:
+        if reorganized_tests[test_class] is None:
             # All tests in test_class have been registered
             continue
 
@@ -160,9 +166,9 @@ def reorganize_tests(tests_to_run):
             # Register all params for test_class::test_func_name
             reorganized_tests[test_class][test_func_name] = None
             continue
-        elif test_func_name not in reorganized_tests[test_class]:
+        if test_func_name not in reorganized_tests[test_class]:
             reorganized_tests[test_class][test_func_name] = []
-        elif reorganized_tests[test_class][test_func_name] is None:
+        if reorganized_tests[test_class][test_func_name] is None:
             # All params for test_class::test_func_name have been registered
             continue
 
@@ -176,7 +182,9 @@ def reorganize_tests(tests_to_run):
         keys = []
         for test_func_name, test_params in test_info.items():
             if test_params is not None:
-                keys.append(f"{test_func_name}[{'-'.join(test_params)}]")
+                # TODO: problem in using parametrize with pytest-xdist
+                # keys.append(f"{test_func_name}[{'-'.join(test_params)}]")
+                keys.append(f"{test_func_name}")
             else:
                 keys.append(test_func_name)
         keyword_param = ["-k", " or ".join(keys)]
@@ -190,16 +198,15 @@ def get_base_log_path(working_dir, *, create_new=True):
         if len(logs) == 0:
             raise RuntimeError("No previous run log file found")
         return Path(logs[-1][: -len(".first.log")])
-    else:
-        log_file_path = log_dir / "pytest.{}".format(datetime.now().strftime("%Y%m%d%H%M%S"))
-        log_file_path.parent.mkdir(parents=True, exist_ok=True)
-        return log_file_path
+    log_file_path = log_dir / "pytest.{}".format(datetime.now().strftime("%Y%m%d%H%M%S"))
+    log_file_path.parent.mkdir(parents=True, exist_ok=True)
+    return log_file_path
 
 
 def get_failed_tests(log_file_path):
     tests_failed_with_recording_mismatch = []
     failed_tests = []
-    with open(log_file_path, "r") as f:
+    with open(log_file_path, "r", encoding="utf-8") as f:
         for line in f:
             node = json.loads(line)
             if "outcome" not in node:
@@ -214,7 +221,19 @@ def get_failed_tests(log_file_path):
     return failed_tests, tests_failed_with_recording_mismatch
 
 
-def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=False):
+def run_tests(args, extras):
+    if args.file:
+        tests_to_run = load_tests_from_file(args.file)
+    elif args.name:
+        tests_to_run = [args.name]
+    elif args.skip_first_run and args.record_mismatch:
+        # load failed tests from last run log
+        tests_to_run = []
+    else:
+        raise ValueError("Must specify either --file or --name")
+    skip_first_run = args.skip_first_run
+    record_mismatch = args.record_mismatch
+
     working_dir = Path(__file__).parent.parent
     log_file_path = get_base_log_path(working_dir, create_new=not skip_first_run)
 
@@ -232,31 +251,31 @@ def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=Fal
             log_suffix=".first",
         )
 
-    if record_mismatch:
-        failed_tests, tests_failed_with_recording_mismatch = get_failed_tests(json_log_file_path)
-        if tests_failed_with_recording_mismatch:
-            print("Re-do live mode recording for tests: \n", json.dumps(tests_failed_with_recording_mismatch, indent=2))
-            run_simple(
-                tests_failed_with_recording_mismatch,
-                working_dir,
-                extra_params=["--tb=line"],
-                is_live_and_recording=True,
-                log_suffix=".record",
-                log_file_path=log_file_path,
-            )
+    failed_tests, tests_failed_with_recording_mismatch = get_failed_tests(json_log_file_path)
+    failed_tests_path = log_file_path.with_suffix(log_file_path.suffix + ".failed.txt")
+    with open(failed_tests_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(failed_tests))
 
-            print(
-                "Rerun playback mode for failed tests: \n", json.dumps(tests_failed_with_recording_mismatch, indent=2)
-            )
-            run_simple(
-                failed_tests,
-                working_dir,
-                extra_params=extras + ["--disable-warnings", "--disable-pytest-warnings"],
-                is_live_and_recording=False,
-                log_file_path=log_file_path,
-                log_suffix=".final",
-            )
-            print(log_file_path.with_suffix(log_file_path.suffix + ".final.log").read_text())
+    if record_mismatch and tests_failed_with_recording_mismatch:
+        print(f"Redo live mode recording for tests: {failed_tests_path}")
+        run_simple(
+            tests_failed_with_recording_mismatch,
+            working_dir,
+            extra_params=["--tb=line"],
+            is_live_and_recording=True,
+            log_suffix=".record",
+            log_file_path=log_file_path,
+        )
+
+        print(f"Rerun playback mode for failed tests: {failed_tests_path}")
+        run_simple(
+            failed_tests,
+            working_dir,
+            extra_params=extras + ["--disable-warnings", "--disable-pytest-warnings"],
+            is_live_and_recording=False,
+            log_file_path=log_file_path,
+            log_suffix=".final",
+        )
 
 
 if __name__ == "__main__":
@@ -295,18 +314,7 @@ if __name__ == "__main__":
 
     _args, _extras = parser.parse_known_args()
 
-    if _args.file:
-        _tests = load_tests_from_file(_args.file)
-    elif _args.name:
-        _tests = [_args.name]
-    elif _args.skip_first_run and _args.record_mismatch:
-        # load failed tests from last run log
-        _tests = []
-    else:
-        raise ValueError("Must specify either --file or --name")
     run_tests(
-        _tests,
+        _args,
         _extras,
-        skip_first_run=_args.skip_first_run,
-        record_mismatch=_args.record_mismatch,
     )
