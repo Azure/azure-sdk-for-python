@@ -14,19 +14,19 @@ from typing_extensions import TypedDict, Required, Optional
 class EntityMetadata(TypedDict, total=False):
     etag: Required[Optional[str]]
     """A string representation of the timestamp property. Used to provide optimistic concurrency."""
-    
+
     timestamp: Required[Optional[datetime.datetime]]
     """A datetime value that is maintained on the server side to record the time an entity was last modified. The Table
     service uses the Timestamp property internally to provide optimistic concurrency."""
-    
+
     id: str
     """The entity ID, which is generally the URL to the resource. This is not returned by default, and only returned if
     full metadata is requested."""
-    
+
     type: str
     """The type name of the containing object. This is not returned by default, and only returned if full metadata is
     requested."""
-    
+
     editLink: str
     """The link used to edit/update the entry, if the entity is updatable and the odata.id does not represent a URL
     that can be used to edit the entity. This is not returned by default, and only returned if full metadata is
