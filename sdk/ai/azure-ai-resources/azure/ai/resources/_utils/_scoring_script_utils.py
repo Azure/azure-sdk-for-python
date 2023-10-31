@@ -52,7 +52,7 @@ def run(raw_data: AMLRequest):
     messages = raw_data["messages"]
     stream = raw_data.get("stream", False)
     session_state = raw_data.get("sessionState", raw_data.get("session_state", None))
-    extra_args = raw_data.get("extraArgs", raw_data.get("extra_args", None))
+    extra_args = raw_data.get("extraArgs", raw_data.get("extra_args", {{}}))
     from {} import chat_completion
     if iscoroutinefunction(chat_completion):
         response = asyncio.run(
