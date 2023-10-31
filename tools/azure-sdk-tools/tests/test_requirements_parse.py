@@ -40,32 +40,70 @@ def get_requirements_from_file(requirements_file: str) -> List[str]:
 
 
 def test_replace_dev_reqs_specifiers(tmp_directory_create):
+    """
+    Specifiers should always be pointed at an external source, nothing to build locally. Nontheless we need to confirm
+    that we don't accidentally trip the replacement logic.
+    """
     target_file = os.path.join(sample_dev_reqs_folder, "specifiers_requirements.txt")
     tmp_dir, requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
     try:
-        replace_dev_reqs(target_file, core_location)
-        actual_requirements = get_requirements_from_file(requirements_file)
+        requirements_before = get_requirements_from_file(requirements_file) 
+        replace_dev_reqs(requirements_file, core_location)
+        requirements_after = get_requirements_from_file(requirements_file)
+
+        assert requirements_before == requirements_after
     finally:
         tmp_dir.cleanup()
 
 
 def test_replace_dev_reqs_relative(tmp_directory_create):
+    """
+    This test exercises the primary workload for replace_dev_reqs, as all local relative requirements must be
+    prebuilt in CI to avoid parallel access issues while pip is attempting to assemble a wheel.
+    """
     target_file = os.path.join(sample_dev_reqs_folder, 'relative_requirements.txt')
     tmp_dir, requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
+    expected_output_folder = os.path.join(repo_root, 'sdk', 'core', 'azure-core', '.tmp_whl_dir')
+
+    expected_results = [
+        os.path.join(expected_output_folder, 'coretestserver-1.0.0b1-py3-none-any.whl'),
+        os.path.join(expected_output_folder, 'coretestserver-1.0.0b1-py3-none-any.whl'),
+        os.path.join(expected_output_folder, 'azure_identity-1.15.1-py3-none-any.whl'),
+        os.path.join(expected_output_folder, 'azure_identity-1.15.1-py3-none-any.whl'),
+        os.path.join(expected_output_folder, 'azure_devtools-1.2.1-py2.py3-none-any.whl'),
+        os.path.join(expected_output_folder, 'azure_devtools-1.2.1-py2.py3-none-any.whl'),
+        os.path.join(expected_output_folder, 'azure_mgmt_core-1.4.0-py3-none-any.whl'),
+        os.path.join(expected_output_folder, 'azure_mgmt_core-1.4.0-py3-none-any.whl'),
+        os.path.join(expected_output_folder, 'azure_sdk_tools-0.0.0-py3-none-any.whl[build]'),
+        os.path.join(expected_output_folder, 'azure_sdk_tools-0.0.0-py3-none-any.whl[build]')
+    ]
 
     try:
-        pass
+        requirements_before = get_requirements_from_file(requirements_file)
+        replace_dev_reqs(requirements_file, core_location)
+        requirements_after = get_requirements_from_file(requirements_file)
 
+        assert requirements_before != requirements_after
+        assert requirements_after == expected_results
     finally:
         tmp_dir.cleanup()
 
 def test_replace_dev_reqs_remote(tmp_directory_create):
+    """
+    "Remote" reqs are requirements that are reached out via some combination of VCS or HTTP. This includes
+        git+https:// for version controlled source that will build in its own silo.
+        https:// for raw wheels
+
+    This test is similar to test_replace_dev_reqs_specifiers in that we're expecting proper no-ops.
+    """
     target_file = os.path.join(sample_dev_reqs_folder, 'remote_requirements.txt')
     tmp_dir, requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
     try:
-        pass
-
+        requirements_before = get_requirements_from_file(requirements_file) 
+        replace_dev_reqs(requirements_file, core_location)
+        requirements_after = get_requirements_from_file(requirements_file)
+        assert requirements_before == requirements_after
     finally:
         tmp_dir.cleanup()

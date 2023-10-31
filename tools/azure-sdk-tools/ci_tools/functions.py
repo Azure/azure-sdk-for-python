@@ -423,6 +423,17 @@ def replace_dev_reqs(file, pkg_root):
         f.write("\n".join(adjusted_req_lines))
 
 
+def is_relative_install_path(req: str, package_path: str) -> str:
+    if ".." in req:
+        return True
+    
+    possible_setup_path = os.path.join(package_path, req, "setup.py")
+    if os.path.exists(possible_setup_path):
+        return True
+
+    return False
+
+
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.
 
@@ -432,7 +443,7 @@ def build_whl_for_req(req: str, package_path: str) -> str:
     """
     from ci_tools.build import create_package
 
-    if ".." in req:
+    if is_relative_install_path(req, package_path):
         # Create temp path if it doesn't exist
         temp_dir = os.path.join(package_path, ".tmp_whl_dir")
         if not os.path.exists(temp_dir):

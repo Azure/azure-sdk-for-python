@@ -6,3 +6,5 @@ tests/testserver_tests/coretestserver
 ../../../tools/azure-devtools
 ../azure-mgmt-core
 -e ../azure-mgmt-core
+../../../tools/azure-sdk-tools[build]
+-e ../../../tools/azure-sdk-tools[build]
