@@ -53,14 +53,14 @@ def main():
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
     # Fetch control plane resource dependencies
-    projects = list(client.dev_center.list_projects(top=1))
+    projects = list(client.list_projects(top=1))
     target_project_name = projects[0]["name"]
 
-    pools = list(client.dev_boxes.list_pools(target_project_name, top=1))
+    pools = list(client.list_pools(target_project_name, top=1))
     target_pool_name = pools[0]["name"]
 
     # Stand up a new dev box
-    create_response = client.dev_boxes.begin_create_dev_box(
+    create_response = client.begin_create_dev_box(
         target_project_name, "Test_DevBox", {"poolName": target_pool_name}
     )
     devbox_result = create_response.result()
@@ -68,11 +68,11 @@ def main():
     LOG.info(f"Provisioned dev box with status {devbox_result['provisioningState']}.")
 
     # Connect to the provisioned dev box
-    remote_connection_response = client.dev_boxes.get_remote_connection(target_project_name, "Test_DevBox")
+    remote_connection_response = client.get_remote_connection(target_project_name, "Test_DevBox")
     LOG.info(f"Connect to the dev box using web URL {remote_connection_response['webUrl']}")
 
     # Tear down the dev box when finished
-    delete_response = client.dev_boxes.begin_delete_dev_box(target_project_name, "Test_DevBox")
+    delete_response = client.begin_delete_dev_box(target_project_name, "Test_DevBox")
     delete_response.wait()
     LOG.info("Deleted dev box successfully.")
 

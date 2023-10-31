@@ -14,24 +14,17 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import DevCenterClientConfiguration
+from ._operations import DevCenterClientOperationsMixin
 from ._serialization import Deserializer, Serializer
-from .operations import DeploymentEnvironmentsOperations, DevBoxesOperations, DevCenterOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword
+class DevCenterClient(DevCenterClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """DevCenterClient.
 
-    :ivar dev_center: DevCenterOperations operations
-    :vartype dev_center: azure.developer.devcenter.operations.DevCenterOperations
-    :ivar dev_boxes: DevBoxesOperations operations
-    :vartype dev_boxes: azure.developer.devcenter.operations.DevBoxesOperations
-    :ivar deployment_environments: DeploymentEnvironmentsOperations operations
-    :vartype deployment_environments:
-     azure.developer.devcenter.operations.DeploymentEnvironmentsOperations
     :param endpoint: The DevCenter-specific URI to operate on. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -68,13 +61,8 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.dev_center = DevCenterOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dev_boxes = DevBoxesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deployment_environments = DeploymentEnvironmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -98,7 +86,7 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)  # type: ignore
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()

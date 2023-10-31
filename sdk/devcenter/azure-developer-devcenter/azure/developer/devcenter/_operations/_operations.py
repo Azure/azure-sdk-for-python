@@ -29,6 +29,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
+from .._vendor import DevCenterClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -91,7 +92,7 @@ def build_dev_center_get_project_request(project_name: str, **kwargs: Any) -> Ht
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_list_pools_request(
+def build_dev_center_list_pools_request(
     project_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -121,7 +122,7 @@ def build_dev_boxes_list_pools_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_get_pool_request(project_name: str, pool_name: str, **kwargs: Any) -> HttpRequest:
+def build_dev_center_get_pool_request(project_name: str, pool_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -146,7 +147,7 @@ def build_dev_boxes_get_pool_request(project_name: str, pool_name: str, **kwargs
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_list_schedules_request(
+def build_dev_center_list_schedules_request(
     project_name: str, pool_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -177,7 +178,7 @@ def build_dev_boxes_list_schedules_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_get_schedule_request(
+def build_dev_center_get_schedule_request(
     project_name: str, pool_name: str, schedule_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -205,7 +206,7 @@ def build_dev_boxes_get_schedule_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_list_all_dev_boxes_request(  # pylint: disable=name-too-long
+def build_dev_center_list_all_dev_boxes_request(  # pylint: disable=name-too-long
     *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -230,7 +231,7 @@ def build_dev_boxes_list_all_dev_boxes_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_list_all_dev_boxes_by_user_request(  # pylint: disable=name-too-long
+def build_dev_center_list_all_dev_boxes_by_user_request(  # pylint: disable=name-too-long
     user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -260,7 +261,7 @@ def build_dev_boxes_list_all_dev_boxes_by_user_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_list_dev_boxes_request(
+def build_dev_center_list_dev_boxes_request(
     project_name: str, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -291,7 +292,7 @@ def build_dev_boxes_list_dev_boxes_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_get_dev_box_request(
+def build_dev_center_get_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -319,7 +320,7 @@ def build_dev_boxes_get_dev_box_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_create_dev_box_request(
+def build_dev_center_create_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -350,7 +351,7 @@ def build_dev_boxes_create_dev_box_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_delete_dev_box_request(
+def build_dev_center_delete_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -378,7 +379,7 @@ def build_dev_boxes_delete_dev_box_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_start_dev_box_request(
+def build_dev_center_start_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -406,7 +407,7 @@ def build_dev_boxes_start_dev_box_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_stop_dev_box_request(
+def build_dev_center_stop_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, *, hibernate: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -436,7 +437,7 @@ def build_dev_boxes_stop_dev_box_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_restart_dev_box_request(
+def build_dev_center_restart_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -464,7 +465,7 @@ def build_dev_boxes_restart_dev_box_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_get_remote_connection_request(  # pylint: disable=name-too-long
+def build_dev_center_get_remote_connection_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -492,7 +493,7 @@ def build_dev_boxes_get_remote_connection_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_list_dev_box_actions_request(  # pylint: disable=name-too-long
+def build_dev_center_list_dev_box_actions_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -520,7 +521,7 @@ def build_dev_boxes_list_dev_box_actions_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_get_dev_box_action_request(  # pylint: disable=name-too-long
+def build_dev_center_get_dev_box_action_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, action_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -549,7 +550,7 @@ def build_dev_boxes_get_dev_box_action_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_skip_action_request(
+def build_dev_center_skip_dev_box_action_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, action_name: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -572,7 +573,7 @@ def build_dev_boxes_skip_action_request(
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_dev_boxes_delay_action_request(
+def build_dev_center_delay_dev_box_action_request(  # pylint: disable=name-too-long
     project_name: str,
     user_id: str,
     dev_box_name: str,
@@ -608,7 +609,7 @@ def build_dev_boxes_delay_action_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_boxes_delay_all_actions_request(  # pylint: disable=name-too-long
+def build_dev_center_delay_all_dev_box_actions_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, *, delay_until: datetime.datetime, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -637,7 +638,7 @@ def build_dev_boxes_delay_all_actions_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_list_all_environments_request(  # pylint: disable=name-too-long
+def build_dev_center_list_all_environments_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -665,7 +666,7 @@ def build_deployment_environments_list_all_environments_request(  # pylint: disa
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_list_environments_request(  # pylint: disable=name-too-long
+def build_dev_center_list_environments_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -694,7 +695,7 @@ def build_deployment_environments_list_environments_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_get_environment_request(  # pylint: disable=name-too-long
+def build_dev_center_get_environment_request(
     project_name: str, user_id: str, environment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -722,7 +723,7 @@ def build_deployment_environments_get_environment_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_create_or_update_environment_request(  # pylint: disable=name-too-long
+def build_dev_center_create_or_update_environment_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, environment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -753,7 +754,7 @@ def build_deployment_environments_create_or_update_environment_request(  # pylin
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_delete_environment_request(  # pylint: disable=name-too-long
+def build_dev_center_delete_environment_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, environment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -781,7 +782,7 @@ def build_deployment_environments_delete_environment_request(  # pylint: disable
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_list_catalogs_request(  # pylint: disable=name-too-long
+def build_dev_center_list_catalogs_request(
     project_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -809,9 +810,7 @@ def build_deployment_environments_list_catalogs_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_get_catalog_request(  # pylint: disable=name-too-long
-    project_name: str, catalog_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_dev_center_get_catalog_request(project_name: str, catalog_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -836,7 +835,7 @@ def build_deployment_environments_get_catalog_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_list_environment_definitions_request(  # pylint: disable=name-too-long
+def build_dev_center_list_environment_definitions_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -864,7 +863,7 @@ def build_deployment_environments_list_environment_definitions_request(  # pylin
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_list_environment_definitions_by_catalog_request(  # pylint: disable=name-too-long
+def build_dev_center_list_environment_definitions_by_catalog_request(  # pylint: disable=name-too-long
     project_name: str, catalog_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -893,7 +892,7 @@ def build_deployment_environments_list_environment_definitions_by_catalog_reques
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_get_environment_definition_request(  # pylint: disable=name-too-long
+def build_dev_center_get_environment_definition_request(  # pylint: disable=name-too-long
     project_name: str, catalog_name: str, definition_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -921,7 +920,7 @@ def build_deployment_environments_get_environment_definition_request(  # pylint:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deployment_environments_list_environment_types_request(  # pylint: disable=name-too-long
+def build_dev_center_list_environment_types_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -949,23 +948,7 @@ def build_deployment_environments_list_environment_types_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class DevCenterOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.developer.devcenter.DevCenterClient`'s
-        :attr:`dev_center` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
+class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_projects(
         self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
@@ -1143,24 +1126,6 @@ class DevCenterOperations:
 
         return cast(JSON, deserialized)  # type: ignore
 
-
-class DevBoxesOperations:  # pylint: disable=too-many-public-methods
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.developer.devcenter.DevCenterClient`'s
-        :attr:`dev_boxes` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
     def list_pools(
         self, project_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
@@ -1245,7 +1210,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_boxes_list_pools_request(
+                _request = build_dev_center_list_pools_request(
                     project_name=project_name,
                     filter=filter,
                     top=top,
@@ -1386,7 +1351,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_get_pool_request(
+        _request = build_dev_center_get_pool_request(
             project_name=project_name,
             pool_name=pool_name,
             api_version=self._config.api_version,
@@ -1481,7 +1446,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_boxes_list_schedules_request(
+                _request = build_dev_center_list_schedules_request(
                     project_name=project_name,
                     pool_name=pool_name,
                     filter=filter,
@@ -1590,7 +1555,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_get_schedule_request(
+        _request = build_dev_center_get_schedule_request(
             project_name=project_name,
             pool_name=pool_name,
             schedule_name=schedule_name,
@@ -1732,7 +1697,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_boxes_list_all_dev_boxes_request(
+                _request = build_dev_center_list_all_dev_boxes_request(
                     filter=filter,
                     top=top,
                     api_version=self._config.api_version,
@@ -1900,7 +1865,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_boxes_list_all_dev_boxes_by_user_request(
+                _request = build_dev_center_list_all_dev_boxes_by_user_request(
                     user_id=user_id,
                     filter=filter,
                     top=top,
@@ -2071,7 +2036,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_boxes_list_dev_boxes_request(
+                _request = build_dev_center_list_dev_boxes_request(
                     project_name=project_name,
                     user_id=user_id,
                     filter=filter,
@@ -2237,7 +2202,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_get_dev_box_request(
+        _request = build_dev_center_get_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2277,7 +2242,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)  # type: ignore
 
     def _create_dev_box_initial(
-        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, JSON, IO], **kwargs: Any
+        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, IO], **kwargs: Any
     ) -> JSON:
         error_map = {
             401: ClientAuthenticationError,
@@ -2301,7 +2266,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = body
 
-        _request = build_dev_boxes_create_dev_box_request(
+        _request = build_dev_center_create_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2537,115 +2502,6 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         project_name: str,
         user_id: str,
         dev_box_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[JSON]:
-        """Creates or replaces a Dev Box.
-
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
-        :type project_name: str
-        :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
-         authentication context. Required.
-        :type user_id: str
-        :param dev_box_name: The name of a Dev Box. Required.
-        :type dev_box_name: str
-        :param body: Represents a environment. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 201
-                response == {
-                    "name": "str",  # Display name for the Dev Box. Required.
-                    "poolName": "str",  # The name of the Dev Box pool this machine belongs to.
-                      Required.
-                    "actionState": "str",  # Optional. The current action state of the Dev Box.
-                      This is state is based on previous action performed by user.
-                    "createdTime": "2020-02-20 00:00:00",  # Optional. Creation time of this Dev
-                      Box.
-                    "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
-                            "innererror": ...
-                        },
-                        "target": "str"  # Optional. The target of the error.
-                    },
-                    "hardwareProfile": {
-                        "memoryGB": 0,  # Optional. The amount of memory available for the
-                          Dev Box.
-                        "skuName": "str",  # Optional. The name of the SKU.
-                        "vCPUs": 0  # Optional. The number of vCPUs available for the Dev
-                          Box.
-                    },
-                    "hibernateSupport": "str",  # Optional. Indicates whether hibernate is
-                      enabled/disabled or unknown. Known values are: "Enabled", "Disabled", and
-                      "OsUnsupported".
-                    "imageReference": {
-                        "name": "str",  # Optional. The name of the image used.
-                        "operatingSystem": "str",  # Optional. The operating system of the
-                          image.
-                        "osBuildNumber": "str",  # Optional. The operating system build
-                          number of the image.
-                        "publishedDate": "2020-02-20 00:00:00",  # Optional. The datetime
-                          that the backing image version was published.
-                        "version": "str"  # Optional. The version of the image.
-                    },
-                    "localAdministrator": "str",  # Optional. Indicates whether the owner of the
-                      Dev Box is a local administrator. Known values are: "Enabled" and "Disabled".
-                    "location": "str",  # Optional. Azure region where this Dev Box is located.
-                      This will be the same region as the Virtual Network it is attached to.
-                    "osType": "str",  # Optional. The operating system type of this Dev Box.
-                      "Windows"
-                    "powerState": "str",  # Optional. The current power state of the Dev Box.
-                      Known values are: "Unknown", "Running", "Deallocated", "PoweredOff", and
-                      "Hibernated".
-                    "projectName": "str",  # Optional. Name of the project this Dev Box belongs
-                      to.
-                    "provisioningState": "str",  # Optional. The current provisioning state of
-                      the Dev Box.
-                    "storageProfile": {
-                        "osDisk": {
-                            "diskSizeGB": 0  # Optional. The size of the OS Disk in
-                              gigabytes.
-                        }
-                    },
-                    "uniqueId": "str",  # Optional. A unique identifier for the Dev Box. This is
-                      a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).
-                    "user": "str"  # Optional. The AAD object id of the user this Dev Box is
-                      assigned to.
-                }
-        """
-
-    @overload
-    def begin_create_dev_box(
-        self,
-        project_name: str,
-        user_id: str,
-        dev_box_name: str,
         body: IO,
         *,
         content_type: str = "application/json",
@@ -2751,7 +2607,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_create_dev_box(
-        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, JSON, IO], **kwargs: Any
+        self, project_name: str, user_id: str, dev_box_name: str, body: Union[JSON, IO], **kwargs: Any
     ) -> LROPoller[JSON]:
         """Creates or replaces a Dev Box.
 
@@ -2762,8 +2618,8 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         :type user_id: str
         :param dev_box_name: The name of a Dev Box. Required.
         :type dev_box_name: str
-        :param body: Represents a environment. Is one of the following types: JSON, JSON, IO Required.
-        :type body: JSON or JSON or IO
+        :param body: Represents a environment. Is either a JSON type or a IO type. Required.
+        :type body: JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -2988,7 +2844,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_delete_dev_box_request(
+        _request = build_dev_center_delete_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3149,7 +3005,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_start_dev_box_request(
+        _request = build_dev_center_start_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3304,7 +3160,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_stop_dev_box_request(
+        _request = build_dev_center_stop_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3463,7 +3319,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_restart_dev_box_request(
+        _request = build_dev_center_restart_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3644,7 +3500,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_get_remote_connection_request(
+        _request = build_dev_center_get_remote_connection_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3731,7 +3587,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_boxes_list_dev_box_actions_request(
+                _request = build_dev_center_list_dev_box_actions_request(
                     project_name=project_name,
                     user_id=user_id,
                     dev_box_name=dev_box_name,
@@ -3845,7 +3701,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_get_dev_box_action_request(
+        _request = build_dev_center_get_dev_box_action_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3886,7 +3742,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def skip_action(  # pylint: disable=inconsistent-return-statements
+    def skip_dev_box_action(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, user_id: str, dev_box_name: str, action_name: str, **kwargs: Any
     ) -> None:
         """Skips an occurrence of an action.
@@ -3919,7 +3775,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_skip_action_request(
+        _request = build_dev_center_skip_dev_box_action_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3950,7 +3806,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def delay_action(
+    def delay_dev_box_action(
         self,
         project_name: str,
         user_id: str,
@@ -4009,7 +3865,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_boxes_delay_action_request(
+        _request = build_dev_center_delay_dev_box_action_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -4051,7 +3907,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def delay_all_actions(
+    def delay_all_dev_box_actions(
         self, project_name: str, user_id: str, dev_box_name: str, *, delay_until: datetime.datetime, **kwargs: Any
     ) -> Iterable[JSON]:
         """Delays all actions.
@@ -4123,7 +3979,7 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_boxes_delay_all_actions_request(
+                _request = build_dev_center_delay_all_dev_box_actions_request(
                     project_name=project_name,
                     user_id=user_id,
                     dev_box_name=dev_box_name,
@@ -4186,24 +4042,6 @@ class DevBoxesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-
-class DeploymentEnvironmentsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.developer.devcenter.DevCenterClient`'s
-        :attr:`deployment_environments` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_all_environments(self, project_name: str, *, top: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
@@ -4268,7 +4106,7 @@ class DeploymentEnvironmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deployment_environments_list_all_environments_request(
+                _request = build_dev_center_list_all_environments_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,
@@ -4398,7 +4236,7 @@ class DeploymentEnvironmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deployment_environments_list_environments_request(
+                _request = build_dev_center_list_environments_request(
                     project_name=project_name,
                     user_id=user_id,
                     top=top,
@@ -4525,7 +4363,7 @@ class DeploymentEnvironmentsOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_deployment_environments_get_environment_request(
+        _request = build_dev_center_get_environment_request(
             project_name=project_name,
             user_id=user_id,
             environment_name=environment_name,
@@ -4565,7 +4403,7 @@ class DeploymentEnvironmentsOperations:
         return cast(JSON, deserialized)  # type: ignore
 
     def _create_or_update_environment_initial(
-        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, JSON, IO], **kwargs: Any
+        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, IO], **kwargs: Any
     ) -> JSON:
         error_map = {
             401: ClientAuthenticationError,
@@ -4589,7 +4427,7 @@ class DeploymentEnvironmentsOperations:
         else:
             _json = body
 
-        _request = build_deployment_environments_create_or_update_environment_request(
+        _request = build_dev_center_create_or_update_environment_request(
             project_name=project_name,
             user_id=user_id,
             environment_name=environment_name,
@@ -4739,77 +4577,6 @@ class DeploymentEnvironmentsOperations:
         project_name: str,
         user_id: str,
         environment_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[JSON]:
-        """Creates or updates an environment.
-
-        :param project_name: The DevCenter Project upon which to execute operations. Required.
-        :type project_name: str
-        :param user_id: The AAD object id of the user. If value is 'me', the identity is taken from the
-         authentication context. Required.
-        :type user_id: str
-        :param environment_name: The name of the environment. Required.
-        :type environment_name: str
-        :param body: Represents an environment. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns JSON object
-        :rtype: ~azure.core.polling.LROPoller[JSON]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 201
-                response == {
-                    "catalogName": "str",  # Name of the catalog. Required.
-                    "environmentDefinitionName": "str",  # Name of the environment definition.
-                      Required.
-                    "environmentType": "str",  # Environment type. Required.
-                    "error": {
-                        "code": "str",  # One of a server-defined set of error codes.
-                          Required.
-                        "message": "str",  # A human-readable representation of the error.
-                          Required.
-                        "details": [
-                            ...
-                        ],
-                        "innererror": {
-                            "code": "str",  # Optional. One of a server-defined set of
-                              error codes.
-                            "innererror": ...
-                        },
-                        "target": "str"  # Optional. The target of the error.
-                    },
-                    "name": "str",  # Optional. Environment name.
-                    "parameters": {},  # Optional. Parameters object for the environment.
-                    "provisioningState": "str",  # Optional. The provisioning state of the
-                      environment.
-                    "resourceGroupId": "str",  # Optional. The identifier of the resource group
-                      containing the environment's resources.
-                    "user": "str"  # Optional. The AAD object id of the owner of this
-                      Environment.
-                }
-        """
-
-    @overload
-    def begin_create_or_update_environment(
-        self,
-        project_name: str,
-        user_id: str,
-        environment_name: str,
         body: IO,
         *,
         content_type: str = "application/json",
@@ -4877,7 +4644,7 @@ class DeploymentEnvironmentsOperations:
 
     @distributed_trace
     def begin_create_or_update_environment(
-        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, JSON, IO], **kwargs: Any
+        self, project_name: str, user_id: str, environment_name: str, body: Union[JSON, IO], **kwargs: Any
     ) -> LROPoller[JSON]:
         """Creates or updates an environment.
 
@@ -4888,8 +4655,8 @@ class DeploymentEnvironmentsOperations:
         :type user_id: str
         :param environment_name: The name of the environment. Required.
         :type environment_name: str
-        :param body: Represents an environment. Is one of the following types: JSON, JSON, IO Required.
-        :type body: JSON or JSON or IO
+        :param body: Represents an environment. Is either a JSON type or a IO type. Required.
+        :type body: JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -5043,7 +4810,7 @@ class DeploymentEnvironmentsOperations:
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        _request = build_deployment_environments_delete_environment_request(
+        _request = build_dev_center_delete_environment_request(
             project_name=project_name,
             user_id=user_id,
             environment_name=environment_name,
@@ -5227,7 +4994,7 @@ class DeploymentEnvironmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deployment_environments_list_catalogs_request(
+                _request = build_dev_center_list_catalogs_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,
@@ -5324,7 +5091,7 @@ class DeploymentEnvironmentsOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_deployment_environments_get_catalog_request(
+        _request = build_dev_center_get_catalog_request(
             project_name=project_name,
             catalog_name=catalog_name,
             api_version=self._config.api_version,
@@ -5429,7 +5196,7 @@ class DeploymentEnvironmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deployment_environments_list_environment_definitions_request(
+                _request = build_dev_center_list_environment_definitions_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,
@@ -5560,7 +5327,7 @@ class DeploymentEnvironmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deployment_environments_list_environment_definitions_by_catalog_request(
+                _request = build_dev_center_list_environment_definitions_by_catalog_request(
                     project_name=project_name,
                     catalog_name=catalog_name,
                     top=top,
@@ -5690,7 +5457,7 @@ class DeploymentEnvironmentsOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_deployment_environments_get_environment_definition_request(
+        _request = build_dev_center_get_environment_definition_request(
             project_name=project_name,
             catalog_name=catalog_name,
             definition_name=definition_name,
@@ -5771,7 +5538,7 @@ class DeploymentEnvironmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deployment_environments_list_environment_types_request(
+                _request = build_dev_center_list_environment_types_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,

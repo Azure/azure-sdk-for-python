@@ -48,15 +48,15 @@ def main():
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
     # Fetch control plane resource dependencies
-    target_project_name = list(client.dev_center.list_projects(top=1))[0]["name"]
-    target_catalog_name = list(client.deployment_environments.list_catalogs(target_project_name, top=1))[0]["name"]
+    target_project_name = list(client.list_projects(top=1))[0]["name"]
+    target_catalog_name = list(client.list_catalogs(target_project_name, top=1))[0]["name"]
     target_environment_definition_name = list(
-        client.deployment_environments.list_environment_definitions_by_catalog(
+        client.list_environment_definitions_by_catalog(
             target_project_name, target_catalog_name, top=1
         )
     )[0]["name"]
     target_environment_type_name = list(
-        client.deployment_environments.list_environment_types(target_project_name, top=1)
+        client.list_environment_types(target_project_name, top=1)
     )[0]["name"]
 
     # Stand up a new environment
@@ -66,7 +66,7 @@ def main():
         "environmentType": target_environment_type_name,
     }
 
-    create_response = client.deployment_environments.begin_create_or_update_environment(
+    create_response = client.begin_create_or_update_environment(
         target_project_name, "DevTestEnv", environment
     )
     environment_result = create_response.result()
@@ -74,7 +74,7 @@ def main():
     LOG.info(f"Provisioned environment with status {environment_result['provisioningState']}.")
 
     # Tear down the environment when finished
-    delete_response = client.deployment_environments.begin_delete_environment(target_project_name, "DevTestEnv")
+    delete_response = client.begin_delete_environment(target_project_name, "DevTestEnv")
     delete_result = delete_response.result()
     LOG.info(f"Completed deletion for the environment with status {delete_result['status']}")
 

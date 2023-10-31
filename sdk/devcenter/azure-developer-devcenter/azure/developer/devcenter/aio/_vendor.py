@@ -12,15 +12,15 @@ from ._configuration import DevCenterClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core import PipelineClient
+    from azure.core import AsyncPipelineClient
 
-    from ._serialization import Deserializer, Serializer
+    from .._serialization import Deserializer, Serializer
 
 
 class DevCenterClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
-    _client: "PipelineClient"
+    _client: "AsyncPipelineClient"
     _config: DevCenterClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
