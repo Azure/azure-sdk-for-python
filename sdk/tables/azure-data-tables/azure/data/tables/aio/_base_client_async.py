@@ -12,9 +12,7 @@ from typing_extensions import Self
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline.transport import (
-    AsyncHttpTransport
-)
+from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncRedirectPolicy,
