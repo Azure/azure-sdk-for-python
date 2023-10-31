@@ -6,7 +6,7 @@
 import time
 import unittest
 from unittest.mock import Mock
-from azure.appconfiguration.provider import SentinelKey
+from azure.appconfiguration.provider import WatchKey
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator_aad
 from testcase import AppConfigTestCase
@@ -21,7 +21,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         client = self.create_aad_client(
             appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
-            refresh_on=[SentinelKey("refresh_message")],
+            refresh_on=[WatchKey("refresh_message")],
             refresh_interval=1,
             on_refresh_success=mock_callback,
         )
