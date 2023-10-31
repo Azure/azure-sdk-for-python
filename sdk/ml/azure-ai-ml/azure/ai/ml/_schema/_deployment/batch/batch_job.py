@@ -131,9 +131,4 @@ class BatchJobSchema(PathAwareSchema):
         if data.get(EndpointYamlFields.RETRY_SETTINGS, None):
             data[EndpointYamlFields.RETRY_SETTINGS] = data[EndpointYamlFields.RETRY_SETTINGS]._to_rest_object()
 
-        if data.get(EndpointYamlFields.BATCH_JOB_EXPERIMENT_NAME, None):
-            data[EndpointYamlFields.BATCH_JOB_EXPERIMENT_NAME] = data[EndpointYamlFields.BATCH_JOB_EXPERIMENT_NAME][
-                "name"
-            ]
-
         return BatchJob(**data)
