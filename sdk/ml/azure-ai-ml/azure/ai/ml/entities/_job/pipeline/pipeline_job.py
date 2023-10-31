@@ -45,10 +45,10 @@ from azure.ai.ml.entities._credentials import (
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._inputs_outputs.group_input import GroupInput
 from azure.ai.ml.entities._job._input_output_helpers import (
-    from_rest_data_outputs_2308,
-    from_rest_inputs_to_dataset_literal_2308,
-    to_rest_data_outputs_2308,
-    to_rest_dataset_literal_inputs_2308,
+    from_rest_data_outputs,
+    from_rest_inputs_to_dataset_literal,
+    to_rest_data_outputs,
+    to_rest_dataset_literal_inputs,
 )
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
@@ -512,7 +512,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         if isinstance(self.component, PipelineComponent):
             source = self.component._source
             # Build the jobs to dict
-            rest_component_jobs = self.component._build_rest_component_jobs_2308()
+            rest_component_jobs = self.component._build_rest_component_jobs()
         else:
             source = ComponentSource.REMOTE_WORKSPACE_JOB
             rest_component_jobs = {}
@@ -538,12 +538,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             properties=self.properties,
             experiment_name=self.experiment_name,
             jobs=rest_component_jobs,
-            inputs=to_rest_dataset_literal_inputs_2308(built_inputs, job_type=self.type),
-            outputs=to_rest_data_outputs_2308(built_outputs),
+            inputs=to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
+            outputs=to_rest_data_outputs(built_outputs),
             settings=settings_dict,
             # Temporarily not modified to 2308 version
             services={k: v._to_rest_object() for k, v in self.services.items()} if self.services else None,
-            identity=self.identity._to_job_rest_object_2308() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
         )
 
         rest_job = JobBase_2308(properties=pipeline_job)
@@ -562,8 +562,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         properties: RestPipelineJob_2308 = obj.properties
         # Workaround for BatchEndpoint as these fields are not filled in
         # Unpack the inputs
-        from_rest_inputs = from_rest_inputs_to_dataset_literal_2308(properties.inputs) or {}
-        from_rest_outputs = from_rest_data_outputs_2308(properties.outputs) or {}
+        from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs) or {}
+        from_rest_outputs = from_rest_data_outputs(properties.outputs) or {}
         # Unpack the component jobs
         sub_nodes = PipelineComponent._resolve_sub_nodes(properties.jobs) if properties.jobs else {}
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
@@ -597,11 +597,11 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             status=properties.status,
             creation_context=SystemData._from_rest_object(obj.system_data)
             if obj.system_data
-            else None,  # Temporarily not modified to 2308 version
-            services=JobServiceBase._from_rest_job_services_2308(properties.services) if properties.services else None,
+            else None,
+            services=JobServiceBase._from_rest_job_services(properties.services) if properties.services else None,
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
-            identity=_BaseJobIdentityConfiguration._from_rest_object_2308(properties.identity)
+            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
         )

@@ -663,7 +663,7 @@ class JobOperations(_ScopeDependentOperations):
         # set headers with user aml token if job is a pipeline or has a user identity setting
         if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
             hasattr(rest_job_resource.properties, "identity")
-            and (isinstance(rest_job_resource.properties.identity, (UserIdentity, UserIdentity_2308)))
+            and (isinstance(rest_job_resource.properties.identity, UserIdentity))
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
@@ -1011,11 +1011,7 @@ class JobOperations(_ScopeDependentOperations):
     # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to 2023-08-01 api
     def _get_job_2308(self, name: str) -> JobBase_2308:
-        service_client_operation = (
-            self.service_client_08_2023_preview.jobs
-            if self.service_client_08_2023_preview
-            else self._service_client_operation
-        )
+        service_client_operation = self.service_client_08_2023_preview.jobs
         return service_client_operation.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,

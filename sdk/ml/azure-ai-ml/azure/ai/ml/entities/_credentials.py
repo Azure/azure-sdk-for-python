@@ -57,13 +57,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
-)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
