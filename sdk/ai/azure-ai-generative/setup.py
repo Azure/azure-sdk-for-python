@@ -63,7 +63,13 @@ setup(
             "samples",
         ]
     ),
-    package_data={"azure.ai.generative": ["azure/ai/generative/index/_utils/encodings/*","azure/ai/generative/synthetic/templates/*"]},
+    package_data={
+        "azure.ai.generative": [
+            "azure/ai/generative/index/_utils/encodings/*",
+            "azure/ai/generative/synthetic/templates/*",
+            "azure/ai/generative/py.typed",
+        ]
+    },
     python_requires="<4.0,>=3.8",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
