@@ -556,7 +556,7 @@ class MLClient:
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
-            pipeline_service_client=self._service_client_08_2023_preview,  # Upgrade create_or_update api for pipeline job
+            service_client_08_2023_preview=self._service_client_08_2023_preview,  # Upgrade create_or_update api for pipeline job
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)

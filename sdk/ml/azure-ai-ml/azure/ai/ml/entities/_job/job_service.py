@@ -145,34 +145,6 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
                 result[name] = JobService._from_rest_object(service)
         return result
 
-    @classmethod
-    def _from_rest_job_services_2308(
-        cls, services: Dict[str, RestJobService_2308]
-    ) -> Dict[
-        str, Union["JobService", "JupyterLabJobService", "SshJobService", "TensorBoardJobService", "VsCodeJobService"]
-    ]:
-        # """Resolve Dict[str, RestJobService] to Dict[str, Specific JobService]"""
-        if services is None:
-            return None
-
-        result = {}
-        for name, service in services.items():
-            if service.job_service_type == JobServiceTypeNames.RestNames.JUPYTER_LAB:
-                result[name] = JupyterLabJobService._from_rest_object(
-                    service
-                )  # Temporarily not modified to 2308 version
-            elif service.job_service_type == JobServiceTypeNames.RestNames.SSH:
-                result[name] = SshJobService._from_rest_object(service)  # Temporarily not modified to 2308 version
-            elif service.job_service_type == JobServiceTypeNames.RestNames.TENSOR_BOARD:
-                result[name] = TensorBoardJobService._from_rest_object(
-                    service
-                )  # Temporarily not modified to 2308 version
-            elif service.job_service_type == JobServiceTypeNames.RestNames.VS_CODE:
-                result[name] = VsCodeJobService._from_rest_object(service)  # Temporarily not modified to 2308 version
-            else:
-                result[name] = JobService._from_rest_object(service)  # Temporarily not modified to 2308 version
-        return result
-
 
 class JobService(JobServiceBase):
     """Basic job service configuration for backward compatibility.

@@ -61,21 +61,9 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
 )
 from azure.ai.ml._restclient.v2023_08_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_08_01_preview.models import AmlToken as RestAmlToken_2308
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    IdentityConfiguration as RestJobIdentityConfiguration_2308,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    IdentityConfigurationType as IdentityConfigurationType_2308,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedIdentity as RestJobManagedIdentity_2308
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials_2308,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import UserIdentity as RestUserIdentity_2308
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
@@ -408,32 +396,6 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
         )
 
     @classmethod
-    def _from_rest_object_2308(cls, obj: RestJobIdentityConfiguration_2308) -> "Identity":
-        if obj is None:
-            return None
-        mapping = {
-            IdentityConfigurationType_2308.AML_TOKEN: AmlTokenConfiguration,
-            IdentityConfigurationType_2308.MANAGED: ManagedIdentityConfiguration,
-            IdentityConfigurationType_2308.USER_IDENTITY: UserIdentityConfiguration,
-        }
-
-        if isinstance(obj, dict):
-            # TODO: support data binding expression
-            obj = RestJobIdentityConfiguration_2308.from_dict(obj)
-
-        identity_class = mapping.get(obj.identity_type, None)
-        if identity_class:
-            # pylint: disable=protected-access
-            return identity_class._from_job_rest_object(obj)  # Temporarily not modified to 2308 version
-        msg = f"Unknown identity type: {obj.identity_type}"
-        raise JobException(
-            message=msg,
-            no_personal_data_message=msg,
-            target=ErrorTarget.IDENTITY,
-            error_category=ErrorCategory.SYSTEM_ERROR,
-        )
-
-    @classmethod
     def _load(
         cls,
         data: Optional[Dict] = None,
@@ -500,13 +462,6 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
 
     def _to_job_rest_object(self) -> RestJobManagedIdentity:
         return RestJobManagedIdentity(
-            client_id=self.client_id,
-            object_id=self.object_id,
-            resource_id=self.resource_id,
-        )
-
-    def _to_job_rest_object_2308(self) -> RestJobManagedIdentity_2308:
-        return RestJobManagedIdentity_2308(
             client_id=self.client_id,
             object_id=self.object_id,
             resource_id=self.resource_id,
@@ -586,9 +541,6 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     def _to_job_rest_object(self) -> RestUserIdentity:
         return RestUserIdentity()
 
-    def _to_job_rest_object_2308(self) -> RestUserIdentity_2308:
-        return RestUserIdentity()
-
     @classmethod
     # pylint: disable=unused-argument
     def _from_job_rest_object(cls, obj: RestUserIdentity) -> "UserIdentity":
@@ -610,7 +562,6 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, UserIdentityConfiguration):
             return NotImplemented
-        self._to_job_rest_object_2308 = other._to_job_rest_object()
         return self._to_job_rest_object() == other._to_job_rest_object()
 
 
@@ -632,9 +583,6 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
         self.type = IdentityType.AML_TOKEN
 
     def _to_job_rest_object(self) -> RestAmlToken:
-        return RestAmlToken()
-
-    def _to_job_rest_object_2308(self) -> RestAmlToken_2308:
         return RestAmlToken()
 
     def _to_dict(self) -> Dict:

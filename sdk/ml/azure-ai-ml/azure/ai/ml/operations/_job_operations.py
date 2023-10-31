@@ -178,7 +178,7 @@ class JobOperations(_ScopeDependentOperations):
             self._all_operations, self._operation_scope, self._operation_config
         )  # pylint: disable=line-too-long
 
-        self.pipeline_service_client = kwargs.pop("pipeline_service_client", None)
+        self.service_client_08_2023_preview = kwargs.pop("service_client_08_2023_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -705,8 +705,8 @@ class JobOperations(_ScopeDependentOperations):
     def create_or_update_with_different_version_api(self, rest_job_resource, **kwargs):
         service_client_operation = self._service_client_operation
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
-        if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.pipeline_service_client:
-            service_client_operation = self.pipeline_service_client.jobs
+        if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.service_client_08_2023_preview:
+            service_client_operation = self.service_client_08_2023_preview.jobs
 
         result = service_client_operation.create_or_update(
             id=rest_job_resource.name,
@@ -1011,8 +1011,11 @@ class JobOperations(_ScopeDependentOperations):
     # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to 2023-08-01 api
     def _get_job_2308(self, name: str) -> JobBase_2308:
-        service_client_operation = self.pipeline_service_client.jobs if self.pipeline_service_client \
+        service_client_operation = (
+            self.service_client_08_2023_preview.jobs
+            if self.service_client_08_2023_preview
             else self._service_client_operation
+        )
         return service_client_operation.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
