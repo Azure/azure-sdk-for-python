@@ -1,15 +1,17 @@
 # Release History
 
-## 1.0.0 (2023-05-23)
+## 1.0.0b3 (2023-11-03)
 
 This release updates the Azure DevCenter library to use the 2023-04-01 GA API.
 
 ### Breaking Changes
 
- - `client.environments` renamed to `client`
+ - `client.dev_center`, `client.dev_box` and `client.dev_box` renamed to `client`
  - `client` now works with "environment definitions" instead of "catalog items"
- - Createing a new environment requires passing `environmentDefinitionName` instead of `catalogItemName`
- - Createing a new environment requires passing an additional parameter `catalogName`
+ - Creating a new environment requires passing `environmentDefinitionName` instead of `catalogItemName`
+ - Creating a new environment requires passing an additional parameter `catalogName`
+ - `user_id` is no longer a parameter with default value.
+ - All actions have `dev_box` added to their names. E.g. `get_action` is updated to `get_dev_box_action`
 
 ### Other Changes
 
