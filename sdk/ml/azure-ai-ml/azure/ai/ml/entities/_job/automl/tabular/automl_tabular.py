@@ -5,7 +5,7 @@
 # pylint: disable=too-many-instance-attributes
 
 from abc import ABC
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AutoNCrossValidations,
@@ -71,8 +71,8 @@ class AutoMLTabular(AutoMLVertical, ABC):
         task_type: str,
         featurization: Optional[TabularFeaturizationSettings] = None,
         limits: Optional[TabularLimitSettings] = None,
-        training: Optional[TrainingSettings] = None,
-        **kwargs,
+        training: Optional[Any] = None,
+        **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity for tabular data.
 
@@ -180,7 +180,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
             self.set_limits(**value)
 
     @property
-    def training(self) -> TrainingSettings:
+    def training(self) -> Any:
         """Get the training settings for the AutoML job.
 
         :return: Training settings for the AutoML job.
