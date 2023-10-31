@@ -26,11 +26,7 @@ import os
 from uuid import uuid4, UUID
 import asyncio
 from dotenv import find_dotenv, load_dotenv
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import TypedDict
+from typing_extensions import TypedDict
 
 
 class EntityType(TypedDict, total=False):

@@ -31,11 +31,7 @@ from azure.data.tables.aio import TableServiceClient
 from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
 from uuid import uuid4, UUID
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import TypedDict
+from typing_extensions import TypedDict
 
 
 class EntityType(TypedDict, total=False):
