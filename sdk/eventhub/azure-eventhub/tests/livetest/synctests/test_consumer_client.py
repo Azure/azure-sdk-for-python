@@ -328,3 +328,34 @@ def test_receive_batch_tracing(connstr_senders, uamqp_transport, fake_span):
     assert root_receive.children[1].links[1].headers['traceparent'] == traceparent2
 
     settings.tracing_implementation.set_value(None)
+
+
+@pytest.mark.liveTest
+def test_receive_batch_large_event(connstr_senders, uamqp_transport):
+    connection_str, senders = connstr_senders
+    senders[0].send(EventData("A" * 15700))
+    client = EventHubConsumerClient.from_connection_string(
+        connection_str, consumer_group='$default', uamqp_transport=uamqp_transport
+    )
+
+    def on_event(partition_context, event):
+        on_event.received += 1
+        on_event.partition_id = partition_context.partition_id
+        on_event.consumer_group = partition_context.consumer_group
+        on_event.fully_qualified_namespace = partition_context.fully_qualified_namespace
+        on_event.eventhub_name = partition_context.eventhub_name
+        assert client._event_processors[0]._consumers[0]._handler._link.current_link_credit == 1
+
+    on_event.received = 0
+    with client:
+        worker = threading.Thread(target=client.receive_batch,
+                                  args=(on_event,),
+                                  kwargs={"starting_position": "-1",
+                                          "partition_id": "0", "prefetch": 2})
+        worker.start()
+        time.sleep(10)
+        assert on_event.received == 1
+        assert on_event.partition_id == "0"
+        assert on_event.consumer_group == "$default"
+        assert on_event.fully_qualified_namespace in connection_str
+        assert on_event.eventhub_name == senders[0]._client.eventhub_name

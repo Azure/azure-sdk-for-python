@@ -1,7 +1,9 @@
 # Release History
 
 ## 1.0.0b2 (Unreleased)
-
+  
+  - All calls to the client using parameter 'content' have been changed to use parameter 'request_body'.
+  
 ### Features Added
 
 ### Breaking Changes

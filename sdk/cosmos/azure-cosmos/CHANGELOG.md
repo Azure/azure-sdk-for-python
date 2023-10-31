@@ -1,9 +1,8 @@
 ## Release History
 
-### 4.5.2b2 (Unreleased)
+### 4.5.2b3 (Unreleased)
 
 #### Features Added
-* Added Support for Priority Based Throttling/Priority Based Execution (Must be enabled at the account level before it can be used). See [PR 32441](https://github.com/Azure/azure-sdk-for-python/pull/32441/)
 
 #### Breaking Changes
 
@@ -11,10 +10,16 @@
 
 #### Other Changes
 
+### 4.5.2b2 (2023-10-31)
+
+#### Features Added
+* Added support for Transactional Batch. See [PR 32508](https://github.com/Azure/azure-sdk-for-python/pull/32508).
+* Added **preview** support for Priority Based Throttling/Priority Based Execution (Must be enabled at the account level before it can be used). See [PR 32441](https://github.com/Azure/azure-sdk-for-python/pull/32441/).
+
 ### 4.5.2b1 (2023-10-17)
 
 #### Features Added
-* Added Support for Subpartitioning in Python SDK. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121)
+* Added support for Hierarchical Partitioning, also known as Subpartitioning. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121).
 
 #### Bugs Fixed
 * Small fix to the `offer_throughput` option in the async client's `create_database_if_not_exists` method, which was previously misspelled as `offerThroughput`.

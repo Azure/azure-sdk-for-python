@@ -692,14 +692,14 @@ class WorkspaceOperationsBase(ABC):
             managed_network = workspace.managed_network._to_rest_object()
         else:
             managed_network = ManagedNetwork(isolation_mode=IsolationMode.DISABLED)._to_rest_object()
-        _set_val(param["managedNetwork"], managed_network)
+        _set_obj_val(param["managedNetwork"], managed_network)
         if workspace.enable_data_isolation:
             _set_val(param["enable_data_isolation"], "true")
 
         # Hub related param
         if workspace._kind and workspace._kind.lower() == WORKSPACE_HUB_KIND:
             if workspace.workspace_hub_config:
-                _set_val(param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object())
+                _set_obj_val(param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object())
             if workspace.existing_workspaces:
                 _set_val(param["existing_workspaces"], workspace.existing_workspaces)
 
