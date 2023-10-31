@@ -41,6 +41,7 @@ class OpenAIEmbedder:
         elif batch_size is None:
             batch_size = 1000
         self.batch_size = int(batch_size)
+        self._dynamic_batch_size = None
 
         if max_retries is None:
             max_retries = 20
@@ -82,7 +83,7 @@ class OpenAIEmbedder:
             "api_type": self.api_type,
             "api_version": self.api_version,
             "api_key": self.api_key,
-            **self.openai_passthrough_args
+            **self.openai_passthrough_args,
         }
         if self.deployment is not None:
             params["engine"] = self.deployment
@@ -96,7 +97,7 @@ class OpenAIEmbedder:
             openai.error.APIError,
             openai.error.APIConnectionError,
             openai.error.RateLimitError,
-            openai.error.ServiceUnavailableError
+            openai.error.ServiceUnavailableError,
         ]
 
     def _dynamic_batch_size_embed_request(self, tokenized_texts: List[List[int]], **kwargs) -> dict:
@@ -144,10 +145,17 @@ class OpenAIEmbedder:
                     retrying = False
                     for retryable_error in self._retryable_openai_errors:
                         if isinstance(e, retryable_error):
-                            # Retry with exponential backoff
                             retrying = True
-                            exp = 2 ** (retry - 1)
-                            delay = max(min(1 * exp, max_seconds), min_seconds)
+                            import openai
+
+                            # Retry with retry-after set by openai for RateLimitError
+                            if isinstance(e, openai.error.RateLimitError) and "Retry-After" in e.headers:
+                                delay = int(e.headers["Retry-After"])
+                                logger.warning(f"OpenAI throws RateLimitError with Retry-After set to {delay}")
+                            # Retry with exponential backoff
+                            else:
+                                exp = 2 ** (retry - 1)
+                                delay = max(min(1 * exp, max_seconds), min_seconds)
                             total_delay += delay
                             logger.warning(f"Sleeping for {delay} seconds before retrying.")
                             time.sleep(delay)
