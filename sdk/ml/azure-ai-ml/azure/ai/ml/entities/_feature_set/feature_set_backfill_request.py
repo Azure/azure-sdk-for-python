@@ -31,8 +31,8 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
     :type tags: Optional[dict[str, str]]
     :keyword resource: The compute resource settings. Defaults to None.
     :paramtype resource: Optional[~azure.ai.ml.entities.MaterializationComputeResource]
-    :param spark_conf: Specifies the spark configuration. Defaults to None.
-    :type spark_conf: Optional[dict[str, str]]
+    :param spark_configuration: Specifies the spark configuration. Defaults to None.
+    :type spark_configuration: Optional[dict[str, str]]
     """
 
     def __init__(
@@ -44,7 +44,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional[MaterializationComputeResource] = None,
-        spark_conf: Optional[Dict[str, str]] = None,
+        spark_configuration: Optional[Dict[str, str]] = None,
         data_status: Optional[List[str]] = None,
         job_id: Optional[str] = None,
         **kwargs,
@@ -55,7 +55,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         self.description = description
         self.resource = resource
         self.tags = tags
-        self.spark_conf = spark_conf
+        self.spark_configuration = spark_configuration
         self.data_status = data_status
         self.job_id = job_id
 
