@@ -237,47 +237,9 @@ For more details about how this fixture starts up the test proxy, or the test pr
 
 ### Deliver environment variables to tests
 
-To target the correct resources in tests, use the [EnvironmentVariableLoader][env_var_loader] from `devtools_testutils`
-to fetch environment variables and provide them to tests. The EnvironmentVariableLoader is meant to decorate test
-methods and inject environment variables particular to a given service. Below is an example of how to create a custom
-decorator, using the EnvironmentVariableLoader, that provides the values of environment variables `TESTSERVICE_ENDPOINT`
-and `TESTSERVICE_SECRET` to tests for a service called "testservice":
-
-```python
-import functools
-from devtools_testutils import EnvironmentVariableLoader
-
-ServicePreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "testservice",
-    testservice_endpoint="https://fake_endpoint.testservice.windows.net",
-    testservice_secret="fakesecret"
-)
-```
-
-The parameters for the `functools.partial` method are:
-
-- The EnvironmentVariableLoader class
-- The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
-  environment variables for the appropriate values.
-- The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
-  the value being a fake value to use in recordings.
-  - These values should have the same formatting as the real values because they are used in playback mode and will need
-  to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
-
-A method that's decorated by the ServicePreparer from the example would be called with `testservice_endpoint` and
-`testservice_secret` as keyword arguments. These arguments use the real values from your `.env` file as the variable
-values in live mode, and the fake values specified in the decorator in playback mode.
-
-**Be sure to match the formatting of live values in playback values.** For example, if the actual service endpoint in
-your `.env` file doesn't end with a trailing slash (`/`), adding a trailing slash to your playback endpoint value will
-result in playback errors. The exact value of your live variables will be replaced with the exact value of your playback
-variables in recordings.
-
-> **Note:** The EnvironmentVariableLoader expects environment variables for service tests to be prefixed with the
-> service name (e.g. `KEYVAULT_` for Key Vault tests). You'll need to set environment variables for
-> `{SERVICE}_TENANT_ID`, `{SERVICE}_CLIENT_ID`, and `{SERVICE}_CLIENT_SECRET` for a service principal when using this
-> class.
+Refer to the [documentation in `devtools_testutils`][env_var_docs] and use the
+[`devtools_testutils.EnvironmentVariableLoader`][env_var_loader] to fetch environment variables and provide them to
+tests.
 
 ### Write your tests
 
@@ -722,6 +684,7 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44
 
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
+[env_var_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 
 [generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/bf4749babb363e2dc972775f4408036e31f361b4/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L196

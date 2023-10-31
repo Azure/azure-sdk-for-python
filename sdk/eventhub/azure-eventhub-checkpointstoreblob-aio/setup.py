@@ -78,6 +78,6 @@ setup(
         "cryptography>=2.1.4",
         # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
-        'aiohttp<4.0,>=3.8.3',
+        'aiohttp<5.0,>=3.8.3',
     ]
 )

@@ -57,7 +57,10 @@ class TestClientTestAsync(AzureRecordedTestCase):
         results = []
         select = ["hotelName", "category", "description"]
         async for x in await client.search(
-            search_text="WiFi", filter="category eq 'Budget'", select=",".join(select), order_by="hotelName desc"
+            search_text="WiFi",
+            filter="category eq 'Budget'",
+            select=",".join(select),
+            order_by="hotelName desc",
         ):
             results.append(x)
         assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
@@ -77,7 +80,10 @@ class TestClientTestAsync(AzureRecordedTestCase):
         results = []
         select = ["hotelName", "category", "description"]
         async for x in await client.search(
-            search_text="WiFi", filter="category eq 'Budget'", select=select, order_by="hotelName desc"
+            search_text="WiFi",
+            filter="category eq 'Budget'",
+            select=select,
+            order_by="hotelName desc",
         ):
             results.append(x)
         assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)

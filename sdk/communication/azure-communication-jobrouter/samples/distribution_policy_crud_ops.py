@@ -32,23 +32,22 @@ class DistributionPolicySamples(object):
         # [START create_distribution_policy]
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
+        )
+        from azure.communication.jobrouter.models import (
             DistributionPolicy,
             LongestIdleMode,
         )
 
         # set `connection_string` to an existing ACS endpoint
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         print("JobRouterAdministrationClient created successfully!")
 
         distribution_policy: DistributionPolicy = router_admin_client.create_distribution_policy(
-            distribution_policy_id = policy_id,
-            distribution_policy = DistributionPolicy(
-                offer_expires_after_seconds = 1 * 60,
-                mode = LongestIdleMode(
-                    min_concurrent_offers = 1,
-                    max_concurrent_offers = 1
-                )
-            )
+            id=policy_id,
+            distribution_policy=DistributionPolicy(
+                offer_expires_after_seconds=1 * 60,
+                mode=LongestIdleMode(min_concurrent_offers=1, max_concurrent_offers=1),
+            ),
         )
 
         print(f"Distribution Policy successfully created with id: {distribution_policy.id}")
@@ -61,20 +60,18 @@ class DistributionPolicySamples(object):
         # [START update_distribution_policy]
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
+        )
+        from azure.communication.jobrouter.models import (
             DistributionPolicy,
             RoundRobinMode,
         )
 
         # set `connection_string` to an existing ACS endpoint
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         print("JobRouterAdministrationClient created successfully!")
 
         updated_distribution_policy: DistributionPolicy = router_admin_client.update_distribution_policy(
-            distribution_policy_id = policy_id,
-            mode = RoundRobinMode(
-                min_concurrent_offers = 1,
-                max_concurrent_offers = 1
-            )
+            id=policy_id, mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1)
         )
 
         print(f"Distribution policy successfully update with new distribution mode")
@@ -86,9 +83,9 @@ class DistributionPolicySamples(object):
         # [START get_distribution_policy]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        distribution_policy = router_admin_client.get_distribution_policy(distribution_policy_id = policy_id)
+        distribution_policy = router_admin_client.get_distribution_policy(id=policy_id)
 
         print(f"Successfully fetched distribution policy with id: {distribution_policy.id}")
         # [END get_distribution_policy]
@@ -98,7 +95,7 @@ class DistributionPolicySamples(object):
         # [START list_distribution_policies]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         distribution_policy_iterator = router_admin_client.list_distribution_policies()
 
@@ -113,9 +110,9 @@ class DistributionPolicySamples(object):
         # [START list_distribution_policies_batched]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        distribution_policy_iterator = router_admin_client.list_distribution_policies(results_per_page = 10)
+        distribution_policy_iterator = router_admin_client.list_distribution_policies(results_per_page=10)
 
         for policy_page in distribution_policy_iterator.by_page():
             policies_in_page = list(policy_page)
@@ -134,14 +131,14 @@ class DistributionPolicySamples(object):
         # [START delete_distribution_policy]
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        router_admin_client.delete_distribution_policy(distribution_policy_id = policy_id)
+        router_admin_client.delete_distribution_policy(id=policy_id)
 
         # [END delete_distribution_policy]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = DistributionPolicySamples()
     sample.create_distribution_policy()
     sample.update_distribution_policy()

@@ -4,15 +4,17 @@
 
 # pylint: disable=protected-access
 
+import re
 import uuid
-from typing import Dict, Iterable, Optional
 
+from typing import Dict, Iterable, Optional
 from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import ManagedServiceIdentityType
@@ -31,6 +33,7 @@ from azure.ai.ml.entities._feature_store._constants import (
     ONLINE_MATERIALIZATION_STORE_TYPE,
     ONLINE_STORE_CONNECTION_CATEGORY,
     ONLINE_STORE_CONNECTION_NAME,
+    STORE_REGEX_PATTERN,
 )
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
@@ -315,8 +318,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_offline_store_role_assignment = True
             update_online_store_role_assignment = True
 
-        if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
-            raise ValidationError("offline store type should be azure_data_lake_gen2")
+        self._validate_offline_store(offline_store=offline_store)
 
         if (
             rest_workspace_obj.feature_store_settings
@@ -494,6 +496,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     @distributed_trace
     @monitor_with_activity(logger, "FeatureStore.BeginProvisionNetwork", ActivityType.PUBLICAPI)
+    @experimental
     def begin_provision_network(
         self,
         *,
@@ -521,3 +524,10 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         )
         module_logger.info("Provision network request initiated for feature store: %s\n", workspace_name)
         return poller
+
+    def _validate_offline_store(self, offline_store: MaterializationStore):
+        store_regex = re.compile(STORE_REGEX_PATTERN)
+        if offline_store and store_regex.match(offline_store.target) is None:
+            raise ValidationError(f"Invalid AzureML offlinestore target ARM Id {offline_store.target}")
+        if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
+            raise ValidationError("offline store type should be azure_data_lake_gen2")

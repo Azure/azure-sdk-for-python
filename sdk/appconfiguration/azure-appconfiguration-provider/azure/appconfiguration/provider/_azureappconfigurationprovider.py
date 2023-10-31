@@ -75,8 +75,15 @@ def load(
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
     :keyword trim_prefixes: List of prefixes to trim from configuration keys
     :paramtype trim_prefixes: Optional[List[str]]
-    :keyword key_vault_options: Options for resolving Key Vault references
-    :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
+    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if
+     keyvault_client_configs is provided.
+    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
+    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
+     azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential isn't provided a
+     credential will need to be in each set for each.
+    :paramtype keyvault_client_configs: Mapping[str, Mapping]
+    :keyword secret_resolver: A function that takes a URI and returns a value.
+    :paramtype secret_resolver: Callable[[str], str]
     :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
     :paramtype refresh_on: List[Tuple[str, str]]
@@ -108,8 +115,15 @@ def load(
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
     :keyword trim_prefixes: List of prefixes to trim from configuration keys
     :paramtype trim_prefixes: Optional[List[str]]
-    :keyword key_vault_options: Options for resolving Key Vault references
-    :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
+    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if
+     keyvault_client_configs is provided.
+    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
+    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
+     azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential isn't provided a
+     credential will need to be in each set for each.
+    :paramtype keyvault_client_configs: Mapping[str, Mapping]
+    :keyword secret_resolver: A function that takes a URI and returns a value.
+    :paramtype secret_resolver: Callable[[str], str]
     :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
     :paramtype refresh_on: List[Tuple[str, str]]
@@ -128,6 +142,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
     credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
+    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -146,23 +161,42 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
-    provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
-    provider._load_all()
+    # Removing use of AzureAppConfigurationKeyVaultOptions
+    if key_vault_options:
+        if "keyvault_credential" in kwargs or "secret_resolver" in kwargs or "keyvault_client_configs" in kwargs:
+            raise ValueError(
+                "Key Vault configurations should only be set by either the key_vault_options or kwargs not both."
+            )
+        kwargs["keyvault_credential"] = key_vault_options.credential
+        kwargs["secret_resolver"] = key_vault_options.secret_resolver
+        kwargs["keyvault_client_configs"] = key_vault_options.client_configs
+
+    if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
+        raise ValueError("A keyvault credential and secret resolver can't both be configured.")
+
+    headers = _get_headers("Startup", **kwargs)
+    provider = _buildprovider(
+        connection_string, endpoint, credential, uses_key_vault="UsesKeyVault" in headers, **kwargs
+    )
+    provider._load_all(headers=headers)
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
-            sentinel = provider._client.get_configuration_setting(key, label)
+            sentinel = provider._client.get_configuration_setting(key, label, headers=headers)
             provider._refresh_on[(key, label)] = sentinel.etag
     return provider
 
 
-def _get_headers(key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions], **kwargs) -> str:
+def _get_headers(request_type, **kwargs) -> str:
     headers = kwargs.pop("headers", {})
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":
-        correlation_context = "RequestType=Startup"
-        if key_vault_options and (
-            key_vault_options.credential or key_vault_options.client_configs or key_vault_options.secret_resolver
+        correlation_context = "RequestType=" + request_type
+        if (
+            "keyvault_credential" in kwargs
+            or "keyvault_client_configs" in kwargs
+            or "secret_resolver" in kwargs
+            or kwargs.pop("uses_key_vault", False)
         ):
             correlation_context += ",UsesKeyVault"
         host_type = ""
@@ -187,8 +221,6 @@ def _buildprovider(
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider(**kwargs)
-    key_vault_options = kwargs.pop("key_vault_options", provider._key_vault_options)
-    headers = _get_headers(key_vault_options, **kwargs)
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
@@ -201,7 +233,6 @@ def _buildprovider(
         provider._client = AzureAppConfigurationClient.from_connection_string(
             connection_string,
             user_agent=user_agent,
-            headers=headers,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
             **kwargs
@@ -211,7 +242,6 @@ def _buildprovider(
         endpoint,
         credential,
         user_agent=user_agent,
-        headers=headers,
         retry_total=retry_total,
         retry_backoff_max=retry_backoff_max,
         **kwargs
@@ -219,33 +249,40 @@ def _buildprovider(
     return provider
 
 
-def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationProvider") -> str:
+def _resolve_keyvault_reference(
+    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider"
+) -> str:
     # pylint:disable=protected-access
-    if provider._key_vault_options is None:
-        raise ValueError("Key Vault options must be set to resolve Key Vault references.")
+    if not (provider._keyvault_credential or provider._keyvault_client_configs or provider._secret_resolver):
+        raise ValueError(
+            """
+            Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve Key
+             Vault references.
+            """
+        )
 
     if config.secret_id is None:
         raise ValueError("Key Vault reference must have a uri value.")
 
-    key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
+    keyvault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
-    vault_url = key_vault_identifier.vault_url + "/"
+    vault_url = keyvault_identifier.vault_url + "/"
 
     # pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(vault_url, None)
 
-    vault_config = provider._key_vault_options.client_configs.get(vault_url, {})
-    credential = vault_config.pop("credential", provider._key_vault_options.credential)
+    vault_config = provider._keyvault_client_configs.get(vault_url, {})
+    credential = vault_config.pop("credential", provider._keyvault_credential)
 
     if referenced_client is None and credential is not None:
         referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
         provider._secret_clients[vault_url] = referenced_client
 
     if referenced_client:
-        return referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version).value
+        return referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version).value
 
-    if provider._key_vault_options.secret_resolver is not None:
-        return provider._key_vault_options.secret_resolver(config.secret_id)
+    if provider._secret_resolver:
+        return provider._secret_resolver(config.secret_id)
 
     raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
 
@@ -343,7 +380,7 @@ class _RefreshTimer:
         )
 
 
-class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
+class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
     settings from Azure App Configuration into a Python application. Enables trimming of prefixes from configuration
@@ -355,7 +392,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._trim_prefixes: List[str] = []
         self._client: Optional[AzureAppConfigurationClient] = None
         self._secret_clients: Dict[str, SecretClient] = {}
-        self._key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
         self._selects: List[SettingSelector] = kwargs.pop(
             "selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)]
         )
@@ -367,6 +403,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
+        self._keyvault_credential = kwargs.pop("keyvault_credential", None)
+        self._secret_resolver = kwargs.pop("secret_resolver", None)
+        self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
+        self._uses_key_vault = (
+            self._keyvault_credential is not None
+            or self._keyvault_client_configs is not None
+            or self._secret_resolver is not None
+        )
         self._update_lock = Lock()
 
     def refresh(self, **kwargs) -> None:
@@ -381,7 +425,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             with self._update_lock:
                 for (key, label), etag in self._refresh_on.items():
                     updated_sentinel = self._client.get_configuration_setting(
-                        key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
+                        key=key,
+                        label=label,
+                        etag=etag,
+                        match_condition=MatchConditions.IfModified,
+                        headers=_get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs),
+                        **kwargs
                     )
                     if updated_sentinel is not None:
                         logging.debug(
@@ -389,7 +438,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
                             key,
                             label,
                         )
-                        self._load_all(**kwargs)
+                        self._load_all(headers=_get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs))
                         self._refresh_on[(key, label)] = updated_sentinel.etag
                         self._refresh_timer.reset()
                         return

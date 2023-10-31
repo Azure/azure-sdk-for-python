@@ -67,6 +67,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
 
     .. admonition:: Example:
 

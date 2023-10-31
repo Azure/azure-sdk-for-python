@@ -280,21 +280,21 @@ class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
         return CustomMonitoringSignal(**data)
 
 
-class LlmRequestResponseDataSchema(metaclass=PatchedSchemaMeta):
+class LlmDataSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
     data_column_names = fields.Dict()
     data_window_size = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.signals import LlmRequestResponseData
+        from azure.ai.ml.entities._monitoring.signals import LlmData
 
-        return LlmRequestResponseData(**data)
+        return LlmData(**data)
 
 
 class GenerationSafetyQualitySchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.GENERATION_SAFETY_QUALITY, required=True)
-    production_data = fields.List(NestedField(LlmRequestResponseDataSchema))
+    production_data = fields.List(NestedField(LlmDataSchema))
     workspace_connection_id = fields.Str()
     metric_thresholds = NestedField(GenerationSafetyQualityMetricThresholdSchema)
     alert_enabled = fields.Bool()

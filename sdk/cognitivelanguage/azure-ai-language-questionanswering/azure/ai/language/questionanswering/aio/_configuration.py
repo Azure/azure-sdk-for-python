@@ -6,7 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
 from typing import Any
 
 from azure.core.configuration import Configuration
@@ -15,13 +14,8 @@ from azure.core.pipeline import policies
 
 from .._version import VERSION
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
-
-class QuestionAnsweringClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class QuestionAnsweringClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for QuestionAnsweringClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -39,7 +33,7 @@ class QuestionAnsweringClientConfiguration(Configuration):  # pylint: disable=to
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         super(QuestionAnsweringClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2021-10-01"] = kwargs.pop("api_version", "2021-10-01")
+        api_version: str = kwargs.pop("api_version", "2021-10-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

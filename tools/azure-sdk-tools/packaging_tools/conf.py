@@ -50,5 +50,5 @@ def build_default_conf(folder: Path, package_name: str) -> None:
     conf[_SECTION]["package_name"] = package_name
     conf[_SECTION]["package_nspkg"] = package_name[: package_name.rindex("-")] + "-nspkg"
 
-    with open(conf_path, "w") as fd:
+    with open(conf_path, "wb") as fd:
         tomlw.dump(conf, fd)

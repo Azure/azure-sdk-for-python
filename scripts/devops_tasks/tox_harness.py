@@ -18,8 +18,8 @@ from common_tasks import (
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
-from ci_tools.functions import build_whl_for_req
-from pkg_resources import parse_requirements, RequirementParseError
+from ci_tools.functions import build_whl_for_req, cleanup_directory
+from pkg_resources import parse_requirements
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
@@ -116,20 +116,23 @@ def replace_dev_reqs(file, pkg_root):
     adjusted_req_lines = []
 
     with open(file, "r") as f:
-        for line in f:
-            args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
-            amended_line = " ".join(args)
+        original_req_lines = list(line.strip() for line in f)
 
-            if amended_line.endswith("]"):
-                trim_amount = amended_line[::-1].index("[") + 1
-                amended_line = amended_line[0 : (len(amended_line) - trim_amount)]
+    for line in original_req_lines:
+        args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
+        amended_line = " ".join(args)
+        extras = ""
 
-            adjusted_req_lines.append(amended_line)
+        if amended_line.endswith("]"):
+            amended_line, extras = amended_line.rsplit("[", maxsplit=1)
+            if extras:
+                extras = f"[{extras}"
+
+        adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root)}{extras}")
 
     req_file_name = os.path.basename(file)
-    logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
+    logging.info("Old {0}:{1}".format(req_file_name, original_req_lines))
 
-    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
     logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
 
     with open(file, "w") as f:
@@ -198,6 +201,7 @@ def collect_log_files(working_dir):
     for f in glob.glob(os.path.join(root_dir, "_tox_logs", "*")):
         logging.info("Log file: {}".format(f))
 
+
 def cleanup_tox_environments(tox_dir: str, command_array: str) -> None:
     """The new .coverage formats are no longer readily amended in place. Because we can't amend them in place,
     we can't amend the source location to remove the path ".tox/<envname>/site-packages/". Because of this, we will
@@ -208,7 +212,7 @@ def cleanup_tox_environments(tox_dir: str, command_array: str) -> None:
         folders = [folder for folder in os.listdir(tox_dir) if "whl" != folder]
         for folder in folders:
             try:
-                shutil.rmtree(folder)
+                cleanup_directory(folder)
             except Exception as e:
                 # git has a permissions problem. one of the files it drops
                 # cannot be removed as no one has the permission to do so.
@@ -216,7 +220,8 @@ def cleanup_tox_environments(tox_dir: str, command_array: str) -> None:
                 logging.info(e)
                 pass
     else:
-        shutil.rmtree(tox_dir)
+        cleanup_directory(tox_dir)
+
 
 def execute_tox_serial(tox_command_tuples):
     return_code = 0
@@ -242,7 +247,7 @@ def execute_tox_serial(tox_command_tuples):
 
             if os.path.exists(clone_dir):
                 try:
-                    shutil.rmtree(clone_dir)
+                    cleanup_directory(clone_dir)
                 except Exception as e:
                     # git has a permissions problem. one of the files it drops
                     # cannot be removed as no one has the permission to do so.
@@ -253,7 +258,7 @@ def execute_tox_serial(tox_command_tuples):
     return return_code
 
 
-def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, options_array: List[str] = []) -> None:
+def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> None:
     """
     Primary entry point for tox invocations during CI runs.
 
@@ -264,6 +269,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
         When invoking of "tox run -e whl -c ../../../eng/tox/tox.ini -- --suppress-no-test-exit-code", "--suppress-no-test-exit-code" the "--" will be
         passed directly to the pytest invocation.
     """
+    options_array: List[str] = []
     if parsed_args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = parsed_args.wheel_dir
 
