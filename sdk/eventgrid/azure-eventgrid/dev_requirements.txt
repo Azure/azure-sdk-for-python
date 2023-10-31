@@ -1,6 +1,6 @@
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
-../../core/azure-core
+-e ../../core/azure-core
 -e ../../identity/azure-identity
 azure-mgmt-resource==22.0.0
 -e ../azure-mgmt-eventgrid

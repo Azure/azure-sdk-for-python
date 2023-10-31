@@ -6,14 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any
 
+from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 VERSION = "unknown"
 
 
-class EventGridPublisherClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class EventGridPublisherClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for EventGridPublisherClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -25,11 +32,11 @@ class EventGridPublisherClientConfiguration:  # pylint: disable=too-many-instanc
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2018-01-01")
+        super(EventGridPublisherClientConfiguration, self).__init__(**kwargs)
+        api_version: Literal["2018-01-01"] = kwargs.pop("api_version", "2018-01-01")
 
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "eventgridpublisherclient/{}".format(VERSION))
-        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -38,7 +45,7 @@ class EventGridPublisherClientConfiguration:  # pylint: disable=too-many-instanc
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")

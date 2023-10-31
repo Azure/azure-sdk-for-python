@@ -163,7 +163,7 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
         raise ValueError(msg) from err
 
 
-def _build_request(endpoint, content_type, events, *, channel_name=None, **kwargs):
+def _build_request(endpoint, content_type, events, *, channel_name=None):
     serialize = Serializer()
     header_parameters: Dict[str, Any] = {}
     header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
@@ -185,8 +185,7 @@ def _build_request(endpoint, content_type, events, *, channel_name=None, **kwarg
         method="POST",
         url=endpoint,
         headers=header_parameters,
-        data=data,
-        **kwargs
+        data=data
     )
     request.format_parameters(query_parameters)
     return request
