@@ -3,19 +3,12 @@
 # ---------------------------------------------------------
 
 from abc import ABC
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
 )
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
-)
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    ServiceTagDestination as RestServiceTagOutboundRuleDestination,
-)
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
-from azure.ai.ml._restclient.v2023_08_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
@@ -23,6 +16,10 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
 )
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServiceTagDestination as RestServiceTagOutboundRuleDestination,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
 
@@ -259,7 +256,7 @@ class ManagedNetwork:
         self,
         *,
         isolation_mode: str = IsolationMode.DISABLED,
-        outbound_rules: Optional[List[OutboundRule]] = None,
+        outbound_rules: Optional[Any] = None,
         network_id: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -271,8 +268,7 @@ class ManagedNetwork:
     def _to_rest_object(self) -> RestManagedNetwork:
         rest_outbound_rules = (
             {
-                # pylint: disable=protected-access
-                outbound_rule.name: outbound_rule._to_rest_object()  # type: ignore
+                outbound_rule.name: outbound_rule._to_rest_object()  # pylint: disable=protected-access
                 for outbound_rule in self.outbound_rules
             }
             if self.outbound_rules
@@ -282,13 +278,13 @@ class ManagedNetwork:
 
     @classmethod
     def _from_rest_object(cls, obj: RestManagedNetwork) -> "ManagedNetwork":
-        from_rest_outbound_rules: Optional[List] = (
+        from_rest_outbound_rules = (
             [
                 OutboundRule._from_rest_object(obj.outbound_rules[name], name=name)  # pylint: disable=protected-access
                 for name in obj.outbound_rules
             ]
             if obj.outbound_rules
-            else []
+            else {}
         )
         return ManagedNetwork(
             isolation_mode=obj.isolation_mode,
