@@ -44,8 +44,8 @@ from azure.core.pipeline.policies import (  # type: ignore
 from . import _base as base
 from . import documents
 from .documents import ConnectionPolicy
-from . import _constants as constants
-from . import http_constants
+from ._constants import _Constants as Constants
+from . import http_constants, exceptions
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
 from . import _request_object
@@ -230,7 +230,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if consistency_level is None:
             # Set to default level present in account
             user_consistency_policy = database_account.ConsistencyPolicy
-            consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
+            consistency_level = user_consistency_policy.get(Constants.DefaultConsistencyLevel)
         else:
             # Set consistency level header to be used for the client
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
@@ -1740,6 +1740,65 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
+    def Batch(self, collection_link, batch_operations, options=None, **kwargs):
+        """Executes the given operations in transactional batch.
+
+        :param str collection_link: The link to the collection
+        :param list batch_operations: The batch of operations for the batch request.
+        :param dict options: The request options for the request.
+
+        :return:
+            The result of the batch operation.
+        :rtype:
+            list
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link, "docs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        batch_operations = base._format_batch_operations(batch_operations)
+
+        result, self.last_response_headers = self._Batch(
+            batch_operations,
+            path,
+            collection_id,
+            options,
+            **kwargs)
+
+        final_responses = []
+        is_error = False
+        error_status = 0
+        error_index = 0
+        for i in range(len(result)):
+            final_responses.append(result[i])
+            status_code = result[i].get("statusCode")
+            if status_code >= 400:
+                is_error = True
+                if status_code != 424:  # Find the operation that had the error
+                    error_status = status_code
+                    error_index = i
+        if is_error:
+            raise exceptions.CosmosBatchOperationError(error_index=error_index,
+                                                       headers=self.last_response_headers,
+                                                       status_code=error_status,
+                                                       message="There was an error in the transactional batch on" +
+                                                               " index {}. Error message: {}".format(
+                                                                   str(error_index),
+                                                                   Constants.ERROR_TRANSLATIONS.get(error_status)),
+                                                       operation_responses=final_responses)
+        return final_responses
+
+    def _Batch(self, batch_operations, path, collection_id, options, **kwargs):
+        initial_headers = self.default_headers.copy()
+        base._populate_batch_headers(initial_headers)
+        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)
+        request_params = _request_object.RequestObject("docs", documents._OperationType.Batch)
+
+        return self.__Post(path, request_params, batch_operations, headers, **kwargs)
+
     def DeleteItem(self, document_link, options=None, **kwargs):
         """Deletes a document.
 
@@ -2104,16 +2163,16 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             database_account.CurrentMediaStorageUsageInMB = self.last_response_headers[
                 http_constants.HttpHeaders.CurrentMediaStorageUsageInMB
             ]
-        database_account.ConsistencyPolicy = result.get(constants._Constants.UserConsistencyPolicy)
+        database_account.ConsistencyPolicy = result.get(Constants.UserConsistencyPolicy)
 
         # WritableLocations and ReadableLocations fields will be available only for geo-replicated database accounts
-        if constants._Constants.WritableLocations in result:
-            database_account._WritableLocations = result[constants._Constants.WritableLocations]
-        if constants._Constants.ReadableLocations in result:
-            database_account._ReadableLocations = result[constants._Constants.ReadableLocations]
-        if constants._Constants.EnableMultipleWritableLocations in result:
+        if Constants.WritableLocations in result:
+            database_account._WritableLocations = result[Constants.WritableLocations]
+        if Constants.ReadableLocations in result:
+            database_account._ReadableLocations = result[Constants.ReadableLocations]
+        if Constants.EnableMultipleWritableLocations in result:
             database_account._EnableMultipleWritableLocations = result[
-                constants._Constants.EnableMultipleWritableLocations
+                Constants.EnableMultipleWritableLocations
             ]
 
         self._useMultipleWriteLocations = (
@@ -2483,7 +2542,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
         req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
 
-        #check if query has prefix partition key
+        # check if query has prefix partition key
         isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
         if isPrefixPartitionQuery:
             # here get the over lapping ranges
@@ -2491,7 +2550,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             pk_properties = partition_key_definition
             partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
             partition_key_value = pk_properties["partition_key"]
-            feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(partition_key_value)  # cspell:disable-line # pylint: disable=line-too-long
+            feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(
+                partition_key_value)  # cspell:disable-line # pylint: disable=line-too-long
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
             # It is possible to get more than one over lapping range. We need to get the query results for each one
             results = None
@@ -2572,8 +2632,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                                 is_query_plan=True,
                                 **kwargs)
 
-
-
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.
 
@@ -2611,7 +2669,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         id_ = resource.get("id")
         if id_:
             try:
-                if id_.find("/") != -1 or id_.find("\\") != -1 or id_.find("?") != -1 or id_.find("#") != -1\
+                if id_.find("/") != -1 or id_.find("\\") != -1 or id_.find("?") != -1 or id_.find("#") != -1 \
                         or id_.find("\t") != -1 or id_.find("\r") != -1 or id_.find("\n") != -1:
                     raise ValueError("Id contains illegal chars.")
 
@@ -2626,14 +2684,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # TODO: Refresh the cache if partition is extracted automatically and we get a 400.1001
 
-        # If the document collection link is present in the cache, then use the cached partitionkey definition
-        if collection_link in self.partition_key_definition_cache:
-            partitionKeyDefinition = self.partition_key_definition_cache.get(collection_link)
-        # Else read the collection from backend and add it to the cache
-        else:
-            collection = self.ReadContainer(collection_link)
-            partitionKeyDefinition = collection.get("partitionKey")
-            self.partition_key_definition_cache[collection_link] = partitionKeyDefinition
+        partitionKeyDefinition = self._get_partition_key_definition(collection_link)
 
         # If the collection doesn't have a partition key definition, skip it as it's a legacy collection
         if partitionKeyDefinition:
@@ -2660,7 +2711,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                     break
                 ret.append(val)
             return ret
-
 
         # Parses the paths into a list of token each representing a property
         partition_key_parts = base.ParsePaths(partitionKeyDefinition.get("paths"))
@@ -2719,6 +2769,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if is_session_consistency:
             # update session
             self.session.update_session(response_result, response_headers)
+
+    def _get_partition_key_definition(self, collection_link):
+        partition_key_definition = None
+        # If the document collection link is present in the cache, then use the cached partitionkey definition
+        if collection_link in self.partition_key_definition_cache:
+            partition_key_definition = self.partition_key_definition_cache.get(collection_link)
+        # Else read the collection from backend and add it to the cache
+        else:
+            collection = self.ReadContainer(collection_link)
+            partition_key_definition = collection.get("partitionKey")
+            self.partition_key_definition_cache[collection_link] = partition_key_definition
+        return partition_key_definition
 
     @staticmethod
     def _return_undefined_or_empty_partition_key(is_system_key):
