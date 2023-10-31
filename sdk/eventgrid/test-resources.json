@@ -55,7 +55,7 @@
     "resources": [
       {
         "type": "Microsoft.EventGrid/namespaces",
-        "apiVersion": "2023-06-01-preview",
+        "apiVersion": "2023-10-01-preview",
         "name": "[variables('namespaceName')]",
         "location": "[parameters('location')]",
         "sku": {
@@ -69,7 +69,7 @@
       },
       {
         "type": "Microsoft.EventGrid/namespaces/topics",
-        "apiVersion": "2023-06-01-preview",
+        "apiVersion": "2023-10-01-preview",
         "name": "[format('{0}/{1}', variables('namespaceName'), variables('topicName'))]",
         "properties": {
           "publisherType": "Custom",
@@ -82,7 +82,7 @@
       },
       {
         "type": "Microsoft.EventGrid/namespaces/topics/eventSubscriptions",
-        "apiVersion": "2023-06-01-preview",
+        "apiVersion": "2023-10-01-preview",
         "name": "[format('{0}/{1}/{2}', variables('namespaceName'), variables('topicName'), variables('subscriptionName'))]",
         "properties": {
           "deliveryConfiguration": {
@@ -289,11 +289,11 @@
       },
       "EVENTGRID_KEY": {
         "type": "string",
-        "value": "[listKeys(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-06-01-preview').key1]"
+        "value": "[listKeys(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-10-01-preview').key1]"
       },
       "EVENTGRID_ENDPOINT": {
         "type": "string",
-        "value": "[format('https://{0}', reference(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-06-01-preview').topicsConfiguration.hostname)]"
+        "value": "[format('https://{0}', reference(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-10-01-preview').topicsConfiguration.hostname)]"
       },
       "EVENTGRID_TOPIC_NAME": {
         "type": "string",
