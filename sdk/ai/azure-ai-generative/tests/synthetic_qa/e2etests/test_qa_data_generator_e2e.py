@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.e2etest
+@pytest.mark.live_test_only
 @pytest.mark.usefixtures("recorded_test")
 class TestQADataGeneratorE2E(AzureRecordedTestCase):
     def validate_token_usage(self, token_usage):

@@ -128,6 +128,8 @@ def sanitized_environment_variables(
             "AI_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,
             "AI_OPENAI_API_BASE": "fake_openai_api_base",
             "AI_OPENAI_API_KEY": "fake_openai_api_key",
+            "AI_OPENAI_COMPLETION_DEPLOYMENT_NAME": "fake_completion_deployment_name",
+            "AI_OPENAI_COMPLETION_MODEL_NAME": "fake_completion_model_name"
         }
     )
 
@@ -166,6 +168,16 @@ def e2e_openai_api_key(sanitized_environment_variables: Dict[str, str]) -> str:
     return sanitized_environment_variables["AI_OPENAI_API_KEY"]
 
 @pytest.fixture()
+def e2e_openai_completion_deployment_name(sanitized_environment_variables: Dict[str, str]) -> str:
+    """Return the OpenAI API Key to use for end-to-end tests"""
+    return sanitized_environment_variables["AI_OPENAI_COMPLETION_DEPLOYMENT_NAME"]
+
+@pytest.fixture()
+def e2e_openai_completion_model_name(sanitized_environment_variables: Dict[str, str]) -> str:
+    """Return the OpenAI API Key to use for end-to-end tests"""
+    return sanitized_environment_variables["AI_OPENAI_COMPLETION_MODEL_NAME"]
+
+@pytest.fixture()
 def credential() -> TokenCredential:
     if is_live():
         tenant_id = os.environ.get("AI_TENANT_ID")
@@ -181,13 +193,15 @@ def credential() -> TokenCredential:
 @pytest.fixture
 def qa_generator(
     e2e_openai_api_base: str,
-    e2e_openai_api_key: str
+    e2e_openai_api_key: str,
+    e2e_openai_completion_deployment_name: str,
+    e2e_openai_completion_model_name: str
 ):
     model_config = dict(
         api_base=e2e_openai_api_base,
         api_key=e2e_openai_api_key,
-        deployment=os.environ["AI_OPENAI_COMPLETION_DEPLOYMENT_NAME"],
-        model=os.environ["AI_OPENAI_COMPLETION_MODEL_NAME"],
+        deployment=e2e_openai_completion_deployment_name,
+        model=e2e_openai_completion_model_name,
         max_tokens=2000,
     )
     qa_generator = QADataGenerator(model_config)
