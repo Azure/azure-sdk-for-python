@@ -17,6 +17,7 @@ import asyncio
 import json
 import os
 from pathlib import Path
+from inspect import iscoroutinefunction
 import sys
 from azureml.contrib.services.aml_request import AMLRequest, rawhttp
 from azureml.contrib.services.aml_response import AMLResponse
@@ -48,12 +49,30 @@ def run(raw_data: AMLRequest):
     method and return the result back
     """
     raw_data = json.loads(raw_data.data)
-    stream = raw_data["stream"]
+    messages = raw_data["messages"]
+    stream = raw_data.get("stream", False)
+    session_state = raw_data.get("sessionState", raw_data.get("session_state", None))
+    extra_args = raw_data.get("extraArgs", raw_data.get("extra_args", {{}}))
     from {} import chat_completion
-    response = asyncio.run(chat_completion(**raw_data))
+    if iscoroutinefunction(chat_completion):
+        response = asyncio.run(
+            chat_completion(
+                messages,
+                stream,
+                session_state,
+                extra_args,
+            )
+        )
+    else:
+        response = chat_completion(
+            messages,
+            stream,
+            session_state,
+            extra_args,
+        )
     if stream:
         aml_response = AMLResponse(response_to_dict(response), 200)
-        aml_response.headers["Content-Type"] = "text/event-stream"
+        aml_response.headers["Content-Type"] = "application/jsonl"
         return aml_response
     return json.dumps(response)
 

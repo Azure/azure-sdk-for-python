@@ -8,12 +8,7 @@
 from datetime import datetime
 from azure.communication.jobrouter._model_base import _deserialize_datetime as _convert_str_to_datetime
 from collections import Counter
-from typing import (
-    Any,
-    Dict,
-    List,
-    Union
-)
+from typing import Any, Dict, List, Union
 
 from router_test_constants import SANITIZED, FAKE_FUNCTION_URI
 from azure.communication.jobrouter.models import (
@@ -258,18 +253,17 @@ class ClassificationPolicyValidator(object):
 
     @staticmethod
     def validate_queue_selectors(entity, queue_selector_attachments, **kwargs):
-
         def validate_static_queue_selector_attachment(
-                actual,  # type: StaticQueueSelectorAttachment
-                expected,  # type: StaticQueueSelectorAttachment
-                **kwargs,
+            actual,  # type: StaticQueueSelectorAttachment
+            expected,  # type: StaticQueueSelectorAttachment
+            **kwargs,
         ):
             QueueSelectorValidator.validate_queue_selector(actual.queue_selector, expected.queue_selector)
 
         def validate_conditional_queue_selector_attachment(
-                actual,  # type: ConditionalQueueSelectorAttachment
-                expected,  # type: ConditionalQueueSelectorAttachment
-                **kwargs,  # type: Any
+            actual,  # type: ConditionalQueueSelectorAttachment
+            expected,  # type: ConditionalQueueSelectorAttachment
+            **kwargs,  # type: Any
         ):
             RouterRuleValidator.validate_router_rule(actual.condition, expected.condition)
 
@@ -277,16 +271,16 @@ class ClassificationPolicyValidator(object):
                 QueueSelectorValidator.validate_queue_selector(i, j)
 
         def validate_rule_engine_selector_attachment(
-                actual,  # type: RuleEngineQueueSelectorAttachment
-                expected,  # type: RuleEngineQueueSelectorAttachment
-                **kwargs,  # type: Any
+            actual,  # type: RuleEngineQueueSelectorAttachment
+            expected,  # type: RuleEngineQueueSelectorAttachment
+            **kwargs,  # type: Any
         ):
             RouterRuleValidator.validate_router_rule(actual.rule, expected.rule)
 
         def validate_weighted_allocation_selector_attachment(
-                actual,  # type: WeightedAllocationQueueSelectorAttachment
-                expected,  # type: WeightedAllocationQueueSelectorAttachment
-                **kwargs,  # type: Any
+            actual,  # type: WeightedAllocationQueueSelectorAttachment
+            expected,  # type: WeightedAllocationQueueSelectorAttachment
+            **kwargs,  # type: Any
         ):
             for i, j in zip(actual.allocations, expected.allocations):
                 assert i.weight == j.weight
@@ -294,9 +288,9 @@ class ClassificationPolicyValidator(object):
                     QueueSelectorValidator.validate_queue_selector(ac_qs, ex_qs)
 
         def validate_passthrough_attachment(
-                actual,  # type: PassThroughQueueSelectorAttachment
-                expected,  # type: PassThroughQueueSelectorAttachment
-                **kwargs,  # type: Any
+            actual,  # type: PassThroughQueueSelectorAttachment
+            expected,  # type: PassThroughQueueSelectorAttachment
+            **kwargs,  # type: Any
         ):
             assert actual.kind == expected.kind
             assert actual.key == expected.key
@@ -402,8 +396,9 @@ class ClassificationPolicyValidator(object):
             )
 
         if "queue_selector_attachments" in kwargs:
-            ClassificationPolicyValidator.validate_queue_selectors(classification_policy,
-                                                                   kwargs.pop("queue_selector_attachments"))
+            ClassificationPolicyValidator.validate_queue_selectors(
+                classification_policy, kwargs.pop("queue_selector_attachments")
+            )
 
         if "prioritization_rule" in kwargs:
             ClassificationPolicyValidator.validate_prioritization_rule(

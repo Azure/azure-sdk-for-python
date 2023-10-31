@@ -73,7 +73,7 @@ class ClassificationPolicySamplesAsync(object):
                             worker_selectors=[
                                 RouterWorkerSelector(key="Skill_O365", label_operator=LabelOperator.EQUAL, value=True),
                                 RouterWorkerSelector(
-                                    key="Skill_O365_Lvl", label_operator=LabelOperator.GREATER_THAN_EQUAL, value=1
+                                    key="Skill_O365_Lvl", label_operator=LabelOperator.GREATER_THAN_OR_EQUAL, value=1
                                 ),
                             ],
                         ),
@@ -81,7 +81,7 @@ class ClassificationPolicySamplesAsync(object):
                             condition=ExpressionRouterRule(expression='If(job.HighPriority = "true", true, false)'),
                             worker_selectors=[
                                 RouterWorkerSelector(
-                                    key="Skill_O365_Lvl", label_operator=LabelOperator.GREATER_THAN_EQUAL, value=10
+                                    key="Skill_O365_Lvl", label_operator=LabelOperator.GREATER_THAN_OR_EQUAL, value=10
                                 )
                             ],
                         ),
