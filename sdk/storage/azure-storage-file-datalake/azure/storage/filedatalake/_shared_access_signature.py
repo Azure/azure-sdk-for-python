@@ -26,7 +26,7 @@ def generate_account_sas(
         account_key,  # type: str
         resource_types,  # type: Union[ResourceTypes, str]
         permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
+        expiry,  # type: Union[datetime, str]
         **kwargs # type: Any
     ):  # type: (...) -> str
     """Generates a shared access signature for the DataLake service.
@@ -86,8 +86,6 @@ def generate_file_system_sas(
         credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[FileSystemSasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
         **kwargs # type: Any
     ):
     # type: (...) -> str
@@ -135,7 +133,7 @@ def generate_file_system_sas(
     :keyword str policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
-        :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
+        :func:`~azure.storage.filedatalake.FileSystemClient.set_file_system_access_policy`.
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
@@ -177,8 +175,6 @@ def generate_file_system_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    if not policy_id and not (expiry and permission):
-        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
     return generate_container_sas(
         account_name=account_name,
         container_name=file_system_name,
@@ -186,8 +182,6 @@ def generate_file_system_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
-        start=start,
-        policy_id=policy_id,
         **kwargs)
 
 
@@ -249,7 +243,7 @@ def generate_directory_sas(
     :keyword str policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
-        :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
+        :func:`~azure.storage.filedatalake.FileSystemClient.set_file_system_access_policy`.
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
@@ -368,7 +362,7 @@ def generate_file_sas(
     :keyword str policy_id:
         A unique value up to 64 characters in length that correlates to a
         stored access policy. To create a stored access policy, use
-        :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
+        :func:`~azure.storage.filedatalake.FileSystemClient.set_file_system_access_policy`.
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address

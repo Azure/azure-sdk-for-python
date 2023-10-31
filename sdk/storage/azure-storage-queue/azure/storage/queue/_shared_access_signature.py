@@ -130,7 +130,7 @@ def generate_account_sas(
         account_key,  # type: str
         resource_types,  # type: Union[ResourceTypes, str]
         permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
+        expiry,  # type: Union[datetime, str]
         start=None,  # type: Optional[Union[datetime, str]]
         ip=None,  # type: Optional[str]
         **kwargs  # type: "Any"
@@ -249,8 +249,11 @@ def generate_queue_sas(
             :dedent: 12
             :caption: Generate a sas token.
     """
-    if not policy_id and not (expiry and permission):
-        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     sas = QueueSharedAccessSignature(account_name, account_key)
     return sas.generate_queue(
         queue_name,

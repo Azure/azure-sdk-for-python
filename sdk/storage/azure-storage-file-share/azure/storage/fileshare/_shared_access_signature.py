@@ -245,7 +245,7 @@ def generate_account_sas(
         account_key,  # type: str
         resource_types,  # type: Union[ResourceTypes, str]
         permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
+        expiry,  # type: Union[datetime, str]
         start=None,  # type: Optional[Union[datetime, str]]
         ip=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -384,8 +384,11 @@ def generate_share_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    if not policy_id and not (expiry and permission):
-        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     sas = FileSharedAccessSignature(account_name, account_key)
     return sas.generate_share(
         share_name=share_name,
@@ -477,8 +480,11 @@ def generate_file_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
-    if not policy_id and not (expiry and permission):
-        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     sas = FileSharedAccessSignature(account_name, account_key)
     if len(file_path) > 1:
         dir_path = '/'.join(file_path[:-1])
