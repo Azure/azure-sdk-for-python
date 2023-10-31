@@ -408,7 +408,7 @@ class MLClient:
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **kwargs,
