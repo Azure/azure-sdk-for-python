@@ -384,7 +384,7 @@ def _check_content_type(data: Any) -> None:
         return data.encode("utf-8")
     else:
         try:
-            return json.dumps(event, cls=AzureJSONEncoder, exclude_readonly=True).encode("utf-8")  # type: ignore
+            return json.dumps(data, cls=AzureJSONEncoder, exclude_readonly=True).encode("utf-8")  # type: ignore
         except:
             raise TypeError("Incorrect type for data. Expected bytes, str, or JSON serializable object to encode.")
 
