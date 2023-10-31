@@ -20,7 +20,7 @@ def create_temporary_scenario(tmp_directory_create, target_file: str) -> str:
 
     if not os.path.exists(target_file):
         raise Exception("Unable to create a temporary scenario based on a nonexistent requirements file.")
-    
+
     if not os.path.isfile(target_file):
         raise Exception("Unable to create a temporary scenario based on a target that is not actually a file.")
 
@@ -30,10 +30,10 @@ def create_temporary_scenario(tmp_directory_create, target_file: str) -> str:
     shutil.copy(target_file, move_target)
 
     return (tmp_dir, move_target)
-    
+
 
 def get_requirements_from_file(requirements_file: str) -> List[str]:
-    with open(requirements_file, 'r', encoding='utf-8') as f:
+    with open(requirements_file, "r", encoding="utf-8") as f:
         results = f.readlines()
 
     return [line.strip() for line in results if line.strip()]
@@ -48,7 +48,7 @@ def test_replace_dev_reqs_specifiers(tmp_directory_create):
     tmp_dir, requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
     try:
-        requirements_before = get_requirements_from_file(requirements_file) 
+        requirements_before = get_requirements_from_file(requirements_file)
         replace_dev_reqs(requirements_file, core_location)
         requirements_after = get_requirements_from_file(requirements_file)
 
@@ -62,21 +62,21 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
     This test exercises the primary workload for replace_dev_reqs, as all local relative requirements must be
     prebuilt in CI to avoid parallel access issues while pip is attempting to assemble a wheel.
     """
-    target_file = os.path.join(sample_dev_reqs_folder, 'relative_requirements.txt')
+    target_file = os.path.join(sample_dev_reqs_folder, "relative_requirements.txt")
     tmp_dir, requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
-    expected_output_folder = os.path.join(repo_root, 'sdk', 'core', 'azure-core', '.tmp_whl_dir')
+    expected_output_folder = os.path.join(repo_root, "sdk", "core", "azure-core", ".tmp_whl_dir")
 
     expected_results = [
-        os.path.join(expected_output_folder, 'coretestserver-1.0.0b1-py3-none-any.whl'),
-        os.path.join(expected_output_folder, 'coretestserver-1.0.0b1-py3-none-any.whl'),
-        os.path.join(expected_output_folder, 'azure_identity-1.15.1-py3-none-any.whl'),
-        os.path.join(expected_output_folder, 'azure_identity-1.15.1-py3-none-any.whl'),
-        os.path.join(expected_output_folder, 'azure_devtools-1.2.1-py2.py3-none-any.whl'),
-        os.path.join(expected_output_folder, 'azure_devtools-1.2.1-py2.py3-none-any.whl'),
-        os.path.join(expected_output_folder, 'azure_mgmt_core-1.4.0-py3-none-any.whl'),
-        os.path.join(expected_output_folder, 'azure_mgmt_core-1.4.0-py3-none-any.whl'),
-        os.path.join(expected_output_folder, 'azure_sdk_tools-0.0.0-py3-none-any.whl[build]'),
-        os.path.join(expected_output_folder, 'azure_sdk_tools-0.0.0-py3-none-any.whl[build]')
+        os.path.join(expected_output_folder, "coretestserver-1.0.0b1-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "coretestserver-1.0.0b1-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_identity-1.15.1-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_identity-1.15.1-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_devtools-1.2.1-py2.py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_devtools-1.2.1-py2.py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_mgmt_core-1.4.0-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_mgmt_core-1.4.0-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
+        os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
     ]
 
     try:
@@ -89,6 +89,7 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
     finally:
         tmp_dir.cleanup()
 
+
 def test_replace_dev_reqs_remote(tmp_directory_create):
     """
     "Remote" reqs are requirements that are reached out via some combination of VCS or HTTP. This includes
@@ -97,11 +98,11 @@ def test_replace_dev_reqs_remote(tmp_directory_create):
 
     This test is similar to test_replace_dev_reqs_specifiers in that we're expecting proper no-ops.
     """
-    target_file = os.path.join(sample_dev_reqs_folder, 'remote_requirements.txt')
+    target_file = os.path.join(sample_dev_reqs_folder, "remote_requirements.txt")
     tmp_dir, requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
     try:
-        requirements_before = get_requirements_from_file(requirements_file) 
+        requirements_before = get_requirements_from_file(requirements_file)
         replace_dev_reqs(requirements_file, core_location)
         requirements_after = get_requirements_from_file(requirements_file)
         assert requirements_before == requirements_after

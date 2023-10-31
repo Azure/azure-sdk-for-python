@@ -426,7 +426,7 @@ def replace_dev_reqs(file, pkg_root):
 def is_relative_install_path(req: str, package_path: str) -> str:
     if ".." in req:
         return True
-    
+
     possible_setup_path = os.path.join(package_path, req, "setup.py")
     if os.path.exists(possible_setup_path):
         return True
