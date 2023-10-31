@@ -266,13 +266,13 @@ class ManagedNetwork:
                 for outbound_rule in self.outbound_rules
             }
             if self.outbound_rules
-            else None
+            else {}
         )
         # returning custom dict as rest obj (instead of RestManagedNetwork) since 08-01-preview restclient 
         # adds changeable_isolation_modes which broke the ARM template validation, not sure why
         return {
-            "isolation_mode": self.isolation_mode,
-            "outbound_rules": rest_outbound_rules
+            "isolationMode": self.isolation_mode,
+            "outboundRules": rest_outbound_rules
         }
 
     @classmethod
