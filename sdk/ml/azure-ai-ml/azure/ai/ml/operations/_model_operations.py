@@ -655,7 +655,7 @@ class ModelOperations(_ScopeDependentOperations):
 
     @experimental
     @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
-    def package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> Environment:
+    def package(self, name: str, version: str, package_request: ModelPackage, **kwargs) -> Environment:  # pylint:disable=too-many-statements
         """Package a model asset
 
         :param name: Name of model asset.
