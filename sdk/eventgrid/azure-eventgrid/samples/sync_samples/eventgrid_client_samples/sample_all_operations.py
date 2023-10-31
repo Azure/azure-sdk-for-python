@@ -79,7 +79,7 @@ if len(release_events) > 0:
         release_result = client.release_cloud_events(
             topic_name=TOPIC_NAME,
             event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-            lock_tokens=release_tokens,
+            release_options=release_tokens,
         )
     except HttpResponseError:
         raise
@@ -93,7 +93,7 @@ if len(acknowledge_events) > 0:
         ack_result = client.acknowledge_cloud_events(
             topic_name=TOPIC_NAME,
             event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-            lock_tokens=ack_tokens,
+            acknowledge_options=ack_tokens,
         )
     except HttpResponseError:
         raise
@@ -107,7 +107,7 @@ if len(reject_events) > 0:
         reject_result = client.reject_cloud_events(
             topic_name=TOPIC_NAME,
             event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-            lock_tokens=reject_tokens,
+            reject_options=reject_tokens,
         )
     except HttpResponseError:
         raise

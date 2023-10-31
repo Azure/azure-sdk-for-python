@@ -24,7 +24,7 @@ try:
     ack_events = client.acknowledge_cloud_events(
         topic_name=TOPIC_NAME,
         event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-        lock_tokens=lock_tokens,
+        acknowledge_options=lock_tokens,
     )
     print(ack_events)
 except HttpResponseError:
