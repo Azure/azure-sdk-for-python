@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from abc import ABC
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
@@ -38,8 +38,8 @@ class OutboundRule(ABC):
     def __init__(
         self,
         *,
-        name: str = None,
-        **kwargs,
+        name: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         self.name = name
         self.type = kwargs.pop("type", None)
@@ -49,20 +49,20 @@ class OutboundRule(ABC):
     @classmethod
     def _from_rest_object(cls, rest_obj: Any, name: str) -> Optional["OutboundRule"]:
         if isinstance(rest_obj, RestFqdnOutboundRule):
-            rule = FqdnDestination(destination=rest_obj.destination, name=name)
-            rule.category = rest_obj.category
-            rule.status = rest_obj.status
-            return rule
+            rule_fqdnDestination = FqdnDestination(destination=rest_obj.destination, name=name)
+            rule_fqdnDestination.category = rest_obj.category
+            rule_fqdnDestination.status = rest_obj.status
+            return rule_fqdnDestination
         if isinstance(rest_obj, RestPrivateEndpointOutboundRule):
-            rule = PrivateEndpointDestination(
+            rule_privateEndpointDestination = PrivateEndpointDestination(
                 service_resource_id=rest_obj.destination.service_resource_id,
                 subresource_target=rest_obj.destination.subresource_target,
                 spark_enabled=rest_obj.destination.spark_enabled,
                 name=name,
             )
-            rule.category = rest_obj.category
-            rule.status = rest_obj.status
-            return rule
+            rule_privateEndpointDestination.category = rest_obj.category
+            rule_privateEndpointDestination.status = rest_obj.status
+            return rule_privateEndpointDestination
         if isinstance(rest_obj, RestServiceTagOutboundRule):
             rule = ServiceTagDestination(
                 service_tag=rest_obj.destination.service_tag,
@@ -96,7 +96,7 @@ class FqdnDestination(OutboundRule):
             :caption: Creating a FqdnDestination outbound rule object.
     """
 
-    def __init__(self, *, name: str, destination: str, **kwargs) -> None:
+    def __init__(self, *, name: str, destination: str, **kwargs: Any) -> None:
         self.destination = destination
         OutboundRule.__init__(self, type=OutboundRuleType.FQDN, name=name, **kwargs)
 
@@ -142,7 +142,7 @@ class PrivateEndpointDestination(OutboundRule):
         service_resource_id: str,
         subresource_target: str,
         spark_enabled: bool = False,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.service_resource_id = service_resource_id
         self.subresource_target = subresource_target
@@ -204,7 +204,7 @@ class ServiceTagDestination(OutboundRule):
         service_tag: str,
         protocol: str,
         port_ranges: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.service_tag = service_tag
         self.protocol = protocol
@@ -256,9 +256,9 @@ class ManagedNetwork:
         self,
         *,
         isolation_mode: str = IsolationMode.DISABLED,
-        outbound_rules: Optional[List[OutboundRule]] = None,
+        outbound_rules: Optional[Any] = None,
         network_id: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.isolation_mode = isolation_mode
         self.network_id = network_id
