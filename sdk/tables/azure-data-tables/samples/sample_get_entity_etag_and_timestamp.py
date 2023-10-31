@@ -20,17 +20,12 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
-import sys
 import os
 from datetime import datetime
 from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
 from azure.data.tables import TableClient
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import TypedDict
+from typing_extensions import TypedDict
 
 
 class EntityType(TypedDict, total=False):
