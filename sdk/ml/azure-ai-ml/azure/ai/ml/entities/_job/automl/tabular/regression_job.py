@@ -69,7 +69,7 @@ class RegressionJob(AutoMLTabular):
             else RegressionPrimaryMetrics[camel_to_snake(value).upper()]
         )
 
-    @property  # type: ignore
+    @property
     def training(self) -> RegressionTrainingSettings:
         return self._training or RegressionTrainingSettings()
 
