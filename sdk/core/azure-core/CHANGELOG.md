@@ -18,6 +18,8 @@
 
 ### Other Changes
 
+- Use ssl context from aiohttp by default.
+
 ## 1.29.4 (2023-09-07)
 
 ### Bugs Fixed
