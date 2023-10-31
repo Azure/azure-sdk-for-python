@@ -25,11 +25,11 @@ def create_temporary_scenario(tmp_directory_create, target_file: str) -> str:
         raise Exception("Unable to create a temporary scenario based on a target that is not actually a file.")
 
     filename = os.path.basename(target_file)
-    move_target = os.path.join(tmp_dir.name, filename)
+    move_target = os.path.join(tmp_dir, filename)
 
     shutil.copy(target_file, move_target)
 
-    return (tmp_dir, move_target)
+    return move_target
 
 
 def get_requirements_from_file(requirements_file: str) -> List[str]:
@@ -45,16 +45,13 @@ def test_replace_dev_reqs_specifiers(tmp_directory_create):
     that we don't accidentally trip the replacement logic.
     """
     target_file = os.path.join(sample_dev_reqs_folder, "specifiers_requirements.txt")
-    tmp_dir, requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
+    requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
-    try:
-        requirements_before = get_requirements_from_file(requirements_file)
-        replace_dev_reqs(requirements_file, core_location)
-        requirements_after = get_requirements_from_file(requirements_file)
+    requirements_before = get_requirements_from_file(requirements_file)
+    replace_dev_reqs(requirements_file, core_location)
+    requirements_after = get_requirements_from_file(requirements_file)
 
-        assert requirements_before == requirements_after
-    finally:
-        tmp_dir.cleanup()
+    assert requirements_before == requirements_after
 
 
 def test_replace_dev_reqs_relative(tmp_directory_create):
@@ -63,7 +60,7 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
     prebuilt in CI to avoid parallel access issues while pip is attempting to assemble a wheel.
     """
     target_file = os.path.join(sample_dev_reqs_folder, "relative_requirements.txt")
-    tmp_dir, requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
+    requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
     expected_output_folder = os.path.join(repo_root, "sdk", "core", "azure-core", ".tmp_whl_dir")
 
     expected_results = [
@@ -77,17 +74,16 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
         os.path.join(expected_output_folder, "azure_mgmt_core-1.4.0-py3-none-any.whl"),
         os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
         os.path.join(expected_output_folder, "azure_sdk_tools-0.0.0-py3-none-any.whl[build]"),
+        os.path.join(expected_output_folder, "azure_core-1.29.6-py3-none-any.whl"),
+        os.path.join(expected_output_folder, "azure_core-1.29.6-py3-none-any.whl"),
     ]
 
-    try:
-        requirements_before = get_requirements_from_file(requirements_file)
-        replace_dev_reqs(requirements_file, core_location)
-        requirements_after = get_requirements_from_file(requirements_file)
+    requirements_before = get_requirements_from_file(requirements_file)
+    replace_dev_reqs(requirements_file, core_location)
+    requirements_after = get_requirements_from_file(requirements_file)
 
-        assert requirements_before != requirements_after
-        assert requirements_after == expected_results
-    finally:
-        tmp_dir.cleanup()
+    assert requirements_before != requirements_after
+    assert requirements_after == expected_results
 
 
 def test_replace_dev_reqs_remote(tmp_directory_create):
@@ -99,12 +95,10 @@ def test_replace_dev_reqs_remote(tmp_directory_create):
     This test is similar to test_replace_dev_reqs_specifiers in that we're expecting proper no-ops.
     """
     target_file = os.path.join(sample_dev_reqs_folder, "remote_requirements.txt")
-    tmp_dir, requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
+    requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
-    try:
-        requirements_before = get_requirements_from_file(requirements_file)
-        replace_dev_reqs(requirements_file, core_location)
-        requirements_after = get_requirements_from_file(requirements_file)
-        assert requirements_before == requirements_after
-    finally:
-        tmp_dir.cleanup()
+    requirements_before = get_requirements_from_file(requirements_file)
+    replace_dev_reqs(requirements_file, core_location)
+    requirements_after = get_requirements_from_file(requirements_file)
+    assert requirements_before == requirements_after
+

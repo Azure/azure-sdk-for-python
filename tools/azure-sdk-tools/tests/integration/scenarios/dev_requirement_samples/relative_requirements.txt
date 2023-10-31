@@ -8,3 +8,5 @@ tests/testserver_tests/coretestserver
 -e ../azure-mgmt-core
 ../../../tools/azure-sdk-tools[build]
 -e ../../../tools/azure-sdk-tools[build]
+-e .
+.
