@@ -68,7 +68,6 @@ setup(
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "azure-ai-ml~=1.0",
         "mlflow-skinny<3",
-        "azure-mgmt-authorization>=0.40.0"
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

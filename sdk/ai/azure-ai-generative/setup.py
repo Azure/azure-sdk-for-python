@@ -76,7 +76,6 @@ setup(
         "azure-ai-resources!=0.0.0b0",
         "azureml-telemetry~=1.0,>=1.43.0",
         "mlflow-skinny<3",
-        "azure-mgmt-authorization>=2.0.0",
         "opencensus-ext-azure~=1.0",
         "opencensus-ext-logging",
     ],
