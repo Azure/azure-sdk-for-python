@@ -9,8 +9,9 @@ import json
 import logging
 import os.path
 import typing
+from os import PathLike
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
 
 import pydash
 import strictyaml
@@ -368,7 +369,11 @@ class ValidationResultBuilder:
 
     @classmethod
     def from_validation_error(
-        cls, error: ValidationError, *, source_path: Optional[str] = None, error_on_unknown_field: bool = False
+        cls,
+        error: ValidationError,
+        *,
+        source_path: Optional[Union[str, PathLike, IO[AnyStr]]] = None,
+        error_on_unknown_field: bool = False,
     ) -> MutableValidationResult:
         """Create a validation result from a ValidationError, which will be raised in marshmallow.Schema.load. Please
         use this function only for exception in loading file.
