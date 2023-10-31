@@ -211,15 +211,14 @@ class TestAssignmentScenario(RouterRecordedTestCase):
 
         with pytest.raises(HttpResponseError) as sre:
             router_client.decline_job_offer(
-                worker_id = self.get_router_worker_id(), offer_id = offer_id,
-                decline_job_offer_options = DeclineJobOfferOptions(retry_offer_at = datetime.min)
+                worker_id=self.get_router_worker_id(),
+                offer_id=offer_id,
+                options=DeclineJobOfferOptions(retry_offer_at=datetime.min),
             )
         assert sre is not None
 
         # unassign job
-        unassign_job_result: UnassignJobResult = router_client.unassign_job(
-            router_job.id, assignment_id
-        )
+        unassign_job_result: UnassignJobResult = router_client.unassign_job(router_job.id, assignment_id)
 
         # accept unassigned job
         self._poll_until_no_exception(

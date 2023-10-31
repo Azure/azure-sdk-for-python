@@ -1,5 +1,5 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines,line-too-long
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1003,7 +1003,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: DistributionPolicy. The DistributionPolicy is compatible with MutableMapping
@@ -1041,7 +1041,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: DistributionPolicy. The DistributionPolicy is compatible with MutableMapping
@@ -1079,7 +1079,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: DistributionPolicy. The DistributionPolicy is compatible with MutableMapping
@@ -1114,7 +1114,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -1442,7 +1442,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ClassificationPolicy. The ClassificationPolicy is compatible with MutableMapping
@@ -1480,7 +1480,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ClassificationPolicy. The ClassificationPolicy is compatible with MutableMapping
@@ -1518,7 +1518,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ClassificationPolicy. The ClassificationPolicy is compatible with MutableMapping
@@ -1553,7 +1553,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -1882,7 +1882,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
@@ -1920,7 +1920,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
@@ -1958,7 +1958,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
@@ -1993,7 +1993,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -2321,7 +2321,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterQueue. The RouterQueue is compatible with MutableMapping
@@ -2359,7 +2359,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterQueue. The RouterQueue is compatible with MutableMapping
@@ -2397,7 +2397,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterQueue. The RouterQueue is compatible with MutableMapping
@@ -2432,7 +2432,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -2760,7 +2760,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterJob. The RouterJob is compatible with MutableMapping
@@ -2798,7 +2798,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterJob. The RouterJob is compatible with MutableMapping
@@ -2836,7 +2836,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterJob. The RouterJob is compatible with MutableMapping
@@ -2871,7 +2871,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -3083,7 +3083,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
     def _reclassify_job(  # pylint: disable=inconsistent-return-statements,protected-access
         self,
         job_id: str,
-        reclassify_job_options: Optional[_models._models.ReclassifyJobOptions] = None,
+        options: Optional[_models._models.ReclassifyJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3092,23 +3092,13 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def _reclassify_job(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        reclassify_job_options: Optional[JSON] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, job_id: str, options: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         ...
 
     @overload
     def _reclassify_job(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        reclassify_job_options: Optional[IO] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, job_id: str, options: Optional[IO] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         ...
 
@@ -3116,7 +3106,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
     def _reclassify_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        reclassify_job_options: Optional[Union[_models._models.ReclassifyJobOptions, JSON, IO]] = None,
+        options: Optional[Union[_models._models.ReclassifyJobOptions, JSON, IO]] = None,
         **kwargs: Any
     ) -> None:
         """Reclassify a job.
@@ -3125,10 +3115,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param reclassify_job_options: Request object for reclassifying a job. Is one of the following
-         types: ReclassifyJobOptions, JSON, IO Default value is None.
-        :type reclassify_job_options: ~azure.communication.jobrouter.models.ReclassifyJobOptions or
-         JSON or IO
+        :param options: Request object for reclassifying a job. Is one of the following types:
+         ReclassifyJobOptions, JSON, IO Default value is None.
+        :type options: ~azure.communication.jobrouter.models.ReclassifyJobOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -3154,11 +3143,11 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(reclassify_job_options, (IOBase, bytes)):
-            _content = reclassify_job_options
+        if isinstance(options, (IOBase, bytes)):
+            _content = options
         else:
-            if reclassify_job_options is not None:
-                _content = json.dumps(reclassify_job_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            if options is not None:
+                _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
 
@@ -3195,7 +3184,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
     def cancel_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        cancel_job_options: Optional[_models.CancelJobOptions] = None,
+        options: Optional[_models.CancelJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3208,8 +3197,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param cancel_job_options: Request model for cancelling job. Default value is None.
-        :type cancel_job_options: ~azure.communication.jobrouter.models.CancelJobOptions
+        :param options: Request model for cancelling job. Default value is None.
+        :type options: ~azure.communication.jobrouter.models.CancelJobOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3222,12 +3211,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def cancel_job(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        cancel_job_options: Optional[JSON] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, job_id: str, options: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Submits request to cancel an existing job by Id while supplying free-form
         cancellation reason.
@@ -3237,8 +3221,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param cancel_job_options: Request model for cancelling job. Default value is None.
-        :type cancel_job_options: JSON
+        :param options: Request model for cancelling job. Default value is None.
+        :type options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3251,12 +3235,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def cancel_job(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        cancel_job_options: Optional[IO] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, job_id: str, options: Optional[IO] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Submits request to cancel an existing job by Id while supplying free-form
         cancellation reason.
@@ -3266,8 +3245,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param cancel_job_options: Request model for cancelling job. Default value is None.
-        :type cancel_job_options: IO
+        :param options: Request model for cancelling job. Default value is None.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3280,7 +3259,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @distributed_trace
     def cancel_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, cancel_job_options: Optional[Union[_models.CancelJobOptions, JSON, IO]] = None, **kwargs: Any
+        self, job_id: str, options: Optional[Union[_models.CancelJobOptions, JSON, IO]] = None, **kwargs: Any
     ) -> None:
         """Submits request to cancel an existing job by Id while supplying free-form
         cancellation reason.
@@ -3290,9 +3269,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param cancel_job_options: Request model for cancelling job. Is one of the following types:
+        :param options: Request model for cancelling job. Is one of the following types:
          CancelJobOptions, JSON, IO Default value is None.
-        :type cancel_job_options: ~azure.communication.jobrouter.models.CancelJobOptions or JSON or IO
+        :type options: ~azure.communication.jobrouter.models.CancelJobOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -3318,11 +3297,11 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(cancel_job_options, (IOBase, bytes)):
-            _content = cancel_job_options
+        if isinstance(options, (IOBase, bytes)):
+            _content = options
         else:
-            if cancel_job_options is not None:
-                _content = json.dumps(cancel_job_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            if options is not None:
+                _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
 
@@ -3357,12 +3336,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def complete_job(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        complete_job_options: _models.CompleteJobOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, job_id: str, options: _models.CompleteJobOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Completes an assigned job.
 
@@ -3370,8 +3344,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param complete_job_options: Request model for completing job. Required.
-        :type complete_job_options: ~azure.communication.jobrouter.models.CompleteJobOptions
+        :param options: Request model for completing job. Required.
+        :type options: ~azure.communication.jobrouter.models.CompleteJobOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3384,7 +3358,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def complete_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, complete_job_options: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, job_id: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Completes an assigned job.
 
@@ -3392,8 +3366,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param complete_job_options: Request model for completing job. Required.
-        :type complete_job_options: JSON
+        :param options: Request model for completing job. Required.
+        :type options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3406,7 +3380,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def complete_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, complete_job_options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, job_id: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Completes an assigned job.
 
@@ -3414,8 +3388,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param complete_job_options: Request model for completing job. Required.
-        :type complete_job_options: IO
+        :param options: Request model for completing job. Required.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3428,7 +3402,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @distributed_trace
     def complete_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, complete_job_options: Union[_models.CompleteJobOptions, JSON, IO], **kwargs: Any
+        self, job_id: str, options: Union[_models.CompleteJobOptions, JSON, IO], **kwargs: Any
     ) -> None:
         """Completes an assigned job.
 
@@ -3436,10 +3410,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param complete_job_options: Request model for completing job. Is one of the following types:
+        :param options: Request model for completing job. Is one of the following types:
          CompleteJobOptions, JSON, IO Required.
-        :type complete_job_options: ~azure.communication.jobrouter.models.CompleteJobOptions or JSON or
-         IO
+        :type options: ~azure.communication.jobrouter.models.CompleteJobOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -3465,10 +3438,10 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(complete_job_options, (IOBase, bytes)):
-            _content = complete_job_options
+        if isinstance(options, (IOBase, bytes)):
+            _content = options
         else:
-            _content = json.dumps(complete_job_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_job_router_complete_job_request(
             job_id=job_id,
@@ -3501,12 +3474,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def close_job(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        close_job_options: _models.CloseJobOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, job_id: str, options: _models.CloseJobOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Closes a completed job.
 
@@ -3514,8 +3482,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param close_job_options: Request model for closing job. Required.
-        :type close_job_options: ~azure.communication.jobrouter.models.CloseJobOptions
+        :param options: Request model for closing job. Required.
+        :type options: ~azure.communication.jobrouter.models.CloseJobOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3528,7 +3496,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def close_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, close_job_options: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, job_id: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Closes a completed job.
 
@@ -3536,8 +3504,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param close_job_options: Request model for closing job. Required.
-        :type close_job_options: JSON
+        :param options: Request model for closing job. Required.
+        :type options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3550,7 +3518,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def close_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, close_job_options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, job_id: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Closes a completed job.
 
@@ -3558,8 +3526,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param close_job_options: Request model for closing job. Required.
-        :type close_job_options: IO
+        :param options: Request model for closing job. Required.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3572,7 +3540,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @distributed_trace
     def close_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, close_job_options: Union[_models.CloseJobOptions, JSON, IO], **kwargs: Any
+        self, job_id: str, options: Union[_models.CloseJobOptions, JSON, IO], **kwargs: Any
     ) -> None:
         """Closes a completed job.
 
@@ -3580,9 +3548,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: Id of the job. Required.
         :type job_id: str
-        :param close_job_options: Request model for closing job. Is one of the following types:
-         CloseJobOptions, JSON, IO Required.
-        :type close_job_options: ~azure.communication.jobrouter.models.CloseJobOptions or JSON or IO
+        :param options: Request model for closing job. Is one of the following types: CloseJobOptions,
+         JSON, IO Required.
+        :type options: ~azure.communication.jobrouter.models.CloseJobOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -3608,10 +3576,10 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(close_job_options, (IOBase, bytes)):
-            _content = close_job_options
+        if isinstance(options, (IOBase, bytes)):
+            _content = options
         else:
-            _content = json.dumps(close_job_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_job_router_close_job_request(
             job_id=job_id,
@@ -3833,7 +3801,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         job_id: str,
         assignment_id: str,
-        unassign_job_options: Optional[_models.UnassignJobOptions] = None,
+        options: Optional[_models.UnassignJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3846,8 +3814,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :type job_id: str
         :param assignment_id: Id of the assignment to un-assign. Required.
         :type assignment_id: str
-        :param unassign_job_options: Request body for unassign route. Default value is None.
-        :type unassign_job_options: ~azure.communication.jobrouter.models.UnassignJobOptions
+        :param options: Request body for unassign route. Default value is None.
+        :type options: ~azure.communication.jobrouter.models.UnassignJobOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3863,7 +3831,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         job_id: str,
         assignment_id: str,
-        unassign_job_options: Optional[JSON] = None,
+        options: Optional[JSON] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3876,8 +3844,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :type job_id: str
         :param assignment_id: Id of the assignment to un-assign. Required.
         :type assignment_id: str
-        :param unassign_job_options: Request body for unassign route. Default value is None.
-        :type unassign_job_options: JSON
+        :param options: Request body for unassign route. Default value is None.
+        :type options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3893,7 +3861,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         job_id: str,
         assignment_id: str,
-        unassign_job_options: Optional[IO] = None,
+        options: Optional[IO] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3906,8 +3874,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :type job_id: str
         :param assignment_id: Id of the assignment to un-assign. Required.
         :type assignment_id: str
-        :param unassign_job_options: Request body for unassign route. Default value is None.
-        :type unassign_job_options: IO
+        :param options: Request body for unassign route. Default value is None.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3923,7 +3891,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         job_id: str,
         assignment_id: str,
-        unassign_job_options: Optional[Union[_models.UnassignJobOptions, JSON, IO]] = None,
+        options: Optional[Union[_models.UnassignJobOptions, JSON, IO]] = None,
         **kwargs: Any
     ) -> _models.UnassignJobResult:
         """Un-assign a job.
@@ -3934,10 +3902,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :type job_id: str
         :param assignment_id: Id of the assignment to un-assign. Required.
         :type assignment_id: str
-        :param unassign_job_options: Request body for unassign route. Is one of the following types:
+        :param options: Request body for unassign route. Is one of the following types:
          UnassignJobOptions, JSON, IO Default value is None.
-        :type unassign_job_options: ~azure.communication.jobrouter.models.UnassignJobOptions or JSON or
-         IO
+        :type options: ~azure.communication.jobrouter.models.UnassignJobOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -3963,11 +3930,11 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(unassign_job_options, (IOBase, bytes)):
-            _content = unassign_job_options
+        if isinstance(options, (IOBase, bytes)):
+            _content = options
         else:
-            if unassign_job_options is not None:
-                _content = json.dumps(unassign_job_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            if options is not None:
+                _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
 
@@ -4079,7 +4046,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         worker_id: str,
         offer_id: str,
-        decline_job_offer_options: Optional[_models.DeclineJobOfferOptions] = None,
+        options: Optional[_models.DeclineJobOfferOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4092,8 +4059,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :type worker_id: str
         :param offer_id: Id of the offer. Required.
         :type offer_id: str
-        :param decline_job_offer_options: Request model for declining offer. Default value is None.
-        :type decline_job_offer_options: ~azure.communication.jobrouter.models.DeclineJobOfferOptions
+        :param options: Request model for declining offer. Default value is None.
+        :type options: ~azure.communication.jobrouter.models.DeclineJobOfferOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4109,7 +4076,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         worker_id: str,
         offer_id: str,
-        decline_job_offer_options: Optional[JSON] = None,
+        options: Optional[JSON] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4122,8 +4089,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :type worker_id: str
         :param offer_id: Id of the offer. Required.
         :type offer_id: str
-        :param decline_job_offer_options: Request model for declining offer. Default value is None.
-        :type decline_job_offer_options: JSON
+        :param options: Request model for declining offer. Default value is None.
+        :type options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4139,7 +4106,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         worker_id: str,
         offer_id: str,
-        decline_job_offer_options: Optional[IO] = None,
+        options: Optional[IO] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4152,8 +4119,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :type worker_id: str
         :param offer_id: Id of the offer. Required.
         :type offer_id: str
-        :param decline_job_offer_options: Request model for declining offer. Default value is None.
-        :type decline_job_offer_options: IO
+        :param options: Request model for declining offer. Default value is None.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4169,7 +4136,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         worker_id: str,
         offer_id: str,
-        decline_job_offer_options: Optional[Union[_models.DeclineJobOfferOptions, JSON, IO]] = None,
+        options: Optional[Union[_models.DeclineJobOfferOptions, JSON, IO]] = None,
         **kwargs: Any
     ) -> None:
         """Declines an offer to work on a job.
@@ -4180,10 +4147,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :type worker_id: str
         :param offer_id: Id of the offer. Required.
         :type offer_id: str
-        :param decline_job_offer_options: Request model for declining offer. Is one of the following
-         types: DeclineJobOfferOptions, JSON, IO Default value is None.
-        :type decline_job_offer_options: ~azure.communication.jobrouter.models.DeclineJobOfferOptions
-         or JSON or IO
+        :param options: Request model for declining offer. Is one of the following types:
+         DeclineJobOfferOptions, JSON, IO Default value is None.
+        :type options: ~azure.communication.jobrouter.models.DeclineJobOfferOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -4209,11 +4175,11 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(decline_job_offer_options, (IOBase, bytes)):
-            _content = decline_job_offer_options
+        if isinstance(options, (IOBase, bytes)):
+            _content = options
         else:
-            if decline_job_offer_options is not None:
-                _content = json.dumps(decline_job_offer_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            if options is not None:
+                _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
 
@@ -4338,7 +4304,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterWorker. The RouterWorker is compatible with MutableMapping
@@ -4376,7 +4342,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterWorker. The RouterWorker is compatible with MutableMapping
@@ -4414,7 +4380,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterWorker. The RouterWorker is compatible with MutableMapping
@@ -4449,7 +4415,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
