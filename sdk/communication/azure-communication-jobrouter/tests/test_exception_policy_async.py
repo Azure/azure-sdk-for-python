@@ -88,9 +88,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                 mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1),
             )
 
-            distribution_policy = await client.upsert_distribution_policy(
-                distribution_policy_id, policy
-            )
+            distribution_policy = await client.upsert_distribution_policy(distribution_policy_id, policy)
 
         # add for cleanup later
         if self._testMethodName in self.distribution_policy_ids:
@@ -135,9 +133,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                 fallback_queue_id=self.get_job_queue_id(),
             )
 
-            classification_policy = await client.upsert_classification_policy(
-                cp_id, classification_policy
-            )
+            classification_policy = await client.upsert_classification_policy(cp_id, classification_policy)
 
         # add for cleanup later
         if self._testMethodName in self.classification_policy_ids:
@@ -173,17 +169,13 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
 
-                    exception_rules = [
-                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
-                    ]
+                    exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    exception_policy = await router_client.upsert_exception_policy(
-                        ep_identifier, exception_policy
-                    )
+                    exception_policy = await router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                     # add for cleanup
                     self.exception_policy_ids[self._testMethodName] = [ep_identifier]
@@ -218,9 +210,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
         async with router_client:
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
-                    exception_rules = [
-                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
-                    ]
+                    exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
@@ -239,9 +229,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                     )
 
                     updated_exception_rules = [
-                        ExceptionRule(
-                            id="fakeExceptionRuleId2", trigger=trigger, actions=[action]
-                        ),
+                        ExceptionRule(id="fakeExceptionRuleId2", trigger=trigger, actions=[action]),
                     ]
 
                     exception_policy.exception_rules = updated_exception_rules
@@ -281,17 +269,13 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
         async with router_client:
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
-                    exception_rules = [
-                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
-                    ]
+                    exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    exception_policy = await router_client.upsert_exception_policy(
-                        ep_identifier, exception_policy
-                    )
+                    exception_policy = await router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                     # add for cleanup
                     self.exception_policy_ids[self._testMethodName] = [ep_identifier]
@@ -302,9 +286,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                     )
 
                     updated_exception_rules = [
-                        ExceptionRule(
-                            id="fakeExceptionRuleId2", trigger=trigger, actions=[action]
-                        ),
+                        ExceptionRule(id="fakeExceptionRuleId2", trigger=trigger, actions=[action]),
                     ]
 
                     exception_policy = await router_client.upsert_exception_policy(
@@ -344,17 +326,13 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
         async with router_client:
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
-                    exception_rules = [
-                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
-                    ]
+                    exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    exception_policy = await router_client.upsert_exception_policy(
-                        ep_identifier, exception_policy
-                    )
+                    exception_policy = await router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                     # add for cleanup
                     self.exception_policy_ids[self._testMethodName] = [ep_identifier]
@@ -399,17 +377,13 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
         async with router_client:
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
-                    exception_rules = [
-                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
-                    ]
+                    exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    exception_policy = await router_client.upsert_exception_policy(
-                        ep_identifier, exception_policy
-                    )
+                    exception_policy = await router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                     # add for cleanup
                     self.exception_policy_ids[self._testMethodName] = [ep_identifier]
@@ -454,19 +428,13 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
                     for identifier in ep_identifiers:
-                        exception_rules = [
-                            ExceptionRule(
-                                id = "fakeExceptionRuleId", trigger=trigger, actions=[action]
-                            )
-                        ]
+                        exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                         exception_policy: ExceptionPolicy = ExceptionPolicy(
                             name=identifier, exception_rules=exception_rules
                         )
 
-                        exception_policy = await router_client.upsert_exception_policy(
-                            identifier, exception_policy
-                        )
+                        exception_policy = await router_client.upsert_exception_policy(identifier, exception_policy)
 
                         policy_count += 1
 

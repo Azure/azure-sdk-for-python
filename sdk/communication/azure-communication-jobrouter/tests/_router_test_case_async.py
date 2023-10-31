@@ -46,13 +46,15 @@ class AsyncRouterRecordedTestCase(AzureRecordedTestCase):
 
                 if router_job.status == RouterJobStatus.PENDING_CLASSIFICATION:
                     # cancel and delete job
-                    await router_client.cancel_job(job_id, CancelJobOptions(
-                        disposition_code = "JobCancelledAsPartOfTestCleanUp"))
+                    await router_client.cancel_job(
+                        job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp")
+                    )
                     await router_client.delete_job(job_id)
                 elif router_job.status == RouterJobStatus.QUEUED:
                     # cancel and delete job
-                    await router_client.cancel_job(job_id, CancelJobOptions(
-                        disposition_code = "JobCancelledAsPartOfTestCleanUp"))
+                    await router_client.cancel_job(
+                        job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp")
+                    )
                     await router_client.delete_job(job_id)
                 elif router_job.status == RouterJobStatus.ASSIGNED:
                     # complete, close and delete job
@@ -82,13 +84,15 @@ class AsyncRouterRecordedTestCase(AzureRecordedTestCase):
                     await router_client.delete_job(job_id)
                 elif router_job.status == RouterJobStatus.CREATED:
                     # cancel and delete job
-                    await router_client.cancel_job(job_id, CancelJobOptions(
-                        disposition_code = "JobCancelledAsPartOfTestCleanUp"))
+                    await router_client.cancel_job(
+                        job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp")
+                    )
                     await router_client.delete_job(job_id)
                 elif router_job.status == RouterJobStatus.WAITING_FOR_ACTIVATION:
                     # cancel and delete job
-                    await router_client.cancel_job(job_id, CancelJobOptions(
-                        disposition_code = "JobCancelledAsPartOfTestCleanUp"))
+                    await router_client.cancel_job(
+                        job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp")
+                    )
                     await router_client.delete_job(job_id)
                 else:
                     pass
