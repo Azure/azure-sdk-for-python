@@ -29,6 +29,7 @@ from azure.core.exceptions import HttpResponseError
 # Text translation client
 # -------------------------------------------------------------------------
 import sample_text_translation_client
+
 text_translator = sample_text_translation_client.create_text_translation_client_with_endpoint()
 
 # -------------------------------------------------------------------------
@@ -39,9 +40,15 @@ def get_text_translation_languages():
     try:
         response = text_translator.get_languages()
 
-        print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
-        print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
-        print(f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}")
+        print(
+            f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
+        )
+        print(
+            f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
+        )
+        print(
+            f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+        )
 
         if response.translation is not None:
             print("Translation Languages:")
@@ -65,15 +72,22 @@ def get_text_translation_languages():
         raise
     # [END get_text_translation_languages]
 
+
 def get_text_translation_languages_scope():
     # [START get_text_translation_languages_scope]
     try:
         scope = "translation"
         response = text_translator.get_languages(scope=scope)
 
-        print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
-        print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
-        print(f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}")
+        print(
+            f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
+        )
+        print(
+            f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
+        )
+        print(
+            f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+        )
 
         if response.translation is not None:
             print("Translation Languages:")
@@ -96,16 +110,23 @@ def get_text_translation_languages_scope():
             print(f"Message: {exception.error.message}")
         raise
     # [END get_text_translation_languages_scope]
-    
+
+
 def get_text_translation_languages_culture():
     # [START get_text_translation_languages_culture]
     try:
         accept_language = "es"
         response = text_translator.get_languages(accept_language=accept_language)
 
-        print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
-        print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
-        print(f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}")
+        print(
+            f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}"
+        )
+        print(
+            f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}"
+        )
+        print(
+            f"Number of supported languages for dictionary operations: {len(response.dictionary) if response.dictionary is not None else 0}"
+        )
 
         if response.translation is not None:
             print("Translation Languages:")
@@ -128,4 +149,3 @@ def get_text_translation_languages_culture():
             print(f"Message: {exception.error.message}")
         raise
     # [END get_text_translation_languages_culture]
-

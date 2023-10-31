@@ -22,18 +22,5 @@
             "V2020_06_12",
             "V2020_08_04"
         ]
-    },
-    "include": [
-      {
-        "CoverageConfig": {
-          "ubuntu2004_pypy39": {
-            "OSVmImage": "MMSUbuntu20.04",
-            "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-            "PythonVersion": "pypy3.9",
-            "CoverageArg": "--disablecov",
-            "TestSamples": "false"
-          }
-        }
-      }
-    ]
+    }
 }

@@ -6,21 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
 from typing import Any
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from .._version import VERSION
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
-
-class TextTranslationClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class TextTranslationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for TextTranslationClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,14 +22,13 @@ class TextTranslationClientConfiguration(Configuration):  # pylint: disable=too-
     :param endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
          https://api.cognitive.microsofttranslator.com). Required.
     :type endpoint: str
-    :keyword api_version: Default value is "3.0". Note that overriding this default value may
-     result in unsupported behavior.
+    :keyword api_version: Mandatory API version parameter. Default value is "3.0". Note that
+     overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
-        super(TextTranslationClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["3.0"] = kwargs.pop("api_version", "3.0")
+        api_version: str = kwargs.pop("api_version", "3.0")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -44,6 +36,7 @@ class TextTranslationClientConfiguration(Configuration):  # pylint: disable=too-
         self.endpoint = endpoint
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "ai-translation-text/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:

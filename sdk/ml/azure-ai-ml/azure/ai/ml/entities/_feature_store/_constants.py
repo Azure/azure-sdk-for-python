@@ -10,3 +10,7 @@ ONLINE_MATERIALIZATION_STORE_TYPE = "redis"
 ONLINE_STORE_CONNECTION_CATEGORY = "Redis"
 DEFAULT_SPARK_RUNTIME_VERSION = "3.2.0"
 FEATURE_STORE_KIND = "featurestore"
+STORE_REGEX_PATTERN = (
+    "^/?subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft.Storage"
+    "/storageAccounts/([^/]+)/blobServices/default/containers/([^/]+)"
+)

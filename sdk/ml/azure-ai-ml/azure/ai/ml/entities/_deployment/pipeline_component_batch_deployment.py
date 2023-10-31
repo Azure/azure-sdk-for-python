@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_schema import (
     PipelineComponentBatchDeploymentSchema,
 )  # pylint: disable=line-too-long
@@ -27,20 +28,20 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 class PipelineComponentBatchDeployment(Deployment):
     """Job Definition entity.
 
-    :param type: Job definition type. Allowed value is: pipeline
-    :type type: str
-    :param name: Job name
-    :type name: str
-    :param job: Job definition
-    :type job: Union[Job, str]
-    :param component: Component definition
-    :type component: Union[Component, str]
-    :param settings: Job settings
-    :type settings: Dict[str, Any]
-    :param description: Job description.
-    :type description: str
-    :param tags: Job tags
-    :type tags: Dict[str, Any]
+    :param type: Job definition type. Allowed value: "pipeline"
+    :type type: Optional[str]
+    :param name: Name of the deployment resource.
+    :type name: Optional[str]
+    :param component: Component definition.
+    :type component: Optional[Union[Component, str]]
+    :param settings: Run-time settings for the pipeline job.
+    :type settings: Optional[Dict[str, Any]]
+    :param description: The description which will be applied to the job.
+    :type description: Optional[str]
+    :param tags: A set of tags. The tags which will be applied to the job.
+    :type tags: Optional[Dict[str, Any]]
+    :param job_definition: Arm ID or PipelineJob entity of an existing pipeline job.
+    :param job_definition: Optional[Dict[str, ~azure.ai.ml.entities._builders.BaseNode]]
     """
 
     def __init__(
@@ -50,12 +51,13 @@ class PipelineComponentBatchDeployment(Deployment):
         endpoint_name: Optional[str] = None,
         component: Optional[Union[Component, str]] = None,
         settings: Optional[Dict[str, str]] = None,
+        job_definition: Optional[Dict[str, BaseNode]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
-        self.job_definition = kwargs.pop("job_definition", None)
         super().__init__(endpoint_name=endpoint_name, name=name, **kwargs)
         self.component = component
         self.settings = settings
+        self.job_definition = job_definition
 
     def _to_rest_object(self, location: str) -> "RestBatchDeployment":  # pylint: disable=arguments-differ
         if isinstance(self.component, PipelineComponent):

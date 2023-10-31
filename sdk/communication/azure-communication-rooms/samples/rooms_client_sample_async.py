@@ -89,6 +89,28 @@ class RoomsSample(object):
         except HttpResponseError as ex:
             print(ex)
 
+    # Starting in 1.1.0b1 release,create_room function also takes pstn_dial_out_enabled as parameter
+    async def create_room_with_pstn_attribute(self):
+
+        valid_from =  datetime.now()
+        valid_until = valid_from + timedelta(weeks=4)
+        participants = [self.participant_1]
+        pstn_dial_out_enabled = True
+
+        try:
+            create_room_response = self.rooms_client.create_room(
+                valid_from=valid_from,
+                valid_until=valid_until,
+                participants=participants,
+                pstn_dial_out_enabled=pstn_dial_out_enabled)
+            self.printRoom(response=create_room_response)
+
+            # all created room to a list
+            self.rooms.append(create_room_response.id)
+
+        except HttpResponseError as ex:
+            print(ex)
+
     async def update_single_room(self, room_id):
         # set attributes you want to change
         valid_from =  datetime.now()
@@ -96,6 +118,23 @@ class RoomsSample(object):
 
         try:
             update_room_response = await self.rooms_client.update_room(room_id=room_id, valid_from=valid_from, valid_until=valid_until)
+            self.printRoom(response=update_room_response)
+        except HttpResponseError as ex:
+            print(ex)
+
+        # Starting in 1.1.0b1 release,update_room function also takes pstn_dial_out_enabled as parameter
+    async def update_room_with_pstn_attribute(self, room_id):
+        # set attributes you want to change
+        valid_from =  datetime.now()
+        valid_until = valid_from + timedelta(weeks=7)
+        pstn_dial_out_enabled = True
+
+        try:
+            update_room_response = self.rooms_client.update_room(
+                room_id=room_id,
+                valid_from=valid_from,
+                valid_until=valid_until,
+                pstn_dial_out_enabled=pstn_dial_out_enabled)
             self.printRoom(response=update_room_response)
         except HttpResponseError as ex:
             print(ex)

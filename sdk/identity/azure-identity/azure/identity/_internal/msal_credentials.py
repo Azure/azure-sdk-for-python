@@ -27,9 +27,6 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
         client_credential: Optional[Union[str, Dict]] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
-        allow_broker: Optional[bool] = None,
-        parent_window_handle: Optional[int] = None,
-        enable_msa_passthrough: Optional[bool] = None,
         authority: Optional[str] = None,
         disable_instance_discovery: Optional[bool] = None,
         tenant_id: Optional[str] = None,
@@ -46,9 +43,6 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
         self._client = MsalClient(**kwargs)
         self._client_credential = client_credential
         self._client_id = client_id
-        self._allow_broker = allow_broker
-        self._parent_window_handle = parent_window_handle
-        self._enable_msa_passthrough = enable_msa_passthrough
         self._enable_support_logging = enable_support_logging
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
@@ -114,7 +108,6 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
                 token_cache=token_cache,
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
-                allow_broker=self._allow_broker,
                 enable_pii_log=self._enable_support_logging,
             )
 

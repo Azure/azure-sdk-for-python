@@ -50,9 +50,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         else:
             decoded_secret = base64.b64decode(self._access_key)
 
-        digest = hmac.new(
-            decoded_secret, value.encode("utf-8"), hashlib.sha256
-        ).digest()
+        digest = hmac.new(decoded_secret, value.encode("utf-8"), hashlib.sha256).digest()
 
         return base64.b64encode(digest).decode("utf-8")
 
@@ -101,22 +99,10 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         utc_now = get_current_utc_time()
         if request.http_request.body is None:
             request.http_request.body = ""
-        content_digest = hashlib.sha256(
-            (request.http_request.body.encode("utf-8"))
-        ).digest()
+        content_digest = hashlib.sha256((request.http_request.body.encode("utf-8"))).digest()
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
-        string_to_sign = (
-            verb
-            + "\n"
-            + query_url
-            + "\n"
-            + utc_now
-            + ";"
-            + self._host
-            + ";"
-            + content_hash
-        )
+        string_to_sign = verb + "\n" + query_url + "\n" + utc_now + ";" + self._host + ";" + content_hash
 
         signature = self._compute_hmac(string_to_sign)
 
@@ -124,10 +110,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
             "x-ms-date": utc_now,
             "x-ms-content-sha256": content_hash,
             "x-ms-return-client-request-id": "true",
-            "Authorization": "HMAC-SHA256 SignedHeaders="
-            + signed_headers
-            + "&Signature="
-            + signature,
+            "Authorization": "HMAC-SHA256 SignedHeaders=" + signed_headers + "&Signature=" + signature,
         }
 
         request.http_request.headers.update(signature_header)

@@ -13,8 +13,7 @@ from typing_extensions import Self
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.transport import (
-    AsyncHttpTransport,
-    HttpRequest,
+    AsyncHttpTransport
 )
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -27,6 +26,7 @@ from azure.core.pipeline.policies import (
     CustomHookPolicy,
     NetworkTraceLoggingPolicy,
 )
+from azure.core.rest import HttpRequest
 
 from ._authentication_async import _configure_credential
 from .._common_conversion import _is_cosmos_endpoint, _get_account
@@ -239,7 +239,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         :param table_name: The table name.
         :type table_name: str
         :param reqs: The HTTP request.
-        :type reqs: ~azure.core.pipeline.transport.HttpRequest
+        :type reqs: ~azure.core.pipeline.rest.HttpRequest
         :return: A list of batch part metadata in response.
         :rtype: list[Mapping[str, Any]]
         """
@@ -248,7 +248,8 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
 
         changeset = HttpRequest("POST", "")
         changeset.set_multipart_mixed(*reqs, policies=policies, boundary=f"changeset_{uuid4()}")
-        request = self._client._client.post(  # pylint: disable=protected-access
+        request = HttpRequest(
+            method="POST",
             url=f"{self.scheme}://{self._primary_hostname}/$batch",
             headers={
                 "x-ms-version": self.api_version,
@@ -265,10 +266,8 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
             boundary=f"batch_{uuid4()}",
         )
 
-        pipeline_response = await self._client._client._pipeline.run(  # pylint: disable=protected-access
-            request, **kwargs
-        )
-        response = pipeline_response.http_response
+        response = await self._client.send_request(request, stream=True, **kwargs)
+        await response.read()
         # TODO: Check for proper error model deserialization
         if response.status_code == 413:
             raise _decode_error(
@@ -279,9 +278,11 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
             _validate_tablename_error(decoded, table_name)
             raise decoded
 
-        parts_iter = response.parts()
+        # The parts() method is defined on the back-compat mixin, not the protocol.
+        parts_iter = response.parts()  # type: ignore[attr-defined]
         parts = []
         async for p in parts_iter:
+            await p.read()
             parts.append(p)
         error_parts = [p for p in parts if not 200 <= p.status_code < 300]
         if any(error_parts):

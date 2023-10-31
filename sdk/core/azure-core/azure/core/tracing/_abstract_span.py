@@ -144,7 +144,7 @@ class AbstractSpan(Protocol, Generic[SpanType]):
         Add correct attributes for a http client span.
 
         :param request: The request made
-        :type request: HttpRequest
+        :type request: azure.core.rest.HttpRequest
         :param response: The response received by the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """
@@ -268,7 +268,7 @@ class HttpSpanMixin:
         Add correct attributes for a http client span.
 
         :param request: The request made
-        :type request: HttpRequest
+        :type request: azure.core.rest.HttpRequest
         :param response: The response received from the server. Is None if no response received.
         :type response: ~azure.core.pipeline.transport.HttpResponse or ~azure.core.pipeline.transport.AsyncHttpResponse
         """

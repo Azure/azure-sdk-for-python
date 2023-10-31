@@ -6,7 +6,7 @@ import pytest
 from pytest_mock import MockFixture
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_10_01.models._models_py3 import (
     FeatureResourceArmPaginatedResult,
     FeaturesetContainer,
     FeaturesetContainerProperties,
@@ -42,13 +42,15 @@ def mock_datastore_operation(
 def mock_feature_set_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
+    mock_aml_services_2023_10_01: Mock,
     mock_aml_services_2023_08_01_preview: Mock,
     mock_datastore_operation: Mock,
 ) -> FeatureSetOperations:
     yield FeatureSetOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2023_08_01_preview,
+        service_client=mock_aml_services_2023_10_01,
+        service_client_for_jobs=mock_aml_services_2023_08_01_preview,
         datastore_operations=mock_datastore_operation,
     )
 
