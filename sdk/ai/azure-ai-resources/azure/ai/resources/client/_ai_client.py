@@ -239,7 +239,7 @@ class AIClient:
         )
         return project.ml_flow_tracking_uri
 
-    def build_ml_index_on_cloud(
+    def build_index_on_cloud(
         self,
         *,
         ######## required args ##########
