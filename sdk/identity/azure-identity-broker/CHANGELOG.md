@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed `UsernamePasswordBrokerCredential`
+
 ### Bugs Fixed
 
 ### Other Changes
@@ -14,5 +16,5 @@
 
 ### Features Added
 
-- Added `azure.identity.broker.InteractiveBrowserBrokerCredential` 
+- Added `azure.identity.broker.InteractiveBrowserBrokerCredential`
   and `azure.identity.broker.UsernamePasswordBrokerCredential` which have broker support.
