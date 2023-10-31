@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long
+# pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long,too-many-statements
 
 from contextlib import contextmanager
 from os import PathLike, path
@@ -657,7 +657,7 @@ class ModelOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Model.Package", ActivityType.PUBLICAPI)
     def package(
         self, name: str, version: str, package_request: ModelPackage, **kwargs
-    ) -> Environment:  # pylint:disable=too-many-statements
+    ) -> Environment:
         """Package a model asset
 
         :param name: Name of model asset.
