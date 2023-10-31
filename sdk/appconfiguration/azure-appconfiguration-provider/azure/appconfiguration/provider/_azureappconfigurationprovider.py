@@ -191,8 +191,20 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
-            sentinel = provider._client.get_configuration_setting(key, label, headers=headers)
-            provider._refresh_on[(key, label)] = sentinel.etag
+            try:
+                sentinel = provider._client.get_configuration_setting(key, label, headers=headers)
+                provider._refresh_on[(key, label)] = sentinel.etag
+            except HttpResponseError as e:
+                if e.status_code == 404:
+                    # If the sentinel is not found a refresh should be triggered when it is created.
+                    logging.debug(
+                        "WatchKey key: %s label %s was configured but not found. Refresh will be triggered if created.",
+                        key,
+                        label,
+                    )
+                    provider._refresh_on[(key, label)] = None
+                else:
+                    raise e
     return provider
 
 
