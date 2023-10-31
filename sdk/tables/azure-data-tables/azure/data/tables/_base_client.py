@@ -253,7 +253,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         policies = [StorageHeadersPolicy()]
 
         changeset = HttpRequest("POST", "")
-        changeset.set_multipart_mixed(*reqs, policies=policies, boundary=f"changeset_{uuid4()}")  # type: ignore
+        changeset.set_multipart_mixed(*reqs, policies=policies, boundary=f"changeset_{uuid4()}")
         request = HttpRequest(
             method="POST",
             url=f"{self.scheme}://{self._primary_hostname}/$batch",
