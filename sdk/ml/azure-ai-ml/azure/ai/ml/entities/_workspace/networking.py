@@ -268,8 +268,7 @@ class ManagedNetwork:
             if self.outbound_rules
             else {}
         )
-        mvnet = RestManagedNetwork(isolation_mode=self.isolation_mode, outbound_rules=rest_outbound_rules)
-        return mvnet
+        return RestManagedNetwork(isolation_mode=self.isolation_mode, outbound_rules=rest_outbound_rules)
 
     @classmethod
     def _from_rest_object(cls, obj: RestManagedNetwork) -> "ManagedNetwork":
