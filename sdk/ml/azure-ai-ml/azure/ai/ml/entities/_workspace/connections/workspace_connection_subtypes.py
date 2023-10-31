@@ -4,12 +4,13 @@
 
 # pylint: disable=protected-access
 
-
+from typing import Optional
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import (
     CONNECTION_API_VERSION_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_KIND_KEY,
+    CONNECTION_DEFAULT_API_VERSION,
 )
 from azure.ai.ml.entities._credentials import (
     ApiKeyConfiguration,
@@ -33,7 +34,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for.
-    :type api_version: str
+    :type api_version: Optional[str]
     :param api_type: The api type that this connection was created for. Defaults to Azure.
     :type api_type: str
     """
@@ -43,14 +44,15 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str,
+        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
         api_type: str = "Azure",
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="azure_open_ai", credentials=credentials, **kwargs)
 
-        self.tags[CONNECTION_API_VERSION_KEY] = api_version
+        if api_version is not None:
+            self.tags[CONNECTION_API_VERSION_KEY] = api_version
         self.tags[CONNECTION_API_TYPE_KEY] = api_type
 
     @property
@@ -108,7 +110,7 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for.
-    :type api_version: str
+    :type api_version: Optional[str]
     """
 
     def __init__(
@@ -116,13 +118,14 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str,
+        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_search", credentials=credentials, **kwargs)
 
-        self.tags[CONNECTION_API_VERSION_KEY] = api_version
+        if api_version is not None:
+            self.tags[CONNECTION_API_VERSION_KEY] = api_version
 
     @property
     def api_version(self) -> str:
@@ -157,10 +160,10 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
     :type tags: dict
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
-    :param api_version: The api version that this connection was created for.
-    :type api_version: str
     :param kind: The kind of ai service that this connection points to. Valid inputs include:
         "AzureOpenAI", "ContentSafety", and "Speech".
+    :param api_version: The api version that this connection was created for.
+    :type api_version: Optional[str]
     :type kind: str
     """
 
@@ -169,14 +172,15 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str,
         kind: str,
+        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_service", credentials=credentials, **kwargs)
 
-        self.tags[CONNECTION_API_VERSION_KEY] = api_version
+        if api_version is not None:
+            self.tags[CONNECTION_API_VERSION_KEY] = api_version
         self.tags[CONNECTION_KIND_KEY] = kind
 
     @property

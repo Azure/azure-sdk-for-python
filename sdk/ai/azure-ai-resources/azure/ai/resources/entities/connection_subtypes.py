@@ -11,6 +11,7 @@ from azure.ai.ml.constants._common import (
     CONNECTION_API_VERSION_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_KIND_KEY,
+    CONNECTION_DEFAULT_API_VERSION,
 )
 
 from .base_connection import BaseConnection
@@ -27,7 +28,7 @@ class AzureOpenAIConnection(BaseConnection):
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for.
-    :type api_version: str
+    :type api_version: Optional[str]
     :param api_type: The api type that this connection was created for. Defaults to "Azure" and currently rarely changes.
     :type api_type: str
     """
@@ -37,7 +38,7 @@ class AzureOpenAIConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str = "unset",
+        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
         api_type: str = "Azure",
         **kwargs,
     ):
@@ -137,7 +138,7 @@ class AzureAISearchConnection(BaseConnection):
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for. Only applies to certain connection types.
-    :type api_version: str
+    :type api_version: Optional[str]
     """
 
     def __init__(
@@ -145,7 +146,7 @@ class AzureAISearchConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str = "unset",
+        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -201,11 +202,11 @@ class AzureAIServiceConnection(BaseConnection):
     :type tags: dict
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
-    :param api_version: The api version that this connection was created for.
-    :type api_version: str
     :param kind: The kind of ai service that this connection points to. Valid inputs include:
         "AzureOpenAI", "ContentSafety", and "Speech"
     :type kind: str
+    :param api_version: The api version that this connection was created for.
+    :type api_version: Optional[str]
     """
 
     def __init__(
@@ -213,8 +214,8 @@ class AzureAIServiceConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str = "unset",
         kind: str,
+        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
