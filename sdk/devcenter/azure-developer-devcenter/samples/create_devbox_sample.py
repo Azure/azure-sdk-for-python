@@ -61,18 +61,18 @@ def main():
 
     # Stand up a new dev box
     create_response = client.begin_create_dev_box(
-        target_project_name, "Test_DevBox", {"poolName": target_pool_name}
+        target_project_name, "me", "Test_DevBox", {"poolName": target_pool_name}
     )
     devbox_result = create_response.result()
 
     LOG.info(f"Provisioned dev box with status {devbox_result['provisioningState']}.")
 
     # Connect to the provisioned dev box
-    remote_connection_response = client.get_remote_connection(target_project_name, "Test_DevBox")
+    remote_connection_response = client.get_remote_connection(target_project_name, "me", "Test_DevBox")
     LOG.info(f"Connect to the dev box using web URL {remote_connection_response['webUrl']}")
 
     # Tear down the dev box when finished
-    delete_response = client.begin_delete_dev_box(target_project_name, "Test_DevBox")
+    delete_response = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
     delete_response.wait()
     LOG.info("Deleted dev box successfully.")
 
