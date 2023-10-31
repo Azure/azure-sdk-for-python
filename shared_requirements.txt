@@ -24,6 +24,7 @@ opentelemetry-api
 azure-eventhub
 aiohttp
 mlflow
+mlflow-skinny
 msal
 msal-extensions
 azure-keyvault-certificates
