@@ -95,7 +95,7 @@ setup(
         ],
         "evaluate": [
             "azureml-metrics[generative-ai]",
-            "promptflow>=0.1.0b7",
+            "promptflow",
             "promptflow-tools",
         ],
         "faiss": [
