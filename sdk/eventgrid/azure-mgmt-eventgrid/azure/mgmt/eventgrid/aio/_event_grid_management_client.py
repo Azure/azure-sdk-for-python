@@ -29,6 +29,7 @@ from .operations import (
     NamespaceTopicEventSubscriptionsOperations,
     NamespaceTopicsOperations,
     NamespacesOperations,
+    NetworkSecurityPerimeterConfigurationsOperations,
     Operations,
     PartnerConfigurationsOperations,
     PartnerDestinationsOperations,
@@ -108,6 +109,10 @@ class EventGridManagementClient:  # pylint: disable=client-accepts-api-version-k
      azure.mgmt.eventgrid.aio.operations.PartnerRegistrationsOperations
     :ivar partner_topics: PartnerTopicsOperations operations
     :vartype partner_topics: azure.mgmt.eventgrid.aio.operations.PartnerTopicsOperations
+    :ivar network_security_perimeter_configurations:
+     NetworkSecurityPerimeterConfigurationsOperations operations
+    :vartype network_security_perimeter_configurations:
+     azure.mgmt.eventgrid.aio.operations.NetworkSecurityPerimeterConfigurationsOperations
     :ivar permission_bindings: PermissionBindingsOperations operations
     :vartype permission_bindings: azure.mgmt.eventgrid.aio.operations.PermissionBindingsOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
@@ -135,7 +140,7 @@ class EventGridManagementClient:  # pylint: disable=client-accepts-api-version-k
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-12-15-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -203,6 +208,9 @@ class EventGridManagementClient:  # pylint: disable=client-accepts-api-version-k
             self._client, self._config, self._serialize, self._deserialize
         )
         self.partner_topics = PartnerTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.permission_bindings = PermissionBindingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

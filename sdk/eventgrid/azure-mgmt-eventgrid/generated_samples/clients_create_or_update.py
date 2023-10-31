@@ -36,14 +36,7 @@ def main():
         client_info={
             "properties": {
                 "attributes": {"deviceTypes": ["Fan", "Light", "AC"], "floor": 3, "room": "345"},
-                "authentication": {
-                    "certificateSubject": {
-                        "commonName": "CertificateCommonName",
-                        "countryCode": "US",
-                        "organization": "Microsoft",
-                        "organizationUnit": "Azure",
-                    }
-                },
+                "clientCertificateAuthentication": {"validationScheme": "SubjectMatchesAuthenticationName"},
                 "description": "This is a test client",
                 "state": "Enabled",
             }
@@ -52,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2023-06-01-preview/examples/Clients_CreateOrUpdate.json
+# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2023-12-15-preview/examples/Clients_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,18 @@
 # Release History
 
+## 10.3.0b3 (2023-11-20)
+
+### Features Added
+
+  - Added operation NamespaceTopicEventSubscriptionsOperations.get_delivery_attributes
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Model DeliveryConfiguration has a new parameter push
+  - Model TopicTypeInfo has a new parameter additional_enforced_permissions
+
+### Breaking Changes
+
+  - Model Client no longer has parameter authentication
+
 ## 10.3.0b2 (2023-05-19)
 
 ### Features Added
