@@ -7,7 +7,7 @@
 
 import ast
 import os
-import enum
+import jsondiff
 import argparse
 import importlib
 import inspect
@@ -19,14 +19,9 @@ import inspect
 import subprocess
 from enum import Enum
 from typing import Dict, Union, Type, Callable
+from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
 from breaking_changes_tracker import BreakingChangesTracker
-try:
-    # won't be able to import these in the created venv
-    from packaging_tools.venvtools import create_venv_with_package
-    import jsondiff
-except (ModuleNotFoundError, ImportError) as e:
-    pass
 
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -99,9 +94,12 @@ def get_parameter_default(param: inspect.Parameter) -> None:
 def get_property_names(node: ast.AST, attribute_names: Dict) -> None:
     func_nodes = [node for node in node.body if isinstance(node, ast.FunctionDef)]
     if func_nodes:
-        assigns = [node for node in func_nodes[0].body if isinstance(node, ast.Assign)]
+        assigns = [node for node in func_nodes[0].body if isinstance(node, (ast.Assign, ast.AnnAssign))]
         if assigns:
             for assign in assigns:
+                if hasattr(assign, "target"):
+                    attr = assign.target
+                    attribute_names.update({attr.attr: attr.attr})
                 if hasattr(assign, "targets"):
                     for attr in assign.targets:
                         if hasattr(attr, "attr") and not attr.attr.startswith("_"):
@@ -136,7 +134,7 @@ def get_properties(cls: Type) -> Dict:
     attribute_names = {}
 
     path = inspect.getsourcefile(cls)
-    with open(path, "r") as source:
+    with open(path, "r", encoding="utf-8-sig") as source:
         module = ast.parse(source.read())
 
     analyzer = ClassTreeAnalyzer(cls.__name__)
@@ -149,9 +147,7 @@ def get_properties(cls: Type) -> Dict:
         for base_class in base_classes:
             try:
                 path = inspect.getsourcefile(base_class)
-                if path.find("azure") == -1:
-                    continue
-                with open(path, "r") as source:
+                with open(path, "r", encoding="utf-8-sig") as source:
                     module = ast.parse(source.read())
             except (TypeError, SyntaxError):
                 _LOGGER.info(f"Unable to create ast of {base_class}")
@@ -288,8 +284,18 @@ def main(package_name: str, target_module: str, version: str, in_venv: Union[boo
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
     if not in_venv:
-        packages = [f"{package_name}=={version}", "aiohttp"]
+        packages = [f"{package_name}=={version}", "jsondiff==1.2.0"]
         with create_venv_with_package(packages) as venv:
+            subprocess.check_call(
+                [
+                    venv.env_exe,
+                    "-m",
+                    "pip",
+                    "install",
+                    "-r",
+                    os.path.join(pkg_dir, "dev_requirements.txt")
+                ]
+            )
             _LOGGER.info(f"Installed version {version} of {package_name} in a venv")
             args = [
                 venv.env_exe,
@@ -368,7 +374,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     in_venv = args.in_venv
     stable_version = args.stable_version
-
+    target_module = args.target_module
     pkg_dir = os.path.abspath(args.target_package)
     package_name = os.path.basename(pkg_dir)
     logging.basicConfig(level=logging.INFO)
@@ -377,9 +383,11 @@ if __name__ == "__main__":
                      f"See http://aka.ms/azsdk/breaking-changes-tool to opt-in.")
         exit(0)
 
-    # TODO need to parse setup.py here to get the top module/namespace since not always the same.
-    #  e.g. azure-storage-file-share and azure.storage.fileshare
-    target_module = package_name.replace("-", ".")
+    if not target_module:
+        from ci_tools.parsing import ParsedSetup
+        pkg_details = ParsedSetup.from_path(pkg_dir)
+        target_module = pkg_details.namespace
+
     if not stable_version:
 
         from pypi_tools.pypi import PyPIClient
@@ -392,5 +400,3 @@ if __name__ == "__main__":
             exit(0)
 
     main(package_name, target_module, stable_version, in_venv, pkg_dir)
-
-
