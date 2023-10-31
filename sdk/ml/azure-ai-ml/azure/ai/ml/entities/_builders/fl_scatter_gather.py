@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml import Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -17,6 +17,7 @@ from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
+from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import MutableValidationResult
 
@@ -199,8 +200,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
             # produce aggregate step inputs by merging static kwargs and mapped arguments from
             # internal merge components
-            agg_inputs = {}
-            agg_inputs.update(self.aggregation_kwargs)
+            agg_inputs: Dict = {}
+            if self.aggregation_kwargs is not None:
+                agg_inputs.update(self.aggregation_kwargs)
             internal_merge_outputs = {
                 self._get_aggregator_input_name(k): v.outputs.aggregated_output for k, v in merge_comp_mapping.items()
             }
@@ -231,7 +233,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     internal_datastore=self.aggregation_datastore,
                     orchestrator_datastore=self.aggregation_datastore,
                 )
-            return executed_aggregation_component.outputs
+            res: PipelineJob = executed_aggregation_component.outputs
+            return res
 
         @pipeline(name="Scatter gather graph")
         # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
@@ -242,9 +245,10 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             termination condition is met.
             """
 
-            silo_inputs = {}
-            # Start with static inputs
-            silo_inputs.update(self.shared_silo_kwargs)
+            silo_inputs: Dict = {}
+            if self.shared_silo_kwargs is not None:
+                # Start with static inputs
+                silo_inputs.update(self.shared_silo_kwargs)
 
             # merge in inputs passed in from previous iteration's aggregate step)
             if self.aggregation_to_silo_argument_map is not None:
@@ -262,9 +266,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 mapping=do_while_mapping,
                 max_iteration_count=self.max_iterations,
             )
-            return scatter_gather_body.outputs
+            res_scatter: PipelineJob = scatter_gather_body.outputs
+            return res_scatter
 
-        return create_scatter_gather_graph()
+        res: PipelineJob = create_scatter_gather_graph()
+        return res
 
     @classmethod
     def _get_fl_datastore_path(
@@ -409,7 +415,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 # This is dangerous, and we need to make sure they both use the same datastore,
                 # so we keep datastore types identical across this recursive call.
                 cls._anchor_step(
-                    pipeline_step.component,
+                    pipeline_step.component,  # type: ignore
                     compute,
                     internal_datastore=internal_datastore,
                     orchestrator_datastore=orchestrator_datastore,
@@ -430,23 +436,24 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                             )
                         )
                 # ...then recursively anchor each job inside the pipeline
-                for job_key in pipeline_step.jobs:
-                    job = pipeline_step.jobs[job_key]
-                    # replace orchestrator with internal datastore, jobs components
-                    # should either use the local datastore
-                    # or have already had their outputs re-assigned.
-                    cls._anchor_step(
-                        job,
-                        compute,
-                        internal_datastore=internal_datastore,
-                        orchestrator_datastore=internal_datastore,
-                        _path=f"{_path}.jobs.{job_key}",
-                    )
+                if not isinstance(pipeline_step, CommandComponent):
+                    for job_key in pipeline_step.jobs:
+                        job = pipeline_step.jobs[job_key]
+                        # replace orchestrator with internal datastore, jobs components
+                        # should either use the local datastore
+                        # or have already had their outputs re-assigned.
+                        cls._anchor_step(
+                            job,
+                            compute,
+                            internal_datastore=internal_datastore,
+                            orchestrator_datastore=internal_datastore,
+                            _path=f"{_path}.jobs.{job_key}",
+                        )
 
         elif pipeline_step.type == "command":
             # if the current step is a command component
             # make sure the compute corresponds to the silo
-            if pipeline_step.compute is None:
+            if not isinstance(pipeline_step, CommandComponent) and pipeline_step.compute is None:
                 pipeline_step.compute = compute
             # then anchor each of the job's outputs
             for name, output in pipeline_step.outputs.items():
@@ -581,9 +588,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             )
         else:
             first_silo = silo_configs[0]
-            expected_inputs = []
+            expected_inputs: List = []
             if hasattr(first_silo, "inputs"):
-                expected_inputs = first_silo.inputs.keys()
+                expected_inputs = cast(List, first_silo.inputs.keys())
             num_expected_inputs = len(expected_inputs)
             # pylint: disable=consider-using-enumerate
             for i in range(len(silo_configs)):
@@ -861,4 +868,5 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """
         rest_node = super(FLScatterGather, self)._to_rest_object(**kwargs)
         rest_node.update({"outputs": self._to_rest_outputs()})
-        return convert_ordered_dict_to_dict(rest_node)
+        res = cast(dict, convert_ordered_dict_to_dict(rest_node))
+        return res
