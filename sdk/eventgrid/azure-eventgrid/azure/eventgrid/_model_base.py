@@ -553,7 +553,7 @@ class Model(_MyMutableMapping):
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
         for k, v in self.items():
-            if exclude_readonly and k in readonly_props:  # pyright: reportUnboundVariable=false
+            if exclude_readonly and k in readonly_props:  # pyright: ignore[reportUnboundVariable]
                 continue
             result[k] = Model._as_dict_value(v, exclude_readonly=exclude_readonly)
         return result
