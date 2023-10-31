@@ -24,12 +24,12 @@
 #
 # --------------------------------------------------------------------------
 from .._generated.models import (
-    AnswerResult,
     AutocompleteMode,
-    CaptionResult,
     IndexAction,
     IndexingResult,
+    QueryAnswerResult,
     QueryAnswerType,
+    QueryCaptionResult,
     QueryCaptionType,
     QueryType,
     ScoringStatistics,
@@ -38,18 +38,18 @@ from .._generated.models import (
     SemanticErrorReason,
     SemanticSearchResultsType,
     VectorFilterMode,
-    VectorizableQuery,
+    VectorizedQuery,
     VectorQuery,
 )
 
 
 __all__ = (
-    "AnswerResult",
     "AutocompleteMode",
-    "CaptionResult",
     "IndexAction",
     "IndexingResult",
+    "QueryAnswerResult",
     "QueryAnswerType",
+    "QueryCaptionResult",
     "QueryCaptionType",
     "QueryType",
     "ScoringStatistics",
@@ -58,6 +58,6 @@ __all__ = (
     "SemanticErrorReason",
     "SemanticSearchResultsType",
     "VectorFilterMode",
-    "VectorizableQuery",
+    "VectorizedQuery",
     "VectorQuery",
 )

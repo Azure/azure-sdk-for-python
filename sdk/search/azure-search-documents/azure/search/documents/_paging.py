@@ -10,7 +10,7 @@ import itertools
 import json
 
 from azure.core.paging import ItemPaged, PageIterator, ReturnType
-from ._generated.models import SearchRequest, SearchDocumentsResult, AnswerResult
+from ._generated.models import SearchRequest, SearchDocumentsResult, QueryAnswerResult
 from ._api_versions import DEFAULT_VERSION
 
 
@@ -84,13 +84,13 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         """
         return cast(int, self._first_iterator_instance().get_count())
 
-    def get_answers(self) -> Optional[List[AnswerResult]]:
+    def get_answers(self) -> Optional[List[QueryAnswerResult]]:
         """Return answers.
 
         :return: answers
-        :rtype: list[~azure.search.documents.models.AnswerResult] or None
+        :rtype: list[~azure.search.documents.models.QueryAnswerResult] or None
         """
-        return cast(List[AnswerResult], self._first_iterator_instance().get_answers())
+        return cast(List[QueryAnswerResult], self._first_iterator_instance().get_answers())
 
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
@@ -155,7 +155,7 @@ class SearchPageIterator(PageIterator):
         return cast(int, response.count)
 
     @_ensure_response
-    def get_answers(self) -> Optional[List[AnswerResult]]:
+    def get_answers(self) -> Optional[List[QueryAnswerResult]]:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         return response.answers

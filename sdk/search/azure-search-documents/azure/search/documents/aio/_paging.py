@@ -7,7 +7,7 @@ from typing import List, Dict, Optional, cast
 
 from azure.core.paging import ReturnType
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
-from .._generated.models import AnswerResult, SearchDocumentsResult
+from .._generated.models import QueryAnswerResult, SearchDocumentsResult
 from .._paging import (
     convert_search_result,
     pack_continuation_token,
@@ -68,13 +68,13 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         """
         return cast(int, await self._first_iterator_instance().get_count())
 
-    async def get_answers(self) -> Optional[List[AnswerResult]]:
+    async def get_answers(self) -> Optional[List[QueryAnswerResult]]:
         """Return answers.
 
         :return: Answers.
-        :rtype: list[~azure.search.documents.AnswerResult]
+        :rtype: list[~azure.search.documents.QueryAnswerResult]
         """
-        return cast(List[AnswerResult], await self._first_iterator_instance().get_answers())
+        return cast(List[QueryAnswerResult], await self._first_iterator_instance().get_answers())
 
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
@@ -139,7 +139,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         return cast(int, response.count)
 
     @_ensure_response
-    async def get_answers(self) -> Optional[List[AnswerResult]]:
+    async def get_answers(self) -> Optional[List[QueryAnswerResult]]:
         self.continuation_token = None
         response = cast(SearchDocumentsResult, self._response)
         return response.answers
