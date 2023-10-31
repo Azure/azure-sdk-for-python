@@ -8,8 +8,6 @@ from pytest_mock import MockFixture
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -22,6 +20,7 @@ from azure.ai.ml.entities import (
     ManagedIdentityConfiguration,
     ServerlessComputeSettings,
     Workspace,
+    ManagedNetwork,
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
 from azure.core.polling import LROPoller
@@ -168,6 +167,7 @@ class TestWorkspaceOperation:
                     ManagedIdentityConfiguration(resource_id="resource2"),
                 ],
             ),
+            managed_network=ManagedNetwork(),
             primary_user_assigned_identity="resource2",
             customer_managed_key=CustomerManagedKey(key_uri="new_cmk_uri"),
         )
@@ -190,6 +190,7 @@ class TestWorkspaceOperation:
                     key_identifier="new_cmk_uri",
                 )
             )
+            assert params.managed_network == {"isolation_mode": "Disabled", "outbound_rules": None}
             assert polling is True
             assert callable(cls)
             return DEFAULT

@@ -5,7 +5,7 @@
 from typing import Any, Dict, Optional, List
 
 from abc import ABC
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
@@ -268,7 +268,12 @@ class ManagedNetwork:
             if self.outbound_rules
             else None
         )
-        return RestManagedNetwork(isolation_mode=self.isolation_mode, outbound_rules=rest_outbound_rules)
+        # returning custom dict as rest obj (instead of RestManagedNetwork) since 08-01-preview restclient 
+        # adds changeable_isolation_modes which broke the ARM template validation, not sure why
+        return {
+            "isolation_mode": self.isolation_mode,
+            "outbound_rules": rest_outbound_rules
+        }
 
     @classmethod
     def _from_rest_object(cls, obj: RestManagedNetwork) -> "ManagedNetwork":
