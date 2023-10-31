@@ -8,9 +8,8 @@ from pytest_mock import MockFixture
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
+    ManagedNetworkSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -22,6 +21,11 @@ from azure.ai.ml.entities import (
     ManagedIdentityConfiguration,
     ServerlessComputeSettings,
     Workspace,
+    ManagedNetwork,
+    IsolationMode,
+    FqdnDestination,
+    ServiceTagDestination,
+    PrivateEndpointDestination,
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
 from azure.core.polling import LROPoller
@@ -126,6 +130,43 @@ class TestWorkspaceOperation:
         mock_workspace_operation_base.begin_create(workspace=ws)
         mock_workspace_operation_base._operation.get.assert_called()
 
+    def test_get(self, mock_workspace_operation_base: WorkspaceOperationsBase) -> None:
+        def outgoing_get_call(rg, name):
+            ws = Workspace(name=name)
+            ws.managed_network = ManagedNetwork(
+                isolation_mode=IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND,
+                outbound_rules=[
+                    FqdnDestination(name="fqdn-rule", destination="google.com"),
+                    PrivateEndpointDestination(
+                        name="perule", service_resource_id="/storageid", subresource_target="blob", spark_enabled=False
+                    ),
+                    ServiceTagDestination(
+                        name="servicetag-rule", service_tag="sometag", protocol="*", port_ranges="1,2"
+                    ),
+                ],
+            )
+            return ws._to_rest_object()
+
+        mock_workspace_operation_base._operation.get.side_effect = outgoing_get_call
+        ws = mock_workspace_operation_base.get(name="random_name", resource_group="rg")
+        mock_workspace_operation_base._operation.get.assert_called_once()
+
+        assert ws.managed_network is not None
+        assert ws.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        rules = ws.managed_network.outbound_rules
+        assert isinstance(rules[0], FqdnDestination)
+        assert rules[0].destination == "google.com"
+
+        assert isinstance(rules[1], PrivateEndpointDestination)
+        assert rules[1].service_resource_id == "/storageid"
+        assert rules[1].spark_enabled == False
+        assert rules[1].subresource_target == "blob"
+
+        assert isinstance(rules[2], ServiceTagDestination)
+        assert rules[2].service_tag == "sometag"
+        assert rules[2].protocol == "*"
+        assert rules[2].port_ranges == "1,2"
+
     def test_create_get_exception_swallow(
         self,
         mock_workspace_operation_base: WorkspaceOperationsBase,
@@ -168,6 +209,7 @@ class TestWorkspaceOperation:
                     ManagedIdentityConfiguration(resource_id="resource2"),
                 ],
             ),
+            managed_network=ManagedNetwork(),
             primary_user_assigned_identity="resource2",
             customer_managed_key=CustomerManagedKey(key_uri="new_cmk_uri"),
         )
@@ -190,6 +232,8 @@ class TestWorkspaceOperation:
                     key_identifier="new_cmk_uri",
                 )
             )
+            assert params.managed_network.isolation_mode == "Disabled"
+            assert params.managed_network.outbound_rules == {}
             assert polling is True
             assert callable(cls)
             return DEFAULT
