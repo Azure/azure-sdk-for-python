@@ -9,8 +9,8 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2023_06_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 
 from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubSchema
 from azure.ai.ml.entities._workspace_hub.workspace_hub_config import WorkspaceHubConfig
