@@ -102,7 +102,16 @@ class OpenAIEmbedder:
 
     def _dynamic_batch_size_embed_request(self, tokenized_texts: List[List[int]], **kwargs) -> dict:
         try:
-            return self._embed_request(tokenized_texts=tokenized_texts, **kwargs)
+            if self._dynamic_batch_size is None:
+                return self._embed_request(tokenized_texts=tokenized_texts, **kwargs)
+            else:
+                embedding_response = {"data": []}
+                for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
+                    embedding_response["data"].extend(
+                        self._embed_request(
+                            tokenized_texts=tokenized_texts[i : i + self._dynamic_batch_size], **kwargs
+                        )["data"]
+                    )
         except Exception as e:
             err_msg = str(e)
             if "Too many inputs" not in err_msg:
@@ -112,14 +121,20 @@ class OpenAIEmbedder:
             match = re.match(r".*The max number of inputs is ([0-9]+).*", err_msg)
             if match and match.group(1):
                 try:
-                    self.batch_size = int(match.group(1))
+                    self._dynamic_batch_size = int(match.group(1))
                 except Exception:
-                    logger.error("Failed to parse max number of inputs from error message, falling back to batch_size=1.")
-                    self.batch_size = 1
-                logger.warning(f"Reducing batch_size to {self.batch_size} and retrying.")
+                    logger.error(
+                        "Failed to parse max number of inputs from error message, falling back to batch_size=1."
+                    )
+                    self._dynamic_batch_size = 1
+                logger.warning(f"Reducing batch_size to {self._dynamic_batch_size} and retrying.")
                 embedding_response = {"data": []}
-                for i in range(0, len(tokenized_texts), self.batch_size):
-                    embedding_response["data"].extend(self._embed_request(tokenized_texts=tokenized_texts[i : i + self.batch_size], **kwargs)["data"])
+                for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
+                    embedding_response["data"].extend(
+                        self._embed_request(
+                            tokenized_texts=tokenized_texts[i : i + self._dynamic_batch_size], **kwargs
+                        )["data"]
+                    )
             else:
                 raise
 
@@ -194,8 +209,7 @@ class OpenAIEmbedder:
 
             tokens = encoding.encode(
                 text,
-                # TODO: Do these need to be configurable? Our use cases treat all text as raw data.
-                allowed_special="all",
+                # TODO: Does this need to be configurable? Our use cases treat all text as raw data.
                 disallowed_special=(),
             )
             # Text longer than a models context length can be split and the embeddings averaged to approximate full text
