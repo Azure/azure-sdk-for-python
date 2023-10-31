@@ -209,7 +209,7 @@ def _convert_to_entity(entry_element):
             etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
         timestamp = _from_entity_datetime(timestamp)
     odata.update({"etag": etag, "timestamp": timestamp})
-    entity._metadata = odata  # pylint: disable=protected-access
+    entity.metadata = odata
     return entity
 
 
@@ -251,11 +251,11 @@ def _normalize_headers(headers):
     return normalized
 
 
-def _return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def _return_headers_and_deserialized(_, deserialized, response_headers):
     return _normalize_headers(response_headers), deserialized
 
 
-def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def _return_context_and_deserialized(response, deserialized, response_headers):
     return response.context["location_mode"], deserialized, response_headers
 
 
