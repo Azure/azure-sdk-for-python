@@ -59,6 +59,7 @@ class BatchJobSchema(PathAwareSchema):
     output_dataset = NestedField(OutputDataSchema)
     output_file_name = fields.Str()
     retry_settings = NestedField(BatchRetrySettingsSchema)
+    properties = fields.Dict(data_key="properties")
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=too-many-branches
@@ -129,5 +130,10 @@ class BatchJobSchema(PathAwareSchema):
 
         if data.get(EndpointYamlFields.RETRY_SETTINGS, None):
             data[EndpointYamlFields.RETRY_SETTINGS] = data[EndpointYamlFields.RETRY_SETTINGS]._to_rest_object()
+
+        if data.get(EndpointYamlFields.BATCH_JOB_EXPERIMENT_NAME, None):
+            data[EndpointYamlFields.BATCH_JOB_EXPERIMENT_NAME] = data[EndpointYamlFields.BATCH_JOB_EXPERIMENT_NAME][
+                "name"
+            ]
 
         return BatchJob(**data)
