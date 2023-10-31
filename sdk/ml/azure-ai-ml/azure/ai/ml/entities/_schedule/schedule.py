@@ -116,7 +116,7 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         return JobSchedule, None
 
     @property
-    def create_job(self) -> None:  # pylint: disable=useless-return
+    def create_job(self) -> Optional[Any]:  # pylint: disable=useless-return
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
         # return None here just to be explicit
         return None
