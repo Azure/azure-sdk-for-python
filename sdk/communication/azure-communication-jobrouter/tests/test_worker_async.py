@@ -76,9 +76,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
                 mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1),
             )
 
-            distribution_policy = await client.upsert_distribution_policy(
-                distribution_policy_id, policy
-            )
+            distribution_policy = await client.upsert_distribution_policy(distribution_policy_id, policy)
 
             # add for cleanup later
             if self._testMethodName in self.distribution_policy_ids:
