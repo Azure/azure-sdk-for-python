@@ -125,7 +125,7 @@ setup(
             "openai>=0.27.8,<1"
         ],
         "simulator": [
-            "aiohttp>=3.8.5,<4",
+            "aiohttp>=3.8.5",
             "aiohttp_retry>=2,<3",
             "Jinja2>=3,<4",
             "json5>=0.9,<1",
