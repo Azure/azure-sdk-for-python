@@ -46,19 +46,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreSecre
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration_2308
-from azure.ai.ml._restclient.v2023_08_01_preview.models import IdentityConfigurationType as IdentityConfigurationType_2308
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedIdentity as RestJobManagedIdentity_2308
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
-)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
@@ -70,6 +57,25 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_08_01_preview.models import AmlToken as RestAmlToken_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    IdentityConfiguration as RestJobIdentityConfiguration_2308,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    IdentityConfigurationType as IdentityConfigurationType_2308,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedIdentity as RestJobManagedIdentity_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials_2308,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import UserIdentity as RestUserIdentity_2308
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
@@ -580,6 +586,9 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     def _to_job_rest_object(self) -> RestUserIdentity:
         return RestUserIdentity()
 
+    def _to_job_rest_object_2308(self) -> RestUserIdentity_2308:
+        return RestUserIdentity()
+
     @classmethod
     # pylint: disable=unused-argument
     def _from_job_rest_object(cls, obj: RestUserIdentity) -> "UserIdentity":
@@ -601,6 +610,7 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, UserIdentityConfiguration):
             return NotImplemented
+        self._to_job_rest_object_2308 = other._to_job_rest_object()
         return self._to_job_rest_object() == other._to_job_rest_object()
 
 
@@ -622,6 +632,9 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
         self.type = IdentityType.AML_TOKEN
 
     def _to_job_rest_object(self) -> RestAmlToken:
+        return RestAmlToken()
+
+    def _to_job_rest_object_2308(self) -> RestAmlToken_2308:
         return RestAmlToken()
 
     def _to_dict(self) -> Dict:
