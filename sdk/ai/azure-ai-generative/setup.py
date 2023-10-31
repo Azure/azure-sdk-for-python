@@ -63,14 +63,20 @@ setup(
             "samples",
         ]
     ),
+    package_data={
+        "azure.ai.generative": [
+            "azure/ai/generative/index/_utils/encodings/*",
+            "azure/ai/generative/synthetic/templates/*",
+            "azure/ai/generative/py.typed",
+        ]
+    },
     python_requires="<4.0,>=3.8",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "azure-ai-resources",
-        "azureml-telemetry",
-        "mlflow<3",
-        "azure-mgmt-authorization",
-        "opencensus-ext-azure<2.0.0",
+        "azure-ai-resources!=0.0.0b0",
+        "azureml-telemetry~=1.0,>=1.43.0",
+        "mlflow-skinny<3",
+        "opencensus-ext-azure~=1.0",
         "opencensus-ext-logging",
     ],
     extras_require={
@@ -118,7 +124,7 @@ setup(
             "openai>=0.27.8,<1"
         ],
         "simulator": [
-            "aiohttp>=3.8.5,<4",
+            "aiohttp>=3.8.5",
             "aiohttp_retry>=2,<3",
             "Jinja2>=3,<4",
             "json5>=0.9,<1",

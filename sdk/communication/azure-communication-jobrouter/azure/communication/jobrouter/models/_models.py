@@ -1298,8 +1298,8 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
     :ivar key: The label key to query against. Required.
     :vartype key: str
     :ivar label_operator: Describes how the value of the label is compared to the value pass
-     through. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
-     "greaterThan", and "greaterThanEqual".
+     through. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanOrEqual",
+     "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
      Default value is "pass-through".
@@ -1310,8 +1310,8 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
     """The label key to query against. Required."""
     label_operator: Union[str, "_models.LabelOperator"] = rest_field(name="labelOperator")
     """Describes how the value of the label is compared to the value pass through. Required. Known
-     values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanEqual\", \"greaterThan\", and
-     \"greaterThanEqual\"."""
+     values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanOrEqual\", \"greaterThan\", and
+     \"greaterThanOrEqual\"."""
     kind: Literal["pass-through"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing the type of queue selector attachment. Required. Default
      value is \"pass-through\"."""
@@ -1346,8 +1346,8 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
     :ivar key: The label key to query against. Required.
     :vartype key: str
     :ivar label_operator: Describes how the value of the label is compared to the value pass
-     through. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
-     "greaterThan", and "greaterThanEqual".
+     through. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanOrEqual",
+     "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar expires_after_seconds: Describes how long the attached label selector is valid in
      seconds.
@@ -1361,8 +1361,8 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
     """The label key to query against. Required."""
     label_operator: Union[str, "_models.LabelOperator"] = rest_field(name="labelOperator")
     """Describes how the value of the label is compared to the value pass through. Required. Known
-     values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanEqual\", \"greaterThan\", and
-     \"greaterThanEqual\"."""
+     values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanOrEqual\", \"greaterThan\", and
+     \"greaterThanOrEqual\"."""
     expires_after_seconds: Optional[float] = rest_field(name="expiresAfterSeconds")
     """Describes how long the attached label selector is valid in seconds."""
     kind: Literal["pass-through"] = rest_discriminator(name="kind")  # type: ignore
@@ -2060,8 +2060,8 @@ class RouterQueueSelector(_model_base.Model):
     :vartype key: str
     :ivar label_operator: Describes how the value of the label is compared to the value defined on
      the
-     label selector. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
-     "greaterThan", and "greaterThanEqual".
+     label selector. Required. Known values are: "equal", "notEqual", "lessThan",
+     "lessThanOrEqual", "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
     :vartype value: any
@@ -2072,7 +2072,7 @@ class RouterQueueSelector(_model_base.Model):
     label_operator: Union[str, "_models.LabelOperator"] = rest_field(name="labelOperator")
     """Describes how the value of the label is compared to the value defined on the
      label selector. Required. Known values are: \"equal\", \"notEqual\", \"lessThan\",
-     \"lessThanEqual\", \"greaterThan\", and \"greaterThanEqual\"."""
+     \"lessThanOrEqual\", \"greaterThan\", and \"greaterThanOrEqual\"."""
     value: Optional[Any] = rest_field()
     """The value to compare against the actual label value with the given operator."""
 
@@ -2295,8 +2295,8 @@ class RouterWorkerSelector(_model_base.Model):
     :vartype key: str
     :ivar label_operator: Describes how the value of the label is compared to the value defined on
      the
-     label selector. Required. Known values are: "equal", "notEqual", "lessThan", "lessThanEqual",
-     "greaterThan", and "greaterThanEqual".
+     label selector. Required. Known values are: "equal", "notEqual", "lessThan",
+     "lessThanOrEqual", "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
     :vartype value: any
@@ -2315,7 +2315,7 @@ class RouterWorkerSelector(_model_base.Model):
     label_operator: Union[str, "_models.LabelOperator"] = rest_field(name="labelOperator")
     """Describes how the value of the label is compared to the value defined on the
      label selector. Required. Known values are: \"equal\", \"notEqual\", \"lessThan\",
-     \"lessThanEqual\", \"greaterThan\", and \"greaterThanEqual\"."""
+     \"lessThanOrEqual\", \"greaterThan\", and \"greaterThanOrEqual\"."""
     value: Optional[Any] = rest_field()
     """The value to compare against the actual label value with the given operator."""
     expires_after_seconds: Optional[float] = rest_field(name="expiresAfterSeconds")
