@@ -216,7 +216,7 @@ class MLIndex:
                         )
 
                     return AzureSearch(
-                        azure_search_endpoint=self.index_config.get("endpoint", endpoint),
+                        azure_search_endpoint=endpoint,
                         azure_search_key=connection_credential.key if isinstance(connection_credential, AzureKeyCredential) else None,
                         index_name=self.index_config.get("index"),
                         embedding_function=self.get_langchain_embeddings(credential=credential).embed_query,
