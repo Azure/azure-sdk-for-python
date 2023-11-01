@@ -95,7 +95,7 @@ setup(
         ],
         "evaluate": [
             "azureml-metrics[generative-ai]",
-            "promptflow>=0.1.0b7",
+            "promptflow",
             "promptflow-tools",
         ],
         "faiss": [
@@ -134,7 +134,6 @@ setup(
             "PyYAML>=4.1,<7",
             "tiktoken>=0.3,<1",
             "websocket_client>=1,<2",
-            "azure-identity>=1,<2",
             "azure-keyvault-secrets>=1,<5",
         ],
     },
