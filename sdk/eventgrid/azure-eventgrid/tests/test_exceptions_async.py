@@ -57,7 +57,6 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
             await client.send(eg_event)
 
     @EventGridPreparer()
-    @recorded_by_proxy_async
     @pytest.mark.asyncio
     async def test_raise_on_bad_resource(self, eventgrid_topic_key):
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
