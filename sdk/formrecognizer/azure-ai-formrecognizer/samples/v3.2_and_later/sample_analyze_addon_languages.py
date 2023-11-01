@@ -1,4 +1,4 @@
-# coding: utf-8
+\# coding: utf-8
 
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,8 +10,8 @@
 FILE: sample_analyze_addon_languages.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract font information using the add-on
-    'LANGUAGES' capability.
+    This sample demonstrates how to detect languages from the document using the
+    add-on 'LANGUAGES' capability.
 
     Add-on features are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.

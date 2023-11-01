@@ -10,8 +10,8 @@
 FILE: sample_analyze_addon_barcodes_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract barcode information using the add-on
-    'BARCODES' feature.
+    This sample demonstrates how to extract all identified barcodes using the
+    add-on 'BARCODES' feature.
 
     Add-on features are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.

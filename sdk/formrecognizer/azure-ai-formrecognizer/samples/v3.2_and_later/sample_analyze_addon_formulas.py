@@ -10,8 +10,8 @@
 FILE: sample_analyze_addon_formulas.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract math formula information using the add-on
-    'FORMULAS' feature.
+    This sample demonstrates how to extract all identified formulas, such as mathematical
+    equations, using the add-on 'FORMULAS' feature.
 
     Add-on features are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.

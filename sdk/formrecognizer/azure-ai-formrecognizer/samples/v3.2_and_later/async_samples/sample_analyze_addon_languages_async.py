@@ -10,7 +10,7 @@
 FILE: sample_analyze_addon_languages_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract font information using the add-on
+    This sample demonstrates how to detect languages using the add-on
     'LANGUAGES' capability.
 
     Add-on features are available within all models except for the Business card
