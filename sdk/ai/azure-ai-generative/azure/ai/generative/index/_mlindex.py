@@ -269,9 +269,10 @@ class MLIndex:
                             logger.warning(
                                 f"Failed to load FAISS Index using installed version of langchain, retrying with vendored FAISS VectorStore.\n{e}"
                             )
-                            from azureml.rag.langchain.vendor.vectorstores.faiss import FAISS
-
+                            
+                            from azure.ai.generative.index._langchain.vendor.vectorstores.faiss import FAISS
                             store = FAISS.load_local(str(tmpdir), embeddings)
+                            
                 elif engine.endswith("indexes.faiss.FaissAndDocStore"):
                     from azure.ai.generative.index._indexes.faiss import FaissAndDocStore
                     error_fmt_str = """Failed to import langchain faiss bridge module with: {e}\n"
@@ -753,7 +754,7 @@ class MLIndex:
                 credential=credential,
             )
         elif index_type == "pinecone":
-            from azureml.rag.tasks.update_pinecone import create_index_from_raw_embeddings
+            from azure.ai.generative.index._tasks.update_pinecone import create_index_from_raw_embeddings
 
             if not index_connection:
                 index_config = {**index_config, **{"environment": os.getenv("PINECONE_ENVIRONMENT")}}
