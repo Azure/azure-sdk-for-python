@@ -21,10 +21,10 @@ from ._generated.models import (
     SearchMode,
     ScoringStatistics,
     VectorFilterMode,
+    VectorQuery,
     SemanticErrorMode,
     SuggestRequest,
 )
-from .models import VectorQuery
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
