@@ -46,7 +46,7 @@ class PipelineComponentBatchDeploymentSchema(PathAwareSchema):
     description = fields.Str(metadata={"description": "Description of the endpoint deployment."})
 
     @validates("description")
-    def validate_user_assigned_identities(self, data, **kwargs):
+    def validate_user_assigned_identities(self, data):
         if len(data) > 0:
             raise ValidationError(f"Parameter 'Description' is not allowed for deployment type 'Pipeline'.")
 
