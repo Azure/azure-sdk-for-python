@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-boolean-expressions
 
 import re
 from typing import Dict, Optional, TypeVar, Union
@@ -118,7 +118,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         """
         if (
             not skip_script_validation
-            and not isinstance(deployment, PipelineComponentBatchDeployment)  # pylint: too-many-boolean-expressions
+            and not isinstance(deployment, PipelineComponentBatchDeployment)
             and deployment
             and deployment.code_configuration
             and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
