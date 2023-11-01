@@ -91,9 +91,12 @@ class HttpXTransport(HttpTransport):
         """
         self.open()
         stream_response = kwargs.pop("stream", False)
-        timeout = kwargs.pop("connection_timeout", self.connection_config.get("timeout"))
+        connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("timeout"))
+        read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
         # not needed here as its already handled during init
         kwargs.pop("connection_verify", None)
+
+        timeout = httpx.Timeout(connect_timeout, read=read_timeout)
         parameters = {
             "method": request.method,
             "url": request.url,
@@ -104,8 +107,10 @@ class HttpXTransport(HttpTransport):
             **kwargs,
         }
 
-        if hasattr(request, "content"):
-            parameters["content"] = request.content
+        # TODO: Determine content vs data + files
+        # Setting "content" causes some tests to fail.
+        # if hasattr(request, "content"):
+        #     parameters["content"] = request.content
 
         response = None
 
@@ -180,13 +185,20 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         """
         await self.open()
         stream_response = kwargs.pop("stream", False)
+        connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("timeout"))
+        read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
+        # not needed here as its already handled during init
+        kwargs.pop("connection_verify", None)
+        timeout = httpx.Timeout(connect_timeout, read=read_timeout)
         parameters = {
             "method": request.method,
             "url": request.url,
             "headers": request.headers.items(),
             "data": request._data,  # pylint: disable=protected-access
-            "content": request.content if hasattr(request, "content") else None,
+            # TODO: determine content vs data + files
+            # "content": request.content if hasattr(request, "content") else None,
             "files": request._files,  # pylint: disable=protected-access
+            "timeout": timeout,
             **kwargs,
         }
 

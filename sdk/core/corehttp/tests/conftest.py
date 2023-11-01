@@ -39,7 +39,6 @@ def port():
 
 def start_testserver():
     port = get_port()
-    print(f'get_port: {port}')
     os.environ["FLASK_APP"] = "coretestserver"
     os.environ["FLASK_PORT"] = str(port)
     if platform.python_implementation() == "PyPy":

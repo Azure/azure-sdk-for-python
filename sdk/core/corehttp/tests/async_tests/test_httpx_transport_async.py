@@ -45,7 +45,9 @@ class TestAsyncHttpXTransport:
             assert ex.value == "connection timed out"
 
     @pytest.mark.asyncio
-    async def test_compress_compressed_no_header(self,):
+    async def test_compress_compressed_no_header(
+        self,
+    ):
         # expect compressed text
         account_name = "coretests"
         account_url = "https://{}.blob.core.windows.net".format(account_name)

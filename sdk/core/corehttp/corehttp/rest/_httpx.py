@@ -57,16 +57,6 @@ class HttpXTransportResponse(HttpResponseImpl):
             stream_download_generator=HttpXStreamDownloadGenerator,
         )
 
-    def read(self) -> bytes:
-        """Read the response's bytes.
-
-        :return: The response's bytes.
-        :rtype: bytes
-        """
-        if self._content is None:
-            self._content = self._internal_response.read()
-        return self.content
-
 
 # pylint: disable=unused-argument
 class HttpXStreamDownloadGenerator:
@@ -101,7 +91,7 @@ class HttpXStreamDownloadGenerator:
             return next(self.iter_content_func)
         except StopIteration:
             self.response._internal_response.close()  # pylint: disable=protected-access
-            #self.response._stream_download_generator.__exit__(None, None, None)  # pylint: disable=protected-access
+            # self.response._stream_download_generator.__exit__(None, None, None)  # pylint: disable=protected-access
             raise
         except httpx.DecodingError as ex:
             if len(ex.args) > 0:
