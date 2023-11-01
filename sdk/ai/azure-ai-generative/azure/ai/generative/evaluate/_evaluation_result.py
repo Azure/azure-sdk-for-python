@@ -1,19 +1,19 @@
-
+from typing import Dict
 
 class EvaluationResult(object):
 
-    def __init__(self, metrics_summary: dict, artifacts: dict, **kwargs):
+    def __init__(self, metrics_summary: Dict[str, float], artifacts: Dict[str, str], **kwargs):
         self._metrics_summary = metrics_summary
         self._artifacts = artifacts
         self._tracking_uri = kwargs.get("tracking_uri")
         self._evaluation_id = kwargs.get("evaluation_id")
 
     @property
-    def metrics_summary(self) -> dict[str: float]:
+    def metrics_summary(self) -> Dict[str, float]:
         return self._metrics_summary
 
     @property
-    def artifacts(self) -> dict[str, str]:
+    def artifacts(self) -> Dict[str, str]:
         return self._artifacts
 
     @property
