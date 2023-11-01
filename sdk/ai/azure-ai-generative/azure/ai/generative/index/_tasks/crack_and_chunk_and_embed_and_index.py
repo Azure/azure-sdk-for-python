@@ -107,6 +107,34 @@ def crack_and_chunk_and_embed_and_index(
         elif index_type == "faiss":
             logger.info(f"Creating Faiss index from embeddings_container with config {index_config}")
             mlindex = embeddings_container.write_as_faiss_mlindex(output_path, engine="azure.ai.generative.index._indexes.faiss.FaissAndDocStore")
+        elif index_type == "pinecone":
+            logger.info(f"Creating Pinecone index from embeddings_container with config {index_config}")
+            from azure.ai.generative.index._tasks.update_pinecone import create_index_from_raw_embeddings
+
+            connection_args = {}
+            if index_connection is not None:
+                connection_args["connection_type"] = "workspace_connection"
+                if isinstance(index_connection, str):
+                    from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
+
+                    connection_args["connection"] = {"id": index_connection}
+                    connection = get_connection_by_id_v2(index_connection)
+                else:
+                    from azure.ai.generative.index._utils.connections import get_id_from_connection
+
+                    connection_args["connection"] = {"id": get_id_from_connection(index_connection)}
+                    connection = index_connection
+
+                from azure.ai.generative.index._utils.connections import get_metadata_from_connection
+
+                index_config["environment"] = get_metadata_from_connection(connection)["environment"]
+
+            mlindex = create_index_from_raw_embeddings(
+                embeddings_container,
+                pinecone_config=index_config,
+                connection=connection_args,
+                output_path=output_path,
+            )
         else:
             raise ValueError(f"Unsupported index_type {index_type}")
 
