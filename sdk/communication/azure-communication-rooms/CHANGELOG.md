@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- The `MicrosoftBotIdentifier` and `MicrosoftBotProperties` have been deprecated.
 
 ## 1.1.0b1 (2023-10-31)
 
