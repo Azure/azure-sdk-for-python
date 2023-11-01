@@ -114,11 +114,6 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
         # Hack to fix generated code adding '/messages' after SAS parameters
-        includes_messages = request.http_request.url.endswith('/messages')
-        if includes_messages:
-            request.http_request.url = request.http_request.url[:-(len('/messages'))]
-            request.http_request.url = urljoin(request.http_request.url, 'messages')
-
         message_id = request.context.options.pop('queue_message_id', None)
         if message_id:
             request.http_request.url = urljoin(
