@@ -431,7 +431,6 @@ def parse_connection_str(
     return primary, secondary, credential
 
 
-
 def create_configuration(**kwargs: Any) -> StorageConfiguration:
      # Backwards compatibility if someone is not passing sdk_moniker
     if not kwargs.get("sdk_moniker"):
