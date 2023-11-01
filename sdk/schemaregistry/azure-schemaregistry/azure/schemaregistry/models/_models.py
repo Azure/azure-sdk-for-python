@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Mapping, TYPE_CHECKING, Union, overload
+from typing import TYPE_CHECKING, Union
 
 from .. import _model_base
 from .._model_base import rest_field
@@ -30,27 +30,9 @@ class Schema(_model_base.Model):
 
     definition: str = rest_field()
     """The content of the schema. Required."""
-    properties: "_models.SchemaProperties" = rest_field()
+    properties: "_models._models.SchemaProperties" = rest_field()
     """The properties of the schema. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        definition: str,
-        properties: "_models.SchemaProperties",
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class SchemaGroup(_model_base.Model):
@@ -99,27 +81,6 @@ class SchemaProperties(_model_base.Model):
     version: int = rest_field()
     """Version of schema. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        format: Union[str, "_models.SchemaFormat"],
-        group_name: str,
-        name: str,
-        version: int,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class SchemaVersion(_model_base.Model):

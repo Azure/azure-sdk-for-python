@@ -31,7 +31,6 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.tracing.decorator import distributed_trace
 
 from ._client import SchemaRegistryClient as GeneratedServiceClient
-from .models import SchemaFormat
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
