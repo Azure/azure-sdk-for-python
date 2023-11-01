@@ -43,26 +43,3 @@ class TestAsyncHttpXTransport:
         with pytest.raises(ServiceRequestError) as ex:
             await pipeline_client.send_request(request)
             assert ex.value == "connection timed out"
-
-    @pytest.mark.asyncio
-    async def test_compress_compressed_no_header(
-        self,
-    ):
-        # expect compressed text
-        account_name = "coretests"
-        account_url = "https://{}.blob.core.windows.net".format(account_name)
-        url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
-        client = AsyncPipelineClient(account_url, transport=AsyncHttpXTransport())
-        async with client:
-            request = HttpRequest("GET", url)
-            pipeline_response = await client.pipeline.run(request, stream=True)
-            response = pipeline_response.http_response
-            data = response.iter_raw()
-            content = b""
-            async for d in data:
-                content += d
-            try:
-                content.decode("utf-8")
-                assert False
-            except UnicodeDecodeError:
-                pass

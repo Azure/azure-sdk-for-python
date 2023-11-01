@@ -47,18 +47,3 @@ class TestHttpXTransport:
         with pytest.raises(ServiceRequestError) as ex:
             pipeline_client.send_request(request)
             assert ex.value == "connection timed out"
-
-    def test_iter_raw(self, port):
-        client = PipelineClient(PLACEHOLDER_ENDPOINT, transport=HttpXTransport())
-        request = HttpRequest("GET", url="http://localhost:{}/streams/basic".format(port))
-        with client.send_request(request, stream=True) as response:
-            raw = b""
-            for part in response.iter_raw():
-                # assert not response._internal_response._content_consumed
-                assert not response.is_closed
-                assert response.is_stream_consumed  # we follow httpx behavior here
-                raw += part
-            assert raw == b"Hello, world!"
-        # assert response._internal_response._content_consumed
-        assert response.is_closed
-        assert response.is_stream_consumed

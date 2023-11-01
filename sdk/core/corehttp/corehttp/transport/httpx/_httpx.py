@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, ContextManager, Optional, cast
+from typing import Any, Optional, cast
 
 import httpx
 from .._base import _create_connection_config, _handle_non_stream_rest_response
@@ -203,8 +203,6 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         }
 
         response = None
-        stream_ctx: Optional[ContextManager] = None
-
         client = cast(httpx.AsyncClient, self.client)
         try:
             if stream_response:
@@ -217,7 +215,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         except httpx.RequestError as err:
             raise ServiceRequestError(err, error=err) from err
 
-        retval = AsyncHttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
+        retval = AsyncHttpXTransportResponse(request, response)
         if not stream_response:
             await _handle_non_stream_rest_response_async(retval)
         return retval
