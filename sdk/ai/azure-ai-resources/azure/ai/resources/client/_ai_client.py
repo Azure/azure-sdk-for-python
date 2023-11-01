@@ -16,7 +16,7 @@ from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 from azure.ai.resources._utils._str_utils import build_connection_id
 from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
 from azure.ai.resources.entities.mlindex import Index as MLIndexAsset
-from azure.ai.resources.operations import ACSOutputConfig, ACSSource, GitSource, IndexDataSource, LocalSource
+from azure.ai.resources.operations import ACSOutputConfig, ACSSource, GitSource, IndexDataSource, LocalSource, PineconeOutputConfig
 from azure.ai.ml import MLClient
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._utils._experimental import experimental
@@ -257,7 +257,7 @@ class AIClient:
         embeddings_model="text-embedding-ada-002",
         aoai_connection_id: str = DEFAULT_OPEN_AI_CONNECTION_NAME,
         ######## ACS index info ########
-        acs_config: ACSOutputConfig = None,  # todo better name?
+        index_config: Union[ACSOutputConfig, PineconeOutputConfig] = None,  # todo better name?
         ######## data source info ########
         input_source: Union[IndexDataSource, str],
         identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
@@ -271,7 +271,7 @@ class AIClient:
             embeddings_model (str): _description_
             aoai_connection_id (str): _description_
             input_config (IndexDataSource): _description_
-            acs_config (ACSOutputConfig): _description_
+            index_config (Union[ACSOutputConfig, PineconeOutputConfig]): _description_
             data_source_url (str, optional): _description_. Defaults to None.
             chunk_size (int, optional): _description_. Defaults to None.
             chunk_overlap (int, optional): _description_. Defaults to None.
@@ -333,6 +333,22 @@ class AIClient:
 
         if document_path_replacement_regex:
             document_path_replacement_regex = json.loads(document_path_replacement_regex)
+        
+        if isinstance(index_config, ACSOutputConfig):
+            index_store = IndexStore(
+                type="acs",
+                connection=build_connection_id(index_config.acs_connection_id, self._scope),
+                name=index_config.acs_index_name,
+            )
+        elif isinstance(index_config, PineconeOutputConfig):
+            index_store = IndexStore(
+                type="pinecone",
+                connection=build_connection_id(index_config.pinecone_connection_id, self._scope),
+                name=index_config.pinecone_index_name,
+            )
+        else:
+            index_store = IndexStore(type="faiss")
+
         data_index = DataIndex(
             name=output_index_name,
             source=IndexSource(
@@ -355,13 +371,7 @@ class AIClient:
                 model=build_open_ai_protocol(embeddings_model),
                 connection=build_connection_id(aoai_connection_id, self._scope),
             ),
-            index=IndexStore(
-                type="acs",
-                connection=build_connection_id(acs_config.acs_connection_id, self._scope),
-                name=acs_config.acs_index_name,
-            )
-            if acs_config is not None
-            else IndexStore(type="faiss"),
+            index=index_store,
             # name is replaced with a unique value each time the job is run
             path=f"azureml://datastores/workspaceblobstore/paths/indexes/{output_index_name}/{{name}}",
         )

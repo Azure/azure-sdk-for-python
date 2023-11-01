@@ -6,6 +6,7 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 
 from ._acs_output_config import ACSOutputConfig
+from ._pinecone_output_config import PineconeOutputConfig
 from ._ai_resource_operations import AIResourceOperations
 from ._connection_operations import ConnectionOperations
 from ._deployment_operations import DeploymentOperations
@@ -24,6 +25,7 @@ __all__ = [
     "GitSource",
     "LocalSource",
     "ACSOutputConfig",
+    "PineconeOutputConfig",
     "ProjectOperations",
     "PFOperations",
     "AIResourceOperations",
