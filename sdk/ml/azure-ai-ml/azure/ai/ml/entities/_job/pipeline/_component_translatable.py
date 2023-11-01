@@ -275,7 +275,7 @@ class ComponentTranslatableMixin:
         return Input(**input_variable)
 
     @classmethod
-    def _to_input_builder_function(cls, input: Union[Input, str, bool, int, float]) -> Input:
+    def _to_input_builder_function(cls, input: Union[Dict, SweepDistribution, Input, str, bool, int, float]) -> Input:
         input_variable = {}
 
         if isinstance(input, Input):
@@ -298,7 +298,7 @@ class ComponentTranslatableMixin:
     @classmethod
     def _to_output(
         cls,  # pylint: disable=unused-argument
-        output: Union[Output, str, bool, int, float],
+        output: Optional[Union[Output, Dict, str, bool, int, float]],
         pipeline_job_dict: Optional[dict] = None,
         **kwargs: Any,
     ) -> Output:

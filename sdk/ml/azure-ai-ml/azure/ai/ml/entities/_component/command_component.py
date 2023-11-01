@@ -101,10 +101,10 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         tags: Optional[Dict] = None,
         display_name: Optional[str] = None,
         command: Optional[str] = None,
-        code: Optional[str] = None,
+        code: Optional[Union[str, os.PathLike]] = None,
         environment: Optional[Union[str, Environment]] = None,
         distribution: Optional[
-            Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+            Union[Dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
         ] = None,
         resources: Optional[JobResourceConfiguration] = None,
         inputs: Optional[Dict] = None,
