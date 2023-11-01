@@ -74,7 +74,7 @@ def run(raw_data: AMLRequest):
         aml_response = AMLResponse(response_to_dict(response), 200)
         aml_response.headers["Content-Type"] = "application/jsonl"
         return aml_response
-    return json.dumps(response)
+    return json.loads(json.dumps(response))
 
 '''
 
