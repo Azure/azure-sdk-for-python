@@ -188,9 +188,9 @@ def index_data(
             identity,
             input_data_override,
         )
-    elif data_index.index.type == DataIndexTypes.ACS:
+    elif data_index.index.type == DataIndexTypes.ACS or data_index.index.type == DataIndexTypes.PINECONE:
         if kwargs.get("incremental_update", False):
-            configured_component = data_index_incremental_update_acs(
+            configured_component = data_index_incremental_update_hosted(
                 ml_client,
                 data_index,
                 description,
@@ -204,7 +204,7 @@ def index_data(
                 input_data_override,
             )
         else:
-            configured_component = data_index_acs(
+            configured_component = data_index_hosted(
                 ml_client,
                 data_index,
                 description,
@@ -227,7 +227,7 @@ def index_data(
     return configured_component
 
 
-def data_index_incremental_update_acs(
+def data_index_incremental_update_hosted(
     ml_client: Any,
     data_index: DataIndex,
     description: Optional[str] = None,
@@ -244,23 +244,30 @@ def data_index_incremental_update_acs(
     from azure.ai.resources.index._dataindex.dsl._pipeline_decorator import pipeline
 
     crack_and_chunk_and_embed_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED)
-    update_acs_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
+
+    if data_index.index.type == DataIndexTypes.ACS:
+        update_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
+    elif data_index.index.type == DataIndexTypes.PINECONE:
+        update_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_PINECONE_INDEX)
+    else:
+        raise ValueError(f"Unsupported hosted index type: {data_index.index.type}")
+
     register_mlindex_asset_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_REGISTER_MLINDEX_ASSET)
 
     @pipeline(
-        name=name if name else "data_index_incremental_update_acs",
+        name=name if name else f"data_index_incremental_update_{data_index.index.type}",
         description=description,
         tags=tags,
-        display_name=display_name if display_name else "LLM - Data to ACS (Incremental Update)",
+        display_name=display_name if display_name else f"LLM - Data to {data_index.index.type.upper()} (Incremental Update)",
         experiment_name=experiment_name,
         compute=compute,
         get_component=True,
     )
-    def data_index_acs_pipeline(
+    def data_index_pipeline(
         input_data: Input,
         embeddings_model: str,
-        acs_config: str,
-        acs_connection_id: str,
+        index_config: str,
+        index_connection_id: str,
         chunk_size: int = 768,
         chunk_overlap: int = 0,
         input_glob: str = "**/*",
@@ -270,16 +277,16 @@ def data_index_incremental_update_acs(
         embeddings_container: Input = None,
     ):
         """
-        Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.
+        Generate embeddings for a `input_data` source and push them into a hosted index (such as Azure Cognitive Search and Pinecone).
 
         :param input_data: The input data to be indexed.
         :type input_data: Input
         :param embeddings_model: The embedding model to use when processing source data chunks.
         :type embeddings_model: str
-        :param acs_config: The configuration for the Azure Cognitive Search index.
-        :type acs_config: str
-        :param acs_connection_id: The connection ID for the Azure Cognitive Search index.
-        :type acs_connection_id: str
+        :param index_config: The configuration for the hosted index.
+        :type index_config: str
+        :param index_connection_id: The connection ID for the hosted index.
+        :type index_connection_id: str
         :param chunk_size: The size of the chunks to break the input data into.
         :type chunk_size: int
         :param chunk_overlap: The number of tokens to overlap between chunks.
@@ -317,17 +324,25 @@ def data_index_incremental_update_acs(
         if identity:
             crack_and_chunk_and_embed.identity = identity
 
-        update_acs_index = update_acs_index_component(
-            embeddings=crack_and_chunk_and_embed.outputs.embeddings, acs_config=acs_config
-        )
+        if data_index.index.type == DataIndexTypes.ACS:
+            update_index = update_index_component(
+                embeddings=crack_and_chunk_and_embed.outputs.embeddings, acs_config=index_config
+            )
+            update_index.environment_variables["AZUREML_WORKSPACE_CONNECTION_ID_ACS"] = index_connection_id
+        elif data_index.index.type == DataIndexTypes.PINECONE:
+            update_index = update_index_component(
+                embeddings=crack_and_chunk_and_embed.outputs.embeddings, pinecone_config=index_config
+            )
+            update_index.environment_variables["AZUREML_WORKSPACE_CONNECTION_ID_PINECONE"] = index_connection_id
+        else:
+            raise ValueError(f"Unsupported hosted index type: {data_index.index.type}")
         if compute is None or compute == "serverless":
-            use_automatic_compute(update_acs_index, instance_type=serverless_instance_type)
-        update_acs_index.environment_variables["AZUREML_WORKSPACE_CONNECTION_ID_ACS"] = acs_connection_id
+            use_automatic_compute(update_index, instance_type=serverless_instance_type)
         if identity:
-            update_acs_index.identity = identity
+            update_index.identity = identity
 
         register_mlindex_asset = register_mlindex_asset_component(
-            storage_uri=update_acs_index.outputs.index,
+            storage_uri=update_index.outputs.index,
             asset_name=data_index.name,
         )
         if compute is None or compute == "serverless":
@@ -335,7 +350,7 @@ def data_index_incremental_update_acs(
         if identity:
             register_mlindex_asset.identity = identity
         return {
-            "mlindex_asset_uri": update_acs_index.outputs.index,
+            "mlindex_asset_uri": update_index.outputs.index,
             "mlindex_asset_id": register_mlindex_asset.outputs.asset_id,
         }
 
@@ -344,14 +359,14 @@ def data_index_incremental_update_acs(
     else:
         input_data = Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path)
 
-    acs_config = {
+    index_config = {
         "index_name": data_index.index.name if data_index.index.name is not None else data_index.name,
         "full_sync": True,
     }
     if data_index.index.config is not None:
-        acs_config.update(data_index.index.config)
+        index_config.update(data_index.index.config)
 
-    component = data_index_acs_pipeline(
+    component = data_index_pipeline(
         input_data=input_data,
         input_glob=data_index.source.input_glob,
         chunk_size=data_index.source.chunk_size,
@@ -363,8 +378,8 @@ def data_index_incremental_update_acs(
         embeddings_model=build_model_protocol(data_index.embedding.model),
         aoai_connection_id=_resolve_connection_id(ml_client, data_index.embedding.connection),
         embeddings_container=Input(type=AssetTypes.URI_FOLDER, path=data_index.embedding.cache_path) if data_index.embedding.cache_path else None,
-        acs_config=json.dumps(acs_config),
-        acs_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
+        index_config=json.dumps(index_config),
+        index_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
     )
     # Hack until full Component classes are implemented that can annotate the optional parameters properly
     component.inputs["input_glob"]._meta.optional = True
@@ -519,7 +534,7 @@ def data_index_faiss(
     return component
 
 
-def data_index_acs(
+def data_index_hosted(
     ml_client: Any,
     data_index: DataIndex,
     description: Optional[str] = None,
@@ -537,23 +552,30 @@ def data_index_acs(
 
     crack_and_chunk_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK)
     generate_embeddings_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_GENERATE_EMBEDDINGS)
-    update_acs_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
+
+    if data_index.index.type == DataIndexTypes.ACS:
+        update_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
+    elif data_index.index.type == DataIndexTypes.PINECONE:
+        update_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_PINECONE_INDEX)
+    else:
+        raise ValueError(f"Unsupported hosted index type: {data_index.index.type}")
+
     register_mlindex_asset_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_REGISTER_MLINDEX_ASSET)
 
     @pipeline(
-        name=name if name else "data_index_acs",
+        name=name if name else f"data_index_{data_index.index.type}",
         description=description,
         tags=tags,
-        display_name=display_name if display_name else "LLM - Data to ACS",
+        display_name=display_name if display_name else f"LLM - Data to {data_index.index.type.upper()}",
         experiment_name=experiment_name,
         compute=compute,
         get_component=True,
     )
-    def data_index_acs_pipeline(
+    def data_index_pipeline(
         input_data: Input,
         embeddings_model: str,
-        acs_config: str,
-        acs_connection_id: str,
+        index_config: str,
+        index_connection_id: str,
         chunk_size: int = 1024,
         data_source_glob: str = None,
         data_source_url: str = None,
@@ -562,16 +584,16 @@ def data_index_acs(
         embeddings_container: Input = None,
     ):
         """
-        Generate embeddings for a `input_data` source and push them into an Azure Cognitive Search index.
+        Generate embeddings for a `input_data` source and push them into a hosted index (such as Azure Cognitive Search and Pinecone).
 
         :param input_data: The input data to be indexed.
         :type input_data: Input
         :param embeddings_model: The embedding model to use when processing source data chunks.
         :type embeddings_model: str
-        :param acs_config: The configuration for the Azure Cognitive Search index.
-        :type acs_config: str
-        :param acs_connection_id: The connection ID for the Azure Cognitive Search index.
-        :type acs_connection_id: str
+        :param index_config: The configuration for the hosted index.
+        :type index_config: str
+        :param index_connection_id: The connection ID for the hosted index.
+        :type index_connection_id: str
         :param chunk_size: The size of the chunks to break the input data into.
         :type chunk_size: int
         :param data_source_glob: The glob pattern to use when searching for input data.
@@ -615,17 +637,25 @@ def data_index_acs(
         if identity:
             generate_embeddings.identity = identity
 
-        update_acs_index = update_acs_index_component(
-            embeddings=generate_embeddings.outputs.embeddings, acs_config=acs_config
-        )
+        if data_index.index.type == DataIndexTypes.ACS:
+            update_index = update_index_component(
+                embeddings=generate_embeddings.outputs.embeddings, acs_config=index_config
+            )
+            update_index.environment_variables["AZUREML_WORKSPACE_CONNECTION_ID_ACS"] = index_connection_id
+        elif data_index.index.type == DataIndexTypes.PINECONE:
+            update_index = update_index_component(
+                embeddings=generate_embeddings.outputs.embeddings, pinecone_config=index_config
+            )
+            update_index.environment_variables["AZUREML_WORKSPACE_CONNECTION_ID_PINECONE"] = index_connection_id
+        else:
+            raise ValueError(f"Unsupported hosted index type: {data_index.index.type}")
         if compute is None or compute == "serverless":
-            use_automatic_compute(update_acs_index, instance_type=serverless_instance_type)
-        update_acs_index.environment_variables["AZUREML_WORKSPACE_CONNECTION_ID_ACS"] = acs_connection_id
+            use_automatic_compute(update_index, instance_type=serverless_instance_type)
         if identity:
-            update_acs_index.identity = identity
+            update_index.identity = identity
 
         register_mlindex_asset = register_mlindex_asset_component(
-            storage_uri=update_acs_index.outputs.index,
+            storage_uri=update_index.outputs.index,
             asset_name=data_index.name,
         )
         if compute is None or compute == "serverless":
@@ -633,7 +663,7 @@ def data_index_acs(
         if identity:
             register_mlindex_asset.identity = identity
         return {
-            "mlindex_asset_uri": update_acs_index.outputs.index,
+            "mlindex_asset_uri": update_index.outputs.index,
             "mlindex_asset_id": register_mlindex_asset.outputs.asset_id,
         }
 
@@ -642,17 +672,17 @@ def data_index_acs(
     else:
         input_data = Input(type=data_index.source.input_data.type, path=data_index.source.input_data.path)
 
-    acs_config = {
+    index_config = {
         "index_name": data_index.index.name if data_index.index.name is not None else data_index.name,
     }
     if data_index.index.config is not None:
-        acs_config.update(data_index.index.config)
+        index_config.update(data_index.index.config)
 
-    component = data_index_acs_pipeline(
+    component = data_index_pipeline(
         input_data=input_data,
         embeddings_model=build_model_protocol(data_index.embedding.model),
-        acs_config=json.dumps(acs_config),
-        acs_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
+        index_config=json.dumps(index_config),
+        index_connection_id=_resolve_connection_id(ml_client, data_index.index.connection),
         chunk_size=data_index.source.chunk_size,
         data_source_glob=data_index.source.input_glob,
         data_source_url=data_index.source.citation_url,
@@ -754,7 +784,15 @@ def _resolve_connection_id(ml_client, connection: Optional[Union[str, WorkspaceC
             long_form = re.match(r"(azureml:/)?/.*/connections/(?P<connection_name>[^/]*)", connection)
             connection_name = long_form.group("connection_name") if long_form else connection
 
-        connection = ml_client.connections.get(connection_name)
+        try:
+            connection = ml_client.connections.get(connection_name)
+        except Exception:
+            # Try again for Pinecone's custom connections
+            return ml_client.connections._operation.list_secrets(
+                connection_name=connection_name,
+                resource_group_name=ml_client.resource_group_name,
+                workspace_name=ml_client.workspace_name
+            ).as_dict()["id"]
     elif hasattr(connection, "_workspace_connection"):
         # Handle azure.ai.resources Connections
         connection = connection._workspace_connection

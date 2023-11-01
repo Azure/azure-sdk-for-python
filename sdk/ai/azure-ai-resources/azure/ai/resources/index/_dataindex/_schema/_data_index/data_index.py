@@ -36,6 +36,8 @@ class DataIndexTypes:
 
     ACS = "acs"
     """Azure Cognitive Search index type."""
+    PINECONE = "pinecone"
+    """Pinecone index type."""
     FAISS = "faiss"
     """Faiss index type."""
 
@@ -182,9 +184,10 @@ class IndexStoreSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=[
             DataIndexTypes.ACS,
+            DataIndexTypes.PINECONE,
             DataIndexTypes.FAISS,
         ],
-        metadata={"description": "The type of index to write to. Currently supported types are 'acs' and 'faiss'."},
+        metadata={"description": "The type of index to write to. Currently supported types are 'acs', 'pinecone', and 'faiss'."},
     )
     name = fields.Str(
         required=False,
@@ -194,13 +197,13 @@ class IndexStoreSchema(metaclass=PatchedSchemaMeta):
         required=False,
         metadata={
             "description": "Connection reference to use for index information, "
-            "only needed for hosted indexes (such as Azure Cognitive Search)."
+            "only needed for hosted indexes (such as Azure Cognitive Search and Pinecone)."
         },
     )
     config = fields.Dict(
         required=False,
         metadata={
-            "description": "Configuration for the index. Primary use is to configure Azure Cognitive Search specific settings."
+            "description": "Configuration for the index. Primary use is to configure Azure Cognitive Search and Pinecone specific settings."
             "Such as custom `field_mapping` for known field types."
         }
     )

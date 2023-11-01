@@ -153,14 +153,14 @@ class Embedding(DictMixin):
 @experimental
 class IndexStore(DictMixin):
     """Congifuration for the destination index to write processed data to.
-    :keyword type: The type of index to write to. Currently supported types are 'acs' and 'faiss'.
+    :keyword type: The type of index to write to. Currently supported types are 'acs', 'pinecone', and 'faiss'.
     :type type: str
-    :keyword name: Name of index to update/create, only needed for hosted indexes (such as Azure Cognitive Search).
+    :keyword name: Name of index to update/create, only needed for hosted indexes (such as Azure Cognitive Search and Pinecone).
     :type name: str, optional
     :keyword connection: Connection reference to use for index information,
-        only needed for hosted indexes (such as Azure Cognitive Search).
+        only needed for hosted indexes (such as Azure Cognitive Search and Pinecone).
     :type connection: str, optional
-    :keyword config: Configuration for the index. Configuration for the index. Primary use is to configure Azure Cognitive Search specific settings.
+    :keyword config: Configuration for the index. Configuration for the index. Primary use is to configure Azure Cognitive Search and Pinecone specific settings.
         Such as custom `field_mapping` for known field types.
     :type config: dict, optional
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the IndexStore object cannot be validated.
