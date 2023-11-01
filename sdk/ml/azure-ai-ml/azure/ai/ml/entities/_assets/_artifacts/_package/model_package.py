@@ -230,12 +230,12 @@ class ModelPackage(Resource, PackageRequest):
         *,
         target_environment: Union[str, Dict[str, str]],
         inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
-        base_environment_source: BaseEnvironment = None,
+        base_environment_source: Optional[BaseEnvironment] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         inputs: Optional[List[ModelPackageInput]] = None,
         model_configuration: Optional[ModelConfiguration] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         if isinstance(target_environment, dict):
             target_environment = target_environment["name"]
