@@ -74,7 +74,7 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "azure-ai-resources!=0.0.0b0",
-        "azureml-telemetry~=1.0,>=1.43.0",
+        "azureml-telemetry~=1.0,>=1.51.0",
         "mlflow-skinny<3",
         "opencensus-ext-azure~=1.0",
         "opencensus-ext-logging",
