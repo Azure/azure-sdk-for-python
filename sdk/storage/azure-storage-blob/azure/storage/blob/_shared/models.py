@@ -569,13 +569,13 @@ class StorageConfiguration(Configuration):
 
     def __init__(self, **kwargs):
         super(StorageConfiguration, self).__init__(**kwargs)
-        self.max_single_put_size = 64 * 1024 * 1024
+        self.max_single_put_size = kwargs.pop('max_single_put_size', 64 * 1024 * 1024)
         self.copy_polling_interval = 15
-        self.max_block_size = 4 * 1024 * 1024
+        self.max_block_size = kwargs.pop('max_block_size', 4 * 1024 * 1024)
         self.min_large_block_upload_threshold = 4 * 1024 * 1024 + 1
-        self.use_byte_buffer = False
-        self.max_page_size = 4 * 1024 * 1024
-        self.min_large_chunk_upload_threshold = 100 * 1024 * 1024 + 1
-        self.max_single_get_size = 32 * 1024 * 1024
-        self.max_chunk_get_size = 4 * 1024 * 1024
+        self.use_byte_buffer = kwargs.pop('use_byte_buffer', False)
+        self.max_page_size = kwargs.pop('max_page_size', 4 * 1024 * 1024)
+        self.min_large_chunk_upload_threshold = kwargs.pop('min_large_block_upload_threshold', 100 * 1024 * 1024 + 1)
+        self.max_single_get_size = kwargs.pop('max_single_get_size', 32 * 1024 * 1024)
+        self.max_chunk_get_size = kwargs.pop('max_chunk_get_size', 4 * 1024 * 1024)
         self.max_range_size = 4 * 1024 * 1024
