@@ -6,7 +6,7 @@
 import logging
 from typing import Any
 
-from marshmallow import INCLUDE, fields, post_load
+from marshmallow import ValidationError, INCLUDE, fields, post_load, validates
 
 from azure.ai.ml._schema import (
     ArmVersionedStr,
@@ -43,6 +43,12 @@ class PipelineComponentBatchDeploymentSchema(DeploymentSchema):
             NestedField("PipelineSchema", unknown=INCLUDE),
         ]
     )
+    description = fields.Str(metadata={"description": "Description of the endpoint deployment."})
+
+    @validates("description")
+    def validate_user_assigned_identities(self, data, **kwargs):
+        if len(data) > 0:
+            raise ValidationError(f"Parameter 'Description' is not allowed for deployment type 'Pipeline'.")
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
