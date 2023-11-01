@@ -30,6 +30,14 @@ When authenticating interactively via `InteractiveBrowserBrokerCredential`, a pa
 
 Microsoft accounts (MSA) are personal accounts created by users to access Microsoft services. MSA- passthrough is a legacy configuration which enables users to get tokens to resources which normally do not accept MSA logins. This is only available to first-party applications. Users authenticating with an application that is configured to use MSA-passthrough can set `enable_msa_passthrough` to `True` inside `InteractiveBrowserBrokerCredential` to allow these personal accounts to be listed by WAM.
 
+## Redirect URIs
+
+Microsoft Entra applications rely on redirect URIs to determine where to send the authentication response after a user has logged in. To enable brokered authentication through WAM, a redirect URI matching the following pattern should be registered to the application:
+
+```
+ms-appx-web://Microsoft.AAD.BrokerPlugin/{client_id}
+```
+
 ## Examples
 
 ### Authenticate with `InteractiveBrowserBrokerCredential`
