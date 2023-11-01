@@ -9,7 +9,7 @@ import uuid
 from abc import abstractmethod
 from enum import Enum
 from functools import wraps
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
@@ -125,22 +125,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
         component: Component,
-        inputs: Optional[
-            Dict[
-                str,
-                Union[
-                    PipelineInput,
-                    NodeOutput,
-                    Input,
-                    str,
-                    bool,
-                    int,
-                    float,
-                    Enum,
-                    "Input",
-                ],
-            ]
-        ] = None,
+        inputs: Optional[Dict] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
@@ -237,7 +222,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         self._name = value
 
     @classmethod
-    def _get_supported_inputs_types(cls) -> Tuple:
+    def _get_supported_inputs_types(cls) -> Any:
         """Get the supported input types for node input.
 
         :param cls: The class (or instance) to retrieve supported input types for.
@@ -510,7 +495,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             # add try catch in case component job failed in schema parse
             return str(_AttrDict.__str__())
 
-    def __hash__(self) -> int:
+    def __hash__(self) -> int:  # type: ignore
         return hash(self.__str__())
 
     def __help__(self) -> Any:

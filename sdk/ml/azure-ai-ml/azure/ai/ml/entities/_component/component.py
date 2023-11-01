@@ -266,7 +266,7 @@ class Component(
 
     @staticmethod
     def _resolve_component_source_from_id(
-        id: Optional[str],
+        id: Optional[Union["Component", str]],
     ) -> Literal[ComponentSource.CLASS, ComponentSource.REMOTE_REGISTRY, ComponentSource.REMOTE_WORKSPACE_COMPONENT]:
         """Resolve the component source from id.
         :param id: The component ID
