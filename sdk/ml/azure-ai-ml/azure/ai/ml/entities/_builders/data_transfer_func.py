@@ -30,7 +30,9 @@ SUPPORTED_INPUTS = [
 
 
 def _parse_input(input_value: Union[Input, dict, str, PipelineInput, NodeOutput]) -> Tuple:
-    component_input, job_input = None, None
+    component_input = None
+    job_input: Union[Input, dict, str, PipelineInput, NodeOutput] = ""
+
     if isinstance(input_value, Input):
         component_input = Input(**input_value._to_dict())
         input_type = input_value.type
@@ -48,6 +50,7 @@ def _parse_input(input_value: Union[Input, dict, str, PipelineInput, NodeOutput]
         component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
         job_input = input_value
     elif isinstance(input_value, (PipelineInput, NodeOutput)):
+        data: Any = None
         # datatransfer node can accept PipelineInput/NodeOutput for export task.
         if input_value._data is None or isinstance(input_value._data, Output):
             data = Input(type=input_value.type, mode=input_value.mode)
@@ -70,7 +73,9 @@ def _parse_input(input_value: Union[Input, dict, str, PipelineInput, NodeOutput]
 
 
 def _parse_output(output_value: Union[Output, Dict]) -> Tuple:
-    component_output, job_output = None, None
+    component_output = None
+    job_output: Union[Output, Dict] = {}
+
     if isinstance(output_value, Output):
         component_output = Output(**output_value._to_dict())
         job_output = Output(**output_value._to_dict())

@@ -43,7 +43,7 @@ from .base_node import BaseNode
 module_logger = logging.getLogger(__name__)
 
 
-def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]) -> Union[Database, FileSystem]:
+def _build_source_sink(io_dict: Optional[Union[Dict, Database, FileSystem]]) -> Union[Database, FileSystem]:
     if io_dict is None:
         return io_dict
     if isinstance(io_dict, (Database, FileSystem)):
