@@ -10,10 +10,17 @@
 
 ### Breaking Changes
 
+- Renamed `AnswerResult` to `QueryAnswerResult` and `CaptionResult` to `QueryCaptionResult`.
+- Renamed `SemanticErrorHandling` to `SemanticErrorMode`.
+- Renamed `RawVectorQuery` to `VectorizedQuery`.
+- Renamed `ExhaustiveKnnVectorSearchAlgorithmConfiguration` to `ExhaustiveKnnAlgorithmConfiguration`.
+- Renamed `PrioritizedFields` to `SemanticPrioritizedFields`.
+
 ### Bugs Fixed
 
 ### Other Changes
 
+- Used API version "2023-11-01".
 
 ## 11.4.0b11 (2023-10-11)
 
