@@ -113,7 +113,6 @@ def urljoin(base_url, stub_url):
 class QueueMessagePolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
-        # Hack to fix generated code adding '/messages' after SAS parameters
         message_id = request.context.options.pop('queue_message_id', None)
         if message_id:
             request.http_request.url = urljoin(
