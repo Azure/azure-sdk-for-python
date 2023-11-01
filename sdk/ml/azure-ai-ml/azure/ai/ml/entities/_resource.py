@@ -43,7 +43,7 @@ class Resource(abc.ABC):
 
     def __init__(
         self,
-        name: str,
+        name: Optional[str],
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,

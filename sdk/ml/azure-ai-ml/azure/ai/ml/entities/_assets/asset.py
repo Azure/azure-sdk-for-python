@@ -96,7 +96,7 @@ class Asset(Resource):
         """
         if value:
             if not isinstance(value, str):
-                msg = f"Asset version must be a string, not type {type(value)}."  # type: ignore[unreachable]
+                msg = f"Asset version must be a string, not type {type(value)}."
                 err = ValidationException(
                     message=msg,
                     target=ErrorTarget.ASSET,
