@@ -173,9 +173,6 @@ def _convert_point_to_envelope(
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
     envelope.tags.update(_utils._populate_part_a_fields(resource))
-    namespace = None
-    if scope is not None:
-        namespace = scope.name
     value = 0
     count = 1
     min_ = None
@@ -193,11 +190,8 @@ def _convert_point_to_envelope(
     # truncation logic
     properties = _utils._filter_custom_properties(point.attributes)
 
-    if namespace is not None:
-        namespace = str(namespace)[:256]
     data_point = MetricDataPoint(
         name=str(name)[:1024],
-        namespace=namespace,
         value=value,
         count=count,
         min=min_,
