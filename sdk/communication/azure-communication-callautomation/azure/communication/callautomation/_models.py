@@ -48,6 +48,9 @@ if TYPE_CHECKING:
 class CallInvite:
     """Details of call invitation for outgoing call.
 
+    **DEPRECATED**: This model has been deprecated and will be removed from future releases.
+    Please pass in the target `CommunicateIdentifier` directly.
+
     :param target: Target's identity.
     :type target: ~azure.communication.callautomation.CommunicationIdentifier
     :keyword source_caller_id_number: Caller's phone number identifier.
@@ -79,6 +82,10 @@ class CallInvite:
 class ServerCallLocator:
     """The locator to locate ongoing call, using server call id.
 
+    **DEPRECATED**: This model has been deprecated and will be removed from future releases.
+    Please pass in the `server_call_id` directly.
+
+
     :param server_call_id: The server call id of ongoing call.
     :type server_call_id: str
     """
@@ -101,6 +108,9 @@ class ServerCallLocator:
 
 class GroupCallLocator:
     """The locator to locate ongoing call, using group call id.
+
+    **DEPRECATED**: This model has been deprecated and will be removed from future releases.
+    Please pass in the `group_call_id` directly.
 
     :param group_call_id: The group call id of ongoing call.
     :type group_call_id: str

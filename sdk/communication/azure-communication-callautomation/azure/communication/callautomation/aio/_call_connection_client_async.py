@@ -71,8 +71,6 @@ if TYPE_CHECKING:
         AzureKeyCredential
     )
 
-MediaSources = Union['FileSource', 'TextSource', 'SsmlSource']
-
 
 class CallConnectionClient:
     """A client to interact with ongoing call. This client can be used to do mid-call actions,
@@ -397,7 +395,7 @@ class CallConnectionClient:
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: Union[MediaSources],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
@@ -427,7 +425,7 @@ class CallConnectionClient:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        play_source_single: Optional[MediaSources] = None
+        play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
         if isinstance(play_source, list):
             warnings.warn("Currently only single play source per request is supported.")
             if play_source:  # Check if the list is not empty
@@ -449,7 +447,7 @@ class CallConnectionClient:
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: Union['FileSource'],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -459,7 +457,9 @@ class CallConnectionClient:
         """Play media to all participants in the call.
 
         :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -492,7 +492,7 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union[MediaSources]] = None,
+        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -506,7 +506,7 @@ class CallConnectionClient:
         operation_callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Recognize tones from specific participant in the call.
+        """Recognize inputs from specific participant in this call.
 
         :param input_type: Determines the type of the recognition.
         :type input_type: str or ~azure.communication.callautomation.RecognizeInputType
@@ -521,22 +521,25 @@ class CallConnectionClient:
         :keyword interrupt_call_media_operation:
          If set recognize can barge into other existing queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
-        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str
         :keyword interrupt_prompt: Determines if we interrupt the prompt and start recognizing.
         :paramtype interrupt_prompt: bool
-        :keyword dtmf_inter_tone_timeout: Time to wait between DTMF inputs to stop recognizing.
+        :keyword dtmf_inter_tone_timeout: Time to wait between DTMF inputs to stop recognizing. Will be ignored
+         unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_inter_tone_timeout: int
-        :keyword dtmf_max_tones_to_collect: Maximum number of DTMF tones to be collected.
+        :keyword dtmf_max_tones_to_collect: Maximum number of DTMF tones to be collected. Will be ignored
+         unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_max_tones_to_collect: int
-        :keyword dtmf_stop_tones: List of tones that will stop recognizing.
+        :keyword dtmf_stop_tones: List of tones that will stop recognizing. Will be ignored
+         unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
-        :keyword choices: Defines Ivr choices for recognize.
+        :keyword choices: Defines Ivr choices for recognize. Will be ignored unless input_type is 'choices'.
         :paramtype choices: list[~azure.communication.callautomation.RecognitionChoice]
         :keyword end_silence_timeout: The length of end silence when user stops speaking and cogservice
-         send response.
+         send response. Will be ingored unless input_type is 'speech' or 'speechOrDtmf'.
         :paramtype end_silence_timeout: int
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
         :paramtype speech_recognition_model_endpoint_id: str
@@ -556,7 +559,7 @@ class CallConnectionClient:
             speech_language=speech_language,
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id
         )
-        play_source_single: Optional[MediaSources] = None
+        play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
         if isinstance(play_prompt, list):
             warnings.warn("Currently only single play source per request is supported.")
             if play_prompt:  # Check if the list is not empty
