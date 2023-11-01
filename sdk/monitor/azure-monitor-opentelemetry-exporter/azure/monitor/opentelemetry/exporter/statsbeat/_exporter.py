@@ -3,7 +3,6 @@
 from typing import Optional
 from opentelemetry.sdk.metrics.export import DataPointT
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter import AzureMonitorMetricExporter
@@ -18,7 +17,6 @@ class _StatsBeatExporter(AzureMonitorMetricExporter):
         point: DataPointT,
         name: str,
         resource: Optional[Resource] = None,
-        scope: Optional[InstrumentationScope] = None
     ) -> TelemetryItem:
         # map statsbeat name from OpenTelemetry name
         name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]
@@ -26,5 +24,5 @@ class _StatsBeatExporter(AzureMonitorMetricExporter):
             point,
             name,
             resource,
-            scope,
+
         )

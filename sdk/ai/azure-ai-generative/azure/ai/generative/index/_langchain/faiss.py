@@ -17,5 +17,5 @@ def azureml_faiss_as_langchain_faiss(faissanddocstore: FaissAndDocStore) -> Vect
         faissanddocstore.query_embed,
         faissanddocstore.index,
         FileBasedDocStore(faissanddocstore.docstore),
-        {int(k): v for (k, v) in faissanddocstore.index_to_doc_id.items()}
+        {int(k): v for (k, v) in faissanddocstore.index_to_doc_id.items()},
     )
