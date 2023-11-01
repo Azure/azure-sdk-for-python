@@ -18,7 +18,7 @@ from common_tasks import (
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
-from ci_tools.functions import build_whl_for_req, cleanup_directory
+from ci_tools.functions import build_whl_for_req, cleanup_directory, replace_dev_reqs
 from pkg_resources import parse_requirements
 import logging
 
@@ -110,36 +110,6 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
             # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
             f.write("\n".join(all_adjustments))
-
-
-def replace_dev_reqs(file, pkg_root):
-    adjusted_req_lines = []
-
-    with open(file, "r") as f:
-        original_req_lines = list(line.strip() for line in f)
-
-    for line in original_req_lines:
-        args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
-        amended_line = " ".join(args)
-        extras = ""
-
-        if amended_line.endswith("]"):
-            amended_line, extras = amended_line.rsplit("[", maxsplit=1)
-            if extras:
-                extras = f"[{extras}"
-
-        adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root)}{extras}")
-
-    req_file_name = os.path.basename(file)
-    logging.info("Old {0}:{1}".format(req_file_name, original_req_lines))
-
-    logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
-
-    with open(file, "w") as f:
-        # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
-        # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
-        # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
-        f.write("\n".join(adjusted_req_lines))
 
 
 def collect_log_files(working_dir):

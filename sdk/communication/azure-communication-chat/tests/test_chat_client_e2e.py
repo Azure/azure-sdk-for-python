@@ -7,7 +7,7 @@ import pytest
 import time
 from datetime import datetime
 from devtools_testutils import AzureRecordedTestCase, is_live
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 from uuid import uuid4
 
 from azure.communication.identity import CommunicationIdentityClient
