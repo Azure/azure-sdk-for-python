@@ -237,7 +237,7 @@ class _PipelineNodeFactory:
                     yaml_path=data[component_key].pop(SOURCE_PATH_CONTEXT_KEY, None),
                 )
 
-        BaseNode.__init__(**data)
+        BaseNode.__init__(self, **data)
         return new_instance
 
     def load_from_rest_object(
