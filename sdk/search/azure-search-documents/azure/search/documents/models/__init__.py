@@ -44,7 +44,6 @@ from .._generated.models import (
     VectorizedQuery,
     VectorizableTextQuery,
 )
-from .._utils import odata
 
 
 __all__ = (
