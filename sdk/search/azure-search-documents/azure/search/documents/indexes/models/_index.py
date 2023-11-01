@@ -43,13 +43,6 @@ class SearchField(_serialization.Model):
      type Edm.String. Key fields can be used to look up documents directly and update or delete
      specific documents. Default is false for simple fields and null for complex fields.
     :vartype key: bool
-    :ivar retrievable: A value indicating whether the field can be returned in a search result. You
-     can disable this option if you want to use a field (for example, margin) as a filter, sorting,
-     or scoring mechanism but do not want the field to be visible to the end user. This property
-     must be true for key fields, and it must be null for complex fields. This property can be
-     changed on existing fields. Enabling this property does not cause any increase in index storage
-     requirements. Default is true for simple fields and null for complex fields.
-    :vartype retrievable: bool
     :ivar searchable: A value indicating whether the field is full-text searchable. This means it
      will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
      value like "sunny day", internally it will be split into the individual tokens "sunny" and
@@ -85,7 +78,7 @@ class SearchField(_serialization.Model):
      Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple
      fields.
     :vartype facetable: bool
-    :ivar analyzer: The name of the analyzer to use for the field. This option can be used only
+    :ivar analyzer_name: The name of the analyzer to use for the field. This option can be used only
      with searchable fields and it can't be set together with either searchAnalyzer or
      indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
      for complex fields. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft",
@@ -105,8 +98,8 @@ class SearchField(_serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype analyzer: str or ~search_service_client.models.LexicalAnalyzerName
-    :ivar search_analyzer: The name of the analyzer used at search time for the field. This option
+    :vartype analyzer_name: str or ~search_service_client.models.LexicalAnalyzerName
+    :ivar search_analyzer_name: The name of the analyzer used at search time for the field. This option
      can be used only with searchable fields. It must be set together with indexAnalyzer and it
      cannot be set together with the analyzer option. This property cannot be set to the name of a
      language analyzer; use the analyzer property instead if you need a language analyzer. This
@@ -128,8 +121,8 @@ class SearchField(_serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype search_analyzer: str or ~search_service_client.models.LexicalAnalyzerName
-    :ivar index_analyzer: The name of the analyzer used at indexing time for the field. This option
+    :vartype search_analyzer_name: str or ~search_service_client.models.LexicalAnalyzerName
+    :ivar index_analyzer_name: The name of the analyzer used at indexing time for the field. This option
      can be used only with searchable fields. It must be set together with searchAnalyzer and it
      cannot be set together with the analyzer option.  This property cannot be set to the name of a
      language analyzer; use the analyzer property instead if you need a language analyzer. Once the
@@ -151,18 +144,18 @@ class SearchField(_serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype index_analyzer: str or ~search_service_client.models.LexicalAnalyzerName
+    :vartype index_analyzer_name: str or ~search_service_client.models.LexicalAnalyzerName
     :ivar vector_search_dimensions: The dimensionality of the vector field.
     :vartype vector_search_dimensions: int
     :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
      to use when searching the vector field.
     :vartype vector_search_profile_name: str
-    :ivar synonym_maps: A list of the names of synonym maps to associate with this field. This
+    :ivar synonym_map_names: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
      expanded at query-time using the rules in the synonym map. This attribute can be changed on
      existing fields. Must be null or an empty collection for complex fields.
-    :vartype synonym_maps: list[str]
+    :vartype synonym_map_names: list[str]
     :ivar fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
     :vartype fields: list[~search_service_client.models.SearchField]
