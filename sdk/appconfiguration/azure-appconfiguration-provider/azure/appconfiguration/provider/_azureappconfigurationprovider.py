@@ -446,6 +446,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             with self._update_lock:
                 need_refresh = False
                 updated_sentinel_keys = dict(self._refresh_on)
+                headers=_get_headers("Watch")
                 for (key, label), etag in updated_sentinel_keys.items():
                     try:
                         updated_sentinel = self._client.get_configuration_setting(
@@ -453,7 +454,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             label=label,
                             etag=etag,
                             match_condition=MatchConditions.IfModified,
-                            headers=_get_headers("Watch"),
+                            headers=headers,
                             **kwargs
                         )
                         if updated_sentinel is not None:
@@ -467,10 +468,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             updated_sentinel_keys[(key, label)] = updated_sentinel.etag
                     except HttpResponseError as e:
                         if e.status_code == 404:
-                            # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                            need_refresh = True
-                            updated_sentinel_keys[(key, label)] = None
+                            if etag is not None:
+                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                                need_refresh = True
+                                updated_sentinel_keys[(key, label)] = None
                         else:
                             raise e
                 # Need to only update once, no matter how many sentinels are updated
