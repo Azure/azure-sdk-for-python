@@ -276,7 +276,7 @@ class NodeIOMixin:
         return rest_data_outputs
 
     @classmethod
-    def _from_rest_inputs(cls, inputs: Dict[str, Union[str, dict]]) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def _from_rest_inputs(cls, inputs: Dict) -> Dict[str, Union[Input, str, bool, int, float]]:
         """Load inputs from rest inputs.
 
         :param inputs: The REST inputs

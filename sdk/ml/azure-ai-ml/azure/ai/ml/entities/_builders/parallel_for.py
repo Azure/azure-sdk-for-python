@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import json
 import os
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union, cast
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -177,8 +177,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
         rest_node.update({"items": rest_items, "outputs": self._to_rest_outputs()})
-        res: dict = convert_ordered_dict_to_dict(rest_node)
-        return res
+        return cast(dict, convert_ordered_dict_to_dict(rest_node))
 
     @classmethod
     # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
@@ -266,7 +265,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     @classmethod
     def _validate_items(
-        cls, items: Union[str, Dict, List], raise_error: bool = True, body_component: Optional[bool] = None
+        cls,
+        items: Union[list, dict, str, NodeOutput, PipelineInput],
+        raise_error: bool = True,
+        body_component: Optional[Component] = None,
     ) -> MutableValidationResult:
         validation_result = cls._create_empty_validation_result()
         if items is not None:
