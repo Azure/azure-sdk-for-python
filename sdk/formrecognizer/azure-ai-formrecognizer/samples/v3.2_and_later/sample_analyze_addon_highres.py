@@ -41,11 +41,6 @@ USAGE:
 
 import os
 
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
 
 def format_polygon(polygon):
     if not polygon:

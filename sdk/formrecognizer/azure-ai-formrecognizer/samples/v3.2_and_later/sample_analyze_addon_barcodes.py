@@ -41,11 +41,6 @@ USAGE:
 
 import os
 
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
 
 def format_bounding_region(bounding_regions):
     if not bounding_regions:

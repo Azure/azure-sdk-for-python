@@ -1,2 +1,0 @@
-python-dotenv
-azure-ai-formrecognizer
