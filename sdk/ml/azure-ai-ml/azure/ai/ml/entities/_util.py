@@ -200,7 +200,7 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
     return f"Validation for {schema.__name__} failed:\n\n {pretty_error} \n\n {additional_message}"
 
 
-def get_md5_string(text: str) -> str:
+def get_md5_string(text: Optional[str]) -> str:
     """Get md5 string for a given text.
 
     :param text: The text to get md5 string for.
