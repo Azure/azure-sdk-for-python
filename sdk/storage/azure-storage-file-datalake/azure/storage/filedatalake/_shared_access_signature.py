@@ -192,8 +192,6 @@ def generate_directory_sas(
         credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[DirectorySasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
         **kwargs # type: Any
     ):
     # type: (...) -> str
@@ -294,8 +292,6 @@ def generate_directory_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
-        start=start,
-        policy_id=policy_id,
         sdd=depth,
         is_directory=True,
         **kwargs)
@@ -309,8 +305,6 @@ def generate_file_sas(
         credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[FileSasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
     # type: (...) -> str
@@ -416,6 +410,4 @@ def generate_file_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
-        start=start,
-        policy_id=policy_id,
         **kwargs)
