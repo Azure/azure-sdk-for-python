@@ -52,7 +52,7 @@ def run(raw_data: AMLRequest):
     messages = raw_data["messages"]
     stream = raw_data.get("stream", False)
     session_state = raw_data.get("sessionState", raw_data.get("session_state", None))
-    extra_args = raw_data.get("extraArgs", raw_data.get("extra_args", {{}}))
+    context = raw_data.get("context", {{}})
     from {} import chat_completion
     if iscoroutinefunction(chat_completion):
         response = asyncio.run(
@@ -60,7 +60,7 @@ def run(raw_data: AMLRequest):
                 messages,
                 stream,
                 session_state,
-                extra_args,
+                context,
             )
         )
     else:
@@ -68,7 +68,7 @@ def run(raw_data: AMLRequest):
             messages,
             stream,
             session_state,
-            extra_args,
+            context,
         )
     if stream:
         aml_response = AMLResponse(response_to_dict(response), 200)
