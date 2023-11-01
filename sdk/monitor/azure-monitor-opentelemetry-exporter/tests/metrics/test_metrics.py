@@ -230,7 +230,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
-        self.assertEqual(envelope.data.base_data.metrics[0].namespace, "test_scope")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 10)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 1)
 
@@ -260,7 +259,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.properties['test'], 'attribute')
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "test name")
-        self.assertEqual(envelope.data.base_data.metrics[0].namespace, "test_scope")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
 
@@ -297,7 +295,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertIsNone(envelope.data.base_data.properties.get("custom_attr"))
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "http.client.duration")
-        self.assertEqual(envelope.data.base_data.metrics[0].namespace, "opentelemetry.instrumentation.requests")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
 
         # target
@@ -348,7 +345,6 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertIsNone(envelope.data.base_data.properties.get("custom_attr"))
         self.assertEqual(len(envelope.data.base_data.metrics), 1)
         self.assertEqual(envelope.data.base_data.metrics[0].name, "http.server.duration")
-        self.assertEqual(envelope.data.base_data.metrics[0].namespace, "opentelemetry.instrumentation.flask")
         self.assertEqual(envelope.data.base_data.metrics[0].value, 15.0)
 
         # Success/Failure

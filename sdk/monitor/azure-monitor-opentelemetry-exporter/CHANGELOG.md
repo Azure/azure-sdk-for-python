@@ -13,7 +13,7 @@
 - Updated django samples with clearly artificial secret key
     ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
 - Remove metric namespace
-    ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
+    ([#32897](https://github.com/Azure/azure-sdk-for-python/pull/32897))
 
 ### Other Changes
 
