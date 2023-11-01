@@ -49,7 +49,7 @@ SUPPORTED_INPUTS = [
 
 def _parse_input(input_value: Union[Input, Dict, SweepDistribution, str, bool, int, float]) -> Tuple:
     component_input = None
-    job_input: Union[Input, Dict, SweepDistribution, str, bool, int, float] = ""
+    job_input: Optional[Union[Input, Dict, SweepDistribution, str, bool, int, float]] = None
 
     if isinstance(input_value, Input):
         component_input = Input(**input_value._to_dict())
