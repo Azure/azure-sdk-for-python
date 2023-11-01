@@ -93,7 +93,7 @@ class SparkComponent(
     def __init__(
         self,
         *,
-        code: Union[str, os.PathLike] = ".",
+        code: Optional[Union[str, os.PathLike]] = ".",
         entry: Optional[Union[Dict[str, str], SparkJobEntry]] = None,
         py_files: Optional[List[str]] = None,
         jars: Optional[List[str]] = None,
