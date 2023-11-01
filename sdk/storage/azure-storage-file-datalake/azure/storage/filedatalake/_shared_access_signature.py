@@ -10,7 +10,7 @@ from urllib.parse import parse_qs
 
 from azure.storage.blob import generate_account_sas as generate_blob_account_sas
 from azure.storage.blob import generate_container_sas, generate_blob_sas
-from azure.storage.queue._shared.shared_access_signature import QueryStringConstants
+from ._shared.shared_access_signature import QueryStringConstants
 
 
 if TYPE_CHECKING:
