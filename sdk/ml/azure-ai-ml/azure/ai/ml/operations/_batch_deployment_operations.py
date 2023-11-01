@@ -116,10 +116,9 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Create example.
         """
-        # pylint: too-many-boolean-expressions
         if (
             not skip_script_validation
-            and not isinstance(deployment, PipelineComponentBatchDeployment)
+            and not isinstance(deployment, PipelineComponentBatchDeployment)  # pylint: too-many-boolean-expressions
             and deployment
             and deployment.code_configuration
             and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
