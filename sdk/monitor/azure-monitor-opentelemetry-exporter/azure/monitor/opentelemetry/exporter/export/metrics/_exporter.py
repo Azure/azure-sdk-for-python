@@ -137,7 +137,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         resource: Optional[Resource] = None,
         scope: Optional[InstrumentationScope] = None
     ) -> Optional[TelemetryItem]:
-        envelope = _convert_point_to_envelope(point, name, resource, scope)
+        envelope = _convert_point_to_envelope(point, name, resource)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)
         if envelope is not None:
@@ -168,7 +168,6 @@ def _convert_point_to_envelope(
     point: DataPointT,
     name: str,
     resource: Optional[Resource] = None,
-    scope: Optional[InstrumentationScope] = None
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
