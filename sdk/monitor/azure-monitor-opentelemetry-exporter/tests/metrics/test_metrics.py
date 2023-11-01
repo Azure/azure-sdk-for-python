@@ -354,7 +354,6 @@ class TestAzureMetricExporter(unittest.TestCase):
             {"service.name": "testServiceName",
              "service.namespace": "testServiceNamespace",
              "service.instance.id": "testServiceInstanceId"})
-        scope = InstrumentationScope("opentelemetry.instrumentation.flask")
         point=NumberDataPoint(
             attributes={
                 "http.status_code": 200,
