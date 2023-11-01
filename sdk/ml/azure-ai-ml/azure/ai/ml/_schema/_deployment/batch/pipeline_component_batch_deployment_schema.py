@@ -48,7 +48,7 @@ class PipelineComponentBatchDeploymentSchema(PathAwareSchema):
     @validates("description")
     def validate_user_assigned_identities(self, data):
         if len(data) > 0:
-            raise ValidationError(f"Parameter 'Description' is not allowed for deployment type 'Pipeline'.")
+            raise ValidationError("Parameter 'Description' is not allowed for deployment type 'Pipeline'.")
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
