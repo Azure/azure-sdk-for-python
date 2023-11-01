@@ -8,7 +8,7 @@
 
 from ._operations import DevCenterOperations
 from ._operations import DevBoxesOperations
-from ._operations import EnvironmentsOperations
+from ._operations import DeploymentEnvironmentsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -17,7 +17,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "DevCenterOperations",
     "DevBoxesOperations",
-    "EnvironmentsOperations",
+    "DeploymentEnvironmentsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

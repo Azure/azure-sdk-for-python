@@ -371,6 +371,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         )
 
     def _validate(self) -> None:
+        # TODO: make spark job schema validatable?
+        if self.resources:
+            self.resources._validate()
         _validate_compute_or_resources(self.compute, self.resources)
         _validate_input_output_mode(self.inputs, self.outputs)
         _validate_spark_configurations(self)

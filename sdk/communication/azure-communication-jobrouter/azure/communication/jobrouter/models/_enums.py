@@ -26,11 +26,11 @@ class LabelOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Not Equal"""
     LESS_THAN = "lessThan"
     """Less than"""
-    LESS_THAN_EQUAL = "lessThanEqual"
+    LESS_THAN_OR_EQUAL = "lessThanOrEqual"
     """Less than or equal"""
     GREATER_THAN = "greaterThan"
     """Greater than"""
-    GREATER_THAN_EQUAL = "greaterThanEqual"
+    GREATER_THAN_OR_EQUAL = "greaterThanOrEqual"
     """Greater than or equal"""
 
 
