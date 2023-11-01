@@ -11,10 +11,10 @@ from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline import policies
 
-from . import models as _models
-from ._azure_app_configuration import AzureAppConfiguration as AzureAppConfigurationGenerated
-from ._configuration import AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated, VERSION
-from ._serialization import Deserializer, Serializer
+from azure.appconfiguration._generated import models as _models
+from azure.appconfiguration._generated._azure_app_configuration import AzureAppConfiguration as AzureAppConfigurationGenerated
+from azure.appconfiguration._generated._configuration import AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated, VERSION
+from azure.appconfiguration._generated._serialization import Deserializer, Serializer
 
 
 class AzureAppConfiguration(AzureAppConfigurationGenerated):

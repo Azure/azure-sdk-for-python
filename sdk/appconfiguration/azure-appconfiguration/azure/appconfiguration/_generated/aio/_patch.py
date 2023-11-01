@@ -10,15 +10,15 @@ from typing import List
 
 
 from typing import List, Optional, Any, Union
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import policies
 
-from . import models as _models
-from ._azure_app_configuration import AzureAppConfiguration as AzureAppConfigurationGenerated
-from ._configuration import AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated, VERSION
-from ._serialization import Deserializer, Serializer
+from azure.appconfiguration._generated import models as _models
+from azure.appconfiguration._generated.aio._azure_app_configuration import AzureAppConfiguration as AzureAppConfigurationGenerated
+from azure.appconfiguration._generated.aio._configuration import AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated, VERSION
+from azure.appconfiguration._generated._serialization import Deserializer, Serializer
 
 
 class AzureAppConfiguration(AzureAppConfigurationGenerated):
