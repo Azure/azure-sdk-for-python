@@ -25,7 +25,7 @@ import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.models import RawVectorQuery
+from azure.search.documents.models import VectorizedQuery
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
@@ -44,7 +44,9 @@ def get_embeddings(text: str):
     openai.api_type = "azure"
     openai.api_key = open_ai_key
     model_id = "text-embedding-ada-002"
-    embedding = openai.Embedding.create(input=text, deployment_id=model_id)["data"][0]["embedding"]
+    embedding = openai.Embedding.create(input=text, deployment_id=model_id)["data"][0][
+        "embedding"
+    ]
     return embedding
 
 
@@ -56,26 +58,41 @@ def get_hotel_index(name: str):
         SimpleField,
         SearchableField,
         VectorSearch,
-        HnswVectorSearchAlgorithmConfiguration,
+        VectorSearchProfile,
+        HnswAlgorithmConfiguration,
     )
 
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-        SearchableField(name="hotelName", type=SearchFieldDataType.String, sortable=True, filterable=True),
+        SearchableField(
+            name="hotelName",
+            type=SearchFieldDataType.String,
+            sortable=True,
+            filterable=True,
+        ),
         SearchableField(name="description", type=SearchFieldDataType.String),
         SearchField(
             name="descriptionVector",
             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
             searchable=True,
             vector_search_dimensions=1536,
-            vector_search_profile="my-vector-config",
+            vector_search_profile_name="my-vector-config",
         ),
         SearchableField(
-            name="category", type=SearchFieldDataType.String, sortable=True, filterable=True, facetable=True
+            name="category",
+            type=SearchFieldDataType.String,
+            sortable=True,
+            filterable=True,
+            facetable=True,
         ),
     ]
     vector_search = VectorSearch(
-        algorithms=[HnswVectorSearchAlgorithmConfiguration(name="my-vector-config", kind="hnsw")]
+        profiles=[
+            VectorSearchProfile(
+                name="my-vector-config", algorithm="my-algorithms-config"
+            )
+        ],
+        algorithms=[HnswAlgorithmConfiguration(name="my-vector-config")],
     )
     return SearchIndex(name=name, fields=fields, vector_search=vector_search)
 
@@ -86,14 +103,18 @@ def get_hotel_documents():
             "hotelId": "1",
             "hotelName": "Fancy Stay",
             "description": "Best hotel in town if you like luxury hotels.",
-            "descriptionVector": get_embeddings("Best hotel in town if you like luxury hotels."),
+            "descriptionVector": get_embeddings(
+                "Best hotel in town if you like luxury hotels."
+            ),
             "category": "Luxury",
         },
         {
             "hotelId": "2",
             "hotelName": "Roach Motel",
             "description": "Cheapest hotel in town. Infact, a motel.",
-            "descriptionVector": get_embeddings("Cheapest hotel in town. Infact, a motel."),
+            "descriptionVector": get_embeddings(
+                "Cheapest hotel in town. Infact, a motel."
+            ),
             "category": "Budget",
         },
         {
@@ -130,7 +151,9 @@ def single_vector_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
-    vector_query = RawVectorQuery(vector=get_embeddings(query), k=3, fields="descriptionVector")
+    vector_query = VectorizedQuery(
+        vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector"
+    )
 
     results = search_client.search(
         search_text="",
@@ -148,7 +171,9 @@ def single_vector_search_with_filter():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
-    vector_query = RawVectorQuery(vector=get_embeddings(query), k=3, fields="descriptionVector")
+    vector_query = VectorizedQuery(
+        vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector"
+    )
 
     results = search_client.search(
         search_text="",
@@ -167,7 +192,9 @@ def simple_hybrid_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
-    vector_query = RawVectorQuery(vector=get_embeddings(query), k=3, fields="descriptionVector")
+    vector_query = VectorizedQuery(
+        vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector"
+    )
 
     results = search_client.search(
         search_text=query,
