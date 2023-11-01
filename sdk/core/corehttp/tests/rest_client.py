@@ -7,7 +7,7 @@ from corehttp.runtime import PipelineClient
 from copy import deepcopy
 
 
-class TestRestClient(object):
+class MockRestClient(object):
     def __init__(self, port, **kwargs):
         kwargs.setdefault("sdk_moniker", "corehttp/1.0.0b1")
         self._client = PipelineClient(endpoint="http://localhost:{}/".format(port), **kwargs)
@@ -19,7 +19,7 @@ class TestRestClient(object):
         <HttpRequest [GET], url: 'http://localhost:3000/helloWorld'>
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
         :param request: The network request you want to make. Required.
         :type request: ~corehttp.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
