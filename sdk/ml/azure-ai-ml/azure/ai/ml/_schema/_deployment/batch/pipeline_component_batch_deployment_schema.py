@@ -16,6 +16,8 @@ from azure.ai.ml._schema import (
     NestedField,
 )
 from azure.ai.ml._schema.core.fields import PipelineNodeNameStr, TypeSensitiveUnionField, PathAwareSchema
+
+# from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType
@@ -23,7 +25,7 @@ from azure.ai.ml.constants._component import NodeType
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineComponentBatchDeploymentSchema(DeploymentSchema):
+class PipelineComponentBatchDeploymentSchema(PathAwareSchema):
     name = fields.Str()
     endpoint_name = fields.Str()
     component = UnionField(
@@ -43,12 +45,6 @@ class PipelineComponentBatchDeploymentSchema(DeploymentSchema):
         ]
     )
     tags = fields.Dict()
-    description = fields.Str(metadata={"description": "Description of the endpoint deployment."})
-
-    @validates("description")
-    def validate_user_assigned_identities(self, data):
-        if len(data) > 0:
-            raise ValidationError("Parameter 'Description' is not allowed for deployment type 'Pipeline'.")
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
