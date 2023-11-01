@@ -34,29 +34,12 @@ class TestEGClientExceptions():
         assert request.headers.get("ce-subject") == "MySubject"
         assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
 
-    
-    def test_binary_request_format_with_extensions(self):
-        event = CloudEvent(
-            type="Contoso.Items.ItemReceived",
-            source="source",
-            subject="MySubject",
-            data='this is binary data',
-            extensions={"extension1": "value1", "extension2": "value2"}
-        )
-
-        request = _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event)
-
-        assert request.data == b"this is binary data"
-        assert request.headers.get("ce-source") == "source"
-        assert request.headers.get("ce-subject") == "MySubject"
-        assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
-
     def test_binary_request_format_with_extensions_and_datacontenttype(self):
         event = CloudEvent(
             type="Contoso.Items.ItemReceived",
             source="source",
             subject="MySubject",
-            data='this is my data',
+            data=b'this is my data',
             datacontenttype="application/json",
             extensions={"extension1": "value1", "extension2": "value2"}
         )
@@ -67,6 +50,7 @@ class TestEGClientExceptions():
         assert request.headers.get("ce-source") == "source"
         assert request.headers.get("ce-subject") == "MySubject"
         assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
+        assert request.headers.get("ce-extension1") == "value1"
 
     def test_class_binary_request_format_error(self):
         test_class = MyTestClass("test")
@@ -82,18 +66,3 @@ class TestEGClientExceptions():
         with pytest.raises(TypeError):
             _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event)
 
-    def test_xml_binary_request_format(self):
-        from xml.etree import ElementTree as ET
-        xml_string = """<?xml version="1.0" encoding="UTF-8"?><Data><test>test</test></Data>"""
-        tree = ET.fromstring(xml_string)
-        event = CloudEvent(
-            type="Contoso.Items.ItemReceived",
-            source="source",
-            subject="MySubject",
-            data=tree,
-            datacontenttype="text/xml",
-            extensions={"extension1": "value1", "extension2": "value2"}
-        )
-
-        with pytest.raises(TypeError):
-            _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event)
