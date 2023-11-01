@@ -95,7 +95,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                                 point,
                                 metric.name,
                                 resource_metric.resource,
-                                scope_metric.scope
                             )
                             if envelope is not None:
                                 envelopes.append(envelope)
@@ -135,7 +134,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         point: DataPointT,
         name: str,
         resource: Optional[Resource] = None,
-        scope: Optional[InstrumentationScope] = None
     ) -> Optional[TelemetryItem]:
         envelope = _convert_point_to_envelope(point, name, resource)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
