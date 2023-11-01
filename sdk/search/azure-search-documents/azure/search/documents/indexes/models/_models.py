@@ -111,9 +111,7 @@ class SearchIndexerSkillset(_serialization.Model):
         generated_skills = []
         for skill in self.skills:
             if hasattr(skill, "_to_generated"):
-                generated_skills.append(
-                    skill._to_generated()
-                )  # pylint:disable=protected-access
+                generated_skills.append(skill._to_generated())  # pylint:disable=protected-access
             else:
                 generated_skills.append(skill)
         assert len(generated_skills) == len(self.skills)
@@ -121,9 +119,7 @@ class SearchIndexerSkillset(_serialization.Model):
             name=getattr(self, "name", None),
             description=getattr(self, "description", None),
             skills=generated_skills,
-            cognitive_services_account=getattr(
-                self, "cognitive_services_account", None
-            ),
+            cognitive_services_account=getattr(self, "cognitive_services_account", None),
             knowledge_store=getattr(self, "knowledge_store", None),
             index_projections=getattr(self, "index_projections", None),
             e_tag=getattr(self, "e_tag", None),
@@ -136,13 +132,9 @@ class SearchIndexerSkillset(_serialization.Model):
         for skill in skillset.skills:
             skill_cls = type(skill)
             if skill_cls in [_EntityRecognitionSkillV3]:
-                custom_skills.append(
-                    EntityRecognitionSkill._from_generated(skill)
-                )  # pylint:disable=protected-access
+                custom_skills.append(EntityRecognitionSkill._from_generated(skill))  # pylint:disable=protected-access
             elif skill_cls in [_SentimentSkillV3]:
-                custom_skills.append(
-                    SentimentSkill._from_generated(skill)
-                )  # pylint:disable=protected-access
+                custom_skills.append(SentimentSkill._from_generated(skill))  # pylint:disable=protected-access
             else:
                 custom_skills.append(skill)
         assert len(skillset.skills) == len(custom_skills)
@@ -268,9 +260,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
             return None
         kwargs = skill.as_dict()
         if isinstance(skill, _EntityRecognitionSkillV3):
-            return EntityRecognitionSkill(
-                skill_version=EntityRecognitionSkillVersion.V3, **kwargs
-            )
+            return EntityRecognitionSkill(skill_version=EntityRecognitionSkillVersion.V3, **kwargs)
         return None
 
 
@@ -739,12 +729,8 @@ class SearchResourceEncryptionKey(_serialization.Model):
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
-            application_id = (
-                search_resource_encryption_key.access_credentials.application_id
-            )
-            application_secret = (
-                search_resource_encryption_key.access_credentials.application_secret
-            )
+            application_id = search_resource_encryption_key.access_credentials.application_id
+            application_secret = search_resource_encryption_key.access_credentials.application_secret
         else:
             application_id = None
             application_secret = None
@@ -827,9 +813,7 @@ class SynonymMap(_serialization.Model):
             name=synonym_map.name,
             synonyms=synonym_map.synonyms.split("\n"),
             # pylint:disable=protected-access
-            encryption_key=SearchResourceEncryptionKey._from_generated(
-                synonym_map.encryption_key
-            ),
+            encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
             e_tag=synonym_map.e_tag,
         )
 
@@ -905,12 +889,8 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         self.type = kwargs["type"]
         self.connection_string = kwargs["connection_string"]
         self.container = kwargs["container"]
-        self.data_change_detection_policy = kwargs.get(
-            "data_change_detection_policy", None
-        )
-        self.data_deletion_detection_policy = kwargs.get(
-            "data_deletion_detection_policy", None
-        )
+        self.data_change_detection_policy = kwargs.get("data_change_detection_policy", None)
+        self.data_deletion_detection_policy = kwargs.get("data_deletion_detection_policy", None)
         self.e_tag = kwargs.get("e_tag", None)
         self.encryption_key = kwargs.get("encryption_key", None)
         self.identity = kwargs.get("identity", None)
@@ -935,13 +915,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(
-        cls, search_indexer_data_source
-    ) -> "SearchIndexerDataSourceConnection":
+    def _from_generated(cls, search_indexer_data_source) -> "SearchIndexerDataSourceConnection":
         connection_string = (
-            search_indexer_data_source.credentials.connection_string
-            if search_indexer_data_source.credentials
-            else None
+            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
         )
         return cls(
             name=search_indexer_data_source.name,
@@ -969,11 +945,7 @@ def unpack_analyzer(analyzer):
     if not analyzer:
         return None
     if isinstance(analyzer, _PatternAnalyzer):
-        return PatternAnalyzer._from_generated(
-            analyzer
-        )  # pylint:disable=protected-access
+        return PatternAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
     if isinstance(analyzer, _CustomAnalyzer):
-        return CustomAnalyzer._from_generated(
-            analyzer
-        )  # pylint:disable=protected-access
+        return CustomAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
     return analyzer

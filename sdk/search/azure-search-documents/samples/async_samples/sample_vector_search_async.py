@@ -45,9 +45,7 @@ def get_embeddings(text: str):
     openai.api_type = "azure"
     openai.api_key = open_ai_key
     model_id = "text-embedding-ada-002"
-    embedding = openai.Embedding.create(input=text, deployment_id=model_id)["data"][0][
-        "embedding"
-    ]
+    embedding = openai.Embedding.create(input=text, deployment_id=model_id)["data"][0]["embedding"]
     return embedding
 
 
@@ -88,11 +86,7 @@ def get_hotel_index(name: str):
         ),
     ]
     vector_search = VectorSearch(
-        profiles=[
-            VectorSearchProfile(
-                name="my-vector-config", algorithm="my-algorithms-config"
-            )
-        ],
+        profiles=[VectorSearchProfile(name="my-vector-config", algorithm="my-algorithms-config")],
         algorithms=[HnswAlgorithmConfiguration(name="my-vector-config")],
     )
     return SearchIndex(name=name, fields=fields, vector_search=vector_search)
@@ -104,18 +98,14 @@ def get_hotel_documents():
             "hotelId": "1",
             "hotelName": "Fancy Stay",
             "description": "Best hotel in town if you like luxury hotels.",
-            "descriptionVector": get_embeddings(
-                "Best hotel in town if you like luxury hotels."
-            ),
+            "descriptionVector": get_embeddings("Best hotel in town if you like luxury hotels."),
             "category": "Luxury",
         },
         {
             "hotelId": "2",
             "hotelName": "Roach Motel",
             "descrdescriptioniption": "Cheapest hotel in town. Infact, a motel.",
-            "descriptionVector": get_embeddings(
-                "Cheapest hotel in town. Infact, a motel."
-            ),
+            "descriptionVector": get_embeddings("Cheapest hotel in town. Infact, a motel."),
             "category": "Budget",
         },
         {
@@ -152,9 +142,7 @@ async def single_vector_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
-    vector_query = VectorizedQuery(
-        vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector"
-    )
+    vector_query = VectorizedQuery(vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
@@ -173,9 +161,7 @@ async def single_vector_search_with_filter():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
-    vector_query = VectorizedQuery(
-        vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector"
-    )
+    vector_query = VectorizedQuery(vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
@@ -195,9 +181,7 @@ async def simple_hybrid_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
-    vector_query = VectorizedQuery(
-        vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector"
-    )
+    vector_query = VectorizedQuery(vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
