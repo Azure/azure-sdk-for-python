@@ -8,10 +8,9 @@ from typing import Any, Iterable, List, Optional, Tuple
 
 from azure.ai.generative.index._utils.logging import get_logger
 from azure.ai.generative.index._utils.requests import send_post_request
+
 try:
-    from langchain.schema.document import Document
-    from langchain.schema.embeddings import Embeddings
-    from langchain.schema.vectorstore import VectorStore
+    from langchain.schema import Document, Embeddings, VectorStore
 except ImportError:
     from azure.ai.generative.index._langchain.vendor.embeddings.base import Embeddings
     from azure.ai.generative.index._langchain.vendor.schema.document import Document
