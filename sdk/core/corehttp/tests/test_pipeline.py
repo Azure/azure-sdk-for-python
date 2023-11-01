@@ -146,7 +146,6 @@ def test_format_url_single_brace():
 
 
 def test_format_incorrect_endpoint():
-    # https://github.com/Azure/azure-sdk-for-python/pull/12106
     client = PipelineClientBase("{Endpoint}/text/analytics/v3.0")
     with pytest.raises(ValueError) as exp:
         client.format_url("foo/bar")
