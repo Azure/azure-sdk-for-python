@@ -11,18 +11,16 @@ import sys
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
-from azure.core.exceptions import HttpResponseError
 from azure.core.messaging import CloudEvent
 from azure.core.tracing.decorator import distributed_trace
-from ._operations import EventGridClientOperationsMixin as OperationsMixin
-from .._model_base import AzureJSONEncoder
-from ..models._models import CloudEvent as InternalCloudEvent
-from ..models._patch import ReceiveResult, ReceiveDetails
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.utils import case_insensitive_dict
+from ._operations import EventGridClientOperationsMixin as OperationsMixin
+from .._model_base import AzureJSONEncoder, _deserialize 
+from ..models._models import CloudEvent as InternalCloudEvent
+from ..models._patch import ReceiveResult, ReceiveDetails
 from .. import models as _models
-from .._model_base import _deserialize
 from .._serialization import Serializer
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -184,8 +182,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if isinstance(body, dict):
             try:
                 body = CloudEvent.from_dict(body)
-            except:
-                raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
+            except Exception as exc:
+                raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.") from exc
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             if binary_mode:
@@ -326,8 +324,10 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     event = kwargs.pop("event")
 
     # Content of the request is the data, if already in binary - no work needed
-    _content = _check_content_type(event.data)
-    # _content = event.data
+    if isinstance(event.data, bytes):
+        _content = event.data
+    else:
+        raise ValueError("Event data must be bytes when in binary mode.")
  
     # content_type must be CloudEvent DataContentType when in binary mode
     default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
@@ -375,19 +375,6 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
         content=_content, # pass through content
         **kwargs
     )
-
-def _check_content_type(data: Any) -> None:
-    # Check the content type of the data and convert to bytes if needed
-    if isinstance(data, bytes):
-        return data
-    elif isinstance(data, str):
-        return data.encode("utf-8")
-    else:
-        try:
-            return json.dumps(data, cls=AzureJSONEncoder, exclude_readonly=True).encode("utf-8")  # type: ignore
-        except:
-            raise TypeError("Incorrect type for data. Expected bytes, str, or JSON serializable object to encode.")
-
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"
