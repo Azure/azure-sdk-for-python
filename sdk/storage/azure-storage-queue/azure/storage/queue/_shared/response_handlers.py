@@ -3,22 +3,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import NoReturn, TYPE_CHECKING
 import logging
-from typing import NoReturn
 from xml.etree.ElementTree import Element
 
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    DecodeError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceModifiedError,
-    ResourceNotFoundError,
-)
 from azure.core.pipeline.policies import ContentDecodePolicy
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceNotFoundError,
+    ResourceModifiedError,
+    ResourceExistsError,
+    ClientAuthenticationError,
+    DecodeError)
 
-from .models import StorageErrorCode, UserDelegationKey, get_enum_value
 from .parser import _to_utc_datetime
+from .models import StorageErrorCode, UserDelegationKey, get_enum_value
+
+
+if TYPE_CHECKING:
+    from datetime import datetime
+    from azure.core.exceptions import AzureError
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -81,7 +85,7 @@ def return_raw_deserialized(response, *_):
     return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
 
 
-def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # pylint:disable=too-many-statements
+def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many-statements
     raise_error = HttpResponseError
     serialized = False
     if not storage_error.response or storage_error.response.status_code in [200, 204]:
