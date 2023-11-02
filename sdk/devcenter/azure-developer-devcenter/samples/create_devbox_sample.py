@@ -59,8 +59,7 @@ def main():
     try:
         endpoint = os.environ["DEVCENTER_ENDPOINT"]
     except KeyError:
-        print("Missing environment variable 'DEVCENTER_ENDPOINT' - please set it before running the example")
-        exit()
+        raise ValueError("Missing environment variable 'DEVCENTER_ENDPOINT' - please set it before running the example")
 
     # Build a client through AAD
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
