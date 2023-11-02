@@ -777,10 +777,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md
 [classify_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_classify_document.py
 [service-rename]: https://techcommunity.microsoft.com/t5/azure-ai-services-blog/azure-form-recognizer-is-now-azure-ai-document-intelligence-with/ba-p/3875765
-[addon_barcodes_sample]: https:://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_barcodes.py
-[addon_fonts_sample]: https:://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_fonts.py
-[addon_formulas_sample]: https:://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_formulas.py
-[addon_highres_sample]: https:://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_highres.py
+[addon_barcodes_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_barcodes.py
+[addon_fonts_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_fonts.py
+[addon_formulas_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_formulas.py
+[addon_highres_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_highres.py
 [addon_languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_languages.py
 
 [cla]: https://cla.microsoft.com
