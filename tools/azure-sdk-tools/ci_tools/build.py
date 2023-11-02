@@ -106,7 +106,12 @@ def build() -> None:
         target_dir = repo_root
 
     targeted_packages = discover_targeted_packages(
-        args.glob_string, target_dir, args.package_filter_string, filter_type="Build", compatibility_filter=True, include_inactive=args.inactive
+        args.glob_string,
+        target_dir,
+        args.package_filter_string,
+        filter_type="Build",
+        compatibility_filter=True,
+        include_inactive=args.inactive,
     )
     artifact_directory = get_artifact_directory(args.distribution_directory)
 
@@ -159,9 +164,12 @@ def create_package(
     """
 
     dist = get_artifact_directory(dest_folder)
+    setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
-    if not os.path.isdir(setup_directory_or_file):
-        setup_directory_or_file = os.path.dirname(setup_directory_or_file)
+    if setup_parsed.ext_modules:
+        run_logged(
+            [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
+        )
 
     if enable_wheel:
         run_logged(
