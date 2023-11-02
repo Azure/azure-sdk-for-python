@@ -153,7 +153,7 @@ class TableBatchOperations(object):
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag and isinstance(entity, TableEntity):
-            etag = entity.metadata.get("etag")
+            etag = entity.metadata.get("etag")  # pylint:disable=no-member
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
