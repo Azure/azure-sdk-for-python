@@ -103,7 +103,9 @@ class Sweep(ParameterizedSweep, BaseNode):
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Objective] = None,
-        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        early_termination: Optional[
+            Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy, EarlyTerminationPolicy, str]
+        ] = None,
         search_space: Optional[
             Dict[
                 str,
@@ -115,7 +117,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
@@ -337,9 +339,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         return SweepSchema(context=context)
 
     @classmethod
-    def _get_origin_inputs_and_search_space(
-        cls, built_inputs: Optional[Dict[str, NodeInput]]
-    ) -> Tuple[Dict[str, Union[Input, str, bool, int, float]], Dict[str, SweepDistribution]]:
+    def _get_origin_inputs_and_search_space(cls, built_inputs: Optional[Dict[str, NodeInput]]) -> Tuple:
         """Separate mixed true inputs & search space definition from inputs of
         this node and return them.
 

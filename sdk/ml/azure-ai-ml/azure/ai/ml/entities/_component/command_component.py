@@ -104,7 +104,14 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         code: Optional[Union[str, os.PathLike]] = None,
         environment: Optional[Union[str, Environment]] = None,
         distribution: Optional[
-            Union[Dict, PyTorchDistribution, MpiDistribution, TensorFlowDistribution, RayDistribution]
+            Union[
+                Dict,
+                MpiDistribution,
+                TensorFlowDistribution,
+                PyTorchDistribution,
+                RayDistribution,
+                DistributionConfiguration,
+            ]
         ] = None,
         resources: Optional[JobResourceConfiguration] = None,
         inputs: Optional[Dict] = None,

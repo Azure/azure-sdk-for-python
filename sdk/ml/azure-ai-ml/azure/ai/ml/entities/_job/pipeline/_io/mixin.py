@@ -28,11 +28,11 @@ class NodeIOMixin:
     dynamically."""
 
     @classmethod
-    def _get_supported_inputs_types(cls) -> None:
+    def _get_supported_inputs_types(cls) -> Optional[Any]:
         return None
 
     @classmethod
-    def _get_supported_outputs_types(cls) -> None:
+    def _get_supported_outputs_types(cls) -> Optional[Any]:
         return None
 
     @classmethod

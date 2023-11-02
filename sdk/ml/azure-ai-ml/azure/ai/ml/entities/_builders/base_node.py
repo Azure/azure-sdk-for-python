@@ -124,9 +124,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         self,
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
-        component: Component,
+        component: Optional[Union[str, Component]],
         inputs: Optional[Dict] = None,
-        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        outputs: Optional[Dict] = None,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
@@ -480,13 +480,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         return cast(Dict, self._inputs)
 
     @property
-    def outputs(self) -> Dict[str, Union[str, Output]]:
+    def outputs(self) -> Dict:
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
         :rtype: Dict[str, Union[str, Output]]
         """
-        return cast(Dict[str, Union[str, Output]], self._outputs)
+        return cast(Dict, self._outputs)
 
     def __str__(self) -> str:
         try:
@@ -514,7 +514,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :return: The origin job outputs
         :rtype: Dict[str, Union[str, Output]]
         """
-        outputs: Dict[str, Union[str, Output]] = {}
+        outputs: Dict = {}
         if self.outputs is not None:
             for output_name, output_obj in self.outputs.items():
                 if isinstance(output_obj, NodeOutput):

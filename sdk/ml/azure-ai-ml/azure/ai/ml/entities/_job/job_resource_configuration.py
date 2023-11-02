@@ -4,7 +4,7 @@
 
 import json
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
@@ -124,7 +124,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         *,
         locations: Optional[List[str]] = None,
         instance_count: Optional[int] = None,
-        instance_type: Optional[str] = None,
+        instance_type: Optional[Union[str, List]] = None,
         properties: Optional[Properties] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
@@ -141,7 +141,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         self.properties = properties
 
     @property
-    def properties(self) -> Optional[Properties]:
+    def properties(self) -> Optional[Union[Properties, Dict]]:
         """The properties of the job.
 
         :rtype: ~azure.ai.ml.entities._job.job_resource_configuration.Properties

@@ -75,11 +75,12 @@ class ParallelFor(LoopNode, NodeIOMixin):
         actual_outputs = kwargs.get("outputs", {})
         # parallel for node shares output meta with body
         try:
-            outputs = self.body._component.outputs
-            # transform body outputs to aggregate types when available
-            self._outputs = self._build_outputs_dict(
-                outputs=actual_outputs, output_definition_dict=self._convert_output_meta(outputs)
-            )
+            if self.body._component is not None and not isinstance(self.body._component, str):
+                outputs = self.body._component.outputs
+                # transform body outputs to aggregate types when available
+                self._outputs = self._build_outputs_dict(
+                    outputs=actual_outputs, output_definition_dict=self._convert_output_meta(outputs)
+                )
         except AttributeError:
             # when body output not available, create default output builder without meta
             self._outputs = self._build_outputs_dict(outputs=actual_outputs)
@@ -268,7 +269,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         cls,
         items: Union[list, dict, str, NodeOutput, PipelineInput],
         raise_error: bool = True,
-        body_component: Optional[Component] = None,
+        body_component: Optional[Union[str, Component]] = None,
     ) -> MutableValidationResult:
         validation_result = cls._create_empty_validation_result()
         if items is not None:
@@ -300,7 +301,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     @classmethod
     def _validate_items_list(
-        cls, items: list, validation_result: MutableValidationResult, body_component: Optional[Component] = None
+        cls,
+        items: list,
+        validation_result: MutableValidationResult,
+        body_component: Optional[Union[str, Component]] = None,
     ) -> None:
         # pylint: disable=protected-access
         meta: dict = {}
