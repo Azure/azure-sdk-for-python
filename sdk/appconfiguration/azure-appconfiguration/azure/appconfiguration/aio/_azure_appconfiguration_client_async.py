@@ -257,7 +257,7 @@ class AzureAppConfigurationClient:
         accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
-        
+
         error_map: Dict[int, Any] = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})

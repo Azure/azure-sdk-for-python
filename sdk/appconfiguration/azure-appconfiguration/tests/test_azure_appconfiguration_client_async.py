@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 import pytest
 import copy
-import datetime
 import json
 import re
+from datetime import datetime, timezone
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -222,7 +222,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_key_label(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
-        items = await self.convert_to_list(self.client.list_configuration_settings(label_filter=LABEL, key_filter=KEY))
+        items = await self.convert_to_list(self.client.list_configuration_settings(KEY, LABEL))
         assert len(items) == 1
         assert all(x.key == KEY and x.label == LABEL for x in items)
         await self.tear_down()
@@ -240,7 +240,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_key(self, appconfiguration_connection_string):
         await self.set_up(appconfiguration_connection_string)
-        items = await self.convert_to_list(self.client.list_configuration_settings(key_filter=KEY))
+        items = await self.convert_to_list(self.client.list_configuration_settings(KEY))
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
         await self.tear_down()
@@ -338,7 +338,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
+        recorded_variables.setdefault("timestamp", str(datetime.utcnow()))
 
         async with self.create_client(appconfiguration_connection_string) as client:
             # Confirm all configuration settings are cleaned up
@@ -351,6 +351,10 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
             )
             assert len(revision) >= 0
+
+            accept_time = datetime(year=2000, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc)
+            revision = await self.convert_to_list(client.list_configuration_settings(accept_datetime=accept_time))
+            assert len(revision) == 0
 
         return recorded_variables
 
