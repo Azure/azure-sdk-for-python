@@ -288,7 +288,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             # If component is remote, return it's asset id
             return self._component.id
         # Otherwise, return the component version or arm id.
-        return self._component
+        res: Union[str, Component] = self._component
+        return res
 
     def _get_component_name(self) -> Optional[str]:
         # first use component version/job's display name or name as component name

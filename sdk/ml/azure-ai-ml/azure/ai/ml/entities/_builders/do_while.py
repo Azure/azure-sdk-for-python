@@ -41,8 +41,8 @@ class DoWhile(LoopNode):
     def __init__(
         self,
         *,
-        body: Pipeline,
-        condition: Union[str, NodeInput, NodeOutput],
+        body: Union[Pipeline, BaseNode],
+        condition: Optional[Union[str, NodeInput, NodeOutput]],
         mapping: Dict,
         limits: Optional[Union[dict, DoWhileJobLimits]] = None,
         **kwargs: Any,
@@ -75,7 +75,7 @@ class DoWhile(LoopNode):
         return self._mapping
 
     @property
-    def condition(self) -> Union[str, NodeInput, NodeOutput]:
+    def condition(self) -> Optional[Union[str, NodeInput, NodeOutput]]:
         """Get the boolean type control output of the body as the do-while loop condition.
 
         :return: Control output of the body as the do-while loop condition.
@@ -122,7 +122,8 @@ class DoWhile(LoopNode):
                 )
             return port_name
 
-        return port
+        res: Union[str, NodeInput, NodeOutput] = port
+        return res
 
     @classmethod
     def _create_instance_from_schema_dict(
@@ -245,6 +246,7 @@ class DoWhile(LoopNode):
             port_obj = port
         if (
             port_obj is not None
+            and port_obj._owner is not None  # pylint: disable=protected-access
             and port_obj._owner._instance_id != self.body._instance_id  # pylint: disable=protected-access
         ):
             # Check the port owner is dowhile body.

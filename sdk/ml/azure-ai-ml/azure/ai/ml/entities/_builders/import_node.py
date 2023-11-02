@@ -88,7 +88,8 @@ class Import(BaseNode):
 
     @property
     def component(self) -> Union[str, ImportComponent]:
-        return self._component
+        res: Union[str, ImportComponent] = self._component
+        return res
 
     @classmethod
     def _attr_type_map(cls) -> dict:
