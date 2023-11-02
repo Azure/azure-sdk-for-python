@@ -56,7 +56,12 @@ class KeyVaultBackupClient(KeyVaultClientBase):
 
     @overload
     def begin_backup(
-        self, blob_storage_url: str, *, sas_token: str, continuation_token: Optional[str] = None, **kwargs: Any
+        self,
+        blob_storage_url: str,
+        *,
+        sas_token: str,
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
     ) -> "LROPoller[KeyVaultBackupResult]":
         ...
 

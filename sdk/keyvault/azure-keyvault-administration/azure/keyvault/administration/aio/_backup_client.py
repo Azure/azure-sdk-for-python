@@ -51,7 +51,12 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
 
     @overload
     async def begin_backup(
-        self, blob_storage_url: str, *, sas_token: str, continuation_token: Optional[str] = None, **kwargs: Any
+        self,
+        blob_storage_url: str,
+        *,
+        sas_token: str,
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
     ) -> "AsyncLROPoller[KeyVaultBackupResult]":
         ...
 
