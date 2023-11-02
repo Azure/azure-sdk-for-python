@@ -327,7 +327,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     return
                 need_refresh = False
                 updated_sentinel_keys = dict(self._refresh_on)
-                headers=_get_headers("Watch")
+                headers = _get_headers("Watch")
                 for (key, label), etag in self._refresh_on.items():
                     try:
                         updated_sentinel = await self._client.get_configuration_setting(
