@@ -14,7 +14,7 @@ from azure.ai.resources._restclient.v2022_10_01 import AzureMachineLearningWorks
 from azure.ai.resources._utils._ai_client_utils import find_config_file_path, get_config_info
 from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 from azure.ai.resources._utils._str_utils import build_connection_id
-from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
+from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME, DEFAULT_CONTENT_SAFETY_CONNECTION_NAME
 from azure.ai.resources.entities.mlindex import Index as MLIndexAsset
 from azure.ai.resources.operations import ACSOutputConfig, ACSSource, GitSource, IndexDataSource, LocalSource
 from azure.ai.ml import MLClient
@@ -420,7 +420,23 @@ class AIClient:
             raise ValueError(f"Unsupported input source type {type(input_source)}")
 
     def get_default_aoai_connection(self):
+        """Retrieves the default Azure Open AI connection associated with this AIClient's project,
+        creating it if it does not already exist.
+
+        :return: A Connection to Azure Open AI
+        :rtype: ~azure.ai.resources.entities.AzureOpenAIConnection
+        """
         return self._connections.get(DEFAULT_OPEN_AI_CONNECTION_NAME)
+    
+    def get_default_content_safety_connection(self):
+        """Retrieves a default Azure AI Service connection associated with this AIClient's project,
+        creating it if the connection does not already exist.
+        This particular AI Service connection is linked to an Azure Content Safety service.
+
+        :return: A Connection to an Azure AI Service
+        :rtype: ~azure.ai.resources.entities.AzureAIServiceConnection
+        """
+        return self._connections.get(DEFAULT_CONTENT_SAFETY_CONNECTION_NAME)
 
     def _add_user_agent(self, kwargs) -> None:
         user_agent = kwargs.pop("user_agent", None)
