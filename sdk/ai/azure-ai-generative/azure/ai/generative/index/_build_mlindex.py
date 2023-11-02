@@ -10,6 +10,7 @@ import yaml
 from azure.ai.resources.entities.mlindex import Index
 from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
 from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
+from azure.ai.resources.operations._pinecone_output_config import PineconeOutputConfig
 from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 
 
@@ -32,7 +33,7 @@ def build_index(
     embeddings_cache_path: str = None,
     ######## data source info ########
     index_input_config: Union[ACSSource, LocalSource] = None,
-    acs_config: ACSOutputConfig = None,  # todo better name?
+    index_config: Union[ACSOutputConfig, PineconeOutputConfig] = None,  # todo better name?
 ) -> Index:
 
     """Generates embeddings locally and stores Index reference in memory
@@ -40,7 +41,8 @@ def build_index(
     try:
         from azure.ai.generative.index._documents import DocumentChunksIterator, split_documents
         from azure.ai.generative.index._embeddings import EmbeddingsContainer
-        from azure.ai.generative.index._tasks.update_acs import create_index_from_raw_embeddings
+        from azure.ai.generative.index._tasks.update_acs import create_index_from_raw_embeddings as acs_create_index_from_raw_embeddings
+        from azure.ai.generative.index._tasks.update_pinecone import create_index_from_raw_embeddings as pinecone_create_index_from_raw_embeddings
         from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
         from azure.ai.generative.index._utils.logging import disable_mlflow
     except ImportError as e:
@@ -113,9 +115,9 @@ def build_index(
         }
     if vector_store.lower() == "azure_cognitive_search":
         acs_args = {
-            "index_name": acs_config.acs_index_name,
+            "index_name": index_config.acs_index_name,
         }
-        if not acs_config.acs_connection_id:
+        if not index_config.acs_connection_id:
             import os
             acs_args = {
                 **acs_args,
@@ -129,7 +131,7 @@ def build_index(
                 "connection": {"key": "AZURE_AI_SEARCH_KEY"}
             }
         else:
-            acs_connection = get_connection_by_id_v2(acs_config.acs_connection_id)
+            acs_connection = get_connection_by_id_v2(index_config.acs_connection_id)
             acs_args = {
                 **acs_args,
                 **{
@@ -139,10 +141,10 @@ def build_index(
             }
             connection_args = {
                 "connection_type": "workspace_connection",
-                "connection": {"id": acs_config.acs_connection_id}
+                "connection": {"id": index_config.acs_connection_id}
             }
 
-        create_index_from_raw_embeddings(
+        acs_create_index_from_raw_embeddings(
             emb=embedder,
             acs_config=acs_args,
             connection=connection_args,
@@ -150,6 +152,47 @@ def build_index(
         )
         mlindex_properties = {
             "azureml.mlIndexAssetKind": "acs",
+            "azureml.mlIndexAsset": "true",
+            "azureml.mlIndexAssetSource": "AzureML Data",
+            "azureml.mlIndexAssetPipelineRunId": "Local",
+        }
+    if vector_store.lower() == "pinecone":
+        pinecone_args = {
+            "index_name": index_config.pinecone_index_name,
+        }
+        if not index_config.pinecone_connection_id:
+            import os
+            pinecone_args = {
+                **pinecone_args,
+                **{
+                    "environment": os.getenv("PINECONE_ENVIRONMENT")
+                }
+            }
+            connection_args = {
+                "connection_type": "environment",
+                "connection": {"key": "PINECONE_API_KEY"}
+            }
+        else:
+            pinecone_connection = get_connection_by_id_v2(index_config.pinecone_connection_id)
+            pinecone_args = {
+                **pinecone_args,
+                **{
+                    "environment": pinecone_connection["properties"]["metadata"]["environment"]
+                }
+            }
+            connection_args = {
+                "connection_type": "workspace_connection",
+                "connection": {"id": index_config.pinecone_connection_id}
+            }
+
+        pinecone_create_index_from_raw_embeddings(
+            emb=embedder,
+            pinecone_config=pinecone_args,
+            connection=connection_args,
+            output_path=save_path,
+        )
+        mlindex_properties = {
+            "azureml.mlIndexAssetKind": "pinecone",
             "azureml.mlIndexAsset": "true",
             "azureml.mlIndexAssetSource": "AzureML Data",
             "azureml.mlIndexAssetPipelineRunId": "Local",

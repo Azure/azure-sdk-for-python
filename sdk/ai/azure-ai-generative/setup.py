@@ -137,6 +137,9 @@ setup(
             "azure-identity>=1,<2",
             "azure-keyvault-secrets>=1,<5",
         ],
+        "pinecone": [
+            "pinecone-client",
+        ],
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
