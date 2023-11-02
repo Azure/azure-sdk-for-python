@@ -35,13 +35,13 @@ _MaximumExclusiveEffectivePartitionKey = 0xFF
 _MinimumInclusiveEffectivePartitionKey = 0x00
 _MaxStringChars = 100
 _MaxStringBytesToAppend = 100
-_MaxPartitionKeyBinarySize = (
- 1  # type marker
- + 9  # hash value
- + 1  # type marker
- + _MaxStringBytesToAppend
- + 1  # trailing zero
-) * 3
+_MaxPartitionKeyBinarySize = \
+    (1  # type marker
+     + 9  # hash value
+     + 1  # type marker
+     + _MaxStringBytesToAppend
+     + 1  # trailing zero
+     ) * 3
 
 
 class PartitionKeyComponentType:
@@ -155,10 +155,13 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_prefix_partition_key(self, pk_value: list) -> Range:
         if self.kind != "MultiHash":
-            raise ValueError("Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys.")  # pylint: disable=line-too-long
+            raise ValueError(
+                "Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys.")  # pylint: disable=line-too-long
 
         if len(pk_value) >= len(self["paths"]):
-            raise ValueError("{} partition key components provided. Expected less than {} components (number of container partition key definition components).".format(len(pk_value), len(self["paths"])))  # pylint: disable=line-too-long
+            raise ValueError(
+                "{} partition key components provided. Expected less than {} components (number of container" +
+                " partition key definition components).".format(len(pk_value), len(self["paths"])))
         # Prefix Partitions always have exclusive max
         min_epk = self._get_effective_partition_key_string(pk_value)
         if min_epk == _MinimumInclusiveEffectivePartitionKey:
@@ -184,10 +187,10 @@ class PartitionKey(dict):
 
         kind = self.kind
         if kind == 'Hash':
-            version = self.version or 'V1'
-            if version == 'V1':
+            version = self.version or 2
+            if version == 1:
                 return self._get_effective_partition_key_for_hash_partitioning()
-            elif version == 'V2':
+            elif version == 2:
                 return self._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
         elif kind == 'MultiHash':
             return self._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
@@ -310,5 +313,3 @@ def _write_for_binary_encoding(value, binary_writer):
 
     elif isinstance(value, _Undefined):
         binary_writer.write(bytes([PartitionKeyComponentType.Undefined]))
-
-

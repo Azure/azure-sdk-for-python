@@ -110,14 +110,6 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/test_example_sansio.py
-                :start-after: [START on_exception]
-                :end-before: [END on_exception]
-                :language: python
-                :dedent: 4
         """
         return
 

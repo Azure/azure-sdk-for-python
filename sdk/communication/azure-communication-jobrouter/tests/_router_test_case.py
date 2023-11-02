@@ -13,8 +13,14 @@ from _shared.utils import get_http_logging_policy
 from azure.communication.jobrouter import (
     JobRouterClient,
     JobRouterAdministrationClient,
-    RouterJobStatus,
 )
+from azure.communication.jobrouter.models import (
+    RouterJobStatus,
+    CancelJobOptions,
+    CompleteJobOptions,
+    CloseJobOptions,
+)
+
 
 class RouterRecordedTestCase(AzureRecordedTestCase):
     @abstractmethod
@@ -23,67 +29,63 @@ class RouterRecordedTestCase(AzureRecordedTestCase):
 
     def create_client(self) -> JobRouterClient:
         return JobRouterClient.from_connection_string(
-            conn_str = self.connection_string,
-            http_logging_policy = get_http_logging_policy())
+            conn_str=self.connection_string, http_logging_policy=get_http_logging_policy()
+        )
 
     def create_admin_client(self) -> JobRouterAdministrationClient:
         return JobRouterAdministrationClient.from_connection_string(
-            conn_str = self.connection_string,
-            http_logging_policy = get_http_logging_policy())
+            conn_str=self.connection_string, http_logging_policy=get_http_logging_policy()
+        )
 
     @retry(Exception, delay=3, tries=3)
-    def clean_up_job(
-            self,
-            job_id,
-            **kwargs
-    ):
+    def clean_up_job(self, job_id, **kwargs):
         router_client: JobRouterClient = self.create_client()
-        router_job = router_client.get_job(job_id = job_id)
-        suppress_errors = kwargs.pop('suppress_errors', False)
+        router_job = router_client.get_job(job_id=job_id)
+        suppress_errors = kwargs.pop("suppress_errors", False)
 
         try:
             if router_job.status == RouterJobStatus.PENDING_CLASSIFICATION:
-                 # cancel and delete job
-                router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
-                router_client.delete_job(job_id = job_id)
+                # cancel and delete job
+                router_client.cancel_job(job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp"))
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.QUEUED:
-                 # cancel and delete job
-                router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
-                router_client.delete_job(job_id = job_id)
+                # cancel and delete job
+                router_client.cancel_job(job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp"))
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.ASSIGNED:
                 # complete, close and delete job
                 worker_assignments = router_job.assignments
 
                 for assignment_id, job_assignment in worker_assignments.items():
-                    router_client.complete_job(job_id = job_id, assignment_id = assignment_id)
-                    router_client.close_job(job_id = job_id, assignment_id = assignment_id)
+                    router_client.complete_job(job_id, CompleteJobOptions(assignment_id=assignment_id))
+                    router_client.close_job(job_id, CloseJobOptions(assignment_id=assignment_id))
 
-                router_client.delete_job(job_id = job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.COMPLETED:
                 # close and delete job
                 worker_assignments = router_job.assignments
 
                 for assignment_id, job_assignment in worker_assignments.items():
-                    router_client.close_job(job_id = job_id, assignment_id = assignment_id)
+                    router_client.close_job(job_id, CloseJobOptions(assignment_id=assignment_id))
 
-                router_client.delete_job(job_id = job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.CLOSED:
                 # delete job
-                router_client.delete_job(job_id = job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.CANCELLED:
                 # delete job
-                router_client.delete_job(job_id = job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.CLASSIFICATION_FAILED:
                 # delete job
-                router_client.delete_job(job_id = job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.CREATED:
                 # cancel and delete job
-                router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
-                router_client.delete_job(job_id = job_id)
-            elif  router_job.status == RouterJobStatus.WAITING_FOR_ACTIVATION:
+                router_client.cancel_job(job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp"))
+                router_client.delete_job(job_id=job_id)
+            elif router_job.status == RouterJobStatus.WAITING_FOR_ACTIVATION:
                 # cancel and delete job
-                router_client.cancel_job(job_id = job_id, disposition_code = "JobCancelledAsPartOfTestCleanUp")
-                router_client.delete_job(job_id = job_id)
+                router_client.cancel_job(job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp"))
+                router_client.delete_job(job_id=job_id)
             else:
                 pass
         except Exception as e:
@@ -95,8 +97,8 @@ class RouterRecordedTestCase(AzureRecordedTestCase):
 
     def _poll_until_no_exception(self, fn, expected_exception, *args, **kwargs):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
-        max_retries = kwargs.pop('max_retries', 20)
-        retry_delay = kwargs.pop('retry_delay', 3)
+        max_retries = kwargs.pop("max_retries", 20)
+        retry_delay = kwargs.pop("retry_delay", 3)
 
         for i in range(max_retries):
             try:

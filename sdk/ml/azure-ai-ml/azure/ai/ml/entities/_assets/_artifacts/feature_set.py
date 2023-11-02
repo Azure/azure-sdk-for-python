@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetContainer,
     FeaturesetContainerProperties,
     FeaturesetVersion,
@@ -16,7 +16,6 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 )
 from azure.ai.ml._schema._feature_set.feature_set_schema import FeatureSetSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, get_arm_id_object_from_id
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LONG_URI_FORMAT, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._feature_set.feature_set_specification import FeatureSetSpecification
@@ -27,7 +26,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from .artifact import ArtifactStorageInfo
 
 
-@experimental
 class FeatureSet(Artifact):
     """Feature Set
 

@@ -7,6 +7,7 @@
 - Exposed `VectorSearchAlgorithmMetric`, `IndexProjectionMode`, `SearchIndexerIndexProjections`,
   `SearchIndexerIndexProjectionSelector`, `SearchIndexerIndexProjectionsParameters`
 - Added `index_projections` support for `SearchIndexerSkillset`
+- Added `semantic_query` for `Search` method.
 
 ### Breaking Changes
 

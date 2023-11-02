@@ -19,6 +19,7 @@
 ### Bugs Fixed
 
 * Fixes issue where `user_agent` was required to be set.
+* Fixes issue where correlation context info is wrong on refresh.
 
 ## 1.1.0b1 (2023-09-13)
 

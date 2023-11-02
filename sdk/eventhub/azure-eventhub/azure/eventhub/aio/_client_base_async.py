@@ -56,17 +56,17 @@ if TYPE_CHECKING:
         uamqp_AMQPClientAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
 
-    CredentialTypes = Union[
+    try:
+        from typing_extensions import TypeAlias, Protocol
+    except ImportError:
+        Protocol = object  # type: ignore
+
+    CredentialTypes: TypeAlias = Union[
         "EventHubSharedKeyCredential",
         AsyncTokenCredential,
         AzureSasCredential,
         AzureNamedKeyCredential,
     ]
-
-    try:
-        from typing_extensions import Protocol
-    except ImportError:
-        Protocol = object  # type: ignore
 
     class AbstractConsumerProducer(Protocol):
         @property

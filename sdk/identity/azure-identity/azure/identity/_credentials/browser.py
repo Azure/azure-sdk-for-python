@@ -8,7 +8,6 @@ from typing import Dict, Any
 import subprocess
 import webbrowser
 from urllib.parse import urlparse
-import msal
 
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -81,77 +80,59 @@ class InteractiveBrowserCredential(InteractiveCredential):
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
+    def _request_token(self, *scopes: str, **kwargs) -> Dict:
+
+        # start an HTTP server to receive the redirect
+        server = None
+        redirect_uri: str = ""
+        if self._parsed_url:
+            try:
+                redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
+                server = self._server_class(self._parsed_url.hostname, self._parsed_url.port, timeout=self._timeout)
+            except socket.error as ex:
+                raise CredentialUnavailableError(message="Couldn't start an HTTP server on " + redirect_uri) from ex
+        else:
+            for port in range(8400, 9000):
+                try:
+                    server = self._server_class("localhost", port, timeout=self._timeout)
+                    redirect_uri = "http://localhost:{}".format(port)
+                    break
+                except socket.error:
+                    continue  # keep looking for an open port
+
+        if not server:
+            raise CredentialUnavailableError(message="Couldn't start an HTTP server on localhost")
+
+        # get the url the user must visit to authenticate
         scopes = list(scopes)  # type: ignore
         claims = kwargs.get("claims")
         app = self._get_app(**kwargs)
-        if isinstance(app, msal.ConfidentialClientApplication):
-            server = None
-            if self._parsed_url:
-                redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
-                try:
-                    server = self._server_class(self._parsed_url.hostname, self._parsed_url.port, timeout=self._timeout)
-                except socket.error as ex:
-                    raise CredentialUnavailableError(message="Couldn't start an HTTP server on " + redirect_uri) from ex
-            else:
-                for port in range(8400, 9000):
-                    try:
-                        server = self._server_class("localhost", port, timeout=self._timeout)
-                        redirect_uri = "http://localhost:{}".format(port)
-                        break
-                    except socket.error:
-                        continue  # keep looking for an open port
+        flow = app.initiate_auth_code_flow(
+            scopes,
+            redirect_uri=redirect_uri,
+            prompt="select_account",
+            claims_challenge=claims,
+            login_hint=self._login_hint,
+        )
+        if "auth_uri" not in flow:
+            raise CredentialUnavailableError("Failed to begin authentication flow")
 
-            if not server:
-                raise CredentialUnavailableError(message="Couldn't start an HTTP server on localhost")
+        if not _open_browser(flow["auth_uri"]):
+            raise CredentialUnavailableError(message="Failed to open a browser")
 
-            flow = app.initiate_auth_code_flow(
-                scopes,
-                redirect_uri=redirect_uri,
-                prompt="select_account",
-                claims_challenge=claims,
-                login_hint=self._login_hint,
-            )
-            if "auth_uri" not in flow:
-                raise CredentialUnavailableError("Failed to begin authentication flow")
-
-            if not _open_browser(flow["auth_uri"]):
-                raise CredentialUnavailableError(message="Failed to open a browser")
-
-            # block until the server times out or receives the post-authentication redirect
-            response = server.wait_for_redirect()
-            if not response:
-                raise ClientAuthenticationError(
+        # block until the server times out or receives the post-authentication redirect
+        response = server.wait_for_redirect()
+        if not response:
+            if within_dac.get():
+                raise CredentialUnavailableError(
                     message="Timed out after waiting {} seconds for the user to authenticate".format(self._timeout)
                 )
-
-            # redeem the authorization code for a token
-            return app.acquire_token_by_auth_code_flow(flow, response, scopes=scopes, claims_challenge=claims)
-
-        port = self._parsed_url.port if self._parsed_url else None
-
-        try:
-            result = app.acquire_token_interactive(
-                scopes=scopes,
-                login_hint=self._login_hint,
-                claims_challenge=claims,
-                timeout=self._timeout,
-                prompt="select_account",
-                port=port,
+            raise ClientAuthenticationError(
+                message="Timed out after waiting {} seconds for the user to authenticate".format(self._timeout)
             )
-        except socket.error as ex:
-            raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
-        if "access_token" not in result and "error_description" in result:
-            if within_dac.get():
-                raise CredentialUnavailableError(message=result["error_description"])
-            raise ClientAuthenticationError(message=result.get("error_description"))
-        if "access_token" not in result:
-            if within_dac.get():
-                raise CredentialUnavailableError(message="Failed to authenticate user")
-            raise ClientAuthenticationError(message="Failed to authenticate user")
 
-        # base class will raise for other errors
-        return result
+        # redeem the authorization code for a token
+        return app.acquire_token_by_auth_code_flow(flow, response, scopes=scopes, claims_challenge=claims)
 
 
 def _open_browser(url):
