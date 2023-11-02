@@ -333,7 +333,7 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     if isinstance(event.data, bytes):
         _content = event.data
     else:
-        raise TypeError("Event data must be bytes when in binary mode.")
+        raise TypeError("Event data must be bytes when in binary mode. Did you forget to call `json.dumps()` and/or `encode()`?")
  
     # content_type must be CloudEvent DataContentType when in binary mode
     default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
