@@ -7,26 +7,40 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout_async.py
+FILE: sample_analyze_addon_highres_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract text, selection marks, and layout information from a document
-    given through a file.
+    This sample demonstrates how to recognize documents with improved quality using
+    the add-on 'OCR_HIGH_RESOLUTION' capability.
 
-    Note that selection marks returned from begin_analyze_document(model_id="prebuilt-layout") do not return the text
-    associated with the checkbox. For the API to return this information, build a custom model to analyze the
-    checkbox and its text. See sample_build_model.py for more information.
+    Add-on capabilities are available within all models except for the Business card
+    model. This sample uses Layout model to demonstrate.
+
+    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    enum class. For more information, see:
+    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+
+    The following capabilities are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following capabilities will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+
+    See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_layout_async.py
+    python sample_analyze_addon_highres_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
-import os
 import asyncio
+import os
 
 
 def format_polygon(polygon):
@@ -35,18 +49,19 @@ def format_polygon(polygon):
     return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
-async def analyze_layout_async():
+async def analyze_with_highres():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
             "..",
             "..",
-            "./sample_forms/forms/form_selection_mark.png",
+            "sample_forms/add_ons/highres.png",
         )
     )
-
+    # [START analyze_with_highres]
     from azure.core.credentials import AzureKeyCredential
+    from azure.ai.formrecognizer import AnalysisFeature
     from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
@@ -55,10 +70,12 @@ async def analyze_layout_async():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
+
     async with document_analysis_client:
+        # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-layout", document=f
+                "prebuilt-layout", document=f, features=[AnalysisFeature.OCR_HIGH_RESOLUTION]
             )
         result = await poller.result()
 
@@ -110,14 +127,14 @@ async def analyze_layout_async():
                 )
 
     print("----------------------------------------")
+    # [END analyze_with_highres]
 
 
 async def main():
-    await analyze_layout_async()
+    await analyze_with_highres()
 
 
 if __name__ == "__main__":
-    import sys
     from azure.core.exceptions import HttpResponseError
 
     try:
