@@ -27,6 +27,7 @@ T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class EventGridClientOperationsMixin(OperationsMixin):
+
     @overload
     async def publish_cloud_events(
         self,
@@ -136,7 +137,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         body: List[Dict[str, Any]],
         *,
         binary_mode: Optional[bool] = False,
-        content_type: str = "application/cloudevents+json; charset=utf-8",
+        content_type: str = "application/cloudevents-batch+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
         """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
@@ -151,8 +152,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type body: list[dict[str, Any]]
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
          When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/cloudevents+json;
-         charset=utf-8`. Expects CloudEvent data to be bytes.
+         the default content type is `application/cloudevents-batch+json; charset=utf-8`. Expects CloudEvent data to be bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -190,6 +190,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        
         # Check that the body is a CloudEvent or list of CloudEvents even if dict
         if isinstance(body, dict) or (isinstance(body, list) and isinstance(body[0], dict)):
             try:
@@ -199,6 +200,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     body = CloudEvent.from_dict(body)
             except AttributeError:
                 raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
+
+
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)

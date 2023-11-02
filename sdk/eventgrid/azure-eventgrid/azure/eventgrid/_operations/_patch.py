@@ -158,8 +158,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
          When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
          the default content type is `application/json`. Expects CloudEvent data to be bytes.
-        :keyword content_type: content type. Default value is "application/cloudevents+json;
-         charset=utf-8".
+        :keyword content_type: content type. Default value is "application/cloudevents-batch+json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
