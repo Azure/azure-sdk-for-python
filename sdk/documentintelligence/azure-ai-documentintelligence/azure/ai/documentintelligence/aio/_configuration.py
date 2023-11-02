@@ -6,12 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Union
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from .._version import VERSION
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class DocumentAnalysisClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
@@ -23,16 +27,18 @@ class DocumentAnalysisClientConfiguration:  # pylint: disable=too-many-instance-
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Is either a
-     AzureKeyCredential type or a AzureKeyCredential type. Required.
+     AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.AzureKeyCredential
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2023-10-31-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AzureKeyCredential], **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "2023-10-31-preview")
 
         if endpoint is None:
@@ -43,6 +49,7 @@ class DocumentAnalysisClientConfiguration:  # pylint: disable=too-many-instance-
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-documentintelligence/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -50,8 +57,8 @@ class DocumentAnalysisClientConfiguration:  # pylint: disable=too-many-instance-
     def _infer_policy(self, **kwargs):
         if isinstance(self.credential, AzureKeyCredential):
             return policies.AzureKeyCredentialPolicy(self.credential, "Ocp-Apim-Subscription-Key", **kwargs)
-        if isinstance(self.credential, AzureKeyCredential):
-            return policies.AzureKeyCredentialPolicy(self.credential, "Authorization", prefix="bearer", **kwargs)
+        if hasattr(self.credential, "get_token"):
+            return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
         raise TypeError(f"Unsupported credential: {self.credential}")
 
     def _configure(self, **kwargs: Any) -> None:
@@ -77,16 +84,18 @@ class DocumentModelAdministrationClientConfiguration:  # pylint: disable=too-man
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Is either a
-     AzureKeyCredential type or a AzureKeyCredential type. Required.
+     AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.AzureKeyCredential
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2023-10-31-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AzureKeyCredential], **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "2023-10-31-preview")
 
         if endpoint is None:
@@ -97,6 +106,7 @@ class DocumentModelAdministrationClientConfiguration:  # pylint: disable=too-man
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-documentintelligence/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -104,8 +114,8 @@ class DocumentModelAdministrationClientConfiguration:  # pylint: disable=too-man
     def _infer_policy(self, **kwargs):
         if isinstance(self.credential, AzureKeyCredential):
             return policies.AzureKeyCredentialPolicy(self.credential, "Ocp-Apim-Subscription-Key", **kwargs)
-        if isinstance(self.credential, AzureKeyCredential):
-            return policies.AzureKeyCredentialPolicy(self.credential, "Authorization", prefix="bearer", **kwargs)
+        if hasattr(self.credential, "get_token"):
+            return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
         raise TypeError(f"Unsupported credential: {self.credential}")
 
     def _configure(self, **kwargs: Any) -> None:
