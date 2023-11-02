@@ -13,18 +13,18 @@ DESCRIPTION:
     This sample demonstrates how to detect languages from the document using the
     add-on 'LANGUAGES' capability.
 
-    Add-on features are available within all models except for the Business card
+    Add-on capabilities are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.
 
-    Add-on features accept a list of strings containing values from the `AnalysisFeature`
+    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
     enum class. For more information, see:
     https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
 
-    The following add-on features are free:
+    The following capabilities are free:
     - BARCODES
     - LANGUAGES
 
-    The following add-on features will incur additional charges:
+    The following capabilities will incur additional charges:
     - FORMULAS
     - OCR_HIGH_RESOLUTION
     - STYLE_FONT
@@ -77,7 +77,7 @@ def analyze_languages():
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
 
-    # Specify which add-on features to enable.
+    # Specify which add-on capabilities to enable.
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
             "prebuilt-layout", document=f, features=[AnalysisFeature.LANGUAGES]

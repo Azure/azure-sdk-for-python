@@ -46,11 +46,11 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_build_classifier.py][sample_build_classifier] and [sample_build_classifier_async.py][sample_build_classifier_async]|Build a custom document classifier.|
 |[sample_manage_classifiers.py][sample_manage_classifiers] and [sample_manage_classifiers_async.py][sample_manage_classifiers_async]|Manage custom document classification models.|
 |[sample_send_request.py][sample_send_request] and [sample_send_request_async.py][sample_send_request_async]|Use the `send_request` client method.|
-|[sample_analyze_addon_barcodes.py][sample_analyze_addon_barcodes] and [sample_analyze_addon_barcodes_async.py][sample_analyze_addon_barcodes_async]|Extract barcodes using the add-on feature.|
-|[sample_analyze_addon_fonts.py][sample_analyze_addon_fonts] and [sample_analyze_addon_fonts_async.py][sample_analyze_addon_fonts_async]|Extract font information using the add-on feature.|
-|[sample_analyze_addon_formulas.py][sample_analyze_addon_formulas] and [sample_analyze_addon_formulas_async.py][sample_analyze_addon_formulas_async]|Extract formulas using the add-on feature.|
-|[sample_analyze_addon_highres.py][sample_analyze_addon_highres] and [sample_analyze_addon_highres_async.py][sample_analyze_addon_highres_async]|Recognize text with improved quality using the add-on feature.|
-|[sample_analyze_addon_languages.py][sample_analyze_addon_languages] and [sample_analyze_addon_languages_async.py][sample_analyze_addon_languages_async]|Detect languages using the add-on feature.|
+|[sample_analyze_addon_barcodes.py][sample_analyze_addon_barcodes] and [sample_analyze_addon_barcodes_async.py][sample_analyze_addon_barcodes_async]|Extract barcodes using the add-on capability.|
+|[sample_analyze_addon_fonts.py][sample_analyze_addon_fonts] and [sample_analyze_addon_fonts_async.py][sample_analyze_addon_fonts_async]|Extract font information using the add-on capability.|
+|[sample_analyze_addon_formulas.py][sample_analyze_addon_formulas] and [sample_analyze_addon_formulas_async.py][sample_analyze_addon_formulas_async]|Extract formulas using the add-on capability.|
+|[sample_analyze_addon_highres.py][sample_analyze_addon_highres] and [sample_analyze_addon_highres_async.py][sample_analyze_addon_highres_async]|Recognize text with improved quality using the add-on capability.|
+|[sample_analyze_addon_languages.py][sample_analyze_addon_languages] and [sample_analyze_addon_languages_async.py][sample_analyze_addon_languages_async]|Detect languages using the add-on capability.|
 
 ## Samples for client library versions 3.1.X
 
