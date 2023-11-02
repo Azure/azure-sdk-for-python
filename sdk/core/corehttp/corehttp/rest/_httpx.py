@@ -27,7 +27,7 @@ import logging
 from typing import AsyncIterator
 
 import httpx
-from ..exceptions import DecodeError, IncompleteReadError
+from ..exceptions import DecodeError, ServiceRequestError, IncompleteReadError, HttpResponseError
 from ._http_response_impl import HttpResponseImpl
 from ._http_response_impl_async import AsyncHttpResponseImpl
 from ..rest import HttpRequest
@@ -96,13 +96,20 @@ class HttpXStreamDownloadGenerator:
             internal_response.close()
             raise
         except httpx.RemoteProtocolError as ex:
-            _LOGGER.warning("Incomplete download: %s", ex)
+            msg = ex.__str__()
+            if "complete message" in msg:
+                _LOGGER.warning("Incomplete download: %s", ex)
+                internal_response.close()
+                raise IncompleteReadError(ex, error=ex) from ex
+            _LOGGER.warning("Unable to stream download: %s", ex)
             internal_response.close()
-            raise IncompleteReadError(ex, error=ex) from ex
+            raise HttpResponseError(ex, error=ex) from ex
         except httpx.DecodingError as ex:
             if len(ex.args) > 0:
-                raise DecodeError(ex.args[0]) from ex
-            raise DecodeError("Failed to decode.") from ex
+                raise DecodeError(ex.args[0], error=ex) from ex
+            raise DecodeError("Failed to decode.", error=ex) from ex
+        except httpx.RequestError as err:
+            raise ServiceRequestError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             internal_response.close()
@@ -181,13 +188,20 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
             await internal_response.aclose()
             raise
         except httpx.RemoteProtocolError as ex:
-            _LOGGER.warning("Incomplete download: %s", ex)
+            msg = ex.__str__()
+            if "complete message" in msg:
+                _LOGGER.warning("Incomplete download: %s", ex)
+                await internal_response.aclose()
+                raise IncompleteReadError(ex, error=ex) from ex
+            _LOGGER.warning("Unable to stream download: %s", ex)
             await internal_response.aclose()
-            raise IncompleteReadError(ex, error=ex) from ex
+            raise HttpResponseError(ex, error=ex) from ex
         except httpx.DecodingError as ex:
             if len(ex.args) > 1:
-                raise DecodeError(ex.args[0]) from ex
-            raise DecodeError("Failed to decode.") from ex
+                raise DecodeError(ex.args[0], error=ex) from ex
+            raise DecodeError("Failed to decode.", error=ex) from ex
+        except httpx.RequestError as err:
+            raise ServiceRequestError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
             await internal_response.aclose()

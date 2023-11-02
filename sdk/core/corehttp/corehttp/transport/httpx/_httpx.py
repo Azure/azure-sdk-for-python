@@ -107,11 +107,6 @@ class HttpXTransport(HttpTransport):
             **kwargs,
         }
 
-        # TODO: Determine content vs data + files
-        # Setting "content" causes some tests to fail.
-        # if hasattr(request, "content"):
-        #     parameters["content"] = request.content
-
         response = None
 
         # Cast for typing since we know it's not None after the open call
@@ -195,8 +190,6 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             "url": request.url,
             "headers": request.headers.items(),
             "data": request._data,  # pylint: disable=protected-access
-            # TODO: determine content vs data + files
-            # "content": request.content if hasattr(request, "content") else None,
             "files": request._files,  # pylint: disable=protected-access
             "timeout": timeout,
             **kwargs,
