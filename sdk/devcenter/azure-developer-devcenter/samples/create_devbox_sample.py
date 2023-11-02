@@ -53,15 +53,13 @@ def get_project_name(LOG, client):
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
-    LOG = logging.getLogger()
 
     # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
     # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
         endpoint = os.environ["DEVCENTER_ENDPOINT"]
     except KeyError:
-        LOG.error("Missing environment variable 'DEVCENTER_ENDPOINT' - please set it before running the example")
+        print("Missing environment variable 'DEVCENTER_ENDPOINT' - please set it before running the example")
         exit()
 
     # Build a client through AAD
@@ -80,16 +78,16 @@ def main():
     )
     devbox_result = create_response.result()
 
-    LOG.info(f"Provisioned dev box with status {devbox_result['provisioningState']}.")
+    print("Provisioned dev box with status {devbox_result['provisioningState']}.")
 
     # Connect to the provisioned dev box
     remote_connection_response = client.get_remote_connection(target_project_name, "me", "Test_DevBox")
-    LOG.info(f"Connect to the dev box using web URL {remote_connection_response['webUrl']}")
+    print("Connect to the dev box using web URL {remote_connection_response['webUrl']}")
 
     # Tear down the dev box when finished
     delete_response = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
     delete_response.wait()
-    LOG.info("Deleted dev box successfully.")
+    print("Deleted dev box successfully.")
 
 
 if __name__ == "__main__":
