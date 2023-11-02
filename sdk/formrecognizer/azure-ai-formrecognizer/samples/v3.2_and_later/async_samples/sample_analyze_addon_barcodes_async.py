@@ -7,26 +7,49 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout_async.py
+FILE: sample_analyze_addon_barcodes_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract text, selection marks, and layout information from a document
-    given through a file.
+    This sample demonstrates how to extract all identified barcodes using the
+    add-on 'barcode/QR code' capability.
 
-    Note that selection marks returned from begin_analyze_document(model_id="prebuilt-layout") do not return the text
-    associated with the checkbox. For the API to return this information, build a custom model to analyze the
-    checkbox and its text. See sample_build_model.py for more information.
+    Add-on capabilities are available within all models except for the Business card
+    model. This sample uses Layout model to demonstrate.
+
+    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    enum class. For more information, see:
+    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+
+    The following capabilities are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following capabilities will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+
+    See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_layout_async.py
+    python sample_analyze_addon_barcodes_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
-import os
 import asyncio
+import os
+
+
+def format_bounding_region(bounding_regions):
+    if not bounding_regions:
+        return "N/A"
+    return ", ".join(
+        f"Page #{region.page_number}: {format_polygon(region.polygon)}"
+        for region in bounding_regions
+    )
 
 
 def format_polygon(polygon):
@@ -35,18 +58,19 @@ def format_polygon(polygon):
     return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
-async def analyze_layout_async():
+async def analyze_barcodes():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
             "..",
             "..",
-            "./sample_forms/forms/form_selection_mark.png",
+            "sample_forms/add_ons/barcodes.jpg",
         )
     )
-
+    # [START analyze_barcodes]
     from azure.core.credentials import AzureKeyCredential
+    from azure.ai.formrecognizer import AnalysisFeature
     from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
@@ -55,69 +79,34 @@ async def analyze_layout_async():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
+
     async with document_analysis_client:
+        # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-layout", document=f
+                "prebuilt-layout", document=f, features=[AnalysisFeature.barcode/QR code]
             )
         result = await poller.result()
 
-    if any([style.is_handwritten for style in result.styles]):
-        print("Document contains handwritten content")
-    else:
-        print("Document does not contain handwritten content")
-
+    # Iterate over extracted barcodes on each page.
     for page in result.pages:
-        print(f"----Analyzing layout from page #{page.page_number}----")
-        print(
-            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
-        )
-
-        for line_idx, line in enumerate(page.lines):
-            words = line.get_words()
-            print(
-                f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                f"within bounding polygon '{format_polygon(line.polygon)}'"
-            )
-
-            for word in words:
-                print(
-                    f"......Word '{word.content}' has a confidence of {word.confidence}"
-                )
-
-        for selection_mark in page.selection_marks:
-            print(
-                f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{format_polygon(selection_mark.polygon)}' and has a confidence of {selection_mark.confidence}"
-            )
-
-    for table_idx, table in enumerate(result.tables):
-        print(
-            f"Table # {table_idx} has {table.row_count} rows and "
-            f"{table.column_count} columns"
-        )
-        for region in table.bounding_regions:
-            print(
-                f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
-            )
-        for cell in table.cells:
-            print(
-                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
-            )
-            for region in cell.bounding_regions:
-                print(
-                    f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'"
-                )
+        print(f"----Barcodes detected from page #{page.page_number}----")
+        print(f"Detected {len(page.barcodes)} barcodes:")
+        for barcode_idx, barcode in enumerate(page.barcodes):
+            print(f"- Barcode #{barcode_idx}: {barcode.value}")
+            print(f"  Kind: {barcode.kind}")
+            print(f"  Confidence: {barcode.confidence}")
+            print(f"  Bounding regions: {format_polygon(barcode.polygon)}")
 
     print("----------------------------------------")
+    # [END analyze_barcodes]
 
 
 async def main():
-    await analyze_layout_async()
+    await analyze_barcodes()
 
 
 if __name__ == "__main__":
-    import sys
     from azure.core.exceptions import HttpResponseError
 
     try:

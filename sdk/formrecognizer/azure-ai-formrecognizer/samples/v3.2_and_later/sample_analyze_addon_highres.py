@@ -7,18 +7,32 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout_async.py
+FILE: sample_analyze_addon_highres.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract text, selection marks, and layout information from a document
-    given through a file.
+    This sample demonstrates how to recognize documents with improved quality using
+    the add-on 'OCR_HIGH_RESOLUTION' capability.
 
-    Note that selection marks returned from begin_analyze_document(model_id="prebuilt-layout") do not return the text
-    associated with the checkbox. For the API to return this information, build a custom model to analyze the
-    checkbox and its text. See sample_build_model.py for more information.
+    Add-on capabilities are available within all models except for the Business card
+    model. This sample uses Layout model to demonstrate.
+
+    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    enum class. For more information, see:
+    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+
+    The following capabilities are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following capabilities will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+
+    See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_layout_async.py
+    python sample_analyze_addon_highres.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -26,7 +40,6 @@ USAGE:
 """
 
 import os
-import asyncio
 
 
 def format_polygon(polygon):
@@ -35,19 +48,18 @@ def format_polygon(polygon):
     return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
-async def analyze_layout_async():
+def analyze_with_highres():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
             "..",
-            "..",
-            "./sample_forms/forms/form_selection_mark.png",
+            "sample_forms/add_ons/highres.png",
         )
     )
-
+    # [START analyze_with_highres]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer.aio import DocumentAnalysisClient
+    from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -55,12 +67,13 @@ async def analyze_layout_async():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    async with document_analysis_client:
-        with open(path_to_sample_documents, "rb") as f:
-            poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-layout", document=f
-            )
-        result = await poller.result()
+
+    # Specify which add-on capabilities to enable.
+    with open(path_to_sample_documents, "rb") as f:
+        poller = document_analysis_client.begin_analyze_document(
+            "prebuilt-layout", document=f, features=[AnalysisFeature.OCR_HIGH_RESOLUTION]
+        )
+    result = poller.result()
 
     if any([style.is_handwritten for style in result.styles]):
         print("Document contains handwritten content")
@@ -110,18 +123,14 @@ async def analyze_layout_async():
                 )
 
     print("----------------------------------------")
-
-
-async def main():
-    await analyze_layout_async()
+    # [END analyze_with_highres]
 
 
 if __name__ == "__main__":
-    import sys
     from azure.core.exceptions import HttpResponseError
 
     try:
-        asyncio.run(main())
+        analyze_with_highres()
     except HttpResponseError as error:
         print(
             "For more information about troubleshooting errors, see the following guide: "
