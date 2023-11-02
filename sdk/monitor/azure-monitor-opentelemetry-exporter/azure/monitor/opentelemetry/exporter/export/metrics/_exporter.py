@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Dict, Mapping, Optional, Union, Any
+from typing import Dict, Optional, Union, Any
 
-from opentelemetry.util.types import Attributes, AttributeValue
+from opentelemetry.util.types import Attributes
 from opentelemetry.sdk.metrics import (
     Counter,
     Histogram,

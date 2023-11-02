@@ -222,7 +222,7 @@ class BaseExporter:
                     result = ExportResult.FAILED_NOT_RETRYABLE
                 elif _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
-                    if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # pylint: disable=W0212, type: ignore
+                    if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects: # type: ignore # pylint: disable=W0212
                         if response_error.response and response_error.response.headers: # type: ignore
                             redirect_has_headers = True
                             location = response_error.response.headers.get("location") # type: ignore
