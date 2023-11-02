@@ -529,243 +529,6 @@ class BuildDocumentModelRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDetails(_model_base.Model):
-    """Get Operation response object.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ChatIndexBuildOperationDetails, DocumentClassifierBuildOperationDetails,
-    DocumentModelBuildOperationDetails, DocumentModelComposeOperationDetails,
-    DocumentModelCopyToOperationDetails
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar operation_id: Operation ID. Required.
-    :vartype operation_id: str
-    :ivar status: Operation status. Required. Known values are: "notStarted", "running", "failed",
-     "succeeded", and "canceled".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
-    :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: int
-    :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar kind: Type of operation. Required. Known values are: "documentModelBuild",
-     "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild", and "chatBuild".
-    :vartype kind: str or ~azure.ai.documentintelligence.models.OperationKind
-    :ivar resource_location: URL of the resource targeted by this operation. Required.
-    :vartype resource_location: str
-    :ivar api_version: API version used to create this operation.
-    :vartype api_version: str
-    :ivar tags: List of key-value tag attributes associated with the document model.
-    :vartype tags: dict[str, str]
-    :ivar error: Encountered error.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
-    """
-
-    operation_id: str = rest_field(name="operationId", visibility=["read"])
-    """Operation ID. Required."""
-    status: Union[str, "_models.OperationStatus"] = rest_field()
-    """Operation status. Required. Known values are: \"notStarted\", \"running\", \"failed\",
-     \"succeeded\", and \"canceled\"."""
-    percent_completed: Optional[int] = rest_field(name="percentCompleted")
-    """Operation progress (0-100)."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """Date and time (UTC) when the operation was created. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """Date and time (UTC) when the status was last updated. Required."""
-    kind: Literal[None] = rest_discriminator(name="kind")
-    """Type of operation. Required. Known values are: \"documentModelBuild\",
-     \"documentModelCompose\", \"documentModelCopyTo\", \"documentClassifierBuild\", and
-     \"chatBuild\"."""
-    resource_location: str = rest_field(name="resourceLocation")
-    """URL of the resource targeted by this operation. Required."""
-    api_version: Optional[str] = rest_field(name="apiVersion")
-    """API version used to create this operation."""
-    tags: Optional[Dict[str, str]] = rest_field()
-    """List of key-value tag attributes associated with the document model."""
-    error: Optional["_models.Error"] = rest_field()
-    """Encountered error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        status: Union[str, "_models.OperationStatus"],
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        resource_location: str,
-        percent_completed: Optional[int] = None,
-        api_version: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        error: Optional["_models.Error"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[None] = None
-
-
-class ChatIndexBuildOperationDetails(
-    OperationDetails, discriminator="chatBuild"
-):  # pylint: disable=too-many-instance-attributes
-    """Get Operation response object.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar operation_id: Operation ID. Required.
-    :vartype operation_id: str
-    :ivar status: Operation status. Required. Known values are: "notStarted", "running", "failed",
-     "succeeded", and "canceled".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
-    :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: int
-    :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar resource_location: URL of the resource targeted by this operation. Required.
-    :vartype resource_location: str
-    :ivar api_version: API version used to create this operation.
-    :vartype api_version: str
-    :ivar tags: List of key-value tag attributes associated with the document model.
-    :vartype tags: dict[str, str]
-    :ivar error: Encountered error.
-    :vartype error: ~azure.ai.documentintelligence.models.Error
-    :ivar result: Operation result upon success.
-    :vartype result: ~azure.ai.documentintelligence.models.ChatIndexDetails
-    :ivar kind: Type of operation. Required. Build a new chat index.
-    :vartype kind: str or ~azure.ai.documentintelligence.models.CHAT_BUILD
-    """
-
-    result: Optional["_models.ChatIndexDetails"] = rest_field()
-    """Operation result upon success."""
-    kind: Literal[OperationKind.CHAT_BUILD] = rest_discriminator(name="kind")  # type: ignore
-    """Type of operation. Required. Build a new chat index."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        status: Union[str, "_models.OperationStatus"],
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        resource_location: str,
-        percent_completed: Optional[int] = None,
-        api_version: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        error: Optional["_models.Error"] = None,
-        result: Optional["_models.ChatIndexDetails"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind: Literal[OperationKind.CHAT_BUILD] = OperationKind.CHAT_BUILD
-
-
-class ChatIndexSummary(_model_base.Model):
-    """Chat index info.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar chat_id: Chat index ID. Required.
-    :vartype chat_id: str
-    :ivar created_date_time: Date and time (UTC) when the index was created. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar expiration_date_time: Date and time (UTC) when the index will expire. Required.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar api_version: API version used to create this index. Required.
-    :vartype api_version: str
-    """
-
-    chat_id: str = rest_field(name="chatId")
-    """Chat index ID. Required."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """Date and time (UTC) when the index was created. Required."""
-    expiration_date_time: datetime.datetime = rest_field(name="expirationDateTime", format="rfc3339")
-    """Date and time (UTC) when the index will expire. Required."""
-    api_version: str = rest_field(name="apiVersion")
-    """API version used to create this index. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        chat_id: str,
-        created_date_time: datetime.datetime,
-        expiration_date_time: datetime.datetime,
-        api_version: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ChatIndexDetails(ChatIndexSummary):
-    """Detailed chat index info.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar chat_id: Chat index ID. Required.
-    :vartype chat_id: str
-    :ivar created_date_time: Date and time (UTC) when the index was created. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar expiration_date_time: Date and time (UTC) when the index will expire. Required.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar api_version: API version used to create this index. Required.
-    :vartype api_version: str
-    """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        chat_id: str,
-        created_date_time: datetime.datetime,
-        expiration_date_time: datetime.datetime,
-        api_version: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class ClassifierDocumentTypeDetails(_model_base.Model):
     """Classifier document type info.
 
@@ -1233,12 +996,94 @@ class DocumentCaption(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class OperationDetails(_model_base.Model):
+    """Operation info.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DocumentClassifierBuildOperationDetails, DocumentModelBuildOperationDetails,
+    DocumentModelComposeOperationDetails, DocumentModelCopyToOperationDetails
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar operation_id: Operation ID. Required.
+    :vartype operation_id: str
+    :ivar status: Operation status. Required. Known values are: "notStarted", "running", "failed",
+     "succeeded", and "canceled".
+    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
+    :ivar percent_completed: Operation progress (0-100).
+    :vartype percent_completed: int
+    :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
+    :vartype created_date_time: ~datetime.datetime
+    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
+    :vartype last_updated_date_time: ~datetime.datetime
+    :ivar kind: Type of operation. Required. Known values are: "documentModelBuild",
+     "documentModelCompose", "documentModelCopyTo", and "documentClassifierBuild".
+    :vartype kind: str or ~azure.ai.documentintelligence.models.OperationKind
+    :ivar resource_location: URL of the resource targeted by this operation. Required.
+    :vartype resource_location: str
+    :ivar api_version: API version used to create this operation.
+    :vartype api_version: str
+    :ivar tags: List of key-value tag attributes associated with the document model.
+    :vartype tags: dict[str, str]
+    :ivar error: Encountered error.
+    :vartype error: ~azure.ai.documentintelligence.models.Error
+    """
+
+    operation_id: str = rest_field(name="operationId", visibility=["read", "create"])
+    """Operation ID. Required."""
+    status: Union[str, "_models.OperationStatus"] = rest_field()
+    """Operation status. Required. Known values are: \"notStarted\", \"running\", \"failed\",
+     \"succeeded\", and \"canceled\"."""
+    percent_completed: Optional[int] = rest_field(name="percentCompleted")
+    """Operation progress (0-100)."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """Date and time (UTC) when the operation was created. Required."""
+    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
+    """Date and time (UTC) when the status was last updated. Required."""
+    kind: Literal[None] = rest_discriminator(name="kind")
+    """Type of operation. Required. Known values are: \"documentModelBuild\",
+     \"documentModelCompose\", \"documentModelCopyTo\", and \"documentClassifierBuild\"."""
+    resource_location: str = rest_field(name="resourceLocation")
+    """URL of the resource targeted by this operation. Required."""
+    api_version: Optional[str] = rest_field(name="apiVersion")
+    """API version used to create this operation."""
+    tags: Optional[Dict[str, str]] = rest_field()
+    """List of key-value tag attributes associated with the document model."""
+    error: Optional["_models.Error"] = rest_field()
+    """Encountered error."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: str,
+        status: Union[str, "_models.OperationStatus"],
+        created_date_time: datetime.datetime,
+        last_updated_date_time: datetime.datetime,
+        resource_location: str,
+        percent_completed: Optional[int] = None,
+        api_version: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        error: Optional["_models.Error"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind: Literal[None] = None
+
+
 class DocumentClassifierBuildOperationDetails(
     OperationDetails, discriminator="documentClassifierBuild"
 ):  # pylint: disable=too-many-instance-attributes
     """Get Operation response object.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1276,6 +1121,7 @@ class DocumentClassifierBuildOperationDetails(
     def __init__(
         self,
         *,
+        operation_id: str,
         status: Union[str, "_models.OperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
@@ -1965,8 +1811,6 @@ class DocumentModelBuildOperationDetails(
 ):  # pylint: disable=too-many-instance-attributes
     """Get Operation response object.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar operation_id: Operation ID. Required.
@@ -2003,6 +1847,7 @@ class DocumentModelBuildOperationDetails(
     def __init__(
         self,
         *,
+        operation_id: str,
         status: Union[str, "_models.OperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
@@ -2031,8 +1876,6 @@ class DocumentModelComposeOperationDetails(
     OperationDetails, discriminator="documentModelCompose"
 ):  # pylint: disable=too-many-instance-attributes
     """Get Operation response object.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2071,6 +1914,7 @@ class DocumentModelComposeOperationDetails(
     def __init__(
         self,
         *,
+        operation_id: str,
         status: Union[str, "_models.OperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
@@ -2099,8 +1943,6 @@ class DocumentModelCopyToOperationDetails(
     OperationDetails, discriminator="documentModelCopyTo"
 ):  # pylint: disable=too-many-instance-attributes
     """Get Operation response object.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2142,6 +1984,7 @@ class DocumentModelCopyToOperationDetails(
     def __init__(
         self,
         *,
+        operation_id: str,
         status: Union[str, "_models.OperationStatus"],
         created_date_time: datetime.datetime,
         last_updated_date_time: datetime.datetime,
@@ -2166,68 +2009,9 @@ class DocumentModelCopyToOperationDetails(
         self.kind: Literal[OperationKind.DOCUMENT_MODEL_COPY_TO] = OperationKind.DOCUMENT_MODEL_COPY_TO
 
 
-class DocumentModelSummary(_model_base.Model):
-    """Document model summary.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar model_id: Unique document model name. Required.
-    :vartype model_id: str
-    :ivar description: Document model description.
-    :vartype description: str
-    :ivar created_date_time: Date and time (UTC) when the document model was created. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar expiration_date_time: Date and time (UTC) when the document model will expire.
-    :vartype expiration_date_time: ~datetime.datetime
-    :ivar api_version: API version used to create this document model.
-    :vartype api_version: str
-    :ivar tags: List of key-value tag attributes associated with the document model.
-    :vartype tags: dict[str, str]
-    """
-
-    model_id: str = rest_field(name="modelId", visibility=["read", "create"])
-    """Unique document model name. Required."""
-    description: Optional[str] = rest_field()
-    """Document model description."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", visibility=["read"], format="rfc3339")
-    """Date and time (UTC) when the document model was created. Required."""
-    expiration_date_time: Optional[datetime.datetime] = rest_field(
-        name="expirationDateTime", visibility=["read"], format="rfc3339"
-    )
-    """Date and time (UTC) when the document model will expire."""
-    api_version: Optional[str] = rest_field(name="apiVersion", visibility=["read"])
-    """API version used to create this document model."""
-    tags: Optional[Dict[str, str]] = rest_field()
-    """List of key-value tag attributes associated with the document model."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_id: str,
-        description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class DocumentModelDetails(DocumentModelSummary):
+class DocumentModelDetails(_model_base.Model):
     """Document model info.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
     :ivar model_id: Unique document model name. Required.
@@ -2242,8 +2026,7 @@ class DocumentModelDetails(DocumentModelSummary):
     :vartype api_version: str
     :ivar tags: List of key-value tag attributes associated with the document model.
     :vartype tags: dict[str, str]
-    :ivar build_mode: Custom document model build mode. Required. Known values are: "template" and
-     "neural".
+    :ivar build_mode: Custom document model build mode. Known values are: "template" and "neural".
     :vartype build_mode: str or ~azure.ai.documentintelligence.models.DocumentBuildMode
     :ivar azure_blob_source: Azure Blob Storage location containing the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified.
@@ -2257,15 +2040,25 @@ class DocumentModelDetails(DocumentModelSummary):
     :vartype doc_types: dict[str, ~azure.ai.documentintelligence.models.DocumentTypeDetails]
     """
 
-    build_mode: Union[str, "_models.DocumentBuildMode"] = rest_field(name="buildMode", visibility=["create"])
-    """Custom document model build mode. Required. Known values are: \"template\" and \"neural\"."""
-    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(
-        name="azureBlobSource", visibility=["create"]
-    )
+    model_id: str = rest_field(name="modelId", visibility=["read", "create"])
+    """Unique document model name. Required."""
+    description: Optional[str] = rest_field()
+    """Document model description."""
+    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
+    """Date and time (UTC) when the document model was created. Required."""
+    expiration_date_time: Optional[datetime.datetime] = rest_field(name="expirationDateTime", format="rfc3339")
+    """Date and time (UTC) when the document model will expire."""
+    api_version: Optional[str] = rest_field(name="apiVersion")
+    """API version used to create this document model."""
+    tags: Optional[Dict[str, str]] = rest_field()
+    """List of key-value tag attributes associated with the document model."""
+    build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = rest_field(name="buildMode")
+    """Custom document model build mode. Known values are: \"template\" and \"neural\"."""
+    azure_blob_source: Optional["_models.AzureBlobContentSource"] = rest_field(name="azureBlobSource")
     """Azure Blob Storage location containing the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
     azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = rest_field(
-        name="azureBlobFileListSource", visibility=["create"]
+        name="azureBlobFileListSource"
     )
     """Azure Blob Storage file list specifying the training data.  Either
      azureBlobSource or azureBlobFileListSource must be specified."""
@@ -2277,9 +2070,12 @@ class DocumentModelDetails(DocumentModelSummary):
         self,
         *,
         model_id: str,
-        build_mode: Union[str, "_models.DocumentBuildMode"],
+        created_date_time: datetime.datetime,
         description: Optional[str] = None,
+        expiration_date_time: Optional[datetime.datetime] = None,
+        api_version: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        build_mode: Optional[Union[str, "_models.DocumentBuildMode"]] = None,
         azure_blob_source: Optional["_models.AzureBlobContentSource"] = None,
         azure_blob_file_list_source: Optional["_models.AzureBlobFileListContentSource"] = None,
         doc_types: Optional[Dict[str, "_models.DocumentTypeDetails"]] = None,
@@ -2866,32 +2662,33 @@ class DocumentWord(_model_base.Model):
 
 
 class Error(_model_base.Model):
-    """Error info.
+    """The error object.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Error code. Required.
+    :ivar code: One of a server-defined set of error codes. Required.
     :vartype code: str
-    :ivar message: Error message. Required.
+    :ivar message: A human-readable representation of the error. Required.
     :vartype message: str
-    :ivar target: Target of the error.
+    :ivar target: The target of the error.
     :vartype target: str
-    :ivar details: List of detailed errors.
+    :ivar details: An array of details about specific errors that led to this reported error.
     :vartype details: list[~azure.ai.documentintelligence.models.Error]
-    :ivar innererror: Detailed error.
+    :ivar innererror: An object containing more specific information than the current object about
+     the error.
     :vartype innererror: ~azure.ai.documentintelligence.models.InnerError
     """
 
     code: str = rest_field()
-    """Error code. Required."""
+    """One of a server-defined set of error codes. Required."""
     message: str = rest_field()
-    """Error message. Required."""
+    """A human-readable representation of the error. Required."""
     target: Optional[str] = rest_field()
-    """Target of the error."""
+    """The target of the error."""
     details: Optional[List["_models.Error"]] = rest_field()
-    """List of detailed errors."""
+    """An array of details about specific errors that led to this reported error."""
     innererror: Optional["_models.InnerError"] = rest_field()
-    """Detailed error."""
+    """An object containing more specific information than the current object about the error."""
 
     @overload
     def __init__(
@@ -2948,108 +2745,30 @@ class ErrorResponse(_model_base.Model):
 
 
 class InnerError(_model_base.Model):
-    """Detailed error.
+    """An object containing more specific information about the error.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar code: Error code. Required.
+    :ivar code: One of a server-defined set of error codes.
     :vartype code: str
-    :ivar message: Error message.
+    :ivar message: A human-readable representation of the error.
     :vartype message: str
-    :ivar innererror: Detailed error.
+    :ivar innererror: Inner error.
     :vartype innererror: ~azure.ai.documentintelligence.models.InnerError
     """
 
-    code: str = rest_field()
-    """Error code. Required."""
+    code: Optional[str] = rest_field()
+    """One of a server-defined set of error codes."""
     message: Optional[str] = rest_field()
-    """Error message."""
+    """A human-readable representation of the error."""
     innererror: Optional["_models.InnerError"] = rest_field()
-    """Detailed error."""
+    """Inner error."""
 
     @overload
     def __init__(
         self,
         *,
-        code: str,
+        code: Optional[str] = None,
         message: Optional[str] = None,
         innererror: Optional["_models.InnerError"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class OperationSummary(_model_base.Model):
-    """Operation info.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar operation_id: Operation ID. Required.
-    :vartype operation_id: str
-    :ivar status: Operation status. Required. Known values are: "notStarted", "running", "failed",
-     "succeeded", and "canceled".
-    :vartype status: str or ~azure.ai.documentintelligence.models.OperationStatus
-    :ivar percent_completed: Operation progress (0-100).
-    :vartype percent_completed: int
-    :ivar created_date_time: Date and time (UTC) when the operation was created. Required.
-    :vartype created_date_time: ~datetime.datetime
-    :ivar last_updated_date_time: Date and time (UTC) when the status was last updated. Required.
-    :vartype last_updated_date_time: ~datetime.datetime
-    :ivar kind: Type of operation. Required. Known values are: "documentModelBuild",
-     "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild", and "chatBuild".
-    :vartype kind: str or ~azure.ai.documentintelligence.models.OperationKind
-    :ivar resource_location: URL of the resource targeted by this operation. Required.
-    :vartype resource_location: str
-    :ivar api_version: API version used to create this operation.
-    :vartype api_version: str
-    :ivar tags: List of key-value tag attributes associated with the document model.
-    :vartype tags: dict[str, str]
-    """
-
-    operation_id: str = rest_field(name="operationId")
-    """Operation ID. Required."""
-    status: Union[str, "_models.OperationStatus"] = rest_field()
-    """Operation status. Required. Known values are: \"notStarted\", \"running\", \"failed\",
-     \"succeeded\", and \"canceled\"."""
-    percent_completed: Optional[int] = rest_field(name="percentCompleted")
-    """Operation progress (0-100)."""
-    created_date_time: datetime.datetime = rest_field(name="createdDateTime", format="rfc3339")
-    """Date and time (UTC) when the operation was created. Required."""
-    last_updated_date_time: datetime.datetime = rest_field(name="lastUpdatedDateTime", format="rfc3339")
-    """Date and time (UTC) when the status was last updated. Required."""
-    kind: Union[str, "_models.OperationKind"] = rest_field()
-    """Type of operation. Required. Known values are: \"documentModelBuild\",
-     \"documentModelCompose\", \"documentModelCopyTo\", \"documentClassifierBuild\", and
-     \"chatBuild\"."""
-    resource_location: str = rest_field(name="resourceLocation")
-    """URL of the resource targeted by this operation. Required."""
-    api_version: Optional[str] = rest_field(name="apiVersion")
-    """API version used to create this operation."""
-    tags: Optional[Dict[str, str]] = rest_field()
-    """List of key-value tag attributes associated with the document model."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        operation_id: str,
-        status: Union[str, "_models.OperationStatus"],
-        created_date_time: datetime.datetime,
-        last_updated_date_time: datetime.datetime,
-        kind: Union[str, "_models.OperationKind"],
-        resource_location: str,
-        percent_completed: Optional[int] = None,
-        api_version: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
     ):
         ...
 

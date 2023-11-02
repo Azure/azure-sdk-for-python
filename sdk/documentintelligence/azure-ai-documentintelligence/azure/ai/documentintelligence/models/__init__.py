@@ -15,9 +15,6 @@ from ._models import AzureBlobFileListContentSource
 from ._models import BoundingRegion
 from ._models import BuildDocumentClassifierRequest
 from ._models import BuildDocumentModelRequest
-from ._models import ChatIndexBuildOperationDetails
-from ._models import ChatIndexDetails
-from ._models import ChatIndexSummary
 from ._models import ClassifierDocumentTypeDetails
 from ._models import ClassifyDocumentRequest
 from ._models import ComponentDocumentModelDetails
@@ -45,7 +42,6 @@ from ._models import DocumentModelBuildOperationDetails
 from ._models import DocumentModelComposeOperationDetails
 from ._models import DocumentModelCopyToOperationDetails
 from ._models import DocumentModelDetails
-from ._models import DocumentModelSummary
 from ._models import DocumentPage
 from ._models import DocumentParagraph
 from ._models import DocumentSection
@@ -60,7 +56,6 @@ from ._models import Error
 from ._models import ErrorResponse
 from ._models import InnerError
 from ._models import OperationDetails
-from ._models import OperationSummary
 from ._models import QuotaDetails
 from ._models import ResourceDetails
 
@@ -96,9 +91,6 @@ __all__ = [
     "BoundingRegion",
     "BuildDocumentClassifierRequest",
     "BuildDocumentModelRequest",
-    "ChatIndexBuildOperationDetails",
-    "ChatIndexDetails",
-    "ChatIndexSummary",
     "ClassifierDocumentTypeDetails",
     "ClassifyDocumentRequest",
     "ComponentDocumentModelDetails",
@@ -126,7 +118,6 @@ __all__ = [
     "DocumentModelComposeOperationDetails",
     "DocumentModelCopyToOperationDetails",
     "DocumentModelDetails",
-    "DocumentModelSummary",
     "DocumentPage",
     "DocumentParagraph",
     "DocumentSection",
@@ -141,7 +132,6 @@ __all__ = [
     "ErrorResponse",
     "InnerError",
     "OperationDetails",
-    "OperationSummary",
     "QuotaDetails",
     "ResourceDetails",
     "ContentFormat",

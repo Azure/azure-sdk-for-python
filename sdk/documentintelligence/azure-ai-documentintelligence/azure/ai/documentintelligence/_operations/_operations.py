@@ -31,7 +31,6 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import AzureJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._validation import api_version_validation
 from .._vendor import DocumentAnalysisClientMixinABC, DocumentModelAdministrationClientMixinABC
 
 if sys.version_info >= (3, 9):
@@ -126,7 +125,7 @@ def build_document_analysis_classify_document_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_build_document_request(  # pylint: disable=name-too-long
+def build_document_model_administration_build_document_model_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -442,9 +441,6 @@ def build_document_model_administration_delete_classifier_request(  # pylint: di
 
 
 class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
-    @api_version_validation(
-        params_added_on={"2022-08-31": ["features"], "2023-10-31-preview": ["query_fields", "output_content_format"]},
-    )  # pylint: disable=inconsistent-return-statements
     def _analyze_document_initial(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
@@ -522,9 +518,6 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
-    @api_version_validation(
-        params_added_on={"2022-08-31": ["features"], "2023-10-31-preview": ["query_fields", "output_content_format"]},
-    )
     def begin_analyze_document(
         self,
         model_id: str,
@@ -581,9 +574,6 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         """
 
     @overload
-    @api_version_validation(
-        params_added_on={"2022-08-31": ["features"], "2023-10-31-preview": ["query_fields", "output_content_format"]},
-    )
     def begin_analyze_document(
         self,
         model_id: str,
@@ -640,9 +630,6 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         """
 
     @overload
-    @api_version_validation(
-        params_added_on={"2022-08-31": ["features"], "2023-10-31-preview": ["query_fields", "output_content_format"]},
-    )
     def begin_analyze_document(
         self,
         model_id: str,
@@ -699,9 +686,6 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         """
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2022-08-31": ["features"], "2023-10-31-preview": ["query_fields", "output_content_format"]},
-    )
     def begin_analyze_document(
         self,
         model_id: str,
@@ -817,9 +801,6 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        params_added_on={"2023-10-31-preview": ["split"]},
-    )  # pylint: disable=inconsistent-return-statements
     def _classify_document_initial(  # pylint: disable=inconsistent-return-statements
         self,
         classifier_id: str,
@@ -886,9 +867,6 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
-    @api_version_validation(
-        params_added_on={"2023-10-31-preview": ["split"]},
-    )
     def begin_classify_document(
         self,
         classifier_id: str,
@@ -928,9 +906,6 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         """
 
     @overload
-    @api_version_validation(
-        params_added_on={"2023-10-31-preview": ["split"]},
-    )
     def begin_classify_document(
         self,
         classifier_id: str,
@@ -970,9 +945,6 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         """
 
     @overload
-    @api_version_validation(
-        params_added_on={"2023-10-31-preview": ["split"]},
-    )
     def begin_classify_document(
         self,
         classifier_id: str,
@@ -1012,9 +984,6 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         """
 
     @distributed_trace
-    @api_version_validation(
-        params_added_on={"2023-10-31-preview": ["split"]},
-    )
     def begin_classify_document(
         self,
         classifier_id: str,
@@ -1113,7 +1082,7 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
 class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
     DocumentModelAdministrationClientMixinABC
 ):
-    def _build_document_initial(  # pylint: disable=inconsistent-return-statements
+    def _build_document_model_initial(  # pylint: disable=inconsistent-return-statements
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO], **kwargs: Any
     ) -> None:
         error_map = {
@@ -1137,7 +1106,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(build_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_build_document_request(
+        _request = build_document_model_administration_build_document_model_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1170,7 +1139,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
-    def begin_build_document(
+    def begin_build_document_model(
         self, build_request: _models.BuildDocumentModelRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
         """Builds a custom document analysis model.
@@ -1195,7 +1164,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         """
 
     @overload
-    def begin_build_document(
+    def begin_build_document_model(
         self, build_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
         """Builds a custom document analysis model.
@@ -1220,7 +1189,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         """
 
     @overload
-    def begin_build_document(
+    def begin_build_document_model(
         self, build_request: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
         """Builds a custom document analysis model.
@@ -1245,7 +1214,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         """
 
     @distributed_trace
-    def begin_build_document(
+    def begin_build_document_model(
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO], **kwargs: Any
     ) -> LROPoller[_models.DocumentModelDetails]:
         """Builds a custom document analysis model.
@@ -1279,7 +1248,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._build_document_initial(  # type: ignore
+            raw_result = self._build_document_model_initial(  # type: ignore
                 build_request=build_request,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -1963,18 +1932,18 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_models(self, **kwargs: Any) -> Iterable["_models.DocumentModelSummary"]:
+    def list_models(self, **kwargs: Any) -> Iterable["_models.DocumentModelDetails"]:
         """List all document models.
 
-        :return: An iterator like instance of DocumentModelSummary
+        :return: An iterator like instance of DocumentModelDetails
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.documentintelligence.models.DocumentModelSummary]
+         ~azure.core.paging.ItemPaged[~azure.ai.documentintelligence.models.DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DocumentModelSummary]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DocumentModelDetails]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2023,7 +1992,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DocumentModelSummary], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.DocumentModelDetails], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2219,17 +2188,17 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_operations(self, **kwargs: Any) -> Iterable["_models.OperationSummary"]:
+    def list_operations(self, **kwargs: Any) -> Iterable["_models.OperationDetails"]:
         """Lists all operations.
 
-        :return: An iterator like instance of OperationSummary
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.documentintelligence.models.OperationSummary]
+        :return: An iterator like instance of OperationDetails
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.documentintelligence.models.OperationDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OperationSummary]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.OperationDetails]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -2278,7 +2247,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OperationSummary], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.OperationDetails], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)

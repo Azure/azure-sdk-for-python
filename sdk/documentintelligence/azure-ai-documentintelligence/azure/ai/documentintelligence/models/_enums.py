@@ -217,8 +217,6 @@ class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: subscription."""
     DOCUMENT_CLASSIFIER_BUILD = "documentClassifierBuild"
     """Build a new custom classifier model."""
-    CHAT_BUILD = "chatBuild"
-    """Build a new chat index."""
 
 
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
