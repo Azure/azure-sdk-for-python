@@ -29,7 +29,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -85,7 +85,7 @@ def build_create_or_update_pipeline_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -122,7 +122,7 @@ def build_get_pipeline_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -155,7 +155,7 @@ def build_delete_pipeline_request(pipeline_name: str, **kwargs: Any) -> HttpRequ
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -187,7 +187,7 @@ def build_rename_pipeline_request(pipeline_name: str, **kwargs: Any) -> HttpRequ
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -228,7 +228,7 @@ def build_create_pipeline_run_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -294,31 +294,30 @@ class PipelineOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_pipelines_by_workspace_request(
+                _request = build_get_pipelines_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_pipelines_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("PipelineListResponse", pipeline_response)
@@ -328,11 +327,11 @@ class PipelineOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -343,8 +342,6 @@ class PipelineOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    get_pipelines_by_workspace.metadata = {"url": "/pipelines"}
 
     def _create_or_update_pipeline_initial(
         self,
@@ -376,26 +373,25 @@ class PipelineOperations:
         else:
             _json = self._serialize.body(pipeline, "PipelineResource")
 
-        request = build_create_or_update_pipeline_request(
+        _request = build_create_or_update_pipeline_request(
             pipeline_name=pipeline_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_pipeline_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -409,11 +405,9 @@ class PipelineOperations:
             deserialized = self._deserialize("PipelineResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}"}
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_or_update_pipeline(
@@ -547,7 +541,7 @@ class PipelineOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("PipelineResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -570,8 +564,6 @@ class PipelineOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}
 
     @distributed_trace
     def get_pipeline(
@@ -604,23 +596,22 @@ class PipelineOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.PipelineResource]] = kwargs.pop("cls", None)
 
-        request = build_get_pipeline_request(
+        _request = build_get_pipeline_request(
             pipeline_name=pipeline_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_pipeline.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -634,11 +625,9 @@ class PipelineOperations:
             deserialized = self._deserialize("PipelineResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}
+        return deserialized  # type: ignore
 
     def _delete_pipeline_initial(  # pylint: disable=inconsistent-return-statements
         self, pipeline_name: str, **kwargs: Any
@@ -657,22 +646,21 @@ class PipelineOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_pipeline_request(
+        _request = build_delete_pipeline_request(
             pipeline_name=pipeline_name,
             api_version=api_version,
-            template_url=self._delete_pipeline_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -682,9 +670,7 @@ class PipelineOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete_pipeline(self, pipeline_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -725,7 +711,7 @@ class PipelineOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -748,8 +734,6 @@ class PipelineOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_pipeline.metadata = {"url": "/pipelines/{pipelineName}"}
-
     def _rename_pipeline_initial(  # pylint: disable=inconsistent-return-statements
         self, pipeline_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> None:
@@ -771,24 +755,23 @@ class PipelineOperations:
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_pipeline_request(
+        _request = build_rename_pipeline_request(
             pipeline_name=pipeline_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_pipeline_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -798,9 +781,7 @@ class PipelineOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _rename_pipeline_initial.metadata = {"url": "/pipelines/{pipelineName}/rename"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_rename_pipeline(
@@ -848,7 +829,7 @@ class PipelineOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -870,8 +851,6 @@ class PipelineOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_rename_pipeline.metadata = {"url": "/pipelines/{pipelineName}/rename"}
 
     @overload
     def create_pipeline_run(
@@ -1010,7 +989,7 @@ class PipelineOperations:
             else:
                 _json = None
 
-        request = build_create_pipeline_run_request(
+        _request = build_create_pipeline_run_request(
             pipeline_name=pipeline_name,
             reference_pipeline_run_id=reference_pipeline_run_id,
             is_recovery=is_recovery,
@@ -1019,19 +998,18 @@ class PipelineOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_pipeline_run.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1043,8 +1021,6 @@ class PipelineOperations:
         deserialized = self._deserialize("CreateRunResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_pipeline_run.metadata = {"url": "/pipelines/{pipelineName}/createRun"}
+        return deserialized  # type: ignore

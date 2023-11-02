@@ -1,5 +1,61 @@
 # Release History
 
+## 1.1.0b1 (2023-10-23)
+
+### Features Added
+
+  - Added operation CatalogsOperations.begin_connect
+  - Added operation CatalogsOperations.get_sync_error_details
+  - Added operation group CatalogDevBoxDefinitionsOperations
+  - Added operation group CustomizationTasksOperations
+  - Added operation group EnvironmentDefinitionsOperations
+  - Model AllowedEnvironmentType has a new parameter display_name
+  - Model Catalog has a new parameter connection_state
+  - Model Catalog has a new parameter last_connection_time
+  - Model Catalog has a new parameter last_sync_stats
+  - Model Catalog has a new parameter sync_type
+  - Model CatalogProperties has a new parameter connection_state
+  - Model CatalogProperties has a new parameter last_connection_time
+  - Model CatalogProperties has a new parameter last_sync_stats
+  - Model CatalogProperties has a new parameter sync_type
+  - Model CatalogUpdate has a new parameter sync_type
+  - Model CatalogUpdateProperties has a new parameter sync_type
+  - Model DevBoxDefinition has a new parameter validation_status
+  - Model DevBoxDefinitionProperties has a new parameter validation_status
+  - Model DevCenter has a new parameter display_name
+  - Model DevCenter has a new parameter encryption
+  - Model DevCenterUpdate has a new parameter display_name
+  - Model DevCenterUpdate has a new parameter encryption
+  - Model EnvironmentType has a new parameter display_name
+  - Model EnvironmentTypeUpdate has a new parameter display_name
+  - Model Pool has a new parameter dev_box_count
+  - Model Pool has a new parameter display_name
+  - Model Pool has a new parameter managed_virtual_network_regions
+  - Model Pool has a new parameter single_sign_on_status
+  - Model Pool has a new parameter virtual_network_type
+  - Model PoolProperties has a new parameter dev_box_count
+  - Model PoolProperties has a new parameter display_name
+  - Model PoolProperties has a new parameter managed_virtual_network_regions
+  - Model PoolProperties has a new parameter single_sign_on_status
+  - Model PoolProperties has a new parameter virtual_network_type
+  - Model PoolUpdate has a new parameter display_name
+  - Model PoolUpdate has a new parameter managed_virtual_network_regions
+  - Model PoolUpdate has a new parameter single_sign_on_status
+  - Model PoolUpdate has a new parameter virtual_network_type
+  - Model PoolUpdateProperties has a new parameter display_name
+  - Model PoolUpdateProperties has a new parameter managed_virtual_network_regions
+  - Model PoolUpdateProperties has a new parameter single_sign_on_status
+  - Model PoolUpdateProperties has a new parameter virtual_network_type
+  - Model Project has a new parameter display_name
+  - Model ProjectEnvironmentType has a new parameter display_name
+  - Model ProjectEnvironmentType has a new parameter environment_count
+  - Model ProjectEnvironmentTypeProperties has a new parameter display_name
+  - Model ProjectEnvironmentTypeProperties has a new parameter environment_count
+  - Model ProjectProperties has a new parameter display_name
+  - Model ProjectUpdate has a new parameter display_name
+  - Model ProjectUpdateProperties has a new parameter display_name
+  - Model Usage has a new parameter id
+
 ## 1.0.0 (2023-05-20)
 
 ### Features Added

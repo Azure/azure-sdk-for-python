@@ -23,7 +23,6 @@ from opentelemetry.sdk.metrics.export import (
     NumberDataPoint,
 )
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
@@ -95,7 +94,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                                 point,
                                 metric.name,
                                 resource_metric.resource,
-                                scope_metric.scope
                             )
                             if envelope is not None:
                                 envelopes.append(envelope)
@@ -135,9 +133,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         point: DataPointT,
         name: str,
         resource: Optional[Resource] = None,
-        scope: Optional[InstrumentationScope] = None
     ) -> Optional[TelemetryItem]:
-        envelope = _convert_point_to_envelope(point, name, resource, scope)
+        envelope = _convert_point_to_envelope(point, name, resource)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)
         if envelope is not None:
@@ -168,14 +165,10 @@ def _convert_point_to_envelope(
     point: DataPointT,
     name: str,
     resource: Optional[Resource] = None,
-    scope: Optional[InstrumentationScope] = None
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
     envelope.tags.update(_utils._populate_part_a_fields(resource))
-    namespace = None
-    if scope is not None:
-        namespace = scope.name
     value = 0
     count = 1
     min_ = None
@@ -193,11 +186,8 @@ def _convert_point_to_envelope(
     # truncation logic
     properties = _utils._filter_custom_properties(point.attributes)
 
-    if namespace is not None:
-        namespace = str(namespace)[:256]
     data_point = MetricDataPoint(
         name=str(name)[:1024],
-        namespace=namespace,
         value=value,
         count=count,
         min=min_,

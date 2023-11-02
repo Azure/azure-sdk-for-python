@@ -42,7 +42,7 @@ async def test_claim_existing_ownership():
     listed_ownership = await checkpoint_store.list_ownership(TEST_NAMESPACE, TEST_EVENTHUB, TEST_CONSUMER_GROUP)
     existing_ownership = listed_ownership[0]
     etag_existing = existing_ownership["etag"]
-    last_modified_exising = existing_ownership["last_modified_time"]
+    last_modified_existing = existing_ownership["last_modified_time"]
 
     time.sleep(0.01)  # so time is changed
     copied_existing_ownership = existing_ownership.copy()
@@ -54,7 +54,7 @@ async def test_claim_existing_ownership():
     assert listed_ownership2[0] == copied_existing_ownership
     assert listed_ownership2[0]["owner_id"] == "owner_1"
     assert listed_ownership2[0]["etag"] != etag_existing
-    assert listed_ownership2[0]["last_modified_time"] != last_modified_exising
+    assert listed_ownership2[0]["last_modified_time"] != last_modified_existing
 
 
 @pytest.mark.asyncio

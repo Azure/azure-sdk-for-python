@@ -1023,6 +1023,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             treat the blob data as CSV data formatted in the default dialect. This can be overridden with
             a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
             These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string
+
+            .. note::
+            "ParquetDialect" is in preview, so some features may not work as intended.
+
         :paramtype blob_format: ~azure.storage.blob.DelimitedTextDialect or ~azure.storage.blob.DelimitedJsonDialect
             or ~azure.storage.blob.QuickQueryDialect or str
         :keyword output_format:

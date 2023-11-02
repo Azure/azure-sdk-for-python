@@ -1,14 +1,15 @@
 # Release History
 
-## 0.17.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 0.18.0 (2023-10-30)
 
 ### Bugs Fixed
 
+  - Fix runNotebook sessionId from int to string #25210
+  - Fix placeholder links causing 404s #26143
+
 ### Other Changes
+
+  - Sync expression Support From DataFactory To Synapse #25054
 
 ## 0.17.0 (2023-07-28)
 

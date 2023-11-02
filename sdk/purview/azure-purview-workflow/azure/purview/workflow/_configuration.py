@@ -6,25 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
 from typing import Any, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class PurviewWorkflowClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class PurviewWorkflowClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for PurviewWorkflowClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -35,14 +28,13 @@ class PurviewWorkflowClientConfiguration(Configuration):  # pylint: disable=too-
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-05-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-10-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        super(PurviewWorkflowClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2022-05-01-preview"] = kwargs.pop("api_version", "2022-05-01-preview")
+        api_version: str = kwargs.pop("api_version", "2023-10-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -54,6 +46,7 @@ class PurviewWorkflowClientConfiguration(Configuration):  # pylint: disable=too-
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://purview.azure.net/.default"])
         kwargs.setdefault("sdk_moniker", "purview-workflow/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:

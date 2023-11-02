@@ -12,14 +12,13 @@ parameters:
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.7'
+    displayName: 'Use Python 3.8'
     inputs:
-     versionSpec: '3.7'
+     versionSpec: '3.8'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
   - script: |
-      python -m pip install setuptools==58.3.0
-      pip install -r eng/ci_tools.txt
+      python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
@@ -28,9 +27,9 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
-        "$(TargetingString)" 
-        --mark_arg="${{ parameters.TestMarkArgument }}" 
-        --service="${{ parameters.ServiceDirectory }}" 
+        "$(TargetingString)"
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
         --toxenv="mypy"
         --disablecov
     env: ${{ parameters.EnvVars }}

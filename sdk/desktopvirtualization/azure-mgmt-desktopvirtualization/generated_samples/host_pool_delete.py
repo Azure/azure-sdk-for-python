@@ -29,13 +29,12 @@ def main():
         subscription_id="daefabc0-95b4-48b3-b645-8a753a63c4fa",
     )
 
-    response = client.host_pools.delete(
+    client.host_pools.delete(
         resource_group_name="resourceGroup1",
         host_pool_name="hostPool1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2022-09-09/examples/HostPool_Delete.json
+# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2023-09-05/examples/HostPool_Delete.json
 if __name__ == "__main__":
     main()

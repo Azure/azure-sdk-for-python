@@ -29,7 +29,7 @@ steps:
     displayName: 'Set Tox Environment Skips'
     inputs:
       scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
-      arguments: '--team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
 
   - ${{ each artifact in parameters.Artifacts }}:
     - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
