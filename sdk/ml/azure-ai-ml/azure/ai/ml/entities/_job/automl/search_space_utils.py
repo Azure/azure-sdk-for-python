@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import re
-from typing import Union
+from typing import Any, List, Union
 
 from marshmallow import fields
 
@@ -39,7 +39,8 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, SweepDistribution]) -> str:
     if isinstance(sweep_distribution, float):
         # Float requires some special handling for small values that get auto-represented with scientific notation.
-        return float_to_str(sweep_distribution)
+        res: str = float_to_str(sweep_distribution)
+        return res
     if not isinstance(sweep_distribution, SweepDistribution):
         # Convert [bool, float, str] types to str
         return str(sweep_distribution)
@@ -99,7 +100,7 @@ def _convert_to_rest_object(sweep_distribution: Union[bool, int, float, str, Swe
             else:
                 sweep_distribution_args.append(str(value))
 
-    sweep_distribution_str = sweep_distribution_type + "("
+    sweep_distribution_str: str = sweep_distribution_type + "("
     sweep_distribution_str += ",".join(sweep_distribution_args)
     sweep_distribution_str += ")"
     return sweep_distribution_str
@@ -138,7 +139,7 @@ def _get_type_inferred_value(value: str) -> Union[bool, int, float, str]:
 
 def _convert_from_rest_object(
     sweep_distribution_str: str,
-) -> Union[bool, int, float, str, SweepDistribution]:
+) -> Any:
     # sweep_distribution_str can be a distribution like "choice('vitb16r224', 'vits16r224')" or
     # a single value like "True", "1", "1.0567", "vitb16r224"
 
@@ -152,7 +153,7 @@ def _convert_from_rest_object(
 
     # Distribution string
     sweep_distribution_type = sweep_distribution_separated[0].strip().lower()
-    sweep_distribution_args = []
+    sweep_distribution_args: List = []
     for value in sweep_distribution_separated[1:]:
         sweep_distribution_args.append(_get_type_inferred_value(value))
 
@@ -247,6 +248,7 @@ def _convert_sweep_dist_str_item_to_dict(
     # sweep_distribution_str can be a distribution like "choice('vitb16r224', 'vits16r224')"
     # return type is {type: 'choice', values: ['vitb16r224', 'vits16r224']}
     sweep_dist_obj = _convert_from_rest_object(sweep_distribution_str)
+    sweep_dist: Union[bool, int, float, str, dict] = ""
     if isinstance(sweep_dist_obj, SweepDistribution):
         if isinstance(sweep_dist_obj, Choice):
             sweep_dist = ChoicePlusSchema().dump(sweep_dist_obj)  # pylint: disable=no-member
