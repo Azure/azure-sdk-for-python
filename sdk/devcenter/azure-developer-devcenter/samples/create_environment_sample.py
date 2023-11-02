@@ -31,6 +31,20 @@ from azure.developer.devcenter import DevCenterClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
+"""
+FILE: create_environment_sample.py
+
+DESCRIPTION:
+    This sample demonstrates how to create and delete Environments using python DevCenterClient. For this sample,
+    you must have presiouly configured a DevCenter, Project, Catalog, and Environment Type. More details 
+    on how to configure those requirements at https://learn.microsoft.com/azure/deployment-environments/
+
+USAGE:
+    python create_environment_samplepy
+
+    Set the environment variables with your own values before running the sample:
+    1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
+"""
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
