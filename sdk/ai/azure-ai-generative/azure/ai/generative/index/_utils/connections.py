@@ -37,17 +37,6 @@ def get_pinecone_environment(config, credential: Optional[TokenCredential] = Non
     connection = get_connection_by_id_v2(connection_id, credential=credential)
     return get_metadata_from_connection(connection)["environment"]
 
-def get_metadata_from_connection(connection: Union[dict, WorkspaceConnection, BaseConnection]) -> dict:
-    """Get a connection metadata from a connection."""
-    if isinstance(connection, dict):
-        return connection["properties"]["metadata"]
-    elif isinstance(connection, WorkspaceConnection):
-        return connection.metadata
-    elif isinstance(connection, Connection):
-        return connection.metadata
-    else:
-        raise ValueError(f"Unknown connection type: {type(connection)}")
-
 
 def get_connection_credential(config, credential: Optional[TokenCredential] = None):
     """Get a credential for a connection."""
