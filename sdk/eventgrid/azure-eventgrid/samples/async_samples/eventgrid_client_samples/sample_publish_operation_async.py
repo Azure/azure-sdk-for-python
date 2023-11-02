@@ -14,8 +14,8 @@ from azure.core.exceptions import HttpResponseError
 
 EVENTGRID_KEY: str = os.environ["EVENTGRID_KEY"]
 EVENTGRID_ENDPOINT: str = os.environ["EVENTGRID_ENDPOINT"]
-TOPIC_NAME: str = os.environ["TOPIC_NAME"]
-EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENT_SUBSCRIPTION_NAME"]
+TOPIC_NAME: str = os.environ["EVENTGRID_TOPIC_NAME"]
+EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 
 # Create a client
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
@@ -23,6 +23,21 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 async def run():
     async with client:
+
+        # Publish a CloudEvent as dict
+        try:
+            cloud_event_dict = {"data": "hello", "source": "https://example.com", "type": "example"}
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
+        except HttpResponseError:
+            raise
+
+        # Publish a list of CloudEvents as dict
+        try:
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=[cloud_event_dict, cloud_event_dict])
+        except HttpResponseError:
+            raise
+
+        
         # Publish a CloudEvent
         try:
             cloud_event = CloudEvent(
