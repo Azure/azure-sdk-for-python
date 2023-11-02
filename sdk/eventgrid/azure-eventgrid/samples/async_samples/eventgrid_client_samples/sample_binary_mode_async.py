@@ -26,7 +26,7 @@ async def run():
         # Publish a CloudEvent
         try:
             cloud_event = CloudEvent(
-                data=b"HI", source="https://example.com", type="example"
+                data=b"HI", source="https://example.com", type="example", datacontenttype="text/plain"
             )
             await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
 
