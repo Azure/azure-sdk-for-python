@@ -106,10 +106,44 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: $(ArtifactName)
 
+  - ${{ if eq(parameters['AdvancedBuild'], 'true') }}:
+    - job: 'CoalesceBuildArtifacts'
+      displayName: Create Single Packages Artifact
+      dependsOn: 
+        - 'Build'
+      timeoutInMinutes: 90
+
+      pool:
+        name: azsdk-pool-mms-ubuntu-2004-general
+        vmImage: MMSUbuntu20.04
+
+      steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages_windows'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
+
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages_mac'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
+
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          artifactName: 'packages_linux'
+          targetPath: $(Build.ArtifactStagingDirectory)/packages
+
+      - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+        parameters:
+          ArtifactPath: '$(Build.ArtifactStagingDirectory)/packages'
+          ArtifactName: 'packages'
+
   - job: 'Build_Extended'
     displayName: Build Extended
     dependsOn: 
       - 'Build'
+      - ${{ if eq(parameters['AdvancedBuild'], 'true') }}:
+        - 'CoalesceBuildArtifacts'
     timeoutInMinutes: 90
     variables:
       Codeql.Enabled: true
@@ -189,6 +223,8 @@ jobs:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       DependsOn:
         - 'Build'
+        - ${{ if eq(parameters['AdvancedBuild'], 'true') }}:
+          - 'CoalesceBuildArtifacts'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
@@ -236,6 +272,8 @@ jobs:
         Cloud: Public
       DependsOn:
         - 'Build'
+        - ${{ if eq(parameters['AdvancedBuild'], 'true') }}:
+          - 'CoalesceBuildArtifacts'
       AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
