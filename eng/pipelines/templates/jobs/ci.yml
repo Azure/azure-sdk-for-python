@@ -61,6 +61,9 @@ parameters:
   - name: GenerateApiReviewForManualOnly
     type: boolean
     default: false
+  - name: AdvancedBuild
+    type: boolean
+    default: false
 
 jobs:
   - job: 'Build'
@@ -85,6 +88,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
+        AdvancedBuild: ${{ parameters.AdvancedBuild }}
 
   - job: 'Build_Extended'
     displayName: Build Extended

@@ -29,6 +29,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: storage
+    BuildTargetingString: "azure-storage-blob,azure-storage-extensions"
     TestProxy: true
     TestTimeoutInMinutes: 120
     # Override the base matrix due to the issues with building cryptography on unsupported platforms
@@ -38,6 +39,7 @@ extends:
         Path: eng/pipelines/templates/stages/platform-matrix-excluding-pypy.json
         Selection: sparse
         GenerateVMJobs: true
+    AdvancedBuild: true
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob
@@ -57,3 +59,7 @@ extends:
       safeName: azuremgmtstoragesync
     - name: azure-mgmt-storageimportexport
       safeName: azuremgmtstorageimportexport
+    - name: azure-storage-extensions
+      safeName: azure-storage-extensions
+      skipVerifyChangeLog: true
+    
