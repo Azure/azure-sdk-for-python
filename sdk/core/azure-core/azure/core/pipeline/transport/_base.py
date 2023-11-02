@@ -108,6 +108,7 @@ def _format_url_section(template, **kwargs: Dict[str, str]) -> str:
                     f"The value provided for the url part '{template}' was incorrect, and resulted in an invalid url"
                 ) from key
             last_template = template
+    return last_template
 
 
 def _urljoin(base_url: str, stub_url: str) -> str:
@@ -352,7 +353,11 @@ class HttpRequest:
         self.files = None
 
     def set_multipart_mixed(
-        self, *requests: "HttpRequest", policies: List[SansIOHTTPPolicy] = None, boundary: str = None, **kwargs: Any
+        self,
+        *requests: "HttpRequest",
+        policies: Optional[List[SansIOHTTPPolicy]] = None,
+        boundary: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         """Set the part of a multipart/mixed.
 
