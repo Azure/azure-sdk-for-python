@@ -5,10 +5,10 @@
 # --------------------------------------------------------------------------
 import datetime
 from enum import Enum
-from typing import Any, Union, NamedTuple
+from typing import Any, Union, NamedTuple, Optional
+from typing_extensions import TypedDict, Required
 
 from azure.core import CaseInsensitiveEnumMeta
-from typing_extensions import TypedDict, Required, Optional
 
 
 class EntityMetadata(TypedDict, total=False):
@@ -39,7 +39,7 @@ class TableEntity(dict):
 
     """
 
-    _metadata: EntityMetadata = {}
+    _metadata: EntityMetadata = {"etag": None, "timestamp": None}
 
     @property
     def metadata(self) -> EntityMetadata:
