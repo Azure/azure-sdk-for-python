@@ -81,7 +81,7 @@ def main():
 
     # Connect to the provisioned dev box
     remote_connection_response = client.get_remote_connection(target_project_name, "me", "Test_DevBox")
-    print("Connect to the dev box using web URL {remote_connection_response['webUrl']}")
+    print(f"Connect to the dev box using web URL {remote_connection_response['webUrl']}")
 
     # Tear down the dev box when finished
     delete_response = client.begin_delete_dev_box(target_project_name, "me", "Test_DevBox")
