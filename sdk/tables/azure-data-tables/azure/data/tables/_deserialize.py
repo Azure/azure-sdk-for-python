@@ -209,7 +209,7 @@ def _convert_to_entity(entry_element):
             etag = "W/\"datetime'" + url_quote(timestamp) + "'\""
         timestamp = _from_entity_datetime(timestamp)
     odata.update({"etag": etag, "timestamp": timestamp})
-    entity.metadata = odata
+    entity._metadata = odata  # pylint: disable=protected-access
     return entity
 
 
