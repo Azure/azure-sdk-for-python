@@ -75,12 +75,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
         actual_outputs = kwargs.get("outputs", {})
         # parallel for node shares output meta with body
         try:
-            if self.body._component is not None and not isinstance(self.body._component, str):
-                outputs = self.body._component.outputs
-                # transform body outputs to aggregate types when available
-                self._outputs = self._build_outputs_dict(
-                    outputs=actual_outputs, output_definition_dict=self._convert_output_meta(outputs)
-                )
+            outputs = self.body._component.outputs
+            # transform body outputs to aggregate types when available
+            self._outputs = self._build_outputs_dict(
+                outputs=actual_outputs, output_definition_dict=self._convert_output_meta(outputs)
+            )
         except AttributeError:
             # when body output not available, create default output builder without meta
             self._outputs = self._build_outputs_dict(outputs=actual_outputs)
