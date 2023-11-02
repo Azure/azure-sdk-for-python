@@ -60,7 +60,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        "pytyped": ["py.typed"],
+        "azure.ai.documentintelligence": ["py.typed"],
     },
     install_requires=[
         "isodate<1.0.0,>=0.6.1",
