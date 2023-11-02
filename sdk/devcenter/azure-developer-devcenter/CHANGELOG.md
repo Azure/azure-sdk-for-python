@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (2023-11-03)
+## 1.0.0b3 (2023-11-02)
 
 This release updates the Azure DevCenter library to use the 2023-04-01 GA API.
 
