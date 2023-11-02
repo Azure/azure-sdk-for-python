@@ -73,9 +73,25 @@ jobs:
       Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
       Codeql.SkipTaskAutoInjection: false
 
+    strategy:
+      matrix:
+        Linux:
+          imageName: 'MMSUbuntu22.04'
+          poolName: 'azsdk-pool-mms-ubuntu-2204-general'
+          ArtifactName: 'linux'
+        ${{ if parameters.AdvancedBuild }}:
+          Windows:
+            imageName: 'MMS2022'
+            poolName: 'azsdk-pool-mms-win-2022-general'
+            ArtifactName: 'windows'
+          Mac:
+            imageName: 'macos-11'
+            poolName: 'Azure Pipelines'
+            ArtifactName: 'mac'
+
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+      name: $(poolName)
+      vmImage: $(imageName)
 
     steps:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
@@ -88,7 +104,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
-        AdvancedBuild: ${{ parameters.AdvancedBuild }}
+        ArtifactSuffix: $(ArtifactName)
 
   - job: 'Build_Extended'
     displayName: Build Extended
