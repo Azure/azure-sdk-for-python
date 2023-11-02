@@ -87,7 +87,7 @@ def main():
     # Tear down the environment when finished
     delete_response = client.begin_delete_environment(target_project_name, "me", "DevTestEnv")
     delete_result = delete_response.result()
-    print("Completed deletion for the environment with status {delete_result['status']}")
+    print(f"Completed deletion for the environment with status {delete_result['status']}")
 
 
 if __name__ == "__main__":
