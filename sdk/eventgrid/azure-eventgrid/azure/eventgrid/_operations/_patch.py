@@ -419,10 +419,13 @@ def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None
         data["specversion"] = _SERIALIZER.body(event.specversion, "str")
         data["source"] = _SERIALIZER.body(event.source, "str")
         data["id"] = _SERIALIZER.body(event.id, "str")
+        
+        # Check if data is bytes and serialize to base64
         if isinstance(event.data, bytes):
             data["data_base64"] = _SERIALIZER.serialize_bytearray(event.data)
         elif event.data:
             data["data"] = _SERIALIZER.body(event.data, "str")
+
         if event.subject:
             data["subject"] = _SERIALIZER.body(event.subject, "str")
         if event.time:
@@ -432,6 +435,7 @@ def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None
         if event.extensions:
             for extension, value in event.extensions.items():
                 data[extension] = _SERIALIZER.body(value, "str")
+
         # If single cloud event return the data
         if not is_list:
             return json.dumps(data)
@@ -439,6 +443,7 @@ def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None
             list_data.append(data)
     # If list of cloud events return the list
     return json.dumps(list_data)
+
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"
