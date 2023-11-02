@@ -269,7 +269,6 @@ class AioHttpTransport(AsyncHttpTransport):
             # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
-        proxy = proxy or None
         if proxies and not proxy:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
 
