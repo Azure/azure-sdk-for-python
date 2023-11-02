@@ -77,7 +77,7 @@ def main():
     )
     devbox_result = create_response.result()
 
-    print("Provisioned dev box with status {devbox_result['provisioningState']}.")
+    print(f"Provisioned dev box with status {devbox_result['provisioningState']}.")
 
     # Connect to the provisioned dev box
     remote_connection_response = client.get_remote_connection(target_project_name, "me", "Test_DevBox")
