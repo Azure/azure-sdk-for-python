@@ -414,6 +414,7 @@ def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None
     data = {}
     list_data = []
     for event in events if isinstance(events, list) else [events]:
+        # CloudEvent required fields
         data["type"] =  _SERIALIZER.body(event.type, "str")
         data["specversion"] = _SERIALIZER.body(event.specversion, "str")
         data["source"] = _SERIALIZER.body(event.source, "str")

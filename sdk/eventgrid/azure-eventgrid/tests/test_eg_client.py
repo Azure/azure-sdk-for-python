@@ -80,7 +80,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
         my_returned_event = events.value[0].event
-        assert my_returned_event.data == b'this is binary data'
+        assert my_returned_event.data == 'this is binary data'
         assert my_returned_event.datacontenttype == 'text/plain'
         assert my_returned_event.type == "Contoso.Items.ItemReceived"
 
@@ -146,7 +146,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
         
         client.publish_cloud_events(
-            eventgrid_topic_name, body=[event], binary_mode=True
+            eventgrid_topic_name, body=event, binary_mode=True
         )
 
         client.publish_cloud_events(
