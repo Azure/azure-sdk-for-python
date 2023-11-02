@@ -351,7 +351,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         eventgrid_partner_namespace_key = os.environ['EVENTGRID_PARTNER_NAMESPACE_TOPIC_KEY']
         channel_name = os.environ['EVENTGRID_PARTNER_CHANNEL_NAME']
         credential = AzureKeyCredential(eventgrid_partner_namespace_key)
-        client = EventGridPublisherClient(eventgrid_partner_namespace_endpoint, eventgrid_partner_namespace_key)
+        client = EventGridPublisherClient(eventgrid_partner_namespace_endpoint, credential)
         cloud_event = CloudEvent(
                 source = "http://samplesource.dev",
                 data = "cloudevent",

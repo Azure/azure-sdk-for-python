@@ -56,6 +56,7 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
         with pytest.raises(ClientAuthenticationError, match="The request authorization key is not authorized for*"):
             await client.send(eg_event)
 
+    @pytest.mark.live_test_only
     @EventGridPreparer()
     @pytest.mark.asyncio
     async def test_raise_on_bad_resource(self, eventgrid_topic_key):
