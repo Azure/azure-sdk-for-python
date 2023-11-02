@@ -16,8 +16,13 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import policies
 
 from azure.appconfiguration._generated import models as _models
-from azure.appconfiguration._generated.aio._azure_app_configuration import AzureAppConfiguration as AzureAppConfigurationGenerated
-from azure.appconfiguration._generated.aio._configuration import AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated, VERSION
+from azure.appconfiguration._generated.aio._azure_app_configuration import (
+    AzureAppConfiguration as AzureAppConfigurationGenerated,
+)
+from azure.appconfiguration._generated.aio._configuration import (
+    AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated,
+    VERSION,
+)
 from azure.appconfiguration._generated._serialization import Deserializer, Serializer
 
 
