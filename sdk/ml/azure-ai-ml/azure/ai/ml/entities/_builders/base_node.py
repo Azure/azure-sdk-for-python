@@ -124,7 +124,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         self,
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
-        component: Optional[Union[str, Component]],
+        component: Any,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         name: Optional[str] = None,
