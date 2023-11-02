@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (it should be stable) (2023-11-02)
+
+
+
 ## 10.1.0b1 (2022-11-03)
 
 ### Other Changes
