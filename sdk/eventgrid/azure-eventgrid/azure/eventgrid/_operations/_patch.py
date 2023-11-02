@@ -209,6 +209,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
                     body = CloudEvent.from_dict(body)
             except AttributeError:
                 raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
+
+
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
