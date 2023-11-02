@@ -144,7 +144,7 @@ class PeriodicTask(threading.Thread):
     def cancel(self):
         self.finished.set()
 
-def _create_telemetry_item(timestamp):
+def _create_telemetry_item(timestamp) -> TelemetryItem:
     return TelemetryItem(
         name="",
         instrumentation_key="",
