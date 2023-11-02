@@ -1,5 +1,5 @@
 directory: specification/cognitiveservices/DocumentIntelligence
-commit: ff72de010905303bb28075aa576b76566c5b305b
+commit: 0fa905ca3dd31d0c7b19232fbb8972530ce0121b
 additionalDirectories: []
 repo: Azure/azure-rest-api-specs-pr
 

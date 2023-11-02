@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, Union
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -26,8 +26,10 @@ class DocumentAnalysisClient(
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param credential: Credential needed for the client to connect to Azure. Is either a
+     AzureKeyCredential type or a AzureKeyCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2023-10-31-preview". Note that overriding this default value may result in unsupported
      behavior.
@@ -36,7 +38,7 @@ class DocumentAnalysisClient(
      Retry-After header is present.
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AzureKeyCredential], **kwargs: Any) -> None:
         _endpoint = "{endpoint}/documentintelligence"
         self._config = DocumentAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
@@ -106,8 +108,10 @@ class DocumentModelAdministrationClient(
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :param credential: Credential needed for the client to connect to Azure. Is either a
+     AzureKeyCredential type or a AzureKeyCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2023-10-31-preview". Note that overriding this default value may result in unsupported
      behavior.
@@ -116,7 +120,7 @@ class DocumentModelAdministrationClient(
      Retry-After header is present.
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AzureKeyCredential], **kwargs: Any) -> None:
         _endpoint = "{endpoint}/documentintelligence"
         self._config = DocumentModelAdministrationClientConfiguration(
             endpoint=endpoint, credential=credential, **kwargs
