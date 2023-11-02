@@ -29,7 +29,7 @@ DESCRIPTION:
     - OCR_HIGH_RESOLUTION
     - STYLE_FONT
 
-    See pricing: https://azure.microsoft.com/en-us/pricing/details/ai-document-intelligence/.
+    See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
     python sample_analyze_addon_languages.py

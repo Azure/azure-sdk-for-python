@@ -686,7 +686,7 @@ The following add-on capabilities are available for 2023-07-31 (GA) and later re
 - [high resolution mode][addon_highres_sample]
 - [language][addon_languages_sample]
 
-Note that some add-on capabilities will incur additional charges. See pricing: https://azure.microsoft.com/en-us/pricing/details/ai-document-intelligence/.
+Note that some add-on capabilities will incur additional charges. See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 ## Troubleshooting
 
