@@ -195,7 +195,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
-        elif isinstance(body, list):
+        elif isinstance(body, list[CloudEvent]):
             kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
             self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
         else:
@@ -336,7 +336,7 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
                 raise TypeError("CloudEvent data must be bytes when in binary mode." 
                                 "Did you forget to call `json.dumps()` and/or `encode()` on CloudEvent data?")
         except AttributeError:
-            raise ValueError("Binary mode is not supported for batch events. Set `binary_mode` to False when passing a batch of CloudEvents.")
+            raise TypeError("Binary mode is not supported for batch CloudEvents. Set `binary_mode` to False when passing in a batch of CloudEvents.")
     else:
         # Content of the request is the serialized CloudEvent or serialized List[CloudEvent]
         _content = _serialize_cloud_events(event)

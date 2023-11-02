@@ -165,9 +165,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
-        elif isinstance(body, list):
+        elif isinstance(body, list[CloudEvent]):
             kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
             await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+        else:
+            raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
 
     @distributed_trace_async
     async def receive_cloud_events(
