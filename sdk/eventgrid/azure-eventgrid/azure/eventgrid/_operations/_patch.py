@@ -142,7 +142,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         body: List[Dict[str, Any]],
         *,
         binary_mode: Optional[bool] = False,
-        content_type: str = "application/cloudevents+json; charset=utf-8",
+        content_type: str = "application/cloudevents-batch+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
         """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
@@ -170,7 +170,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
     
     @distributed_trace
     def publish_cloud_events(
-        self, topic_name: str, body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any]], *, binary_mode: Optional[bool] = False, **kwargs
+        self,
+        topic_name: str,
+        body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any]],
+        *,
+        binary_mode: Optional[bool] = False,
+        **kwargs
     ) -> None:
         """Publish Batch Cloud Event or Events to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
@@ -194,6 +199,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        
         # Check that the body is a CloudEvent or list of CloudEvents even if dict
         if isinstance(body, dict) or (isinstance(body, list) and isinstance(body[0], dict)):
             try:
@@ -412,7 +418,7 @@ def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None
         data["source"] = _SERIALIZER.body(event.source, "str")
         data["id"] = _SERIALIZER.body(event.id, "str")
         if isinstance(event.data, bytes):
-            data["data_base64"] = _SERIALIZER.body(base64.b64encode(event.data), "bytearray")
+            data["data_base64"] = _SERIALIZER.serialize_bytearray(event.data)
         elif event.data:
             data["data"] = _SERIALIZER.body(event.data, "str")
         if event.subject:
@@ -422,7 +428,8 @@ def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None
         if event.datacontenttype:
             data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
         if event.extensions:
-            data["additional_properties"] = _SERIALIZER.body(event.extensions, "object")
+            for extension, value in event.extensions.items():
+                data[extension] = _SERIALIZER.body(value, "str")
         # If single cloud event return the data
         if not is_list:
             return json.dumps(data)
