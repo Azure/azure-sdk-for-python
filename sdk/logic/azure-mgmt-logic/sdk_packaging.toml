@@ -2,6 +2,6 @@
 package_name = "azure-mgmt-logic"
 package_pprint_name = "Logic Apps Management"
 package_doc_id = "logic-apps"
-is_stable = false
+is_stable = true
 sample_link = ""
 title = "LogicManagementClient"
