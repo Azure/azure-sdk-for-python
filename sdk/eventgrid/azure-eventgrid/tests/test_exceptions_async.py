@@ -69,7 +69,7 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @pytest.mark.asyncio
     async def test_raise_on_bad_resource(self):
-        credential = AzureKeyCredential("fake_key")
+        credential = AzureKeyCredential(os.environ["EVENTGRID_TOPIC_KEY"])
         client = EventGridPublisherClient(
             "https://bad-resource.eastus-1.eventgrid.azure.net/api/events",
             credential,
