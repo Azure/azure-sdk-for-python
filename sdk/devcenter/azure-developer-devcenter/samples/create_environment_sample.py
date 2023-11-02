@@ -82,7 +82,7 @@ def main():
     )
     environment_result = create_response.result()
 
-    print("Provisioned environment with status {environment_result['provisioningState']}.")
+    print(f"Provisioned environment with status {environment_result['provisioningState']}.")
 
     # Tear down the environment when finished
     delete_response = client.begin_delete_environment(target_project_name, "me", "DevTestEnv")
