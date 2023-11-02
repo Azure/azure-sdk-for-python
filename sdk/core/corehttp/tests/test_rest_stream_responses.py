@@ -8,14 +8,14 @@ from corehttp.rest import HttpRequest
 from corehttp.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 from corehttp.exceptions import HttpResponseError, ServiceRequestError
 
-from rest_client import TestRestClient
+from rest_client import MockRestClient
 from utils import SYNC_TRANSPORTS
 
 
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_iter_raw(port, transport):
     request = HttpRequest("GET", "/streams/basic")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     with client.send_request(request, stream=True) as response:
         raw = b""
         for part in response.iter_raw():
@@ -30,7 +30,7 @@ def test_iter_raw(port, transport):
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_iter_raw_on_iterable(port, transport):
     request = HttpRequest("GET", "/streams/iterable")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     with client.send_request(request, stream=True) as response:
         raw = b""
         for part in response.iter_raw():
@@ -41,7 +41,7 @@ def test_iter_raw_on_iterable(port, transport):
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_iter_with_error(port, transport):
     request = HttpRequest("GET", "/errors/403")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     with client.send_request(request, stream=True) as response:
         with pytest.raises(HttpResponseError):
             response.raise_for_status()
@@ -62,7 +62,7 @@ def test_iter_with_error(port, transport):
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_iter_bytes(port, transport):
     request = HttpRequest("GET", "/streams/basic")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     with client.send_request(request, stream=True) as response:
         raw = b""
         for chunk in response.iter_bytes():
@@ -77,7 +77,7 @@ def test_iter_bytes(port, transport):
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_sync_streaming_response(port, transport):
     request = HttpRequest("GET", "/streams/basic")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     with client.send_request(request, stream=True) as response:
         assert response.status_code == 200
         assert not response.is_closed
@@ -92,7 +92,7 @@ def test_sync_streaming_response(port, transport):
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_cannot_read_after_stream_consumed(port, transport):
     request = HttpRequest("GET", "/streams/basic")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     with client.send_request(request, stream=True) as response:
         content = b""
         for part in response.iter_bytes():
@@ -110,7 +110,7 @@ def test_cannot_read_after_stream_consumed(port, transport):
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_cannot_read_after_response_closed(port, transport):
     request = HttpRequest("GET", "/streams/basic")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     with client.send_request(request, stream=True) as response:
         response.close()
         with pytest.raises(StreamClosedError) as ex:
@@ -126,7 +126,7 @@ def test_decompress_plain_no_header(port, transport):
     account_name = "coretests"
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     request = HttpRequest("GET", url)
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
     with pytest.raises(ResponseNotReadError):
         response.content
@@ -140,7 +140,7 @@ def test_compress_plain_no_header(port, transport):
     account_name = "coretests"
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     request = HttpRequest("GET", url)
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
     iter = response.iter_raw()
     data = b"".join(list(iter))
@@ -153,7 +153,7 @@ def test_decompress_compressed_no_header(port, transport):
     account_name = "coretests"
     url = "https://{}.blob.core.windows.net/tests/test.tar.gz".format(account_name)
     request = HttpRequest("GET", url)
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
     iter = response.iter_bytes()
     data = b"".join(list(iter))
@@ -166,7 +166,7 @@ def test_decompress_compressed_header_targz(port, transport):
     account_name = "coretests"
     url = "https://{}.blob.core.windows.net/tests/test_with_header.tar.gz".format(account_name)
     request = HttpRequest("GET", url)
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
     iter = response.iter_bytes()
     data = b"".join(list(iter))
@@ -177,7 +177,7 @@ def test_decompress_compressed_header_targz(port, transport):
 def test_iter_read(port, transport):
     # thanks to McCoy Patiño for this test!
     request = HttpRequest("GET", "/basic/string")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
     response.read()
     iterator = response.iter_bytes()
@@ -195,7 +195,7 @@ def test_iter_read_back_and_forth(port, transport):
     # actually read the contents into the response, the output them. Once they're yielded,
     # the stream is closed, so you have to catch the output when you iterate through it
     request = HttpRequest("GET", "/basic/string")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
     iterator = response.iter_bytes()
     for part in iterator:
@@ -211,7 +211,7 @@ def test_iter_read_back_and_forth(port, transport):
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_error_reading(port, transport):
     request = HttpRequest("GET", "/errors/403")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     with client.send_request(request, stream=True) as response:
         response.read()
         assert response.content == b""
@@ -227,7 +227,7 @@ def test_error_reading(port, transport):
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_pass_kwarg_to_iter_bytes(port, transport):
     request = HttpRequest("GET", "/basic/string")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
     for part in response.iter_bytes(chunk_size=5):
         assert part
@@ -236,7 +236,7 @@ def test_pass_kwarg_to_iter_bytes(port, transport):
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_pass_kwarg_to_iter_raw(port, transport):
     request = HttpRequest("GET", "/basic/string")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
     for part in response.iter_raw(chunk_size=5):
         assert part
@@ -246,7 +246,7 @@ def test_pass_kwarg_to_iter_raw(port, transport):
 def test_decompress_compressed_header(port, transport):
     # expect plain text
     request = HttpRequest("GET", "/encoding/gzip")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request)
     content = response.read()
     assert content == b"hello world"
@@ -258,7 +258,7 @@ def test_decompress_compressed_header(port, transport):
 def test_deflate_decompress_compressed_header(port, transport):
     # expect plain text
     request = HttpRequest("GET", "/encoding/deflate")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request)
     content = response.read()
     assert content == b"hi there"
@@ -270,7 +270,7 @@ def test_deflate_decompress_compressed_header(port, transport):
 def test_decompress_compressed_header_stream(port, transport):
     # expect plain text
     request = HttpRequest("GET", "/encoding/gzip")
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(request, stream=True)
     content = response.read()
     assert content == b"hello world"

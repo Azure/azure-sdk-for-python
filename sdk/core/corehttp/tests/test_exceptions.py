@@ -14,7 +14,7 @@ from corehttp.exceptions import (
 )
 from corehttp.rest import HttpRequest
 
-from rest_client import TestRestClient
+from rest_client import MockRestClient
 from utils import SYNC_TRANSPORTS
 
 
@@ -64,7 +64,7 @@ class TestExceptions(object):
     @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
     def test_httpresponse_error_with_response(self, port, transport):
         request = HttpRequest("GET", url="http://localhost:{}/basic/string".format(port))
-        client = TestRestClient(port, transport=transport())
+        client = MockRestClient(port, transport=transport())
         response = client.send_request(request, stream=False)
         error = HttpResponseError(response=response)
         assert error.message == "Operation returned an invalid status 'OK'"
@@ -75,7 +75,7 @@ class TestExceptions(object):
     @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
     def test_malformed_json(self, port, transport):
         request = HttpRequest("GET", "/errors/malformed-json")
-        client = TestRestClient(port, transport=transport())
+        client = MockRestClient(port, transport=transport())
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
@@ -87,7 +87,7 @@ class TestExceptions(object):
     @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
     def test_text(self, port, transport):
         request = HttpRequest("GET", "/errors/text")
-        client = TestRestClient(port, transport=transport())
+        client = MockRestClient(port, transport=transport())
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()

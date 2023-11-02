@@ -14,13 +14,13 @@ from corehttp.rest._aiohttp import RestAioHttpTransportResponse
 from corehttp.exceptions import HttpResponseError
 from utils import ASYNC_TRANSPORTS, readonly_checks
 
-from rest_client_async import AsyncTestRestClient
+from rest_client_async import AsyncMockRestClient
 
 
 @pytest.fixture
 def send_request(port):
     async def _send_request(request, transport):
-        client = AsyncTestRestClient(port, transport=transport)
+        client = AsyncMockRestClient(port, transport=transport)
         async with client:
             response = await client.send_request(request, stream=False)
             response.raise_for_status()
@@ -79,7 +79,7 @@ async def test_response_html(send_request, transport):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
 async def test_raise_for_status(port, transport):
-    client = AsyncTestRestClient(port, transport=transport())
+    client = AsyncMockRestClient(port, transport=transport())
     response = await client.send_request(HttpRequest("GET", "/errors/403"))
     assert response.status_code == 403
     with pytest.raises(HttpResponseError):

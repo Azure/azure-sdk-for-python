@@ -13,14 +13,14 @@ from corehttp.rest._requests_basic import RestRequestsTransportResponse
 from corehttp.exceptions import HttpResponseError
 import xml.etree.ElementTree as ET
 
-from rest_client import TestRestClient
+from rest_client import MockRestClient
 from utils import readonly_checks, SYNC_TRANSPORTS
 
 
 @pytest.fixture
 def send_request(port):
     def _send_request(request, transport):
-        client = TestRestClient(port, transport=transport)
+        client = MockRestClient(port, transport=transport)
         response = client.send_request(request, stream=False)
         response.raise_for_status()
         return response
@@ -67,7 +67,7 @@ def test_response_html(send_request, transport):
 
 @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
 def test_raise_for_status(port, transport):
-    client = TestRestClient(port, transport=transport())
+    client = MockRestClient(port, transport=transport())
     response = client.send_request(HttpRequest("GET", "/basic/string"))
     response.raise_for_status()
 

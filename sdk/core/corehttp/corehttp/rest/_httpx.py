@@ -182,7 +182,7 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
             raise
         except httpx.RemoteProtocolError as ex:
             _LOGGER.warning("Incomplete download: %s", ex)
-            internal_response.aclose()
+            await internal_response.aclose()
             raise IncompleteReadError(ex, error=ex) from ex
         except httpx.DecodingError as ex:
             if len(ex.args) > 1:
@@ -190,5 +190,5 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
             raise DecodeError("Failed to decode.") from ex
         except Exception as err:
             _LOGGER.warning("Unable to stream download: %s", err)
-            internal_response.aclose()
+            await internal_response.aclose()
             raise
