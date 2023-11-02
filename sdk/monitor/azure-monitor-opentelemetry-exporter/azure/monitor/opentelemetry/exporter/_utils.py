@@ -26,7 +26,7 @@ try:
 except ImportError:
     # Temporary workaround for <Py3.8
     # importlib-metadata causing issues in CI
-    import pkg_resources
+    import pkg_resources # type: ignore
     opentelemetry_version = pkg_resources.get_distribution(
         "opentelemetry-sdk"
     ).version
@@ -149,7 +149,7 @@ def _create_telemetry_item(timestamp) -> TelemetryItem:
         name="",
         instrumentation_key="",
         tags=dict(azure_monitor_context),
-        time=ns_to_iso_str(timestamp),
+        time=ns_to_iso_str(timestamp), # type: ignore
     )
 
 def _populate_part_a_fields(resource):
