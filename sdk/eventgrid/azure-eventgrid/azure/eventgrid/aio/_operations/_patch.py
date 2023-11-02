@@ -49,7 +49,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type body: list[~azure.core.messaging.CloudEvent]
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
          When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/json`. Expects CloudEvent data to be bytes.
+         the default content type is `application/cloudevents-batch+json;
+         charset=utf-8`. Expects CloudEvent data to be bytes.
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -82,7 +83,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type body: ~azure.core.messaging.CloudEvent
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
          When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/json`. Expects CloudEvent data to be bytes.
+         the default content type is `application/cloudevents+json;
+         charset=utf-8`. Expects CloudEvent data to be bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -115,7 +117,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type body: dict
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
          When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/json`. Expects CloudEvent data to be bytes.
+         the default content type is `application/cloudevents+json;
+         charset=utf-8`. Expects CloudEvent data to be bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -142,7 +145,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent] or dict[str, Any]
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
          When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/json`. Expects CloudEvent data to be bytes.
+         the default content type is `application/cloudevents+json;
+         charset=utf-8`. Expects CloudEvent data to be bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -160,18 +164,10 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
-            if binary_mode:
-                self._publish_binary_mode(topic_name, body, self._config.api_version, **kwargs)
-            internal_body = _cloud_event_to_generated(body)
-            await self._publish_cloud_event(topic_name, internal_body, **kwargs)
-        else:
+            await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+        elif isinstance(body, list):
             kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
-            internal_body_list = []
-            for item in body:
-                internal_body_list.append(_cloud_event_to_generated(item))
-            if self._binary_mode:
-                raise ValueError("Binary mode is not supported for batch events.")
-            await self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
+            await self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
 
     @distributed_trace_async
     async def receive_cloud_events(
@@ -225,7 +221,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
 
-    def _publish_binary_mode(self, topic_name: str, event: Any, api_version, **kwargs: Any) -> None:
+    async def _publish(self, topic_name: str, event: Any, api_version, binary_mode, **kwargs: Any) -> None:
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
@@ -249,6 +245,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             params=_params,
             content_type=content_type,
             event=event,
+            binary_mode=binary_mode,
             **kwargs
         )
 
@@ -259,8 +256,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         }
         http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
 
-        # pipeline_response: PipelineResponse = self.send_request(http_request, **kwargs)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             http_request,
             stream=_stream,
             **kwargs
@@ -270,7 +267,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         if response.status_code not in [200]:
             if _stream:
-                    response.read()  # Load the body in memory and close the socket
+                await  response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

@@ -83,7 +83,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type body: list[~azure.core.messaging.CloudEvent]
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
          When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/json`. Expects CloudEvent data to be bytes.
+         the default content type is `application/cloudevents-batch+json`. Expects CloudEvent data to be bytes.
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -116,7 +116,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type body: ~azure.core.messaging.CloudEvent
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
          When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/json`. Expects CloudEvent data to be bytes.
+         the default content type is `application/cloudevents+json`. Expects CloudEvent data to be bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -175,6 +175,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :param body: Cloud Event or array of Cloud Events being published. Required.
         :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent] or dict[str, Any]
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
+         When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
+         the default content type is `application/json`. Expects CloudEvent data to be bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -192,19 +194,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.") from exc
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
-            if binary_mode:
-                self._publish_binary_mode(topic_name, body, self._config.api_version, **kwargs)
-            else:
-                internal_body = _cloud_event_to_generated(body)
-                self._publish_cloud_event(topic_name, internal_body, **kwargs)
-        else:
+            self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+        elif isinstance(body, list):
             kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
-            internal_body_list = []
-            for item in body:
-                internal_body_list.append(_cloud_event_to_generated(item))
-            if binary_mode:
-                raise ValueError("Binary mode is not supported for batch events.")
-            self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
+            self._publish(topic_name, body, self._config.api_version, binary_mode, **kwargs)
+        else:
+            raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
 
     @distributed_trace
     def receive_cloud_events(
@@ -258,7 +253,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
 
-    def _publish_binary_mode(self, topic_name: str, event: Any, api_version, **kwargs: Any) -> None:
+    def _publish(self, topic_name: str, event: Any, api_version: str, binary_mode: Optional[bool] = False, **kwargs: Any) -> None:
 
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
@@ -282,6 +277,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             params=_params,
             content_type=content_type,
             event=event,
+            binary_mode=binary_mode,
             **kwargs
         )
 
@@ -328,18 +324,28 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     event = kwargs.pop("event")
+    binary_mode = kwargs.pop("binary_mode", False)
 
-    # Content of the request is the data, if already in binary - no work needed
-    if isinstance(event.data, bytes):
-        _content = event.data
+    
+    if binary_mode:
+        # Content of the request is the data, if already in binary - no work needed
+        try:
+            if isinstance(event.data, bytes):
+                _content = event.data
+            else:
+                raise TypeError("CloudEvent data must be bytes when in binary mode." 
+                                "Did you forget to call `json.dumps()` and/or `encode()` on CloudEvent data?")
+        except AttributeError:
+            raise ValueError("Binary mode is not supported for batch events. Set `binary_mode` to False when passing a batch of CloudEvents.")
     else:
-        raise TypeError("Event data must be bytes when in binary mode. Did you forget to call `json.dumps()` and/or `encode()`?")
- 
+        # Content of the request is the serialized CloudEvent or serialized List[CloudEvent]
+        _content = _serialize_cloud_events(event)
+    
     # content_type must be CloudEvent DataContentType when in binary mode
     default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
-    content_type: str = event.datacontenttype or default_content_type
+    content_type: str = event.datacontenttype if (binary_mode and event.datacontenttype) else default_content_type
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-10-01-preview"))
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -356,22 +362,24 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-    # Cloud Headers
-    _headers['ce-source'] = _SERIALIZER.header('ce-source', event.source, 'str')
-    _headers['ce-type'] = _SERIALIZER.header('ce-type', event.type, 'str')
-    if event.specversion:
-        _headers['ce-specversion'] = _SERIALIZER.header('ce-specversion', event.specversion, 'str')
-    if event.id:
-        _headers['ce-id'] = _SERIALIZER.header('ce-id', event.id, 'str')
-    if event.time:
-        _headers['ce-time'] = _SERIALIZER.header('ce-time', event.time, 'str')
-    if event.dataschema:
-        _headers['ce-dataschema'] = _SERIALIZER.header('ce-dataschema', event.dataschema, 'str')
-    if event.subject:
-        _headers['ce-subject'] = _SERIALIZER.header('ce-subject', event.subject, 'str')
-    if event.extensions:
-        for extension, value in event.extensions.items():
-            _headers[f'ce-{extension}'] = _SERIALIZER.header('ce-extensions', value, 'str')
+
+    if binary_mode:
+        # Cloud Headers
+        _headers['ce-source'] = _SERIALIZER.header('ce-source', event.source, 'str')
+        _headers['ce-type'] = _SERIALIZER.header('ce-type', event.type, 'str')
+        if event.specversion:
+            _headers['ce-specversion'] = _SERIALIZER.header('ce-specversion', event.specversion, 'str')
+        if event.id:
+            _headers['ce-id'] = _SERIALIZER.header('ce-id', event.id, 'str')
+        if event.time:
+            _headers['ce-time'] = _SERIALIZER.header('ce-time', event.time, 'str')
+        if event.dataschema:
+            _headers['ce-dataschema'] = _SERIALIZER.header('ce-dataschema', event.dataschema, 'str')
+        if event.subject:
+            _headers['ce-subject'] = _SERIALIZER.header('ce-subject', event.subject, 'str')
+        if event.extensions:
+            for extension, value in event.extensions.items():
+                _headers[f'ce-{extension}'] = _SERIALIZER.header('ce-extensions', value, 'str')
 
     return HttpRequest(
         method="POST",
@@ -381,6 +389,36 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
         content=_content, # pass through content
         **kwargs
     )
+
+def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None:
+    # Serialize CloudEvent or List[CloudEvent] into a JSON string
+    is_list = isinstance(events, list)
+    data = {}
+    list_data = []
+    for event in events if isinstance(events, list) else [events]:
+        data["type"] =  _SERIALIZER.body(event.type, "str")
+        data["specversion"] = _SERIALIZER.body(event.specversion, "str")
+        data["source"] = _SERIALIZER.body(event.source, "str")
+        data["id"] = _SERIALIZER.body(event.id, "str")
+        if isinstance(event.data, bytes):
+            data["data_base64"] = _SERIALIZER.body(base64.b64encode(event.data), "bytearray")
+        elif event.data:
+            data["data"] = _SERIALIZER.body(event.data, "str")
+        if event.subject:
+            data["subject"] = _SERIALIZER.body(event.subject, "str")
+        if event.time:
+            data["time"] = _SERIALIZER.body(event.time, "str")
+        if event.datacontenttype:
+            data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
+        if event.extensions:
+            data["additional_properties"] = _SERIALIZER.body(event.extensions, "object")
+        # If single cloud event return the data
+        if not is_list:
+            return json.dumps(data)
+        else:
+            list_data.append(data)
+    # If list of cloud events return the list
+    return json.dumps(list_data)
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"
