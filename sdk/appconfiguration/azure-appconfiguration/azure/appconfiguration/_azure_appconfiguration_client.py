@@ -201,7 +201,14 @@ class AzureAppConfigurationClient:
         """
 
     @distributed_trace
-    def list_configuration_settings(self, **kwargs) -> ItemPaged[ConfigurationSetting]:
+    def list_configuration_settings(self, *args, **kwargs) -> ItemPaged[ConfigurationSetting]:
+        key_filter = None
+        label_filter = None
+        if len(args) > 0:
+            key_filter = args[0]
+        if len(args) > 1:
+            label_filter = args[1]
+
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
@@ -216,8 +223,8 @@ class AzureAppConfigurationClient:
                     **kwargs
                 )
             return self._impl.get_key_values(  # type: ignore
-                key=kwargs.pop("key_filter", None),
-                label=kwargs.pop("label_filter", None),
+                key=key_filter or kwargs.pop("key_filter", None),
+                label=label_filter or kwargs.pop("label_filter", None),
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs
