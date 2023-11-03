@@ -265,7 +265,7 @@ def test_bearer_policy_calls_sansio_methods(http_request):
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_azure_key_credential_policy(http_request):
+def test_service_key_credential_policy(http_request):
     """Tests to see if we can create an ServiceKeyCredentialPolicy"""
 
     key_header = "api_key"
@@ -282,7 +282,7 @@ def test_azure_key_credential_policy(http_request):
     pipeline.run(http_request("GET", "https://test_key_credential"))
 
 
-def test_azure_key_credential_policy_raises():
+def test_service_key_credential_policy_raises():
     """Tests ServiceKeyCredential and ServiceKeyCredentialPolicy raises with non-compliant input parameters."""
     api_key = 1234
     key_header = 5678
@@ -297,7 +297,7 @@ def test_azure_key_credential_policy_raises():
         credential_policy = ServiceKeyCredentialPolicy(credential=str(api_key), name=key_header)
 
 
-def test_azure_key_credential_updates():
+def test_service_key_credential_updates():
     """Tests ServiceKeyCredential updates"""
     api_key = "original"
 
@@ -337,7 +337,7 @@ combinations = [
 ]
 
 
-def test_azure_named_key_credential():
+def test_service_named_key_credential():
     cred = ServiceNamedKeyCredential("sample_name", "samplekey")
 
     assert cred.named_key.name == "sample_name"
@@ -350,7 +350,7 @@ def test_azure_named_key_credential():
     assert isinstance(cred.named_key, tuple)
 
 
-def test_azure_named_key_credential_raises():
+def test_service_named_key_credential_raises():
     with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred = ServiceNamedKeyCredential("sample_name", 123345)
 
@@ -363,8 +363,8 @@ def test_azure_named_key_credential_raises():
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_azure_http_credential_policy(http_request):
-    """Tests to see if we can create an AzureHttpKeyCredentialPolicy"""
+def test_service_http_credential_policy(http_request):
+    """Tests to see if we can create an ServiceKeyCredentialPolicy"""
 
     prefix = "SharedAccessKey"
     api_key = "test_key"

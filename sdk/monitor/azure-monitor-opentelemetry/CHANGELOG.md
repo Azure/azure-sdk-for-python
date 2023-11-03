@@ -15,6 +15,9 @@
 
 ### Bugs Fixed
 
+- Updated django samples with clearly artificial secret key
+    ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
+
 ### Other Changes
 
 ## 1.0.0 (2023-09-12)
