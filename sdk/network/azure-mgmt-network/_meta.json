@@ -1,5 +1,5 @@
 {
-  "commit": "acf24167b5174d88f36302e243c883f2e63eec52",
+  "commit": "b672a0b301338a570af2e5430b4b7691f909a094",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
@@ -10,7 +10,7 @@
   "readme": "specification/network/resource-manager/readme.md",
   "package-2023-02": "2023-06-19 07:26:19 +0530 0b4a0a3f4bfc198df608f373784505e42e248c2c Microsoft.Network/stable/2023-02-01/networkVirtualAppliance.json",
   "package-2021-02": "2021-09-14 19:30:27 -0700 54f1c87938269d4706629dc04c26ee1f3634585a Microsoft.Network/stable/2021-02-01/privateLinkService.json",
-  "package-2021-02-preview-only": "2023-07-28 22:13:42 +0530 1fbe3900e67f81f96ec4bcf8e5065f8486225035 Microsoft.Network/preview/2021-02-01-preview/networkSecurityPerimeter.json",
+  "package-2021-02-preview-only": "2023-10-12 23:38:35 +0530 dac9f85a47b0e4e759593f3a19968a732b911b47 Microsoft.Network/preview/2021-02-01-preview/networkSecurityPerimeter.json",
   "package-2020-11": "2022-06-05 17:57:39 -0700 afd092f0148242079f0206329e4964407fe9e5b5 Microsoft.Network/stable/2020-11-01/loadBalancer.json",
   "package-2020-08": "2021-05-11 02:02:27 -0700 e729721df20047dcb4fdb675d234b6821f1a4f81 Microsoft.Network/stable/2020-08-01/applicationGateway.json",
   "package-2020-07": "2021-05-11 02:02:27 -0700 e729721df20047dcb4fdb675d234b6821f1a4f81 Microsoft.Network/stable/2020-07-01/applicationGateway.json",

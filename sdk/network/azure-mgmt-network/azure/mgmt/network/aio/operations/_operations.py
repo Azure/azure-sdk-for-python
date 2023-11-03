@@ -748,6 +748,7 @@ from ...operations._operations import build_network_security_perimeters_delete_r
 from ...operations._operations import build_network_security_perimeters_get_request
 from ...operations._operations import build_network_security_perimeters_list_request
 from ...operations._operations import build_network_security_perimeters_list_by_subscription_request
+from ...operations._operations import build_network_security_perimeters_patch_request
 from ...operations._operations import build_nsp_access_rules_create_or_update_request
 from ...operations._operations import build_nsp_access_rules_delete_request
 from ...operations._operations import build_nsp_access_rules_get_request
@@ -66374,6 +66375,91 @@ class NetworkSecurityPerimetersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Network/networkSecurityPerimeters'}
+
+    @distributed_trace_async
+    async def patch(
+        self,
+        resource_group_name: str,
+        network_security_perimeter_name: str,
+        parameters: Union[_models.UpdateTagsRequest, IO],
+        **kwargs: Any
+    ) -> _models.NetworkSecurityPerimeter:
+        """Patch Tags for a Network Security Perimeter.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param network_security_perimeter_name: The name of the network security perimeter. Required.
+        :type network_security_perimeter_name: str
+        :param parameters: Parameter supplied to the network security perimeter. Is either a
+         UpdateTagsRequest type or a IO type. Required.
+        :type parameters: ~azure.mgmt.network.models.UpdateTagsRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: NetworkSecurityPerimeter or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.NetworkSecurityPerimeter
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2021-02-01-preview")
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.NetworkSecurityPerimeter] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "UpdateTagsRequest")
+
+        request = build_network_security_perimeters_patch_request(
+            resource_group_name=resource_group_name,
+            network_security_perimeter_name=network_security_perimeter_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.patch.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("NetworkSecurityPerimeter", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    patch.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkSecurityPerimeters/{networkSecurityPerimeterName}'}
 
 class NspAccessRulesOperations:
     """

@@ -1,5 +1,11 @@
 # Release History
 
+## 25.2.0 (2023-11-03)
+
+### Features Added
+
+  - Added operation NetworkSecurityPerimetersOperations.patch
+
 ## 25.1.0 (2023-09-15)
 
 ### Features Added

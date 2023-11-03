@@ -37468,6 +37468,35 @@ class SystemData(_serialization.Model):
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
 
+class UpdateTagsRequest(_serialization.Model):
+    """Update tags request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Network security perimeter identifier.
+    :vartype id: str
+    :ivar tags: List of tags for Network Security Perimeter.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: List of tags for Network Security Perimeter.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.tags = tags
+
 class UserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
     """Network security user rule.
 
