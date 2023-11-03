@@ -105,6 +105,6 @@ def __getattr__(name):
             "MicrosoftBotIdentifier is deprecated and should not be used.",
             DeprecationWarning
         )
-        from ._shared.models import MicrosoftBotIdentifier
-        return MicrosoftBotIdentifier
+        from ._shared.models import _MicrosoftBotIdentifier
+        return _MicrosoftBotIdentifier
     raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")
