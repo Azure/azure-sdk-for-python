@@ -9,12 +9,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Optional, Any, Union
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
-from ._azure_app_configuration import (
-    AzureAppConfiguration as AzureAppConfigurationGenerated
-)
-from ._configuration import (
-    AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated
-)
+from ._azure_app_configuration import AzureAppConfiguration as AzureAppConfigurationGenerated
+from ._configuration import AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated
 
 
 class AzureAppConfiguration(AzureAppConfigurationGenerated):

@@ -10,12 +10,8 @@ from typing import List, Optional, Any, Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._azure_app_configuration import (
-    AzureAppConfiguration as AzureAppConfigurationGenerated
-)
-from ._configuration import (
-    AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated
-)
+from ._azure_app_configuration import AzureAppConfiguration as AzureAppConfigurationGenerated
+from ._configuration import AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated
 
 
 class AzureAppConfiguration(AzureAppConfigurationGenerated):
