@@ -78,7 +78,7 @@ class AzureAppConfigurationClient:
             )
         else:
             self._impl = AzureAppConfiguration(
-                credential,
+                credential,  # type: ignore # mypy doesn't compare the type hint with the api surface in patch.py
                 base_url,
                 credential_scopes=credential_scopes,
                 per_call_policies=self._sync_token_policy,
