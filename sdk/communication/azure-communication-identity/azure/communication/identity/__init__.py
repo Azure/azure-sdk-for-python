@@ -16,6 +16,8 @@ from ._shared.models import (
     identifier_from_raw_id,
     MicrosoftTeamsUserIdentifier,
     MicrosoftTeamsUserProperties,
+    MicrosoftTeamsAppIdentifier,
+    MicrosoftTeamsAppProperties,
     PhoneNumberIdentifier,
     PhoneNumberProperties,
     UnknownIdentifier,
@@ -34,6 +36,8 @@ __all__ = [
     "identifier_from_raw_id",
     "MicrosoftTeamsUserIdentifier",
     "MicrosoftTeamsUserProperties",
+    "MicrosoftTeamsAppIdentifier",
+    "MicrosoftTeamsAppProperties",
     "PhoneNumberIdentifier",
     "PhoneNumberProperties",
     "UnknownIdentifier",
@@ -41,11 +45,11 @@ __all__ = [
 
 def __getattr__(name):
     if name == 'MicrosoftBotProperties':
-        warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
+        warnings.warn(f"{name} is deprecated and should not be used", DeprecationWarning)
         from ._shared.models  import _MicrosoftBotProperties
         return _MicrosoftBotProperties
     if name == 'MicrosoftBotIdentifier':
-        warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
+        warnings.warn(f"{name} is deprecated and should not be used. For Microsoft Teams application scenarios, use MicrosoftTeamsAppIdentifier instead", DeprecationWarning)
         from ._shared.models  import _MicrosoftBotIdentifier
         return _MicrosoftBotIdentifier
     raise AttributeError(f"module 'azure.communication.identity' has no attribute {name}")
