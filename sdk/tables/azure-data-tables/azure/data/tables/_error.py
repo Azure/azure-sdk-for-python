@@ -264,7 +264,7 @@ class TableTransactionError(HttpResponseError):
         try:
             message_sections = self.message.split(":", 1)
             return int(message_sections[0])
-        except Exception:
+        except Exception:  # pylint:disable=broad-except
             return 0
 
 
