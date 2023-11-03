@@ -42,7 +42,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         body: List[CloudEvent],
         *,
-        binary_mode: Optional[bool] = False,
+        binary_mode: bool = False,
         content_type: str = "application/cloudevents-batch+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
