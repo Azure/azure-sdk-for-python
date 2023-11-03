@@ -290,11 +290,11 @@ class JobRouterAdministrationClientOperationsMixin(
         patch = distribution_policy
         if isinstance(distribution_policy, _models.DistributionPolicy):
             patch = _models.DistributionPolicy(
-                name = kwargs.pop("name", distribution_policy.name),
-                offer_expires_after_seconds = kwargs.pop(
+                name=kwargs.pop("name", distribution_policy.name),
+                offer_expires_after_seconds=kwargs.pop(
                     "offer_expires_after_seconds", distribution_policy.offer_expires_after_seconds
                 ),
-                mode = kwargs.pop("mode", distribution_policy.mode),
+                mode=kwargs.pop("mode", distribution_policy.mode),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -457,10 +457,10 @@ class JobRouterAdministrationClientOperationsMixin(
         patch = queue
         if isinstance(queue, _models.RouterQueue):
             patch = _models.RouterQueue(
-                name = kwargs.pop("name", queue.name),
-                distribution_policy_id = kwargs.pop("distribution_policy_id", queue.distribution_policy_id),
-                labels = kwargs.pop("labels", queue.labels),
-                exception_policy_id = kwargs.pop("exception_policy_id", queue.exception_policy_id),
+                name=kwargs.pop("name", queue.name),
+                distribution_policy_id=kwargs.pop("distribution_policy_id", queue.distribution_policy_id),
+                labels=kwargs.pop("labels", queue.labels),
+                exception_policy_id=kwargs.pop("exception_policy_id", queue.exception_policy_id),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -671,13 +671,13 @@ class JobRouterAdministrationClientOperationsMixin(
         patch = classification_policy
         if isinstance(classification_policy, _models.ClassificationPolicy):
             patch = _models.ClassificationPolicy(
-                name = kwargs.pop("name", classification_policy.name),
-                fallback_queue_id = kwargs.pop("fallback_queue_id", classification_policy.fallback_queue_id),
-                queue_selector_attachments = kwargs.pop(
+                name=kwargs.pop("name", classification_policy.name),
+                fallback_queue_id=kwargs.pop("fallback_queue_id", classification_policy.fallback_queue_id),
+                queue_selector_attachments=kwargs.pop(
                     "queue_selector_attachments", classification_policy.queue_selector_attachments
                 ),
-                prioritization_rule = kwargs.pop("prioritization_rule", classification_policy.prioritization_rule),
-                worker_selector_attachments = kwargs.pop(
+                prioritization_rule=kwargs.pop("prioritization_rule", classification_policy.prioritization_rule),
+                worker_selector_attachments=kwargs.pop(
                     "worker_selector_attachments", classification_policy.worker_selector_attachments
                 ),
             )
@@ -816,10 +816,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """
 
     def upsert_worker(
-        self,
-        worker_id: str,
-        *args: Union[_models.RouterWorker, JSON, IO],
-        **kwargs: Any
+        self, worker_id: str, *args: Union[_models.RouterWorker, JSON, IO], **kwargs: Any
     ) -> _models.RouterWorker:
         """Update a router worker.
 
@@ -897,12 +894,12 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         patch = router_worker
         if isinstance(router_worker, _models.RouterWorker):
             patch = _models.RouterWorker(
-                queues = kwargs.pop("queues", router_worker.queues),
-                capacity = kwargs.pop("capacity", router_worker.capacity),
-                labels = kwargs.pop("labels", router_worker.labels),
-                tags = kwargs.pop("tags", router_worker.tags),
-                channels = kwargs.pop("channels", router_worker.channels),
-                available_for_offers = kwargs.pop("available_for_offers", router_worker.available_for_offers),
+                queues=kwargs.pop("queues", router_worker.queues),
+                capacity=kwargs.pop("capacity", router_worker.capacity),
+                labels=kwargs.pop("labels", router_worker.labels),
+                tags=kwargs.pop("tags", router_worker.tags),
+                channels=kwargs.pop("channels", router_worker.channels),
+                available_for_offers=kwargs.pop("available_for_offers", router_worker.available_for_offers),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -1142,18 +1139,19 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         patch = router_job
         if isinstance(router_job, _models.RouterJob):
             patch = _models.RouterJob(
-                channel_reference = kwargs.pop("channel_reference", router_job.channel_reference),
-                channel_id = kwargs.pop("channel_id", router_job.channel_id),
-                classification_policy_id = kwargs.pop("classification_policy_id", router_job.classification_policy_id),
-                queue_id = kwargs.pop("queue_id", router_job.queue_id),
-                priority = kwargs.pop("priority", router_job.priority),
-                disposition_code = kwargs.pop("disposition_code", router_job.disposition_code),
-                requested_worker_selectors = kwargs.pop("requested_worker_selectors",
-                                                        router_job.requested_worker_selectors),
-                labels = kwargs.pop("labels", router_job.labels),
-                tags = kwargs.pop("tags", router_job.tags),
-                notes = kwargs.pop("notes", router_job.notes),
-                matching_mode = kwargs.pop("matching_mode", router_job.matching_mode),
+                channel_reference=kwargs.pop("channel_reference", router_job.channel_reference),
+                channel_id=kwargs.pop("channel_id", router_job.channel_id),
+                classification_policy_id=kwargs.pop("classification_policy_id", router_job.classification_policy_id),
+                queue_id=kwargs.pop("queue_id", router_job.queue_id),
+                priority=kwargs.pop("priority", router_job.priority),
+                disposition_code=kwargs.pop("disposition_code", router_job.disposition_code),
+                requested_worker_selectors=kwargs.pop(
+                    "requested_worker_selectors", router_job.requested_worker_selectors
+                ),
+                labels=kwargs.pop("labels", router_job.labels),
+                tags=kwargs.pop("tags", router_job.tags),
+                notes=kwargs.pop("notes", router_job.notes),
+                matching_mode=kwargs.pop("matching_mode", router_job.matching_mode),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)

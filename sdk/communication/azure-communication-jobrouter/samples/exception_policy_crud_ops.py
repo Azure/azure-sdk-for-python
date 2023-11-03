@@ -29,6 +29,32 @@ class ExceptionPolicySamples(object):
     def create_exception_policy(self):
         connection_string = self.endpoint
         policy_id = self._ep_policy_id
+
+        classification_policy: ClassificationPolicy = router_admin_client.upsert_classification_policy(
+            policy_id,
+            ClassificationPolicy(
+                prioritization_rule = StaticRouterRule(value = 10),
+                queue_selector_attachments = [
+                    StaticQueueSelectorAttachment(
+                        queue_selector = RouterQueueSelector(key = "Region", label_operator = LabelOperator.EQUAL,
+                                                             value = "NA")
+                    ),
+                ],
+                worker_selector_attachments = [
+                    ConditionalWorkerSelectorAttachment(
+                        condition = ExpressionRouterRule(expression = 'If(job.Product = "O365", true, false)'),
+                        worker_selectors = [
+                            RouterWorkerSelector(key = "Skill_O365", label_operator = LabelOperator.EQUAL,
+                                                 value = True),
+                            RouterWorkerSelector(
+                                key = "Skill_O365_Lvl", label_operator = LabelOperator.GREATER_THAN_OR_EQUAL, value = 1
+                            ),
+                        ],
+                    )
+                ],
+            ),
+        )
+
         # [START create_exception_policy]
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
@@ -71,23 +97,25 @@ class ExceptionPolicySamples(object):
 
         # define exception rule
 
-        exception_rule = {
-            "EscalateJobOnQueueOverFlowTrigger": ExceptionRule(
+        exception_rules = [
+            ExceptionRule(
+                id = "EscalateJobOnQueueOverFlowTrigger",
                 trigger=queue_length_exception_trigger,
-                actions={"EscalationJobActionOnQueueOverFlow": escalate_job_on_queue_over_flow},
+                actions=[escalate_job_on_queue_over_flow],
             ),
-            "EscalateJobOnWaitTimeExceededTrigger": ExceptionRule(
+            ExceptionRule(
+                id = "EscalateJobOnWaitTimeExceededTrigger",
                 trigger=wait_time_exception_trigger,
-                actions={"EscalationJobActionOnWaitTimeExceed": escalate_job_on_wait_time_exceeded},
+                actions=[escalate_job_on_wait_time_exceeded],
             ),
-        }
+        ]
 
         # create the exception policy
         # set a unique value to `policy_id`
-        exception_policy = router_admin_client.create_exception_policy(
-            id=policy_id,
-            exception_policy=ExceptionPolicy(
-                name="TriggerJobCancellationWhenQueueLenIs10", exception_rules=exception_rule
+        exception_policy = router_admin_client.upsert_exception_policy(
+            policy_id,
+            ExceptionPolicy(
+                name="TriggerJobCancellationWhenQueueLenIs10", exception_rules=exception_rules
             ),
         )
 
@@ -130,26 +158,26 @@ class ExceptionPolicySamples(object):
         )
 
         updated_exception_policy: ExceptionPolicy = router_admin_client.update_exception_policy(
-            id=policy_id,
-            exception_rules={
+            policy_id,
+            exception_rules=[
                 # adding new rule
-                "EscalateJobOnWaitTimeExceededTrigger2Min": ExceptionRule(
+                ExceptionRule(
+                    id = "EscalateJobOnWaitTimeExceededTrigger2Min",
                     trigger=escalate_job_on_wait_time_exceed2,
-                    actions={"EscalationJobActionOnWaitTimeExceed": escalate_job_on_wait_time_exceeded2},
+                    actions=[escalate_job_on_wait_time_exceeded2],
                 ),
                 # modifying existing rule
-                "EscalateJobOnQueueOverFlowTrigger": ExceptionRule(
+                ExceptionRule(
+                    id = "EscalateJobOnQueueOverFlowTrigger",
                     trigger=QueueLengthExceptionTrigger(threshold=100),
-                    actions={
-                        "EscalationJobActionOnQueueOverFlow": ReclassifyExceptionAction(
+                    actions=[
+                        ReclassifyExceptionAction(
                             classification_policy_id="escalation-on-q-over-flow",
                             labels_to_upsert={"EscalateJob": True, "EscalationReasonCode": "QueueOverFlow"},
                         )
-                    },
+                    ],
                 ),
-                # deleting existing rule
-                "EscalateJobOnWaitTimeExceededTrigger": None,
-            },
+            ],
         )
 
         print(
@@ -167,7 +195,7 @@ class ExceptionPolicySamples(object):
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        exception_policy = router_admin_client.get_exception_policy(id=policy_id)
+        exception_policy = router_admin_client.get_exception_policy(policy_id)
 
         print(f"Successfully fetched exception policy with id: {exception_policy.id}")
         # [END get_exception_policy]
@@ -182,7 +210,7 @@ class ExceptionPolicySamples(object):
         exception_policy_iterator = router_admin_client.list_exception_policies()
 
         for ep in exception_policy_iterator:
-            print(f"Retrieved exception policy with id: {ep.exception_policy.id}")
+            print(f"Retrieved exception policy with id: {ep.id}")
 
         print(f"Successfully completed fetching exception policies")
         # [END list_exception_policies]
@@ -201,7 +229,7 @@ class ExceptionPolicySamples(object):
             print(f"Retrieved {len(policies_in_page)} policies in current page")
 
             for ep in policies_in_page:
-                print(f"Retrieved exception policy with id: {ep.exception_policy.id}")
+                print(f"Retrieved exception policy with id: {ep.id}")
 
         print(f"Successfully completed fetching exception policies")
         # [END list_exception_policies_batched]
@@ -215,7 +243,7 @@ class ExceptionPolicySamples(object):
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        router_admin_client.delete_exception_policy(id=policy_id)
+        router_admin_client.delete_exception_policy(policy_id)
 
         # [END delete_exception_policy]
 

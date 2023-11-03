@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines,trailing-whitespace,anomalous-backslash-in-string,name-too-long
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -25,8 +25,7 @@ if TYPE_CHECKING:
 
 
 class AcceptJobOfferResult(_model_base.Model):
-    """Response containing Id's for the worker, job, and assignment from an accepted
-    offer.
+    """Response containing Id's for the worker, job, and assignment from an accepted offer.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -81,14 +80,10 @@ class DistributionMode(_model_base.Model):
     :ivar max_concurrent_offers: Governs the maximum number of active concurrent offers a job can
      have.
     :vartype max_concurrent_offers: int
-    :ivar bypass_selectors: (Optional)
-     If set to true, then router will match workers to jobs even if they
-     don't match label selectors.
-     Warning: You may get workers that are not
-     qualified for the job they are matched with if you set this
-     variable to true.
-     This flag is intended more for temporary usage.
-     By default, set to false.
+    :ivar bypass_selectors: If set to true, then router will match workers to jobs even if they
+     don't match label selectors. Warning: You may get workers that are not qualified for the job
+     they are matched with if you set this variable to true. This flag is intended more for
+     temporary usage. By default, set to false.
     :vartype bypass_selectors: bool
     :ivar kind: The type discriminator describing a sub-type of DistributionMode. Required. Default
      value is None.
@@ -101,14 +96,10 @@ class DistributionMode(_model_base.Model):
     max_concurrent_offers: Optional[int] = rest_field(name="maxConcurrentOffers")
     """Governs the maximum number of active concurrent offers a job can have."""
     bypass_selectors: Optional[bool] = rest_field(name="bypassSelectors")
-    """(Optional)
-     If set to true, then router will match workers to jobs even if they
-     don't match label selectors.
-     Warning: You may get workers that are not
-     qualified for the job they are matched with if you set this
-     variable to true.
-     This flag is intended more for temporary usage.
-     By default, set to false."""
+    """If set to true, then router will match workers to jobs even if they don't match label
+     selectors. Warning: You may get workers that are not qualified for the job they are matched
+     with if you set this variable to true. This flag is intended more for temporary usage. By
+     default, set to false."""
     kind: Literal[None] = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of DistributionMode. Required. Default value is
      None."""
@@ -146,32 +137,18 @@ class BestWorkerMode(DistributionMode, discriminator="best-worker"):
     :ivar max_concurrent_offers: Governs the maximum number of active concurrent offers a job can
      have.
     :vartype max_concurrent_offers: int
-    :ivar bypass_selectors: (Optional)
-     If set to true, then router will match workers to jobs even if they
-     don't match label selectors.
-     Warning: You may get workers that are not
-     qualified for the job they are matched with if you set this
-     variable to true.
-     This flag is intended more for temporary usage.
-     By default, set to false.
+    :ivar bypass_selectors: If set to true, then router will match workers to jobs even if they
+     don't match label selectors. Warning: You may get workers that are not qualified for the job
+     they are matched with if you set this variable to true. This flag is intended more for
+     temporary usage. By default, set to false.
     :vartype bypass_selectors: bool
-    :ivar scoring_rule: A rule of one of the following types:
-
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol.
+    :ivar scoring_rule: Define a scoring rule to use, when calculating a score to determine the
+     best worker. If not set, will use a default scoring formula that uses the number of job labels
+     that the worker labels match, as well as the number of label selectors the worker labels match
+     and/or exceed using a logistic function (https://en.wikipedia.org/wiki/Logistic_function).
     :vartype scoring_rule: ~azure.communication.jobrouter.models.RouterRule
-    :ivar scoring_rule_options: Encapsulates all options that can be passed as parameters for
-     scoring rule with
-     BestWorkerMode.
+    :ivar scoring_rule_options: Options to configure 'scoringRule'. If not set, default values are
+     used.
     :vartype scoring_rule_options: ~azure.communication.jobrouter.models.ScoringRuleOptions
     :ivar kind: The type discriminator describing a sub-type of Mode. Required. Default value is
      "best-worker".
@@ -179,22 +156,12 @@ class BestWorkerMode(DistributionMode, discriminator="best-worker"):
     """
 
     scoring_rule: Optional["_models.RouterRule"] = rest_field(name="scoringRule")
-    """A rule of one of the following types:
-     
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol."""
+    """Define a scoring rule to use, when calculating a score to determine the best worker. If not
+     set, will use a default scoring formula that uses the number of job labels that the worker
+     labels match, as well as the number of label selectors the worker labels match and/or exceed
+     using a logistic function (https://en.wikipedia.org/wiki/Logistic_function)."""
     scoring_rule_options: Optional["_models.ScoringRuleOptions"] = rest_field(name="scoringRuleOptions")
-    """Encapsulates all options that can be passed as parameters for scoring rule with
-     BestWorkerMode."""
+    """Options to configure 'scoringRule'. If not set, default values are used."""
     kind: Literal["best-worker"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing a sub-type of Mode. Required. Default value is
      \"best-worker\"."""
@@ -261,11 +228,10 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
-    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with the
-     current timestamp.
+    :ivar note: A note that will be appended to the jobs' Notes collection with the current
+     timestamp.
     :vartype note: str
-    :ivar disposition_code: (Optional) Indicates the outcome of the job, populate this field with
-     your own
+    :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
      custom values.
     :vartype disposition_code: str
     :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required. Default
@@ -274,11 +240,9 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
     """
 
     note: Optional[str] = rest_field()
-    """(Optional) A note that will be appended to the jobs' Notes collection with the
-     current timestamp."""
+    """A note that will be appended to the jobs' Notes collection with the current timestamp."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
-    """(Optional) Indicates the outcome of the job, populate this field with your own
-     custom values."""
+    """Indicates the outcome of the job, populate this field with your own custom values."""
     kind: Literal["cancel"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing a sub-type of ExceptionAction. Required. Default value is
      \"cancel\"."""
@@ -307,23 +271,19 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
 class CancelJobOptions(_model_base.Model):
     """Request payload for deleting a job.
 
-    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with the
-     current timestamp.
+    :ivar note: A note that will be appended to the jobs' Notes collection with the current
+     timestamp.
     :vartype note: str
     :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
-     custom
-     values.
-     If not provided, default value of "Cancelled" is set.
+     custom values. If not provided, default value of "Cancelled" is set.
     :vartype disposition_code: str
     """
 
     note: Optional[str] = rest_field()
-    """(Optional) A note that will be appended to the jobs' Notes collection with the
-     current timestamp."""
+    """A note that will be appended to the jobs' Notes collection with the current timestamp."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
-    """Indicates the outcome of the job, populate this field with your own custom
-     values.
-     If not provided, default value of \"Cancelled\" is set."""
+    """Indicates the outcome of the job, populate this field with your own custom values. If not
+     provided, default value of \"Cancelled\" is set."""
 
     @overload
     def __init__(
@@ -352,7 +312,7 @@ class ClassificationPolicy(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar etag: Concurrency Token. Required.
+    :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     :ivar id: Unique identifier of this policy. Required.
     :vartype id: str
@@ -365,19 +325,7 @@ class ClassificationPolicy(_model_base.Model):
      given job.
     :vartype queue_selector_attachments:
      list[~azure.communication.jobrouter.models.QueueSelectorAttachment]
-    :ivar prioritization_rule: A rule of one of the following types:
-
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol.
+    :ivar prioritization_rule: The rule to determine a priority score for a given job.
     :vartype prioritization_rule: ~azure.communication.jobrouter.models.RouterRule
     :ivar worker_selector_attachments: The worker selector attachments used to attach worker
      selectors to a given job.
@@ -386,7 +334,7 @@ class ClassificationPolicy(_model_base.Model):
     """
 
     etag: str = rest_field(visibility=["read"])
-    """Concurrency Token. Required."""
+    """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
     """Unique identifier of this policy. Required."""
     name: Optional[str] = rest_field()
@@ -398,19 +346,7 @@ class ClassificationPolicy(_model_base.Model):
     )
     """The queue selector attachments used to resolve a queue for a given job."""
     prioritization_rule: Optional["_models.RouterRule"] = rest_field(name="prioritizationRule")
-    """A rule of one of the following types:
-     
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol."""
+    """The rule to determine a priority score for a given job."""
     worker_selector_attachments: Optional[List["_models.WorkerSelectorAttachment"]] = rest_field(
         name="workerSelectorAttachments"
     )
@@ -447,32 +383,27 @@ class CloseJobOptions(_model_base.Model):
     :ivar assignment_id: The assignment within which the job is to be closed. Required.
     :vartype assignment_id: str
     :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
-     custom
-     values.
+     custom values.
     :vartype disposition_code: str
     :ivar close_at: If not provided, worker capacity is released immediately along with a
-     JobClosedEvent notification.
-     If provided, worker capacity is released along
-     with a JobClosedEvent notification at a future time in UTC.
+     JobClosedEvent notification. If provided, worker capacity is released along with a
+     JobClosedEvent notification at a future time in UTC.
     :vartype close_at: ~datetime.datetime
-    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with the
-     current timestamp.
+    :ivar note: A note that will be appended to the jobs' Notes collection with the current
+     timestamp.
     :vartype note: str
     """
 
     assignment_id: str = rest_field(name="assignmentId")
     """The assignment within which the job is to be closed. Required."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
-    """Indicates the outcome of the job, populate this field with your own custom
-     values."""
+    """Indicates the outcome of the job, populate this field with your own custom values."""
     close_at: Optional[datetime.datetime] = rest_field(name="closeAt", format="rfc3339")
-    """If not provided, worker capacity is released immediately along with a
-     JobClosedEvent notification.
-     If provided, worker capacity is released along
-     with a JobClosedEvent notification at a future time in UTC."""
+    """If not provided, worker capacity is released immediately along with a JobClosedEvent
+     notification. If provided, worker capacity is released along with a JobClosedEvent notification
+     at a future time in UTC."""
     note: Optional[str] = rest_field()
-    """(Optional) A note that will be appended to the jobs' Notes collection with the
-     current timestamp."""
+    """A note that will be appended to the jobs' Notes collection with the current timestamp."""
 
     @overload
     def __init__(
@@ -503,16 +434,15 @@ class CompleteJobOptions(_model_base.Model):
 
     :ivar assignment_id: The assignment within the job to complete. Required.
     :vartype assignment_id: str
-    :ivar note: (Optional) A note that will be appended to the jobs' Notes collection with the
-     current timestamp.
+    :ivar note: A note that will be appended to the jobs' Notes collection with the current
+     timestamp.
     :vartype note: str
     """
 
     assignment_id: str = rest_field(name="assignmentId")
     """The assignment within the job to complete. Required."""
     note: Optional[str] = rest_field()
-    """(Optional) A note that will be appended to the jobs' Notes collection with the
-     current timestamp."""
+    """A note that will be appended to the jobs' Notes collection with the current timestamp."""
 
     @overload
     def __init__(
@@ -535,8 +465,7 @@ class CompleteJobOptions(_model_base.Model):
 
 
 class QueueSelectorAttachment(_model_base.Model):
-    """An attachment of queue selectors to resolve a queue to a job from a
-    classification policy.
+    """An attachment of queue selectors to resolve a queue to a job from a classification policy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ConditionalQueueSelectorAttachment, PassThroughQueueSelectorAttachment,
@@ -561,24 +490,13 @@ class QueueSelectorAttachment(_model_base.Model):
 
 
 class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator="conditional"):
-    """Describes a set of queue selectors that will be attached if the given condition
-    resolves to true.
+    """Describes a set of queue selectors that will be attached if the given condition resolves to
+    true.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar condition: A rule of one of the following types:
-
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol. Required.
+    :ivar condition: The condition that must be true for the queue selectors to be attached.
+     Required.
     :vartype condition: ~azure.communication.jobrouter.models.RouterRule
     :ivar queue_selectors: The queue selectors to attach. Required.
     :vartype queue_selectors: list[~azure.communication.jobrouter.models.RouterQueueSelector]
@@ -588,19 +506,7 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
     """
 
     condition: "_models.RouterRule" = rest_field()
-    """A rule of one of the following types:
-     
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol. Required."""
+    """The condition that must be true for the queue selectors to be attached. Required."""
     queue_selectors: List["_models.RouterQueueSelector"] = rest_field(name="queueSelectors")
     """The queue selectors to attach. Required."""
     kind: Literal["conditional"] = rest_discriminator(name="kind")  # type: ignore
@@ -654,24 +560,13 @@ class WorkerSelectorAttachment(_model_base.Model):
 
 
 class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="conditional"):
-    """Describes a set of worker selectors that will be attached if the given
-    condition resolves to true.
+    """Describes a set of worker selectors that will be attached if the given condition resolves to
+    true.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar condition: A rule of one of the following types:
-
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol. Required.
+    :ivar condition: The condition that must be true for the worker selectors to be attached.
+     Required.
     :vartype condition: ~azure.communication.jobrouter.models.RouterRule
     :ivar worker_selectors: The worker selectors to attach. Required.
     :vartype worker_selectors: list[~azure.communication.jobrouter.models.RouterWorkerSelector]
@@ -681,19 +576,7 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
     """
 
     condition: "_models.RouterRule" = rest_field()
-    """A rule of one of the following types:
-     
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol. Required."""
+    """The condition that must be true for the worker selectors to be attached. Required."""
     worker_selectors: List["_models.RouterWorkerSelector"] = rest_field(name="workerSelectors")
     """The worker selectors to attach. Required."""
     kind: Literal["conditional"] = rest_discriminator(name="kind")  # type: ignore
@@ -725,24 +608,18 @@ class DeclineJobOfferOptions(_model_base.Model):
     """Request payload for declining offers.
 
     :ivar retry_offer_at: If the RetryOfferAt is not provided, then this job will not be offered
-     again to
-     the worker who declined this job unless
-     the worker is de-registered and
-     re-registered.  If a RetryOfferAt time is provided, then the job will be
-     re-matched to
-     eligible workers at the retry time in UTC.  The worker that
-     declined the job will also be eligible for the job at that time.
+     again to the worker who declined this job unless the worker is de-registered and re-registered.
+     If a RetryOfferAt time is provided, then the job will be re-matched to eligible workers at the
+     retry time in UTC.  The worker that declined the job will also be eligible for the job at that
+     time.
     :vartype retry_offer_at: ~datetime.datetime
     """
 
     retry_offer_at: Optional[datetime.datetime] = rest_field(name="retryOfferAt", format="rfc3339")
-    """If the RetryOfferAt is not provided, then this job will not be offered again to
-     the worker who declined this job unless
-     the worker is de-registered and
-     re-registered.  If a RetryOfferAt time is provided, then the job will be
-     re-matched to
-     eligible workers at the retry time in UTC.  The worker that
-     declined the job will also be eligible for the job at that time."""
+    """If the RetryOfferAt is not provided, then this job will not be offered again to the worker who
+     declined this job unless the worker is de-registered and re-registered.  If a RetryOfferAt time
+     is provided, then the job will be re-matched to eligible workers at the retry time in UTC.  The
+     worker that declined the job will also be eligible for the job at that time."""
 
     @overload
     def __init__(
@@ -765,18 +642,13 @@ class DeclineJobOfferOptions(_model_base.Model):
 
 class RouterRule(_model_base.Model):
     """A rule of one of the following types:
-
-    StaticRule:  A rule
-    providing static rules that always return the same result, regardless of
+    StaticRule:  A rule providing static rules that always return the same result, regardless of
     input.
-    DirectMapRule:  A rule that return the same labels as the input
-    labels.
-    ExpressionRule: A rule providing inline expression
-    rules.
-    FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-    Function.
-    WebhookRule: A rule providing a binding to a webserver following
-    OAuth2.0 authentication protocol.
+    DirectMapRule:  A rule that return the same labels as the input labels.
+    ExpressionRule: A rule providing inline expression rules.
+    FunctionRule: A rule providing a binding to an HTTP Triggered Azure Function.
+    WebhookRule: A rule providing a binding to a webserver following OAuth2.0 authentication
+    protocol.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FunctionRouterRule, DirectMapRouterRule, ExpressionRouterRule, StaticRouterRule,
@@ -824,29 +696,27 @@ class DistributionPolicy(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar etag: Concurrency Token. Required.
+    :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     :ivar id: The unique identifier of the policy. Required.
     :vartype id: str
     :ivar name: The human readable name of the policy.
     :vartype name: str
     :ivar offer_expires_after_seconds: The number of seconds after which any offers created under
-     this policy will be
-     expired.
+     this policy will be expired.
     :vartype offer_expires_after_seconds: float
     :ivar mode: Abstract base class for defining a distribution mode.
     :vartype mode: ~azure.communication.jobrouter.models.DistributionMode
     """
 
     etag: str = rest_field(visibility=["read"])
-    """Concurrency Token. Required."""
+    """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
     """The unique identifier of the policy. Required."""
     name: Optional[str] = rest_field()
     """The human readable name of the policy."""
     offer_expires_after_seconds: Optional[float] = rest_field(name="offerExpiresAfterSeconds")
-    """The number of seconds after which any offers created under this policy will be
-     expired."""
+    """The number of seconds after which any offers created under this policy will be expired."""
     mode: Optional["_models.DistributionMode"] = rest_field()
     """Abstract base class for defining a distribution mode."""
 
@@ -878,24 +748,24 @@ class ExceptionPolicy(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar etag: Concurrency Token. Required.
+    :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     :ivar id: The Id of the exception policy. Required.
     :vartype id: str
-    :ivar name: (Optional) The name of the exception policy.
+    :ivar name: The name of the exception policy.
     :vartype name: str
-    :ivar exception_rules: (Optional) A collection of exception rules on the exception policy.
+    :ivar exception_rules: A collection of exception rules on the exception policy.
     :vartype exception_rules: list[~azure.communication.jobrouter.models.ExceptionRule]
     """
 
     etag: str = rest_field(visibility=["read"])
-    """Concurrency Token. Required."""
+    """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
     """The Id of the exception policy. Required."""
     name: Optional[str] = rest_field()
-    """(Optional) The name of the exception policy."""
+    """The name of the exception policy."""
     exception_rules: Optional[List["_models.ExceptionRule"]] = rest_field(name="exceptionRules")
-    """(Optional) A collection of exception rules on the exception policy."""
+    """A collection of exception rules on the exception policy."""
 
     @overload
     def __init__(
@@ -999,8 +869,8 @@ class ExpressionRouterRule(RouterRule, discriminator="expression-rule"):
     language: Optional[Union[str, "_models.ExpressionRouterRuleLanguage"]] = rest_field()
     """The expression language to compile to and execute. \"powerFx\""""
     expression: str = rest_field()
-    """The string containing the expression to evaluate. Should contain return
-     statement with calculated values. Required."""
+    """The string containing the expression to evaluate. Should contain return statement with
+     calculated values. Required."""
     kind: Literal["expression-rule"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing a sub-type of Rule. Required. Default value is
      \"expression-rule\"."""
@@ -1072,28 +942,24 @@ class FunctionRouterRule(RouterRule, discriminator="azure-function-rule"):
 class FunctionRouterRuleCredential(_model_base.Model):
     """Credentials used to access Azure function rule.
 
-    :ivar function_key: (Optional) Access key scoped to a particular function.
+    :ivar function_key: Access key scoped to a particular function.
     :vartype function_key: str
-    :ivar app_key: (Optional) Access key scoped to a Azure Function app.
-     This key grants access to
-     all functions under the app.
+    :ivar app_key: Access key scoped to a Azure Function app. This key grants access to all
+     functions under the app.
     :vartype app_key: str
-    :ivar client_id: (Optional) Client id, when AppKey is provided
-     In context of Azure function,
-     this is usually the name of the key.
+    :ivar client_id: Client id, when AppKey is provided In context of Azure function, this is
+     usually the name of the key.
     :vartype client_id: str
     """
 
     function_key: Optional[str] = rest_field(name="functionKey")
-    """(Optional) Access key scoped to a particular function."""
+    """Access key scoped to a particular function."""
     app_key: Optional[str] = rest_field(name="appKey")
-    """(Optional) Access key scoped to a Azure Function app.
-     This key grants access to
-     all functions under the app."""
+    """Access key scoped to a Azure Function app. This key grants access to all functions under the
+     app."""
     client_id: Optional[str] = rest_field(name="clientId")
-    """(Optional) Client id, when AppKey is provided
-     In context of Azure function,
-     this is usually the name of the key."""
+    """Client id, when AppKey is provided In context of Azure function, this is usually the name of
+     the key."""
 
     @overload
     def __init__(
@@ -1117,17 +983,12 @@ class FunctionRouterRuleCredential(_model_base.Model):
 
 
 class JobMatchingMode(_model_base.Model):
-    """The matching mode to be applied to this job.
-
-    Supported types:
-
-    QueueAndMatchMode: Used when matching worker to a job is required to be
-    done right after job is queued.
-    ScheduleAndSuspendMode: Used for scheduling
-    jobs to be queued at a future time. At specified time, matching of a worker to
-    the job will not start automatically.
-    SuspendMode: Used when matching workers
-    to a job needs to be suspended.
+    """A matching mode of one of the following types:
+    QueueAndMatchMode: Used when matching worker to a job is required to be done right after job is
+    queued.
+    ScheduleAndSuspendMode: Used for scheduling jobs to be queued at a future time. At specified
+    time, matching of a worker to the job will not start automatically.
+    SuspendMode: Used when matching workers to a job needs to be suspended.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     QueueAndMatchMode, ScheduleAndSuspendMode, SuspendMode
@@ -1160,14 +1021,10 @@ class LongestIdleMode(DistributionMode, discriminator="longest-idle"):
     :ivar max_concurrent_offers: Governs the maximum number of active concurrent offers a job can
      have.
     :vartype max_concurrent_offers: int
-    :ivar bypass_selectors: (Optional)
-     If set to true, then router will match workers to jobs even if they
-     don't match label selectors.
-     Warning: You may get workers that are not
-     qualified for the job they are matched with if you set this
-     variable to true.
-     This flag is intended more for temporary usage.
-     By default, set to false.
+    :ivar bypass_selectors: If set to true, then router will match workers to jobs even if they
+     don't match label selectors. Warning: You may get workers that are not qualified for the job
+     they are matched with if you set this variable to true. This flag is intended more for
+     temporary usage. By default, set to false.
     :vartype bypass_selectors: bool
     :ivar kind: The type discriminator describing a sub-type of Mode. Required. Default value is
      "longest-idle".
@@ -1201,8 +1058,8 @@ class LongestIdleMode(DistributionMode, discriminator="longest-idle"):
 
 
 class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manual-reclassify"):
-    """An action that manually reclassifies a job by providing the queue, priority and
-    worker selectors.
+    """An action that manually reclassifies a job by providing the queue, priority and worker
+    selectors.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1254,8 +1111,7 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manual-rec
 
 
 class OAuth2WebhookClientCredential(_model_base.Model):
-    """OAuth2.0 Credentials used to Contoso's Authorization server.
-    Reference:
+    """OAuth2.0 Credentials used to Contoso's Authorization server. Reference:
     https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/.
 
     :ivar client_id: ClientId for Contoso Authorization server.
@@ -1290,8 +1146,8 @@ class OAuth2WebhookClientCredential(_model_base.Model):
 
 
 class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator="pass-through"):
-    """Attaches a queue selector where the value is passed through from the job label
-    with the same key.
+    """Attaches a queue selector where the value is passed through from the job label with the same
+    key.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1338,8 +1194,8 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
 
 
 class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="pass-through"):
-    """Attaches a worker selector where the value is passed through from the job label
-    with the same key.
+    """Attaches a worker selector where the value is passed through from the job label with the same
+    key.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1451,24 +1307,22 @@ class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queue-length"
 
 
 class QueueWeightedAllocation(_model_base.Model):
-    """Contains the weight percentage and queue selectors to be applied if selected
-    for weighted distributions.
+    """Contains the weight percentage and queue selectors to be applied if selected for weighted
+    distributions.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar weight: The percentage of this weight, expressed as a fraction of 1. Required.
     :vartype weight: float
     :ivar queue_selectors: A collection of queue selectors that will be applied if this allocation
-     is
-     selected. Required.
+     is selected. Required.
     :vartype queue_selectors: list[~azure.communication.jobrouter.models.RouterQueueSelector]
     """
 
     weight: float = rest_field()
     """The percentage of this weight, expressed as a fraction of 1. Required."""
     queue_selectors: List["_models.RouterQueueSelector"] = rest_field(name="queueSelectors")
-    """A collection of queue selectors that will be applied if this allocation is
-     selected. Required."""
+    """A collection of queue selectors that will be applied if this allocation is selected. Required."""
 
     @overload
     def __init__(
@@ -1499,13 +1353,11 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
-    :ivar classification_policy_id: (optional) The new classification policy that will determine
-     queue, priority
-     and worker selectors.
+    :ivar classification_policy_id: The new classification policy that will determine queue,
+     priority and worker selectors.
     :vartype classification_policy_id: str
-    :ivar labels_to_upsert: (optional) Dictionary containing the labels to update (or add if not
-     existing)
-     in key-value pairs.
+    :ivar labels_to_upsert: Dictionary containing the labels to update (or add if not existing) in
+     key-value pairs.
     :vartype labels_to_upsert: dict[str, any]
     :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required. Default
      value is "reclassify".
@@ -1513,11 +1365,9 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
     """
 
     classification_policy_id: Optional[str] = rest_field(name="classificationPolicyId")
-    """(optional) The new classification policy that will determine queue, priority
-     and worker selectors."""
+    """The new classification policy that will determine queue, priority and worker selectors."""
     labels_to_upsert: Optional[Dict[str, Any]] = rest_field(name="labelsToUpsert")
-    """(optional) Dictionary containing the labels to update (or add if not existing)
-     in key-value pairs."""
+    """Dictionary containing the labels to update (or add if not existing) in key-value pairs."""
     kind: Literal["reclassify"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing a sub-type of ExceptionAction. Required. Default value is
      \"reclassify\"."""
@@ -1548,8 +1398,8 @@ class ReclassifyJobOptions(_model_base.Model):
 
 
 class RoundRobinMode(DistributionMode, discriminator="round-robin"):
-    """Jobs are distributed in order to workers, starting with the worker that is
-    after the last worker to receive a job.
+    """Jobs are distributed in order to workers, starting with the worker that is after the last
+    worker to receive a job.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1559,14 +1409,10 @@ class RoundRobinMode(DistributionMode, discriminator="round-robin"):
     :ivar max_concurrent_offers: Governs the maximum number of active concurrent offers a job can
      have.
     :vartype max_concurrent_offers: int
-    :ivar bypass_selectors: (Optional)
-     If set to true, then router will match workers to jobs even if they
-     don't match label selectors.
-     Warning: You may get workers that are not
-     qualified for the job they are matched with if you set this
-     variable to true.
-     This flag is intended more for temporary usage.
-     By default, set to false.
+    :ivar bypass_selectors: If set to true, then router will match workers to jobs even if they
+     don't match label selectors. Warning: You may get workers that are not qualified for the job
+     they are matched with if you set this variable to true. This flag is intended more for
+     temporary usage. By default, set to false.
     :vartype bypass_selectors: bool
     :ivar kind: The type discriminator describing a sub-type of Mode. Required. Default value is
      "round-robin".
@@ -1607,8 +1453,7 @@ class RouterChannel(_model_base.Model):
     :ivar channel_id: Id of the channel. Required.
     :vartype channel_id: str
     :ivar capacity_cost_per_job: The amount of capacity that an instance of a job of this channel
-     will consume
-     of the total worker capacity. Required.
+     will consume of the total worker capacity. Required.
     :vartype capacity_cost_per_job: int
     :ivar max_number_of_jobs: The maximum number of jobs that can be supported concurrently for
      this channel.
@@ -1618,8 +1463,8 @@ class RouterChannel(_model_base.Model):
     channel_id: str = rest_field(name="channelId")
     """Id of the channel. Required."""
     capacity_cost_per_job: int = rest_field(name="capacityCostPerJob")
-    """The amount of capacity that an instance of a job of this channel will consume
-     of the total worker capacity. Required."""
+    """The amount of capacity that an instance of a job of this channel will consume of the total
+     worker capacity. Required."""
     max_number_of_jobs: Optional[int] = rest_field(name="maxNumberOfJobs")
     """The maximum number of jobs that can be supported concurrently for this channel."""
 
@@ -1651,7 +1496,7 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar etag: Concurrency Token. Required.
+    :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     :ivar id: The id of the job. Required.
     :vartype id: str
@@ -1674,20 +1519,17 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :ivar disposition_code: Reason code for cancelled or closed jobs.
     :vartype disposition_code: str
     :ivar requested_worker_selectors: A collection of manually specified label selectors, which a
-     worker must satisfy
-     in order to process this job.
+     worker must satisfy in order to process this job.
     :vartype requested_worker_selectors:
      list[~azure.communication.jobrouter.models.RouterWorkerSelector]
     :ivar attached_worker_selectors: A collection of label selectors attached by a classification
-     policy, which a
-     worker must satisfy in order to process this job.
+     policy, which a worker must satisfy in order to process this job.
     :vartype attached_worker_selectors:
      list[~azure.communication.jobrouter.models.RouterWorkerSelector]
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
     :vartype labels: dict[str, any]
-    :ivar assignments: A collection of the assignments of the job.
-     Key is AssignmentId.
+    :ivar assignments: A collection of the assignments of the job. Key is AssignmentId.
     :vartype assignments: dict[str, ~azure.communication.jobrouter.models.RouterJobAssignment]
     :ivar tags: A set of non-identifying attributes attached to this job.
     :vartype tags: dict[str, any]
@@ -1695,22 +1537,13 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype notes: list[~azure.communication.jobrouter.models.RouterJobNote]
     :ivar scheduled_at: If set, job will be scheduled to be enqueued at a given time.
     :vartype scheduled_at: ~datetime.datetime
-    :ivar matching_mode: The matching mode to be applied to this job.
-
-     Supported types:
-
-     QueueAndMatchMode: Used when matching worker to a job is required to be
-     done right after job is queued.
-     ScheduleAndSuspendMode: Used for scheduling
-     jobs to be queued at a future time. At specified time, matching of a worker to
-     the job will not start automatically.
-     SuspendMode: Used when matching workers
-     to a job needs to be suspended.
+    :ivar matching_mode: If provided, will determine how job matching will be carried out. Default
+     mode: QueueAndMatchMode.
     :vartype matching_mode: ~azure.communication.jobrouter.models.JobMatchingMode
     """
 
     etag: str = rest_field(visibility=["read"])
-    """Concurrency Token. Required."""
+    """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
     """The id of the job. Required."""
     channel_reference: Optional[str] = rest_field(name="channelReference")
@@ -1734,19 +1567,18 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     requested_worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = rest_field(
         name="requestedWorkerSelectors"
     )
-    """A collection of manually specified label selectors, which a worker must satisfy
-     in order to process this job."""
+    """A collection of manually specified label selectors, which a worker must satisfy in order to
+     process this job."""
     attached_worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = rest_field(
         name="attachedWorkerSelectors", visibility=["read"]
     )
-    """A collection of label selectors attached by a classification policy, which a
-     worker must satisfy in order to process this job."""
+    """A collection of label selectors attached by a classification policy, which a worker must
+     satisfy in order to process this job."""
     labels: Optional[Dict[str, Any]] = rest_field()
-    """A set of key/value pairs that are identifying attributes used by the rules
-     engines to make decisions."""
+    """A set of key/value pairs that are identifying attributes used by the rules engines to make
+     decisions."""
     assignments: Optional[Dict[str, "_models.RouterJobAssignment"]] = rest_field(visibility=["read"])
-    """A collection of the assignments of the job.
-     Key is AssignmentId."""
+    """A collection of the assignments of the job. Key is AssignmentId."""
     tags: Optional[Dict[str, Any]] = rest_field()
     """A set of non-identifying attributes attached to this job."""
     notes: Optional[List["_models.RouterJobNote"]] = rest_field()
@@ -1754,17 +1586,8 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     scheduled_at: Optional[datetime.datetime] = rest_field(name="scheduledAt", visibility=["read"], format="rfc3339")
     """If set, job will be scheduled to be enqueued at a given time."""
     matching_mode: Optional["_models.JobMatchingMode"] = rest_field(name="matchingMode")
-    """The matching mode to be applied to this job.
-     
-     Supported types:
-     
-     QueueAndMatchMode: Used when matching worker to a job is required to be
-     done right after job is queued.
-     ScheduleAndSuspendMode: Used for scheduling
-     jobs to be queued at a future time. At specified time, matching of a worker to
-     the job will not start automatically.
-     SuspendMode: Used when matching workers
-     to a job needs to be suspended."""
+    """If provided, will determine how job matching will be carried out. Default mode:
+     QueueAndMatchMode."""
 
     @overload
     def __init__(
@@ -1993,40 +1816,36 @@ class RouterQueue(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar etag: Concurrency Token. Required.
+    :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     :ivar id: The Id of this queue. Required.
     :vartype id: str
     :ivar name: The name of this queue.
     :vartype name: str
     :ivar distribution_policy_id: The ID of the distribution policy that will determine how a job
-     is distributed
-     to workers.
+     is distributed to workers.
     :vartype distribution_policy_id: str
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions.
     :vartype labels: dict[str, any]
-    :ivar exception_policy_id: (Optional) The ID of the exception policy that determines various
-     job
+    :ivar exception_policy_id: The ID of the exception policy that determines various job
      escalation rules.
     :vartype exception_policy_id: str
     """
 
     etag: str = rest_field(visibility=["read"])
-    """Concurrency Token. Required."""
+    """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
     """The Id of this queue. Required."""
     name: Optional[str] = rest_field()
     """The name of this queue."""
     distribution_policy_id: Optional[str] = rest_field(name="distributionPolicyId")
-    """The ID of the distribution policy that will determine how a job is distributed
-     to workers."""
+    """The ID of the distribution policy that will determine how a job is distributed to workers."""
     labels: Optional[Dict[str, Any]] = rest_field()
-    """A set of key/value pairs that are identifying attributes used by the rules
-     engines to make decisions."""
+    """A set of key/value pairs that are identifying attributes used by the rules engines to make
+     decisions."""
     exception_policy_id: Optional[str] = rest_field(name="exceptionPolicyId")
-    """(Optional) The ID of the exception policy that determines various job
-     escalation rules."""
+    """The ID of the exception policy that determines various job escalation rules."""
 
     @overload
     def __init__(
@@ -2051,16 +1870,14 @@ class RouterQueue(_model_base.Model):
 
 
 class RouterQueueSelector(_model_base.Model):
-    """Describes a condition that must be met against a set of labels for queue
-    selection.
+    """Describes a condition that must be met against a set of labels for queue selection.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar key: The label key to query against. Required.
     :vartype key: str
     :ivar label_operator: Describes how the value of the label is compared to the value defined on
-     the
-     label selector. Required. Known values are: "equal", "notEqual", "lessThan",
+     the label selector. Required. Known values are: "equal", "notEqual", "lessThan",
      "lessThanOrEqual", "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
@@ -2070,9 +1887,9 @@ class RouterQueueSelector(_model_base.Model):
     key: str = rest_field()
     """The label key to query against. Required."""
     label_operator: Union[str, "_models.LabelOperator"] = rest_field(name="labelOperator")
-    """Describes how the value of the label is compared to the value defined on the
-     label selector. Required. Known values are: \"equal\", \"notEqual\", \"lessThan\",
-     \"lessThanOrEqual\", \"greaterThan\", and \"greaterThanOrEqual\"."""
+    """Describes how the value of the label is compared to the value defined on the label selector.
+     Required. Known values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanOrEqual\",
+     \"greaterThan\", and \"greaterThanOrEqual\"."""
     value: Optional[Any] = rest_field()
     """The value to compare against the actual label value with the given operator."""
 
@@ -2107,8 +1924,7 @@ class RouterQueueStatistics(_model_base.Model):
     :ivar length: Length of the queue: total number of enqueued jobs. Required.
     :vartype length: int
     :ivar estimated_wait_time_minutes: The estimated wait time of this queue rounded up to the
-     nearest minute, grouped
-     by job priority.
+     nearest minute, grouped by job priority.
     :vartype estimated_wait_time_minutes: dict[str, float]
     :ivar longest_job_wait_time_minutes: The wait time of the job that has been enqueued in this
      queue for the longest.
@@ -2120,8 +1936,8 @@ class RouterQueueStatistics(_model_base.Model):
     length: int = rest_field()
     """Length of the queue: total number of enqueued jobs. Required."""
     estimated_wait_time_minutes: Optional[Dict[str, float]] = rest_field(name="estimatedWaitTimeMinutes")
-    """The estimated wait time of this queue rounded up to the nearest minute, grouped
-     by job priority."""
+    """The estimated wait time of this queue rounded up to the nearest minute, grouped by job
+     priority."""
     longest_job_wait_time_minutes: Optional[float] = rest_field(name="longestJobWaitTimeMinutes")
     """The wait time of the job that has been enqueued in this queue for the longest."""
 
@@ -2154,7 +1970,7 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar etag: Concurrency Token. Required.
+    :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     :ivar id: Id of the worker. Required.
     :vartype id: str
@@ -2184,7 +2000,7 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     """
 
     etag: str = rest_field(visibility=["read"])
-    """Concurrency Token. Required."""
+    """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
     """Id of the worker. Required."""
     state: Optional[Union[str, "_models.RouterWorkerState"]] = rest_field(visibility=["read"])
@@ -2194,8 +2010,8 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     capacity: Optional[int] = rest_field()
     """The total capacity score this worker has to manage multiple concurrent jobs."""
     labels: Optional[Dict[str, Any]] = rest_field()
-    """A set of key/value pairs that are identifying attributes used by the rules
-     engines to make decisions."""
+    """A set of key/value pairs that are identifying attributes used by the rules engines to make
+     decisions."""
     tags: Optional[Dict[str, Any]] = rest_field()
     """A set of non-identifying attributes attached to this worker."""
     channels: Optional[List["_models.RouterChannel"]] = rest_field()
@@ -2207,8 +2023,8 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     )
     """A list of assigned jobs attached to this worker."""
     load_ratio: Optional[float] = rest_field(name="loadRatio", visibility=["read"])
-    """A value indicating the workers capacity. A value of '1' means all capacity is
-     consumed. A value of '0' means no capacity is currently consumed."""
+    """A value indicating the workers capacity. A value of '1' means all capacity is consumed. A value
+     of '0' means no capacity is currently consumed."""
     available_for_offers: Optional[bool] = rest_field(name="availableForOffers")
     """A flag indicating this worker is open to receive offers or not."""
 
@@ -2284,8 +2100,7 @@ class RouterWorkerAssignment(_model_base.Model):
 
 
 class RouterWorkerSelector(_model_base.Model):
-    """Describes a condition that must be met against a set of labels for worker
-    selection.
+    """Describes a condition that must be met against a set of labels for worker selection.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2294,8 +2109,7 @@ class RouterWorkerSelector(_model_base.Model):
     :ivar key: The label key to query against. Required.
     :vartype key: str
     :ivar label_operator: Describes how the value of the label is compared to the value defined on
-     the
-     label selector. Required. Known values are: "equal", "notEqual", "lessThan",
+     the label selector. Required. Known values are: "equal", "notEqual", "lessThan",
      "lessThanOrEqual", "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
@@ -2313,9 +2127,9 @@ class RouterWorkerSelector(_model_base.Model):
     key: str = rest_field()
     """The label key to query against. Required."""
     label_operator: Union[str, "_models.LabelOperator"] = rest_field(name="labelOperator")
-    """Describes how the value of the label is compared to the value defined on the
-     label selector. Required. Known values are: \"equal\", \"notEqual\", \"lessThan\",
-     \"lessThanOrEqual\", \"greaterThan\", and \"greaterThanOrEqual\"."""
+    """Describes how the value of the label is compared to the value defined on the label selector.
+     Required. Known values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanOrEqual\",
+     \"greaterThan\", and \"greaterThanOrEqual\"."""
     value: Optional[Any] = rest_field()
     """The value to compare against the actual label value with the given operator."""
     expires_after_seconds: Optional[float] = rest_field(name="expiresAfterSeconds")
@@ -2355,19 +2169,7 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar rule: A rule of one of the following types:
-
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol. Required.
+    :ivar rule: A RouterRule that resolves a collection of queue selectors to attach. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
      Default value is "rule-engine".
@@ -2375,19 +2177,7 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="
     """
 
     rule: "_models.RouterRule" = rest_field()
-    """A rule of one of the following types:
-     
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol. Required."""
+    """A RouterRule that resolves a collection of queue selectors to attach. Required."""
     kind: Literal["rule-engine"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing the type of queue selector attachment. Required. Default
      value is \"rule-engine\"."""
@@ -2417,19 +2207,7 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar rule: A rule of one of the following types:
-
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol. Required.
+    :ivar rule: A RouterRule that resolves a collection of worker selectors to attach. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
      Default value is "rule-engine".
@@ -2437,19 +2215,7 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator
     """
 
     rule: "_models.RouterRule" = rest_field()
-    """A rule of one of the following types:
-     
-     StaticRule:  A rule
-     providing static rules that always return the same result, regardless of
-     input.
-     DirectMapRule:  A rule that return the same labels as the input
-     labels.
-     ExpressionRule: A rule providing inline expression
-     rules.
-     FunctionRule: A rule providing a binding to an HTTP Triggered Azure
-     Function.
-     WebhookRule: A rule providing a binding to a webserver following
-     OAuth2.0 authentication protocol. Required."""
+    """A RouterRule that resolves a collection of worker selectors to attach. Required."""
     kind: Literal["rule-engine"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing the type of worker selector attachment. Required. Default
      value is \"rule-engine\"."""
@@ -2475,10 +2241,8 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator
 
 
 class ScheduleAndSuspendMode(JobMatchingMode, discriminator="schedule-and-suspend"):
-    """Describes a matching mode used for scheduling jobs to be queued at a future
-    time.
-    At the specified time, matching worker to a job will not start
-    automatically.
+    """Describes a matching mode used for scheduling jobs to be queued at a future time. At the
+    specified time, matching worker to a job will not start automatically.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2516,63 +2280,42 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="schedule-and-suspen
 
 
 class ScoringRuleOptions(_model_base.Model):
-    """Encapsulates all options that can be passed as parameters for scoring rule with
-    BestWorkerMode.
+    """Encapsulates all options that can be passed as parameters for scoring rule with BestWorkerMode.
 
-    :ivar batch_size: (Optional) Set batch size when AllowScoringBatchOfWorkers is set to true.
-     Defaults to 20 if not configured.
+    :ivar batch_size: Set batch size when 'isBatchScoringEnabled' is set to true. Defaults to 20 if
+     not configured.
     :vartype batch_size: int
-    :ivar scoring_parameters: (Optional) List of extra parameters from the job that will be sent as
-     part of
-     the payload to scoring rule.
-     If not set, the job's labels (sent in the payload
-     as ``job``\ ) and the job's worker selectors (sent in the payload as
-     ``selectors``\ )
-     are added to the payload of the scoring rule by default.
-     Note:
-     Worker labels are always sent with scoring payload.
+    :ivar scoring_parameters: List of extra parameters from the job that will be sent as part of
+     the payload to scoring rule. If not set, the job's labels (sent in the payload as ``job``\ )
+     and the job's worker selectors (sent in the payload as ``selectors``\ ) are added to the
+     payload of the scoring rule by default. Note: Worker labels are always sent with scoring
+     payload.
     :vartype scoring_parameters: list[str or
      ~azure.communication.jobrouter.models.ScoringRuleParameterSelector]
-    :ivar is_batch_scoring_enabled: (Optional)
-     If set to true, will score workers in batches, and the parameter
-     name of the worker labels will be sent as ``workers``.
-     By default, set to false
-     and the parameter name for the worker labels will be sent as ``worker``.
-     Note: If
-     enabled, use BatchSize to set batch size.
+    :ivar is_batch_scoring_enabled: If set to true, will score workers in batches, and the
+     parameter name of the worker labels will be sent as ``workers``. By default, set to false and
+     the parameter name for the worker labels will be sent as ``worker``. Note: If enabled, use
+     'batchSize' to set batch size.
     :vartype is_batch_scoring_enabled: bool
-    :ivar descending_order: (Optional)
-     If false, will sort scores by ascending order. By default, set to
-     true.
+    :ivar descending_order: If false, will sort scores by ascending order. By default, set to true.
     :vartype descending_order: bool
     """
 
     batch_size: Optional[int] = rest_field(name="batchSize")
-    """(Optional) Set batch size when AllowScoringBatchOfWorkers is set to true.
-     Defaults to 20 if not configured."""
+    """Set batch size when 'isBatchScoringEnabled' is set to true. Defaults to 20 if not configured."""
     scoring_parameters: Optional[List[Union[str, "_models.ScoringRuleParameterSelector"]]] = rest_field(
         name="scoringParameters"
     )
-    """(Optional) List of extra parameters from the job that will be sent as part of
-     the payload to scoring rule.
-     If not set, the job's labels (sent in the payload
-     as ``job``\ ) and the job's worker selectors (sent in the payload as
-     ``selectors``\ )
-     are added to the payload of the scoring rule by default.
-     Note:
-     Worker labels are always sent with scoring payload."""
+    """List of extra parameters from the job that will be sent as part of the payload to scoring rule.
+     If not set, the job's labels (sent in the payload as ``job``\ ) and the job's worker selectors
+     (sent in the payload as ``selectors``\ ) are added to the payload of the scoring rule by
+     default. Note: Worker labels are always sent with scoring payload."""
     is_batch_scoring_enabled: Optional[bool] = rest_field(name="isBatchScoringEnabled")
-    """(Optional)
-     If set to true, will score workers in batches, and the parameter
-     name of the worker labels will be sent as ``workers``.
-     By default, set to false
-     and the parameter name for the worker labels will be sent as ``worker``.
-     Note: If
-     enabled, use BatchSize to set batch size."""
+    """If set to true, will score workers in batches, and the parameter name of the worker labels will
+     be sent as ``workers``. By default, set to false and the parameter name for the worker labels
+     will be sent as ``worker``. Note: If enabled, use 'batchSize' to set batch size."""
     descending_order: Optional[bool] = rest_field(name="descendingOrder")
-    """(Optional)
-     If false, will sort scores by ascending order. By default, set to
-     true."""
+    """If false, will sort scores by ascending order. By default, set to true."""
 
     @overload
     def __init__(
@@ -2601,8 +2344,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar queue_selector: Describes a condition that must be met against a set of labels for queue
-     selection. Required.
+    :ivar queue_selector: The queue selector to attach. Required.
     :vartype queue_selector: ~azure.communication.jobrouter.models.RouterQueueSelector
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
      Default value is "static".
@@ -2610,8 +2352,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
     """
 
     queue_selector: "_models.RouterQueueSelector" = rest_field(name="queueSelector")
-    """Describes a condition that must be met against a set of labels for queue
-     selection. Required."""
+    """The queue selector to attach. Required."""
     kind: Literal["static"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing the type of queue selector attachment. Required. Default
      value is \"static\"."""
@@ -2637,8 +2378,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
 
 
 class StaticRouterRule(RouterRule, discriminator="static-rule"):
-    """A rule providing static rules that always return the same result, regardless of
-    input.
+    """A rule providing static rules that always return the same result, regardless of input.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2680,9 +2420,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="st
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar worker_selector: Describes a condition that must be met against a set of labels for
-     worker
-     selection. Required.
+    :ivar worker_selector: The worker selector to attach. Required.
     :vartype worker_selector: ~azure.communication.jobrouter.models.RouterWorkerSelector
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
      Default value is "static".
@@ -2690,8 +2428,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="st
     """
 
     worker_selector: "_models.RouterWorkerSelector" = rest_field(name="workerSelector")
-    """Describes a condition that must be met against a set of labels for worker
-     selection. Required."""
+    """The worker selector to attach. Required."""
     kind: Literal["static"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing the type of worker selector attachment. Required. Default
      value is \"static\"."""
@@ -2738,14 +2475,12 @@ class UnassignJobOptions(_model_base.Model):
     """Request payload for unassigning a job.
 
     :ivar suspend_matching: If SuspendMatching is true, then the job is not queued for re-matching
-     with a
-     worker.
+     with a worker.
     :vartype suspend_matching: bool
     """
 
     suspend_matching: Optional[bool] = rest_field(name="suspendMatching")
-    """If SuspendMatching is true, then the job is not queued for re-matching with a
-     worker."""
+    """If SuspendMatching is true, then the job is not queued for re-matching with a worker."""
 
     @overload
     def __init__(
@@ -2848,8 +2583,7 @@ class WebhookRouterRule(RouterRule, discriminator="webhook-rule"):
     :ivar authorization_server_uri: Uri for Authorization Server.
     :vartype authorization_server_uri: str
     :ivar client_credential: OAuth2.0 Credentials used to Contoso's Authorization server.
-     Reference:
-     https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/.
+     Reference: https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/.
     :vartype client_credential: ~azure.communication.jobrouter.models.OAuth2WebhookClientCredential
     :ivar webhook_uri: Uri for Contoso's Web Server.
     :vartype webhook_uri: str
@@ -2861,8 +2595,7 @@ class WebhookRouterRule(RouterRule, discriminator="webhook-rule"):
     authorization_server_uri: Optional[str] = rest_field(name="authorizationServerUri")
     """Uri for Authorization Server."""
     client_credential: Optional["_models.OAuth2WebhookClientCredential"] = rest_field(name="clientCredential")
-    """OAuth2.0 Credentials used to Contoso's Authorization server.
-     Reference:
+    """OAuth2.0 Credentials used to Contoso's Authorization server. Reference:
      https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/."""
     webhook_uri: Optional[str] = rest_field(name="webhookUri")
     """Uri for Contoso's Web Server."""
@@ -2895,8 +2628,8 @@ class WebhookRouterRule(RouterRule, discriminator="webhook-rule"):
 class WeightedAllocationQueueSelectorAttachment(
     QueueSelectorAttachment, discriminator="weighted-allocation-queue-selector"
 ):
-    """Describes multiple sets of queue selectors, of which one will be selected and
-    attached according to a weighting.
+    """Describes multiple sets of queue selectors, of which one will be selected and attached
+    according to a weighting.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2936,8 +2669,8 @@ class WeightedAllocationQueueSelectorAttachment(
 class WeightedAllocationWorkerSelectorAttachment(
     WorkerSelectorAttachment, discriminator="weighted-allocation-worker-selector"
 ):
-    """Describes multiple sets of worker selectors, of which one will be selected and
-    attached according to a weighting.
+    """Describes multiple sets of worker selectors, of which one will be selected and attached
+    according to a weighting.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2975,24 +2708,22 @@ class WeightedAllocationWorkerSelectorAttachment(
 
 
 class WorkerWeightedAllocation(_model_base.Model):
-    """Contains the weight percentage and worker selectors to be applied if selected
-    for weighted distributions.
+    """Contains the weight percentage and worker selectors to be applied if selected for weighted
+    distributions.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar weight: The percentage of this weight, expressed as a fraction of 1. Required.
     :vartype weight: float
     :ivar worker_selectors: A collection of worker selectors that will be applied if this
-     allocation is
-     selected. Required.
+     allocation is selected. Required.
     :vartype worker_selectors: list[~azure.communication.jobrouter.models.RouterWorkerSelector]
     """
 
     weight: float = rest_field()
     """The percentage of this weight, expressed as a fraction of 1. Required."""
     worker_selectors: List["_models.RouterWorkerSelector"] = rest_field(name="workerSelectors")
-    """A collection of worker selectors that will be applied if this allocation is
-     selected. Required."""
+    """A collection of worker selectors that will be applied if this allocation is selected. Required."""
 
     @overload
     def __init__(

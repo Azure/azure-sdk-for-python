@@ -3189,11 +3189,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
-        """Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+        """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
-        Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+        Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param job_id: Id of the job. Required.
         :type job_id: str
@@ -3213,11 +3211,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
     def cancel_job(  # pylint: disable=inconsistent-return-statements
         self, job_id: str, options: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
-        """Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+        """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
-        Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+        Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param job_id: Id of the job. Required.
         :type job_id: str
@@ -3237,11 +3233,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
     def cancel_job(  # pylint: disable=inconsistent-return-statements
         self, job_id: str, options: Optional[IO] = None, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
-        """Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+        """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
-        Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+        Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param job_id: Id of the job. Required.
         :type job_id: str
@@ -3261,11 +3255,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
     def cancel_job(  # pylint: disable=inconsistent-return-statements
         self, job_id: str, options: Optional[Union[_models.CancelJobOptions, JSON, IO]] = None, **kwargs: Any
     ) -> None:
-        """Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+        """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
-        Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+        Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param job_id: Id of the job. Required.
         :type job_id: str
@@ -3639,12 +3631,10 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          value is None.
         :paramtype classification_policy_id: str
         :keyword scheduled_before: If specified, filter on jobs that was scheduled before or at given
-         timestamp.
-         Range: (-Inf, scheduledBefore]. Default value is None.
+         timestamp. Range: (-Inf, scheduledBefore]. Default value is None.
         :paramtype scheduled_before: ~datetime.datetime
         :keyword scheduled_after: If specified, filter on jobs that was scheduled at or after given
-         value. Range:
-         [scheduledAfter, +Inf). Default value is None.
+         value. Range: [scheduledAfter, +Inf). Default value is None.
         :paramtype scheduled_after: ~datetime.datetime
         :return: An iterator like instance of RouterJob
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterJob]
@@ -3977,11 +3967,11 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @distributed_trace
     def accept_job_offer(self, worker_id: str, offer_id: str, **kwargs: Any) -> _models.AcceptJobOfferResult:
-        """Accepts an offer to work on a job and returns a 409/Conflict if another agent
-        accepted the job already.
+        """Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
+        already.
 
-        Accepts an offer to work on a job and returns a 409/Conflict if another agent
-        accepted the job already.
+        Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
+        already.
 
         :param worker_id: Id of the worker. Required.
         :type worker_id: str
@@ -4647,10 +4637,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          is None.
         :paramtype queue_id: str
         :keyword has_capacity: If set to true, select only workers who have capacity for the channel
-         specified
-         by ``channelId`` or for any channel if ``channelId`` not specified. If set to
-         false, then will return all workers including workers without any capacity for
-         jobs. Defaults to false. Default value is None.
+         specified by ``channelId`` or for any channel if ``channelId`` not specified. If set to false,
+         then will return all workers including workers without any capacity for jobs. Defaults to
+         false. Default value is None.
         :paramtype has_capacity: bool
         :return: An iterator like instance of RouterWorker
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterWorker]
