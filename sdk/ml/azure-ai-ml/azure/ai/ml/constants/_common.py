@@ -184,9 +184,8 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "will not create a docker container using the image defined in the environment."
 )
 CONNECTION_API_VERSION_KEY = "ApiVersion"
-CONNECTION_DEFAULT_API_VERSION = "2023-10-01-preview"
 CONNECTION_API_TYPE_KEY = "ApiType"
-CONNECTION_KIND_KEY = "kind"
+CONNECTION_KIND_KEY = "Kind"
 
 
 class DefaultOpenEncoding:

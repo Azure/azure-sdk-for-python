@@ -308,6 +308,7 @@ class WorkspaceConnection(Resource):
         for name in popped_tags:
             if name in tags:
                 rest_kwargs[camel_to_snake(name)] = tags[name]
+        import pdb; pdb.set_trace()
         return rest_kwargs
 
     @classmethod

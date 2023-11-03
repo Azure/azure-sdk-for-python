@@ -11,7 +11,6 @@ from azure.ai.ml.constants._common import (
     CONNECTION_API_VERSION_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_KIND_KEY,
-    CONNECTION_DEFAULT_API_VERSION,
 )
 
 from .base_connection import BaseConnection
@@ -38,7 +37,7 @@ class AzureOpenAIConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
+        api_version: Optional[str] = None,
         api_type: str = "Azure",
         **kwargs,
     ):
@@ -146,7 +145,7 @@ class AzureAISearchConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
+        api_version: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -215,7 +214,7 @@ class AzureAIServiceConnection(BaseConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         kind: str,
-        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
+        api_version: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type

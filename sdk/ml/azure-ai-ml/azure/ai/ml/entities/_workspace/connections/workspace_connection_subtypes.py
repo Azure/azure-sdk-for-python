@@ -10,7 +10,6 @@ from azure.ai.ml.constants._common import (
     CONNECTION_API_VERSION_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_KIND_KEY,
-    CONNECTION_DEFAULT_API_VERSION,
 )
 from azure.ai.ml.entities._credentials import (
     ApiKeyConfiguration,
@@ -44,7 +43,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
+        api_version: Optional[str] = None,
         api_type: str = "Azure",
         **kwargs,
     ):
@@ -118,7 +117,7 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
+        api_version: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -173,7 +172,7 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         kind: str,
-        api_version: Optional[str] = CONNECTION_DEFAULT_API_VERSION,
+        api_version: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type

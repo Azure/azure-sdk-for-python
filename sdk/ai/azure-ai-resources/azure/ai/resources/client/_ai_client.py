@@ -92,6 +92,13 @@ class AIClient:
             workspace_name=project_name,
             **kwargs,
         )
+        self._ai_resource_ml_client = MLClient(
+            credential=credential,
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=ai_resource_name,
+            **kwargs,
+        )
 
         self._service_client_06_2023_preview = ServiceClient062023Preview(
             credential=self._credential,
@@ -108,6 +115,7 @@ class AIClient:
             **app_insights_handler_kwargs,
         )
         self._connections = ConnectionOperations(self._ml_client, **app_insights_handler_kwargs)
+        self._resource_connections = ConnectionOperations(self._ai_resource_ml_client, **app_insights_handler_kwargs)
         self._mlindexes = MLIndexOperations(self._ml_client, **app_insights_handler_kwargs)
         self._ai_resources = AIResourceOperations(self._ml_client, **app_insights_handler_kwargs)
         self._deployments = DeploymentOperations(self._ml_client, self._connections, **app_insights_handler_kwargs)
@@ -426,7 +434,7 @@ class AIClient:
         :return: A Connection to Azure Open AI
         :rtype: ~azure.ai.resources.entities.AzureOpenAIConnection
         """
-        return self._connections.get(DEFAULT_OPEN_AI_CONNECTION_NAME)
+        return self._resource_connections.get(DEFAULT_OPEN_AI_CONNECTION_NAME)
     
     def get_default_content_safety_connection(self):
         """Retrieves a default Azure AI Service connection associated with this AIClient's project,
@@ -436,7 +444,7 @@ class AIClient:
         :return: A Connection to an Azure AI Service
         :rtype: ~azure.ai.resources.entities.AzureAIServiceConnection
         """
-        return self._connections.get(DEFAULT_CONTENT_SAFETY_CONNECTION_NAME)
+        return self._resource_connections.get(DEFAULT_CONTENT_SAFETY_CONNECTION_NAME)
 
     def _add_user_agent(self, kwargs) -> None:
         user_agent = kwargs.pop("user_agent", None)
