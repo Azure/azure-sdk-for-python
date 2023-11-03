@@ -13,7 +13,7 @@ import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
-from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
+from azure.keyvault.keys import ApiVersion, JsonWebKey, KeyCurveName, KeyOperation, KeyVaultKey
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys.crypto.aio import (
     CryptographyClient,
@@ -22,8 +22,7 @@ from azure.keyvault.keys.crypto.aio import (
     SignatureAlgorithm,
 )
 from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
-from azure.keyvault.keys._generated_models import KeySignParameters
-from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
+from azure.keyvault.keys._generated.models import KeySignParameters
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -38,7 +37,9 @@ NO_GET = Permissions(keys=[p.value for p in KeyPermissions if p.value != "get"])
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
-only_vault_latest = get_decorator(only_vault=True, is_async=True, api_versions=[DEFAULT_VERSION])
+only_vault_7_4_plus = get_decorator(
+    only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5_PREVIEW_1]
+)
 no_get = get_decorator(is_async=True, permissions=NO_GET)
 
 
@@ -594,7 +595,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         )
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_4_plus)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_send_request(self, key_client, is_hsm, **kwargs):

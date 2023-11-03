@@ -18,7 +18,7 @@ except ImportError:
 
 from corehttp.rest import HttpRequest
 from corehttp.runtime.policies import SansIOHTTPPolicy
-from rest_client import TestRestClient
+from rest_client import MockRestClient
 
 
 @pytest.fixture
@@ -370,7 +370,7 @@ def test_request_policies_chain(port):
 
     policies = [NewPolicyOne(), NewPolicyModifyHeaders(), NewPolicyValidateRequest()]
     request = HttpRequest("DELETE", "/container0/blob0")
-    client = TestRestClient(port="5000", policies=policies)
+    client = MockRestClient(port="5000", policies=policies)
     with pytest.raises(ValueError) as ex:
         client.send_request(
             request,

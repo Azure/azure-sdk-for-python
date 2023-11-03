@@ -105,7 +105,7 @@ def evaluate(
         params_permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
         with mlflow.start_run(run_name=evaluation_name) as run:
-            log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative")
+            log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative-parent")
             for index, params_permutations_dict in enumerate(params_permutations_dicts):
                 evaluation_name_variant = f"{evaluation_name}_{index}" if evaluation_name else f"{run.info.run_name}_{index}"
 
@@ -183,7 +183,10 @@ def _evaluate(
     with mlflow.start_run(nested=True if mlflow.active_run() else False, run_name=evaluation_name) as run, \
             RedirectUserOutputStreams(logger=LOGGER) as _:
 
-        log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative")
+        log_property_and_tag(
+            "_azureml.evaluation_run",
+            "azure-ai-generative-parent" if run.data.tags.get("mlflow.parentRunId") is None else "azure-ai-generative"
+        )
         # Log input is a preview feature behind an allowlist. Uncomment this line once the feature is broadly available.
         # log_input(data=data, data_is_file=_data_is_file)
 

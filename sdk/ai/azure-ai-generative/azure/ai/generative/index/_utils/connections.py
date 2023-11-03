@@ -27,6 +27,16 @@ except Exception:
 
 logger = get_logger("connections")
 
+def get_pinecone_environment(config, credential: Optional[TokenCredential] = None):
+    """Get the Pinecone project environment from a connection."""
+    connection_type = config.get("connection_type", None)
+    if connection_type != "workspace_connection":
+        raise ValueError(f"Unsupported connection type for Pinecone index: {connection_type}")
+
+    connection_id = config.get("connection", {}).get("id")
+    connection = get_connection_by_id_v2(connection_id, credential=credential)
+    return get_metadata_from_connection(connection)["environment"]
+
 
 def get_connection_credential(config, credential: Optional[TokenCredential] = None):
     """Get a credential for a connection."""

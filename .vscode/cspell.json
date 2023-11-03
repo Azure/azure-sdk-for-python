@@ -32,6 +32,7 @@
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
+    "sdk/ai/azure-ai-generative/tests/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -102,6 +103,7 @@
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
     "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_model_base.py",
     "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
@@ -1275,7 +1277,8 @@
         "Fdirectory",
         "Ffile",
         "Fsubdir",
-        "Fdir"
+        "Fdir",
+        "adal"
       ]
     },
     {

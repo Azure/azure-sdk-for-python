@@ -816,7 +816,7 @@
                     "location": "[parameters('location')]",
                     "dependsOn": [
                         "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
-                        "[variables('offlineStoreConnectionTarget')]"
+                        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]"
                     ],
                     "identity": {
                         "type": "SystemAssigned"
@@ -861,8 +861,7 @@
 			"apiVersion": "2022-05-01",
 			"name": "[concat(parameters('workspaceName'), '-deploy-feature-store')]",
 			"dependsOn": [
-				"[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]",
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]",
                 "[resourceId('Microsoft.MachineLearningServices/workspaces/connections', parameters('workspaceName'), parameters('offline_store_connection_name'))]",
                 "[resourceId('Microsoft.MachineLearningServices/workspaces/connections', parameters('workspaceName'), parameters('online_store_connection_name'))]"

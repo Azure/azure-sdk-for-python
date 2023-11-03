@@ -49,7 +49,6 @@ class Resource(abc.ABC):
         properties: Optional[Dict] = None,
         **kwargs,
     ) -> None:
-
         self.name = name
         self.description = description
         self.tags = dict(tags) if tags else {}

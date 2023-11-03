@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from requests.adapters import HTTPAdapter  # pylint: disable=networking-import-outside-azure-core-transport
+from requests.adapters import HTTPAdapter  # pylint: disable=all
 
 
 class BiggerBlockSizeHTTPAdapter(HTTPAdapter):

@@ -23,8 +23,8 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 from azure.core.credentials import TokenCredential
 
-from ._project_scope import OperationScope
-from ._user_agent import USER_AGENT
+from .._project_scope import OperationScope
+from .._user_agent import USER_AGENT
 from azure.ai.resources.operations import (
     AIResourceOperations,
     ConnectionOperations,
@@ -239,7 +239,7 @@ class AIClient:
         )
         return project.ml_flow_tracking_uri
 
-    def build_ml_index_on_cloud(
+    def build_index_on_cloud(
         self,
         *,
         ######## required args ##########
