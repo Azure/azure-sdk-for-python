@@ -185,7 +185,7 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
 )
 CONNECTION_API_VERSION_KEY = "ApiVersion"
 CONNECTION_API_TYPE_KEY = "ApiType"
-CONNECTION_KIND_KEY = "kind"
+CONNECTION_KIND_KEY = "Kind"
 
 
 class DefaultOpenEncoding:
@@ -307,6 +307,7 @@ class ArmConstants:
     ENVIRONMENT_TYPE = "environment"
     ENVIRONMENT_VERSION_TYPE = "environment_version"
     ONLINE_ENDPOINT_TYPE = "online_endpoint"
+    MULTIPLE_ENDPOINTS_TYPE = "endpoints"
     ONLINE_DEPLOYMENT_TYPE = "online_deployment"
     UPDATE_ONLINE_ENDPOINT_TYPE = "update_online_endpoint"
     BASE_TYPE = "base"

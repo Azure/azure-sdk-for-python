@@ -179,10 +179,16 @@
     "set_up_feature_store": {
         "value": "false"
     },
-    "byo_open_ai_resource_id": {
-        "value": ""
-    },
     "serverless_compute_settings": {
         "value": {}
+    },
+    "endpoint_resource_id": {
+        "value": "null"
+    },
+    "endpoint_kind": {
+        "value": "AIServices"
+    },
+    "endpoint_option": {
+        "value": "new"
     }
 }
