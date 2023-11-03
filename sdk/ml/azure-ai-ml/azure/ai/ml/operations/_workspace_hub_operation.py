@@ -134,6 +134,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :keyword endpoint_resource_id: The UID of an AI service resource.
             The created hub will automatically create several
             endpoints connecting to this resource, and creates its own otherwise.
+            Note: This input is for AI Service resources ONLY. For legacy users who wish
+            to provide an Open AI resource for their endpoint destinations. Please use the
+            hidden keyword argument "byo_open_ai_resource_id".
         :paramtype endpoint_resource_id: str
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
