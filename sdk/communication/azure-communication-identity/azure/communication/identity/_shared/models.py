@@ -407,16 +407,19 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
         )  # type: ignore
     if prefix == TEAMS_APP_PUBLIC_CLOUD_PREFIX:
         return MicrosoftTeamsAppIdentifier(
+            app_id=suffix,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
         )  # type: ignore
     if prefix == TEAMS_APP_DOD_CLOUD_PREFIX:
         return MicrosoftTeamsAppIdentifier(
+            app_id=suffix,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
         )  # type: ignore
     if prefix == TEAMS_APP_GCCH_CLOUD_PREFIX:
         return MicrosoftTeamsAppIdentifier(
+            app_id=suffix,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
         )  # type: ignore
