@@ -131,7 +131,8 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :paramtype workspace_hub: ~azure.ai.ml.entities.WorkspaceHub
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
         :paramtype update_dependent_resources: boolean
-        :keyword endpoint_resource_id: The UID of an AI service resource. The created hub will automatically create several
+        :keyword endpoint_resource_id: The UID of an AI service resource.
+            The created hub will automatically create several
             endpoints connecting to this resource, and creates its own otherwise.
         :paramtype endpoint_resource_id: str
         :return: An instance of LROPoller that returns a WorkspaceHub.
