@@ -6,24 +6,16 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
-
-
 from typing import List, Optional, Any, Union
-from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline import policies
 
-from azure.appconfiguration._generated import models as _models
-from azure.appconfiguration._generated.aio._azure_app_configuration import (
-    AzureAppConfiguration as AzureAppConfigurationGenerated,
+from ._azure_app_configuration import (
+    AzureAppConfiguration as AzureAppConfigurationGenerated
 )
-from azure.appconfiguration._generated.aio._configuration import (
-    AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated,
-    VERSION,
+from ._configuration import (
+    AzureAppConfigurationConfiguration as AzureAppConfigurationConfigurationGenerated
 )
-from azure.appconfiguration._generated._serialization import Deserializer, Serializer
 
 
 class AzureAppConfiguration(AzureAppConfigurationGenerated):
@@ -50,33 +42,7 @@ class AzureAppConfiguration(AzureAppConfigurationGenerated):
         sync_token: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}"
-        self._config = AzureAppConfigurationConfiguration(
-            credential=credential, endpoint=endpoint, sync_token=sync_token, **kwargs
-        )
-        _policies = kwargs.pop("policies", None)
-        if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
-        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-        self._serialize.client_side_validation = False
+        super().__init__(credential, endpoint, sync_token=sync_token, **kwargs)
 
 
 class AzureAppConfigurationConfiguration(AzureAppConfigurationConfigurationGenerated):
@@ -104,20 +70,7 @@ class AzureAppConfigurationConfiguration(AzureAppConfigurationConfigurationGener
         sync_token: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-10-01")
-
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
-        if endpoint is None:
-            raise ValueError("Parameter 'endpoint' must not be None.")
-
-        self.credential = credential
-        self.endpoint = endpoint
-        self.sync_token = sync_token
-        self.api_version = api_version
-        kwargs.setdefault("sdk_moniker", "appconfiguration/{}".format(VERSION))
-        self.polling_interval = kwargs.get("polling_interval", 30)
-        self._configure(**kwargs)
+        super().__init__(credential, endpoint, sync_token=sync_token, **kwargs)
 
 
 __all__: List[str] = [
