@@ -60,7 +60,7 @@ class TestEventGridPublisherClientExceptions(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @EventGridPreparer()
     def test_raise_on_bad_resource(self, eventgrid_topic_key):
-        akc_credential = AzureKeyCredential(eventgrid_topic_key)
+        akc_credential = AzureKeyCredential(self, eventgrid_topic_key)
         client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
         eg_event = EventGridEvent(
                 subject="sample", 
