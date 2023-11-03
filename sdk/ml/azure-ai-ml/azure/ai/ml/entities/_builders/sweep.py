@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 import pydash
 from marshmallow import EXCLUDE, Schema
@@ -106,14 +106,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         early_termination: Optional[
             Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy, EarlyTerminationPolicy, str]
         ] = None,
-        search_space: Optional[
-            Dict[
-                str,
-                Union[
-                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
-                ],
-            ]
-        ] = None,
+        search_space: Optional[Dict] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         identity: Optional[
@@ -123,7 +116,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         **kwargs: Any,
     ) -> None:
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
-        self._job_inputs, self._job_outputs = inputs, outputs  # type: ignore
+        self._job_inputs, self._job_outputs = inputs, outputs
 
         kwargs.pop("type", None)
         BaseNode.__init__(
@@ -162,9 +155,7 @@ class Sweep(ParameterizedSweep, BaseNode):
     @property
     def search_space(
         self,
-    ) -> Dict[
-        str, Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform]
-    ]:
+    ) -> Optional[Dict]:
         """Dictionary of the hyperparameter search space.
 
         Each key is the name of a hyperparameter and its value is the parameter expression.
@@ -241,7 +232,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         # hack: only early termination policy does not follow yaml schema now, should be removed after server-side made
         # the change
         if "early_termination" in rest_obj:
-            _early_termination: EarlyTerminationPolicy = self.early_termination
+            _early_termination = cast(EarlyTerminationPolicy, self.early_termination)
             rest_obj["early_termination"] = _early_termination._to_rest_object().as_dict()
 
         rest_obj.update(
@@ -291,9 +282,10 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     def _to_job(self) -> SweepJob:
         command = self.trial.command
-        for key, _ in self.search_space.items():
-            # Double curly brackets to escape
-            command = command.replace(f"${{{{inputs.{key}}}}}", f"${{{{search_space.{key}}}}}")
+        if self.search_space is not None:
+            for key, _ in self.search_space.items():
+                # Double curly brackets to escape
+                command = command.replace(f"${{{{inputs.{key}}}}}", f"${{{{search_space.{key}}}}}")
 
         # TODO: raise exception when the trial is a pre-registered component
         if command != self.trial.command and isinstance(self.trial, CommandComponent):
@@ -358,7 +350,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             str,
             Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
         ] = {}
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = {}
+        inputs: Dict = {}
         if built_inputs is not None:
             for input_name, input_obj in built_inputs.items():
                 if isinstance(input_obj, NodeInput):
@@ -392,7 +384,7 @@ class Sweep(ParameterizedSweep, BaseNode):
                 self.early_termination.slack_factor = None
 
     @property
-    def early_termination(self) -> Union[str, EarlyTerminationPolicy]:
+    def early_termination(self) -> Optional[EarlyTerminationPolicy]:
         """The early termination policy for the sweep job.
 
         :rtype: Union[str, ~azure.ai.ml.sweep.BanditPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy,
@@ -401,7 +393,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         return self._early_termination
 
     @early_termination.setter
-    def early_termination(self, value: Union[EarlyTerminationPolicy, Dict[str, Union[str, float, int, bool]]]) -> None:
+    def early_termination(self, value: Optional[EarlyTerminationPolicy]) -> None:
         """Sets the early termination policy for the sweep job.
 
         :param value: The early termination policy for the sweep job.
