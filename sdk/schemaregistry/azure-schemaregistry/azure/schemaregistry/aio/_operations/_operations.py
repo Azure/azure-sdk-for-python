@@ -30,13 +30,13 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
     def __init__(self) -> None:
         raise_if_not_implemented(self.__class__, [
-            'get_schema_id_by_content',
-            'register_schema',
+            '_get_schema_id_by_content',
+            '_register_schema',
         ])
 
 
     @distributed_trace
-    def list_schema_groups(
+    def _list_schema_groups(
         self,
         **kwargs: Any
     ) -> AsyncIterable["_models._models.SchemaGroup"]:
@@ -119,7 +119,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
 
     @distributed_trace_async
-    async def get_schema_by_id(
+    async def _get_schema_by_id(
         self,
         id: str,
         **kwargs: Any
@@ -201,7 +201,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
 
     @distributed_trace
-    def list_schema_versions(
+    def _list_schema_versions(
         self,
         group_name: str,
         name: str,
