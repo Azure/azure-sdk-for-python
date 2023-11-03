@@ -7,7 +7,7 @@ import abc
 import os
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
 
 from msrest import Serializer
 
@@ -43,11 +43,11 @@ class Resource(abc.ABC):
 
     def __init__(
         self,
-        name: str,
+        name: Optional[str],
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.name = name
         self.description = description
@@ -75,7 +75,7 @@ class Resource(abc.ABC):
         return self.__source_path
 
     @_source_path.setter
-    def _source_path(self, value: Union[str, PathLike]):
+    def _source_path(self, value: Union[str, PathLike]) -> None:
         self.__source_path = Path(value).as_posix()
 
     @property
@@ -85,7 +85,9 @@ class Resource(abc.ABC):
         :return: The global ID of the resource, an Azure Resource Manager (ARM) ID.
         :rtype: Optional[str]
         """
-        return self._id
+        if self._id is None:
+            return None
+        return str(self._id)
 
     @property
     def creation_context(self) -> Optional[SystemData]:
@@ -106,7 +108,7 @@ class Resource(abc.ABC):
         return self._base_path
 
     @abc.abstractmethod
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the object content into a file.
 
         :param dest: The local path or file stream to write the YAML content to.
@@ -117,7 +119,7 @@ class Resource(abc.ABC):
 
     @classmethod
     # pylint: disable=unused-argument
-    def _resolve_cls_and_type(cls, data, params_override):
+    def _resolve_cls_and_type(cls, data: Dict, params_override: Optional[List[Dict]] = None) -> Tuple:
         """Resolve the class to use for deserializing the data. Return current class if no override is provided.
 
         :param data: Data to deserialize.
@@ -136,7 +138,7 @@ class Resource(abc.ABC):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Resource":
         """Construct a resource object from a file. @classmethod.
 
@@ -157,8 +159,9 @@ class Resource(abc.ABC):
     # pylint: disable:unused-argument
     def _get_arm_resource(
         self,
-        **kwargs,  # pylint: disable=unused-argument
-    ):
+        # pylint: disable=unused-argument
+        **kwargs: Any,
+    ) -> Dict:
         """Get arm resource.
 
         :keyword kwargs: A dictionary of additional configuration parameters.
@@ -170,12 +173,12 @@ class Resource(abc.ABC):
         from azure.ai.ml._arm_deployments.arm_helper import get_template
 
         # pylint: disable=no-member
-        template = get_template(resource_type=self._arm_type)
+        template = get_template(resource_type=self._arm_type)  # type: ignore
         # pylint: disable=no-member
-        template["copy"]["name"] = f"{self._arm_type}Deployment"
-        return template
+        template["copy"]["name"] = f"{self._arm_type}Deployment"  # type: ignore
+        return dict(template)
 
-    def _get_arm_resource_and_params(self, **kwargs):
+    def _get_arm_resource_and_params(self, **kwargs: Any) -> List:
         """Get arm resource and parameters.
 
         :keyword kwargs: A dictionary of additional configuration parameters.
@@ -186,7 +189,7 @@ class Resource(abc.ABC):
         """
         resource = self._get_arm_resource(**kwargs)
         # pylint: disable=no-member
-        param = self._to_arm_resource_param(**kwargs)
+        param = self._to_arm_resource_param(**kwargs)  # type: ignore
         return [(resource, param)]
 
     def __repr__(self) -> str:
@@ -196,6 +199,6 @@ class Resource(abc.ABC):
     def __str__(self) -> str:
         if hasattr(self, "print_as_yaml") and self.print_as_yaml:
             # pylint: disable=no-member
-            yaml_serialized = self._to_dict()
-            return dump_yaml(yaml_serialized, default_flow_style=False)
+            yaml_serialized = self._to_dict()  # type: ignore
+            return str(dump_yaml(yaml_serialized, default_flow_style=False))
         return self.__repr__()
