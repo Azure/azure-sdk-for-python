@@ -10,8 +10,6 @@ from azure.ai.ml import MLClient, load_workspace_connection
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 
-from azure.ai.ml.constants._common import CONNECTION_DEFAULT_API_VERSION
-
 
 @pytest.mark.xdist_group(name="workspace_connection")
 @pytest.mark.e2etest
@@ -309,7 +307,9 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.tags is not None
         assert wps_connection.tags["hello"] == "world"
         assert wps_connection.api_type == "Azure"
-        assert wps_connection.api_version == CONNECTION_DEFAULT_API_VERSION
+        # api_version hould be set to something by backend, but don't want to be exact in check
+        # since this can change over time with no warning. 
+        assert wps_connection.api_version is not None
 
         client.connections.delete(name=wps_connection_name)
 

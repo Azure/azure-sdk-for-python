@@ -9,8 +9,6 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIWorkspaceConnection
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
 
-from azure.ai.ml.constants._common import CONNECTION_DEFAULT_API_VERSION
-
 
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
@@ -147,9 +145,8 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_open_ai"
         assert ws_connection.target == "dummy"
         assert ws_connection.tags["hello"] == "world"
-        assert ws_connection.tags["ApiVersion"] == CONNECTION_DEFAULT_API_VERSION
         assert ws_connection.tags["ApiType"] == "Azure"
-        assert ws_connection.api_version == CONNECTION_DEFAULT_API_VERSION
+        assert ws_connection.api_version == None
         assert ws_connection.api_type == "Azure"
 
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_search.yaml")
