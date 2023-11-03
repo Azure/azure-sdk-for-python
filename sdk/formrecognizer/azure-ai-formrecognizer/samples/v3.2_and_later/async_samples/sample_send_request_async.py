@@ -65,7 +65,7 @@ async def sample_send_request():
     )
     
     # override the api version to v2.1
-    request = HttpRequest(method="GET", url="v2.1/custom/models?op=summary&api-version=v2.1")
+    request = HttpRequest(method="GET", url="v2.1/custom/models?op=summary")
     async with client:
         response = client.send_request(request)
     response.raise_for_status()
@@ -74,7 +74,7 @@ async def sample_send_request():
           f"and we can have at most {response_body['summary']['limit']} custom models.")
     
     # pass with full url and override the api version to v2.1
-    request = HttpRequest(method="GET", url=f"{client._endpoint}/formrecognizer/v2.1/custom/models?op=summary&api-version=v2.1")
+    request = HttpRequest(method="GET", url=f"{client._endpoint}/formrecognizer/v2.1/custom/models?op=summary")
     async with client:
         response = client.send_request(request)
     response.raise_for_status()
@@ -87,6 +87,7 @@ async def sample_send_request_v2():
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
+    # The default FormTrainingClient API version is v2.1
     client = FormTrainingClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
@@ -105,7 +106,7 @@ async def sample_send_request_v2():
           f"and we can have at most {response_body['summary']['limit']} custom models.")
     
     # pass with full url and override the api version
-    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.0/custom/models?op=summary&api-version=v2.0")
+    request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.0/custom/models?op=summary")
     async with client:
         response = client.send_request(request)
     response.raise_for_status()

@@ -58,7 +58,7 @@ class TestSendRequest(FormRecognizerTest):
         # test with v2 api version
         request = HttpRequest(
             method="GET",
-            url="v2.1/custom/models?op=summary&api-version=v2.1",
+            url="v2.1/custom/models?op=summary",
             headers={"Accept": "application/json"},
         )
         result = client.send_request(request)
@@ -67,9 +67,10 @@ class TestSendRequest(FormRecognizerTest):
         assert received_info4["summary"]["count"] == 0
         assert received_info4["summary"]["limit"]
         
+        # test with v2 api version with full url
         request = HttpRequest(
             method="GET",
-            url=f"{client._endpoint}/formrecognizer/v2.1/custom/models?op=summary&api-version=v2.1",
+            url=f"{client._endpoint}/formrecognizer/v2.1/custom/models?op=summary",
             headers={"Accept": "application/json"},
         )
         result = client.send_request(request)
@@ -126,6 +127,7 @@ class TestSendRequest(FormRecognizerTest):
         assert received_info4["error"]["code"] == "404"
         assert received_info4["error"]["message"] == "Resource not found"
         
+        # test with v2 api version with full url
         request = HttpRequest(
             method="GET",
             url=f"{client._endpoint}/formrecognizer/info?api-version=2022-08-31",
