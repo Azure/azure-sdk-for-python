@@ -108,13 +108,12 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     envelope.tags["ai.operation.parentId"] = "{:016x}".format( # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
-    properties = {}
+    properties = _utils._filter_custom_properties(
+        log_record.attributes,
+        lambda key, val: not _is_ignored_attribute(key)
+    )
     exc_type = exc_message = stack_trace = None
     if log_record.attributes:
-        properties = _utils._filter_custom_properties(
-            log_record.attributes,
-            lambda key, val: not _is_ignored_attribute(key)
-        )
         exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
         exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
         # pylint: disable=line-too-long
