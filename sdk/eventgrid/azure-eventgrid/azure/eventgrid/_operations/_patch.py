@@ -56,9 +56,10 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param body: Array of Cloud Events being published. Required.
         :type body: list[~azure.core.messaging.CloudEvent]
-        :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
-         When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/cloudevents-batch+json; charset=utf-8`. Expects CloudEvent data to be bytes.
+        :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
+         When specified, the content type is set to `datacontenttype` of the CloudEvent. If 'datacontenttype` is not specified,
+         the default content type is `application/cloudevents-batch+json; charset=utf-8`.
+         Requires CloudEvent data to be passed in as bytes.
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -89,9 +90,10 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param body: Single Cloud Event being published. Required.
         :type body: ~azure.core.messaging.CloudEvent
-        :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
-         When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/cloudevents+json; charset=utf-8`. Expects CloudEvent data to be bytes.
+        :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
+         When specified, the content type is set to `datacontenttype` of the CloudEvent. If `datacontenttype` is not specified,
+         the default content type is `application/cloudevents+json; charset=utf-8`.
+         Requires CloudEvent data to be passed in as bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -122,9 +124,10 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param body: Single Cloud Event being published. Required.
         :type body: dict[str, Any]
-        :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
-         When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is application/cloudevents+json; charset=utf-8". Expects CloudEvent data to be bytes.
+        :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
+         When specified, the content type is set to `datacontenttype` of the CloudEvent. If `datacontenttype` is not specified,
+         the default content type is `application/cloudevents+json; charset=utf-8`.
+         Requires CloudEvent data to be passed in as bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -155,9 +158,10 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param body: Batch of Cloud Events being published. Required.
         :type body: list[dict[str, Any]]
-        :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
-         When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is "application/cloudevents-batch+json; charset=utf-8". Expects CloudEvent data to be bytes.
+        :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
+         When specified, the content type is set to `datacontenttype` of the CloudEvent. If 'datacontenttype` is not specified,
+         the default content type is `application/cloudevents-batch+json; charset=utf-8`.
+         Requires CloudEvent data to be passed in as bytes.
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
