@@ -16,6 +16,8 @@
 - Renamed `RawVectorQuery` to `VectorizedQuery`.
 - Renamed `ExhaustiveKnnVectorSearchAlgorithmConfiguration` to `ExhaustiveKnnAlgorithmConfiguration`.
 - Renamed `PrioritizedFields` to `SemanticPrioritizedFields`.
+- Renamed `query_caption_highlight` to `query_caption_highlight_enabled`.
+- `query_language` and `query_speller` are not available for `Search` method in this stable release.
 
 ### Bugs Fixed
 
