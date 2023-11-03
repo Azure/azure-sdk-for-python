@@ -899,7 +899,9 @@
       "filename": "sdk/monitor/azure-monitor-*/**/*",
       "words": [
         "ctxt",
-        "wday"
+        "wday",
+        "percentilesw",
+        "plotly"
       ]
     },
     {
