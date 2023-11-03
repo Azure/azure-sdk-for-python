@@ -62,7 +62,9 @@ class ParameterizedSweep:
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Union[Dict, Objective]] = None,
-        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        early_termination: Optional[
+            Union[EarlyTerminationPolicy, BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]
+        ] = None,
         search_space: Optional[
             Dict[
                 str,
@@ -95,6 +97,7 @@ class ParameterizedSweep:
         self._limits = limits
         self.search_space = search_space
         self.queue_settings = queue_settings
+        self.objective: Optional[Objective] = None
 
         if isinstance(objective, Dict):
             self.objective = Objective(**objective)
@@ -102,7 +105,7 @@ class ParameterizedSweep:
             self.objective = objective
 
     @property
-    def limits(self) -> SweepJobLimits:
+    def limits(self) -> Optional[SweepJobLimits]:
         """Limits for sweep job.
 
         :returns: Limits for sweep job.
@@ -155,14 +158,15 @@ class ParameterizedSweep:
                 trial_timeout=trial_timeout,
             )
         else:
-            if max_concurrent_trials is not None:
-                self.limits.max_concurrent_trials = max_concurrent_trials
-            if max_total_trials is not None:
-                self.limits.max_total_trials = max_total_trials
-            if timeout is not None:
-                self.limits.timeout = timeout
-            if trial_timeout is not None:
-                self.limits.trial_timeout = trial_timeout
+            if self.limits is not None:
+                if max_concurrent_trials is not None:
+                    self.limits.max_concurrent_trials = max_concurrent_trials
+                if max_total_trials is not None:
+                    self.limits.max_total_trials = max_total_trials
+                if timeout is not None:
+                    self.limits.timeout = timeout
+                if trial_timeout is not None:
+                    self.limits.trial_timeout = trial_timeout
 
     def set_objective(self, *, goal: Optional[str] = None, primary_metric: Optional[str] = None) -> None:
         """Set the sweep object.. Leave parameters as None if you don't want to update corresponding values.
@@ -183,7 +187,7 @@ class ParameterizedSweep:
             self.objective = Objective(goal=goal, primary_metric=primary_metric)
 
     @property
-    def sampling_algorithm(self) -> Union[str, SamplingAlgorithm]:
+    def sampling_algorithm(self) -> Optional[Union[str, SamplingAlgorithm]]:
         """Sampling algorithm for sweep job.
 
         :returns: Sampling algorithm for sweep job.
@@ -200,9 +204,9 @@ class ParameterizedSweep:
         """
         if value is None:
             self._sampling_algorithm = None
-        elif isinstance(value, SamplingAlgorithm):
-            self._sampling_algorithm = value
-        elif isinstance(value, str) and value.lower().capitalize() in SAMPLING_ALGORITHM_CONSTRUCTOR:
+        elif isinstance(value, SamplingAlgorithm) or (
+            isinstance(value, str) and value.lower().capitalize() in SAMPLING_ALGORITHM_CONSTRUCTOR
+        ):
             self._sampling_algorithm = value
         else:
             msg = f"unsupported sampling algorithm: {value}"
@@ -234,7 +238,7 @@ class ParameterizedSweep:
         )
 
     @property
-    def early_termination(self) -> Union[str, EarlyTerminationPolicy]:
+    def early_termination(self) -> Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]]:
         """Early termination policy for sweep job.
 
         :returns: Early termination policy for sweep job.
@@ -243,7 +247,9 @@ class ParameterizedSweep:
         return self._early_termination
 
     @early_termination.setter
-    def early_termination(self, value: Union[EarlyTerminationPolicy, str]) -> None:
+    def early_termination(
+        self, value: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]]
+    ) -> None:
         """Set early termination policy for sweep job.
 
         :param value: Early termination policy for sweep job.
