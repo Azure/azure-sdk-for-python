@@ -418,11 +418,15 @@ def _serialize_cloud_events(events: Union[CloudEvent, List[CloudEvent]]) -> None
     data = {}
     list_data = []
     for event in events if isinstance(events, list) else [events]:
-        # CloudEvent required fields
-        data["type"] =  _SERIALIZER.body(event.type, "str")
-        data["specversion"] = _SERIALIZER.body(event.specversion, "str")
-        data["source"] = _SERIALIZER.body(event.source, "str")
-        data["id"] = _SERIALIZER.body(event.id, "str")
+        # CloudEvent required fields but validate they are not set to None
+        if event.type:
+            data["type"] =  _SERIALIZER.body(event.type, "str")
+        if event.specversion:
+            data["specversion"] = _SERIALIZER.body(event.specversion, "str")
+        if event.source:
+            data["source"] = _SERIALIZER.body(event.source, "str")
+        if event.id:
+            data["id"] = _SERIALIZER.body(event.id, "str")
         
         # Check if data is bytes and serialize to base64
         if isinstance(event.data, bytes):
