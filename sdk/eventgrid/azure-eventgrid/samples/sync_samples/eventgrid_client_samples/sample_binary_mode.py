@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import os
+import json
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridClient
 from azure.eventgrid.models import *
@@ -19,29 +20,24 @@ EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 # Create a client
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
-# Publish a CloudEvent as dict
-try:
-    cloud_event_dict = {"data": "hello", "source": "https://example.com", "type": "example"}
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
-except HttpResponseError:
-    raise
-
-# Publish a list of CloudEvents as dict
-try:
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=[cloud_event_dict, cloud_event_dict])
-except HttpResponseError:
-    raise
 
 # Publish a CloudEvent
 try:
-    cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
+    # Publish CloudEvent in binary mode with str encoded as bytes
+    cloud_event_dict = {"data":b"HI", "source":"https://example.com", "type":"example", "datacontenttype":"text/plain"}
+    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
+
+    # Publish CloudEvent in binary mode with json encoded as bytes
+    cloud_event = CloudEvent(data=json.dumps({"hello":"data"}).encode("utf-8"), source="https://example.com", type="example", datacontenttype="application/json")
+    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event, binary_mode=True)
+
+    # Receive a CloudEvent
+    receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=100)
+    for receive_details in receive_result.value:
+        cloud_event_received = receive_details.event
+        print("CloudEvent: ", cloud_event_received)
+        print("CloudEvent data: ", cloud_event_received.data)
 except HttpResponseError:
     raise
 
-# Publish a list of CloudEvents
-try:
-    list_of_cloud_events = [cloud_event, cloud_event]
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=list_of_cloud_events)
-except HttpResponseError:
-    raise
+
