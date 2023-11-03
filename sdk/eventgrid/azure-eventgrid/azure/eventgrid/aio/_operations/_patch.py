@@ -34,7 +34,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         body: List[CloudEvent],
         *,
-        binary_mode: Optional[bool] = False,
+        binary_mode: bool = False,
         content_type: str = "application/cloudevents-batch+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
@@ -49,8 +49,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :param body: Array of Cloud Events being published. Required.
         :type body: list[~azure.core.messaging.CloudEvent]
         :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
-         When specified, the content type is set to `datacontenttype` of the CloudEvent. If 'datacontenttype` is not specified,
-         the default content type is `application/cloudevents-batch+json; charset=utf-8`.
+         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
+         If 'datacontenttype` is not specified the default content type is `application/cloudevents-batch+json; charset=utf-8`.
          Requires CloudEvent data to be passed in as bytes.
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
@@ -68,7 +68,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         body: CloudEvent,
         *,
-        binary_mode: Optional[bool] = False,
+        binary_mode: bool = False,
         content_type: str = "application/cloudevents+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
@@ -83,8 +83,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :param body: Single Cloud Event being published. Required.
         :type body: ~azure.core.messaging.CloudEvent
         :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
-         When specified, the content type is set to `datacontenttype` of the CloudEvent. If `datacontenttype` is not specified,
-         the default content type is `application/cloudevents+json; charset=utf-8`.
+         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
+         If `datacontenttype` is not specified, the default content type is `application/cloudevents+json; charset=utf-8`.
          Requires CloudEvent data to be passed in as bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
@@ -102,7 +102,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         body: Dict[str, Any],
         *,
-        binary_mode: Optional[bool] = False,
+        binary_mode: bool = False,
         content_type: str = "application/cloudevents+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
@@ -117,8 +117,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :param body: Single Cloud Event being published. Required.
         :type body: dict[str, Any]
         :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
-         When specified, the content type is set to `datacontenttype` of the CloudEvent. If `datacontenttype` is not specified,
-         the default content type is `application/cloudevents+json; charset=utf-8`.
+         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
+         If `datacontenttype` is not specified, the default content type is `application/cloudevents+json; charset=utf-8`.
          Requires CloudEvent data to be passed in as bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
@@ -136,7 +136,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         body: List[Dict[str, Any]],
         *,
-        binary_mode: Optional[bool] = False,
+        binary_mode: bool = False,
         content_type: str = "application/cloudevents-batch+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
@@ -151,8 +151,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :param body: Batch of Cloud Events being published. Required.
         :type body: list[dict[str, Any]]
         :keyword bool binary_mode: Whether to publish a CloudEvent in binary mode. Defaults to False.
-         When specified, the content type is set to `datacontenttype` of the CloudEvent. If 'datacontenttype` is not specified,
-         the default content type is `application/cloudevents-batch+json; charset=utf-8`.
+         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
+         If 'datacontenttype` is not specified, the default content type is `application/cloudevents-batch+json; charset=utf-8`.
          Requires CloudEvent data to be passed in as bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
@@ -166,7 +166,12 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @distributed_trace_async
     async def publish_cloud_events(
-        self, topic_name: str, body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any]], *, binary_mode: Optional[bool] = False, **kwargs
+        self,
+        topic_name: str,
+        body: Union[List[CloudEvent], CloudEvent, List[Dict[str, Any]], Dict[str, Any]],
+        *,
+        binary_mode: bool = False,
+        **kwargs
     ) -> None:
         """Publish Batch Cloud Event or Events to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
@@ -177,11 +182,11 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param body: Cloud Event or Array of Cloud Events being published. Required.
-        :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent] or dict[str, Any] or list[dict[str, Any]]
+        :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent] or dict[str, any] or list[dict[str, any]]
         :keyword bool binary_mode: Whether to publish the events in binary mode. Defaults to False.
-         When specified, the content type is set to `datacontenttype` of the CloudEvent. If not specified,
-         the default content type is `application/cloudevents+json;
-         charset=utf-8`. Expects CloudEvent data to be bytes.
+         When True and `datacontenttype` is specified in CloudEvent, content type is set to `datacontenttype`.
+         If not specified, the default content type is "application/cloudevents+json; charset=utf-8".
+         Requires CloudEvent data to be passed in as bytes.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -200,7 +205,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
                 else:
                     body = CloudEvent.from_dict(body)
             except AttributeError:
-                raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
+                raise TypeError("Incorrect type for body. Expected CloudEvent,"
+                                " list of CloudEvents, dict, or list of dicts."
+                                " If dict passed, must follow the CloudEvent format.")
 
 
         if isinstance(body, CloudEvent):
