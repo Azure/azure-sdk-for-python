@@ -141,6 +141,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
     def from_connection_string(
         cls, conn_str: str, **kwargs: Any

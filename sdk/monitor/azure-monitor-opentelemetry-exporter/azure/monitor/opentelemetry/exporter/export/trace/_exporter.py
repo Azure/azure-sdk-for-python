@@ -146,6 +146,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         disabled = environ.get(_APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED)
         return disabled is None or disabled.lower() != "true"
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
         """Create an AzureMonitorTraceExporter from a connection string.
