@@ -37,7 +37,11 @@ from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
-from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND, WORKSPACE_HUB_KIND, ENDPOINT_AI_SERVICE_KIND
+from azure.ai.ml.entities._workspace_hub._constants import (
+    PROJECT_WORKSPACE_KIND,
+    WORKSPACE_HUB_KIND,
+    ENDPOINT_AI_SERVICE_KIND,
+)
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
