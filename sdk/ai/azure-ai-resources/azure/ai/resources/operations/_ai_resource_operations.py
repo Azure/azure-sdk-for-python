@@ -61,7 +61,12 @@ class AIResourceOperations:
     @distributed_trace
     @monitor_with_activity(logger, "AIResource.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(
-        self, *, ai_resource: AIResource, update_dependent_resources: bool = False, **kwargs
+        self,
+        *,
+        ai_resource: AIResource,
+        update_dependent_resources: bool = False,
+        endpoint_resource_id: str = None,
+        **kwargs,
     ) -> LROPoller[AIResource]:
         """Create a new AI resource.
 
@@ -70,6 +75,9 @@ class AIResourceOperations:
         :paramtype ai_resource: ~azure.ai.resources.entities.AIResource
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
         :paramtype update_dependent_resources: boolean
+        :keyword endpoint_resource_id: The UID of an AI service resource. The created hub will automatically create several
+            endpoints connecting to this resource, and creates its own otherwise.
+        :paramtype endpoint_resource_id: str
         :return: An instance of LROPoller that returns the created AI resource.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.AIResource]
         """

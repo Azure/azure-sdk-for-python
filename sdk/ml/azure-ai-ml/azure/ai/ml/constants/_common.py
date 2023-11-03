@@ -307,6 +307,7 @@ class ArmConstants:
     ENVIRONMENT_TYPE = "environment"
     ENVIRONMENT_VERSION_TYPE = "environment_version"
     ONLINE_ENDPOINT_TYPE = "online_endpoint"
+    MULTIPLE_ENDPOINTS_TYPE = "endpoints"
     ONLINE_DEPLOYMENT_TYPE = "online_deployment"
     UPDATE_ONLINE_ENDPOINT_TYPE = "update_online_endpoint"
     BASE_TYPE = "base"

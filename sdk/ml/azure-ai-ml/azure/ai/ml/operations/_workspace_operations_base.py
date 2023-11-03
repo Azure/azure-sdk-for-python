@@ -106,6 +106,7 @@ class WorkspaceOperationsBase(ABC):
         existing_workspace = None
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
         byo_open_ai_resource_id = kwargs.pop("byo_open_ai_resource_id", "")
+        endpoint_resource_id = kwargs.pop("endpoint_resource_id", "")
 
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
@@ -143,7 +144,7 @@ class WorkspaceOperationsBase(ABC):
             template,
             param,
             resources_being_deployed,
-        ) = self._populate_arm_parameters(workspace, byo_open_ai_resource_id=byo_open_ai_resource_id, **kwargs)
+        ) = self._populate_arm_parameters(workspace, byo_open_ai_resource_id=byo_open_ai_resource_id, endpoint_resource_id=endpoint_resource_id, **kwargs)
         # check if create with workspace hub request is valid
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             if not all(
@@ -518,7 +519,7 @@ class WorkspaceOperationsBase(ABC):
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
         byo_open_ai_resource_id = kwargs.get("byo_open_ai_resource_id") or ""
-        _set_val(param["byo_open_ai_resource_id"], byo_open_ai_resource_id)
+        endpoint_resource_id = kwargs.get("endpoint_resource_id") or ""
         _set_val(param["workspaceName"], workspace.name)
         if not workspace.display_name:
             _set_val(param["friendlyName"], workspace.name)
@@ -696,12 +697,21 @@ class WorkspaceOperationsBase(ABC):
         if workspace.enable_data_isolation:
             _set_val(param["enable_data_isolation"], "true")
 
-        # Hub related param
+        # Hub related params
         if workspace._kind and workspace._kind.lower() == WORKSPACE_HUB_KIND:
             if workspace.workspace_hub_config:
                 _set_obj_val(param["workspace_hub_config"], workspace.workspace_hub_config._to_rest_object())
             if workspace.existing_workspaces:
                 _set_val(param["existing_workspaces"], workspace.existing_workspaces)
+            # A user-supplied resource ID (either AOAI or AI Services or null)
+            # endpoint_kind differentiates between a 'Bring a legacy AOAI resource hub' and 'any other kind of hub'
+            # The former doesn't create non-AOAI endpoints, and is set below if the user provided a byo AOAI
+            # resource ID. The latter case is the default and not shown here.
+            if byo_open_ai_resource_id != "" and endpoint_resource_id == "":
+                _set_val(param["endpoint_kind"], "OpenAI")
+                _set_val(param["endpoint_resource_id"], byo_open_ai_resource_id)
+            elif endpoint_resource_id != "":
+                _set_val(param["endpoint_resource_id"], endpoint_resource_id)
 
         # Lean related param
         if workspace._kind and workspace._kind.lower() == PROJECT_WORKSPACE_KIND:

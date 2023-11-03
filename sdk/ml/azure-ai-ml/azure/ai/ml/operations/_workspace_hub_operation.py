@@ -120,6 +120,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         *,
         workspace_hub: WorkspaceHub,
         update_dependent_resources: bool = False,
+        endpoint_resource_id: str = None,
         **kwargs: Dict,
     ) -> LROPoller[WorkspaceHub]:
         """Create a new WorkspaceHub.
@@ -130,6 +131,9 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :paramtype workspace_hub: ~azure.ai.ml.entities.WorkspaceHub
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
         :paramtype update_dependent_resources: boolean
+        :keyword endpoint_resource_id: The UID of an AI service resource. The created hub will automatically create several
+            endpoints connecting to this resource, and creates its own otherwise.
+        :paramtype endpoint_resource_id: str
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
 
@@ -151,6 +155,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             workspace=workspace_hub,
             update_dependent_resources=update_dependent_resources,
             get_callback=get_callback,
+            endpoint_resource_id=endpoint_resource_id,
             **kwargs,
         )
 
