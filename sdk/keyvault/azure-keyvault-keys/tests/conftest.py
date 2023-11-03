@@ -8,9 +8,7 @@ import os
 from unittest import mock
 
 import pytest
-from devtools_testutils import (add_general_regex_sanitizer,
-                                add_oauth_response_sanitizer, is_live,
-                                test_proxy)
+from devtools_testutils import add_general_string_sanitizer, add_oauth_response_sanitizer, is_live
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
 
 os.environ['PYTHONHASHSEED'] = '0'
@@ -37,11 +35,11 @@ def add_sanitizers(test_proxy):
     azure_attestation_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL","https://fakeattestation.azurewebsites.net")
     azure_attestation_uri = azure_attestation_uri.rstrip('/')
 
-    add_general_regex_sanitizer(regex=azure_keyvault_url, value="https://vaultname.vault.azure.net")
-    add_general_regex_sanitizer(regex=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=azure_managedhsm_url,value="https://managedhsmvaultname.managedhsm.azure.net")
-    add_general_regex_sanitizer(regex=azure_attestation_uri,value="https://fakeattestation.azurewebsites.net")
+    add_general_string_sanitizer(target=azure_keyvault_url, value="https://vaultname.vault.azure.net")
+    add_general_string_sanitizer(target=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_string_sanitizer(target=azure_managedhsm_url, value="https://managedhsmvaultname.managedhsm.azure.net")
+    add_general_string_sanitizer(target=azure_attestation_uri, value="https://fakeattestation.azurewebsites.net")
     add_oauth_response_sanitizer()
 
 
