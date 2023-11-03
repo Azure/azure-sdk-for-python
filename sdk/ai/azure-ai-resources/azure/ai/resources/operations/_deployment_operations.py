@@ -68,7 +68,7 @@ class DeploymentOperations:
                 deployment.instance_type = "Standard_DS3_v2"
             # Create dockerfile
             with open(f"{model.path}/Dockerfile", "w+") as f:
-                base_image = "mcr.microsoft.com/azureml/promptflow/promptflow-runtime:latest" if not model.base_image else model.base_image
+                base_image = "mcr.microsoft.com/azureml/promptflow/promptflow-runtime-stable:latest" if not model.base_image else model.base_image
                 f.writelines([f"FROM {base_image}\n", "COPY ./* /\n", "RUN pip install -r requirements.txt\n"])
             azureml_environment = Environment(
                 build=BuildContext(
@@ -113,8 +113,8 @@ class DeploymentOperations:
                 azureml_model = AzureMLModel(name=f"{deployment.name}-deployment-model", path=model.path, type="mlflow_model")
             if model.conda_file and model.chat_module:
                 azureml_model = AzureMLModel(name=f"{deployment.name}-deployment-model", path=model.path, type="custom_model")
-                chat_module = f"{Path(model.path).resolve().name}.{model.chat_module}"
-                create_chat_scoring_script(temp_dir.name, chat_module)
+                model_dir_name = Path(model.path).resolve().name
+                create_chat_scoring_script(temp_dir.name, model.chat_module, model_dir_name)
                 azureml_environment = Environment(
                     image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
                     conda_file=str(Path(model.path) / model.conda_file),
