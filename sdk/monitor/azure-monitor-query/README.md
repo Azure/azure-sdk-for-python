@@ -310,6 +310,7 @@ The following example shows setting a server timeout in seconds. A gateway timeo
 
 ```python
 import os
+from datetime import timedelta
 from azure.monitor.query import LogsQueryClient
 from azure.identity import DefaultAzureCredential
 
