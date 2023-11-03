@@ -21,6 +21,137 @@ class TestEGClientExceptions(AzureRecordedTestCase):
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         return client
+    
+
+    @pytest.mark.live_test_only
+    def test_publish_binary_mode_xml(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        eventgrid_key = os.environ['EVENTGRID_KEY']
+        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
+        eventgrid_event_subscription_name = os.environ['EVENTGRID_EVENT_SUBSCRIPTION_NAME']
+        client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
+        
+        from xml.etree import ElementTree as ET
+        xml_string = """<?xml version="1.0" encoding="UTF-8"?><Data><test>test</test></Data>"""
+        tree = xml_string.encode('utf-8')
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data=tree,
+            datacontenttype="text/xml",
+            extensions={"extension1": "value1", "extension2": "value2"}
+        )
+
+        client.publish_cloud_events(
+            eventgrid_topic_name, body=event, binary_mode=True
+        )
+
+        time.sleep(5)
+
+        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        my_returned_event = events.value[0].event
+        assert my_returned_event.data == xml_string
+        assert my_returned_event.datacontenttype == 'text/xml'
+        assert my_returned_event.type == "Contoso.Items.ItemReceived"
+
+
+    @pytest.mark.live_test_only
+    def test_publish_binary_mode_cloud_event(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        eventgrid_key = os.environ['EVENTGRID_KEY']
+        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
+        eventgrid_event_subscription_name = os.environ['EVENTGRID_EVENT_SUBSCRIPTION_NAME']
+        client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
+
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data=b'this is binary data',
+            datacontenttype='text/plain'
+        )
+
+        client.publish_cloud_events(
+            eventgrid_topic_name, body=event, binary_mode=True
+        )
+
+        time.sleep(5)
+
+        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        my_returned_event = events.value[0].event
+        assert my_returned_event.data == 'this is binary data'
+        assert my_returned_event.datacontenttype == 'text/plain'
+        assert my_returned_event.type == "Contoso.Items.ItemReceived"
+
+
+    @pytest.mark.live_test_only
+    def test_publish_binary_mode_incorrect_cloud_event(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        eventgrid_key = os.environ['EVENTGRID_KEY']
+        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
+        client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
+
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data={"key": "value"},
+            datacontenttype='text/plain'
+        )
+
+        with pytest.raises(TypeError):
+            client.publish_cloud_events(
+                eventgrid_topic_name, body=event, binary_mode=True
+            )
+
+    @pytest.mark.live_test_only
+    def test_publish_binary_mode_list_cloud_event(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        eventgrid_key = os.environ['EVENTGRID_KEY']
+        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
+        eventgrid_event_subscription_name = os.environ['EVENTGRID_EVENT_SUBSCRIPTION_NAME']
+        client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
+
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data={"key": "value"},
+            datacontenttype='text/plain'
+        )
+
+        with pytest.raises(TypeError):
+            client.publish_cloud_events(
+                eventgrid_topic_name, body=[event], binary_mode=True
+            )
+
+    @pytest.mark.live_test_only
+    def test_publish_binary_mode_combinations(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        eventgrid_key = os.environ['EVENTGRID_KEY']
+        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
+        eventgrid_event_subscription_name = os.environ['EVENTGRID_EVENT_SUBSCRIPTION_NAME']
+        client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
+
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data=b"hello",
+            datacontenttype='text/plain'
+        )
+
+        dict_event = {"type": "Contoso.Items.ItemReceived", "source": "source", "subject": "MySubject", "data": b"hello", "datacontenttype": "text/plain"}
+
+        
+        client.publish_cloud_events(
+            eventgrid_topic_name, body=event, binary_mode=True
+        )
+
+        client.publish_cloud_events(
+            eventgrid_topic_name, body=dict_event, binary_mode=True
+        )
 
     @pytest.mark.skip("need to update conftest")
     @EventGridPreparer()
