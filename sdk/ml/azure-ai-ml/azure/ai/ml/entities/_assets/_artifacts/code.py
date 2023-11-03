@@ -4,7 +4,7 @@
 import os
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import CodeVersionData, CodeVersionDetails
 from azure.ai.ml._schema import CodeAssetSchema
@@ -50,7 +50,7 @@ class Code(Artifact):
         properties: Optional[Dict] = None,
         path: Optional[Union[str, PathLike]] = None,
         ignore_file: Optional[IgnoreFile] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(
             name=name,
@@ -73,7 +73,7 @@ class Code(Artifact):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Code":
         data = data or {}
         params_override = params_override or []
@@ -81,10 +81,13 @@ class Code(Artifact):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(CodeAssetSchema, data, context, **kwargs)
+        res: Code = load_from_dict(CodeAssetSchema, data, context, **kwargs)
+        return res
 
     def _to_dict(self) -> Dict:
-        return CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        # pylint: disable=no-member
+        res: dict = CodeAssetSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
     def _from_rest_object(cls, code_rest_object: CodeVersionData) -> "Code":
@@ -127,7 +130,8 @@ class Code(Artifact):
         else:
             self._path = asset_artifact.full_storage_path  # pylint: disable=attribute-defined-outside-init
 
-    def _to_arm_resource_param(self, **kwargs):  # pylint: disable=unused-argument
+    # pylint: disable=unused-argument
+    def _to_arm_resource_param(self, **kwargs: Any) -> Dict:
         properties = self._to_rest_object().properties
 
         return {
