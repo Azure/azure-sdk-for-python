@@ -67,7 +67,7 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
                 event_type="Sample.EventGrid.Event",
                 data_version="2.0"
                 )
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(ServiceRequestError):
             await client.send(eg_event)
 
     @EventGridPreparer()
