@@ -13,7 +13,7 @@ from typing import Callable, Dict, Any
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util import ns_to_iso_str
-from opentelemetry.util.types import Attributes, AttributeValue
+from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
