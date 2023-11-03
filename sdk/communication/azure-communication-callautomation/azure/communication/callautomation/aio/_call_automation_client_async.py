@@ -379,7 +379,6 @@ class CallAutomationClient:
         recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
         recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
-        pause_on_start: Optional[bool] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
         **kwargs
@@ -395,8 +394,6 @@ class CallAutomationClient:
         :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
         :keyword recording_format_type: The format type of call recording.
         :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
-        :keyword pause_on_start: The state of the pause on start option.
-        :paramtype pause_on_start: bool or None
         :keyword audio_channel_participant_ordering:
          The sequential order in which audio channels are assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
@@ -424,7 +421,6 @@ class CallAutomationClient:
         recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
         recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
-        pause_on_start: Optional[bool] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
         **kwargs
@@ -440,8 +436,6 @@ class CallAutomationClient:
         :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
         :keyword recording_format_type: The format type of call recording.
         :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
-        :keyword pause_on_start: The state of the pause on start option.
-        :paramtype pause_on_start: bool or None
         :keyword audio_channel_participant_ordering:
          The sequential order in which audio channels are assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
@@ -481,7 +475,6 @@ class CallAutomationClient:
             recording_content_type=kwargs.pop("recording_content_type", None),
             recording_channel_type=kwargs.pop("recording_channel_type", None),
             recording_format_type=kwargs.pop("recording_format_type", None),
-            pause_on_start=kwargs.pop("pause_on_start", None),
             audio_channel_participant_ordering=kwargs.pop("audio_channel_participant_ordering", None),
             channel_affinity=channel_affinity_internal
         )
