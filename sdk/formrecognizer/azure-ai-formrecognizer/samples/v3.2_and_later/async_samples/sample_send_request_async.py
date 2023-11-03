@@ -100,7 +100,7 @@ async def sample_send_request_v2():
     # and the API version of your client will automatically be used for the request.
     request = HttpRequest(method="GET", url="custom/models?op=summary")
     async with client:
-        response = client.send_request(request)
+        response = await client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
     print(f"Our account has {response_body['summary']['count']} custom models, "
@@ -109,7 +109,7 @@ async def sample_send_request_v2():
     # pass with full url and override the api version
     request = HttpRequest(method="GET", url=f"{endpoint}/formrecognizer/v2.0/custom/models?op=summary")
     async with client:
-        response = client.send_request(request)
+        response = await client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
     print(f"Our account has {response_body['summary']['count']} custom models, "
@@ -119,7 +119,7 @@ async def sample_send_request_v2():
     # can only override the api version to 2022-08-31 or later with full url
     request = HttpRequest(method="GET", url=f"{client._endpoint}/formrecognizer/info?api-version=2023-07-31")
     async with client:
-        response = client.send_request(request)
+        response = await client.send_request(request)
     response.raise_for_status()
     response_body = response.json()
     print(

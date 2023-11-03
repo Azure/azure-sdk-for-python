@@ -98,16 +98,6 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             assert received_info1["summary"]["count"] == 0
             assert received_info1["summary"]["limit"] == 250
             
-            request = HttpRequest(
-                method="GET",
-                url="custom/models?op=summary&api-version=v2.0",
-                headers={"Accept": "application/json"},
-            )
-            result = await client.send_request(request)
-            received_info2 = result.json()
-            assert received_info2["summary"]["count"] == received_info1["summary"]["count"]
-            assert received_info2["summary"]["limit"] == received_info1["summary"]["limit"]
-            
             # test with full url
             request = HttpRequest(
                 method="GET",

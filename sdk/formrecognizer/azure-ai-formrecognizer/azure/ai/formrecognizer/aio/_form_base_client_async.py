@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from copy import deepcopy
 from typing import Any, Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -108,7 +109,10 @@ class FormRecognizerClientBaseAsync:
         api_version = self._api_version
         if hasattr(api_version, "value"):
             api_version = api_version.value
-        request_copy = _format_api_version(request, api_version)
+        if self._api_version in ["2.0", "2.1"]:
+            request_copy = deepcopy(request)
+        else:
+            request_copy = _format_api_version(request, api_version)
         path_format_arguments = {
             "endpoint": _SERIALIZER.url("endpoint", self._endpoint, "str", skip_quote=True),
         }
