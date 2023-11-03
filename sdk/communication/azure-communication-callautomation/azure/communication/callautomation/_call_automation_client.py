@@ -20,7 +20,8 @@ from ._generated.models import (
     AnswerCallRequest,
     RedirectCallRequest,
     RejectCallRequest,
-    StartCallRecordingRequest
+    StartCallRecordingRequest,
+    CallIntelligenceOptions
 )
 from ._models import (
     CallConnectionProperties,
@@ -187,6 +188,10 @@ class CallAutomationClient:
             source_display_name = source_display_name or target_participant.source_display_name
             target_participant = target_participant.target
 
+        call_intelligence_options = CallIntelligenceOptions(
+            cognitive_services_endpoint=cognitive_services_endpoint
+            ) if cognitive_services_endpoint else None
+
         try:
             targets = [serialize_identifier(p) for p in target_participant]
         except TypeError:
@@ -198,7 +203,7 @@ class CallAutomationClient:
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
-            cognitive_services_endpoint=cognitive_services_endpoint
+            call_intelligence_options=call_intelligence_options
         )
 
         process_repeatability_first_sent(kwargs)
@@ -284,10 +289,14 @@ class CallAutomationClient:
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        call_intelligence_options = CallIntelligenceOptions(
+            cognitive_services_endpoint=cognitive_services_endpoint
+            ) if cognitive_services_endpoint else None
+
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
-            cognitive_services_endpoint=cognitive_services_endpoint,
+            call_intelligence_options=call_intelligence_options,
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             operation_context=operation_context

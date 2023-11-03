@@ -46,7 +46,7 @@ from .._generated.models import (
     RecognizeOptions,
     MuteParticipantsRequest,
     CancelAddParticipantRequest,
-    CustomContext
+    CustomCallingContext
 )
 from .._generated.models._enums import RecognizeInputType
 from .._shared.auth_policy_utils import get_authentication_policy
@@ -261,7 +261,7 @@ class CallConnectionClient:
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
+        user_custom_calling_context = CustomCallingContext(
             voip_headers=voip_headers,
             sip_headers=sip_headers
             ) if sip_headers or voip_headers else None
@@ -269,7 +269,7 @@ class CallConnectionClient:
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
-            custom_context=user_custom_context
+            custom_calling_context=user_custom_calling_context
         )
 
         process_repeatability_first_sent(kwargs)
@@ -330,9 +330,9 @@ class CallConnectionClient:
             source_display_name = source_display_name or target_participant.source_display_name
             target_participant = target_participant.target
 
-        user_custom_context = None
+        user_custom_calling_context = None
         if sip_headers or voip_headers:
-            user_custom_context = CustomContext(
+            user_custom_calling_context = CustomCallingContext(
                 voip_headers=voip_headers,
                 sip_headers=sip_headers
             )
@@ -343,7 +343,7 @@ class CallConnectionClient:
             invitation_timeout_in_seconds=invitation_timeout,
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
-            custom_context=user_custom_context,
+            custom_calling_context=user_custom_calling_context
         )
 
         process_repeatability_first_sent(kwargs)
