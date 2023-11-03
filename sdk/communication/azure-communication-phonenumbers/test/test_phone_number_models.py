@@ -8,6 +8,7 @@ import pytest
 import azure.communication.phonenumbers._shared.models as models
 
 test_user_id = "test_user_id"
+test_app_id = "test_app_id"
 test_unknown_id = "test_unknown_id"
 test_phone_number = "+123456789101"
 
@@ -71,6 +72,35 @@ def test_microsoft_teams_user_identifier_cloud_types():
         assert teams_user.properties["is_anonymous"] == False
         assert teams_user.properties["cloud"] == cloud
 
+def test_microsoft_teams_app_identifier():
+    app = models.MicrosoftTeamsAppIdentifier(test_app_id)
+    assert app.kind == models.CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
+    assert app.raw_id == f'{models.TEAMS_APP_PUBLIC_CLOUD_PREFIX}{test_app_id}'
+    assert app.properties["app_id"] == test_app_id
+    assert app.properties["cloud"] == models.CommunicationCloudEnvironment.PUBLIC
+
+def test_microsoft_teams_app_identifier_cloud_types():
+    for cloud, prefix in zip(
+        [models.CommunicationCloudEnvironment.DOD, models.CommunicationCloudEnvironment.GCCH],
+        [models.TEAMS_APP_DOD_CLOUD_PREFIX, models.TEAMS_APP_GCCH_CLOUD_PREFIX]
+    ):
+        app = models.MicrosoftTeamsAppIdentifier(test_app_id, cloud=cloud)
+        assert app.kind == models.CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
+        assert app.raw_id == f'{prefix}{test_app_id}'
+        assert app.properties["app_id"] == test_app_id
+        assert app.properties["cloud"] == cloud
+
+def test_identifier_from_raw_id_microsoft_teams_app_returns_unknown():
+    raw_id = f"not_a_prefix:{test_app_id}"
+    identifier = models.identifier_from_raw_id(raw_id)
+    assert isinstance(identifier, models.UnknownIdentifier)
+
+def test_identifier_from_raw_id_microsoft_teams_app_cloud_types():
+    for prefix in [models.TEAMS_APP_PUBLIC_CLOUD_PREFIX, models.TEAMS_APP_GCCH_CLOUD_PREFIX, models.TEAMS_APP_DOD_CLOUD_PREFIX]:
+        raw_id = f"{prefix}:{test_app_id}"
+        identifier = models.identifier_from_raw_id(raw_id)
+        assert isinstance(identifier, models.MicrosoftTeamsAppIdentifier)
+
 def test_identifier_from_raw_id_microsoft_teams_user():
     for prefix in [models.TEAMS_USER_ANONYMOUS_PREFIX, models.TEAMS_USER_PUBLIC_CLOUD_PREFIX, models.TEAMS_USER_DOD_CLOUD_PREFIX, models.TEAMS_USER_GCCH_CLOUD_PREFIX]:
         raw_id = f"{prefix}:{test_user_id}"
@@ -96,6 +126,13 @@ def test_phone_number_identifier_equality():
     phone3 = models.PhoneNumberIdentifier("+0987654321")
     assert phone1 == phone2
     assert phone1 != phone3
+
+def test_microsoft_teams_app_identifier_equality():
+    app1 = models.MicrosoftTeamsAppIdentifier(test_app_id)
+    app2 = models.MicrosoftTeamsAppIdentifier(test_app_id)
+    app3 = models.MicrosoftTeamsAppIdentifier(test_unknown_id)
+    assert app1 == app2
+    assert app1 != app3
 
 def test_microsoft_teams_user_identifier_equality():
     user1 = models.MicrosoftTeamsUserIdentifier(test_user_id)

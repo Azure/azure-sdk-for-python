@@ -28,6 +28,8 @@ from ._shared.models import (
     PhoneNumberProperties,
     MicrosoftTeamsUserIdentifier,
     MicrosoftTeamsUserProperties,
+    MicrosoftTeamsAppIdentifier,
+    MicrosoftTeamsAppProperties,
     UnknownIdentifier
 )
 
@@ -54,6 +56,8 @@ __all__ = [
     'identifier_from_raw_id',
     'PhoneNumberIdentifier',
     'PhoneNumberProperties',
+    'MicrosoftTeamsAppIdentifier',
+    'MicrosoftTeamsAppProperties',
     'UnknownIdentifier'
 ]
 __version__ = VERSION

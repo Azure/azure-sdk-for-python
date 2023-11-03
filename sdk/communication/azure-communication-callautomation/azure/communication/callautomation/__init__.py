@@ -30,6 +30,7 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     CommunicationIdentifierKind,
     CommunicationCloudEnvironment,
+    MicrosoftTeamsAppIdentifier,
     UnknownIdentifier,
 )
 from ._generated.models._enums import (
@@ -76,6 +77,7 @@ __all__ = [
     "CommunicationUserIdentifier",
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
+    "MicrosoftTeamsAppIdentifier",
     "UnknownIdentifier",
 
     # enums

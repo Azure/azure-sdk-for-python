@@ -97,6 +97,38 @@ class IdentifierRawIdTest(unittest.TestCase):
             ),
             "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
         )
+        _assert_raw_id(
+            MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"),
+            "28:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
+        )
+        _assert_raw_id(
+            MicrosoftTeamsAppIdentifier(
+                app_id="01234567-89ab-cdef-0123-456789abcdef",
+                cloud=CommunicationCloudEnvironment.PUBLIC,
+            ),
+            "28:orgid:01234567-89ab-cdef-0123-456789abcdef",
+        )
+        _assert_raw_id(
+            MicrosoftTeamsAppIdentifier(
+                app_id="01234567-89ab-cdef-0123-456789abcdef",
+                cloud=CommunicationCloudEnvironment.GCCH,
+            ),
+            "28:gcch:01234567-89ab-cdef-0123-456789abcdef",
+        )
+        _assert_raw_id(
+            MicrosoftTeamsAppIdentifier(
+                app_id="01234567-89ab-cdef-0123-456789abcdef",
+                cloud=CommunicationCloudEnvironment.DOD,
+            ),
+            "28:dod:01234567-89ab-cdef-0123-456789abcdef",
+        )
+        # cspell:enable
+        _assert_raw_id(
+            UnknownIdentifier(
+                identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
+            ),
+            "28:ag08-global:01234567-89ab-cdef-0123-456789abcdef",
+        )
 
     def test_identifier_from_raw_id(self):
         _assert_communication_identifier(
@@ -166,6 +198,27 @@ class IdentifierRawIdTest(unittest.TestCase):
             "8:orgid:legacyFormat",
             MicrosoftTeamsUserIdentifier(
                 user_id="legacyFormat", cloud="PUBLIC", is_anonymous=False
+            ),
+        )
+        _assert_communication_identifier(
+            "28:orgid:01234567-89ab-cdef-0123-456789abcdef",
+            MicrosoftTeamsAppIdentifier(
+                app_id="01234567-89ab-cdef-0123-456789abcdef",
+                cloud=CommunicationCloudEnvironment.PUBLIC,
+            ),
+        )
+        _assert_communication_identifier(
+            "28:gcch:01234567-89ab-cdef-0123-456789abcdef",
+            MicrosoftTeamsAppIdentifier(
+                app_id="01234567-89ab-cdef-0123-456789abcdef",
+                cloud=CommunicationCloudEnvironment.GCCH,
+            ),
+        )
+        _assert_communication_identifier(
+            "28:dod:01234567-89ab-cdef-0123-456789abcdef",
+            MicrosoftTeamsAppIdentifier(
+                app_id="01234567-89ab-cdef-0123-456789abcdef",
+                cloud=CommunicationCloudEnvironment.DOD,
             ),
         )
         _assert_communication_identifier(
@@ -329,7 +382,62 @@ class IdentifierRawIdTest(unittest.TestCase):
             value="+512345556789"
         )
 
-        # UnknownIdentifiers are equal.
+        # MicrosoftTeamsAppIdentifiers are equal.
+        assert MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
+        ) == MicrosoftTeamsAppIdentifier(app_id="45ab2481-1c1c-4005-be24-0ffb879b1130")
+        assert MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.PUBLIC,
+        ) == MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.PUBLIC,
+        )
+        assert MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.GCCH,
+        ) == MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.GCCH,
+        )
+        assert MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.DOD,
+        ) == MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.DOD,
+        )
+        assert MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+        ) == MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.PUBLIC,
+        )
+
+        # MicrosoftTeamsAppIdentifiers are not equal.
+        assert MicrosoftTeamsAppIdentifier(
+            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.DOD,
+        ) != MicrosoftTeamsAppIdentifier(
+            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.GCCH,
+        )
+        assert MicrosoftTeamsAppIdentifier(
+            bot_id="55666-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.DOD,
+        ) != MicrosoftTeamsAppIdentifier(
+            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.DOD,
+        )
+        assert MicrosoftTeamsAppIdentifier(
+            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.GCCH,
+        ) != MicrosoftTeamsAppIdentifier(
+            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
+            cloud=CommunicationCloudEnvironment.GCCH,
+        )
+
+        # UnknownIdentifier are equal.
         assert UnknownIdentifier(
             identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
         ) == UnknownIdentifier(
