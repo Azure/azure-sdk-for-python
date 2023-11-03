@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from copy import deepcopy
 from typing import Any, Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
