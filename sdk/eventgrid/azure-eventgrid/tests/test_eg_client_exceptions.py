@@ -25,7 +25,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
 
     @EventGridPreparer()
     @recorded_by_proxy
-    def test_publish_cloud_event_bad_request(self, eventgrid_endpoint, eventgrid_key):
+    def test_publish_cloud_event_bad_request(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
         event = CloudEvent(
             type="Contoso.Items.ItemReceived",
@@ -35,7 +35,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
 
         with pytest.raises(HttpResponseError):
-            client.publish_cloud_events("testtopic1", [event])
+            client.publish_cloud_events(eventgrid_topic_name, [event])
 
     @EventGridPreparer()
     @recorded_by_proxy    
