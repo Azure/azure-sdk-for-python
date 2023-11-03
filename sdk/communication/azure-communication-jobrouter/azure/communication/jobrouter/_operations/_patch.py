@@ -1280,7 +1280,147 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         super()._reclassify_job(job_id=job_id, options={}, **kwargs)
 
+    @distributed_trace
+    def cancel_job(
+        self,
+        job_id: str,
+        options: Optional[Union[_models._models.CancelJobOptions, JSON, IO]] = None,
+        **kwargs: Any
+    ) -> None:  # pylint: disable=arguments-differ
+        """Closes a completed job.
+
+        :param str job_id: Id of the job.
+
+        :param options: Request model for cancelling job. Is one of the following types:
+         CancelJobOptions, JSON, IO Default value is None.
+        :type options: ~azure.communication.jobrouter.models.CancelJobOptions or JSON or IO
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START cancel_job]
+                :end-before: [END cancel_job]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to cancel a job
+        """
+        if not job_id:
+            raise ValueError("job_id cannot be None.")
+
+        super()._cancel_job(job_id = job_id, options = options, **kwargs)
+
+    @distributed_trace
+    def complete_job(
+        self,
+        job_id: str,
+        options: Union[_models._models.CompleteJobOptions, JSON, IO],
+        **kwargs: Any
+    ) -> None:  # pylint: disable=arguments-differ
+        """Completes an assigned job.
+
+        :param str job_id: Id of the job.
+
+        :param options: Request model for completing job. Is one of the following types:
+         CompleteJobOptions, JSON, IO Required.
+        :type options: ~azure.communication.jobrouter.models.CompleteJobOptions or JSON or IO
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START complete_job]
+                :end-before: [END complete_job]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to complete a job
+        """
+        if not job_id:
+            raise ValueError("job_id cannot be None.")
+
+        super()._complete_job(job_id = job_id, options = options, **kwargs)
+
+    @distributed_trace
+    def close_job(
+        self,
+        job_id: str,
+        options: Union[_models._models.CloseJobOptions, JSON, IO],
+        **kwargs: Any
+    ) -> None:  # pylint: disable=arguments-differ
+        """Closes a completed job.
+
+        :param str job_id: Id of the job.
+
+        :param options: Request model for closing job. Is one of the following types: CloseJobOptions,
+         JSON, IO Required.
+        :type options: ~azure.communication.jobrouter.models.CloseJobOptions or JSON or IO
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START close_job]
+                :end-before: [END close_job]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to close a job
+        """
+        if not job_id:
+            raise ValueError("job_id cannot be None.")
+
+        super()._close_job(job_id = job_id, options = options, **kwargs)
+
     # endregion Job
+
+    # region Offer
+    @distributed_trace
+    def decline_job_offer(
+        self,
+        worker_id: str,
+        offer_id: str,
+        options: Optional[Union[_models._models.DeclineJobOfferOptions, JSON, IO]] = None,
+        **kwargs: Any
+    ) -> None:  # pylint: disable=arguments-differ
+        """Declines an offer to work on a job.
+
+        :param worker_id: Id of the worker. Required.
+        :type worker_id: str
+        :param offer_id: Id of the offer. Required.
+        :type offer_id: str
+        :param options: Request model for declining offer. Is one of the following types:
+         DeclineJobOfferOptions, JSON, IO Default value is None.
+        :type options: ~azure.communication.jobrouter.models.DeclineJobOfferOptions or JSON or IO
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START close_job]
+                :end-before: [END close_job]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to close a job
+        """
+        if not worker_id:
+            raise ValueError("worker_id cannot be None.")
+
+        if not offer_id:
+            raise ValueError("offer_id cannot be None.")
+
+        super()._decline_job_offer(worker_id = worker_id, offer_id = offer_id, options = options, **kwargs)
+    # endregion Offer
 
 
 __all__: List[str] = [

@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 class AcceptJobOfferResult(_model_base.Model):
     """Response containing Id's for the worker, job, and assignment from an accepted offer.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: The assignment Id that assigns a worker that has accepted an offer to a
      job. Required.
@@ -72,7 +72,7 @@ class DistributionMode(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     BestWorkerMode, LongestIdleMode, RoundRobinMode
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
@@ -129,7 +129,7 @@ class DistributionMode(_model_base.Model):
 class BestWorkerMode(DistributionMode, discriminator="best-worker"):
     """Jobs are distributed to the worker with the strongest abilities available.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
@@ -196,9 +196,7 @@ class ExceptionAction(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     CancelExceptionAction, ManualReclassifyExceptionAction, ReclassifyExceptionAction
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
@@ -208,11 +206,26 @@ class ExceptionAction(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    id: Optional[str] = rest_field(visibility=["read"])
+    id: Optional[str] = rest_field()
     """Unique Id of the exception action."""
     kind: Literal[None] = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of ExceptionAction. Required. Default value is
      None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -222,9 +235,7 @@ class ExceptionAction(_model_base.Model):
 class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
     """An action that marks a job as cancelled.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
@@ -251,6 +262,7 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         note: Optional[str] = None,
         disposition_code: Optional[str] = None,
     ):
@@ -285,24 +297,9 @@ class CancelJobOptions(_model_base.Model):
     """Indicates the outcome of the job, populate this field with your own custom values. If not
      provided, default value of \"Cancelled\" is set."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        note: Optional[str] = None,
-        disposition_code: Optional[str] = None,
-    ):
-        ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
+class CancelJobResult(_model_base.Model):
+    """Response payload from cancelling a job."""
 
 
 class ClassificationPolicy(_model_base.Model):
@@ -310,7 +307,7 @@ class ClassificationPolicy(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -378,7 +375,7 @@ class ClassificationPolicy(_model_base.Model):
 class CloseJobOptions(_model_base.Model):
     """Request payload for closing jobs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: The assignment within which the job is to be closed. Required.
     :vartype assignment_id: str
@@ -405,32 +402,15 @@ class CloseJobOptions(_model_base.Model):
     note: Optional[str] = rest_field()
     """A note that will be appended to the jobs' Notes collection with the current timestamp."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        assignment_id: str,
-        disposition_code: Optional[str] = None,
-        close_at: Optional[datetime.datetime] = None,
-        note: Optional[str] = None,
-    ):
-        ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
+class CloseJobResult(_model_base.Model):
+    """Response payload from closing a job."""
 
 
 class CompleteJobOptions(_model_base.Model):
     """Request payload for completing jobs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: The assignment within the job to complete. Required.
     :vartype assignment_id: str
@@ -444,24 +424,9 @@ class CompleteJobOptions(_model_base.Model):
     note: Optional[str] = rest_field()
     """A note that will be appended to the jobs' Notes collection with the current timestamp."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        assignment_id: str,
-        note: Optional[str] = None,
-    ):
-        ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
+class CompleteJobResult(_model_base.Model):
+    """Response payload from completing a job."""
 
 
 class QueueSelectorAttachment(_model_base.Model):
@@ -472,7 +437,7 @@ class QueueSelectorAttachment(_model_base.Model):
     RuleEngineQueueSelectorAttachment, StaticQueueSelectorAttachment,
     WeightedAllocationQueueSelectorAttachment
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of QueueSelectorAttachment. Required.
      Default value is None.
@@ -493,7 +458,7 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
     """Describes a set of queue selectors that will be attached if the given condition resolves to
     true.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar condition: The condition that must be true for the queue selectors to be attached.
      Required.
@@ -542,7 +507,7 @@ class WorkerSelectorAttachment(_model_base.Model):
     RuleEngineWorkerSelectorAttachment, StaticWorkerSelectorAttachment,
     WeightedAllocationWorkerSelectorAttachment
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of WorkerSelectorAttachment. Required.
      Default value is None.
@@ -563,7 +528,7 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
     """Describes a set of worker selectors that will be attached if the given condition resolves to
     true.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar condition: The condition that must be true for the worker selectors to be attached.
      Required.
@@ -621,23 +586,9 @@ class DeclineJobOfferOptions(_model_base.Model):
      is provided, then the job will be re-matched to eligible workers at the retry time in UTC.  The
      worker that declined the job will also be eligible for the job at that time."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        retry_offer_at: Optional[datetime.datetime] = None,
-    ):
-        ...
 
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
+class DeclineJobOfferResult(_model_base.Model):
+    """Response payload from declining a job."""
 
 
 class RouterRule(_model_base.Model):
@@ -654,7 +605,7 @@ class RouterRule(_model_base.Model):
     FunctionRouterRule, DirectMapRouterRule, ExpressionRouterRule, StaticRouterRule,
     WebhookRouterRule
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of RouterRule. Required. Default value
      is None.
@@ -673,7 +624,7 @@ class RouterRule(_model_base.Model):
 class DirectMapRouterRule(RouterRule, discriminator="direct-map-rule"):
     """A rule that return the same labels as the input labels.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of Rule. Required. Default value is
      "direct-map-rule".
@@ -694,7 +645,7 @@ class DistributionPolicy(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -746,7 +697,7 @@ class ExceptionPolicy(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -790,7 +741,7 @@ class ExceptionPolicy(_model_base.Model):
 class ExceptionRule(_model_base.Model):
     """A rule that defines actions to execute upon a specific trigger.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of the exception rule. Required.
     :vartype id: str
@@ -834,7 +785,7 @@ class ExceptionTrigger(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     QueueLengthExceptionTrigger, WaitTimeExceptionTrigger
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required. Default
      value is None.
@@ -854,7 +805,7 @@ class ExceptionTrigger(_model_base.Model):
 class ExpressionRouterRule(RouterRule, discriminator="expression-rule"):
     """A rule providing inline expression rules.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar language: The expression language to compile to and execute. "powerFx"
     :vartype language: str or ~azure.communication.jobrouter.models.ExpressionRouterRuleLanguage
@@ -899,7 +850,7 @@ class ExpressionRouterRule(RouterRule, discriminator="expression-rule"):
 class FunctionRouterRule(RouterRule, discriminator="azure-function-rule"):
     """A rule providing a binding to an HTTP Triggered Azure Function.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar function_uri: URL for Azure Function. Required.
     :vartype function_uri: str
@@ -993,7 +944,7 @@ class JobMatchingMode(_model_base.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     QueueAndMatchMode, ScheduleAndSuspendMode, SuspendMode
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of JobMatchingMode. Required. Default
      value is None.
@@ -1013,7 +964,7 @@ class JobMatchingMode(_model_base.Model):
 class LongestIdleMode(DistributionMode, discriminator="longest-idle"):
     """Jobs are directed to the worker who has been idle longest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
@@ -1061,9 +1012,7 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manual-rec
     """An action that manually reclassifies a job by providing the queue, priority and worker
     selectors.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
@@ -1092,6 +1041,7 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manual-rec
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         queue_id: Optional[str] = None,
         priority: Optional[int] = None,
         worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = None,
@@ -1149,7 +1099,7 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
     """Attaches a queue selector where the value is passed through from the job label with the same
     key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: The label key to query against. Required.
     :vartype key: str
@@ -1197,7 +1147,7 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
     """Attaches a worker selector where the value is passed through from the job label with the same
     key.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: The label key to query against. Required.
     :vartype key: str
@@ -1251,7 +1201,7 @@ class QueueAndMatchMode(JobMatchingMode, discriminator="queue-and-match"):
     """Describes a matching mode where matching worker to a job is automatically started after job is
     queued successfully.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing QueueAndMatchMode. Required. Default value is
      "queue-and-match".
@@ -1270,7 +1220,7 @@ class QueueAndMatchMode(JobMatchingMode, discriminator="queue-and-match"):
 class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queue-length"):
     """Trigger for an exception action on exceeding queue length.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar threshold: Threshold of number of jobs ahead in the queue to for this trigger to fire.
      Required.
@@ -1310,7 +1260,7 @@ class QueueWeightedAllocation(_model_base.Model):
     """Contains the weight percentage and queue selectors to be applied if selected for weighted
     distributions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar weight: The percentage of this weight, expressed as a fraction of 1. Required.
     :vartype weight: float
@@ -1347,9 +1297,7 @@ class QueueWeightedAllocation(_model_base.Model):
 class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
     """An action that modifies labels on a job and then reclassifies it.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
@@ -1376,6 +1324,7 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         classification_policy_id: Optional[str] = None,
         labels_to_upsert: Optional[Dict[str, Any]] = None,
     ):
@@ -1397,11 +1346,15 @@ class ReclassifyJobOptions(_model_base.Model):
     """Request payload for reclassifying jobs."""
 
 
+class ReclassifyJobResult(_model_base.Model):
+    """Response payload from reclassifying a job."""
+
+
 class RoundRobinMode(DistributionMode, discriminator="round-robin"):
     """Jobs are distributed in order to workers, starting with the worker that is after the last
     worker to receive a job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar min_concurrent_offers: Governs the minimum desired number of active concurrent offers a
      job can have.
@@ -1448,7 +1401,7 @@ class RoundRobinMode(DistributionMode, discriminator="round-robin"):
 class RouterChannel(_model_base.Model):
     """Represents the capacity a job in this channel will consume from a worker.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar channel_id: Id of the channel. Required.
     :vartype channel_id: str
@@ -1494,7 +1447,7 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -1621,7 +1574,7 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
 class RouterJobAssignment(_model_base.Model):
     """Assignment details of a job to a worker.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: The Id of the job assignment. Required.
     :vartype assignment_id: str
@@ -1672,7 +1625,7 @@ class RouterJobAssignment(_model_base.Model):
 class RouterJobNote(_model_base.Model):
     """A note attached to a job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar message: The message contained in the note. Required.
     :vartype message: str
@@ -1709,7 +1662,7 @@ class RouterJobNote(_model_base.Model):
 class RouterJobOffer(_model_base.Model):
     """An offer of a job to a worker.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offer_id: The Id of the offer. Required.
     :vartype offer_id: str
@@ -1760,7 +1713,7 @@ class RouterJobOffer(_model_base.Model):
 class RouterJobPositionDetails(_model_base.Model):
     """Position and estimated wait time for a job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar job_id: Id of the job these details are about. Required.
     :vartype job_id: str
@@ -1814,7 +1767,7 @@ class RouterQueue(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -1872,7 +1825,7 @@ class RouterQueue(_model_base.Model):
 class RouterQueueSelector(_model_base.Model):
     """Describes a condition that must be met against a set of labels for queue selection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: The label key to query against. Required.
     :vartype key: str
@@ -1917,7 +1870,7 @@ class RouterQueueSelector(_model_base.Model):
 class RouterQueueStatistics(_model_base.Model):
     """Statistics for the queue.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar queue_id: Id of the queue these details are about. Required.
     :vartype queue_id: str
@@ -1968,7 +1921,7 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
@@ -2055,7 +2008,7 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
 class RouterWorkerAssignment(_model_base.Model):
     """The assignment for a worker to a job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: The Id of the assignment. Required.
     :vartype assignment_id: str
@@ -2104,7 +2057,7 @@ class RouterWorkerSelector(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: The label key to query against. Required.
     :vartype key: str
@@ -2167,7 +2120,7 @@ class RouterWorkerSelector(_model_base.Model):
 class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="rule-engine"):
     """Attaches queue selectors to a job when the RouterRule is resolved.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule: A RouterRule that resolves a collection of queue selectors to attach. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
@@ -2205,7 +2158,7 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="
 class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="rule-engine"):
     """Attaches worker selectors to a job when a RouterRule is resolved.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule: A RouterRule that resolves a collection of worker selectors to attach. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
@@ -2244,7 +2197,7 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="schedule-and-suspen
     """Describes a matching mode used for scheduling jobs to be queued at a future time. At the
     specified time, matching worker to a job will not start automatically.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar schedule_at: Scheduled time. Required.
     :vartype schedule_at: ~datetime.datetime
@@ -2342,7 +2295,7 @@ class ScoringRuleOptions(_model_base.Model):
 class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="static"):
     """Describes a queue selector that will be attached to the job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar queue_selector: The queue selector to attach. Required.
     :vartype queue_selector: ~azure.communication.jobrouter.models.RouterQueueSelector
@@ -2380,7 +2333,7 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
 class StaticRouterRule(RouterRule, discriminator="static-rule"):
     """A rule providing static rules that always return the same result, regardless of input.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The static value this rule always returns.
     :vartype value: any
@@ -2418,7 +2371,7 @@ class StaticRouterRule(RouterRule, discriminator="static-rule"):
 class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="static"):
     """Describes a worker selector that will be attached to the job.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar worker_selector: The worker selector to attach. Required.
     :vartype worker_selector: ~azure.communication.jobrouter.models.RouterWorkerSelector
@@ -2456,7 +2409,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="st
 class SuspendMode(JobMatchingMode, discriminator="suspend"):
     """Describes a matching mode where matching worker to a job is suspended.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing SuspendMode. Required. Default value is
      "suspend".
@@ -2504,7 +2457,7 @@ class UnassignJobOptions(_model_base.Model):
 class UnassignJobResult(_model_base.Model):
     """Response payload after a job has been successfully unassigned.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar job_id: The Id of the job unassigned. Required.
     :vartype job_id: str
@@ -2540,7 +2493,7 @@ class UnassignJobResult(_model_base.Model):
 class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="wait-time"):
     """Trigger for an exception action on exceeding wait time.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar threshold_seconds: Threshold for wait time for this trigger. Required.
     :vartype threshold_seconds: float
@@ -2578,7 +2531,7 @@ class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="wait-time"):
 class WebhookRouterRule(RouterRule, discriminator="webhook-rule"):
     """A rule providing a binding to an external web server.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar authorization_server_uri: Uri for Authorization Server.
     :vartype authorization_server_uri: str
@@ -2631,7 +2584,7 @@ class WeightedAllocationQueueSelectorAttachment(
     """Describes multiple sets of queue selectors, of which one will be selected and attached
     according to a weighting.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.QueueWeightedAllocation]
@@ -2672,7 +2625,7 @@ class WeightedAllocationWorkerSelectorAttachment(
     """Describes multiple sets of worker selectors, of which one will be selected and attached
     according to a weighting.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.WorkerWeightedAllocation]
@@ -2711,7 +2664,7 @@ class WorkerWeightedAllocation(_model_base.Model):
     """Contains the weight percentage and worker selectors to be applied if selected for weighted
     distributions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar weight: The percentage of this weight, expressed as a fraction of 1. Required.
     :vartype weight: float
