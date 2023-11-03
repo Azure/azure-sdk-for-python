@@ -43,7 +43,7 @@ def build_index(
         from azure.ai.generative.index._embeddings import EmbeddingsContainer
         from azure.ai.generative.index._tasks.update_acs import create_index_from_raw_embeddings as acs_create_index_from_raw_embeddings
         from azure.ai.generative.index._tasks.update_pinecone import create_index_from_raw_embeddings as pinecone_create_index_from_raw_embeddings
-        from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
+        from azure.ai.generative.index._utils.connections import get_connection_by_id_v2, get_metadata_from_connection
         from azure.ai.generative.index._utils.logging import disable_mlflow
     except ImportError as e:
         print("In order to use build_index to build an Index locally, you must have azure-ai-generative[index] installed")
@@ -177,7 +177,7 @@ def build_index(
             pinecone_args = {
                 **pinecone_args,
                 **{
-                    "environment": pinecone_connection["properties"]["metadata"]["environment"]
+                    "environment": get_metadata_from_connection(pinecone_connection)["environment"]
                 }
             }
             connection_args = {
