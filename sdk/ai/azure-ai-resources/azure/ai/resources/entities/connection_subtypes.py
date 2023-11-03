@@ -16,7 +16,9 @@ from azure.ai.ml.constants._common import (
 from .base_connection import BaseConnection
 
 class AzureOpenAIConnection(BaseConnection):
-    """A Connection for Azure Open AI.
+    """A Connection for Azure Open AI. Note: This object usually shouldn't be created manually by users.
+    To get the default AzureOpenAIConnection for an AI Resource, use an AIClient object to call the
+    'get_default_aoai_connection' function.
 
     :param name: Name of the connection.
     :type name: str
@@ -191,7 +193,9 @@ class AzureAISearchConnection(BaseConnection):
 
 
 class AzureAIServiceConnection(BaseConnection):
-    """A Connection for an Azure Cognitive Service.
+    """A Connection for an Azure Cognitive Service. Note: This object usually shouldn't be created manually by users.
+    To get the default AzureOpenAIConnection for an AI Resource, use an AIClient object to call the
+    'get_default_aoai_connection' function.
 
     :param name: Name of the connection.
     :type name: str
