@@ -38,8 +38,8 @@ async def run():
             )
             for details in receive_result.value:
                 cloud_event_received = details.event
-                print("CloudEvent: " + cloud_event_received)
-                print("Data: " + cloud_event_received.data)
+                print("CloudEvent: ", cloud_event_received)
+                print("Data: ", cloud_event_received.data)
         except HttpResponseError:
             raise
 
