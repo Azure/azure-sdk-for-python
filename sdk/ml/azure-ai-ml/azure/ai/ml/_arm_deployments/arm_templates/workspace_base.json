@@ -547,13 +547,6 @@
                 "description": "A flag to determine whether to set up feature store"
             }
         },
-        "byo_open_ai_resource_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Resource Id of BYO open ai resource."
-            }
-        },
         "serverless_compute_settings": {
             "type": "object",
             "defaultValue": {},
@@ -872,7 +865,7 @@
                     }
                 },
                 {
-                    "condition": "[equals(parameters('endpoint_option'), 'new')]",
+                    "condition": "[and(equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
                     "type": "endpoints",
                     "apiVersion": "2023-08-01-preview",
                     "name": "Azure.OpenAI",
@@ -886,7 +879,7 @@
                     ]
                   },
                   {
-                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'))]",
+                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
                     "type": "endpoints",
                     "apiVersion": "2023-08-01-preview",
                     "name": "Azure.ContentSafety",
@@ -900,7 +893,7 @@
                     ]
                   },
                   {
-                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'))]",
+                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
                     "type": "endpoints",
                     "apiVersion": "2023-08-01-preview",
                     "name": "Azure.Speech",
