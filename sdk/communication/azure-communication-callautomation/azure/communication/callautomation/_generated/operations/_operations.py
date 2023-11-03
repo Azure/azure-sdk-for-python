@@ -823,7 +823,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         else:
             _json = self._serialize.body(create_call_request, "CreateCallRequest")
 
-        request = build_azure_communication_call_automation_service_create_call_request(
+        _request = build_azure_communication_call_automation_service_create_call_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -834,11 +834,11 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -853,9 +853,9 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         deserialized = self._deserialize("CallConnectionProperties", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def answer_call(
@@ -933,7 +933,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         else:
             _json = self._serialize.body(answer_call_request, "AnswerCallRequest")
 
-        request = build_azure_communication_call_automation_service_answer_call_request(
+        _request = build_azure_communication_call_automation_service_answer_call_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -944,11 +944,11 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -963,9 +963,9 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         deserialized = self._deserialize("CallConnectionProperties", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def redirect_call(  # pylint: disable=inconsistent-return-statements
@@ -1048,7 +1048,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         else:
             _json = self._serialize.body(redirect_call_request, "RedirectCallRequest")
 
-        request = build_azure_communication_call_automation_service_redirect_call_request(
+        _request = build_azure_communication_call_automation_service_redirect_call_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1059,11 +1059,11 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1076,7 +1076,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def reject_call(  # pylint: disable=inconsistent-return-statements
@@ -1154,7 +1154,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         else:
             _json = self._serialize.body(reject_call_request, "RejectCallRequest")
 
-        request = build_azure_communication_call_automation_service_reject_call_request(
+        _request = build_azure_communication_call_automation_service_reject_call_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1165,11 +1165,11 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1182,7 +1182,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class CallConnectionOperations:
@@ -1229,7 +1229,7 @@ class CallConnectionOperations:
 
         cls: ClsType[_models.CallConnectionProperties] = kwargs.pop("cls", None)
 
-        request = build_call_connection_get_call_request(
+        _request = build_call_connection_get_call_request(
             call_connection_id=call_connection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1238,11 +1238,11 @@ class CallConnectionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1257,9 +1257,9 @@ class CallConnectionOperations:
         deserialized = self._deserialize("CallConnectionProperties", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def hangup_call(  # pylint: disable=inconsistent-return-statements
@@ -1290,7 +1290,7 @@ class CallConnectionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_call_connection_hangup_call_request(
+        _request = build_call_connection_hangup_call_request(
             call_connection_id=call_connection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1299,11 +1299,11 @@ class CallConnectionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1316,7 +1316,7 @@ class CallConnectionOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def terminate_call(  # pylint: disable=inconsistent-return-statements
@@ -1345,7 +1345,7 @@ class CallConnectionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_call_connection_terminate_call_request(
+        _request = build_call_connection_terminate_call_request(
             call_connection_id=call_connection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1354,11 +1354,11 @@ class CallConnectionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1371,7 +1371,7 @@ class CallConnectionOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def transfer_to_participant(
@@ -1470,7 +1470,7 @@ class CallConnectionOperations:
         else:
             _json = self._serialize.body(transfer_to_participant_request, "TransferToParticipantRequest")
 
-        request = build_call_connection_transfer_to_participant_request(
+        _request = build_call_connection_transfer_to_participant_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1482,11 +1482,11 @@ class CallConnectionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1501,9 +1501,9 @@ class CallConnectionOperations:
         deserialized = self._deserialize("TransferCallResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_participants(self, call_connection_id: str, **kwargs: Any) -> Iterable["_models.CallParticipant"]:
@@ -1536,7 +1536,7 @@ class CallConnectionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_call_connection_get_participants_request(
+                _request = build_call_connection_get_participants_request(
                     call_connection_id=call_connection_id,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -1547,7 +1547,7 @@ class CallConnectionOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1559,7 +1559,7 @@ class CallConnectionOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -1567,9 +1567,9 @@ class CallConnectionOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize(
@@ -1581,11 +1581,11 @@ class CallConnectionOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1692,7 +1692,7 @@ class CallConnectionOperations:
         else:
             _json = self._serialize.body(add_participant_request, "AddParticipantRequest")
 
-        request = build_call_connection_add_participant_request(
+        _request = build_call_connection_add_participant_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1704,11 +1704,11 @@ class CallConnectionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1723,9 +1723,9 @@ class CallConnectionOperations:
         deserialized = self._deserialize("AddParticipantResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def remove_participant(
@@ -1824,7 +1824,7 @@ class CallConnectionOperations:
         else:
             _json = self._serialize.body(remove_participant_request, "RemoveParticipantRequest")
 
-        request = build_call_connection_remove_participant_request(
+        _request = build_call_connection_remove_participant_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1836,11 +1836,11 @@ class CallConnectionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1855,9 +1855,9 @@ class CallConnectionOperations:
         deserialized = self._deserialize("RemoveParticipantResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def mute(
@@ -1956,7 +1956,7 @@ class CallConnectionOperations:
         else:
             _json = self._serialize.body(mute_participants_request, "MuteParticipantsRequest")
 
-        request = build_call_connection_mute_request(
+        _request = build_call_connection_mute_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1968,11 +1968,11 @@ class CallConnectionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1987,9 +1987,9 @@ class CallConnectionOperations:
         deserialized = self._deserialize("MuteParticipantsResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def cancel_add_participant(
@@ -2088,7 +2088,7 @@ class CallConnectionOperations:
         else:
             _json = self._serialize.body(cancel_add_participant_request, "CancelAddParticipantRequest")
 
-        request = build_call_connection_cancel_add_participant_request(
+        _request = build_call_connection_cancel_add_participant_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2100,11 +2100,11 @@ class CallConnectionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2119,9 +2119,9 @@ class CallConnectionOperations:
         deserialized = self._deserialize("CancelAddParticipantResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_participant(
@@ -2152,7 +2152,7 @@ class CallConnectionOperations:
 
         cls: ClsType[_models.CallParticipant] = kwargs.pop("cls", None)
 
-        request = build_call_connection_get_participant_request(
+        _request = build_call_connection_get_participant_request(
             call_connection_id=call_connection_id,
             participant_raw_id=participant_raw_id,
             api_version=self._config.api_version,
@@ -2162,11 +2162,11 @@ class CallConnectionOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2181,9 +2181,9 @@ class CallConnectionOperations:
         deserialized = self._deserialize("CallParticipant", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
 
 class CallMediaOperations:
@@ -2291,7 +2291,7 @@ class CallMediaOperations:
         else:
             _json = self._serialize.body(play_request, "PlayRequest")
 
-        request = build_call_media_play_request(
+        _request = build_call_media_play_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2303,11 +2303,11 @@ class CallMediaOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2320,7 +2320,7 @@ class CallMediaOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def cancel_all_media_operations(  # pylint: disable=inconsistent-return-statements
@@ -2349,7 +2349,7 @@ class CallMediaOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_call_media_cancel_all_media_operations_request(
+        _request = build_call_media_cancel_all_media_operations_request(
             call_connection_id=call_connection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2358,11 +2358,11 @@ class CallMediaOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2375,7 +2375,7 @@ class CallMediaOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def recognize(  # pylint: disable=inconsistent-return-statements
@@ -2464,7 +2464,7 @@ class CallMediaOperations:
         else:
             _json = self._serialize.body(recognize_request, "RecognizeRequest")
 
-        request = build_call_media_recognize_request(
+        _request = build_call_media_recognize_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2476,11 +2476,11 @@ class CallMediaOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2493,7 +2493,7 @@ class CallMediaOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
@@ -2592,7 +2592,7 @@ class CallMediaOperations:
         else:
             _json = self._serialize.body(continuous_dtmf_recognition_request, "ContinuousDtmfRecognitionRequest")
 
-        request = build_call_media_start_continuous_dtmf_recognition_request(
+        _request = build_call_media_start_continuous_dtmf_recognition_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2604,11 +2604,11 @@ class CallMediaOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2621,7 +2621,7 @@ class CallMediaOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
@@ -2720,7 +2720,7 @@ class CallMediaOperations:
         else:
             _json = self._serialize.body(continuous_dtmf_recognition_request, "ContinuousDtmfRecognitionRequest")
 
-        request = build_call_media_stop_continuous_dtmf_recognition_request(
+        _request = build_call_media_stop_continuous_dtmf_recognition_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2732,11 +2732,11 @@ class CallMediaOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2749,7 +2749,7 @@ class CallMediaOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def send_dtmf_tones(
@@ -2844,7 +2844,7 @@ class CallMediaOperations:
         else:
             _json = self._serialize.body(send_dtmf_tones_request, "SendDtmfTonesRequest")
 
-        request = build_call_media_send_dtmf_tones_request(
+        _request = build_call_media_send_dtmf_tones_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2856,11 +2856,11 @@ class CallMediaOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2875,9 +2875,9 @@ class CallMediaOperations:
         deserialized = self._deserialize("SendDtmfTonesResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
 
 class CallRecordingOperations:
@@ -2981,7 +2981,7 @@ class CallRecordingOperations:
         else:
             _json = self._serialize.body(start_call_recording, "StartCallRecordingRequest")
 
-        request = build_call_recording_start_recording_request(
+        _request = build_call_recording_start_recording_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -2992,11 +2992,11 @@ class CallRecordingOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3011,9 +3011,9 @@ class CallRecordingOperations:
         deserialized = self._deserialize("RecordingStateResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_recording_properties(self, recording_id: str, **kwargs: Any) -> _models.RecordingStateResponse:
@@ -3040,7 +3040,7 @@ class CallRecordingOperations:
 
         cls: ClsType[_models.RecordingStateResponse] = kwargs.pop("cls", None)
 
-        request = build_call_recording_get_recording_properties_request(
+        _request = build_call_recording_get_recording_properties_request(
             recording_id=recording_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3049,11 +3049,11 @@ class CallRecordingOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3068,9 +3068,9 @@ class CallRecordingOperations:
         deserialized = self._deserialize("RecordingStateResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def stop_recording(  # pylint: disable=inconsistent-return-statements
@@ -3099,7 +3099,7 @@ class CallRecordingOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_call_recording_stop_recording_request(
+        _request = build_call_recording_stop_recording_request(
             recording_id=recording_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3108,11 +3108,11 @@ class CallRecordingOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3125,7 +3125,7 @@ class CallRecordingOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def pause_recording(  # pylint: disable=inconsistent-return-statements
@@ -3154,7 +3154,7 @@ class CallRecordingOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_call_recording_pause_recording_request(
+        _request = build_call_recording_pause_recording_request(
             recording_id=recording_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3163,11 +3163,11 @@ class CallRecordingOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3180,7 +3180,7 @@ class CallRecordingOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def resume_recording(  # pylint: disable=inconsistent-return-statements
@@ -3209,7 +3209,7 @@ class CallRecordingOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_call_recording_resume_recording_request(
+        _request = build_call_recording_resume_recording_request(
             recording_id=recording_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3218,11 +3218,11 @@ class CallRecordingOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3235,4 +3235,4 @@ class CallRecordingOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore

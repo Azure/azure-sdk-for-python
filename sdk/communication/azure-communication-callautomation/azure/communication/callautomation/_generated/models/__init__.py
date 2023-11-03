@@ -14,6 +14,7 @@ from ._models import AnswerCallRequest
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
+from ._models import CallIntelligenceOptions
 from ._models import CallLocator
 from ._models import CallParticipant
 from ._models import CallTransferAccepted
@@ -34,7 +35,7 @@ from ._models import ContinuousDtmfRecognitionStopped
 from ._models import ContinuousDtmfRecognitionToneFailed
 from ._models import ContinuousDtmfRecognitionToneReceived
 from ._models import CreateCallRequest
-from ._models import CustomContext
+from ._models import CustomCallingContext
 from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import FileSource
@@ -72,7 +73,6 @@ from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import TextSource
-from ._models import ToneInfo
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 
@@ -103,6 +103,7 @@ __all__ = [
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",
+    "CallIntelligenceOptions",
     "CallLocator",
     "CallParticipant",
     "CallTransferAccepted",
@@ -123,7 +124,7 @@ __all__ = [
     "ContinuousDtmfRecognitionToneFailed",
     "ContinuousDtmfRecognitionToneReceived",
     "CreateCallRequest",
-    "CustomContext",
+    "CustomCallingContext",
     "DtmfOptions",
     "DtmfResult",
     "FileSource",
@@ -161,7 +162,6 @@ __all__ = [
     "SsmlSource",
     "StartCallRecordingRequest",
     "TextSource",
-    "ToneInfo",
     "TransferCallResponse",
     "TransferToParticipantRequest",
     "CallConnectionState",
