@@ -115,7 +115,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
     def __init__(
         self,
         *,
-        component: Optional[Union[str, PipelineComponent]] = None,
+        component: Optional[Union[str, PipelineComponent, Component]] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Output]] = None,
         name: Optional[str] = None,

@@ -156,7 +156,8 @@ class Sweep(ParameterizedSweep, BaseNode):
 
         :rtype: ~azure.ai.ml.entities.CommandComponent
         """
-        return self._component
+        res: CommandComponent = self._component
+        return res
 
     @property
     def search_space(
