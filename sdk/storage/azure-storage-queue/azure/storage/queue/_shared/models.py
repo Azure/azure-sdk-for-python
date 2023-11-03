@@ -578,4 +578,4 @@ class StorageConfiguration(Configuration):
         self.min_large_chunk_upload_threshold = kwargs.pop('min_large_chunk_upload_threshold', 100 * 1024 * 1024 + 1)
         self.max_single_get_size = kwargs.pop('max_single_get_size', 32 * 1024 * 1024)
         self.max_chunk_get_size = kwargs.pop('max_chunk_get_size', 4 * 1024 * 1024)
-        self.max_range_size = kwargs.pop('max_get_range_size', 4 * 1024 * 1024)
+        self.max_range_size = kwargs.pop('max_range_size', 4 * 1024 * 1024)
