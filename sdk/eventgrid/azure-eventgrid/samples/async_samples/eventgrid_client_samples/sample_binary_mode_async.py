@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import os
 import asyncio
+import json
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid.aio import EventGridClient
 from azure.eventgrid.models import *
@@ -23,39 +24,28 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 async def run():
     async with client:
-
-        # Publish a CloudEvent as dict
-        try:
-            cloud_event_dict = {"data": "hello", "source": "https://example.com", "type": "example"}
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
-        except HttpResponseError:
-            raise
-
-        # Publish a list of CloudEvents as dict
-        try:
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=[cloud_event_dict, cloud_event_dict])
-        except HttpResponseError:
-            raise
-
-        
         # Publish a CloudEvent
         try:
-            cloud_event = CloudEvent(
-                data="HI", source="https://example.com", type="example"
+            # Publish CloudEvent in binary mode with str encoded as bytes
+            cloud_event_dict = {"data":b"HI", "source":"https://example.com", "type":"example", "datacontenttype":"text/plain"}
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
+
+            # Publish CloudEvent in binary mode with json encoded as bytes
+            cloud_event = CloudEvent(data=json.dumps({"hello":"data"}).encode("utf-8"), source="https://example.com", type="example", datacontenttype="application/json")
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event, binary_mode=True)
+
+            receive_result = await client.receive_cloud_events(
+                topic_name=TOPIC_NAME,
+                event_subscription_name=EVENT_SUBSCRIPTION_NAME,
+                max_events=10,
+                max_wait_time=10,
             )
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
+            for details in receive_result.value:
+                cloud_event_received = details.event
+                print("CloudEvent: ", cloud_event_received)
+                print("Data: ", cloud_event_received.data)
         except HttpResponseError:
             raise
-
-        # Publish a list of CloudEvents
-        try:
-            list_of_cloud_events = [cloud_event, cloud_event]
-            await client.publish_cloud_events(
-                topic_name=TOPIC_NAME, body=list_of_cloud_events
-            )
-        except HttpResponseError:
-            raise
-
 
 if __name__ == "__main__":
     asyncio.get_event_loop().run_until_complete(run())
