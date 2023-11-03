@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import os
 import asyncio
+import json
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid.aio import EventGridClient
 from azure.eventgrid.models import *
@@ -25,10 +26,11 @@ async def run():
     async with client:
         # Publish a CloudEvent
         try:
-            cloud_event = CloudEvent(
-                data=b"HI", source="https://example.com", type="example", datacontenttype="text/plain"
-            )
-            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
+            cloud_event_dict = {"data":b"HI", "source":"https://example.com", "type":"example", "datacontenttype":"text/plain"}
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
+
+            cloud_event = CloudEvent(data=json.dumps({"hello":"data"}).encode("utf-8"), source="https://example.com", type="example", datacontenttype="application/json")
+            await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event, binary_mode=True)
 
             receive_result = await client.receive_cloud_events(
                 topic_name=TOPIC_NAME,

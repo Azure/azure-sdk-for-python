@@ -23,6 +23,9 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 # Publish a CloudEvent
 try:
+    cloud_event_dict = {"data":b"HI", "source":"https://example.com", "type":"example", "datacontenttype":"text/plain"}
+    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
+
     cloud_event = CloudEvent(data=json.dumps({"hello":"data"}).encode("utf-8"), source="https://example.com", type="example", datacontenttype="application/json")
     client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event, binary_mode=True)
 
