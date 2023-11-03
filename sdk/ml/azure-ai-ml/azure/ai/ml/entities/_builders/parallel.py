@@ -9,7 +9,6 @@ import json
 import logging
 import os
 import re
-from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast
 
 from marshmallow import Schema
@@ -22,12 +21,12 @@ from ...constants._component import NodeType
 from .._component.component import Component
 from .._component.flow import FlowComponent
 from .._component.parallel_component import ParallelComponent
-from .._inputs_outputs import Input, Output
+from .._inputs_outputs import Output
 from .._job.job_resource_configuration import JobResourceConfiguration
 from .._job.parallel.parallel_job import ParallelJob
 from .._job.parallel.parallel_task import ParallelTask
 from .._job.parallel.retry_settings import RetrySettings
-from .._job.pipeline._io import NodeOutput, NodeWithGroupInputMixin
+from .._job.pipeline._io import NodeWithGroupInputMixin
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
 
@@ -93,29 +92,15 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         *,
         component: Union[ParallelComponent, str],
         compute: Optional[str] = None,
-        inputs: Optional[
-            Dict[
-                str,
-                Union[
-                    NodeOutput,
-                    Input,
-                    str,
-                    bool,
-                    int,
-                    float,
-                    Enum,
-                    "Input",
-                ],
-            ]
-        ] = None,
+        inputs: Optional[Dict] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
-        retry_settings: Optional[Union[RetrySettings, Dict[str, Union[RetrySettings, str]]]] = None,
+        retry_settings: Optional[Union[RetrySettings, Dict]] = None,
         logging_level: Optional[str] = None,
         max_concurrency_per_instance: Optional[int] = None,
         error_threshold: Optional[int] = None,
         mini_batch_error_threshold: Optional[int] = None,
         input_data: Optional[str] = None,
-        task: Optional[Union[RunFunction, Dict[str, Union[ParallelTask, str]]]] = None,
+        task: Optional[Union[ParallelTask, RunFunction, Dict]] = None,
         partition_keys: Optional[List] = None,
         mini_batch_size: Optional[Union[str, int]] = None,
         resources: Optional[JobResourceConfiguration] = None,
@@ -163,15 +148,16 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             try:
                 mini_batch_size = int(mini_batch_size)
             except ValueError as e:
-                unit = mini_batch_size[-2:].lower()
-                if unit == "kb":
-                    mini_batch_size = int(mini_batch_size[0:-2]) * 1024
-                elif unit == "mb":
-                    mini_batch_size = int(mini_batch_size[0:-2]) * 1024 * 1024
-                elif unit == "gb":
-                    mini_batch_size = int(mini_batch_size[0:-2]) * 1024 * 1024 * 1024
-                else:
-                    raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
+                if not isinstance(mini_batch_size, int):
+                    unit = mini_batch_size[-2:].lower()
+                    if unit == "kb":
+                        mini_batch_size = int(mini_batch_size[0:-2]) * 1024
+                    elif unit == "mb":
+                        mini_batch_size = int(mini_batch_size[0:-2]) * 1024 * 1024
+                    elif unit == "gb":
+                        mini_batch_size = int(mini_batch_size[0:-2]) * 1024 * 1024 * 1024
+                    else:
+                        raise ValueError("mini_batch_size unit must be kb, mb or gb") from e
 
         self.mini_batch_size = mini_batch_size
         self.partition_keys = partition_keys
@@ -185,7 +171,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         self.environment_variables = {} if environment_variables is None else environment_variables
 
         if isinstance(self.component, ParallelComponent):
-            self.resources = self.resources or copy.deepcopy(self.component.resources)
+            self.resources = cast(JobResourceConfiguration, self.resources) or cast(
+                JobResourceConfiguration, copy.deepcopy(self.component.resources)
+            )
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
                 self.max_concurrency_per_instance or self.component.max_concurrency_per_instance
@@ -214,7 +202,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         :return: The retry settings for the parallel job.
         :rtype: ~azure.ai.ml.entities._job.parallel.retry_settings.RetrySettings
         """
-        return self._retry_settings
+        return cast(RetrySettings, self._retry_settings)
 
     @retry_settings.setter
     def retry_settings(self, value: Union[RetrySettings, Dict]) -> None:
@@ -228,7 +216,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         self._retry_settings = value
 
     @property
-    def resources(self) -> JobResourceConfiguration:
+    def resources(self) -> Optional[JobResourceConfiguration]:
         """Get the resource configuration for the parallel job.
 
         :return: The resource configuration for the parallel job.
@@ -254,16 +242,17 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         :return: The component of the parallel job.
         :rtype: str or ~azure.ai.ml.entities._component.parallel_component.ParallelComponent
         """
-        return self._component
+        res: Union[str, ParallelComponent] = self._component
+        return res
 
     @property
-    def task(self) -> ParallelTask:
+    def task(self) -> Optional[ParallelTask]:
         """Get the parallel task.
 
         :return: The parallel task.
         :rtype: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask
         """
-        return self._task
+        return cast(Optional[ParallelTask], self._task)
 
     @task.setter
     def task(self, value: Union[ParallelTask, Dict]) -> None:
@@ -364,7 +353,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
 
     def _parallel_attr_to_dict(self, attr: str, base_type: Type) -> dict:
         # Convert parallel attribute to dict
-        rest_attr = None
+        rest_attr = {}
         parallel_attr = getattr(self, attr)
         if parallel_attr is not None:
             if isinstance(parallel_attr, base_type):
@@ -373,8 +362,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
                 rest_attr = parallel_attr
             else:
                 raise Exception(f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead.")
-        res: dict = convert_ordered_dict_to_dict(rest_attr)
-        return res
+        return cast(dict, convert_ordered_dict_to_dict(rest_attr))
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:

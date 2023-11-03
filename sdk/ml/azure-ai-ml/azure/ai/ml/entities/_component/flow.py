@@ -81,7 +81,7 @@ class FlowComponentInputDict(_FlowComponentPortDict):
         )
 
     @contextlib.contextmanager
-    def _fit_inputs(self, inputs: Dict[str, Any]) -> Iterable[None]:
+    def _fit_inputs(self, inputs: Optional[Dict]) -> Iterable[None]:
         """Add dynamic input ports to the input port dictionary.
         Input ports of a flow component include:
         1. data: required major uri_folder input
