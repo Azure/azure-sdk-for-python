@@ -31,11 +31,6 @@ extends:
     TestProxy: true
     ServiceDirectory: tables
     ValidateFormatting: true
-    MatrixConfigs:
-      - Name: tables_ci_matrix
-        Path: eng/pipelines/templates/stages/platform-matrix-metricsadvisor_tables.json
-        Selection: sparse
-        GenerateVMJobs: true
     Artifacts:
     - name: azure-data-tables
       safeName: azuredatatables

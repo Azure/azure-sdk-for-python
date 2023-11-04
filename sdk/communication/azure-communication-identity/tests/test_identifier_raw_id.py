@@ -97,65 +97,6 @@ class IdentifierRawIdTest(unittest.TestCase):
             ),
             "4:+112345556789_207ffef6-9444-41fb-92ab-20eacaae2768",
         )
-        _assert_raw_id(
-            MicrosoftBotIdentifier(bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130"),
-            "28:orgid:45ab2481-1c1c-4005-be24-0ffb879b1130",
-        )
-        _assert_raw_id(
-            MicrosoftBotIdentifier(
-                bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-                is_resource_account_configured=False,
-                cloud=CommunicationCloudEnvironment.PUBLIC,
-            ),
-            "28:45ab2481-1c1c-4005-be24-0ffb879b1130",
-        )
-        _assert_raw_id(
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                is_resource_account_configured=False,
-                cloud=CommunicationCloudEnvironment.GCCH,
-            ),
-            "28:gcch-global:01234567-89ab-cdef-0123-456789abcdef",
-        )
-        _assert_raw_id(
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                is_resource_account_configured=False,
-                cloud=CommunicationCloudEnvironment.DOD,
-            ),
-            "28:dod-global:01234567-89ab-cdef-0123-456789abcdef",
-        )
-        _assert_raw_id(
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                is_resource_account_configured=True,
-                cloud=CommunicationCloudEnvironment.PUBLIC,
-            ),
-            "28:orgid:01234567-89ab-cdef-0123-456789abcdef",
-        )
-        _assert_raw_id(
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                is_resource_account_configured=True,
-                cloud=CommunicationCloudEnvironment.GCCH,
-            ),
-            "28:gcch:01234567-89ab-cdef-0123-456789abcdef",
-        )
-        _assert_raw_id(
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                is_resource_account_configured=True,
-                cloud=CommunicationCloudEnvironment.DOD,
-            ),
-            "28:dod:01234567-89ab-cdef-0123-456789abcdef",
-        )
-        # cspell:enable
-        _assert_raw_id(
-            UnknownIdentifier(
-                identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
-            ),
-            "28:ag08-global:01234567-89ab-cdef-0123-456789abcdef",
-        )
 
     def test_identifier_from_raw_id(self):
         _assert_communication_identifier(
@@ -225,54 +166,6 @@ class IdentifierRawIdTest(unittest.TestCase):
             "8:orgid:legacyFormat",
             MicrosoftTeamsUserIdentifier(
                 user_id="legacyFormat", cloud="PUBLIC", is_anonymous=False
-            ),
-        )
-        _assert_communication_identifier(
-            "28:45ab2481-1c1c-4005-be24-0ffb879b1130",
-            MicrosoftBotIdentifier(
-                bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-                cloud=CommunicationCloudEnvironment.PUBLIC,
-                is_resource_account_configured=False,
-            ),
-        )
-        _assert_communication_identifier(
-            "28:gcch-global:01234567-89ab-cdef-0123-456789abcdef",
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                cloud=CommunicationCloudEnvironment.GCCH,
-                is_resource_account_configured=False,
-            ),
-        )
-        _assert_communication_identifier(
-            "28:dod-global:01234567-89ab-cdef-0123-456789abcdef",
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                cloud=CommunicationCloudEnvironment.DOD,
-                is_resource_account_configured=False,
-            ),
-        )
-        _assert_communication_identifier(
-            "28:orgid:01234567-89ab-cdef-0123-456789abcdef",
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                cloud=CommunicationCloudEnvironment.PUBLIC,
-                is_resource_account_configured=True,
-            ),
-        )
-        _assert_communication_identifier(
-            "28:gcch:01234567-89ab-cdef-0123-456789abcdef",
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                cloud=CommunicationCloudEnvironment.GCCH,
-                is_resource_account_configured=True,
-            ),
-        )
-        _assert_communication_identifier(
-            "28:dod:01234567-89ab-cdef-0123-456789abcdef",
-            MicrosoftBotIdentifier(
-                bot_id="01234567-89ab-cdef-0123-456789abcdef",
-                cloud=CommunicationCloudEnvironment.DOD,
-                is_resource_account_configured=True,
             ),
         )
         _assert_communication_identifier(
@@ -436,110 +329,19 @@ class IdentifierRawIdTest(unittest.TestCase):
             value="+512345556789"
         )
 
-        # MicrosoftBotIdentifiers are equal.
-        assert MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
-        ) == MicrosoftBotIdentifier(bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130")
-        assert MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.PUBLIC,
-        ) == MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.PUBLIC,
-        )
-        assert MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.GCCH,
-        ) == MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.GCCH,
-        )
-        assert MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-        ) == MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.PUBLIC,
-        )
-        assert MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=True,
-        ) == MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=True,
-            cloud=CommunicationCloudEnvironment.PUBLIC,
-        )
-        assert MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-        ) == MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=True,
-            cloud=CommunicationCloudEnvironment.PUBLIC,
-        )
-
-        # MicrosoftBotIdentifiers are not equal.
-        assert MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.DOD,
-        ) != MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.GCCH,
-        )
-        assert MicrosoftBotIdentifier(
-            bot_id="55666-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.DOD,
-        ) != MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.DOD,
-        )
-        assert MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=True,
-            cloud=CommunicationCloudEnvironment.GCCH,
-        ) != MicrosoftBotIdentifier(
-            bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.GCCH,
-        )
-
-        # MicrosoftBotIdentifiers are equal.
+        # UnknownIdentifiers are equal.
         assert UnknownIdentifier(
             identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
         ) == UnknownIdentifier(
             identifier="28:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
         )
 
-        # MicrosoftBotIdentifiers are not equal.
+        # UnknownIdentifiers are not equal.
         assert UnknownIdentifier(
             identifier="48:8888-global:01234567-89ab-cdef-0123-456789abcdef"
         ) != UnknownIdentifier(
             identifier="48:ag08-global:01234567-89ab-cdef-0123-456789abcdef"
         )
-
-
-def test_default_cloud_for_bot_identifier_is_public():
-    bot = MicrosoftBotIdentifier(
-        bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130",
-        is_resource_account_configured=False,
-    )
-
-    assert bot.properties["cloud"] == CommunicationCloudEnvironment.PUBLIC
-
-
-def test_default_is_resource_account_configured_for_bot_identifier_is_true():
-    bot = MicrosoftBotIdentifier(bot_id="45ab2481-1c1c-4005-be24-0ffb879b1130")
-
-    assert bot.properties["is_resource_account_configured"] is True
-
 
 def _assert_raw_id(identifier, want):
     # type: (CommunicationIdentifier, str) -> None

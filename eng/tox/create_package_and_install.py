@@ -16,7 +16,6 @@ import logging
 import sys
 import glob
 import shutil
-from pkg_resources import parse_version
 
 from tox_helper_tasks import get_pip_list_output
 from ci_tools.parsing import ParsedSetup, parse_require
@@ -76,7 +75,9 @@ def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_typ
         create_package(setuppy_path, dist_dir, enable_wheel=False)
 
     prebuilt_packages = [
-        f for f in os.listdir(args.distribution_directory) if f.endswith(".whl" if package_type == "wheel" else ".tar.gz")
+        f
+        for f in os.listdir(args.distribution_directory)
+        if f.endswith(".whl" if package_type == "wheel" else ".tar.gz")
     ]
 
     if not in_ci():

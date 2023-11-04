@@ -1,6 +1,6 @@
 # Release History
 
-## 1.15.0b3 (Unreleased)
+## 1.15.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.15.0 (2023-10-26)
+
+### Features Added
+
+- Added bearer token provider.  ([#32655](https://github.com/Azure/azure-sdk-for-python/pull/32655))
+
+### Bugs Fixed
+
+- Fixed issue InteractiveBrowserCredential does not hand over to next credential in chain if no browser is supported.([#32276](https://github.com/Azure/azure-sdk-for-python/pull/32276))
 
 ## 1.15.0b2 (2023-10-12)
 

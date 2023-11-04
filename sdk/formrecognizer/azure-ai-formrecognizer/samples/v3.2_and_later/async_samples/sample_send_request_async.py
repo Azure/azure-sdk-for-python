@@ -20,6 +20,7 @@ USAGE:
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
+import asyncio
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest

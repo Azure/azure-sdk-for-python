@@ -29,14 +29,14 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.virtualharddisks.update(
+    response = client.virtual_hard_disks.begin_update(
         resource_group_name="test-rg",
-        virtualharddisks_name="test-vhd",
-        virtualharddisks={"tags": {"additionalProperties": "sample"}},
-    )
+        virtual_hard_disk_name="test-vhd",
+        virtual_hard_disks={"tags": {"additionalProperties": "sample"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/UpdateVirtualHardDisk.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/UpdateVirtualHardDisk.json
 if __name__ == "__main__":
     main()
