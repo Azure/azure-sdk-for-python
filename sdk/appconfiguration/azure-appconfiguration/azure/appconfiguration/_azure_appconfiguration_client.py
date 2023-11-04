@@ -42,6 +42,8 @@ from ._utils import (
     get_endpoint_from_connection_string,
     prep_if_match,
     prep_if_none_match,
+    get_key_filter,
+    get_label_filter,
 )
 from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
@@ -149,7 +151,7 @@ class AzureAppConfigurationClient:
 
     @overload
     def list_configuration_settings(
-        self, *, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label and accept_datetime.
@@ -207,14 +209,6 @@ class AzureAppConfigurationClient:
         accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
-
-        key_filter = None
-        label_filter = None
-        if len(args) > 0:
-            key_filter = args[0]
-        if len(args) > 1:
-            label_filter = args[1]
-
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
@@ -230,8 +224,8 @@ class AzureAppConfigurationClient:
                     **kwargs
                 )
             return self._impl.get_key_values(  # type: ignore
-                key=key_filter or kwargs.pop("key_filter", None),
-                label=label_filter or kwargs.pop("label_filter", None),
+                key=get_key_filter(*args, **kwargs) or kwargs.pop("key_filter", None),
+                label=get_label_filter(*args, **kwargs) or kwargs.pop("label_filter", None),
                 accept_datetime=accept_datetime,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],

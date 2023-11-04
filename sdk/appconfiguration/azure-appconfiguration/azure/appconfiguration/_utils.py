@@ -70,3 +70,31 @@ def parse_connection_string(connection_string: str) -> Tuple[str, str, str]:
 
 def get_current_utc_time() -> str:
     return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S.%f ")) + "GMT"
+
+
+def get_key_filter(*args, **kwargs) -> Optional[str]:
+    key_filter = None
+    if len(args) > 0:
+        key_filter = args[0]
+        try:
+            kwargs["key_filter"]
+            raise TypeError(
+                "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'key_filter'"
+            )
+        except KeyError:
+            pass
+    return key_filter
+
+
+def get_label_filter(*args, **kwargs) -> Optional[str]:
+    label_filter = None
+    if len(args) > 1:
+        label_filter = args[1]
+        try:
+            kwargs["label_filter"]
+            raise TypeError(
+                "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+            )
+        except KeyError:
+            pass
+    return label_filter
