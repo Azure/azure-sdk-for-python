@@ -225,6 +225,32 @@ class TestAppConfigurationClient(AppConfigTestCase):
         items = list(self.client.list_configuration_settings(KEY, LABEL))
         assert len(items) == 1
         assert all(x.label == LABEL and x.label == LABEL for x in items)
+
+        with pytest.raises(TypeError) as ex:
+            self.client.list_configuration_settings("MyKey1", key_filter="MyKey2")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'key_filter'"
+        )
+        with pytest.raises(TypeError) as ex:
+            self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        )
+        with pytest.raises(TypeError) as ex:
+            self.client.list_configuration_settings("None", key_filter="MyKey")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'key_filter'"
+        )
+        with pytest.raises(TypeError) as ex:
+            self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        )
+
         self.tear_down()
 
     @app_config_decorator
