@@ -32,6 +32,7 @@
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
+    "sdk/ai/azure-ai-generative/tests/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -898,7 +899,9 @@
       "filename": "sdk/monitor/azure-monitor-*/**/*",
       "words": [
         "ctxt",
-        "wday"
+        "wday",
+        "percentilesw",
+        "plotly"
       ]
     },
     {
@@ -1266,7 +1269,8 @@
         "Fdirectory",
         "Ffile",
         "Fsubdir",
-        "Fdir"
+        "Fdir",
+        "adal"
       ]
     },
     {

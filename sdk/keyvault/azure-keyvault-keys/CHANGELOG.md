@@ -1,14 +1,13 @@
 # Release History
 
-## 4.9.0b3 (Unreleased)
+## 4.9.0b3 (2023-11-03)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+- Added support for service API version `7.5-preview.1`
+- Added `KeyProperties.hsm_platform` to get the underlying HSM platform
 
 ### Other Changes
+- Key Vault API version `7.5-preview.1` is now the default
 
 ## 4.9.0b2 (2023-10-12)
 

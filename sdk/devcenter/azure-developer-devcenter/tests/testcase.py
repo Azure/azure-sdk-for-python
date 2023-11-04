@@ -14,10 +14,11 @@ class DevcenterTest(AzureRecordedTestCase):
     def create_client(self, endpoint):
         credential = self.get_credential(DevCenterClient)
         return DevCenterClient(endpoint=endpoint, credential=credential)
-    
+
+
 DevcenterPowerShellPreparer = functools.partial(
     PowerShellPreparer,
-    "devcenter", 
+    "devcenter",
     devcenter_endpoint="https://dddd3333-d3d3-3333-d3d3-dddddd333333-fake-dev-center.location.devcenter.azure.com",
     devcenter_project_name="fake-proj",
     devcenter_pool_name="fake-pool",
@@ -26,4 +27,5 @@ DevcenterPowerShellPreparer = functools.partial(
     devcenter_catalog_name="fake-catalog",
     devcenter_environment_definition_name="fake-sandbox",
     devcenter_devbox_name="fake-devbox",
-    devcenter_environment_name="fake-environment")
+    devcenter_environment_name="fake-environment",
+)

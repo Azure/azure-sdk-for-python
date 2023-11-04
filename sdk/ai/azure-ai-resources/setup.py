@@ -66,9 +66,9 @@ setup(
     python_requires="<4.0,>=3.8",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "azure-ai-ml",
-        "mlflow<3",
-        "azure-mgmt-authorization"
+        "azure-ai-ml~=1.0",
+        "mlflow-skinny<3",
+        "azureml-telemetry~=1.0,>=1.51.0",
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

@@ -14,7 +14,7 @@ from azure.ai.resources._restclient.v2022_10_01 import AzureMachineLearningWorks
 from azure.ai.resources._utils._ai_client_utils import find_config_file_path, get_config_info
 from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 from azure.ai.resources._utils._str_utils import build_connection_id
-from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
+from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME, DEFAULT_CONTENT_SAFETY_CONNECTION_NAME
 from azure.ai.resources.entities.mlindex import Index as MLIndexAsset
 from azure.ai.resources.operations import ACSOutputConfig, ACSSource, GitSource, IndexDataSource, LocalSource
 from azure.ai.ml import MLClient
@@ -24,7 +24,7 @@ from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, User
 from azure.core.credentials import TokenCredential
 
 from .._project_scope import OperationScope
-from ._user_agent import USER_AGENT
+from .._user_agent import USER_AGENT
 from azure.ai.resources.operations import (
     AIResourceOperations,
     ConnectionOperations,
@@ -92,6 +92,15 @@ class AIClient:
             workspace_name=project_name,
             **kwargs,
         )
+        # Client scoped to the AI Resource for operations that need AI resource-scoping
+        # instead of project scoping.
+        self._ai_resource_ml_client = MLClient(
+            credential=credential,
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=ai_resource_name,
+            **kwargs,
+        )
 
         self._service_client_06_2023_preview = ServiceClient062023Preview(
             credential=self._credential,
@@ -107,7 +116,10 @@ class AIClient:
             ml_client=self._ml_client,
             **app_insights_handler_kwargs,
         )
-        self._connections = ConnectionOperations(self._ml_client, **app_insights_handler_kwargs)
+        # TODO add scoping to allow connections to:
+        # - Create project-scoped connections
+        # For now, connections are AI resource-scoped.
+        self._connections = ConnectionOperations(self._ai_resource_ml_client, **app_insights_handler_kwargs)
         self._mlindexes = MLIndexOperations(self._ml_client, **app_insights_handler_kwargs)
         self._ai_resources = AIResourceOperations(self._ml_client, **app_insights_handler_kwargs)
         self._deployments = DeploymentOperations(self._ml_client, self._connections, **app_insights_handler_kwargs)
@@ -154,6 +166,9 @@ class AIClient:
     @property
     def connections(self) -> ConnectionOperations:
         """A collection of connection-related operations.
+        NOTE: Unlike other operation handles, the connections handle
+        is scoped to the AIClient's AI Resource, and not the project.
+        SDK support for project-scoped connections does not exist yet.
 
         :return: Connections operations
         :rtype: ConnectionsOperations
@@ -239,7 +254,7 @@ class AIClient:
         )
         return project.ml_flow_tracking_uri
 
-    def build_ml_index_on_cloud(
+    def build_index_on_cloud(
         self,
         *,
         ######## required args ##########
@@ -420,7 +435,23 @@ class AIClient:
             raise ValueError(f"Unsupported input source type {type(input_source)}")
 
     def get_default_aoai_connection(self):
+        """Retrieves the default Azure Open AI connection associated with this AIClient's project,
+        creating it if it does not already exist.
+
+        :return: A Connection to Azure Open AI
+        :rtype: ~azure.ai.resources.entities.AzureOpenAIConnection
+        """
         return self._connections.get(DEFAULT_OPEN_AI_CONNECTION_NAME)
+    
+    def get_default_content_safety_connection(self):
+        """Retrieves a default Azure AI Service connection associated with this AIClient's project,
+        creating it if the connection does not already exist.
+        This particular AI Service connection is linked to an Azure Content Safety service.
+
+        :return: A Connection to an Azure AI Service
+        :rtype: ~azure.ai.resources.entities.AzureAIServiceConnection
+        """
+        return self._connections.get(DEFAULT_CONTENT_SAFETY_CONNECTION_NAME)
 
     def _add_user_agent(self, kwargs) -> None:
         user_agent = kwargs.pop("user_agent", None)

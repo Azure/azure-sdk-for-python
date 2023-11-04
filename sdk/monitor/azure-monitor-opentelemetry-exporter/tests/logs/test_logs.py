@@ -416,7 +416,10 @@ class TestAzureLogExporterUtils(unittest.TestCase):
             _get_log_export_result(ExportResult.FAILED_RETRYABLE),
             LogExportResult.FAILURE,
         )
-        self.assertEqual(_get_log_export_result(None), None)
+        self.assertEqual(
+            _get_log_export_result(None),
+            LogExportResult.FAILURE
+        )
 
     def test_get_severity_level(self):
         for sev_num in SeverityNumber:
