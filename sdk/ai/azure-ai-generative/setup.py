@@ -74,7 +74,7 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "azure-ai-resources!=0.0.0b0",
-        "azureml-telemetry~=1.0,>=1.43.0",
+        "azureml-telemetry~=1.0,>=1.51.0",
         "mlflow-skinny<3",
         "opencensus-ext-azure~=1.0",
         "opencensus-ext-logging",
@@ -95,7 +95,7 @@ setup(
         ],
         "evaluate": [
             "azureml-metrics[generative-ai]",
-            "promptflow>=0.1.0b7",
+            "promptflow",
             "promptflow-tools",
         ],
         "faiss": [
@@ -134,7 +134,6 @@ setup(
             "PyYAML>=4.1,<7",
             "tiktoken>=0.3,<1",
             "websocket_client>=1,<2",
-            "azure-identity>=1,<2",
             "azure-keyvault-secrets>=1,<5",
         ],
     },

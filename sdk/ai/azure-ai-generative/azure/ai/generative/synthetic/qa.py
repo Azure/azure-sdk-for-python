@@ -91,42 +91,22 @@ class QADataGenerator:
     _PARSING_ERR_UNEQUAL_Q_AFTER_MOD = "Parsing error: Unequal question count after modification"
     _PARSING_ERR_FIRST_LINE = "Parsing error: First line must be a question"
 
-    def __init__(self, model_config: Dict, connection: BaseConnection = None, **kwargs: Any):
-        """Initialize QADataGenerator using Azure OpenAI details."""
-        if connection:
-            if connection.type != "azure_open_ai":
-                raise TypeError("QADataGenerator only supports AzureOpenAI connections")
-            metadata = connection.metadata
-            api_type = metadata.get("apiType") or metadata.get("ApiType", "azure")
-            api_type = api_type.lower()
-            if api_type == "azure_ad":
-                default_credential = DefaultAzureCredential()
-                api_key = default_credential.get_token("https://cognitiveservices.azure.com/.default").token
-            elif connection.credentials.type.lower() == "api_key":
-                api_key = connection.credentials.key
-            else:
-                raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
-            self._chat_completion_params = dict(
-                api_type=api_type,
-                api_version=metadata.get("apiVersion") or metadata.get("ApiVersion", _DEFAULT_AOAI_VERSION),
-                api_base=connection.target,
-                api_key=api_key,
-                deployment_id=model_config["deployment"],
-                model=model_config["model"],
-                max_tokens=model_config.get("max_tokens", 2000),
-                temperature=0.0,  # don't need creativity
-            )
-        else:
-            self._chat_completion_params = dict(
-                api_type=model_config.get("api_type", "azure"),
-                api_version=model_config.get("api_version", _DEFAULT_AOAI_VERSION),
-                api_base=model_config["api_base"],
-                api_key=model_config["api_key"],
-                deployment_id=model_config["deployment"],
-                model=model_config["model"],
-                max_tokens=model_config.get("max_tokens", 2000),
-                temperature=0.0,  # don't need creativity
-            )
+    def __init__(self, model_config: Dict, **kwargs: Any):
+        """Initialize QADataGenerator using Azure OpenAI details."""        
+        self._chat_completion_params = dict(
+            # AOAI connection params
+            api_type=model_config["api_type"] if "api_type" in model_config else os.getenv("OPENAI_API_TYPE", "azure"),
+            api_version=model_config["api_version"] if "api_version" in model_config else os.getenv("OPENAI_API_VERSION", _DEFAULT_AOAI_VERSION),
+            api_base=model_config["api_base"] if "api_base" in model_config else os.getenv("OPENAI_API_BASE"),
+            api_key=model_config["api_key"] if "api_key" in model_config else os.getenv("OPENAI_API_KEY"),
+
+            # AOAI model params
+            deployment_id=model_config["deployment"],
+            model=model_config["model"],
+            max_tokens=model_config.get("max_tokens", 2000),
+            temperature=0.0,  # don't need creativity
+        )
+
         ops_logger.update_info(kwargs)
 
     def _validate(self, qa_type: QAType, num_questions: int):

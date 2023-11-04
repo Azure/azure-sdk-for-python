@@ -10,7 +10,7 @@ from copy import deepcopy
 from corehttp.runtime import AsyncPipelineClient
 
 
-class AsyncTestRestClient(object):
+class AsyncMockRestClient(object):
     def __init__(self, port, **kwargs):
         kwargs.setdefault("sdk_moniker", "autorestswaggerbatfileservice/1.0.0b1")
 
@@ -23,7 +23,7 @@ class AsyncTestRestClient(object):
         <HttpRequest [GET], url: 'http://localhost:3000/helloWorld'>
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
         :param request: The network request you want to make. Required.
         :type request: ~corehttp.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.

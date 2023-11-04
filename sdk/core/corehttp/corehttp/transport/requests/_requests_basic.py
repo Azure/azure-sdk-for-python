@@ -31,7 +31,7 @@ from urllib3.exceptions import (
     NewConnectionError,
     ConnectTimeoutError,
 )
-import requests  # pylint: disable=networking-import-outside-azure-core-transport
+import requests  # pylint: disable=all
 
 from ...exceptions import (
     ServiceRequestError,
