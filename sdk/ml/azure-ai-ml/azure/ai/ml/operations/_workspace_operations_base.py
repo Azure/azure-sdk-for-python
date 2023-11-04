@@ -38,9 +38,9 @@ from azure.ai.ml.entities import Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities._workspace_hub._constants import (
+    ENDPOINT_AI_SERVICE_KIND,
     PROJECT_WORKSPACE_KIND,
     WORKSPACE_HUB_KIND,
-    ENDPOINT_AI_SERVICE_KIND,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -684,11 +684,6 @@ class WorkspaceOperationsBase(ABC):
 
             if materialization_identity:
                 _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
-            else:
-                _set_val(
-                    param["materialization_identity_name"],
-                    f"materialization-uai-{workspace.resource_group}-{workspace.name}",
-                )
 
             if not kwargs.get("grant_materialization_permissions", None):
                 _set_val(param["grant_materialization_permissions"], "false")

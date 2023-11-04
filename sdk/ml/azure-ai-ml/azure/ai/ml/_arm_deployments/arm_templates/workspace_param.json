@@ -143,9 +143,6 @@
     "offline_store_subscription_id" : {
         "value": ""
     },
-    "materialization_identity_name": {
-        "value": "empty"
-    },
     "materialization_identity_resource_id" : {
         "value": ""
     },
