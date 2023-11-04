@@ -38,9 +38,9 @@ class RouterWorkerSamplesAsync(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         async with router_admin_client:
-            distribution_policy = await router_admin_client.create_distribution_policy(
-                id=distribution_policy_id,
-                distribution_policy=DistributionPolicy(
+            distribution_policy = await router_admin_client.upsert_distribution_policy(
+                distribution_policy_id,
+                DistributionPolicy(
                     offer_expires_after_seconds=10 * 60,
                     mode=LongestIdleMode(min_concurrent_offers=1, max_concurrent_offers=1),
                 ),
@@ -57,23 +57,23 @@ class RouterWorkerSamplesAsync(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         async with router_admin_client:
-            job_queue1: RouterQueue = await router_admin_client.create_queue(
-                id="worker-q-1",
-                queue=RouterQueue(
+            job_queue1: RouterQueue = await router_admin_client.upsert_queue(
+                "worker-q-1",
+                RouterQueue(
                     distribution_policy_id=distribution_policy_id,
                 ),
             )
 
-            job_queue2: RouterQueue = await router_admin_client.create_queue(
-                id="worker-q-2",
-                queue=RouterQueue(
+            job_queue2: RouterQueue = await router_admin_client.upsert_queue(
+                "worker-q-2",
+                RouterQueue(
                     distribution_policy_id=distribution_policy_id,
                 ),
             )
 
-            job_queue3: RouterQueue = await router_admin_client.create_queue(
-                id="worker-q-3",
-                queue=RouterQueue(
+            job_queue3: RouterQueue = await router_admin_client.upsert_queue(
+                "worker-q-3",
+                RouterQueue(
                     distribution_policy_id=distribution_policy_id,
                 ),
             )
@@ -87,7 +87,7 @@ class RouterWorkerSamplesAsync(object):
         from azure.communication.jobrouter.aio import JobRouterClient
         from azure.communication.jobrouter.models import (
             RouterWorker,
-            ChannelConfiguration,
+            RouterChannel,
         )
 
         # set `connection_string` to an existing ACS endpoint
@@ -95,16 +95,16 @@ class RouterWorkerSamplesAsync(object):
         print("JobRouterClient created successfully!")
 
         async with router_client:
-            router_worker: RouterWorker = await router_client.create_worker(
-                worker_id=worker_id,
-                router_worker=RouterWorker(
-                    total_capacity=100,
-                    queue_assignments={"worker-q-1": {}, "worker-q-2": {}},
-                    channel_configurations={
-                        "WebChat": ChannelConfiguration(capacity_cost_per_job=1),
-                        "WebChatEscalated": ChannelConfiguration(capacity_cost_per_job=20),
-                        "Voip": ChannelConfiguration(capacity_cost_per_job=100),
-                    },
+            router_worker: RouterWorker = await router_client.upsert_worker(
+                worker_id,
+                RouterWorker(
+                    capacity=100,
+                    queues=["worker-q-1", "worker-q-2"],
+                    channels=[
+                        RouterChannel(channel_id = "WebChat", capacity_cost_per_job=1),
+                        RouterChannel(channel_id = "WebChatEscalated", capacity_cost_per_job=20),
+                        RouterChannel(channel_id = "Voip", capacity_cost_per_job=100),
+                    ],
                     labels={"Location": "NA", "English": 7, "O365": True, "Xbox_Support": False},
                     tags={"Name": "John Doe", "Department": "IT_HelpDesk"},
                 ),
@@ -121,7 +121,7 @@ class RouterWorkerSamplesAsync(object):
         from azure.communication.jobrouter.aio import JobRouterClient
         from azure.communication.jobrouter.models import (
             RouterWorker,
-            ChannelConfiguration,
+            RouterChannel,
         )
 
         # set `connection_string` to an existing ACS endpoint
@@ -136,10 +136,10 @@ class RouterWorkerSamplesAsync(object):
         # 5. Increase capacityCostPerJob for channel `WebChatEscalated` to 50
 
         async with router_client:
-            updated_router_worker: RouterWorker = await router_client.update_worker(
-                worker_id=worker_id,
-                queue_assignments={"worker-q-3": {}},
-                channel_configurations={"WebChatEscalated": ChannelConfiguration(capacity_cost_per_job=50)},
+            updated_router_worker: RouterWorker = await router_client.upsert_worker(
+                worker_id,
+                queues=["worker-q-3"],
+                channels=[RouterChannel(channel_id = "WebChatEscalated", capacity_cost_per_job=50)],
                 labels={"O365": "Supported", "Xbox_Support": None, "Xbox_Support_EN": True},
             )
 
@@ -169,7 +169,7 @@ class RouterWorkerSamplesAsync(object):
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
         async with router_client:
-            router_worker = await router_client.update_worker(worker_id=worker_id, available_for_offers=True)
+            router_worker = await router_client.upsert_worker(worker_id, available_for_offers=True)
 
             print(
                 f"Successfully registered router worker with id: {router_worker.id} with status: {router_worker.state}"
@@ -185,7 +185,7 @@ class RouterWorkerSamplesAsync(object):
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
         async with router_client:
-            router_worker = await router_client.update_worker(worker_id=worker_id, available_for_offers=False)
+            router_worker = await router_client.upsert_worker(worker_id, available_for_offers=False)
 
             print(
                 f"Successfully de-registered router worker with id: {router_worker.id} "
@@ -204,7 +204,7 @@ class RouterWorkerSamplesAsync(object):
             router_worker_iterator = router_client.list_workers()
 
             async for w in router_worker_iterator:
-                print(f"Retrieved worker with id: {w.worker.id}")
+                print(f"Retrieved worker with id: {w.id}")
 
             print(f"Successfully completed fetching workers")
         # [END list_workers_async]
@@ -224,7 +224,7 @@ class RouterWorkerSamplesAsync(object):
                 print(f"Retrieved {len(workers_in_page)} workers in current page")
 
                 for w in workers_in_page:
-                    print(f"Retrieved worker with id: {w.worker.id}")
+                    print(f"Retrieved worker with id: {w.id}")
 
             print(f"Successfully completed fetching workers")
         # [END list_workers_batched_async]
