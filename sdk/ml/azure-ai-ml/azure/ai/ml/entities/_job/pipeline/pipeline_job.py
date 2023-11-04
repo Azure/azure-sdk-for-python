@@ -573,7 +573,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         if getattr(properties, "component_id", None):
             component = properties.component_id
         else:
-            component = PipelineComponent._load_from_rest_pipeline_job(  # Temporarily not modified to 2308 version
+            component = PipelineComponent._load_from_rest_pipeline_job(
                 {
                     "inputs": from_rest_inputs,
                     "outputs": from_rest_outputs,
