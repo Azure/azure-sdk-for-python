@@ -547,18 +547,32 @@
                 "description": "A flag to determine whether to set up feature store"
             }
         },
-        "byo_open_ai_resource_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Resource Id of BYO open ai resource."
-            }
-        },
         "serverless_compute_settings": {
             "type": "object",
             "defaultValue": {},
             "metadata": {
                 "description": "Serverless compute settings to be used for the workspace."
+            }
+        },
+        "endpoint_resource_id": {
+            "type": "string",
+            "defaultValue": "null",
+            "metadata": {
+                "description": "The resource id that this workspace hub's endpoints should reference."
+            }
+        },
+        "endpoint_kind": {
+            "type": "string",
+            "defaultValue": "AIServices",
+            "metadata": {
+                "description": "The kind of endpoints this workspace hub ought to contain."
+            }
+        },
+        "endpoint_option": {
+            "type": "string",
+            "defaultValue": "new",
+            "metadata": {
+                "description": "Testing value. Do not touch."
             }
         }
     },
@@ -802,9 +816,6 @@
                 "enableDataIsolation": "[parameters('enable_data_isolation')]",
                 "workspaceHubConfig": "[parameters('workspace_hub_config')]",
                 "existingWorkspaces": "[parameters('existing_workspaces')]",
-                "azureOpenAI": {
-                    "resourceId": "[parameters('byo_open_ai_resource_id')]"
-                },
                 "serverlessComputeSettings": "[parameters('serverless_compute_settings')]"
             },
             "resources":[
@@ -852,7 +863,49 @@
                             "resourceid": "[variables('materialization_identity_resource_id')]"
                         }
                     }
-                }
+                },
+                {
+                    "condition": "[and(equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
+                    "type": "endpoints",
+                    "apiVersion": "2023-08-01-preview",
+                    "name": "Azure.OpenAI",
+                    "properties": {
+                      "name": "Azure.OpenAI",
+                      "endpointType": "Azure.OpenAI",
+                      "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
+                    },
+                    "dependsOn": [
+                      "[parameters('workspaceName')]"
+                    ]
+                  },
+                  {
+                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
+                    "type": "endpoints",
+                    "apiVersion": "2023-08-01-preview",
+                    "name": "Azure.ContentSafety",
+                    "properties": {
+                      "name": "Azure.ContentSafety",
+                      "endpointType": "Azure.ContentSafety",
+                      "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
+                    },
+                    "dependsOn": [
+                      "[parameters('workspaceName')]"
+                    ]
+                  },
+                  {
+                    "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
+                    "type": "endpoints",
+                    "apiVersion": "2023-08-01-preview",
+                    "name": "Azure.Speech",
+                    "properties": {
+                      "name": "Azure.Speech",
+                      "endpointType": "Azure.Speech",
+                      "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
+                    },
+                    "dependsOn": [
+                      "[parameters('workspaceName')]"
+                    ]
+                  }
             ]
         },
         {

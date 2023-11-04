@@ -74,7 +74,6 @@ def test_connection_error_response(http_request, http_response):
 
 @pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
 def test_response_streaming_error_behavior(http_response):
-    # Test to reproduce https://github.com/Azure/azure-sdk-for-python/issues/16723
     block_size = 103
     total_response_size = 500
     req_response = requests.Response()

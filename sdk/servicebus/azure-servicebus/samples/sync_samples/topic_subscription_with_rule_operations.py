@@ -110,13 +110,12 @@ def receive_messages(servicebus_client, subscription_name):
     with servicebus_client:
         receiver = servicebus_client.get_subscription_receiver(
             topic_name=TOPIC_NAME,
-            subscription_name=subscription_name,
-            max_wait_time=5
+            subscription_name=subscription_name
         )
         with receiver:
             print("==========================================================================")
             print("Receiving Messages From Subscription: {}".format(subscription_name))
-            received_msgs = receiver.receive_messages(max_message_count=10)
+            received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
             for msg in received_msgs:
                 color = msg.application_properties.get(b'Color').decode()
                 correlation_id = msg.correlation_id
