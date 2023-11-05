@@ -43,7 +43,7 @@ def add_sanitizers(test_proxy):
     add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token, aeg-channel-name")
     add_general_regex_sanitizer(
         value="fakeresource",
-        regex="(?<=\\/\\/)[.*]+(?=\\.centraluseuap-1\\.eventgrid\\.azure\\.net/api/events)",
+        regex="(?<=\\/\\/)[.*]+(?=\\.eastus-1\\.eventgrid\\.azure\\.net/api/events)",
     )
 
     add_oauth_response_sanitizer()
@@ -61,7 +61,7 @@ def add_sanitizers(test_proxy):
     # Need to santize namespace for eventgrid_topic:
     try:
         eventgrid_hostname = urlparse(eventgrid_topic_endpoint).hostname
-        add_general_string_sanitizer(target=eventgrid_hostname.upper(), value="sanitized.centraluseuap-1.eventgrid.azure.net")
+        add_general_string_sanitizer(target=eventgrid_hostname.upper(), value="sanitized.eastus-1.eventgrid.azure.net")
     except:
         pass
     add_general_string_sanitizer(target=client_id, value="00000000-0000-0000-0000-000000000000")
