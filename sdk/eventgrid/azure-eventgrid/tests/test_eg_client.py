@@ -53,6 +53,13 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         assert my_returned_event.datacontenttype == 'text/xml'
         assert my_returned_event.type == "Contoso.Items.ItemReceived"
 
+        tokens = []
+        for detail in events.value:
+            token = detail.broker_properties.lock_token
+            tokens.append(token)
+        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, reject_options=RejectOptions(lock_tokens=tokens))
+
+
 
     @pytest.mark.live_test_only()
     @EventGridPreparer()
@@ -79,6 +86,12 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         assert my_returned_event.data == 'this is binary data'
         assert my_returned_event.datacontenttype == 'text/plain'
         assert my_returned_event.type == "Contoso.Items.ItemReceived"
+
+        tokens = []
+        for detail in events.value:
+            token = detail.broker_properties.lock_token
+            tokens.append(token)
+        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, reject_options=RejectOptions(lock_tokens=tokens))
 
 
     @EventGridPreparer()
@@ -141,6 +154,14 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         client.publish_cloud_events(
             eventgrid_topic_name, body=dict_event, binary_mode=True
         )
+
+        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        tokens = []
+        for detail in events.value:
+            token = detail.broker_properties.lock_token
+            tokens.append(token)
+        rejected_result = client.reject_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name, reject_options=RejectOptions(lock_tokens=tokens))
+
 
     @pytest.mark.skip("need to update conftest")
     @EventGridPreparer()
