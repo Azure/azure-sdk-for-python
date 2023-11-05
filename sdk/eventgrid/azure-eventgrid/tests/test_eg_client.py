@@ -23,6 +23,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         return client
     
 
+    @pytest.mark.live_test_only()
     @EventGridPreparer()
     @recorded_by_proxy
     def test_publish_binary_mode_xml(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
@@ -53,6 +54,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         assert my_returned_event.type == "Contoso.Items.ItemReceived"
 
 
+    @pytest.mark.live_test_only()
     @EventGridPreparer()
     @recorded_by_proxy
     def test_publish_binary_mode_cloud_event(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
@@ -115,6 +117,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
                 eventgrid_topic_name, body=[event], binary_mode=True
             )
 
+    @pytest.mark.live_test_only()
     @EventGridPreparer()
     @recorded_by_proxy
     def test_publish_binary_mode_combinations(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
