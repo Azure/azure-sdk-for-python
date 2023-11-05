@@ -23,12 +23,9 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         return client
     
 
-    @pytest.mark.live_test_only
-    def test_publish_binary_mode_xml(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        eventgrid_key = os.environ['EVENTGRID_KEY']
-        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
-        eventgrid_event_subscription_name = os.environ['EVENTGRID_EVENT_SUBSCRIPTION_NAME']
+    @EventGridPreparer()
+    @recorded_by_proxy
+    def test_publish_binary_mode_xml(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
         
         from xml.etree import ElementTree as ET
@@ -56,12 +53,9 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         assert my_returned_event.type == "Contoso.Items.ItemReceived"
 
 
-    @pytest.mark.live_test_only
-    def test_publish_binary_mode_cloud_event(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        eventgrid_key = os.environ['EVENTGRID_KEY']
-        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
-        eventgrid_event_subscription_name = os.environ['EVENTGRID_EVENT_SUBSCRIPTION_NAME']
+    @EventGridPreparer()
+    @recorded_by_proxy
+    def test_publish_binary_mode_cloud_event(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         event = CloudEvent(
@@ -85,11 +79,9 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         assert my_returned_event.type == "Contoso.Items.ItemReceived"
 
 
-    @pytest.mark.live_test_only
-    def test_publish_binary_mode_incorrect_cloud_event(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        eventgrid_key = os.environ['EVENTGRID_KEY']
-        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
+    @EventGridPreparer()
+    @recorded_by_proxy
+    def test_publish_binary_mode_incorrect_cloud_event(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         event = CloudEvent(
@@ -105,12 +97,9 @@ class TestEGClientExceptions(AzureRecordedTestCase):
                 eventgrid_topic_name, body=event, binary_mode=True
             )
 
-    @pytest.mark.live_test_only
-    def test_publish_binary_mode_list_cloud_event(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        eventgrid_key = os.environ['EVENTGRID_KEY']
-        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
-        eventgrid_event_subscription_name = os.environ['EVENTGRID_EVENT_SUBSCRIPTION_NAME']
+    @EventGridPreparer()
+    @recorded_by_proxy
+    def test_publish_binary_mode_list_cloud_event(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         event = CloudEvent(
@@ -126,12 +115,9 @@ class TestEGClientExceptions(AzureRecordedTestCase):
                 eventgrid_topic_name, body=[event], binary_mode=True
             )
 
-    @pytest.mark.live_test_only
-    def test_publish_binary_mode_combinations(self):
-        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
-        eventgrid_key = os.environ['EVENTGRID_KEY']
-        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
-        eventgrid_event_subscription_name = os.environ['EVENTGRID_EVENT_SUBSCRIPTION_NAME']
+    @EventGridPreparer()
+    @recorded_by_proxy
+    def test_publish_binary_mode_combinations(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         event = CloudEvent(
