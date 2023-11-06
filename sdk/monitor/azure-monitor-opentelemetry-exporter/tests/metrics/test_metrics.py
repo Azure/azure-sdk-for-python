@@ -382,4 +382,7 @@ class TestAzureMetricExporterUtils(unittest.TestCase):
             _get_metric_export_result(ExportResult.FAILED_RETRYABLE),
             MetricExportResult.FAILURE,
         )
-        self.assertEqual(_get_metric_export_result(None), None)
+        self.assertEqual(
+            _get_metric_export_result(None),
+            MetricExportResult.FAILURE,
+        )

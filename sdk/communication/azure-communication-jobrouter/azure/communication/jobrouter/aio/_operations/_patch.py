@@ -129,8 +129,8 @@ class JobRouterAdministrationClientOperationsMixin(
         patch = exception_policy
         if isinstance(exception_policy, _models.ExceptionPolicy):
             patch = _models.ExceptionPolicy(
-                name = kwargs.pop("name", exception_policy.name),
-                exception_rules = kwargs.pop("exception_rules", exception_policy.exception_rules),
+                name=kwargs.pop("name", exception_policy.name),
+                exception_rules=kwargs.pop("exception_rules", exception_policy.exception_rules),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -280,11 +280,11 @@ class JobRouterAdministrationClientOperationsMixin(
         patch = distribution_policy
         if isinstance(distribution_policy, _models.DistributionPolicy):
             patch = _models.DistributionPolicy(
-                name = kwargs.pop("name", distribution_policy.name),
-                offer_expires_after_seconds = kwargs.pop(
+                name=kwargs.pop("name", distribution_policy.name),
+                offer_expires_after_seconds=kwargs.pop(
                     "offer_expires_after_seconds", distribution_policy.offer_expires_after_seconds
                 ),
-                mode = kwargs.pop("mode", distribution_policy.mode),
+                mode=kwargs.pop("mode", distribution_policy.mode),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -388,7 +388,8 @@ class JobRouterAdministrationClientOperationsMixin(
                 :caption: Use a JobRouterAdministrationClient to update a queue
         """
 
-    async def upsert_queue(self, queue_id: str, *args: Union[_models.RouterQueue, JSON, IO], **kwargs: Any
+    async def upsert_queue(
+        self, queue_id: str, *args: Union[_models.RouterQueue, JSON, IO], **kwargs: Any
     ) -> _models.RouterQueue:
         """Update a job queue
 
@@ -438,10 +439,10 @@ class JobRouterAdministrationClientOperationsMixin(
         patch = queue
         if isinstance(queue, _models.RouterQueue):
             patch = _models.RouterQueue(
-                name = kwargs.pop("name", queue.name),
-                distribution_policy_id = kwargs.pop("distribution_policy_id", queue.distribution_policy_id),
-                labels = kwargs.pop("labels", queue.labels),
-                exception_policy_id = kwargs.pop("exception_policy_id", queue.exception_policy_id),
+                name=kwargs.pop("name", queue.name),
+                distribution_policy_id=kwargs.pop("distribution_policy_id", queue.distribution_policy_id),
+                labels=kwargs.pop("labels", queue.labels),
+                exception_policy_id=kwargs.pop("exception_policy_id", queue.exception_policy_id),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -653,13 +654,13 @@ class JobRouterAdministrationClientOperationsMixin(
         patch = classification_policy
         if isinstance(classification_policy, _models.ClassificationPolicy):
             patch = _models.ClassificationPolicy(
-                name = kwargs.pop("name", classification_policy.name),
-                fallback_queue_id = kwargs.pop("fallback_queue_id", classification_policy.fallback_queue_id),
-                queue_selector_attachments = kwargs.pop(
+                name=kwargs.pop("name", classification_policy.name),
+                fallback_queue_id=kwargs.pop("fallback_queue_id", classification_policy.fallback_queue_id),
+                queue_selector_attachments=kwargs.pop(
                     "queue_selector_attachments", classification_policy.queue_selector_attachments
                 ),
-                prioritization_rule = kwargs.pop("prioritization_rule", classification_policy.prioritization_rule),
-                worker_selector_attachments = kwargs.pop(
+                prioritization_rule=kwargs.pop("prioritization_rule", classification_policy.prioritization_rule),
+                worker_selector_attachments=kwargs.pop(
                     "worker_selector_attachments", classification_policy.worker_selector_attachments
                 ),
             )
@@ -797,7 +798,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 :caption: Use a JobRouterClient to de-register a worker
         """
 
-    async def upsert_worker(self, worker_id: str, *args: Union[_models.RouterWorker, JSON, IO], **kwargs: Any
+    async def upsert_worker(
+        self, worker_id: str, *args: Union[_models.RouterWorker, JSON, IO], **kwargs: Any
     ) -> _models.RouterWorker:
         """Update a router worker.
 
@@ -874,12 +876,12 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         patch = router_worker
         if isinstance(router_worker, _models.RouterWorker):
             patch = _models.RouterWorker(
-                queues = kwargs.pop("queues", router_worker.queues),
-                capacity = kwargs.pop("capacity", router_worker.capacity),
-                labels = kwargs.pop("labels", router_worker.labels),
-                tags = kwargs.pop("tags", router_worker.tags),
-                channels = kwargs.pop("channels", router_worker.channels),
-                available_for_offers = kwargs.pop("available_for_offers", router_worker.available_for_offers),
+                queues=kwargs.pop("queues", router_worker.queues),
+                capacity=kwargs.pop("capacity", router_worker.capacity),
+                labels=kwargs.pop("labels", router_worker.labels),
+                tags=kwargs.pop("tags", router_worker.tags),
+                channels=kwargs.pop("channels", router_worker.channels),
+                available_for_offers=kwargs.pop("available_for_offers", router_worker.available_for_offers),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -1045,7 +1047,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 :caption: Use a JobRouterClient to update a job
         """
 
-    async def upsert_job(self, job_id: str, *args: Union[_models.RouterJob, JSON, IO], **kwargs: Any
+    async def upsert_job(
+        self, job_id: str, *args: Union[_models.RouterJob, JSON, IO], **kwargs: Any
     ) -> _models.RouterJob:
         """Update a job.
 
@@ -1120,18 +1123,19 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         patch = router_job
         if isinstance(router_job, _models.RouterJob):
             patch = _models.RouterJob(
-                channel_reference = kwargs.pop("channel_reference", router_job.channel_reference),
-                channel_id = kwargs.pop("channel_id", router_job.channel_id),
-                classification_policy_id = kwargs.pop("classification_policy_id", router_job.classification_policy_id),
-                queue_id = kwargs.pop("queue_id", router_job.queue_id),
-                priority = kwargs.pop("priority", router_job.priority),
-                disposition_code = kwargs.pop("disposition_code", router_job.disposition_code),
-                requested_worker_selectors = kwargs.pop("requested_worker_selectors",
-                                                        router_job.requested_worker_selectors),
-                labels = kwargs.pop("labels", router_job.labels),
-                tags = kwargs.pop("tags", router_job.tags),
-                notes = kwargs.pop("notes", router_job.notes),
-                matching_mode = kwargs.pop("matching_mode", router_job.matching_mode),
+                channel_reference=kwargs.pop("channel_reference", router_job.channel_reference),
+                channel_id=kwargs.pop("channel_id", router_job.channel_id),
+                classification_policy_id=kwargs.pop("classification_policy_id", router_job.classification_policy_id),
+                queue_id=kwargs.pop("queue_id", router_job.queue_id),
+                priority=kwargs.pop("priority", router_job.priority),
+                disposition_code=kwargs.pop("disposition_code", router_job.disposition_code),
+                requested_worker_selectors=kwargs.pop(
+                    "requested_worker_selectors", router_job.requested_worker_selectors
+                ),
+                labels=kwargs.pop("labels", router_job.labels),
+                tags=kwargs.pop("tags", router_job.tags),
+                notes=kwargs.pop("notes", router_job.notes),
+                matching_mode=kwargs.pop("matching_mode", router_job.matching_mode),
             )
 
         if_unmodified_since = kwargs.pop("if_unmodified_since", None)
@@ -1260,7 +1264,147 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         await super()._reclassify_job(job_id=job_id, options={}, **kwargs)
 
+    @distributed_trace_async
+    async def cancel_job(
+            self,
+            job_id: str,
+            options: Optional[Union[_models._models.CancelJobOptions, JSON, IO]] = None,
+            **kwargs: Any
+    ) -> None:  # pylint: disable=arguments-differ
+        """Closes a completed job.
+
+        :param str job_id: Id of the job.
+
+        :param options: Request model for cancelling job. Is one of the following types:
+         CancelJobOptions, JSON, IO Default value is None.
+        :type options: ~azure.communication.jobrouter.models.CancelJobOptions or JSON or IO
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START cancel_job_async]
+                :end-before: [END cancel_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to cancel a job
+        """
+        if not job_id:
+            raise ValueError("job_id cannot be None.")
+
+        await super()._cancel_job(job_id = job_id, options = options, **kwargs)
+
+    @distributed_trace_async
+    async def complete_job(
+        self,
+        job_id: str,
+        options: Union[_models._models.CompleteJobOptions, JSON, IO],
+        **kwargs: Any
+    ) -> None:  # pylint: disable=arguments-differ
+        """Completes an assigned job.
+
+        :param str job_id: Id of the job.
+
+        :param options: Request model for completing job. Is one of the following types:
+         CompleteJobOptions, JSON, IO Required.
+        :type options: ~azure.communication.jobrouter.models.CompleteJobOptions or JSON or IO
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START complete_job_async]
+                :end-before: [END complete_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to complete a job
+        """
+        if not job_id:
+            raise ValueError("job_id cannot be None.")
+
+        await super()._complete_job(job_id=job_id, options=options, **kwargs)
+
+    @distributed_trace_async
+    async def close_job(
+            self,
+            job_id: str,
+            options: Union[_models._models.CloseJobOptions, JSON, IO],
+            **kwargs: Any
+    ) -> None:  # pylint: disable=arguments-differ
+        """Closes a completed job.
+
+        :param str job_id: Id of the job.
+
+        :param options: Request model for closing job. Is one of the following types: CloseJobOptions,
+         JSON, IO Required.
+        :type options: ~azure.communication.jobrouter.models.CloseJobOptions or JSON or IO
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START close_job_async]
+                :end-before: [END close_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to close a job
+        """
+        if not job_id:
+            raise ValueError("job_id cannot be None.")
+
+        await super()._close_job(job_id = job_id, options = options, **kwargs)
+
     # endregion Job
+
+    # region Offer
+    @distributed_trace_async
+    async def decline_job_offer(
+        self,
+        worker_id: str,
+        offer_id: str,
+        options: Optional[Union[_models._models.DeclineJobOfferOptions, JSON, IO]] = None,
+        **kwargs: Any
+    ) -> None:  # pylint: disable=arguments-differ
+        """Declines an offer to work on a job.
+
+        :param worker_id: Id of the worker. Required.
+        :type worker_id: str
+        :param offer_id: Id of the offer. Required.
+        :type offer_id: str
+        :param options: Request model for declining offer. Is one of the following types:
+         DeclineJobOfferOptions, JSON, IO Default value is None.
+        :type options: ~azure.communication.jobrouter.models.DeclineJobOfferOptions or JSON or IO
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops_async.py
+                :start-after: [START close_job_async]
+                :end-before: [END close_job_async]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to close a job
+        """
+        if not worker_id:
+            raise ValueError("worker_id cannot be None.")
+
+        if not offer_id:
+            raise ValueError("offer_id cannot be None.")
+
+        await super()._decline_job_offer(worker_id = worker_id, offer_id = offer_id, options = options, **kwargs)
+    # endregion Offer
 
 
 __all__: List[str] = [
