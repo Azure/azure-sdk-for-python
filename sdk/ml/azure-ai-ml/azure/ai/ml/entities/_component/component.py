@@ -14,7 +14,10 @@ from ..._restclient.v2022_10_01.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,
-    ComponentVersionProperties,
+)
+from ..._restclient.v2023_08_01_preview.models import (
+    ComponentVersion as ComponentVersion_2308,
+    ComponentVersionProperties as ComponentVersionProperties_2308,
 )
 from ..._schema import PathAwareSchema
 from ..._schema.component import ComponentSchema
@@ -541,7 +544,7 @@ class Component(
             return self._get_anonymous_component_name_version()
         return self.name, self.version
 
-    def _to_rest_object(self) -> ComponentVersion:
+    def _to_rest_object(self) -> ComponentVersion_2308:
         component = self._to_dict()
 
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
@@ -562,14 +565,14 @@ class Component(
             # hack while full pass through supported is worked on for IPP fields
             component.pop("intellectual_property")
             component["intellectualProperty"] = self._intellectual_property._to_rest_object().serialize()
-        properties = ComponentVersionProperties(
+        properties = ComponentVersionProperties_2308(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
             properties=dict(self.properties) if self.properties else {},
             tags=self.tags,
         )
-        result = ComponentVersion(properties=properties)
+        result = ComponentVersion_2308(properties=properties)
         if self._is_anonymous:
             result.name = ANONYMOUS_COMPONENT_NAME
         else:

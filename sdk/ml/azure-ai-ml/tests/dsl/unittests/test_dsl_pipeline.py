@@ -1138,42 +1138,42 @@ class TestDSLPipeline:
     @pytest.mark.parametrize(
         "target_yml, target_dsl_pipeline",
         [
-            # (
-            #     "./tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
-            #     data_binding_expression.input_basic(),
-            # ),
-            # (
-            #     "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
-            #     data_binding_expression.input_literal_cross_type(),
-            # ),
-            # (
-            #     "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
-            #     data_binding_expression.input_literal_meta(),
-            # ),
-            # (
-            #     "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
-            #     data_binding_expression.input_path_concatenate(),
-            # ),
-            # (
-            #     "./tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
-            #     data_binding_expression.input_reason_expression(),
-            # ),
-            # (
-            #     "./tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
-            #     data_binding_expression.input_string_concatenate(),
-            # ),
-            # (
-            #     "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
-            #     data_binding_expression.run_settings_compute(),
-            # ),
-            # (
-            #     "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
-            #     data_binding_expression.input_path(),
-            # ),
-            # (
-            #     "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
-            #     data_binding_expression.run_settings_sweep_choice(),
-            # ),
+            (
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
+                data_binding_expression.input_basic(),
+            ),
+            (
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
+                data_binding_expression.input_literal_cross_type(),
+            ),
+            (
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
+                data_binding_expression.input_literal_meta(),
+            ),
+            (
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
+                data_binding_expression.input_path_concatenate(),
+            ),
+            (
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
+                data_binding_expression.input_reason_expression(),
+            ),
+            (
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
+                data_binding_expression.input_string_concatenate(),
+            ),
+            (
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
+                data_binding_expression.run_settings_compute(),
+            ),
+            (
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
+                data_binding_expression.input_path(),
+            ),
+            (
+                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
+                data_binding_expression.run_settings_sweep_choice(),
+            ),
             (
                 "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_limits.yml",
                 data_binding_expression.run_settings_sweep_limits(),
