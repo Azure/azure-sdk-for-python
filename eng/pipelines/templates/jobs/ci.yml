@@ -106,9 +106,9 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: $(ArtifactName)
 
-  - ${{ if eq(parameters['AdvancedBuild'], 'true') }}:
+  - ${{ if eq(parameters['AdvancedBuild'], true) }}:
     - job: 'CoalesceBuildArtifacts'
-      displayName: Create Single Packages Artifact
+      displayName: Combine Built Artifacts
       dependsOn: 
         - 'Build'
       timeoutInMinutes: 90
@@ -142,7 +142,7 @@ jobs:
     displayName: Build Extended
     dependsOn: 
       - 'Build'
-      - ${{ if eq(parameters['AdvancedBuild'], 'true') }}:
+      - ${{ if eq(parameters['AdvancedBuild'], true) }}:
         - 'CoalesceBuildArtifacts'
     timeoutInMinutes: 90
     variables:
@@ -223,7 +223,7 @@ jobs:
       JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
       DependsOn:
         - 'Build'
-        - ${{ if eq(parameters['AdvancedBuild'], 'true') }}:
+        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
           - 'CoalesceBuildArtifacts'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
@@ -272,7 +272,7 @@ jobs:
         Cloud: Public
       DependsOn:
         - 'Build'
-        - ${{ if eq(parameters['AdvancedBuild'], 'true') }}:
+        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
           - 'CoalesceBuildArtifacts'
       AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
