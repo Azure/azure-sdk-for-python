@@ -376,7 +376,7 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ResourceNotificationsHealthResourcesAnnotatedEventName = 'Microsoft.ResourceNotifications.HealthResources.ResourceAnnotated'
 
-    ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventName = 'Microsoft.ResourceNotifications.HealthResources.AvailabilityStatusChanged'
+    ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventName = 'Microsoft.ResourceNotifications.HealthResources.AvailabilityStatusChanged'        
 
     ResourceNotificationsResourceManagementCreatedOrUpdatedEventName = 'Microsoft.ResourceNotifications.Resources.CreatedOrUpdated'
 
