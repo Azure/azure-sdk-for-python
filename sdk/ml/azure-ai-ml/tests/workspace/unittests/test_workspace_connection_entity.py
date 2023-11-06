@@ -149,6 +149,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.tags["ApiType"] == "Azure"
         assert ws_connection.api_version == "some_version"
         assert ws_connection.api_type == "Azure"
+        
 
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_search.yaml")
 
