@@ -23,7 +23,7 @@ class ServerlessComputeSettings:
     custom_subnet: Optional[ArmId]
     no_public_ip: bool = False
 
-    def __init__(self, custom_subnet: Optional[Union[str, ArmId]] = None, no_public_ip: bool = False) -> None:
+    def __init__(self, *, custom_subnet: Optional[Union[str, ArmId]] = None, no_public_ip: bool = False) -> None:
         """
         :param custom_subnet: The ARM ID of the subnet to use for serverless compute(s).
         :type custom_subnet: Optional[Union[str, ArmId]]
