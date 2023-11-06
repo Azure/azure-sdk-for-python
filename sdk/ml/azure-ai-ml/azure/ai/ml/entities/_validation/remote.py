@@ -97,7 +97,7 @@ class RemoteValidatableMixin(RestTranslatableMixin):
         """
         raise NotImplementedError()
 
-    def _get_resource_name_version(self) -> typing.Tuple[str, str]:
+    def _get_resource_name_version(self) -> typing.Tuple:
         """Return resource name and version to be used in remote validation.
 
         Should be overridden by subclass.

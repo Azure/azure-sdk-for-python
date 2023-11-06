@@ -108,7 +108,7 @@ class SchemaValidatableMixin:
     ) -> MutableValidationResult:
         return validation_result.try_raise(raise_error=raise_error, error_func=cls._create_validation_error)
 
-    def _validate(self, raise_error: bool = False) -> MutableValidationResult:
+    def _validate(self, raise_error: typing.Optional[bool] = False) -> MutableValidationResult:
         """Validate the resource. If raise_error is True, raise ValidationError if validation fails and log warnings if
         applicable; Else, return the validation result.
 
