@@ -107,7 +107,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
         #     HdfsDatastore
         # )
 
-        ds_type = None
+        ds_type: Any = None
         type_in_override = find_type_in_override(params_override)
         type = type_in_override or data.get(
             CommonYamlFields.TYPE, DatastoreType.AZURE_BLOB

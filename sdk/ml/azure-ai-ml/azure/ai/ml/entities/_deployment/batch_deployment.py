@@ -186,7 +186,7 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         return output_switcher.get(rest_output_action, rest_output_action)
 
     @classmethod
-    def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: str) -> str:
+    def _yaml_output_action_to_rest_output_action(cls, yaml_output_action: Any) -> str:
         output_switcher = {
             BatchDeploymentOutputAction.APPEND_ROW: BatchOutputAction.APPEND_ROW,
             BatchDeploymentOutputAction.SUMMARY_ONLY: BatchOutputAction.SUMMARY_ONLY,
@@ -194,7 +194,8 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
 
         return output_switcher.get(yaml_output_action, yaml_output_action)
 
-    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> BatchDeploymentData:  # type: ignore
         self._validate()
         code_config = (
             RestCodeConfiguration(

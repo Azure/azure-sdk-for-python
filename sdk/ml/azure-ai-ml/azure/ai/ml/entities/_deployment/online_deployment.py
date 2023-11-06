@@ -9,7 +9,7 @@ import os
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EndpointComputeType
@@ -291,7 +291,7 @@ class OnlineDeployment(Deployment):
         if self.name:
             validate_endpoint_or_deployment_name(self.name, is_deployment=True)
 
-    def _merge_with(self, other: "OnlineDeployment") -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             if self.name != other.name:
                 msg = "The deployment name: {} and {} are not matched when merging."
@@ -511,7 +511,8 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         res: dict = KubernetesOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
-    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # type: ignore
         self._validate()
         code, environment, model = self._generate_dependencies()
 
@@ -551,7 +552,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             }
         }
 
-    def _merge_with(self, other: "KubernetesOnlineDeployment") -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             super()._merge_with(other)
             if self.resources:
@@ -587,7 +588,10 @@ class KubernetesOnlineDeployment(OnlineDeployment):
             environment=deployment.environment_id,
             resources=ResourceRequirementsSettings._from_rest_object(deployment.container_resource_requirements),
             app_insights_enabled=deployment.app_insights_enabled,
-            scale_settings=OnlineScaleSettings._from_rest_object(deployment.scale_settings),
+            scale_settings=cast(
+                Optional[Union[DefaultScaleSettings, TargetUtilizationScaleSettings]],
+                OnlineScaleSettings._from_rest_object(deployment.scale_settings),
+            ),
             liveness_probe=ProbeSettings._from_rest_object(deployment.liveness_probe),
             readiness_probe=ProbeSettings._from_rest_object(deployment.readiness_probe),
             environment_variables=deployment.environment_variables,
@@ -755,7 +759,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
         res: dict = ManagedOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
-    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
+    # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # type: ignore
         self._validate()
         code, environment, model = self._generate_dependencies()
         properties = RestManagedOnlineDeployment(
@@ -826,7 +831,10 @@ class ManagedOnlineDeployment(OnlineDeployment):
             code_configuration=code_config,
             environment=deployment.environment_id,
             app_insights_enabled=deployment.app_insights_enabled,
-            scale_settings=OnlineScaleSettings._from_rest_object(deployment.scale_settings),
+            scale_settings=cast(
+                Optional[Union[DefaultScaleSettings, TargetUtilizationScaleSettings]],
+                OnlineScaleSettings._from_rest_object(deployment.scale_settings),
+            ),
             liveness_probe=ProbeSettings._from_rest_object(deployment.liveness_probe),
             environment_variables=deployment.environment_variables,
             readiness_probe=ProbeSettings._from_rest_object(deployment.readiness_probe),
@@ -843,7 +851,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
             provisioning_state=deployment.provisioning_state if hasattr(deployment, "provisioning_state") else None,
         )
 
-    def _merge_with(self, other: "ManagedOnlineDeployment") -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             super()._merge_with(other)
             self.instance_type = other.instance_type or self.instance_type

@@ -6,7 +6,7 @@
 
 from abc import ABC
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
@@ -16,7 +16,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import OneLakeDatastore 
 from azure.ai.ml._schema._datastore.one_lake import OneLakeSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
-from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, ServicePrincipalConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -89,7 +88,7 @@ class OneLakeDatastore(Datastore):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        credentials: Optional[Union[NoneCredentialConfiguration, ServicePrincipalConfiguration]] = None,
+        credentials: Any = None,
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.ONE_LAKE
