@@ -76,13 +76,11 @@ def get_key_filter(*args, **kwargs) -> Optional[str]:
     key_filter = None
     if len(args) > 0:
         key_filter = args[0]
-        try:
-            kwargs["key_filter"]
+        if "key_filter" in kwargs:
             raise TypeError(
-                "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'key_filter'"
+                "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument "
+                "'key_filter'"
             )
-        except KeyError:
-            pass
     return key_filter
 
 
@@ -90,11 +88,9 @@ def get_label_filter(*args, **kwargs) -> Optional[str]:
     label_filter = None
     if len(args) > 1:
         label_filter = args[1]
-        try:
-            kwargs["label_filter"]
+        if "label_filter" in kwargs:
             raise TypeError(
-                "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+                "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument "
+                "'label_filter'"
             )
-        except KeyError:
-            pass
     return label_filter
