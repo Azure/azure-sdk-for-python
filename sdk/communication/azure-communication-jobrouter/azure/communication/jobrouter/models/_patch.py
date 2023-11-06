@@ -7,8 +7,19 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
+from ._models import (
+    CompleteJobOptions,
+    CloseJobOptions,
+    CancelJobOptions,
+    DeclineJobOfferOptions
+)
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "CompleteJobOptions",
+    "CloseJobOptions",
+    "CancelJobOptions",
+    "DeclineJobOfferOptions",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
