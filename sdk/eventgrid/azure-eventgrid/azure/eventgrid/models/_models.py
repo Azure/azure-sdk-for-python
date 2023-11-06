@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class AcknowledgeOptions(_model_base.Model):
     """Array of lock tokens for the corresponding received Cloud Events to be acknowledged.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar lock_tokens: Array of lock tokens. Required.
     :vartype lock_tokens: list[str]
@@ -52,7 +52,7 @@ class AcknowledgeOptions(_model_base.Model):
 class AcknowledgeResult(_model_base.Model):
     """The result of the Acknowledge operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -92,7 +92,7 @@ class AcknowledgeResult(_model_base.Model):
 class BrokerProperties(_model_base.Model):
     """Properties of the Event Broker operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar lock_token: The token of the lock on the event. Required.
     :vartype lock_token: str
@@ -111,7 +111,7 @@ class CloudEvent(_model_base.Model):
     """Properties of an event published to an Azure Messaging EventGrid Namespace topic using the
     CloudEvent 1.0 Schema.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: An identifier for the event. The combination of id and source must be unique for each
      distinct event. Required.
@@ -167,7 +167,7 @@ class CloudEvent(_model_base.Model):
 class Error(_model_base.Model):
     """The error object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: One of a server-defined set of error codes. Required.
     :vartype code: str
@@ -219,7 +219,7 @@ class Error(_model_base.Model):
 class FailedLockToken(_model_base.Model):
     """Failed LockToken information.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar lock_token: The lock token of an entry in the request. Required.
     :vartype lock_token: str
@@ -300,7 +300,7 @@ class PublishResult(_model_base.Model):
 class ReceiveDetails(_model_base.Model):
     """Receive operation details per Cloud Event.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar broker_properties: The Event Broker details. Required.
     :vartype broker_properties: ~azure.eventgrid.models.BrokerProperties
@@ -318,7 +318,7 @@ class ReceiveDetails(_model_base.Model):
 class ReceiveResult(_model_base.Model):
     """Details of the Receive operation response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Array of receive responses, one per cloud event. Required.
     :vartype value: list[~azure.eventgrid.models.ReceiveDetails]
@@ -332,7 +332,7 @@ class ReceiveResult(_model_base.Model):
 class RejectOptions(_model_base.Model):
     """Array of lock tokens for the corresponding received Cloud Events to be rejected.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar lock_tokens: Array of lock tokens. Required.
     :vartype lock_tokens: list[str]
@@ -363,7 +363,7 @@ class RejectOptions(_model_base.Model):
 class RejectResult(_model_base.Model):
     """The result of the Reject operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -403,7 +403,7 @@ class RejectResult(_model_base.Model):
 class ReleaseOptions(_model_base.Model):
     """Array of lock tokens for the corresponding received Cloud Events to be released.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar lock_tokens: Array of lock tokens. Required.
     :vartype lock_tokens: list[str]
@@ -434,7 +434,7 @@ class ReleaseOptions(_model_base.Model):
 class ReleaseResult(_model_base.Model):
     """The result of the Release operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -474,7 +474,7 @@ class ReleaseResult(_model_base.Model):
 class RenewCloudEventLocksResult(_model_base.Model):
     """The result of the RenewLock operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -513,7 +513,7 @@ class RenewCloudEventLocksResult(_model_base.Model):
 class RenewLockOptions(_model_base.Model):
     """Array of lock tokens for the corresponding received Cloud Events to be renewed.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar lock_tokens: Array of lock tokens. Required.
     :vartype lock_tokens: list[str]

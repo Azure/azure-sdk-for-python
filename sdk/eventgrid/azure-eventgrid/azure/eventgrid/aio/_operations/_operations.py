@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._model_base import AzureJSONEncoder, _deserialize
+from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import build_event_grid_acknowledge_cloud_events_request, build_event_grid_publish_cloud_event_request, build_event_grid_publish_cloud_events_request, build_event_grid_receive_cloud_events_request, build_event_grid_reject_cloud_events_request, build_event_grid_release_cloud_events_request, build_event_grid_renew_cloud_event_locks_request
 from .._vendor import EventGridClientMixinABC
 
@@ -73,7 +73,7 @@ class EventGridClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(event, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(event, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_publish_cloud_event_request(
             topic_name=topic_name,
@@ -157,7 +157,7 @@ class EventGridClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(events, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(events, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_publish_cloud_events_request(
             topic_name=topic_name,
@@ -431,7 +431,7 @@ class EventGridClientOperationsMixin(
         if isinstance(acknowledge_options, (IOBase, bytes)):
             _content = acknowledge_options
         else:
-            _content = json.dumps(acknowledge_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(acknowledge_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_acknowledge_cloud_events_request(
             topic_name=topic_name,
@@ -631,7 +631,7 @@ class EventGridClientOperationsMixin(
         if isinstance(release_options, (IOBase, bytes)):
             _content = release_options
         else:
-            _content = json.dumps(release_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(release_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_release_cloud_events_request(
             topic_name=topic_name,
@@ -815,7 +815,7 @@ class EventGridClientOperationsMixin(
         if isinstance(reject_options, (IOBase, bytes)):
             _content = reject_options
         else:
-            _content = json.dumps(reject_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(reject_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_reject_cloud_events_request(
             topic_name=topic_name,
@@ -1006,7 +1006,7 @@ class EventGridClientOperationsMixin(
         if isinstance(renew_lock_options, (IOBase, bytes)):
             _content = renew_lock_options
         else:
-            _content = json.dumps(renew_lock_options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(renew_lock_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_event_grid_renew_cloud_event_locks_request(
             topic_name=topic_name,
