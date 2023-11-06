@@ -155,7 +155,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
             )
         assert e.value.http_status == 400
         assert e.value.error.code == "content_filter"
-        assert "The response was filtered due to the prompt triggering Azure OpenAI’s content management policy" in str(e.value)
+        assert "The response was filtered due to the prompt triggering Azure OpenAI's content management policy" in str(e.value)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])

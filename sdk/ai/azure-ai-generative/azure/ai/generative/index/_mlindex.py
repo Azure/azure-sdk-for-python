@@ -178,9 +178,20 @@ class MLIndex:
                     else:
                         raise e
 
+                index_endpoint = self.index_config.get("endpoint", None)
+                if not index_endpoint:
+                    index_endpoint = get_target_from_connection(
+                        get_connection_by_id_v2(
+                            self.index_config["connection"]["id"],
+                            credential=credential
+                            )
+                        )
+
                 azure_search_documents_version = packages_versions_for_compatibility["azure-search-documents"]
                 search_client_version = pkg_version.parse(azure_search_documents_version)
                 langchain_pkg_version = pkg_version.parse(langchain_version)
+
+
                 if (
                     search_client_version > pkg_version.parse("11.4.0b6")
                     and search_client_version <= pkg_version.parse("11.4.0b8")
@@ -206,17 +217,8 @@ class MLIndex:
                     from azure.core.credentials import AzureKeyCredential
                     from langchain.vectorstores.azuresearch import AzureSearch
 
-                    endpoint = self.index_config.get("endpoint", None)
-                    if not endpoint:
-                        endpoint = get_target_from_connection(
-                            get_connection_by_id_v2(
-                                self.index_config["connection"]["id"],
-                                credential=credential
-                            )
-                        )
-
                     return AzureSearch(
-                        azure_search_endpoint=endpoint,
+                        azure_search_endpoint=index_endpoint,
                         azure_search_key=connection_credential.key if isinstance(connection_credential, AzureKeyCredential) else None,
                         index_name=self.index_config.get("index"),
                         embedding_function=self.get_langchain_embeddings(credential=credential).embed_query,
@@ -235,12 +237,7 @@ class MLIndex:
 
                     return AzureCognitiveSearchVectorStore(
                         index_name=self.index_config.get("index"),
-                        endpoint=self.index_config.get(
-                            "endpoint",
-                            get_target_from_connection(
-                                get_connection_by_id_v2(self.index_config["connection"]["id"], credential=credential)
-                            ),
-                        ),
+                        endpoint=index_endpoint,
                         embeddings=self.get_langchain_embeddings(credential=credential),
                         field_mapping=self.index_config.get("field_mapping", {}),
                         credential=connection_credential,

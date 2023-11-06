@@ -38,7 +38,7 @@ def init():
     # It is the path to the model folder (./azureml-models/$MODEL_NAME/$VERSION)
     # Please provide your model's folder name if there is one
     print(os.getenv("AZUREML_MODEL_DIR"))
-    resolved_path = str(Path(os.getenv("AZUREML_MODEL_DIR")).resolve())
+    resolved_path = str(Path(os.getenv("AZUREML_MODEL_DIR")).resolve() / "{}")
     sys.path.append(resolved_path)
 
 @rawhttp
@@ -82,10 +82,11 @@ def run(raw_data: AMLRequest):
 def create_chat_scoring_script(
     directory: Union[str, os.PathLike],
     chat_module: str,
+    model_dir_name: str = None,
 ) -> None:
     score_file_path = f"{str(directory)}/score.py"
     with open(score_file_path, "w+") as f:
-        f.write(CHAT_SCORING_SCRIPT_TEMPLATE.format(chat_module))
+        f.write(CHAT_SCORING_SCRIPT_TEMPLATE.format(model_dir_name if model_dir_name else "", chat_module))
 
 
 def create_mlmodel_file(model: Model):
