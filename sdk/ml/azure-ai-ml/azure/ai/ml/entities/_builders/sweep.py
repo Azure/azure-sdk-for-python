@@ -284,8 +284,9 @@ class Sweep(ParameterizedSweep, BaseNode):
         command = self.trial.command
         if self.search_space is not None:
             for key, _ in self.search_space.items():
-                # Double curly brackets to escape
-                command = command.replace(f"${{{{inputs.{key}}}}}", f"${{{{search_space.{key}}}}}")
+                if command is not None:
+                    # Double curly brackets to escape
+                    command = command.replace(f"${{{{inputs.{key}}}}}", f"${{{{search_space.{key}}}}}")
 
         # TODO: raise exception when the trial is a pre-registered component
         if command != self.trial.command and isinstance(self.trial, CommandComponent):
