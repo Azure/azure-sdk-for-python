@@ -289,7 +289,7 @@ def _evaluate(
             "eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"
         },
         tracking_uri=kwargs.get("tracking_uri"),
-        evaluation_id=run.info.run_id
+        evaluation_id=run.info.run_id,
     )
     if output_path:
         evaluation_result.download_evaluation_artifacts(path=output_path)
