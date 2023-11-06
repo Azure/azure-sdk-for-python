@@ -10,11 +10,12 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
-from azure.ai.ml._restclient.v2023_10_01.models import FeaturestoreEntityVersion, ListViewType
+from azure.ai.ml._restclient.v2023_10_01.models import FeaturestoreEntityVersion
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._feature_store_utils import _archive_or_restore
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml.constants import ListViewType
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.ai.ml.exceptions import ValidationException
 from azure.core.paging import ItemPaged
