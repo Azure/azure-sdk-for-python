@@ -1,6 +1,6 @@
 # Release History
 
-## 12.8.0 (2023-11-6)
+## 12.8.0 (2023-11-06)
 
 ### Features Added
 - Stable release of features from 12.18.0b1
