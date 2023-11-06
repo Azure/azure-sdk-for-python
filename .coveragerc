@@ -24,4 +24,3 @@ omit =
 	*/test*
 	env*
 	*/_serialization.py
-	*/sms/_shared/*
