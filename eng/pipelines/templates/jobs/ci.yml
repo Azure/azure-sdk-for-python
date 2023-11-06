@@ -72,8 +72,6 @@ jobs:
       Codeql.Enabled: true
       Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
       Codeql.SkipTaskAutoInjection: false
-      - ${{ if eq(parameters['AdvancedBuild'], false) }}:
-        ArtifactName: ''
 
     - ${{ if eq(parameters['AdvancedBuild'], false) }}:
       pool:
