@@ -192,7 +192,7 @@ if __name__ == "__main__":
                 requirements = ParsedSetup.from_path(
                     os.path.join(os.path.abspath(args.target_setup), "setup.py")
                 ).requires
-                azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure")]
+                azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure-")]
 
                 if azure_requirements:
                     logging.info(
