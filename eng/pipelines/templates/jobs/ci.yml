@@ -66,19 +66,39 @@ parameters:
     default: false
 
 jobs:
-  - job: 'Build'
-    timeoutInMinutes: 90
-    variables:
-      Codeql.Enabled: true
-      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
-      Codeql.SkipTaskAutoInjection: false
+  
+  - ${{ if eq(parameters['AdvancedBuild'], false) }}:
+    - job: 'Build'
+      timeoutInMinutes: 90
+      variables:
+        Codeql.Enabled: true
+        Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
+        Codeql.SkipTaskAutoInjection: false
 
-    - ${{ if eq(parameters['AdvancedBuild'], false) }}:
       pool:
         name: azsdk-pool-mms-ubuntu-2004-general
         vmImage: MMSUbuntu20.04
 
-    - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+      steps:
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+
+      - template: ../steps/build-package-artifacts.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          Artifacts: ${{ parameters.Artifacts }}
+
+  - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+    - job: 'Build'
+      timeoutInMinutes: 90
+      variables:
+        Codeql.Enabled: true
+        Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
+        Codeql.SkipTaskAutoInjection: false
+
       strategy:
         matrix:
           Linux:
@@ -99,20 +119,19 @@ jobs:
         name: $(poolName)
         vmImage: $(imageName)
 
-    steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+      steps:
+      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+        parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-    - template: ../steps/build-package-artifacts.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-        TestPipeline: ${{ parameters.TestPipeline }}
-        Artifacts: ${{ parameters.Artifacts }}
-        ArtifactSuffix: $(ArtifactName)
+      - template: ../steps/build-package-artifacts.yml
+        parameters:
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ArtifactSuffix: $(ArtifactName)
 
-  - ${{ if eq(parameters['AdvancedBuild'], true) }}:
     - job: 'CoalesceBuildArtifacts'
       displayName: Combine Built Artifacts
       dependsOn: 
