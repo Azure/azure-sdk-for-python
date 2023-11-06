@@ -605,7 +605,7 @@
         },
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
-        "materialization_identity_resource_id": "[if(empty(parameters('materialization_identity_resource_id')), resourceId(resourceGroup().name, 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name')),  parameters('materialization_identity_resource_id'))]",
+        "materialization_identity_resource_id": "[if(and(empty(parameters('materialization_identity_resource_id')), equals(parameters('set_up_feature_store'), 'true')), resourceId(resourceGroup().name, 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name')),  parameters('materialization_identity_resource_id'))]",
         "offlineStoreContainerName": "[concat('offlinestore', guid(variables('storageAccount')))]",
         "offlineStoreConnectionName": "[if(empty(parameters('offline_store_connection_name')), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
         "onlineStoreConnectionName": "[if(empty(parameters('online_store_connection_name')), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
@@ -827,7 +827,8 @@
                     "location": "[parameters('location')]",
                     "dependsOn": [
                         "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
-                        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]"
+                        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]",
+                        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
                     ],
                     "identity": {
                         "type": "SystemAssigned"
@@ -849,7 +850,8 @@
                     "name": "[variables('onlineStoreConnectionName')]",
                     "location": "[parameters('location')]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
+                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+                        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
                     ],
                     "identity": {
                         "type": "SystemAssigned"
@@ -982,7 +984,8 @@
             "apiVersion": "2022-04-01",
             "name": "[guid(variables('materialization_identity_resource_id'), subscription().subscriptionId, resourceGroup().name, parameters('workspaceName'), 'azureml ds role')]",
             "dependsOn": [
-                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
+                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
             ],
             "properties": {
                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",

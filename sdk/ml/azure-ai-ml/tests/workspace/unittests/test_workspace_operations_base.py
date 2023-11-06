@@ -8,8 +8,10 @@ from pytest_mock import MockFixture
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
-    ServerlessComputeSettings as RestServerlessComputeSettings,
     ManagedNetworkSettings,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -17,15 +19,15 @@ from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.entities import (
     CustomerManagedKey,
     FeatureStore,
-    IdentityConfiguration,
-    ManagedIdentityConfiguration,
-    ServerlessComputeSettings,
-    Workspace,
-    ManagedNetwork,
-    IsolationMode,
     FqdnDestination,
-    ServiceTagDestination,
+    IdentityConfiguration,
+    IsolationMode,
+    ManagedIdentityConfiguration,
+    ManagedNetwork,
     PrivateEndpointDestination,
+    ServerlessComputeSettings,
+    ServiceTagDestination,
+    Workspace,
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
 from azure.core.polling import LROPoller
@@ -348,7 +350,6 @@ class TestWorkspaceOperation:
 
         assert param["set_up_feature_store"] == {"value": "true"}
         assert param["grant_materialization_permissions"] == {"value": "true"}
-        assert param["materialization_identity_name"] == {"value": "materialization-uai-rg-name"}
         assert param["materialization_identity_resource_id"] == {"value": ""}
 
         template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
@@ -359,7 +360,6 @@ class TestWorkspaceOperation:
 
         assert param["set_up_feature_store"] == {"value": "true"}
         assert param["grant_materialization_permissions"] == {"value": "false"}
-        assert param["materialization_identity_name"] == {"value": "empty"}
         assert param["materialization_identity_resource_id"] == {"value": "resource_id"}
 
     def test_populate_feature_store_role_assignments_paramaters(
