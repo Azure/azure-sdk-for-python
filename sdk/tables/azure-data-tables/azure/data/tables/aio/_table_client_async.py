@@ -42,7 +42,7 @@ from .._error import (
 from .._table_client import EntityType, TransactionOperationType
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
-from ._table_batch_async import TableBatchOperations
+from .._table_batch import TableBatchOperations
 
 
 class TableClient(AsyncTablesBaseClient):
@@ -662,20 +662,17 @@ class TableClient(AsyncTablesBaseClient):
                 :caption: Using transactions to send multiple requests at once
         """
         batched_requests = TableBatchOperations(
-            self._client,
-            self._client._serialize,  # pylint: disable=protected-access
-            self._client._deserialize,  # pylint: disable=protected-access
-            self._client._config,  # pylint: disable=protected-access
-            self.table_name,
+            config=self._client._config,  # pylint: disable=protected-access
+            endpoint=f"{self.scheme}://{self._primary_hostname}",
+            table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            **kwargs,
         )
-        try:
-            for operation in operations:  # type: ignore
+        if isinstance(operations, AsyncIterable):
+            async for operation in operations:
                 batched_requests.add_operation(operation)
-        except TypeError:
+        else:
             try:
-                async for operation in operations:  # type: ignore
+                for operation in operations:
                     batched_requests.add_operation(operation)
             except TypeError as exc:
                 raise TypeError(

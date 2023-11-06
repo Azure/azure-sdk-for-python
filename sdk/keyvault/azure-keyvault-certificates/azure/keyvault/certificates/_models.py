@@ -5,7 +5,7 @@
 # pylint: disable=too-many-lines,too-many-public-methods
 from typing import TYPE_CHECKING
 
-from . import _generated_models as models
+from ._generated import models
 from ._shared import parse_key_vault_id
 from ._enums import(
     CertificatePolicyAction,
@@ -1172,7 +1172,7 @@ class CertificateIssuer(object):
     :param provider: The issuer provider
     :type provider: str or None
     :param attributes: The issuer attributes.
-    :type attributes: ~azure.keyvault.certificates._generated_models.IssuerAttributes or None
+    :type attributes: ~azure.keyvault.certificates._generated.models.IssuerAttributes or None
     :param account_id: The username / account name / account id.
     :type account_id: str or None
     :param password: The password / secret / account key.

@@ -10,7 +10,7 @@ from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
 
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER
-from ci_tools.parsing import ParsedSetup, get_build_config
+from ci_tools.parsing import ParsedSetup, get_config_setting
 from pypi_tools.pypi import PyPIClient
 
 import os, sys, platform, glob, re, logging
@@ -215,22 +215,6 @@ def discover_targeted_packages(
     collected_packages = apply_business_filter(collected_packages, filter_type)
 
     return sorted(collected_packages)
-
-
-def get_config_setting(package_path: str, setting: str, default: Any = True) -> Any:
-    # we should always take the override if one is present
-    override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
-    if override_value:
-        return override_value
-
-    # if no override, check for the config setting in the pyproject.toml
-    config = get_build_config(package_path)
-
-    if config:
-        if setting.lower() in config:
-            return config[setting.lower()]
-
-    return default
 
 
 def is_package_active(package_path: str):

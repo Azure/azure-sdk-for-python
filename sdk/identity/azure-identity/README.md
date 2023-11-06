@@ -1,12 +1,12 @@
 # Azure Identity client library for Python
 
-The Azure Identity library provides [Azure Active Directory (Azure AD)](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) token authentication support across the Azure SDK. It provides a set of [`TokenCredential`](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementations, which can be used to construct Azure SDK clients that support Azure AD token authentication.
+The Azure Identity library provides [Microsoft Entra ID](https://learn.microsoft.com/azure/active-directory/fundamentals/active-directory-whatis) ([formerly Azure Active Directory](https://learn.microsoft.com/azure/active-directory/fundamentals/new-name)) token authentication support across the Azure SDK. It provides a set of [`TokenCredential`](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementations, which can be used to construct Azure SDK clients that support Microsoft Entra token authentication.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-identity/)
 | [API reference documentation][ref_docs]
-| [Azure AD documentation](https://learn.microsoft.com/azure/active-directory/)
+| [Microsoft Entra ID documentation](https://learn.microsoft.com/entra/identity/)
 
 ## Getting started
 
@@ -20,7 +20,7 @@ pip install azure-identity
 
 ### Prerequisites
 
-- An [Azure subscription](https://azure.microsoft.com/free/)
+- An [Azure subscription](https://azure.microsoft.com/free/python)
 - Python 3.7 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
 ### Authenticate during local development
@@ -55,7 +55,7 @@ For systems without a default web browser, the `azd auth login --use-device-code
 
 A credential is a class that contains or can obtain the data needed for a service client to authenticate requests. Service clients across the Azure SDK accept a credential instance when they're constructed, and use that credential to authenticate requests.
 
-The Azure Identity library focuses on OAuth authentication with Azure AD. It offers various credential classes capable of acquiring an Azure AD access token. See the [Credential classes](#credential-classes "Credential classes") section below for a list of this library's credential classes.
+The Azure Identity library focuses on OAuth authentication with Microsoft Entra ID. It offers various credential classes capable of acquiring a Microsoft Entra access token. See the [Credential classes](#credential-classes "Credential classes") section below for a list of this library's credential classes.
 
 ### DefaultAzureCredential
 
@@ -212,7 +212,7 @@ client = SecretClient("https://my-vault.vault.azure.net", credential)
 
 ## Cloud configuration
 
-Credentials default to authenticating to the Azure AD endpoint for Azure Public Cloud. To access resources in other clouds, such as Azure Government or a private cloud, configure credentials with the `authority` argument. [AzureAuthorityHosts](https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureAuthorityHosts) defines authorities for well-known clouds:
+Credentials default to authenticating to the Microsoft Entra endpoint for Azure Public Cloud. To access resources in other clouds, such as Azure Government or a private cloud, configure credentials with the `authority` argument. [AzureAuthorityHosts](https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureAuthorityHosts) defines authorities for well-known clouds:
 
 ```python
 from azure.identity import AzureAuthorityHosts
@@ -244,7 +244,7 @@ Not all credentials require this configuration. Credentials that authenticate th
 |[`ChainedTokenCredential`][chain_cred_ref]| Allows users to define custom authentication flows composing multiple credentials.
 |[`EnvironmentCredential`][environment_cred_ref]| Authenticates a service principal or user via credential information specified in environment variables.
 |[`ManagedIdentityCredential`][managed_id_cred_ref]| Authenticates the managed identity of an Azure resource.
-|[`WorkloadIdentityCredential`][workload_id_cred_ref]| Supports [Azure AD workload identity](https://learn.microsoft.com/azure/aks/workload-identity-overview) on Kubernetes.
+|[`WorkloadIdentityCredential`][workload_id_cred_ref]| Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/aks/workload-identity-overview) on Kubernetes.
 
 ### Authenticate service principals
 
@@ -282,16 +282,16 @@ variables:
 
 |Variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|ID of an Azure AD application
-|`AZURE_TENANT_ID`|ID of the application's Azure AD tenant
+|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
+|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant
 |`AZURE_CLIENT_SECRET`|one of the application's client secrets
 
 ### Service principal with certificate
 
 |Variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|ID of an Azure AD application
-|`AZURE_TENANT_ID`|ID of the application's Azure AD tenant
+|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
+|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant
 |`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key
 |`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any
 
@@ -299,7 +299,7 @@ variables:
 
 |Variable name|Value
 |-|-
-|`AZURE_CLIENT_ID`|ID of an Azure AD application
+|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
 |`AZURE_USERNAME`|a username (usually an email address)
 |`AZURE_PASSWORD`|that user's password
 
@@ -314,9 +314,13 @@ As of version 1.14.0, accessing resources protected by [Continuous Access Evalua
 Token caching is a feature provided by the Azure Identity library that allows apps to:
 - Cache tokens in memory (default) or on disk (opt-in).
 - Improve resilience and performance.
-- Reduce the number of requests made to Azure AD to obtain access tokens.
+- Reduce the number of requests made to Microsoft Entra ID to obtain access tokens.
 
 The Azure Identity library offers both in-memory and persistent disk caching. For more details, see the [token caching documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TOKEN_CACHING.md).
+
+## Brokered authentication
+
+An authentication broker is an application that runs on a user’s machine and manages the authentication handshakes and token maintenance for connected accounts. Currently, only the Windows Web Account Manager (WAM) is supported. To enable support, use the [`azure-identity-broker`][azure_identity_broker] package. For details on authenticating using WAM, see the [broker plugin documentation][azure_identity_broker_readme].
 
 ## Troubleshooting
 
@@ -329,7 +333,7 @@ Credentials raise `CredentialUnavailableError` when they're unable to attempt au
 
 Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fail to authenticate. `ClientAuthenticationError` has a `message` attribute, which describes why authentication failed. When raised by `DefaultAzureCredential` or `ChainedTokenCredential`, the message collects error messages from each credential in the chain.
 
-For more information on handling specific Azure AD errors, see the Azure AD [error code documentation](https://learn.microsoft.com/azure/active-directory/develop/reference-aadsts-error-codes).
+For more information on handling specific Microsoft Entra ID errors, see the Microsoft Entra ID [error code documentation](https://learn.microsoft.com/azure/active-directory/develop/reference-error-codes).
 
 ### Logging
 
@@ -348,7 +352,7 @@ credential = DefaultAzureCredential(logging_enable=True)
 
 ### Client library support
 
-Client and management libraries listed on the [Azure SDK release page](https://azure.github.io/azure-sdk/releases/latest/python.html) that support Azure AD authentication accept credentials from this library. You can learn more about using these libraries in their documentation, which is linked from the release page.
+Client and management libraries listed on the [Azure SDK release page](https://azure.github.io/azure-sdk/releases/latest/python.html) that support Microsoft Entra authentication accept credentials from this library. You can learn more about using these libraries in their documentation, which is linked from the release page.
 
 ### Known issues
 
@@ -373,6 +377,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_developer_cli]:https://aka.ms/azure-dev
 [azure_core_transport_doc]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
+[azure_identity_broker]: https://pypi.org/project/azure-identity-broker
+[azure_identity_broker_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity-broker
 [azure_eventhub]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob

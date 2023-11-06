@@ -16,37 +16,25 @@ from ._utils import wrap_exceptions, resolve_tenant
 
 
 class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
-    """Opens a browser to interactively authenticate a user.
+    """Uses an authentication broker to interactively sign in a user.
 
-    :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
+    Currently, only the Windows authentication broker, Web Account Manager (WAM), is supported. Users on macOS and Linux
+    will be authenticated through a browser.
+
+    :func:`~get_token` opens a browser to a login URL provided by Microsoft Entra ID and authenticates a user
     there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the "organizations" tenant, which can
+    :keyword str tenant_id: a Microsoft Entra tenant ID. Defaults to the "organizations" tenant, which can
         authenticate work or school accounts.
-    :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
+    :keyword str client_id: Client ID of the Microsoft Entra application users will sign in to. If
         unspecified, users will authenticate to an Azure development application.
     :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
         may still log in with a different username.
-    :keyword str redirect_uri: a redirect URI for the application identified by `client_id` as configured in Azure
-        Active Directory, for example "http://localhost:8400". This is only required when passing a value for
-        **client_id**, and must match a redirect URI in the application's registration. The credential must be able to
-        bind a socket to this URI.
-    :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
-    :keyword bool disable_automatic_authentication: if True, :func:`get_token` will raise
-        :class:`AuthenticationRequiredError` when user interaction is required to acquire a token. Defaults to False.
-    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
-        will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
-    :keyword bool allow_broker: An authentication broker is an application that runs on a user's machine that manages
-        the authentication handshakes and token maintenance for connected accounts. The Windows operating system uses
-        the Web Account Manager (WAM) as its authentication broker. If this parameter is set to True, the broker will
-        be used when possible. Defaults to False.
-        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam for more
-        information about WAM.
     :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system,
         and your app opts in to use broker via `allow_broker`, you are required to also provide its window handle,
         so that the sign in UI window will properly pop up on top of your window.
@@ -63,7 +51,6 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self._allow_broker = kwargs.pop("allow_broker", None)
         self._parent_window_handle = kwargs.pop("parent_window_handle", None)
         self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
         super().__init__(**kwargs)
@@ -109,7 +96,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         capabilities = None
         token_cache = self._cache
 
-        app_class = msal.ConfidentialClientApplication if self._client_credential else msal.PublicClientApplication
+        app_class = msal.PublicClientApplication
 
         if kwargs.get("enable_cae"):
             client_applications_map = self._cae_client_applications
@@ -129,7 +116,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 token_cache=token_cache,
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
-                allow_broker=self._allow_broker,
+                enable_broker_on_windows=True,
             )
 
         return client_applications_map[tenant_id]

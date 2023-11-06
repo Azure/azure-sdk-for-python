@@ -6,6 +6,8 @@ from .parse_functions import (
     parse_freeze_output,
     read_setup_py_content,
     get_build_config,
+    get_config_setting,
+    update_build_config,
 )
 
 __all__ = [
@@ -16,4 +18,6 @@ __all__ = [
     "parse_freeze_output",
     "read_setup_py_content",
     "get_build_config",
+    "get_config_setting",
+    "update_build_config",
 ]

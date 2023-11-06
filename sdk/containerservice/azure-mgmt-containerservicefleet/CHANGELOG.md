@@ -1,5 +1,20 @@
 # Release History
 
+## 1.0.0 (2023-10-27)
+
+### Breaking Changes
+
+  - Model Fleet no longer has parameter hub_profile
+
+## 1.0.0b3 (2023-10-23)
+
+### Features Added
+
+  - Added operation group FleetUpdateStrategiesOperations
+  - Model AgentProfile has a new parameter vm_size
+  - Model FleetHubProfile has a new parameter portal_fqdn
+  - Model UpdateRun has a new parameter update_strategy_id
+
 ## 1.0.0b2 (2023-09-12)
 
 ### Features Added

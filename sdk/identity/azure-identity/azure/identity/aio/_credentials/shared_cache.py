@@ -20,10 +20,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
         may contain tokens for multiple identities.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
+    :keyword str tenant_id: a Microsoft Entra tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
     :keyword cache_persistence_options: configuration for persistent token caching. If not provided, the credential
         will use the persistent cache shared by Microsoft development applications
@@ -65,7 +65,7 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
-          attribute gives a reason. Any error response from Azure Active Directory is available as the error's
+          attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
           ``response`` attribute.
         """
         if not scopes:
