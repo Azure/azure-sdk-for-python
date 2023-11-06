@@ -46,7 +46,7 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             assert received_info2["customDocumentModels"]["count"] == received_info1["customDocumentModels"]["count"]
             assert received_info2["customDocumentModels"]["limit"] == received_info1["customDocumentModels"]["limit"]
 
-            # test with full url
+            # test with absolute url
             request = HttpRequest(
                 method="GET",
                 url=f"{client._endpoint}/formrecognizer/info?api-version=2022-08-31",
@@ -57,7 +57,7 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             assert received_info3["customDocumentModels"]["count"] == received_info1["customDocumentModels"]["count"]
             assert received_info3["customDocumentModels"]["limit"] == received_info1["customDocumentModels"]["limit"]
 
-            # test with v2 api version
+            # test with v2 API version
             request = HttpRequest(
                 method="GET",
                 url="v2.1/custom/models?op=summary",
@@ -69,7 +69,7 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             assert received_info4["summary"]["count"] == 0
             assert received_info4["summary"]["limit"] == 250
             
-            # test with v2 api version with full url
+            # test with v2 API version with absolute url
             request = HttpRequest(
                 method="GET",
                 url=f"{client._endpoint}/formrecognizer/v2.1/custom/models?op=summary",
@@ -98,7 +98,7 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             assert received_info1["summary"]["count"] == 0
             assert received_info1["summary"]["limit"] == 250
             
-            # test with full url
+            # test with absolute url
             request = HttpRequest(
                 method="GET",
                 url=f"{client._endpoint}/formrecognizer/v2.0/custom/models?op=summary",
@@ -109,7 +109,7 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             assert received_info3["summary"]["count"] == received_info1["summary"]["count"]
             assert received_info3["summary"]["limit"] == received_info1["summary"]["limit"]
             
-            # test with new api version
+            # relative URLs can't override the API version on 2.x clients
             request = HttpRequest(
                 method="GET",
                 url="info?api-version=2022-08-31",
@@ -120,7 +120,7 @@ class TestSendRequestAsync(AsyncFormRecognizerTest):
             assert received_info4["error"]["code"] == "404"
             assert received_info4["error"]["message"] == "Resource not found"
             
-            # test with v2 api version with full url
+            # test with v2 API version with absolute url
             request = HttpRequest(
                 method="GET",
                 url=f"{client._endpoint}/formrecognizer/info?api-version=2022-08-31",

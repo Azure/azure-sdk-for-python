@@ -96,10 +96,10 @@ class FormRecognizerClientBaseAsync:
 
         The request URL can be relative to the base URL. The service API version used for the request is the same as
         the client's unless otherwise specified. Overriding the client's configured API version in relative URL is
-        supported on client with API version 2022-08-31 and later, and v2 versions separately. Overriding in full URL
-        supported on client with any API version. This method does not raise if the response is an error; to raise an
-        exception, call `raise_for_status()` on the returned response object. For more information about how to send
-        custom requests with this method, see https://aka.ms/azsdk/dpcodegen/python/send_request.
+        supported on client with API version 2022-08-31 and later. Overriding in absolute URL supported on client with
+        any API version. This method does not raise if the response is an error; to raise an exception, call
+        `raise_for_status()` on the returned response object. For more information about how to send custom requests
+        with this method, see https://aka.ms/azsdk/dpcodegen/python/send_request.
 
         :param request: The network request you want to make.
         :type request: ~azure.core.rest.HttpRequest
