@@ -83,7 +83,7 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
-  - ${{ if eq(parameters.ArtifactSuffix, '') }}
+  - ${{ if eq(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
@@ -94,7 +94,7 @@ steps:
         ArtifactPath: '$(Build.SourcesDirectory)/.logs'
         ArtifactName: 'build_logs'
 
-    - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
       - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
         displayName: 'Generate BOM'
         condition: succeededOrFailed()
@@ -106,7 +106,7 @@ steps:
           ArtifactPath: '$(Build.ArtifactStagingDirectory)/_manifest'
           ArtifactName: 'packages_manifest'
 
-  - ${{ if ne(parameters.ArtifactSuffix, '') }}
+  - ${{ if ne(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
@@ -117,7 +117,7 @@ steps:
         ArtifactPath: '$(Build.SourcesDirectory)/.logs'
         ArtifactName: 'build_logs_${{ parameters.ArtifactSuffix }}'
 
-    - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
       - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
         displayName: 'Generate BOM'
         condition: succeededOrFailed()
