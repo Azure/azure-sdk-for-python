@@ -208,7 +208,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             self.resources = self.resources or self.component.resources
             self.distribution = self.distribution or self.component.distribution
 
-        self._swept = False
+        self._swept: bool = False
         self._init = False
 
     @classmethod

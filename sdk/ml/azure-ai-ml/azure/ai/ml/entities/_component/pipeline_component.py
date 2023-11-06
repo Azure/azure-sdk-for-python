@@ -298,7 +298,8 @@ class PipelineComponent(Component):
           * A map of job source to the number of occurrences
         :rtype: Tuple[Dict[str, int], Dict[str, int]]
         """
-        job_types, job_sources = [], []
+        job_types: list = []
+        job_sources = []
         for job in self.jobs.values():
             job_types.append(job.type)
             if isinstance(job, BaseNode):

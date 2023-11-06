@@ -5,7 +5,7 @@
 import json
 import os
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from marshmallow import Schema
 
@@ -176,7 +176,7 @@ class ParallelComponent(
         :return: Value of resources.instance_count.
         :rtype: Optional[int]
         """
-        return self.resources.instance_count if self.resources else None
+        return self.resources.instance_count if self.resources and not isinstance(self.resources, dict) else None
 
     @instance_count.setter
     def instance_count(self, value: int) -> None:
@@ -190,7 +190,8 @@ class ParallelComponent(
         if not self.resources:
             self.resources = JobResourceConfiguration(instance_count=value)
         else:
-            self.resources.instance_count = value
+            if not isinstance(self.resources, dict):
+                self.resources.instance_count = value
 
     @property
     def code(self) -> Optional[str]:
@@ -238,8 +239,7 @@ class ParallelComponent(
         :rtype: Optional[Environment, str]
         """
         if self.task:
-            res: str = self.task.environment
-            return res
+            return cast(Optional[str], self.task.environment)
         return None
 
     @environment.setter
