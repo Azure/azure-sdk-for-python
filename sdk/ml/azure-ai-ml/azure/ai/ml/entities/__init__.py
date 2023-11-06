@@ -110,6 +110,7 @@ from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetada
 from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
 from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from ._feature_set.feature_set_specification import FeatureSetSpecification
+from ._feature_set.feature_window import FeatureWindow
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
@@ -197,9 +198,9 @@ from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.connections.workspace_connection_subtypes import (
-    AzureOpenAIWorkspaceConnection,
     AzureAISearchWorkspaceConnection,
     AzureAIServiceWorkspaceConnection,
+    AzureOpenAIWorkspaceConnection,
 )
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
@@ -378,6 +379,7 @@ __all__ = [
     "DataColumnType",
     "FeatureSetSpecification",
     "MaterializationComputeResource",
+    "FeatureWindow",
     "MaterializationSettings",
     "MaterializationType",
     "FeatureStore",
