@@ -9,7 +9,6 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class Notification(RestTranslatableMixin):
     """Configuration for notification.
 
