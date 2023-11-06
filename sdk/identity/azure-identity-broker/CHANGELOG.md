@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- `enable_broker` is always on if running on Windows. Automatially fall back into non-broker mode if running on MacOS or Linux.
+- `enable_broker` is always on if running on Windows. Automatically fall back into non-broker mode if running on MacOS or Linux.
 
 ### Breaking Changes
 
