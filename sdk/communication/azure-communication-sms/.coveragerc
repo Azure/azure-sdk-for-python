@@ -15,4 +15,4 @@ exclude_lines =
 	if TYPE_CHECKING:
 omit =
 	*/test*
-	*/_shared/*
+	*/sms/_shared/*

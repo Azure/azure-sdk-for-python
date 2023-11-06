@@ -6,4 +6,4 @@ verifytypes = false
 
 [tool.coverage.report]
 omit = [ "*/sms/_shared/*" ]
-exclude_also = [ "*/sms/_shared/*" ]
+#exclude_also = [ "*/sms/_shared/*" ]
