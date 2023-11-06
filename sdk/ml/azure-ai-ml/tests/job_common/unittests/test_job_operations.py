@@ -192,7 +192,7 @@ class TestJobOperations:
         mock_job_operation.stream("random_name")
 
         # check
-        mock_job_operation._operation_2023_02_preview.get.assert_called_once()
+        mock_job_operation._service_client_operation.get.assert_called_once()
         mock_job_operation._get_workspace_url.assert_called_once()
         mock_job_operation._stream_logs_until_completion.assert_called_once()
         assert mock_job_operation._runs_operations_client._operation._client._base_url == "TheWorkSpaceUrl"
