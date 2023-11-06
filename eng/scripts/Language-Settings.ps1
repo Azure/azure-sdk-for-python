@@ -642,10 +642,11 @@ function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
 }
 
 function Get-python-DirectoriesForGeneration () {
-  Get-ChildItem "$RepoRoot/sdk" -Directory
+    # TODO: Reenable swagger generation when tox generate supports arbitrary generator versions
+    Get-ChildItem "$RepoRoot/sdk" -Directory
     | Get-ChildItem -Directory
     | Where-Object { $_ -notmatch "-mgmt-" }
-    | Where-Object { (Test-Path "$_/tsp-location.yaml") -or (Test-Path "$_/swagger/README.md") }
+    | Where-Object { (Test-Path "$_/tsp-location.yaml") } # -or (Test-Path "$_/swagger/README.md")
 }
 
 function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
