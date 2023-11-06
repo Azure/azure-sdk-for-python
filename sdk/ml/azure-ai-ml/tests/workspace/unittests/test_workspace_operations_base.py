@@ -8,8 +8,10 @@ from pytest_mock import MockFixture
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
-    ServerlessComputeSettings as RestServerlessComputeSettings,
     ManagedNetworkSettings,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -17,15 +19,15 @@ from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.entities import (
     CustomerManagedKey,
     FeatureStore,
-    IdentityConfiguration,
-    ManagedIdentityConfiguration,
-    ServerlessComputeSettings,
-    Workspace,
-    ManagedNetwork,
-    IsolationMode,
     FqdnDestination,
-    ServiceTagDestination,
+    IdentityConfiguration,
+    IsolationMode,
+    ManagedIdentityConfiguration,
+    ManagedNetwork,
     PrivateEndpointDestination,
+    ServerlessComputeSettings,
+    ServiceTagDestination,
+    Workspace,
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
 from azure.core.polling import LROPoller
@@ -409,8 +411,8 @@ class TestWorkspaceOperation:
         "serverless_compute_settings",
         [
             None,
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
-            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(subnet_name="npip"), no_public_ip=True),
         ],
     )
     def test_create_workspace_with_serverless_custom_vnet(
@@ -437,8 +439,8 @@ class TestWorkspaceOperation:
         "serverless_compute_settings",
         [
             None,
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
-            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(subnet_name="npip"), no_public_ip=True),
         ],
     )
     def test_update_workspace_with_serverless_custom_vnet(
@@ -461,7 +463,7 @@ class TestWorkspaceOperation:
     @pytest.mark.parametrize(
         "new_settings",
         [
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
             ServerlessComputeSettings(no_public_ip=True),
         ],
     )
@@ -472,7 +474,7 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ) -> None:
         original_settings = ServerlessComputeSettings(
-            gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
+            custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
         )
         wsname = "fake"
         ws = Workspace(name=wsname, location="test", serverless_compute=new_settings)
