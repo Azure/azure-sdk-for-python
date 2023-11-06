@@ -281,10 +281,10 @@ class WorkspaceConnection(Resource):
         properties = rest_obj.properties
         if properties.auth_type == ConnectionAuthType.PAT:
             credentials = PatTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
-        if properties.auth_type == ConnectionAuthType.SAS:
-            credentials = SasTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.MANAGED_IDENTITY:
             credentials = ManagedIdentityConfiguration._from_workspace_connection_rest_object(properties.credentials)
+        if properties.auth_type == ConnectionAuthType.SAS:
+            credentials = SasTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.USERNAME_PASSWORD:
             credentials = UsernamePasswordConfiguration._from_workspace_connection_rest_object(properties.credentials)
         if properties.auth_type == ConnectionAuthType.ACCESS_KEY:
