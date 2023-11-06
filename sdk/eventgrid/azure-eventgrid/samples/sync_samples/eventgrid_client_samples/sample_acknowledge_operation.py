@@ -18,7 +18,7 @@ EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
-# Acknowledge a batch of CloudEvents
+# Acknowledge a CloudEvent
 try:
     lock_tokens = AcknowledgeOptions(lock_tokens=["token"])
     ack_events = client.acknowledge_cloud_events(

@@ -20,16 +20,16 @@ EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
-# Publish a CloudEvent
 try:
+    # Publish a CloudEvent
     cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
     client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
 
+    # Receive CloudEvents and parse out lock tokens
     receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=10, max_wait_time=10)
     lock_tokens_to_release = []
     for item in receive_result.value:
         lock_tokens_to_release.append(item.broker_properties.lock_token)
-
 
     # Renew a lock token
     lock_tokens = RenewLockOptions(lock_tokens=lock_tokens_to_release)

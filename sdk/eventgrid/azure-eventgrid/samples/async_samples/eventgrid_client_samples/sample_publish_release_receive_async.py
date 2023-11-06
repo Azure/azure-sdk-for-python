@@ -23,11 +23,12 @@ async def run():
     client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
     async with client:
-        # Publish a CloudEvent
         try:
+            # Publish a CloudEvent
             cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
             await client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
 
+            # Receive CloudEvents and parse out lock tokens
             receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
             lock_tokens_to_release = []
             for item in receive_result.value:
@@ -45,11 +46,11 @@ async def run():
             )
             print("Released Event:", release_events)
 
-
+            # Receive CloudEvents again
             receive_result = await client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
             print("Received events after release:", receive_result.value)
 
-            # Acknowledge a LockToken
+            # Acknowledge LockTokens
             acknowledge_token = AcknowledgeOptions(lock_tokens=lock_tokens_to_release)
             acknowledge_events = await client.acknowledge_cloud_events(
                 topic_name=TOPIC_NAME,

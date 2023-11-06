@@ -20,11 +20,12 @@ EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
-# Publish a CloudEvent
 try:
+    # Publish a CloudEvent
     cloud_event = CloudEvent(data="hello", source="https://example.com", type="example")
     client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event)
 
+    # Receive CloudEvents and parse out lock tokens
     receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
     lock_tokens_to_release = []
     for item in receive_result.value:
@@ -42,7 +43,7 @@ try:
     )
     print("Released Event:", release_events)
 
-
+    # Receive CloudEvents again
     receive_result = client.receive_cloud_events(topic_name=TOPIC_NAME, event_subscription_name=EVENT_SUBSCRIPTION_NAME, max_events=1, max_wait_time=15)
     print("Received events after release:", receive_result.value)
 

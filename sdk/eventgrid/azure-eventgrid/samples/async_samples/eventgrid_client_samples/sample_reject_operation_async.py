@@ -20,7 +20,7 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 
 
 async def run():
-    # Release a LockToken
+    # Reject a LockToken
     try:
         async with client:
             tokens = RejectOptions(lock_tokens=["token"])
