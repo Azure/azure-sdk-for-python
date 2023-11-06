@@ -58,6 +58,12 @@ class CommunicationIdentifier(Protocol):
 CommunicationUserProperties = TypedDict("CommunicationUserProperties", {"id": str})
 
 PHONE_NUMBER_PREFIX = "4:"
+BOT_PREFIX = "28:"
+BOT_PUBLIC_CLOUD_PREFIX = "28:orgid:"
+BOT_DOD_CLOUD_PREFIX = "28:dod:"
+BOT_DOD_CLOUD_GLOBAL_PREFIX = "28:dod-global:"
+BOT_GCCH_CLOUD_PREFIX = "28:gcch:"
+BOT_GCCH_CLOUD_GLOBAL_PREFIX = "28:gcch-global:"
 TEAMS_APP_PUBLIC_CLOUD_PREFIX = "28:orgid:"
 TEAMS_APP_DOD_CLOUD_PREFIX = "28:dod:"
 TEAMS_APP_GCCH_CLOUD_PREFIX = "28:gcch:"
@@ -352,12 +358,18 @@ def _microsoft_bot_raw_id(identifier: _MicrosoftBotIdentifier) -> str:  # pylint
         return str(identifier.raw_id)
     bot_id = identifier.properties["bot_id"]
     cloud = identifier.properties["cloud"]
+    if identifier.properties["is_resource_account_configured"] is False:
+        if cloud == CommunicationCloudEnvironment.DOD:
+            return f"{BOT_DOD_CLOUD_GLOBAL_PREFIX}{bot_id}"
+        if cloud == CommunicationCloudEnvironment.GCCH:
+            return f"{BOT_GCCH_CLOUD_GLOBAL_PREFIX}{bot_id}"
+        return f"{BOT_PREFIX}{bot_id}"
 
     if cloud == CommunicationCloudEnvironment.DOD:
-        return f"{TEAMS_APP_DOD_CLOUD_PREFIX}{bot_id}"
+        return f"{BOT_DOD_CLOUD_PREFIX}{bot_id}"
     if cloud == CommunicationCloudEnvironment.GCCH:
-        return f"{TEAMS_APP_GCCH_CLOUD_PREFIX}{bot_id}"
-    return f"{TEAMS_APP_PUBLIC_CLOUD_PREFIX}{bot_id}"
+        return f"{BOT_GCCH_CLOUD_PREFIX}{bot_id}"
+    return f"{BOT_PUBLIC_CLOUD_PREFIX}{bot_id}"
 
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
