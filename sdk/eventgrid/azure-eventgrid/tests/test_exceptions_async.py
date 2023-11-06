@@ -58,8 +58,8 @@ class TestEventGridPublisherClientExceptionsAsync(AzureRecordedTestCase):
 
     @pytest.mark.skip("Fix during MQ - skip to unblock pipeline")
     @pytest.mark.live_test_only
-    @pytest.mark.asyncio
     @EventGridPreparer()
+    @pytest.mark.asyncio
     async def test_raise_on_bad_resource(self, eventgrid_topic_key):
         akc_credential = AzureKeyCredential(eventgrid_topic_key)
         client = EventGridPublisherClient("https://bad-resource.westus-1.eventgrid.azure.net/api/events", akc_credential)
