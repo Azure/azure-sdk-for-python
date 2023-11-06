@@ -586,20 +586,34 @@
                 "description": "A flag to determine whether to set up feature store"
             }
         },
-        "byo_open_ai_resource_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Resource Id of BYO open ai resource."
-            }
-        },
         "serverless_compute_settings": {
             "type": "object",
             "defaultValue": {},
             "metadata": {
                 "description": "Serverless compute configuration."
             }
-        }
+        },
+        "endpoint_resource_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The resource id that this workspace hub's endpoints should reference."
+            }
+        },
+        "endpoint_kind": {
+            "type": "string",
+            "defaultValue": "AIServices",
+            "metadata": {
+                "description": "The kind of endpoints this workspace hub ought to contain."
+            }
+        },
+        "endpoint_option": {
+            "type": "string",
+            "defaultValue": "new",
+            "metadata": {
+                "description": "Testing value. Do not touch."
+            }
+        } 
     },
     "variables": {
         "tenantId": "[subscription().tenantId]",
