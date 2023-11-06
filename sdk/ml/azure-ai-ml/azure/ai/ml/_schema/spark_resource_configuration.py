@@ -14,7 +14,7 @@ class SparkResourceConfigurationSchema(metaclass=PatchedSchemaMeta):
     """Schema for SparkResourceConfiguration."""
 
     instance_type = fields.Str(metadata={"description": "Optional type of VM used as supported by the compute target."})
-    runtime_version = UnionField([fields.Str(), fields.Number()])
+    runtime_version = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):
