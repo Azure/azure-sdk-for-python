@@ -12,7 +12,8 @@ class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
     def __getattribute__(cls, item):
         if item == "MICROSOFT_BOT":
-            warnings.warn("MICROSOFT_BOT is deprecated and has been replaced by MICROSOFT_TEAMS_APP identifier.", DeprecationWarning)
+            warnings.warn("MICROSOFT_BOT is deprecated and has been replaced by \
+                          MICROSOFT_TEAMS_APP identifier.", DeprecationWarning)
         return CaseInsensitiveEnumMeta.__getattribute__(cls, item)
 
 class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
@@ -264,7 +265,7 @@ class MicrosoftTeamsAppIdentifier:
     :keyword cloud: Cloud environment that the application belongs to. Default value is `PUBLIC`.
     :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
     """
-     
+
     kind = CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
 
     def __init__(self, app_id: str, **kwargs: Any) -> None:
@@ -287,7 +288,7 @@ def _microsoft_teams_app_raw_id(identifier: MicrosoftTeamsAppIdentifier) -> str:
         return str(identifier.raw_id)
     app_id = identifier.properties["app_id"]
     cloud = identifier.properties["cloud"]
-    
+
     if cloud == CommunicationCloudEnvironment.DOD:
         return f"{TEAMS_APP_DOD_CLOUD_PREFIX}{app_id}"
     if cloud == CommunicationCloudEnvironment.GCCH:
@@ -351,7 +352,7 @@ def _microsoft_bot_raw_id(identifier: _MicrosoftBotIdentifier) -> str:  # pylint
         return str(identifier.raw_id)
     bot_id = identifier.properties["bot_id"]
     cloud = identifier.properties["cloud"]
-    
+
     if cloud == CommunicationCloudEnvironment.DOD:
         return f"{TEAMS_APP_DOD_CLOUD_PREFIX}{bot_id}"
     if cloud == CommunicationCloudEnvironment.GCCH:

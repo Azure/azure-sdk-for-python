@@ -49,7 +49,8 @@ def __getattr__(name):
         from ._shared.models  import _MicrosoftBotProperties
         return _MicrosoftBotProperties
     if name == 'MicrosoftBotIdentifier':
-        warnings.warn(f"{name} is deprecated and should not be used. For Microsoft Teams application scenarios, use MicrosoftTeamsAppIdentifier instead", DeprecationWarning)
+        warnings.warn(f"{name} is deprecated and should not be used. For Microsoft Teams \
+                       application scenarios, use MicrosoftTeamsAppIdentifier instead", DeprecationWarning)
         from ._shared.models  import _MicrosoftBotIdentifier
         return _MicrosoftBotIdentifier
     raise AttributeError(f"module 'azure.communication.identity' has no attribute {name}")
