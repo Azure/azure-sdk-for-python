@@ -12,7 +12,8 @@ class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
     def __getattribute__(cls, item):
         if item == "MICROSOFT_BOT":
-            warnings.warn("MICROSOFT_BOT is deprecated and should not be used.", DeprecationWarning)
+            warnings.warn("MICROSOFT_BOT is deprecated and has been replaced by \
+                          MICROSOFT_TEAMS_APP identifier.", DeprecationWarning)
         return CaseInsensitiveEnumMeta.__getattribute__(cls, item)
 
 class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
@@ -28,6 +29,7 @@ class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
     COMMUNICATION_USER = "communication_user"
     PHONE_NUMBER = "phone_number"
     MICROSOFT_TEAMS_USER = "microsoft_teams_user"
+    MICROSOFT_TEAMS_APP = "microsoft_teams_app"
     MICROSOFT_BOT = "microsoft_bot"
 
 
@@ -62,6 +64,9 @@ BOT_DOD_CLOUD_PREFIX = "28:dod:"
 BOT_DOD_CLOUD_GLOBAL_PREFIX = "28:dod-global:"
 BOT_GCCH_CLOUD_PREFIX = "28:gcch:"
 BOT_GCCH_CLOUD_GLOBAL_PREFIX = "28:gcch-global:"
+TEAMS_APP_PUBLIC_CLOUD_PREFIX = "28:orgid:"
+TEAMS_APP_DOD_CLOUD_PREFIX = "28:dod:"
+TEAMS_APP_GCCH_CLOUD_PREFIX = "28:gcch:"
 TEAMS_USER_ANONYMOUS_PREFIX = "8:teamsvisitor:"
 TEAMS_USER_PUBLIC_CLOUD_PREFIX = "8:orgid:"
 TEAMS_USER_DOD_CLOUD_PREFIX = "8:dod:"
@@ -242,6 +247,61 @@ def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> st
     return f"{TEAMS_USER_PUBLIC_CLOUD_PREFIX}{user_id}"
 
 
+MicrosoftTeamsAppProperties = TypedDict(
+    "MicrosoftTeamsAppProperties",
+    {
+        "app_id": str,
+        "cloud": Union[CommunicationCloudEnvironment, str],
+    },
+)
+
+
+class MicrosoftTeamsAppIdentifier:
+    """Represents an identifier for a Microsoft Teams application.
+
+    :ivar str raw_id: Optional raw ID of the identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar MicrosoftTeamsAppProperties: The properties of the identifier.
+     The keys in this mapping include:
+        - `app_id`(str): The id of the Microsoft Teams application.
+        - `cloud` (str): Cloud environment that this identifier belongs to.
+
+    :param str app_id: Microsoft Teams application id.
+    :keyword cloud: Cloud environment that the application belongs to. Default value is `PUBLIC`.
+    :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
+    """
+
+    kind = CommunicationIdentifierKind.MICROSOFT_TEAMS_APP
+
+    def __init__(self, app_id: str, **kwargs: Any) -> None:
+        self.raw_id = kwargs.get("raw_id")
+        self.properties = MicrosoftTeamsAppProperties(
+            app_id=app_id,
+            cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
+        )
+        if self.raw_id is None:
+            self.raw_id = _microsoft_teams_app_raw_id(self)
+
+    def __eq__(self, other):
+        try:
+            return self.raw_id == _microsoft_teams_app_raw_id(other)
+        except Exception:  # pylint: disable=broad-except
+            return False
+
+def _microsoft_teams_app_raw_id(identifier: MicrosoftTeamsAppIdentifier) -> str:  # pylint: disable=too-many-return-statements
+    if identifier.raw_id:
+        return str(identifier.raw_id)
+    app_id = identifier.properties["app_id"]
+    cloud = identifier.properties["cloud"]
+
+    if cloud == CommunicationCloudEnvironment.DOD:
+        return f"{TEAMS_APP_DOD_CLOUD_PREFIX}{app_id}"
+    if cloud == CommunicationCloudEnvironment.GCCH:
+        return f"{TEAMS_APP_GCCH_CLOUD_PREFIX}{app_id}"
+    return f"{TEAMS_APP_PUBLIC_CLOUD_PREFIX}{app_id}"
+
+
 _MicrosoftBotProperties = TypedDict(
     "MicrosoftBotProperties",
     {
@@ -355,6 +415,24 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
+            cloud=CommunicationCloudEnvironment.GCCH,
+            raw_id=raw_id,
+        )  # type: ignore
+    if prefix == TEAMS_APP_PUBLIC_CLOUD_PREFIX:
+        return MicrosoftTeamsAppIdentifier(
+            app_id=suffix,
+            cloud=CommunicationCloudEnvironment.PUBLIC,
+            raw_id=raw_id,
+        )  # type: ignore
+    if prefix == TEAMS_APP_DOD_CLOUD_PREFIX:
+        return MicrosoftTeamsAppIdentifier(
+            app_id=suffix,
+            cloud=CommunicationCloudEnvironment.DOD,
+            raw_id=raw_id,
+        )  # type: ignore
+    if prefix == TEAMS_APP_GCCH_CLOUD_PREFIX:
+        return MicrosoftTeamsAppIdentifier(
+            app_id=suffix,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
         )  # type: ignore
