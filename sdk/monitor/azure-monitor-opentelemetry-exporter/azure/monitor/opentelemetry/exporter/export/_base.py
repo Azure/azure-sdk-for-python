@@ -5,7 +5,7 @@ import os
 import tempfile
 import time
 from enum import Enum
-from typing import List, Any
+from typing import List, Optional, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -130,6 +130,8 @@ class BaseExporter:
             collect_statsbeat_metrics(self)
 
     def _transmit_from_storage(self) -> None:
+        if not self.storage:
+            return
         for blob in self.storage.gets():
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
@@ -186,7 +188,7 @@ class BaseExporter:
                     for error in track_response.errors:
                         if _is_retryable_code(error.status_code):
                             resend_envelopes.append(
-                                envelopes[error.index]
+                                envelopes[error.index] # type: ignore
                             )
                             if self._should_collect_stats():
                                 _update_requests_map(_REQ_RETRY_NAME[1], value=error.status_code)
@@ -220,10 +222,11 @@ class BaseExporter:
                     result = ExportResult.FAILED_NOT_RETRYABLE
                 elif _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
-                    if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # pylint: disable=W0212
-                        if response_error.response and response_error.response.headers:
+                    # pylint: disable=W0212
+                    if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects: # type: ignore
+                        if response_error.response and response_error.response.headers: # type: ignore
                             redirect_has_headers = True
-                            location = response_error.response.headers.get("location")
+                            location = response_error.response.headers.get("location") # type: ignore
                             url = urlparse(location)
                         else:
                             redirect_has_headers = False
@@ -270,7 +273,7 @@ class BaseExporter:
                 if self._should_collect_stats():
                     exc_type = request_error.exc_type
                     if exc_type is None or exc_type is type(None):
-                        exc_type = request_error.__class__.__name__
+                        exc_type = request_error.__class__.__name__ # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
@@ -335,7 +338,7 @@ def _get_auth_policy(credential, default_auth_policy):
     return default_auth_policy
 
 
-def _is_redirect_code(response_code: int) -> bool:
+def _is_redirect_code(response_code: Optional[int]) -> bool:
     """Determine if response is a redirect response.
 
     :param int response_code: HTTP response code
@@ -345,7 +348,7 @@ def _is_redirect_code(response_code: int) -> bool:
     return response_code in _REDIRECT_STATUS_CODES
 
 
-def _is_retryable_code(response_code: int) -> bool:
+def _is_retryable_code(response_code: Optional[int]) -> bool:
     """Determine if response is retryable.
 
     :param int response_code: HTTP response code
@@ -355,7 +358,7 @@ def _is_retryable_code(response_code: int) -> bool:
     return response_code in _RETRYABLE_STATUS_CODES
 
 
-def _is_throttle_code(response_code: int) -> bool:
+def _is_throttle_code(response_code: Optional[int]) -> bool:
     """Determine if response is throttle response.
 
     :param int response_code: HTTP response code
@@ -365,7 +368,7 @@ def _is_throttle_code(response_code: int) -> bool:
     return response_code in _THROTTLE_STATUS_CODES
 
 
-def _reached_ingestion_code(response_code: int) -> bool:
+def _reached_ingestion_code(response_code: Optional[int]) -> bool:
     """Determine if response indicates ingestion service has been reached.
 
     :param int response_code: HTTP response code

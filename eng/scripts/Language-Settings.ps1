@@ -23,7 +23,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   try
   {
     Push-Location $RepoRoot
-    python -m pip install "./tools/azure-sdk-tools[build]" -q -I
+    $null = python -m pip install "./tools/azure-sdk-tools[build]" -q -I
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
