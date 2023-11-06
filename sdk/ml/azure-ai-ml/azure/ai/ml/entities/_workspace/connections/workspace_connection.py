@@ -297,8 +297,8 @@ class WorkspaceConnection(Resource):
         tags = properties.metadata if hasattr(properties, "metadata") else None
         rest_kwargs = {
             "id": rest_obj.id,
-            "name": rest_obj.name,
             "target": properties.target,
+            "name": rest_obj.name,
             "creation_context": SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             "type": camel_to_snake(properties.category),
             "credentials": credentials,
