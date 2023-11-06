@@ -329,7 +329,10 @@ class NodeIOMixin:
 
 
 def flatten_dict(
-    dct: Dict, _type: Union[Type["_GroupAttrDict"], Type[GroupInput]], *, allow_dict_fields: Optional[List[str]] = None
+    dct: Optional[Dict],
+    _type: Union[Type["_GroupAttrDict"], Type[GroupInput]],
+    *,
+    allow_dict_fields: Optional[List[str]] = None,
 ) -> Dict:
     """Flatten inputs/input_definitions dict for inputs dict build.
 

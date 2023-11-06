@@ -6,7 +6,7 @@ import json
 import os
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
 import yaml
 from marshmallow import EXCLUDE, Schema, ValidationError
@@ -26,7 +26,6 @@ from ..._schema import PathAwareSchema
 from ..._schema.component.flow import FlowComponentSchema, FlowSchema, RunSchema
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .. import Environment
-from .._assets import Code
 from .._inputs_outputs import GroupInput, Input, Output
 from ._additional_includes import AdditionalIncludesMixin
 from .component import Component
@@ -81,7 +80,7 @@ class FlowComponentInputDict(_FlowComponentPortDict):
         )
 
     @contextlib.contextmanager
-    def _fit_inputs(self, inputs: Optional[Dict]) -> Iterable[None]:
+    def _fit_inputs(self, inputs: Optional[Dict]) -> Generator:
         """Add dynamic input ports to the input port dictionary.
         Input ports of a flow component include:
         1. data: required major uri_folder input
@@ -282,7 +281,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         return self._flow
 
     @property
-    def environment(self) -> Union[str, Environment]:
+    def environment(self) -> Optional[Union[str, Environment]]:
         """The environment for the flow component. Defaults to None.
 
         :rtype: Union[str, Environment])
@@ -389,7 +388,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     # endregion
 
     @classmethod
-    def _normalize_component_name(cls, value: str):
+    def _normalize_component_name(cls, value: str) -> str:
         return value.replace("-", "_")
 
     # region Component
@@ -518,7 +517,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         self._code_arm_id = value
 
     @contextlib.contextmanager
-    def _try_build_local_code(self) -> Iterable[Optional[Code]]:
+    def _try_build_local_code(self) -> Generator:
         with super()._try_build_local_code() as code:
             if not code or not code.path:
                 yield code

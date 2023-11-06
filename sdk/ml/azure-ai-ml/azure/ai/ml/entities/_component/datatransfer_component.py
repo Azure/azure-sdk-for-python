@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Any, Dict, NoReturn, Optional, Union
+from typing import Any, Dict, NoReturn, Optional, Union, cast
 
 from marshmallow import Schema
 
@@ -76,10 +76,10 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         return self._task
 
     def _to_dict(self) -> Dict:
-        res: dict = convert_ordered_dict_to_dict(
-            {**self._other_parameter, **super(DataTransferComponent, self)._to_dict()}
+        return cast(
+            dict,
+            convert_ordered_dict_to_dict({**self._other_parameter, **super(DataTransferComponent, self)._to_dict()}),
         )
-        return res
 
     def __str__(self) -> str:
         try:
@@ -91,6 +91,8 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 
     @classmethod
     def _build_source_sink(cls, io_dict: Union[Dict, Database, FileSystem]) -> Union[Database, FileSystem]:
+        component_io: Union[Database, FileSystem] = Database()
+
         if isinstance(io_dict, Database):
             component_io = Database()
         elif isinstance(io_dict, FileSystem):
