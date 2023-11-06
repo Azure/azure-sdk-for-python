@@ -769,11 +769,16 @@ def encode_filter_set(value):
                 described_filter = data
             # handle the situation when data is a tuple or list of length 2
             else:
-                descriptor, filter_value = data
-                described_filter = {
-                    TYPE: AMQPTypes.described,
-                    VALUE: ({TYPE: AMQPTypes.symbol, VALUE: descriptor}, filter_value),
-                }
+                try:
+                    descriptor, filter_value = data
+                    described_filter = {
+                        TYPE: AMQPTypes.described,
+                        VALUE: ({TYPE: AMQPTypes.symbol, VALUE: descriptor}, filter_value),
+                    }
+                except ValueError:
+                    raise ValueError(
+                        "Filter value must be a tuple or list of length 2."
+                    )
 
         cast(List, fields[VALUE]).append(
             ({TYPE: AMQPTypes.symbol, VALUE: name}, described_filter)
