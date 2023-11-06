@@ -10,10 +10,6 @@
 
 - Removed `UsernamePasswordBrokerCredential`
 
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.0.0b1 (2023-10-12)
 
 ### Features Added
