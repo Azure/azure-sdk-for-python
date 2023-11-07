@@ -1,5 +1,15 @@
 # Release History
 
+## 12.19.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.19.0 (2023-11-07)
 
 ### Features Added
