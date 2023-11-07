@@ -1266,10 +1266,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     @distributed_trace_async
     async def cancel_job(
-            self,
-            job_id: str,
-            options: Optional[Union[_models._models.CancelJobOptions, JSON, IO]] = None,
-            **kwargs: Any
+        self, job_id: str, options: Optional[Union[_models._models.CancelJobOptions, JSON, IO]] = None, **kwargs: Any
     ) -> None:  # pylint: disable=arguments-differ
         """Closes a completed job.
 
@@ -1295,21 +1292,25 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
-        await super()._cancel_job(job_id = job_id, options = options, **kwargs)
+        await super()._cancel_job(job_id=job_id, options=options, **kwargs)
 
     @distributed_trace_async
     async def complete_job(
         self,
         job_id: str,
-        options: Union[_models._models.CompleteJobOptions, JSON, IO],
+        assignment_id: str,
+        options: Optional[Union[_models._models.CompleteJobOptions, JSON, IO]] = None,
         **kwargs: Any
     ) -> None:  # pylint: disable=arguments-differ
         """Completes an assigned job.
 
         :param str job_id: Id of the job.
 
+        :param assignment_id: The Id of the job assignment. Required.
+        :type assignment_id: str
+
         :param options: Request model for completing job. Is one of the following types:
-         CompleteJobOptions, JSON, IO Required.
+         CompleteJobOptions, JSON, IO Default value is None.
         :type options: ~azure.communication.jobrouter.models.CompleteJobOptions or JSON or IO
 
         :return: None
@@ -1328,21 +1329,28 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
-        await super()._complete_job(job_id=job_id, options=options, **kwargs)
+        if not assignment_id:
+            raise ValueError("assignment_id cannot be None.")
+
+        await super()._complete_job(job_id=job_id, assignment_id = assignment_id, options=options, **kwargs)
 
     @distributed_trace_async
     async def close_job(
-            self,
-            job_id: str,
-            options: Union[_models._models.CloseJobOptions, JSON, IO],
-            **kwargs: Any
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[Union[_models._models.CloseJobOptions, JSON, IO]] = None,
+        **kwargs: Any
     ) -> None:  # pylint: disable=arguments-differ
         """Closes a completed job.
 
         :param str job_id: Id of the job.
 
+        :param assignment_id: The Id of the job assignment. Required.
+        :type assignment_id: str
+
         :param options: Request model for closing job. Is one of the following types: CloseJobOptions,
-         JSON, IO Required.
+         JSON, IO Default value is None.
         :type options: ~azure.communication.jobrouter.models.CloseJobOptions or JSON or IO
 
         :return: None
@@ -1361,7 +1369,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
-        await super()._close_job(job_id = job_id, options = options, **kwargs)
+        if not assignment_id:
+            raise ValueError("assignment_id cannot be None.")
+
+        await super()._close_job(job_id=job_id, assignment_id = assignment_id, options=options, **kwargs)
 
     # endregion Job
 
@@ -1403,7 +1414,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not offer_id:
             raise ValueError("offer_id cannot be None.")
 
-        await super()._decline_job_offer(worker_id = worker_id, offer_id = offer_id, options = options, **kwargs)
+        await super()._decline_job_offer(worker_id=worker_id, offer_id=offer_id, options=options, **kwargs)
+
     # endregion Offer
 
 
