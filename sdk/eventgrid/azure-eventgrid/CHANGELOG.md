@@ -1,14 +1,10 @@
 # Release History
 
-## 4.15.1 (Unreleased)
+## 4.16.0 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new enum values to `SystemEventnames` related to Azure Resource Notifications.
 
 ## 4.15.0 (2023-10-12)
 
