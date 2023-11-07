@@ -191,7 +191,7 @@ class DiagnoseWorkspaceParameters:
         val = None
         if rest_obj.value and isinstance(rest_obj.value, DiagnoseRequestProperties):
             # pylint: disable=protected-access
-            val = rest_obj.value._from_rest_object()
+            val = rest_obj.value._from_rest_object(rest_obj)
         return cls(value=val)
 
     def _to_rest_object(self) -> RestDiagnoseWorkspaceParameters:
