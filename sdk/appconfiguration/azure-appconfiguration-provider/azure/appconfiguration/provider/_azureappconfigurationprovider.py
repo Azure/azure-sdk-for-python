@@ -202,7 +202,6 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                         key,
                         label,
                     )
-                    provider._refresh_on[(key, label)] = None
                 else:
                     raise e
     return provider

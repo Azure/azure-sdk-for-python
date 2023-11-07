@@ -333,7 +333,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 need_refresh = False
                 updated_sentinel_keys = dict(self._refresh_on)
                 headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
-                for (key, label), etag in self._refresh_on.items():
+                for (key, label), etag in updated_sentinel_keys.items():
                     try:
                         updated_sentinel = await self._client.get_configuration_setting(
                             key=key,
@@ -359,8 +359,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             raise e
                 # Need to only update once, no matter how many sentinels are updated
                 if need_refresh:
-                    await self._load_all(headers=headers, **kwargs)
-                    self._refresh_on = updated_sentinel_keys
+                    await self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
                     if self._on_refresh_success:
                         await self._on_refresh_success()
                 # Even if we don't need to refresh, we should reset the timer
@@ -386,6 +385,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     async def _load_all(self, **kwargs):
         configuration_settings = {}
+        sentinel_keys = kwargs.pop("sentinel_keys", self._refresh_on)
         for select in self._selects:
             configurations = self._client.list_configuration_settings(
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
@@ -405,7 +405,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 # so they stay up-to-date.
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
                 if (config.key, config.label) in self._refresh_on:
-                    self._refresh_on[(config.key, config.label)] = config.etag
+                    sentinel_keys[(config.key, config.label)] = config.etag
+        self._on_refresh = sentinel_keys
         self._dict = configuration_settings
 
     def _process_key_name(self, config):
