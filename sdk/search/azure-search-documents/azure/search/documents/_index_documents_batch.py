@@ -40,7 +40,7 @@ class IndexDocumentsBatch:
 
         :param documents: Documents to upload to an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[Dict]
+        :type documents: dict or list[dict]
         :return: the added actions
         :rtype: list[IndexAction]
         """
@@ -61,7 +61,7 @@ class IndexDocumentsBatch:
 
         :param documents: Documents to delete from an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[Dict]
+        :type documents: dict or list[dict]
         :return: the added actions
         :rtype: list[IndexAction]
         """
@@ -79,7 +79,7 @@ class IndexDocumentsBatch:
 
         :param documents: Documents to merge into an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[Dict]
+        :type documents: dict or list[dict]
         :return: the added actions
         :rtype: list[IndexAction]
         """
@@ -99,7 +99,7 @@ class IndexDocumentsBatch:
         :param documents: Documents to merge or upload into an Azure search
          index. May be a single list of documents, or documents as individual
          parameters.
-        :type documents: dict or list[Dict]
+        :type documents: dict or list[dict]
         :return: the added actions
         :rtype: list[IndexAction]
         """

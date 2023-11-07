@@ -4,10 +4,34 @@
 
 ### Features Added
 
-- Exposed `VectorSearchAlgorithmMetric`, `IndexProjectionMode`, `SearchIndexerIndexProjections`,
-  `SearchIndexerIndexProjectionSelector`, `SearchIndexerIndexProjectionsParameters`
+- Added new models:
+  - `VectorSearchAlgorithmMetric`
+  - `IndexProjectionMode`
+  - `SearchIndexerIndexProjections`
+  - `SearchIndexerIndexProjectionSelector`
+  - `SearchIndexerIndexProjectionsParameters`
+  - `BlobIndexerDataToExtract`
+  - `BlobIndexerImageAction`
+  - `BlobIndexerParsingMode`
+  - `CharFilterName`
+  - `CustomEntity`
+  - `CustomEntityAlias`
+  - `DataChangeDetectionPolicy`
+  - `DataDeletionDetectionPolicy`
+  - `DefaultCognitiveServicesAccount`
+  - `HighWaterMarkChangeDetectionPolicy`
+  - `HnswAlgorithmConfiguration`
+  - `IndexerExecutionResult`
+  - `IndexingParameters`
+  - `IndexingParametersConfiguration`
+  - `IndexingSchedule`
+  - `LexicalAnalyzerName`
+  - `LexicalTokenizerName`
+  - `PIIDetectionSkill`
+  - `PIIDetectionSkillMaskingMode`
+  - `ScoringProfile`
+  - `SemanticSearch`
 - Added `index_projections` support for `SearchIndexerSkillset`
-- Added `semantic_query` for `Search` method.
 
 ### Breaking Changes
 
@@ -18,6 +42,7 @@
 - Renamed `PrioritizedFields` to `SemanticPrioritizedFields`.
 - Renamed `query_caption_highlight` to `query_caption_highlight_enabled`.
 - `query_language` and `query_speller` are not available for `Search` method in this stable release.
+- `alias` operations are not available in this stable release.
 
 ### Bugs Fixed
 

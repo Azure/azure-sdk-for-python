@@ -134,7 +134,7 @@ class SearchClient(HeadersMixin):
     @distributed_trace
     def search(
         self,
-        search_text: Optional[str] = "",
+        search_text: Optional[str] = None,
         *,
         include_total_count: Optional[bool] = None,
         facets: Optional[List[str]] = None,
@@ -256,11 +256,11 @@ class SearchClient(HeadersMixin):
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
          time it takes for semantic enrichment to finish processing before the request fails.
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
-        :paramtype vector_queries: List[VectorQuery]
+        :paramtype vector_queries: list[VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
           vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
-        :rtype:  SearchItemPaged[Dict]
+        :rtype:  SearchItemPaged[dict]
 
         .. admonition:: Example:
 
