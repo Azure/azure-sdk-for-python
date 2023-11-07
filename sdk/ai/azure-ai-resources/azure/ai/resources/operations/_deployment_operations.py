@@ -158,8 +158,12 @@ class DeploymentOperations:
                         default_instance_type, deployment, allowed_instance_types=allowed_instance_types
                     )
 
-                if "registries/azureml" in model_details.id:
+                if "registries/azureml/" in model_details.id:
                     default_instance_type = model_details.properties["inference-recommended-sku"]
+                    allowed_instance_types = []
+                    if "," in default_instance_type:
+                        allowed_instance_types = model_details.properties["inference-recommended-sku"].split(",")
+                        default_instance_type = allowed_instance_types[0]
                     min_sku_spec = model_details.properties["inference-min-sku-spec"].split("|")
                     self._check_default_instance_type_and_populate(
                         default_instance_type, deployment, min_sku_spec=min_sku_spec
