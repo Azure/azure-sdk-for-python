@@ -10,7 +10,6 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
 from azure.ai.ml._restclient.v2023_08_01_preview.models import PipelineJob as RestPipelineJob_2308
 from azure.ai.ml._schema import PathAwareSchema
@@ -595,9 +594,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             properties=properties.properties,
             experiment_name=properties.experiment_name,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(obj.system_data)
-            if obj.system_data
-            else None,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             services=JobServiceBase._from_rest_job_services(properties.services) if properties.services else None,
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,

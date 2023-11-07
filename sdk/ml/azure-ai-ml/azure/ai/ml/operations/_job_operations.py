@@ -32,7 +32,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
-from azure.ai.ml._restclient.v2023_08_01_preview.models import UserIdentity as UserIdentity_2308
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -702,7 +701,7 @@ class JobOperations(_ScopeDependentOperations):
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
-    def create_or_update_with_different_version_api(self, rest_job_resource, **kwargs):
+    def create_or_update_with_different_version_api(self, rest_job_resource, **kwargs):  # pylint: disable=name-too-long
         service_client_operation = self._service_client_operation
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.service_client_08_2023_preview:
