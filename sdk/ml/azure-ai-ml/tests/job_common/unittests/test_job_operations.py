@@ -121,7 +121,7 @@ def mock_job_operation(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2023_02_01_preview,
-        service_client_run_history=mock_aml_services_run_history,
+        service_client_02_2023_preview=mock_aml_services_2023_02_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credential=Mock(spec_set=DefaultAzureCredential),
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
