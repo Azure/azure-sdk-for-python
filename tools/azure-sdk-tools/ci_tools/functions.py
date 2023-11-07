@@ -464,7 +464,7 @@ def pytest(args: [], cwd: str = None, python_executable: str = None) -> bool:
     exe = python_executable or sys.executable
 
     commands = [
-        sys.executable,
+        exe,
         "-m",
         "pytest",
     ]

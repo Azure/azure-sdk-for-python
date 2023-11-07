@@ -54,15 +54,6 @@ def create_scenario_file(package_folder: str, optional_config: str) -> str:
     pass
 
 
-def clean_test_environment(freeze_file: str) -> None:
-    """
-    Removes all packages within a freeze_file from a pip environment.
-    """
-
-    with open(freeze_file, "r", encoding="utf-8") as f:
-        f.readlines()
-
-
 def create_package_and_install(
     distribution_directory: str,
     target_setup: str,
@@ -383,14 +374,15 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
             python_executable=environment_exe,
         )
 
-        # install the dev requirements
-        install_result = pip_install_requirements_file(
-            os.path.join(mapped_args.target, "dev_requirements.txt"), environment_exe
-        )
+        dev_reqs = os.path.join(mapped_args.target, "dev_requirements.txt")
+        test_tools = os.path.join(mapped_args.target, "..", "..", "..", "eng", "test_tools.txt")
+
+        # install the dev requirements and test_tools requirements files
+        install_result = pip_install(["-r", dev_reqs, "-r", test_tools], python_executable=environment_exe)
 
         if not install_result:
             logging.error(
-                f"Unable to complete installation of dev_requirements.txt for {parsed_package.name}, check command output above."
+                f"Unable to complete installation of dev_requirements.txt/ci_tools.txt for {parsed_package.name}, check command output above."
             )
             config_results.append(False)
             break
