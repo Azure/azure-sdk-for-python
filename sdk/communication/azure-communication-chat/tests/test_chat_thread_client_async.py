@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from azure.core.credentials import AccessToken
 from datetime import datetime
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 from azure.communication.chat.aio import ChatThreadClient
 from azure.communication.chat import (
     ChatParticipant,

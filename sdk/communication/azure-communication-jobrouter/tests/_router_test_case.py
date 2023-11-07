@@ -16,6 +16,9 @@ from azure.communication.jobrouter import (
 )
 from azure.communication.jobrouter.models import (
     RouterJobStatus,
+    CancelJobOptions,
+    CompleteJobOptions,
+    CloseJobOptions,
 )
 
 
@@ -37,52 +40,52 @@ class RouterRecordedTestCase(AzureRecordedTestCase):
     @retry(Exception, delay=3, tries=3)
     def clean_up_job(self, job_id, **kwargs):
         router_client: JobRouterClient = self.create_client()
-        router_job = router_client.get_job(id=job_id)
+        router_job = router_client.get_job(job_id=job_id)
         suppress_errors = kwargs.pop("suppress_errors", False)
 
         try:
             if router_job.status == RouterJobStatus.PENDING_CLASSIFICATION:
                 # cancel and delete job
-                router_client.cancel_job(id=job_id, disposition_code="JobCancelledAsPartOfTestCleanUp")
-                router_client.delete_job(id=job_id)
+                router_client.cancel_job(job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp"))
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.QUEUED:
                 # cancel and delete job
-                router_client.cancel_job(id=job_id, disposition_code="JobCancelledAsPartOfTestCleanUp")
-                router_client.delete_job(id=job_id)
+                router_client.cancel_job(job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp"))
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.ASSIGNED:
                 # complete, close and delete job
                 worker_assignments = router_job.assignments
 
                 for assignment_id, job_assignment in worker_assignments.items():
-                    router_client.complete_job(id=job_id, assignment_id=assignment_id)
-                    router_client.close_job(id=job_id, assignment_id=assignment_id)
+                    router_client.complete_job(job_id, assignment_id)
+                    router_client.close_job(job_id, assignment_id)
 
-                router_client.delete_job(id=job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.COMPLETED:
                 # close and delete job
                 worker_assignments = router_job.assignments
 
                 for assignment_id, job_assignment in worker_assignments.items():
-                    router_client.close_job(id=job_id, assignment_id=assignment_id)
+                    router_client.close_job(job_id, assignment_id)
 
-                router_client.delete_job(id=job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.CLOSED:
                 # delete job
-                router_client.delete_job(id=job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.CANCELLED:
                 # delete job
-                router_client.delete_job(id=job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.CLASSIFICATION_FAILED:
                 # delete job
-                router_client.delete_job(id=job_id)
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.CREATED:
                 # cancel and delete job
-                router_client.cancel_job(id=job_id, disposition_code="JobCancelledAsPartOfTestCleanUp")
-                router_client.delete_job(id=job_id)
+                router_client.cancel_job(job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp"))
+                router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.WAITING_FOR_ACTIVATION:
                 # cancel and delete job
-                router_client.cancel_job(id=job_id, disposition_code="JobCancelledAsPartOfTestCleanUp")
-                router_client.delete_job(id=job_id)
+                router_client.cancel_job(job_id, CancelJobOptions(disposition_code="JobCancelledAsPartOfTestCleanUp"))
+                router_client.delete_job(job_id=job_id)
             else:
                 pass
         except Exception as e:

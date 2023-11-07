@@ -645,13 +645,10 @@ class TableClient(TablesBaseClient):
                 :caption: Using transactions to send multiple requests at once
         """
         batched_requests = TableBatchOperations(
-            self._client,
-            self._client._serialize,  # pylint: disable=protected-access
-            self._client._deserialize,  # pylint: disable=protected-access
-            self._client._config,  # pylint: disable=protected-access
-            self.table_name,
+            config=self._client._config,  # pylint: disable=protected-access
+            endpoint=f"{self.scheme}://{self._primary_hostname}",
+            table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            **kwargs,
         )
         try:
             for operation in operations:

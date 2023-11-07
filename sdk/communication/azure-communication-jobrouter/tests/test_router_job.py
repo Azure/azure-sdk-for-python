@@ -12,7 +12,7 @@ from devtools_testutils import recorded_by_proxy
 from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
 from _router_test_case import RouterRecordedTestCase
 from _validators import RouterJobValidator
-from _helpers import _convert_str_to_datetime
+from azure.communication.jobrouter._model_base import _deserialize_datetime as _convert_str_to_datetime
 from _decorators import RouterPreparers
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
@@ -23,8 +23,6 @@ from azure.communication.jobrouter import (
 )
 from azure.communication.jobrouter.models import (
     RoundRobinMode,
-    RouterWorker,
-    ChannelConfiguration,
     RouterWorkerSelector,
     LabelOperator,
     RouterQueueSelector,
@@ -37,6 +35,7 @@ from azure.communication.jobrouter.models import (
     ClassificationPolicy,
     RouterJob,
     ScheduleAndSuspendMode,
+    RouterJobNote,
 )
 
 job_labels = {"key1": "JobKey", "key2": 10, "key3": True}
@@ -57,9 +56,9 @@ job_requested_worker_selectors = [
     RouterWorkerSelector(key="FakeKey1", label_operator=LabelOperator.EQUAL, value=True),
     RouterWorkerSelector(key="FakeKey2", label_operator=LabelOperator.NOT_EQUAL, value=False),
     RouterWorkerSelector(key="FakeKey3", label_operator=LabelOperator.LESS_THAN, value=10),
-    RouterWorkerSelector(key="FakeKey4", label_operator=LabelOperator.LESS_THAN_EQUAL, value=10.01),
+    RouterWorkerSelector(key="FakeKey4", label_operator=LabelOperator.LESS_THAN_OR_EQUAL, value=10.01),
     RouterWorkerSelector(key="FakeKey5", label_operator=LabelOperator.GREATER_THAN, value=10),
-    RouterWorkerSelector(key="FakeKey6", label_operator=LabelOperator.GREATER_THAN_EQUAL, value=10),
+    RouterWorkerSelector(key="FakeKey6", label_operator=LabelOperator.GREATER_THAN_OR_EQUAL, value=10),
 ]
 
 
@@ -86,7 +85,7 @@ expected_attached_worker_selectors = [
 ]
 
 test_timestamp = _convert_str_to_datetime("2022-05-13T23:59:04.5311999+07:00")
-job_notes = {test_timestamp: "Fake notes attached to job"}
+job_notes = [RouterJobNote(added_at=test_timestamp, message="Fake notes attached to job")]
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -104,20 +103,20 @@ class TestRouterJob(RouterRecordedTestCase):
                 self.classification_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.classification_policy_ids[self._testMethodName]):
-                    router_admin_client.delete_classification_policy(id=policy_id)
+                    router_admin_client.delete_classification_policy(policy_id)
 
             if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                 for _id in set(self.queue_ids[self._testMethodName]):
-                    router_admin_client.delete_queue(id=_id)
+                    router_admin_client.delete_queue(_id)
 
             if self._testMethodName in self.distribution_policy_ids and any(
                 self.distribution_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                    router_admin_client.delete_distribution_policy(id=policy_id)
+                    router_admin_client.delete_distribution_policy(policy_id)
 
     def get_distribution_policy_id(self):
-        return self._testMethodName + "_tst_dp"
+        return "_" + self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self):
         client: JobRouterAdministrationClient = self.create_admin_client()
@@ -130,9 +129,7 @@ class TestRouterJob(RouterRecordedTestCase):
             name=distribution_policy_id,
         )
 
-        distribution_policy = client.create_distribution_policy(
-            id=distribution_policy_id, distribution_policy=policy
-        )
+        distribution_policy = client.upsert_distribution_policy(distribution_policy_id, policy)
 
         # add for cleanup later
         if self._testMethodName in self.distribution_policy_ids:
@@ -143,7 +140,7 @@ class TestRouterJob(RouterRecordedTestCase):
             self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
 
     def get_job_queue_id(self):
-        return self._testMethodName + "_tst_q"
+        return "_" + self._testMethodName + "_tst_q"
 
     def setup_job_queue(self):
         client: JobRouterAdministrationClient = self.create_admin_client()
@@ -155,7 +152,7 @@ class TestRouterJob(RouterRecordedTestCase):
             labels=job_labels,
         )
 
-        job_queue = client.create_queue(id=job_queue_id, queue=job_queue)
+        job_queue = client.upsert_queue(job_queue_id, job_queue)
 
         # add for cleanup later
         if self._testMethodName in self.queue_ids:
@@ -164,7 +161,7 @@ class TestRouterJob(RouterRecordedTestCase):
             self.queue_ids[self._testMethodName] = [job_queue_id]
 
     def get_fallback_queue_id(self):
-        return self._testMethodName + "_tst_flbk_q"  # cspell:disable-line
+        return "_" + self._testMethodName + "_tst_flbk_q"  # cspell:disable-line
 
     def setup_fallback_queue(self):
         client: JobRouterAdministrationClient = self.create_admin_client()
@@ -176,7 +173,7 @@ class TestRouterJob(RouterRecordedTestCase):
             labels=job_labels,
         )
 
-        job_queue = client.create_queue(id=job_queue_id, queue=job_queue)
+        job_queue = client.upsert_queue(job_queue_id, job_queue)
 
         # add for cleanup later
         if self._testMethodName in self.queue_ids:
@@ -185,7 +182,7 @@ class TestRouterJob(RouterRecordedTestCase):
             self.queue_ids[self._testMethodName] = [job_queue_id]
 
     def get_classification_policy_id(self):
-        return self._testMethodName + "_tst_cp"
+        return "_" + self._testMethodName + "_tst_cp"
 
     def setup_classification_policy(self):
         client: JobRouterAdministrationClient = self.create_admin_client()
@@ -203,14 +200,12 @@ class TestRouterJob(RouterRecordedTestCase):
         classification_policy: ClassificationPolicy = ClassificationPolicy(
             name=cp_id,
             fallback_queue_id=self.get_fallback_queue_id(),
-            queue_selectors=cp_queue_selectors,
+            queue_selector_attachments=cp_queue_selectors,
             prioritization_rule=prioritization_rules[0],
-            worker_selectors=cp_worker_selectors,
+            worker_selector_attachments=cp_worker_selectors,
         )
 
-        job_queue = client.create_classification_policy(
-            id=cp_id, classification_policy=classification_policy
-        )
+        job_queue = client.upsert_classification_policy(cp_id, classification_policy)
 
         # add for cleanup later
         if self._testMethodName in self.classification_policy_ids:
@@ -220,17 +215,17 @@ class TestRouterJob(RouterRecordedTestCase):
 
     def validate_job_is_queued(self, identifier, **kwargs):
         router_client: JobRouterClient = self.create_client()
-        router_job = router_client.get_job(id=identifier)
+        router_job = router_client.get_job(identifier)
         assert router_job.status == RouterJobStatus.QUEUED
 
     def validate_job_is_scheduled(self, identifier, **kwargs):
         router_client: JobRouterClient = self.create_client()
-        router_job = router_client.get_job(id=identifier)
+        router_job = router_client.get_job(identifier)
         assert router_job.status == RouterJobStatus.SCHEDULED
 
     def validate_job_is_cancelled(self, identifier, **kwargs):
         router_client: JobRouterClient = self.create_client()
-        router_job = router_client.get_job(id=identifier)
+        router_job = router_client.get_job(identifier)
         assert router_job.status == RouterJobStatus.CANCELLED
 
     @RouterPreparers.router_test_decorator
@@ -253,7 +248,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -288,7 +283,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         matching_mode = ScheduleAndSuspendMode(schedule_at=recorded_variables["scheduled_time_utc"])
 
-        job_identifier = "tst_create_sch_job"
+        job_identifier = "_tst_create_sch_job"
         router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
@@ -303,7 +298,7 @@ class TestRouterJob(RouterRecordedTestCase):
             matching_mode=matching_mode,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -349,7 +344,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -374,7 +369,7 @@ class TestRouterJob(RouterRecordedTestCase):
         router_job.labels["FakeKey"] = "FakeWorkerValue"
         updated_job_labels = router_job.labels
 
-        update_router_job = router_client.update_job(job_identifier, router_job)
+        update_router_job = router_client.upsert_job(job_identifier, router_job)
 
         assert update_router_job is not None
         RouterJobValidator.validate_job(
@@ -413,7 +408,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -438,7 +433,7 @@ class TestRouterJob(RouterRecordedTestCase):
         updated_job_labels = {k: v for k, v in router_job.labels.items()}
         updated_job_labels["FakeKey"] = "FakeWorkerValue"
 
-        update_router_job = router_client.update_job(job_identifier, labels=updated_job_labels)
+        update_router_job = router_client.upsert_job(job_identifier, labels=updated_job_labels)
 
         assert update_router_job is not None
         RouterJobValidator.validate_job(
@@ -477,7 +472,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -500,7 +495,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         self._poll_until_no_exception(self.validate_job_is_queued, Exception, job_identifier)
 
-        queried_router_job = router_client.get_job(id=job_identifier)
+        queried_router_job = router_client.get_job(job_id=job_identifier)
 
         RouterJobValidator.validate_job(
             queried_router_job,
@@ -536,7 +531,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -579,7 +574,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -606,7 +601,7 @@ class TestRouterJob(RouterRecordedTestCase):
         updated_job_labels["FakeKey"] = "FakeWorkerValue"
         router_job.labels = updated_job_labels
 
-        update_router_job = router_client.update_job(job_identifier, router_job)
+        update_router_job = router_client.upsert_job(job_identifier, router_job)
 
         assert update_router_job is not None
         RouterJobValidator.validate_job(
@@ -647,7 +642,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -670,10 +665,10 @@ class TestRouterJob(RouterRecordedTestCase):
         self._poll_until_no_exception(self.validate_job_is_queued, Exception, job_identifier)
 
         # Act
-        updated_job_labels = {k: v for k,v in router_job.labels.items()}
+        updated_job_labels = {k: v for k, v in router_job.labels.items()}
         updated_job_labels["FakeKey"] = "FakeWorkerValue"
 
-        update_router_job = router_client.update_job(id=job_identifier, labels=updated_job_labels)
+        update_router_job = router_client.upsert_job(job_identifier, labels=updated_job_labels)
 
         assert update_router_job is not None
         RouterJobValidator.validate_job(
@@ -714,7 +709,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -736,7 +731,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         self._poll_until_no_exception(self.validate_job_is_queued, Exception, job_identifier)
 
-        queried_router_job = router_client.get_job(id=job_identifier)
+        queried_router_job = router_client.get_job(job_id=job_identifier)
 
         RouterJobValidator.validate_job(
             queried_router_job,
@@ -774,7 +769,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(id=job_identifier, router_job=router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -798,10 +793,10 @@ class TestRouterJob(RouterRecordedTestCase):
         self._poll_until_no_exception(self.validate_job_is_queued, Exception, job_identifier)
 
         # job needs to be in a termination state before it can be deleted
-        router_client.cancel_job(id=job_identifier)
-        router_client.delete_job(id=job_identifier)
+        router_client.cancel_job(job_identifier)
+        router_client.delete_job(job_identifier)
         with pytest.raises(ResourceNotFoundError) as nfe:
-            router_client.get_job(id=job_identifier)
+            router_client.get_job(job_identifier)
             self.job_ids.pop(self._testMethodName, None)
         assert nfe.value.reason == "Not Found"
         assert nfe.value.status_code == 404
@@ -831,7 +826,7 @@ class TestRouterJob(RouterRecordedTestCase):
                 notes=job_notes,
             )
 
-            router_job = router_client.create_job(id=identifier, router_job=router_job)
+            router_job = router_client.upsert_job(identifier, router_job)
 
             # add for cleanup
             self.job_ids[self._testMethodName].append(identifier)
@@ -867,13 +862,13 @@ class TestRouterJob(RouterRecordedTestCase):
             assert len(list_of_jobs) <= 2
 
             for j_item in list_of_jobs:
-                response_at_creation = created_job_response.get(j_item.job.id, None)
+                response_at_creation = created_job_response.get(j_item.id, None)
 
                 if not response_at_creation:
                     continue
 
                 RouterJobValidator.validate_job(
-                    j_item.job,
+                    j_item,
                     identifier=response_at_creation.id,
                     channel_reference=response_at_creation.channel_reference,
                     channel_id=response_at_creation.channel_id,
@@ -902,7 +897,7 @@ class TestRouterJob(RouterRecordedTestCase):
         matching_mode = ScheduleAndSuspendMode(schedule_at=recorded_variables["scheduled_time_utc"])
 
         router_client: JobRouterClient = self.create_client()
-        job_identifiers = ["tst_list_sch_job_1", "tst_list_sch_job_2"]
+        job_identifiers = ["_tst_list_sch_job_1", "_tst_list_sch_job_2"]
 
         created_job_response = {}
         job_count = len(job_identifiers)
@@ -921,7 +916,7 @@ class TestRouterJob(RouterRecordedTestCase):
                 matching_mode=matching_mode,
             )
 
-            router_job = router_client.create_job(id=identifier, router_job=router_job)
+            router_job = router_client.upsert_job(identifier, router_job)
 
             # add for cleanup
             self.job_ids[self._testMethodName].append(identifier)
@@ -959,13 +954,13 @@ class TestRouterJob(RouterRecordedTestCase):
             assert len(list_of_jobs) <= 2
 
             for j_item in list_of_jobs:
-                response_at_creation = created_job_response.get(j_item.job.id, None)
+                response_at_creation = created_job_response.get(j_item.id, None)
 
                 if not response_at_creation:
                     continue
 
                 RouterJobValidator.validate_job(
-                    j_item.job,
+                    j_item,
                     identifier=response_at_creation.id,
                     channel_reference=response_at_creation.channel_reference,
                     channel_id=response_at_creation.channel_id,

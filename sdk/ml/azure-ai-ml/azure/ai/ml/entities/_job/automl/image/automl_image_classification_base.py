@@ -19,6 +19,24 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class AutoMLImageClassificationBase(AutoMLImage):
+    """Base class for AutoML Image Classification and Image Classification Multilabel tasks.
+    Please do not instantiate this class directly. Instantiate one of the child classes instead.
+
+    :keyword task_type: Type of task to run.
+    Possible values include: "ImageClassification", "ImageClassificationMultilabel".
+    :paramtype task_type: str
+    :keyword limits: Limits for Automl image classification jobs. Defaults to None.
+    :paramtype limits: Optional[~azure.ai.ml.automl.ImageLimitSettings]
+    :keyword sweep: Sweep settings for Automl image classification jobs. Defaults to None.
+    :paramtype sweep: Optional[~azure.ai.ml.automl.ImageSweepSettings]
+    :keyword training_parameters: Training parameters for Automl image classification jobs. Defaults to None.
+    :paramtype training_parameters: Optional[~azure.ai.ml.automl.ImageModelSettingsClassification]
+    :keyword search_space: Search space for Automl image classification jobs. Defaults to None.
+    :paramtype search_space: Optional[List[~azure.ai.ml.automl.ImageClassificationSearchSpace]]
+    :keyword kwargs: Other Keyword arguments for AutoMLImageClassificationBase class.
+    :paramtype kwargs: Dict[str, Any]
+    """
+
     def __init__(
         self,
         *,
@@ -35,10 +53,22 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
     @property
     def training_parameters(self) -> ImageModelSettingsClassification:
+        """
+        :rtype: ~azure.ai.ml.automl.ImageModelSettingsClassification
+        :return: Training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
+        """
         return self._training_parameters
 
     @training_parameters.setter
     def training_parameters(self, value: Union[Dict, ImageModelSettingsClassification]) -> None:
+        """Setting Image training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
+
+        :param value: Training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
+        :type value: Union[Dict, ~azure.ai.ml.automl.ImageModelSettingsClassification]
+        :raises ~azure.ml.exceptions.ValidationException if value is not a dictionary or
+         ImageModelSettingsClassification.
+        :return: None
+        """
         if value is None:
             self._training_parameters = None
         elif isinstance(value, ImageModelSettingsClassification):
@@ -62,10 +92,21 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
     @property
     def search_space(self) -> List[ImageClassificationSearchSpace]:
+        """
+        :rtype: List[~azure.ai.ml.automl.ImageClassificationSearchSpace]
+        :return: Search space for AutoML Image Classification and Image Classification Multilabel tasks.
+        """
         return self._search_space
 
     @search_space.setter
     def search_space(self, value: Union[List[Dict], List[SearchSpace]]) -> None:
+        """Setting Image search space for AutoML Image Classification and Image Classification Multilabel tasks.
+
+        :param value: Search space for AutoML Image Classification and Image Classification Multilabel tasks.
+        :type value: Union[List[Dict], List[~azure.ai.ml.automl.ImageClassificationSearchSpace]]
+        :raises ~azure.ml.exceptions.ValidationException if value is not a list of dictionaries or
+            ImageClassificationSearchSpace.
+        """
         if not isinstance(value, list):
             msg = "Expected a list for search space."
             raise ValidationException(

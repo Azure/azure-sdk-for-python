@@ -60,7 +60,7 @@ try:
       "comment": "Thanks for raising this!"
     }
     task_id = "6785028c-1348-4415-b6b7-f723be6c8c31"
-    client.approve_approval_task(task_id, approve_response)
+    client.approval.approve(task_id, approve_response)
     print('Successfully approve a workflow task.')
 
 except HttpResponseError as e:

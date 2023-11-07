@@ -13,6 +13,14 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 
 @experimental
 class ServerlessSparkCompute:
+    """Serverless Spark compute.
+
+    :param runtime_version: The runtime version of the compute.
+    :type runtime_version: str
+    :param instance_type: The instance type of the compute.
+    :type instance_type: str
+    """
+
     def __init__(
         self,
         *,

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.0.1 (2023-11-07)
 
 ### Features Added
 
@@ -11,11 +11,10 @@
 - Allow OTEL_PYTHON_DISABLED_INSTRUMENTATIONS functionality for Azure Core Tracing in Auto-instrumentation
     ([#32331](https://github.com/Azure/azure-sdk-for-python/pull/32331))
 
-### Breaking Changes
-
 ### Bugs Fixed
 
-### Other Changes
+- Updated django samples with clearly artificial secret key
+    ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
 
 ## 1.0.0 (2023-09-12)
 

@@ -24,14 +24,13 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-import sys
 from typing import Optional, TYPE_CHECKING, Type, cast
 from types import TracebackType
 
 import logging
 import asyncio
-import aiohttp  # pylint: disable=networking-import-outside-azure-core-transport
-import aiohttp.client_exceptions  # pylint: disable=networking-import-outside-azure-core-transport
+import aiohttp  # pylint: disable=all
+import aiohttp.client_exceptions  # pylint: disable=all
 
 from ...exceptions import (
     ServiceRequestError,

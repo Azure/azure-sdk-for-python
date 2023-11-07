@@ -55,10 +55,8 @@ queue_selectors = [
         queue_selectors=[RouterQueueSelector(key="test_key", label_operator=LabelOperator.EQUAL, value="test_value")],
     ),
     RuleEngineQueueSelectorAttachment(
-        rule = StaticRouterRule(value = [
-            RouterQueueSelector(
-                key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
-            )]
+        rule=StaticRouterRule(
+            value=[RouterQueueSelector(key="test_key", label_operator=LabelOperator.EQUAL, value="test_value")]
         )
     ),
     PassThroughQueueSelectorAttachment(key="testKey", label_operator=LabelOperator.EQUAL),
@@ -106,14 +104,16 @@ worker_selectors = [
         ],
     ),
     RuleEngineWorkerSelectorAttachment(
-        rule = StaticRouterRule(value = [
-            RouterWorkerSelector(
-                key = "test_key",
-                label_operator = LabelOperator.EQUAL,
-                value = "test_value",
-                expires_after_seconds = 10.0,
-                expedite = False
-            )]
+        rule=StaticRouterRule(
+            value=[
+                RouterWorkerSelector(
+                    key="test_key",
+                    label_operator=LabelOperator.EQUAL,
+                    value="test_value",
+                    expires_after_seconds=10.0,
+                    expedite=False,
+                )
+            ]
         )
     ),
     PassThroughWorkerSelectorAttachment(key="testKey", label_operator=LabelOperator.EQUAL),
@@ -146,17 +146,17 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 self.classification_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.classification_policy_ids[self._testMethodName]):
-                    router_client.delete_classification_policy(id=policy_id)
+                    router_client.delete_classification_policy(classification_policy_id=policy_id)
 
             if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                 for policy_id in set(self.queue_ids[self._testMethodName]):
-                    router_client.delete_queue(id=policy_id)
+                    router_client.delete_queue(queue_id=policy_id)
 
             if self._testMethodName in self.distribution_policy_ids and any(
                 self.distribution_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                    router_client.delete_distribution_policy(id=policy_id)
+                    router_client.delete_distribution_policy(distribution_policy_id=policy_id)
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp"
@@ -171,9 +171,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
             name=distribution_policy_id,
         )
 
-        distribution_policy = client.create_distribution_policy(
-            id=distribution_policy_id, distribution_policy=policy
-        )
+        distribution_policy = client.upsert_distribution_policy(distribution_policy_id, policy)
 
         # add for cleanup later
         if self._testMethodName in self.distribution_policy_ids:
@@ -192,7 +190,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
 
         job_queue: RouterQueue = RouterQueue(distribution_policy_id=self.get_distribution_policy_id(), name="test")
 
-        job_queue = client.create_queue(id=job_queue_id, queue=job_queue)
+        job_queue = client.upsert_queue(job_queue_id, job_queue)
 
         # add for cleanup later
         if self._testMethodName in self.queue_ids:
@@ -213,14 +211,12 @@ class TestClassificationPolicy(RouterRecordedTestCase):
             classification_policy: ClassificationPolicy = ClassificationPolicy(
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
-            classification_policy = router_client.create_classification_policy(
-                id=cp_identifier, classification_policy=classification_policy
-            )
+            classification_policy = router_client.upsert_classification_policy(cp_identifier, classification_policy)
 
             # add for cleanup
             self.classification_policy_ids[self._testMethodName] = [cp_identifier]
@@ -231,9 +227,9 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 classification_policy,
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
     @RouterPreparers.router_test_decorator
@@ -249,14 +245,12 @@ class TestClassificationPolicy(RouterRecordedTestCase):
             classification_policy: ClassificationPolicy = ClassificationPolicy(
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
-            classification_policy = router_client.create_classification_policy(
-                id=cp_identifier, classification_policy=classification_policy
-            )
+            classification_policy = router_client.upsert_classification_policy(cp_identifier, classification_policy)
 
             # add for cleanup
             self.classification_policy_ids[self._testMethodName] = [cp_identifier]
@@ -267,15 +261,15 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 classification_policy,
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
             updated_prioritization_rule = ExpressionRouterRule(expression="2")
             classification_policy.prioritization_rule = updated_prioritization_rule
 
-            updated_classification_policy = router_client.update_classification_policy(
+            updated_classification_policy = router_client.upsert_classification_policy(
                 cp_identifier, classification_policy
             )
 
@@ -283,9 +277,9 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 updated_classification_policy,
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=updated_prioritization_rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
     @RouterPreparers.router_test_decorator
@@ -301,14 +295,12 @@ class TestClassificationPolicy(RouterRecordedTestCase):
             classification_policy: ClassificationPolicy = ClassificationPolicy(
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
-            classification_policy = router_client.create_classification_policy(
-                id=cp_identifier, classification_policy=classification_policy
-            )
+            classification_policy = router_client.upsert_classification_policy(cp_identifier, classification_policy)
 
             # add for cleanup
             self.classification_policy_ids[self._testMethodName] = [cp_identifier]
@@ -319,25 +311,25 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 classification_policy,
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
             updated_prioritization_rule = ExpressionRouterRule(expression="2")
             classification_policy.prioritization_rule = updated_prioritization_rule
 
-            updated_classification_policy = router_client.update_classification_policy(
-                id=cp_identifier, prioritization_rule=updated_prioritization_rule
+            updated_classification_policy = router_client.upsert_classification_policy(
+                cp_identifier, prioritization_rule=updated_prioritization_rule
             )
 
             ClassificationPolicyValidator.validate_classification_policy(
                 updated_classification_policy,
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=updated_prioritization_rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
     @RouterPreparers.router_test_decorator
@@ -353,14 +345,12 @@ class TestClassificationPolicy(RouterRecordedTestCase):
             classification_policy: ClassificationPolicy = ClassificationPolicy(
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
-            classification_policy = router_client.create_classification_policy(
-                id=cp_identifier, classification_policy=classification_policy
-            )
+            classification_policy = router_client.upsert_classification_policy(cp_identifier, classification_policy)
 
             # add for cleanup
             self.classification_policy_ids[self._testMethodName] = [cp_identifier]
@@ -371,22 +361,22 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 classification_policy,
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
             queried_classification_policy = router_client.get_classification_policy(
-                id=cp_identifier
+                classification_policy_id=cp_identifier
             )
 
             ClassificationPolicyValidator.validate_classification_policy(
                 queried_classification_policy,
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
     @RouterPreparers.router_test_decorator
@@ -406,14 +396,12 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 classification_policy: ClassificationPolicy = ClassificationPolicy(
                     name=_identifier,
                     fallback_queue_id=self.get_job_queue_id(),
-                    queue_selectors=queue_selectors,
+                    queue_selector_attachments=queue_selectors,
                     prioritization_rule=rule,
-                    worker_selectors=worker_selectors,
+                    worker_selector_attachments=worker_selectors,
                 )
 
-                classification_policy = router_client.create_classification_policy(
-                    id=_identifier, classification_policy=classification_policy
-                )
+                classification_policy = router_client.upsert_classification_policy(_identifier, classification_policy)
 
                 policy_count += 1
 
@@ -426,9 +414,9 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                     classification_policy,
                     name=_identifier,
                     fallback_queue_id=self.get_job_queue_id(),
-                    queue_selectors=queue_selectors,
+                    queue_selector_attachments=queue_selectors,
                     prioritization_rule=rule,
-                    worker_selectors=worker_selectors,
+                    worker_selector_attachments=worker_selectors,
                 )
 
                 created_cp_response[classification_policy.id] = classification_policy
@@ -445,18 +433,18 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 assert len(list_of_policies) <= 1
 
                 for policy_item in list_of_policies:
-                    response_at_creation = created_cp_response.get(policy_item.classification_policy.id, None)
+                    response_at_creation = created_cp_response.get(policy_item.id, None)
 
                     if not response_at_creation:
                         continue
 
                     ClassificationPolicyValidator.validate_classification_policy(
-                        policy_item.classification_policy,
+                        policy_item,
                         name=response_at_creation.name,
                         fallback_queue_id=response_at_creation.fallback_queue_id,
-                        queue_selectors=response_at_creation.queue_selectors,
+                        queue_selector_attachments=response_at_creation.queue_selector_attachments,
                         prioritization_rule=response_at_creation.prioritization_rule,
-                        worker_selectors=response_at_creation.worker_selectors,
+                        worker_selector_attachments=response_at_creation.worker_selector_attachments,
                     )
                     policy_count -= 1
 
@@ -473,14 +461,14 @@ class TestClassificationPolicy(RouterRecordedTestCase):
             classification_policy: ClassificationPolicy = ClassificationPolicy(
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
-            classification_policy = router_client.create_classification_policy(
-                id=cp_identifier,
-                classification_policy=classification_policy,
+            classification_policy = router_client.upsert_classification_policy(
+                cp_identifier,
+                classification_policy,
             )
 
             # add for cleanup
@@ -492,15 +480,15 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 classification_policy,
                 name=cp_identifier,
                 fallback_queue_id=self.get_job_queue_id(),
-                queue_selectors=queue_selectors,
+                queue_selector_attachments=queue_selectors,
                 prioritization_rule=rule,
-                worker_selectors=worker_selectors,
+                worker_selector_attachments=worker_selectors,
             )
 
-            router_client.delete_classification_policy(id=cp_identifier)
+            router_client.delete_classification_policy(classification_policy_id=cp_identifier)
 
             with pytest.raises(ResourceNotFoundError) as nfe:
-                router_client.get_classification_policy(id=cp_identifier)
+                router_client.get_classification_policy(classification_policy_id=cp_identifier)
 
             assert nfe.value.reason == "Not Found"
             assert nfe.value.status_code == 404
