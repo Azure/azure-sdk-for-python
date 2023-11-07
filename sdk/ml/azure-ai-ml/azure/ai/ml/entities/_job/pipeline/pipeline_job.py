@@ -10,8 +10,8 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
-from azure.ai.ml._restclient.v2023_08_01_preview.models import PipelineJob as RestPipelineJob_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -485,7 +485,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             properties=self.properties,
         )
 
-    def _to_rest_object(self) -> JobBase_2308:
+    def _to_rest_object(self) -> JobBase:
         """Build current parameterized pipeline instance to a pipeline job object before submission.
 
         :return: Rest pipeline job.
@@ -528,7 +528,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         # MFE not support pass None or empty input value. Remove the empty inputs in pipeline job.
         built_inputs = {k: v for k, v in built_inputs.items() if v is not None and v != ""}
 
-        pipeline_job = RestPipelineJob_2308(
+        pipeline_job = RestPipelineJob(
             compute_id=rest_compute,
             component_id=component_id,
             display_name=self.display_name,
@@ -540,17 +540,16 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             inputs=to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
             outputs=to_rest_data_outputs(built_outputs),
             settings=settings_dict,
-            # Temporarily not modified to 2308 version
             services={k: v._to_rest_object() for k, v in self.services.items()} if self.services else None,
             identity=self.identity._to_job_rest_object() if self.identity else None,
         )
 
-        rest_job = JobBase_2308(properties=pipeline_job)
+        rest_job = JobBase(properties=pipeline_job)
         rest_job.name = self.name
         return rest_job
 
     @classmethod
-    def _load_from_rest(cls, obj: JobBase_2308) -> "PipelineJob":
+    def _load_from_rest(cls, obj: JobBase) -> "PipelineJob":
         """Build a pipeline instance from rest pipeline object.
 
         :param obj: The REST Pipeline Object
@@ -558,7 +557,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         :return: pipeline job.
         :rtype: PipelineJob
         """
-        properties: RestPipelineJob_2308 = obj.properties
+        properties: RestPipelineJob = obj.properties
         # Workaround for BatchEndpoint as these fields are not filled in
         # Unpack the inputs
         from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs) or {}

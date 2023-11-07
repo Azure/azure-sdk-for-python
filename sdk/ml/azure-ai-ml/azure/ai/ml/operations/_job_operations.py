@@ -142,7 +142,7 @@ class JobOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type service_client: ~azure.ai.ml._restclient.v2023_08_01_preview.AzureMachineLearningWorkspaces
+    :type service_client: ~azure.ai.ml._restclient.v2023_04_01_preview.AzureMachineLearningWorkspaces
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credential: Credential to use for authentication.
@@ -156,6 +156,8 @@ class JobOperations(_ScopeDependentOperations):
         service_client: AMLServiceClient,
         all_operations: OperationsContainer,
         credential: TokenCredential,
+        *,
+        service_client_08_2023_preview=None,
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
@@ -177,7 +179,7 @@ class JobOperations(_ScopeDependentOperations):
             self._all_operations, self._operation_scope, self._operation_config
         )  # pylint: disable=line-too-long
 
-        self.service_client_08_2023_preview = kwargs.pop("service_client_08_2023_preview", None)
+        self.service_client_08_2023_preview = service_client_08_2023_preview
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -666,7 +668,7 @@ class JobOperations(_ScopeDependentOperations):
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
-        result = self.create_or_update_with_different_version_api(rest_job_resource=rest_job_resource, **kwargs)
+        result = self._create_or_update_with_different_version_api(rest_job_resource=rest_job_resource, **kwargs)
 
         if is_local_run(result):
             ws_base_url = self._all_operations.all_operations[
@@ -697,11 +699,13 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self.create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
+            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
 
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
-    def create_or_update_with_different_version_api(self, rest_job_resource, **kwargs):  # pylint: disable=name-too-long
+    def _create_or_update_with_different_version_api(  # pylint: disable=name-too-long
+        self, rest_job_resource, **kwargs
+    ):
         service_client_operation = self._service_client_operation
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.service_client_08_2023_preview:
@@ -725,7 +729,7 @@ class JobOperations(_ScopeDependentOperations):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
 
-        self.create_or_update_with_different_version_api(rest_job_resource=job_object)
+        self._create_or_update_with_different_version_api(rest_job_resource=job_object)
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
