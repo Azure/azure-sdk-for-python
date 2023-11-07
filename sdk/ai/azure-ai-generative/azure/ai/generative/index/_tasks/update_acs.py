@@ -150,8 +150,8 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                             kind=VectorSearchAlgorithmKind.HNSW,
                             parameters=HnswParameters(
                                 m=4,
-                                efConstruction=400,
-                                efSearch=500,
+                                ef_construction=400,
+                                ef_search=500,
                                 metric="cosine",
                             ),
                         )
