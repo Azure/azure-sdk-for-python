@@ -223,9 +223,11 @@ class AzureAppConfigurationClient:
                     cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                     **kwargs
                 )
+            key_filter, kwargs = get_key_filter(*args, **kwargs)
+            label_filter, kwargs = get_label_filter(*args, **kwargs)
             return self._impl.get_key_values(  # type: ignore
-                key=get_key_filter(*args, **kwargs),
-                label=get_label_filter(*args, **kwargs),
+                key=key_filter,
+                label=label_filter,
                 accept_datetime=accept_datetime,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],

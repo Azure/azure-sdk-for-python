@@ -81,7 +81,7 @@ def get_key_filter(*args, **kwargs) -> Optional[str]:
                 "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument "
                 "'key_filter'"
             )
-    return key_filter or kwargs.pop("key_filter", None)
+    return key_filter or kwargs.pop("key_filter", None), kwargs
 
 
 def get_label_filter(*args, **kwargs) -> Optional[str]:
@@ -93,4 +93,4 @@ def get_label_filter(*args, **kwargs) -> Optional[str]:
                 "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument "
                 "'label_filter'"
             )
-    return label_filter or kwargs.pop("label_filter", None)
+    return label_filter or kwargs.pop("label_filter", None), kwargs
