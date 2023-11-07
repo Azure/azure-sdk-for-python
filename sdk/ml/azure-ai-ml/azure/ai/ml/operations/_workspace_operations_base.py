@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -911,6 +912,7 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
         None,
     )
     return app_insights
+
 
 def _generate_container_registry(name: str, resources_being_deployed: dict) -> str:
     """Generates a name for a container registry resource to be created with workspace based on workspace name,
