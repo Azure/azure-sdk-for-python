@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class AddChatParticipantsRequest(_serialization.Model):
     """Participants to be added to the thread.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar participants: Participants to add to a chat thread. Required.
     :vartype participants: list[~azure.communication.chat.models.ChatParticipant]
@@ -69,12 +69,12 @@ class AddChatParticipantsResult(_serialization.Model):
 class ChatAttachment(_serialization.Model):
     """An attachment in a chat message.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of the attachment. Required.
     :vartype id: str
     :ivar attachment_type: The type of attachment. Required. "image"
-    :vartype attachment_type: str or ~azure.communication.chat.models.AttachmentType
+    :vartype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
     :ivar extension: The file extension of the attachment, if available.
     :vartype extension: str
     :ivar name: The name of the attachment content.
@@ -103,7 +103,7 @@ class ChatAttachment(_serialization.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        attachment_type: Union[str, "_models.AttachmentType"],
+        attachment_type: Union[str, "_models.ChatAttachmentType"],
         extension: Optional[str] = None,
         name: Optional[str] = None,
         url: Optional[str] = None,
@@ -114,7 +114,7 @@ class ChatAttachment(_serialization.Model):
         :keyword id: Id of the attachment. Required.
         :paramtype id: str
         :keyword attachment_type: The type of attachment. Required. "image"
-        :paramtype attachment_type: str or ~azure.communication.chat.models.AttachmentType
+        :paramtype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
         :keyword extension: The file extension of the attachment, if available.
         :paramtype extension: str
         :keyword name: The name of the attachment content.
@@ -138,7 +138,7 @@ class ChatError(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: The error code. Required.
     :vartype code: str
@@ -186,7 +186,7 @@ class ChatError(_serialization.Model):
 class ChatMessage(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Chat message.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The id of the chat message. This id is server generated. Required.
     :vartype id: str
@@ -378,7 +378,7 @@ class ChatMessageContent(_serialization.Model):
 class ChatMessageReadReceipt(_serialization.Model):
     """A chat message read receipt indicates the time a chat message was read by a recipient.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sender_communication_identifier: Identifies a participant in Azure Communication
      services. A participant is, for example, a phone number or an Azure communication user. This
@@ -442,7 +442,7 @@ class ChatMessageReadReceiptsCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of chat message read receipts. Required.
     :vartype value: list[~azure.communication.chat.models.ChatMessageReadReceipt]
@@ -476,7 +476,7 @@ class ChatMessagesCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of chat messages. Required.
     :vartype value: list[~azure.communication.chat.models.ChatMessage]
@@ -508,7 +508,7 @@ class ChatMessagesCollection(_serialization.Model):
 class ChatParticipant(_serialization.Model):
     """A participant of the chat thread.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar communication_identifier: Identifies a participant in Azure Communication services. A
      participant is, for example, a phone number or an Azure communication user. This model is
@@ -565,7 +565,7 @@ class ChatParticipantsCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Chat participants. Required.
     :vartype value: list[~azure.communication.chat.models.ChatParticipant]
@@ -599,7 +599,7 @@ class ChatThreadItem(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Chat thread id. Required.
     :vartype id: str
@@ -653,7 +653,7 @@ class ChatThreadItem(_serialization.Model):
 class ChatThreadProperties(_serialization.Model):
     """Chat thread.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Chat thread id. Required.
     :vartype id: str
@@ -732,7 +732,7 @@ class ChatThreadsItemCollection(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Collection of chat threads. Required.
     :vartype value: list[~azure.communication.chat.models.ChatThreadItem]
@@ -764,7 +764,7 @@ class ChatThreadsItemCollection(_serialization.Model):
 class CommunicationErrorResponse(_serialization.Model):
     """The Communication Services error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error: The Communication Services error. Required.
     :vartype error: ~azure.communication.chat.models.ChatError
@@ -850,7 +850,7 @@ class CommunicationIdentifierModel(_serialization.Model):
 class CommunicationUserIdentifierModel(_serialization.Model):
     """A user that got created with an Azure Communication Services resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The Id of the communication user. Required.
     :vartype id: str
@@ -876,7 +876,7 @@ class CommunicationUserIdentifierModel(_serialization.Model):
 class CreateChatThreadRequest(_serialization.Model):
     """Request payload for creating a chat thread.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar topic: The chat thread topic. Required.
     :vartype topic: str
@@ -940,7 +940,7 @@ class CreateChatThreadResult(_serialization.Model):
 class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
     """A Microsoft Teams user.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar user_id: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object Id
      of the user. Required.
@@ -990,7 +990,7 @@ class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
 class PhoneNumberIdentifierModel(_serialization.Model):
     """A phone number.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The phone number in E.164 format. Required.
     :vartype value: str
@@ -1016,7 +1016,7 @@ class PhoneNumberIdentifierModel(_serialization.Model):
 class SendChatMessageRequest(_serialization.Model):
     """Details of the message to send.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content: Chat message content. Required.
     :vartype content: str
@@ -1072,7 +1072,7 @@ class SendChatMessageRequest(_serialization.Model):
 class SendChatMessageResult(_serialization.Model):
     """Result of the send message operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: A server-generated message id. Required.
     :vartype id: str
@@ -1098,7 +1098,7 @@ class SendChatMessageResult(_serialization.Model):
 class SendReadReceiptRequest(_serialization.Model):
     """Request payload for sending a read receipt.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar chat_message_id: Id of the latest chat message read by the user. Required.
     :vartype chat_message_id: str

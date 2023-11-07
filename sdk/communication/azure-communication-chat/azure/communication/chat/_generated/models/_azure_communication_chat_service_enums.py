@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AttachmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ChatAttachmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of attachment."""
 
     IMAGE = "image"

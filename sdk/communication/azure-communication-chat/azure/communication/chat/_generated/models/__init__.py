@@ -34,7 +34,7 @@ from ._models_py3 import SendTypingNotificationRequest
 from ._models_py3 import UpdateChatMessageRequest
 from ._models_py3 import UpdateChatThreadRequest
 
-from ._azure_communication_chat_service_enums import AttachmentType
+from ._azure_communication_chat_service_enums import ChatAttachmentType
 from ._azure_communication_chat_service_enums import ChatMessageType
 from ._azure_communication_chat_service_enums import CommunicationCloudEnvironmentModel
 from ._azure_communication_chat_service_enums import CommunicationIdentifierModelKind
@@ -70,7 +70,7 @@ __all__ = [
     "SendTypingNotificationRequest",
     "UpdateChatMessageRequest",
     "UpdateChatThreadRequest",
-    "AttachmentType",
+    "ChatAttachmentType",
     "ChatMessageType",
     "CommunicationCloudEnvironmentModel",
     "CommunicationIdentifierModelKind",

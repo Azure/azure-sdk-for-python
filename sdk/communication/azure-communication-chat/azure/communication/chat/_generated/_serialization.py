@@ -64,7 +64,7 @@ import xml.etree.ElementTree as ET
 import isodate  # type: ignore
 
 from azure.core.exceptions import DeserializationError, SerializationError
-from azure.core.serialization import NULL as AzureCoreNull
+from azure.core.serialization import NULL as CoreNull
 
 _BOM = codecs.BOM_UTF8.decode(encoding="utf-8")
 
@@ -730,7 +730,6 @@ class Serializer(object):
 
             if kwargs.get("skip_quote") is True:
                 output = str(output)
-                # https://github.com/Azure/autorest.python/issues/2063
                 output = output.replace("{", quote("{")).replace("}", quote("}"))
             else:
                 output = quote(str(output), safe="")
@@ -806,7 +805,7 @@ class Serializer(object):
             raise ValueError("No value for given attribute")
 
         try:
-            if data is AzureCoreNull:
+            if data is CoreNull:
                 return None
             if data_type in self.basic_types.values():
                 return self.serialize_basic(data, data_type, **kwargs)
@@ -1211,7 +1210,6 @@ def rest_key_extractor(attr, attr_desc, data):
         if working_data is None:
             # If at any point while following flatten JSON path see None, it means
             # that all properties under are None as well
-            # https://github.com/Azure/msrest-for-python/issues/197
             return None
         key = ".".join(dict_keys[1:])
 
@@ -1232,7 +1230,6 @@ def rest_key_case_insensitive_extractor(attr, attr_desc, data):
         if working_data is None:
             # If at any point while following flatten JSON path see None, it means
             # that all properties under are None as well
-            # https://github.com/Azure/msrest-for-python/issues/197
             return None
         key = ".".join(dict_keys[1:])
 
