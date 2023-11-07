@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2023-11-07)
 
 ### Features Added
 
@@ -9,10 +9,6 @@
 ### Breaking Changes
 
 - Removed `UsernamePasswordBrokerCredential`
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b1 (2023-10-12)
 

@@ -12,7 +12,7 @@ from opentelemetry._logs import get_logger_provider, set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
 )
-from opentelemetry.instrumentation.instrumentor import (
+from opentelemetry.instrumentation.instrumentor import ( # type: ignore
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
@@ -119,7 +119,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     span_processor = BatchSpanProcessor(
         trace_exporter,
     )
-    get_tracer_provider().add_span_processor(span_processor)
+    get_tracer_provider().add_span_processor(span_processor) # type: ignore
     if _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         settings.tracing_implementation = OpenTelemetrySpan
 
@@ -131,9 +131,9 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     log_record_processor = BatchLogRecordProcessor(
         log_exporter,
     )
-    get_logger_provider().add_log_record_processor(log_record_processor)
+    get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    logger_name = configurations[LOGGER_NAME_ARG]
+    logger_name = configurations[LOGGER_NAME_ARG] # type: ignore
     getLogger(logger_name).addHandler(handler)
 
 
