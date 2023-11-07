@@ -706,7 +706,7 @@ class JobOperations(_ScopeDependentOperations):
     ):
         service_client_operation = self._operation_2023_02_preview
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
-        if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.service_client_08_2023_preview:
+        if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
             service_client_operation = self.service_client_08_2023_preview.jobs
 
         result = service_client_operation.create_or_update(
