@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict, Any
 from azure.core import MatchConditions
 
 
@@ -72,7 +72,7 @@ def get_current_utc_time() -> str:
     return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S.%f ")) + "GMT"
 
 
-def get_key_filter(*args, **kwargs) -> Optional[str]:
+def get_key_filter(*args, **kwargs) -> Tuple[Optional[str], Dict[str, Any]]:
     key_filter = None
     if len(args) > 0:
         key_filter = args[0]
@@ -84,7 +84,7 @@ def get_key_filter(*args, **kwargs) -> Optional[str]:
     return key_filter or kwargs.pop("key_filter", None), kwargs
 
 
-def get_label_filter(*args, **kwargs) -> Optional[str]:
+def get_label_filter(*args, **kwargs) -> Tuple[Optional[str], Dict[str, Any]]:
     label_filter = None
     if len(args) > 1:
         label_filter = args[1]
