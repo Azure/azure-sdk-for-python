@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Support datetime type for keyword argument `accept_datetime` in `get_snapshot_configuration_settings()`, `list_snapshot_configuration_settings()` and `list_revisions()`.
 
 ## 1.5.0b3 (2023-10-10)
 
