@@ -47,25 +47,26 @@ class ExceptionPolicySamples(object):
             RouterWorkerSelector,
             LabelOperator,
         )
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         for _id in self._cp_policy_ids:
             classification_policy: ClassificationPolicy = router_admin_client.upsert_classification_policy(
                 _id,
                 ClassificationPolicy(
-                    prioritization_rule = StaticRouterRule(value = 100),
-                    queue_selector_attachments = [
+                    prioritization_rule=StaticRouterRule(value=100),
+                    queue_selector_attachments=[
                         StaticQueueSelectorAttachment(
-                            queue_selector = RouterQueueSelector(key = "Escalate",
-                                                                 label_operator = LabelOperator.EQUAL,
-                                                                 value = True)
+                            queue_selector=RouterQueueSelector(
+                                key="Escalate", label_operator=LabelOperator.EQUAL, value=True
+                            )
                         ),
                     ],
-                    worker_selector_attachments = [
+                    worker_selector_attachments=[
                         StaticWorkerSelectorAttachment(
-                            worker_selector = RouterWorkerSelector(key = "Escalate",
-                                                                  label_operator = LabelOperator.EQUAL,
-                                                                  value = True)
+                            worker_selector=RouterWorkerSelector(
+                                key="Escalate", label_operator=LabelOperator.EQUAL, value=True
+                            )
                         ),
                     ],
                 ),
@@ -198,9 +199,7 @@ class ExceptionPolicySamples(object):
             ],
         )
 
-        print(
-            f"Exception policy updated with rules: {updated_exception_policy.exception_rules}"
-        )
+        print(f"Exception policy updated with rules: {updated_exception_policy.exception_rules}")
         print("Exception policy has been successfully updated")
 
         # [END update_exception_policy]
