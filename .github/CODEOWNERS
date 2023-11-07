@@ -29,6 +29,9 @@
 /sdk/ @lmazuel
 
 # Core
+# PRLabel: %Core.Http
+/sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
+
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
 /sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
@@ -39,6 +42,9 @@
 ####
 # Service team
 ####
+
+# PRLabel: %AI
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
 
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
@@ -104,13 +110,22 @@
 /sdk/keyvault/                                                       @schaabs @mccoyp
 
 # PRLabel: %Load Testing
-/sdk/loadtestservice/azure-developer-loadtesting/                    @msyyc @iscai-msft
+/sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
 
 # PRLabel: %Monitor
 /sdk/loganalytics/azure-loganalytics/                                @azmonapplicationinsights @pvaneck
+
+# PRLabel: %Monitor
 /sdk/loganalytics/                                                   @pvaneck
+
+# PRLabel: %Monitor
 /sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+
+# PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+
+# PRLabel: %Monitor
+/sdk/monitor/*                                                       @pvaneck
 
 # PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
@@ -142,7 +157,7 @@
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
-/sdk/datadatamigration/                                              @vchske
+/sdk/datamigration/                                                  @vchske
 
 # PRLabel: %Device Provisioning
 /sdk/iothub/azure-iot-deviceprovisioning                             @c-ryan-k @digimaun
@@ -160,7 +175,7 @@
 /sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
-/sdk/machinelearningcompute/                                         @shutchings
+/sdk/machinelearning/                                                @shutchings
 
 # PRLabel: %Machine Learning
 /sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
@@ -263,7 +278,7 @@
 /sdk/remoterendering/                                                @FlorianBorn71
 
 # PRLabel: %Open AI
-/sdk/openai                                                          @kristapratico @glecaros
+/sdk/openai/                                                         @kristapratico @glecaros
 
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc
@@ -281,7 +296,7 @@
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
 
 # PRLabel: %SQL
-/sql/sql/                                                            @jaredmoo
+/sdk/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
@@ -938,3 +953,5 @@
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+
+/pylintrc                                                            @l0lawrence

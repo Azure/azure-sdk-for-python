@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from typing import Optional, Union
     from azure.core.async_paging import AsyncItemPaged
     from .. import KeyType
-    from .._generated_models import KeyAttributes
+    from .._generated.models import KeyAttributes
 
 
 class KeyClient(AsyncKeyVaultClientBase):
@@ -41,7 +41,7 @@ class KeyClient(AsyncKeyVaultClientBase):
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
-    :paramtype api_version: ~azure.keyvault.keys.ApiVersion
+    :paramtype api_version: ~azure.keyvault.keys.ApiVersion or str
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
 

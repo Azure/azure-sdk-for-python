@@ -581,7 +581,35 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
-    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None):
+    @pytest.mark.live_test_only
+    @recorded_by_proxy_async
+    async def test_create_room_pstn_dial_out_enabled(self):
+        # room attributes
+
+        async with self.rooms_client:
+            response = await self.rooms_client.create_room(pstn_dial_out_enabled=True)
+
+            # delete created room
+            await self.rooms_client.delete_room(room_id=response.id)
+            self.verify_successful_room_response(response=response, pstn_dial_out_enabled=True)
+
+
+    @pytest.mark.live_test_only
+    @recorded_by_proxy_async
+    async def test_create_room_timerange_pstn_dial_out_enabled(self):
+        # room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
+
+        async with self.rooms_client:
+            response = await self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True)
+
+            # delete created room
+            await self.rooms_client.delete_room(room_id=response.id)
+            self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True)
+
+
+    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, pstn_dial_out_enabled=None):
         if room_id is not None:
             assert room_id == response.id
         if valid_from is not None:
@@ -590,8 +618,11 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
         if valid_until is not None:
             assert valid_until.replace(tzinfo=None) == datetime.strptime(
                 response.valid_until, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
+        if pstn_dial_out_enabled is not None:
+            assert pstn_dial_out_enabled == response.pstn_dial_out_enabled
         assert response.created_at is not None
         assert response.id is not None
         assert response.valid_from is not None
         assert response.valid_until is not None
+        assert response.pstn_dial_out_enabled is not None
 

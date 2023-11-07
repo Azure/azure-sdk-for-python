@@ -104,11 +104,13 @@ from ._endpoint.online_endpoint import (
     ManagedOnlineEndpoint,
     OnlineEndpoint,
 )
+from ._feature_set.data_availability_status import DataAvailabilityStatus
 from ._feature_set.feature import Feature
 from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
 from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from ._feature_set.feature_set_specification import FeatureSetSpecification
+from ._feature_set.feature_window import FeatureWindow
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
@@ -195,6 +197,11 @@ from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.connections.workspace_connection import WorkspaceConnection
+from ._workspace.connections.workspace_connection_subtypes import (
+    AzureAISearchWorkspaceConnection,
+    AzureAIServiceWorkspaceConnection,
+    AzureOpenAIWorkspaceConnection,
+)
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
     DiagnoseRequestProperties,
@@ -214,6 +221,7 @@ from ._workspace.networking import (
     ServiceTagDestination,
 )
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
+from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
 from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
@@ -272,6 +280,9 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
+    "AzureOpenAIWorkspaceConnection",
+    "AzureAISearchWorkspaceConnection",
+    "AzureAIServiceWorkspaceConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -368,13 +379,16 @@ __all__ = [
     "DataColumnType",
     "FeatureSetSpecification",
     "MaterializationComputeResource",
+    "FeatureWindow",
     "MaterializationSettings",
     "MaterializationType",
     "FeatureStore",
     "MaterializationStore",
     "Notification",
     "FeatureSetBackfillMetadata",
+    "DataAvailabilityStatus",
     "FeatureSetMaterializationMetadata",
+    "ServerlessComputeSettings",
     # builders
     "Command",
     "Parallel",

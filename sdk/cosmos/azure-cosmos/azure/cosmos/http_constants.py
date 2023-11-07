@@ -87,6 +87,11 @@ class HttpHeaders(object):
     Referer = "referer"
     Pragma = "Pragma"
 
+    # Bulk/Batch
+    IsBatchRequest = "x-ms-cosmos-is-batch-request"
+    IsBatchAtomic = "x-ms-cosmos-batch-atomic"
+    ShouldBatchContinueOnError = "x-ms-cosmos-batch-continue-on-error"
+
     # Query
     Query = "x-ms-documentdb-query"
     IsQuery = "x-ms-documentdb-isquery"
@@ -100,6 +105,7 @@ class HttpHeaders(object):
     Continuation = "x-ms-continuation"
     PageSize = "x-ms-max-item-count"
     ResponseContinuationTokenLimitInKb = "x-ms-documentdb-responsecontinuationtokenlimitinkb"  # cspell:disable-line
+    PriorityLevel = "x-ms-cosmos-priority-level"
 
     # Request sender generated. Simply echoed by backend.
     ActivityId = "x-ms-activity-id"
@@ -186,6 +192,10 @@ class HttpHeaders(object):
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = "x-ms-documentdb-partitionkeyrangeid"
     PartitionKeyDeletePending = "x-ms-cosmos-is-partition-key-delete-pending"
+    StartEpkString = "x-ms-start-epk"
+    EndEpkString = "x-ms-end-epk"
+    ReadFeedKeyType = "x-ms-read-key-type"
+    SDKSupportedCapabilities = "x-ms-cosmos-sdk-supportedcapabilities"
 
     # Upsert header
     IsUpsert = "x-ms-documentdb-is-upsert"
@@ -220,15 +230,15 @@ class HttpHeaders(object):
     GatewayVersion = "x-ms-gatewayversion"
     ServiceVersion = "x-ms-serviceversion"
     SchemaVersion = "x-ms-schemaversion"
-    QuorumAckedLsn = "x-ms-quorum-acked-lsn" # cspell:disable-line
+    QuorumAckedLsn = "x-ms-quorum-acked-lsn"  # cspell:disable-line
     CurrentWriteQuorum = "x-ms-current-write-quorum"
     CurrentReplicaSetSize = "x-ms-current-replica-set-size"
     XpRole = "x-ms-xp-role"
     GlobalCommittedLsn = "x-ms-global-committed-lsn"
     NumberOfReadRegions = "x-ms-number-of-read-regions"
     TransportRequestId = "x-ms-transport-request-id"
-    CosmosLsn = "x-ms-cosmos-llsn" # cspell:disable-line
-    CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn" # cspell:disable-line
+    CosmosLsn = "x-ms-cosmos-llsn"  # cspell:disable-line
+    CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"  # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"
 
 class HttpHeaderPreferenceTokens(object):
@@ -296,7 +306,7 @@ class CookieHeaders(object):
 class Versions(object):
     """Constants of versions.
     """
-    CurrentVersion = "2018-12-31"
+    CurrentVersion = "2020-07-15"
     SDKName = "azure-cosmos"
     QueryVersion = "1.0"
 
@@ -372,6 +382,7 @@ class StatusCodes(object):
     GONE = 410
     PRECONDITION_FAILED = 412
     REQUEST_ENTITY_TOO_LARGE = 413
+    FAILED_DEPENDENCY = 424
     TOO_MANY_REQUESTS = 429
     RETRY_WITH = 449
 

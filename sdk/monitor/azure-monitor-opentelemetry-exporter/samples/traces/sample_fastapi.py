@@ -7,6 +7,7 @@ application insights with the AzureMonitorTraceExporter.
 See more info on the flask instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-flask
 """
+# mypy: disable-error-code="attr-defined"
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from fastapi import Depends, FastAPI
 from httpx import AsyncClient

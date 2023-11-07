@@ -7,8 +7,10 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+* Fixed issue in serializing EntityProperty tuples where a value of None could be serialized as the string "None".
 
 ### Other Changes
+* Refactored batching code to use latest Core models and improve typing.
 
 ## 12.4.4 (2023-09-14)
 

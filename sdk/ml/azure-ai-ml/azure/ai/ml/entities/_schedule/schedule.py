@@ -32,6 +32,7 @@ from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
+from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 module_logger = logging.getLogger(__name__)

@@ -120,8 +120,10 @@ class ShareServiceClient(StorageAccountHostsMixin):
         if not sas_token and not credential:
             raise ValueError(
                 'You need to provide either an account shared key or SAS token when creating a storage service.')
+
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ShareServiceClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
+        super(ShareServiceClient, self).__init__(
+            parsed_url, service='file-share', credential=credential, **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent

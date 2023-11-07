@@ -6,13 +6,13 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import delete_resource_by_arm_id
 from azure.ai.ml.constants._common import Scope, ArmConstants
-from azure.ai.ml.entities._workspace_hub._constants import WORKSPACE_HUB_KIND
+from azure.ai.ml.entities._workspace_hub._constants import WORKSPACE_HUB_KIND, ENDPOINT_AI_SERVICE_KIND
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -35,7 +35,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient062023Preview,
+        service_client: ServiceClient082023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -120,6 +120,8 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         *,
         workspace_hub: WorkspaceHub,
         update_dependent_resources: bool = False,
+        endpoint_resource_id: str = None,
+        endpoint_kind: str = ENDPOINT_AI_SERVICE_KIND,
         **kwargs: Dict,
     ) -> LROPoller[WorkspaceHub]:
         """Create a new WorkspaceHub.
@@ -130,6 +132,17 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :paramtype workspace_hub: ~azure.ai.ml.entities.WorkspaceHub
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
         :paramtype update_dependent_resources: boolean
+        :keyword endpoint_resource_id: The UID of an AI service or Open AI resource.
+            The created hub will automatically create several
+            endpoints connecting to this resource, and creates its own otherwise.
+            If an Open AI resource ID is provided, then only a single Open AI
+            endpoint will be created. If set, then endpoint_resource_id should also be
+            set unless its default value is applicable.
+        :paramtype endpoint_resource_id: str
+        :keyword endpoint_kind: What kind of endpoint resource is being provided
+            by the endpoint_resource_id field. Defaults to "AIServices". The only other valid
+            input is "OpenAI".
+        :paramtype endpoint_kind: str
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
 
@@ -151,6 +164,8 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             workspace=workspace_hub,
             update_dependent_resources=update_dependent_resources,
             get_callback=get_callback,
+            endpoint_resource_id=endpoint_resource_id,
+            endpoint_kind=endpoint_kind,
             **kwargs,
         )
 

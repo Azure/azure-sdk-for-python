@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
     FeaturestoreEntityVersion,
@@ -16,7 +16,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._schema._feature_store_entity.feature_store_entity_schema import FeatureStoreEntitySchema
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._util import load_from_dict
@@ -25,7 +24,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from .data_column import DataColumn
 
 
-@experimental
 class FeatureStoreEntity(Asset):
     """Feature Store Entity
 
