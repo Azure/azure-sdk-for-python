@@ -254,8 +254,8 @@ from azure.communication.jobrouter.models import (
 )
 complete_job_result = router_client.complete_job(
     "jobId-1",
+    accept_job_offer_result.assignment_id,
     CompleteJobOptions(
-        assignment_id = accept_job_offer_result.assignment_id,
         note = f"Job has been completed by {router_worker.id} at {datetime.datetime.utcnow()}"
     )
 )
@@ -274,8 +274,8 @@ from azure.communication.jobrouter.models import (
 
 close_job_result = router_client.close_job(
     "jobId-1",
+    accept_job_offer_result.assignment_id,
     CloseJobOptions(
-        assignment_id = accept_job_offer_result.assignment_id,
         note = f"Job has been closed by {router_worker.id} at {datetime.datetime.utcnow()}"
     )
 )
@@ -297,8 +297,8 @@ from azure.communication.jobrouter.models import (
 
 close_job_in_future_result = router_client.close_job(
     "jobId-1",
+    accept_job_offer_result.assignment_id,
     CloseJobOptions(
-        assignment_id = accept_job_offer_result.assignment_id,
         note = f"Job has been closed by {router_worker.id} at {datetime.utcnow()}",
         close_at = datetime.utcnow() + timedelta(seconds = 2)
     )

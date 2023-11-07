@@ -375,10 +375,6 @@ class ClassificationPolicy(_model_base.Model):
 class CloseJobOptions(_model_base.Model):
     """Request payload for closing jobs.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar assignment_id: The assignment within which the job is to be closed. Required.
-    :vartype assignment_id: str
     :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
      custom values.
     :vartype disposition_code: str
@@ -391,8 +387,6 @@ class CloseJobOptions(_model_base.Model):
     :vartype note: str
     """
 
-    assignment_id: str = rest_field(name="assignmentId")
-    """The assignment within which the job is to be closed. Required."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
     """Indicates the outcome of the job, populate this field with your own custom values."""
     close_at: Optional[datetime.datetime] = rest_field(name="closeAt", format="rfc3339")
@@ -410,17 +404,11 @@ class CloseJobResult(_model_base.Model):
 class CompleteJobOptions(_model_base.Model):
     """Request payload for completing jobs.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar assignment_id: The assignment within the job to complete. Required.
-    :vartype assignment_id: str
     :ivar note: A note that will be appended to the jobs' Notes collection with the current
      timestamp.
     :vartype note: str
     """
 
-    assignment_id: str = rest_field(name="assignmentId")
-    """The assignment within the job to complete. Required."""
     note: Optional[str] = rest_field()
     """A note that will be appended to the jobs' Notes collection with the current timestamp."""
 
@@ -1574,6 +1562,8 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
 class RouterJobAssignment(_model_base.Model):
     """Assignment details of a job to a worker.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: The Id of the job assignment. Required.
@@ -1588,7 +1578,7 @@ class RouterJobAssignment(_model_base.Model):
     :vartype closed_at: ~datetime.datetime
     """
 
-    assignment_id: str = rest_field(name="assignmentId")
+    assignment_id: str = rest_field(name="assignmentId", visibility=["read"])
     """The Id of the job assignment. Required."""
     worker_id: Optional[str] = rest_field(name="workerId")
     """The Id of the Worker assigned to the job."""
@@ -1603,7 +1593,6 @@ class RouterJobAssignment(_model_base.Model):
     def __init__(
         self,
         *,
-        assignment_id: str,
         assigned_at: datetime.datetime,
         worker_id: Optional[str] = None,
         completed_at: Optional[datetime.datetime] = None,
@@ -1662,6 +1651,8 @@ class RouterJobNote(_model_base.Model):
 class RouterJobOffer(_model_base.Model):
     """An offer of a job to a worker.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar offer_id: The Id of the offer. Required.
@@ -1676,7 +1667,7 @@ class RouterJobOffer(_model_base.Model):
     :vartype expires_at: ~datetime.datetime
     """
 
-    offer_id: str = rest_field(name="offerId")
+    offer_id: str = rest_field(name="offerId", visibility=["read"])
     """The Id of the offer. Required."""
     job_id: str = rest_field(name="jobId")
     """The Id of the job. Required."""
@@ -1691,7 +1682,6 @@ class RouterJobOffer(_model_base.Model):
     def __init__(
         self,
         *,
-        offer_id: str,
         job_id: str,
         capacity_cost: int,
         offered_at: Optional[datetime.datetime] = None,
