@@ -80,19 +80,6 @@ setup(
         "opencensus-ext-logging",
     ],
     extras_require={
-        "cognitive_search": [
-            "azure-search-documents==11.4.0b8",
-        ],
-        "document_parsing": [
-            "pandas>=1",
-            "nltk>=3.8,<4",
-            "markdown>=3.4,<4",
-            "beautifulsoup4>=4.11,<5",
-            "tika>=2.6,<3",
-            "pypdf>=3.7,<4",
-            "unstructured>=0.10,<1",
-            "GitPython>=3.1,<4"
-        ],
         "evaluate": [
             "azureml-metrics[generative-ai]",
             "promptflow",
@@ -114,6 +101,15 @@ setup(
             "tiktoken>=0.3,<1",
             "mmh3",
             "requests",
+            "pandas>=1",
+            "nltk>=3.8,<4",
+            "markdown>=3.4,<4",
+            "beautifulsoup4>=4.11,<5",
+            "tika>=2.6,<3",
+            "pypdf>=3.7,<4",
+            "unstructured>=0.10,<1",
+            "GitPython>=3.1,<4",
+            "azure-search-documents==11.4.0b11"
         ],
         "promptflow": [
             "promptflow[azure]",
