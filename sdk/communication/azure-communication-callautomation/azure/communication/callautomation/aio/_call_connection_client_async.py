@@ -29,7 +29,7 @@ from .._models import (
     MuteParticipantResult,
     SendDtmfTonesResult,
     CallInvite,
-    CancelAddParticipantResult
+    CancelAddParticipantOperationResult
 )
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._generated.models import (
@@ -45,7 +45,7 @@ from .._generated.models import (
     PlayOptions,
     RecognizeOptions,
     MuteParticipantsRequest,
-    CancelAddParticipantRequest,
+    CancelAddParticipantOperationRequest,
     CustomCallingContext
 )
 from .._generated.models._enums import RecognizeInputType
@@ -754,14 +754,14 @@ class CallConnectionClient:
         return MuteParticipantResult._from_generated(response) # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def cancel_add_participant(
+    async def cancel_add_participant_operation(
         self,
         invitation_id: str,
         *,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
         **kwargs
-    ) -> CancelAddParticipantResult:
+    ) -> CancelAddParticipantOperationResult:
         """Cancel add participant request.
         :param  invitation_id: The invitation ID used to add participant.
         :type invitation_id: str
@@ -772,22 +772,22 @@ class CallConnectionClient:
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :return: CancelAddParticipantResult
-        :rtype: ~azure.communication.callautomation.CancelAddParticipantResult
+        :return: CancelAddParticipantOperationResult
+        :rtype: ~azure.communication.callautomation.CancelAddParticipantOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cancel_add_participant_request = CancelAddParticipantRequest(
+        cancel_add_participant_operation_request = CancelAddParticipantOperationRequest(
             invitation_id=invitation_id,
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url
         )
         process_repeatability_first_sent(kwargs)
-        response = await self._call_connection_client.cancel_add_participant(
+        response = await self._call_connection_client.cancel_add_participant_operation(
             self._call_connection_id,
-            cancel_add_participant_request,
+            cancel_add_participant_operation_request,
             **kwargs
         )
-        return CancelAddParticipantResult._from_generated(response)  # pylint:disable=protected-access
+        return CancelAddParticipantOperationResult._from_generated(response)  # pylint:disable=protected-access
 
     async def __aenter__(self) -> "CallConnectionClient":
         await self._client.__aenter__()

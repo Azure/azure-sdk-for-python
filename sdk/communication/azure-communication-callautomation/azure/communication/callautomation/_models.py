@@ -41,7 +41,7 @@ if TYPE_CHECKING:
         RecordingStateResponse as RecordingStateResultRest,
         MuteParticipantsResult as MuteParticipantsResultRest,
         SendDtmfTonesResult as SendDtmfTonesResultRest,
-        CancelAddParticipantResponse as CancelAddParticipantResultRest,
+        CancelAddParticipantOperationResponse as CancelAddParticipantOperationResultRest,
     )
 
 
@@ -620,7 +620,7 @@ class SendDtmfTonesResult:
     def _from_generated(cls, send_dtmf_tones_result_generated: 'SendDtmfTonesResultRest'):
         return cls(operation_context=send_dtmf_tones_result_generated.operation_context)
 
-class CancelAddParticipantResult:
+class CancelAddParticipantOperationResult:
     """ The result payload for cancelling add participant request for a participant.
     :keyword invitation_id: Invitation ID that was used to add the participant to the call.
     :paramtype participant: str
@@ -643,8 +643,9 @@ class CancelAddParticipantResult:
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, cancel_add_participant_result_generated: 'CancelAddParticipantResultRest'):
+    def _from_generated(cls,
+                        cancel_add_participant_operation_result_generated: 'CancelAddParticipantOperationResultRest'):
         return cls(
-            invitation_id=cancel_add_participant_result_generated.invitation_id,
-            operation_context=cancel_add_participant_result_generated.operation_context
+            invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
+            operation_context=cancel_add_participant_operation_result_generated.operation_context
         )

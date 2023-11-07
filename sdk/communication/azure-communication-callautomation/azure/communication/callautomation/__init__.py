@@ -22,7 +22,7 @@ from ._models import (
     ChannelAffinity,
     MuteParticipantResult,
     SendDtmfTonesResult,
-    CancelAddParticipantResult,
+    CancelAddParticipantOperationResult,
     CallInvite,
     ServerCallLocator,
     GroupCallLocator,
@@ -68,7 +68,7 @@ __all__ = [
     "TransferCallResult",
     "MuteParticipantResult",
     "SendDtmfTonesResult",
-    "CancelAddParticipantResult",
+    "CancelAddParticipantOperationResult",
 
 
     # common ACS communication identifier
