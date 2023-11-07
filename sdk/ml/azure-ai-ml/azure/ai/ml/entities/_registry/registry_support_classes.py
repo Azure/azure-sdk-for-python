@@ -222,6 +222,7 @@ class RegistryRegionDetails:
                 hasattr(config, "system_created_storage_account") and config.system_created_storage_account is not None
                 for config in rest_configs
             ],
+            0,
         )
         # configs should be mono-typed. Either they're all system created
         # or all user created.
