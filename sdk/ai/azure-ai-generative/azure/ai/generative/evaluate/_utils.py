@@ -104,3 +104,27 @@ def _write_properties_to_run_history(properties: dict, logger) -> None:
             response.raise_for_status()
     except AttributeError as e:
         logger.error("Fail writing properties '%s' to run history: %s", properties, e)
+
+
+def _get_ai_studio_url(tracking_uri, evaluation_id):
+    _PROJECT_INFO_REGEX = (
+        r".*/subscriptions/(.+)/resourceGroups/(.+)"
+        r"/providers/Microsoft.MachineLearningServices/workspaces/([^/]+)"
+    )
+
+    pattern = re.compile(_PROJECT_INFO_REGEX)
+
+    mo = pattern.match(tracking_uri)
+
+    ret = {}
+    ret[_SUB_ID] = mo.group(1)
+    ret[_RES_GRP] = mo.group(2)
+    ret[_WS_NAME] = mo.group(3)
+
+    studio_base_url = os.getenv("AI_STUDIO_BASE_URL", "https://ai.azure.com")
+
+    studio_url = f"{studio_base_url}/build/evaluation/{evaluation_id}?wsid=/subscriptions/{ret[_SUB_ID]}" \
+                 f"/resourceGroups/{ret[_RES_GRP]}/providers/Microsoft.MachineLearningServices/workspaces" \
+                 f"/{ret[_WS_NAME]}"
+
+    return studio_url
