@@ -265,10 +265,10 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             assignment_id = accept_job_offer_result.assignment_id
 
             # complete job
-            await router_client.complete_job(job_identifier, CompleteJobOptions(assignment_id=assignment_id))
+            await router_client.complete_job(job_identifier, assignment_id)
 
             # close job
-            await router_client.close_job(job_identifier, CloseJobOptions(assignment_id=assignment_id))
+            await router_client.close_job(job_identifier, assignment_id)
 
             # validate post closure job details
             queried_job: RouterJob = await router_client.get_job(job_identifier)

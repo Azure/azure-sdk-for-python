@@ -168,7 +168,7 @@ class JobQueueSamplesAsync(object):
 
         async with router_admin_client:
             await router_admin_client.delete_queue(job_queue_id)
-        # [END delete_queue_async]
+            # [END delete_queue_async]
             await router_admin_client.delete_distribution_policy(self._distribution_policy_id)
 
 
