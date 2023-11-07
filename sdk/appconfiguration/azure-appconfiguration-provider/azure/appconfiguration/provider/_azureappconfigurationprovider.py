@@ -351,8 +351,10 @@ def _is_retryable_error(error: HttpResponseError) -> bool:
     # 408: Request Timeout
     # 429: Too Many Requests
     # 500: Internal Server Error
+    # 502: Bad Gateway
+    # 503: Service Unavailable
     # 504: Gateway Timeout
-    return error.status_code in [408, 429, 500, 504]
+    return error.status_code in [408, 429, 500, 502, 503, 504]
 
 
 class _RefreshTimer:
@@ -446,7 +448,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             with self._update_lock:
                 need_refresh = False
                 updated_sentinel_keys = dict(self._refresh_on)
-                headers = _get_headers("Watch")
+                headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
                 for (key, label), etag in updated_sentinel_keys.items():
                     try:
                         updated_sentinel = self._client.get_configuration_setting(
@@ -477,7 +479,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             raise e
                 # Need to only update once, no matter how many sentinels are updated
                 if need_refresh:
-                    self._load_all(sentinel_keys=updated_sentinel_keys, **kwargs)
+                    self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
                     if self._on_refresh_success:
                         self._on_refresh_success()
                 # Even if we don't need to refresh, we should reset the timer

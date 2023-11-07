@@ -313,6 +313,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
+        self._uses_key_vault = (
+            self._keyvault_credential is not None
+            or self._keyvault_client_configs is not None
+            or self._secret_resolver is not None
+        )
         self._update_lock = Lock()
 
     async def refresh(self, **kwargs) -> None:
@@ -327,7 +332,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     return
                 need_refresh = False
                 updated_sentinel_keys = dict(self._refresh_on)
-                headers = _get_headers("Watch")
+                headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
                 for (key, label), etag in self._refresh_on.items():
                     try:
                         updated_sentinel = await self._client.get_configuration_setting(
@@ -354,7 +359,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             raise e
                 # Need to only update once, no matter how many sentinels are updated
                 if need_refresh:
-                    await self._load_all(**kwargs)
+                    await self._load_all(headers=headers, **kwargs)
                     self._refresh_on = updated_sentinel_keys
                     if self._on_refresh_success:
                         await self._on_refresh_success()
