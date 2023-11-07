@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.0.3 (2023-11-07)
 
 ### Other Changes
+
+- Add type validation for the `logs` parameter in the `upload` method. ([#32591](https://github.com/Azure/azure-sdk-for-python/pull/32591/))
 
 ## 1.0.2 (2023-06-15)
 

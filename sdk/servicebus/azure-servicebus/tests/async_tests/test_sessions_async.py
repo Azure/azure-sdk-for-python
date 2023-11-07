@@ -629,6 +629,9 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
     async def test_async_session_by_conn_str_receive_handler_with_auto_autolockrenew(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        if sys.platform.startswith('darwin'):
+            pytest.skip("Skipping for flakiness on OSX. Need to fix and unskip during MQ. Issue created: #32067.")
+
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             session_id = str(uuid.uuid4())

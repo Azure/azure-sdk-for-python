@@ -1,20 +1,24 @@
 # Release History
 
-## 1.5.0b3 (Unreleased)
+## 1.5.0b4 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.5.0b3 (2023-10-10)
 
 ### Breaking Changes
 - Renamed parameter `name` in `list_snapshot_configuration_settings()` to `snapshot_name`.
 - Removed keyword argument `accept_datetime` in `list_snapshot_configuration_settings()`.
 - Moved operation `list_snapshot_configuration_settings()` to an overload of `list_configuration_settings()`, and moved the parameter `snapshot_name` to keyword.
 - Published enum `SnapshotStatus`, and accepted the type for `status` parameter in `list_snapshots()` and `status` property in `Snapshot` model.
-- Renamed model `Snapshot` tp `ConfigurationSnapshot`.
+- Renamed model `Snapshot` to `ConfigurationSnapshot`.
 - Renamed model `ConfigurationSettingFilter` to `ConfigurationSettingsFilter`.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.5.0b2 (2023-08-02)
 

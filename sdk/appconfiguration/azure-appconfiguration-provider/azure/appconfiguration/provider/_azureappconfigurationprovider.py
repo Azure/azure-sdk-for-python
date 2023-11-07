@@ -174,22 +174,30 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
-    provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
-    provider._load_all()
+    headers = _get_headers("Startup", **kwargs)
+    provider = _buildprovider(
+        connection_string, endpoint, credential, uses_key_vault="UsesKeyVault" in headers, **kwargs
+    )
+    provider._load_all(headers=headers)
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
-            sentinel = provider._client.get_configuration_setting(key, label)
+            sentinel = provider._client.get_configuration_setting(key, label, headers=headers)
             provider._refresh_on[(key, label)] = sentinel.etag
     return provider
 
 
-def _get_headers(**kwargs) -> str:
+def _get_headers(request_type, **kwargs) -> str:
     headers = kwargs.pop("headers", {})
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() != "true":
-        correlation_context = "RequestType=Startup"
-        if "keyvault_credential" in kwargs or "keyvault_client_configs" in kwargs or "secret_resolver" in kwargs:
+        correlation_context = "RequestType=" + request_type
+        if (
+            "keyvault_credential" in kwargs
+            or "keyvault_client_configs" in kwargs
+            or "secret_resolver" in kwargs
+            or kwargs.pop("uses_key_vault", False)
+        ):
             correlation_context += ",UsesKeyVault"
         host_type = ""
         if AzureFunctionEnvironmentVariable in os.environ:
@@ -213,7 +221,6 @@ def _buildprovider(
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider(**kwargs)
-    headers = _get_headers(**kwargs)
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
@@ -226,7 +233,6 @@ def _buildprovider(
         provider._client = AzureAppConfigurationClient.from_connection_string(
             connection_string,
             user_agent=user_agent,
-            headers=headers,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
             **kwargs
@@ -236,7 +242,6 @@ def _buildprovider(
         endpoint,
         credential,
         user_agent=user_agent,
-        headers=headers,
         retry_total=retry_total,
         retry_backoff_max=retry_backoff_max,
         **kwargs
@@ -401,6 +406,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
+        self._uses_key_vault = (
+            self._keyvault_credential is not None
+            or self._keyvault_client_configs is not None
+            or self._secret_resolver is not None
+        )
         self._update_lock = Lock()
 
     def refresh(self, **kwargs) -> None:
@@ -415,7 +425,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             with self._update_lock:
                 for (key, label), etag in self._refresh_on.items():
                     updated_sentinel = self._client.get_configuration_setting(
-                        key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
+                        key=key,
+                        label=label,
+                        etag=etag,
+                        match_condition=MatchConditions.IfModified,
+                        headers=_get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs),
+                        **kwargs
                     )
                     if updated_sentinel is not None:
                         logging.debug(
@@ -423,7 +438,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             key,
                             label,
                         )
-                        self._load_all(**kwargs)
+                        self._load_all(headers=_get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs))
                         self._refresh_on[(key, label)] = updated_sentinel.etag
                         self._refresh_timer.reset()
                         return

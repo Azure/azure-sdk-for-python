@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
+from azure.mgmt.connectedvmware import ConnectedVMwareMgmtClient
 
 """
 # PREREQUISITES
@@ -24,18 +24,17 @@ from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
 
 
 def main():
-    client = AzureArcVMwareManagementServiceAPI(
+    client = ConnectedVMwareMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.virtual_machine_templates.begin_delete(
+    client.virtual_machine_templates.begin_delete(
         resource_group_name="testrg",
         virtual_machine_template_name="WebFrontEndTemplate",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/preview/2022-07-15-preview/examples/DeleteVirtualMachineTemplate.json
+# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/stable/2023-10-01/examples/DeleteVirtualMachineTemplate.json
 if __name__ == "__main__":
     main()

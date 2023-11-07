@@ -155,6 +155,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         default: Optional[str] = None,
         optional: Optional[bool] = None,
         description: Optional[str] = None,
+        path: Optional[str] = None,
         **kwargs,
     ) -> None:
         """Initialize a string input.

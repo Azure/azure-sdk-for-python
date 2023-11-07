@@ -23,6 +23,7 @@
 database service.
 """
 
+
 class Partition(object):
     """A class that holds the hash value and node name for a partition.
     """
@@ -47,6 +48,11 @@ class Partition(object):
 
     def CompareTo(self, other_hash_value):
         """Compare the passed hash value with the hash value of this object.
+        :param List[int] other_hash_value: the hash value to be compared
+        :returns: an integer stating the result of the comparison
+         -1 if other_hash_value is greater than self.hash_value, 1 if other_hash_value is less than self.hash_value,
+          0 if they're both equal
+        :rtype: int
         """
         if len(self.hash_value) != len(other_hash_value):
             raise ValueError("Length of hashes doesn't match.")

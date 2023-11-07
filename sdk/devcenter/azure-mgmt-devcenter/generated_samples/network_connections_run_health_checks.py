@@ -29,13 +29,12 @@ def main():
         subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
-    response = client.network_connections.begin_run_health_checks(
+    client.network_connections.begin_run_health_checks(
         resource_group_name="rg1",
         network_connection_name="uswest3network",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/NetworkConnections_RunHealthChecks.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2023-10-01-preview/examples/NetworkConnections_RunHealthChecks.json
 if __name__ == "__main__":
     main()

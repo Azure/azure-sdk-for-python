@@ -5,8 +5,8 @@ Project: sdk/storage/azure-storage-file-share
 PrimaryPackage: azure-storage-file-share
 
 PackageVersions:
-- azure-core: 1.26.1
-  azure-storage-file-share: 12.10.1
+- azure-core: 1.29.5
+  azure-storage-file-share: 12.14.2
 - azure-core: source
   azure-storage-file-share: source
 
