@@ -6,6 +6,9 @@ from unittest.mock import Mock, patch
 import jwt
 import pytest
 import yaml
+from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
 from msrest import Deserializer
 from pytest_mock import MockFixture
 
@@ -25,9 +28,6 @@ from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._run_operations import RunOperations
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential
 
 from .test_vcr_utils import before_record_cb, vcr_header_filters
 
