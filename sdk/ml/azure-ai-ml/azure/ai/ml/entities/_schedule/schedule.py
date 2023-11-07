@@ -336,8 +336,8 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         create_job._id = job_id
         schedule = JobSchedule(
             base_path=context[BASE_PATH_CONTEXT_KEY],
+            create_job=None,
             **load_from_dict(JobScheduleSchema, data, context, **kwargs),
-            **{create_job_key: None},
         )
         schedule.create_job = create_job
         return schedule
