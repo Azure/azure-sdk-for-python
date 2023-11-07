@@ -19,7 +19,7 @@ from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.scenario.generation import replace_dev_reqs
-from ci_tools.functions import build_whl_for_req, cleanup_directory
+from ci_tools.functions import cleanup_directory
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
 

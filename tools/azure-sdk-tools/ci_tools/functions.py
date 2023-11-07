@@ -471,6 +471,8 @@ def pytest(args: [], cwd: str = None, python_executable: str = None) -> bool:
 
     commands.extend(args)
 
+    logging.info(commands)
+    breakpoint()
     if cwd:
         result = subprocess.run(commands, cwd=cwd)
     else:

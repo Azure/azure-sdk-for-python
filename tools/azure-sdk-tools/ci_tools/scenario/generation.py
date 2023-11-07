@@ -27,17 +27,15 @@ from ci_tools.functions import (
 from ci_tools.build import cleanup_build_artifacts, create_package
 from ci_tools.parsing import ParsedSetup, parse_require, parse_freeze_output
 from ci_tools.functions import get_package_from_repo, find_whl, get_pip_list_output, pytest
-from ci_tools.scenario import ManagedVirtualEnv
+from .managed_virtual_env import ManagedVirtualEnv
 
 
-def prepare_environment(package_folder: str, venv_directory: str) -> str:
+def prepare_environment(package_folder: str, venv_directory: str, env_name: str) -> str:
     """
     Empties the venv_directory directory and creates a virtual environment within. Returns the path to the new python executable.
     """
-    if os.path.exists(venv_directory):
-        cleanup_directory(venv_directory)
-
-    venv = ManagedVirtualEnv(venv_directory)
+    venv = ManagedVirtualEnv(venv_directory, env_name)
+    venv.create()
 
     return venv.python_executable
 
@@ -213,20 +211,22 @@ def replace_dev_reqs(file: str, pkg_root: str) -> None:
     adjusted_req_lines = []
 
     with open(file, "r") as f:
-        for line in f:
-            args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
-            amended_line = " ".join(args)
+        original_req_lines = list(line.strip() for line in f)
 
-            if amended_line.endswith("]"):
-                trim_amount = amended_line[::-1].index("[") + 1
-                amended_line = amended_line[0 : (len(amended_line) - trim_amount)]
+    for line in original_req_lines:
+        args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
+        amended_line = " ".join(args)
+        extras = ""
 
-            adjusted_req_lines.append(amended_line)
+        if amended_line.endswith("]"):
+            amended_line, extras = amended_line.rsplit("[", maxsplit=1)
+            if extras:
+                extras = f"[{extras}"
+
+        adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root)}{extras}")
 
     req_file_name = os.path.basename(file)
-    logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
-
-    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
+    logging.info("Old {0}:{1}".format(req_file_name, original_req_lines))
     logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
 
     with open(file, "w") as f:
@@ -263,7 +263,7 @@ def discover_packages(
 
 def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
     """This function builds whls for every requirement found in a package's
-    dev_requirements.txt and installs each of them.
+    dev_requirements.txt and installs it.
 
     :param str file: the absolute path to the dev_requirements.txt file
     :param str pkg_root: the absolute path to the package's root
@@ -295,6 +295,16 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
     shutil.rmtree(os.path.join(pkg_root, ".tmp_whl_dir"))
 
 
+def is_relative_install_path(req: str, package_path: str) -> str:
+    possible_setup_path = os.path.join(package_path, req, "setup.py")
+
+    # blank lines are _allowed_ in a dev requirements. they should not resolve to the package_path erroneously
+    if not req:
+        return False
+
+    return os.path.exists(possible_setup_path)
+
+
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.
 
@@ -302,8 +312,9 @@ def build_whl_for_req(req: str, package_path: str) -> str:
     :param str package_path: the absolute path to the package's root
     :return: The absolute path to the whl built or the requirement if a third-party package
     """
+    from ci_tools.build import create_package
 
-    if ".." in req:
+    if is_relative_install_path(req, package_path):
         # Create temp path if it doesn't exist
         temp_dir = os.path.join(package_path, ".tmp_whl_dir")
         if not os.path.exists(temp_dir):
@@ -357,7 +368,7 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
 
     for config in optional_configs:
         env_name = config.get("name")
-        environment_exe = prepare_environment(mapped_args.target, mapped_args.temp_dir)
+        environment_exe = prepare_environment(mapped_args.target, mapped_args.temp_dir, env_name)
 
         # install package
         create_package_and_install(
@@ -394,10 +405,11 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
             break
 
         # uninstall anything additional
-        uninstall_result = pip_uninstall(config.get("uninstall", []))
+        additional_uninstalls = config.get("uninstall", [])
+        uninstall_result = pip_uninstall(additional_uninstalls, python_executable=environment_exe)
         if not uninstall_result:
             logging.error(
-                f"Unable to complete installation of additional packages {additional_installs} for {parsed_package.name}, check command output above."
+                f"Unable to complete removal of packages targeted for uninstall {additional_uninstalls} for {parsed_package.name}, check command output above."
             )
             config_results.append(False)
             break
