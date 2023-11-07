@@ -27,7 +27,7 @@ from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorksp
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as AMLServiceClient
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
@@ -140,9 +140,9 @@ class JobOperations(_ScopeDependentOperations):
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client: Service client to allow end users to operate on Azure Machine Learning
+    :param service_client_02_2023_preview: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type service_client: ~azure.ai.ml._restclient.v2023_04_01_preview.AzureMachineLearningWorkspaces
+    :type service_client_02_2023_preview: ~azure.ai.ml._restclient.v2023_02_01_preview.AzureMachineLearningWorkspaces
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credential: Credential to use for authentication.
@@ -153,17 +153,15 @@ class JobOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: AMLServiceClient,
+        service_client_02_2023_preview: ServiceClient022023Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
-        *,
-        service_client_08_2023_preview=None,
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._service_client_operation = service_client.jobs
-        self._service_client = service_client
+        self._operation_2023_02_preview = service_client_02_2023_preview.jobs
+        self._service_client = service_client_02_2023_preview
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -179,7 +177,7 @@ class JobOperations(_ScopeDependentOperations):
             self._all_operations, self._operation_scope, self._operation_config
         )  # pylint: disable=line-too-long
 
-        self.service_client_08_2023_preview = service_client_08_2023_preview
+        self.service_client_08_2023_preview = kwargs.pop("service_client_08_2023_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -287,7 +285,7 @@ class JobOperations(_ScopeDependentOperations):
             parent_job = self.get(parent_job_name)
             return self._runs_operations.get_run_children(parent_job.name)
 
-        return self._service_client_operation.list(
+        return self._operation_2023_02_preview.list(
             self._operation_scope.resource_group_name,
             self._workspace_name,
             cls=lambda objs: [self._handle_rest_errors(obj) for obj in objs],
@@ -403,7 +401,7 @@ class JobOperations(_ScopeDependentOperations):
         tag = kwargs.pop("tag", None)
 
         if not tag:
-            return self._service_client_operation.begin_cancel(
+            return self._operation_2023_02_preview.begin_cancel(
                 id=name,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -416,7 +414,7 @@ class JobOperations(_ScopeDependentOperations):
         jobs = self.list(tag=tag)
         # TODO: Do we need to show error message when no jobs is returned for the given tag?
         for job in jobs:
-            result = self._service_client_operation.begin_cancel(
+            result = self._operation_2023_02_preview.begin_cancel(
                 id=job.name,
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
@@ -706,7 +704,7 @@ class JobOperations(_ScopeDependentOperations):
     def _create_or_update_with_different_version_api(  # pylint: disable=name-too-long
         self, rest_job_resource, **kwargs
     ):
-        service_client_operation = self._service_client_operation
+        service_client_operation = self._operation_2023_02_preview
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.service_client_08_2023_preview:
             service_client_operation = self.service_client_08_2023_preview.jobs
@@ -1004,7 +1002,7 @@ class JobOperations(_ScopeDependentOperations):
         return uri
 
     def _get_job(self, name: str) -> JobBase:
-        return self._service_client_operation.get(
+        return self._operation_2023_02_preview.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
