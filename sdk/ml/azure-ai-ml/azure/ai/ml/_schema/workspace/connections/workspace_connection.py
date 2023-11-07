@@ -36,6 +36,7 @@ class WorkspaceConnectionSchema(ResourceSchema):
             ConnectionCategory.AZURE_SYNAPSE_ANALYTICS,
             ConnectionCategory.AZURE_MY_SQL_DB,
             ConnectionCategory.AZURE_POSTGRES_DB,
+            ConnectionCategory.API_KEY
         ],
         casing_transform=camel_to_snake,
         required=True,
