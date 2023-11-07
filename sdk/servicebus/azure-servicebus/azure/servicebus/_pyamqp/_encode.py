@@ -766,7 +766,7 @@ def encode_filter_set(value):
             if isinstance(name, str):
                 name = name.encode("utf-8")  # type: ignore
             if isinstance(data, (str, bytes)):
-                described_filter = data
+                described_filter = data # type: ignore
             # handle the situation when data is a tuple or list of length 2
             else:
                 try:
@@ -775,10 +775,9 @@ def encode_filter_set(value):
                         TYPE: AMQPTypes.described,
                         VALUE: ({TYPE: AMQPTypes.symbol, VALUE: descriptor}, filter_value),
                     }
-                except ValueError:
-                    raise ValueError(
-                        "Filter value must be a tuple or list of length 2."
-                    )
+                # if its not a type that is known, raise the error from the server
+                except Exception:
+                    described_filter = data
 
         cast(List, fields[VALUE]).append(
             ({TYPE: AMQPTypes.symbol, VALUE: name}, described_filter)
