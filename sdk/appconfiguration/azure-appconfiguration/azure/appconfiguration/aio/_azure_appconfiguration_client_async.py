@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
+from datetime import datetime
 from typing import Any, Dict, List, Mapping, Optional, Union, cast, overload
 from typing_extensions import Literal
 from azure.core import MatchConditions
@@ -35,6 +36,8 @@ from .._utils import (
     get_endpoint_from_connection_string,
     prep_if_match,
     prep_if_none_match,
+    get_key_filter,
+    get_label_filter,
 )
 
 
@@ -122,7 +125,7 @@ class AzureAppConfigurationClient:
 
     @overload
     def list_configuration_settings(
-        self, *, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """List the configuration settings stored in the configuration service, optionally filtered by
@@ -134,7 +137,8 @@ class AzureAppConfigurationClient:
         :keyword label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :paramtype label_filter: str
-        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :paramtype accept_datetime: ~datetime.datetime or str
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
@@ -176,7 +180,11 @@ class AzureAppConfigurationClient:
         """
 
     @distributed_trace
-    def list_configuration_settings(self, **kwargs) -> AsyncItemPaged[ConfigurationSetting]:
+    def list_configuration_settings(self, *args, **kwargs) -> AsyncItemPaged[ConfigurationSetting]:
+        accept_datetime = kwargs.pop("accept_datetime", None)
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
+
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
@@ -186,13 +194,17 @@ class AzureAppConfigurationClient:
             if snapshot_name is not None:
                 return self._impl.get_key_values(  # type: ignore
                     snapshot=snapshot_name,
+                    accept_datetime=accept_datetime,
                     select=select,
                     cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                     **kwargs
                 )
+            key_filter, kwargs = get_key_filter(*args, **kwargs)
+            label_filter, kwargs = get_label_filter(*args, **kwargs)
             return self._impl.get_key_values(  # type: ignore
-                key=kwargs.pop("key_filter", None),
-                label=kwargs.pop("label_filter", None),
+                key=key_filter,
+                label=label_filter,
+                accept_datetime=accept_datetime,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs
@@ -220,7 +232,8 @@ class AzureAppConfigurationClient:
         :type etag: str or None
         :param match_condition: The match condition to use upon the etag
         :type match_condition: ~azure.core.MatchConditions
-        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :paramtype accept_datetime: ~datetime.datetime or str
         :return: The matched ConfigurationSetting object
         :rtype: ~azure.appconfiguration.ConfigurationSetting or None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
@@ -238,6 +251,10 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
+        accept_datetime = kwargs.pop("accept_datetime", None)
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
+
         error_map: Dict[int, Any] = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
@@ -250,6 +267,7 @@ class AzureAppConfigurationClient:
             key_value = await self._impl.get_key_value(
                 key=key,
                 label=label,
+                accept_datetime=accept_datetime,
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
                 error_map=error_map,
@@ -448,7 +466,8 @@ class AzureAppConfigurationClient:
         :param label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
         :type label_filter: str
-        :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
+        :paramtype accept_datetime: ~datetime.datetime or str
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
@@ -474,6 +493,9 @@ class AzureAppConfigurationClient:
             async for item in filtered_revisions:
                 pass  # do something
         """
+        accept_datetime = kwargs.pop("accept_datetime", None)
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
@@ -482,6 +504,7 @@ class AzureAppConfigurationClient:
             return self._impl.get_revisions(  # type: ignore
                 label=label_filter,
                 key=key_filter,
+                accept_datetime=accept_datetime,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs
