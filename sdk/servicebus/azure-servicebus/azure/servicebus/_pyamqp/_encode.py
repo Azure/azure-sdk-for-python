@@ -776,7 +776,7 @@ def encode_filter_set(value):
                         VALUE: ({TYPE: AMQPTypes.symbol, VALUE: descriptor}, filter_value),
                     }
                 # if its not a type that is known, raise the error from the server
-                except Exception:
+                except (ValueError, TypeError):
                     described_filter = data
 
         cast(List, fields[VALUE]).append(
