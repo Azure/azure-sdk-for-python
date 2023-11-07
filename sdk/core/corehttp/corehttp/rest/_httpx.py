@@ -41,22 +41,20 @@ class HttpXTransportResponse(HttpResponseImpl):
 
     :param request: The request sent to the server
     :type request: ~corehttp.rest.HTTPRequest
-    :param httpx.Response httpx_response: The response object returned from the HttpX library
+    :param internal_response: The response object returned from the HttpX library
+    :type internal_response: ~httpx.Response
     """
 
-    def __init__(
-        self,
-        request: HttpRequest,
-        httpx_response: httpx.Response,
-    ) -> None:
+    def __init__(self, request: HttpRequest, internal_response: httpx.Response, **kwargs) -> None:
         super().__init__(
             request=request,
-            internal_response=httpx_response,
-            status_code=httpx_response.status_code,
-            headers=httpx_response.headers,
-            reason=httpx_response.reason_phrase,
-            content_type=httpx_response.headers.get("content-type"),
+            internal_response=internal_response,
+            status_code=internal_response.status_code,
+            headers=internal_response.headers,
+            reason=internal_response.reason_phrase,
+            content_type=internal_response.headers.get("content-type"),
             stream_download_generator=HttpXStreamDownloadGenerator,
+            **kwargs
         )
 
 
@@ -121,22 +119,20 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
 
     :param request: The request sent to the server
     :type request: ~corehttp.rest.HTTPRequest
-    :param httpx.Response httpx_response: The response object returned from HttpX library
+    :param internal_response: The response object returned from HttpX library
+    :type internal_response: ~httpx.Response
     """
 
-    def __init__(
-        self,
-        request: HttpRequest,
-        httpx_response: httpx.Response,
-    ) -> None:
+    def __init__(self, request: HttpRequest, internal_response: httpx.Response, **kwargs) -> None:
         super().__init__(
             request=request,
-            internal_response=httpx_response,
-            status_code=httpx_response.status_code,
-            headers=httpx_response.headers,
-            reason=httpx_response.reason_phrase,
-            content_type=httpx_response.headers.get("content-type"),
+            internal_response=internal_response,
+            status_code=internal_response.status_code,
+            headers=internal_response.headers,
+            reason=internal_response.reason_phrase,
+            content_type=internal_response.headers.get("content-type"),
             stream_download_generator=AsyncHttpXStreamDownloadGenerator,
+            **kwargs
         )
 
     async def close(self) -> None:
