@@ -60,31 +60,52 @@ class AzureAppConfigurationClient:
         self._sync_token_policy = SyncTokenPolicy()
 
         if isinstance(credential, AppConfigConnectionStringCredential):
-            self._impl = AzureAppConfiguration(
-                credential,  # type: ignore
-                base_url,
-                credential_scopes=credential_scopes,
-                per_call_policies=self._sync_token_policy,
-                authentication_policy=AppConfigRequestsCredentialsPolicy(credential),
-                **kwargs,
+            kwargs.update(
+                {
+                    "credential_scopes": credential_scopes,
+                    "per_call_policies": self._sync_token_policy,
+                    "authentication_policy": AppConfigRequestsCredentialsPolicy(credential)
+                }
             )
+            # self._impl = AzureAppConfiguration(
+            #     credential,  # type: ignore
+            #     base_url,
+            #     credential_scopes=credential_scopes,
+            #     per_call_policies=self._sync_token_policy,
+            #     authentication_policy=AppConfigRequestsCredentialsPolicy(credential),
+            #     **kwargs,
+            # )
         elif isinstance(credential, AzureKeyCredential):
-            self._impl = AzureAppConfiguration(
-                credential,
-                base_url,
-                credential_scopes=credential_scopes,
-                per_call_policies=self._sync_token_policy,
-                **kwargs,
+            kwargs.update(
+                {
+                    "credential_scopes": credential_scopes,
+                    "per_call_policies": self._sync_token_policy,
+                }
             )
+            # self._impl = AzureAppConfiguration(
+            #     credential,
+            #     base_url,
+            #     credential_scopes=credential_scopes,
+            #     per_call_policies=self._sync_token_policy,
+            #     **kwargs,
+            # )
         else:
-            self._impl = AzureAppConfiguration(
-                credential,  # type: ignore # mypy doesn't compare the type hint with the api surface in patch.py
-                base_url,
-                credential_scopes=credential_scopes,
-                per_call_policies=self._sync_token_policy,
-                authentication_policy=BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
-                **kwargs,
+            kwargs.update(
+                {
+                    "credential_scopes": credential_scopes,
+                    "per_call_policies": self._sync_token_policy,
+                    "authentication_policy":BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+                }
             )
+            # self._impl = AzureAppConfiguration(
+            #     credential,  # type: ignore # mypy doesn't compare the type hint with the api surface in patch.py
+            #     base_url,
+            #     credential_scopes=credential_scopes,
+            #     per_call_policies=self._sync_token_policy,
+            #     authentication_policy=BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+            #     **kwargs,
+            # )
+        self._impl = AzureAppConfiguration(credential, base_url, **kwargs)
 
     @classmethod
     def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
