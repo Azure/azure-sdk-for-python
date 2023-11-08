@@ -171,7 +171,7 @@ def test_example_per_call_policy():
     # Define your own policy
     class MyPolicy(SansIOHTTPPolicy[HttpRequest, HttpResponse]):
         def on_request(self, request: PipelineRequest[HttpRequest]) -> None:
-            # Simplicy hook that redirect google calls to bing :).
+            # Simple hook that redirect google calls to bing :).
             current_url = request.http_request.url
             request.http_request.url = current_url.replace("google", "bing")
 
