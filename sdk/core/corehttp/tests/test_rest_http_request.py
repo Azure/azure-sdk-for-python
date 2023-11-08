@@ -8,7 +8,6 @@
 # Thank you httpx for your wonderful tests!
 import io
 import pytest
-import sys
 import os
 
 try:
