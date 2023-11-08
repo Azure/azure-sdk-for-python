@@ -74,7 +74,7 @@ class EventHubConsumerClient(
      `retry_total` specifies the numbers of retry after error raised by internal receive method in the while-loop.
      If retry attempts are exhausted, the `on_error` callback will be called (if provided) with the error information.
      The failed internal partition consumer will be closed (`on_partition_close` will be called if provided) and
-     new internal partition consumer will be created (`on_partition_initialize` will be called if provided) to resume
+     new internal partition consumer wilchel be created (`on_partition_initialize` will be called if provided) to resume
      receiving.
     :paramtype retry_total: int
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
