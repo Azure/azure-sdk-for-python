@@ -347,6 +347,7 @@ class ContainerProxy(object):
         max_item_count=None,  # type: Optional[int]
         enable_scan_in_query=None,  # type: Optional[bool]
         populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
+        populate_index_metrics=None, # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -371,6 +372,9 @@ class ContainerProxy(object):
         :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this options will incur
+            overhead, so it should be enabled only when debugging slow queries.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -412,6 +416,8 @@ class ContainerProxy(object):
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
+        if populate_index_metrics is not None:
+            feed_options["populateIndexMetrics"] = populate_index_metrics
         if partition_key is not None:
             if self.__is_prefix_partitionkey(partition_key):
                 kwargs["isPrefixPartitionQuery"] = True
