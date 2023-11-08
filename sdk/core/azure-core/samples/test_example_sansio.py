@@ -161,6 +161,7 @@ def example_proxy_policy():
     # HTTP_PROXY and HTTPS_PROXY.
     # [END proxy_policy]
 
+
 def test_example_per_call_policy():
     """Per call policy example.
 
@@ -178,8 +179,7 @@ def test_example_per_call_policy():
     # Replace "PipelineClient" by your actual client (KeyVault, Storage, etc.)
     # "per_call_policies" is available on any client this team produces.
     client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient(
-        base_url = "https://google.com",
-        per_call_policies=MyPolicy()
+        base_url="https://google.com", per_call_policies=MyPolicy()
     )
     # This part will be done by your client
     request = HttpRequest("GET", "https://google.com/")
