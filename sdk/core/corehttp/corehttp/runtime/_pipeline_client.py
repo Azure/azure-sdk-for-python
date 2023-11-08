@@ -33,6 +33,7 @@ from ._base import PipelineClientBase
 from ..transport import HttpTransport
 from .policies import (
     ContentDecodePolicy,
+    CustomHookPolicy,
     RetryPolicy,
     HeadersPolicy,
     UserAgentPolicy,
@@ -104,6 +105,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
                 ContentDecodePolicy(**kwargs),
                 kwargs.get("retry_policy") or RetryPolicy(**kwargs),
                 kwargs.get("authentication_policy"),
+                kwargs.get("custom_hook_policy") or CustomHookPolicy(**kwargs),
                 kwargs.get("logging_policy") or NetworkTraceLoggingPolicy(**kwargs),
             ]
         if isinstance(per_call_policies, Iterable):

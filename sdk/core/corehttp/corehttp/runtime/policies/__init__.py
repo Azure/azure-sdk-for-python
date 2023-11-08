@@ -29,6 +29,7 @@ from ._authentication import (
     BearerTokenCredentialPolicy,
     ServiceKeyCredentialPolicy,
 )
+from ._custom_hook import CustomHookPolicy
 from ._retry import RetryPolicy, RetryMode
 from ._universal import (
     HeadersPolicy,
@@ -50,6 +51,7 @@ __all__ = [
     "UserAgentPolicy",
     "NetworkTraceLoggingPolicy",
     "ContentDecodePolicy",
+    "CustomHookPolicy",
     "RetryMode",
     "RetryPolicy",
     "ProxyPolicy",
