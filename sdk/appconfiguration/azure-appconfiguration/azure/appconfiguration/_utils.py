@@ -37,11 +37,6 @@ def prep_if_none_match(etag: Optional[str], match_condition: Optional[MatchCondi
     return None
 
 
-def get_endpoint_from_connection_string(connection_string: str) -> str:
-    endpoint, _, _ = parse_connection_string(connection_string)
-    return endpoint
-
-
 def parse_connection_string(connection_string: str) -> Tuple[str, str, str]:
     # connection_string looks like Endpoint=https://xxxxx;Id=xxxxx;Secret=xxxx
     segments = connection_string.split(";")

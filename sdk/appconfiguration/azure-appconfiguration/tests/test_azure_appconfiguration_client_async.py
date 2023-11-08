@@ -1036,11 +1036,11 @@ class TestAppConfigurationClientUnitTest:
         def new_method(self, request):
             request.http_request.headers["Authorization"] = str(uuid4())
 
-        from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+        from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 
         # Store the method to restore later
-        temp = AzureKeyCredentialPolicy.on_request
-        AzureKeyCredentialPolicy.on_request = new_method
+        temp = AppConfigRequestsCredentialsPolicy._signed_request
+        AppConfigRequestsCredentialsPolicy._signed_request = new_method
 
         client = AzureAppConfigurationClient.from_connection_string(
             APPCONFIGURATION_CONNECTION_STRING, transport=MockTransport()
@@ -1048,4 +1048,4 @@ class TestAppConfigurationClientUnitTest:
         client.list_configuration_settings()
 
         # Reset the actual method
-        AzureKeyCredentialPolicy.on_request = temp
+        AppConfigRequestsCredentialsPolicy._signed_request = temp

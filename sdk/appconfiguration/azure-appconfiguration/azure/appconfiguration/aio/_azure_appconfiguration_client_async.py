@@ -11,7 +11,7 @@ from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AzureKeyCredentialPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -24,11 +24,11 @@ from azure.core.exceptions import (
 from azure.core.utils import CaseInsensitiveDict
 from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
+from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._generated.aio import AzureAppConfiguration
 from .._generated.models import SnapshotUpdateParameters, SnapshotStatus
 from .._models import ConfigurationSetting, ConfigurationSettingsFilter, ConfigurationSnapshot
 from .._utils import (
-    get_endpoint_from_connection_string,
     prep_if_match,
     prep_if_none_match,
     get_key_filter,
@@ -67,20 +67,23 @@ class AzureAppConfigurationClient:
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
         if isinstance(credential, AzureKeyCredential):
-            auth_policy = kwargs.pop("auth_policy")
+            id_credential = kwargs.pop("id_credential")
             kwargs.update(
                 {
-                    "authentication_policy": auth_policy,
+                    "authentication_policy": AppConfigRequestsCredentialsPolicy(credential, base_url, id_credential),
                 }
             )
-        elif isinstance(credential, AsyncTokenCredential):
+        elif hasattr(credential, "get_token"):  # AsyncFakeCredential is not an instance of AsyncTokenCredential
             kwargs.update(
                 {
                     "authentication_policy": AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
                 }
             )
         else:
-            raise TypeError(f"Unsupported credential: {credential}")
+            raise TypeError(
+                f"Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential "
+                "or a token credential from azure.identity"
+            )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfiguration(
             credential, base_url, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
@@ -105,14 +108,12 @@ class AzureAppConfigurationClient:
             connection_str = "<my connection string>"
             async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
         """
-        base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        _, _, secret = parse_connection_string(connection_string)
-        credential = AzureKeyCredential(secret)
-        auth_policy = AzureKeyCredentialPolicy(credential, connection_string)
+        endpoint, id_credential, secret = parse_connection_string(connection_string)
+        # AzureKeyCredential type is for internal use, it's not exposed in public API.
         return cls(
-            credential=credential,  # type: ignore[arg-type] # AzureKeyCredential type is for internal use
-            base_url=base_url,
-            auth_policy=auth_policy,
+            credential=AzureKeyCredential(secret),  # type: ignore[arg-type]
+            base_url=endpoint,
+            id_credential=id_credential,
             **kwargs,
         )
 
