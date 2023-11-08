@@ -1,9 +1,8 @@
-recursive-include tests *.py
-recursive-include samples *.py *.md *.txt
+include _meta.json
+recursive-include tests *.py *.json
+recursive-include samples *.py *.md
 include *.md
 include azure/__init__.py
 include azure/ai/__init__.py
+include LICENSE
 include azure/ai/generative/py.typed
-include azure/ai/generative/index/_utils/encodings/*
-recursive-include azure/ai/generative/synthetic/templates *.txt
-recursive-include azure/ai/generative/synthetic/simulator/templates *.md
