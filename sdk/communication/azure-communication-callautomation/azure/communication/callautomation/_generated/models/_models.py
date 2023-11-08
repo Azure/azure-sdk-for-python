@@ -845,7 +845,7 @@ class CancelAddParticipantFailed(_serialization.Model):
         self.invitation_id = invitation_id
 
 
-class CancelAddParticipantOperationRequest(_serialization.Model):
+class CancelAddParticipantRequest(_serialization.Model):
     """Request payload for cancelling add participant request.
 
     All required parameters must be populated in order to send to server.
@@ -898,7 +898,7 @@ class CancelAddParticipantOperationRequest(_serialization.Model):
         self.operation_callback_uri = operation_callback_uri
 
 
-class CancelAddParticipantOperationResponse(_serialization.Model):
+class CancelAddParticipantResponse(_serialization.Model):
     """Response payload for cancel add participant request.
 
     :ivar invitation_id: Invitation ID used to cancel the add participant action.

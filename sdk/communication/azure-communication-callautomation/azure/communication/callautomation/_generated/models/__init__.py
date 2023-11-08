@@ -20,8 +20,8 @@ from ._models import CallParticipant
 from ._models import CallTransferAccepted
 from ._models import CallTransferFailed
 from ._models import CancelAddParticipantFailed
-from ._models import CancelAddParticipantOperationRequest
-from ._models import CancelAddParticipantOperationResponse
+from ._models import CancelAddParticipantRequest
+from ._models import CancelAddParticipantResponse
 from ._models import CancelAddParticipantSucceeded
 from ._models import ChannelAffinity
 from ._models import Choice
@@ -109,8 +109,8 @@ __all__ = [
     "CallTransferAccepted",
     "CallTransferFailed",
     "CancelAddParticipantFailed",
-    "CancelAddParticipantOperationRequest",
-    "CancelAddParticipantOperationResponse",
+    "CancelAddParticipantRequest",
+    "CancelAddParticipantResponse",
     "CancelAddParticipantSucceeded",
     "ChannelAffinity",
     "Choice",

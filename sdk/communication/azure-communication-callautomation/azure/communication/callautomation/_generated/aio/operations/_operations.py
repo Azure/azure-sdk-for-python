@@ -32,7 +32,7 @@ from ...operations._operations import (
     build_azure_communication_call_automation_service_redirect_call_request,
     build_azure_communication_call_automation_service_reject_call_request,
     build_call_connection_add_participant_request,
-    build_call_connection_cancel_add_participant_operation_request,
+    build_call_connection_cancel_add_participant_request,
     build_call_connection_get_call_request,
     build_call_connection_get_participant_request,
     build_call_connection_get_participants_request,
@@ -1307,78 +1307,78 @@ class CallConnectionOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def cancel_add_participant_operation(
+    async def cancel_add_participant(
         self,
         call_connection_id: str,
-        cancel_add_participant_operation_request: _models.CancelAddParticipantOperationRequest,
+        cancel_add_participant_request: _models.CancelAddParticipantRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.CancelAddParticipantOperationResponse:
+    ) -> _models.CancelAddParticipantResponse:
         """Cancel add participant operation.
 
         Cancel add participant operation.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param cancel_add_participant_operation_request: Cancellation request. Required.
-        :type cancel_add_participant_operation_request:
-         ~azure.communication.callautomation.models.CancelAddParticipantOperationRequest
+        :param cancel_add_participant_request: Cancellation request. Required.
+        :type cancel_add_participant_request:
+         ~azure.communication.callautomation.models.CancelAddParticipantRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CancelAddParticipantOperationResponse
-        :rtype: ~azure.communication.callautomation.models.CancelAddParticipantOperationResponse
+        :return: CancelAddParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.CancelAddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def cancel_add_participant_operation(
+    async def cancel_add_participant(
         self,
         call_connection_id: str,
-        cancel_add_participant_operation_request: IO,
+        cancel_add_participant_request: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.CancelAddParticipantOperationResponse:
+    ) -> _models.CancelAddParticipantResponse:
         """Cancel add participant operation.
 
         Cancel add participant operation.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param cancel_add_participant_operation_request: Cancellation request. Required.
-        :type cancel_add_participant_operation_request: IO
+        :param cancel_add_participant_request: Cancellation request. Required.
+        :type cancel_add_participant_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: CancelAddParticipantOperationResponse
-        :rtype: ~azure.communication.callautomation.models.CancelAddParticipantOperationResponse
+        :return: CancelAddParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.CancelAddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def cancel_add_participant_operation(
+    async def cancel_add_participant(
         self,
         call_connection_id: str,
-        cancel_add_participant_operation_request: Union[_models.CancelAddParticipantOperationRequest, IO],
+        cancel_add_participant_request: Union[_models.CancelAddParticipantRequest, IO],
         **kwargs: Any
-    ) -> _models.CancelAddParticipantOperationResponse:
+    ) -> _models.CancelAddParticipantResponse:
         """Cancel add participant operation.
 
         Cancel add participant operation.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param cancel_add_participant_operation_request: Cancellation request. Is either a
-         CancelAddParticipantOperationRequest type or a IO type. Required.
-        :type cancel_add_participant_operation_request:
-         ~azure.communication.callautomation.models.CancelAddParticipantOperationRequest or IO
+        :param cancel_add_participant_request: Cancellation request. Is either a
+         CancelAddParticipantRequest type or a IO type. Required.
+        :type cancel_add_participant_request:
+         ~azure.communication.callautomation.models.CancelAddParticipantRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: CancelAddParticipantOperationResponse
-        :rtype: ~azure.communication.callautomation.models.CancelAddParticipantOperationResponse
+        :return: CancelAddParticipantResponse
+        :rtype: ~azure.communication.callautomation.models.CancelAddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1393,19 +1393,17 @@ class CallConnectionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.CancelAddParticipantOperationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CancelAddParticipantResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(cancel_add_participant_operation_request, (IOBase, bytes)):
-            _content = cancel_add_participant_operation_request
+        if isinstance(cancel_add_participant_request, (IOBase, bytes)):
+            _content = cancel_add_participant_request
         else:
-            _json = self._serialize.body(
-                cancel_add_participant_operation_request, "CancelAddParticipantOperationRequest"
-            )
+            _json = self._serialize.body(cancel_add_participant_request, "CancelAddParticipantRequest")
 
-        _request = build_call_connection_cancel_add_participant_operation_request(
+        _request = build_call_connection_cancel_add_participant_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1433,7 +1431,7 @@ class CallConnectionOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("CancelAddParticipantOperationResponse", pipeline_response)
+        deserialized = self._deserialize("CancelAddParticipantResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
