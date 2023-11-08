@@ -25,8 +25,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Awaitable, Union
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline import PipelineRequest
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import RedirectPolicy
