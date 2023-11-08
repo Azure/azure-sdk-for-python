@@ -234,8 +234,8 @@ class DeploymentOperations:
         shutil.rmtree(temp_dir.name)
         created_deployment = create_deployment_poller.result()
 
-        created_endpoint.traffic = {deployment.name: 100}
-        update_endpoint_poller = self._ml_client.begin_create_or_update(created_endpoint)
+        v2_endpoint.traffic = {deployment.name: 100}
+        update_endpoint_poller = self._ml_client.begin_create_or_update(v2_endpoint)
         updated_endpoint = update_endpoint_poller.result()
 
         return Deployment._from_v2_endpoint_deployment(updated_endpoint, deployment)
