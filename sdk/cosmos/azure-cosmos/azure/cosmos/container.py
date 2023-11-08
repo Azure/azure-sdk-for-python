@@ -347,7 +347,6 @@ class ContainerProxy(object):
         max_item_count=None,  # type: Optional[int]
         enable_scan_in_query=None,  # type: Optional[bool]
         populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
-        populate_index_metrics=None, # type: Optional[bool]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
