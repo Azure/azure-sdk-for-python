@@ -628,7 +628,7 @@ def build_job_router_cancel_job_request(job_id: str, **kwargs: Any) -> HttpReque
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_job_router_complete_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
+def build_job_router_complete_job_request(job_id: str, assignment_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -637,9 +637,10 @@ def build_job_router_complete_job_request(job_id: str, **kwargs: Any) -> HttpReq
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/routing/jobs/{jobId}:complete"
+    _url = "/routing/jobs/{jobId}/assignments/{assignmentId}:complete"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "assignmentId": _SERIALIZER.url("assignment_id", assignment_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -655,7 +656,7 @@ def build_job_router_complete_job_request(job_id: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_job_router_close_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
+def build_job_router_close_job_request(job_id: str, assignment_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -664,9 +665,10 @@ def build_job_router_close_job_request(job_id: str, **kwargs: Any) -> HttpReques
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/routing/jobs/{jobId}:close"
+    _url = "/routing/jobs/{jobId}/assignments/{assignmentId}:close"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "assignmentId": _SERIALIZER.url("assignment_id", assignment_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -3128,7 +3130,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Reclassify a job.
 
-        :param job_id: Id of the job. Required.
+        :param job_id: The id of the job. Required.
         :type job_id: str
         :param options: Request object for reclassifying a job. Is one of the following types:
          ReclassifyJobOptions, JSON, IO Default value is None.
@@ -3235,7 +3237,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
-        :param job_id: Id of the job. Required.
+        :param job_id: The id of the job. Required.
         :type job_id: str
         :param options: Request model for cancelling job. Is one of the following types:
          CancelJobOptions, JSON, IO Default value is None.
@@ -3315,7 +3317,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
     def _complete_job(  # pylint: disable=protected-access
         self,
         job_id: str,
-        options: _models._models.CompleteJobOptions,
+        assignment_id: str,
+        options: Optional[_models._models.CompleteJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3324,28 +3327,46 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def _complete_job(  # pylint: disable=protected-access
-        self, job_id: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[JSON] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models._models.CompleteJobResult:
         ...
 
     @overload
     def _complete_job(  # pylint: disable=protected-access
-        self, job_id: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models._models.CompleteJobResult:
         ...
 
     @distributed_trace
     def _complete_job(  # pylint: disable=protected-access
-        self, job_id: str, options: Union[_models._models.CompleteJobOptions, JSON, IO], **kwargs: Any
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[Union[_models._models.CompleteJobOptions, JSON, IO]] = None,
+        **kwargs: Any
     ) -> _models._models.CompleteJobResult:
         """Completes an assigned job.
 
         Completes an assigned job.
 
-        :param job_id: Id of the job. Required.
+        :param job_id: The id of the job. Required.
         :type job_id: str
+        :param assignment_id: The Id of the job assignment. Required.
+        :type assignment_id: str
         :param options: Request model for completing job. Is one of the following types:
-         CompleteJobOptions, JSON, IO Required.
+         CompleteJobOptions, JSON, IO Default value is None.
         :type options: ~azure.communication.jobrouter.models.CompleteJobOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
@@ -3375,10 +3396,14 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         if isinstance(options, (IOBase, bytes)):
             _content = options
         else:
-            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            if options is not None:
+                _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_job_router_complete_job_request(
             job_id=job_id,
+            assignment_id=assignment_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3419,7 +3444,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
     def _close_job(  # pylint: disable=protected-access
         self,
         job_id: str,
-        options: _models._models.CloseJobOptions,
+        assignment_id: str,
+        options: Optional[_models._models.CloseJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3428,28 +3454,46 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @overload
     def _close_job(  # pylint: disable=protected-access
-        self, job_id: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[JSON] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models._models.CloseJobResult:
         ...
 
     @overload
     def _close_job(  # pylint: disable=protected-access
-        self, job_id: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models._models.CloseJobResult:
         ...
 
     @distributed_trace
     def _close_job(  # pylint: disable=protected-access
-        self, job_id: str, options: Union[_models._models.CloseJobOptions, JSON, IO], **kwargs: Any
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[Union[_models._models.CloseJobOptions, JSON, IO]] = None,
+        **kwargs: Any
     ) -> _models._models.CloseJobResult:
         """Closes a completed job.
 
         Closes a completed job.
 
-        :param job_id: Id of the job. Required.
+        :param job_id: The id of the job. Required.
         :type job_id: str
+        :param assignment_id: The Id of the job assignment. Required.
+        :type assignment_id: str
         :param options: Request model for closing job. Is one of the following types: CloseJobOptions,
-         JSON, IO Required.
+         JSON, IO Default value is None.
         :type options: ~azure.communication.jobrouter.models.CloseJobOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
@@ -3479,10 +3523,14 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         if isinstance(options, (IOBase, bytes)):
             _content = options
         else:
-            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            if options is not None:
+                _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_job_router_close_job_request(
             job_id=job_id,
+            assignment_id=assignment_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3501,27 +3549,18 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.status_code == 200:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(
-                    _models._models.CloseJobResult, response.json()  # pylint: disable=protected-access
-                )
-
-        if response.status_code == 202:
-            if _stream:
-                deserialized = response.iter_bytes()
-            else:
-                deserialized = _deserialize(
-                    _models._models.CloseJobResult, response.json()  # pylint: disable=protected-access
-                )
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.CloseJobResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3726,9 +3765,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Un-assign a job.
 
-        :param job_id: Id of the job to un-assign. Required.
+        :param job_id: The id of the job. Required.
         :type job_id: str
-        :param assignment_id: Id of the assignment to un-assign. Required.
+        :param assignment_id: The Id of the job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Default value is None.
         :type options: ~azure.communication.jobrouter.models.UnassignJobOptions
@@ -3756,9 +3795,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Un-assign a job.
 
-        :param job_id: Id of the job to un-assign. Required.
+        :param job_id: The id of the job. Required.
         :type job_id: str
-        :param assignment_id: Id of the assignment to un-assign. Required.
+        :param assignment_id: The Id of the job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Default value is None.
         :type options: JSON
@@ -3786,9 +3825,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Un-assign a job.
 
-        :param job_id: Id of the job to un-assign. Required.
+        :param job_id: The id of the job. Required.
         :type job_id: str
-        :param assignment_id: Id of the assignment to un-assign. Required.
+        :param assignment_id: The Id of the job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Default value is None.
         :type options: IO
@@ -3814,9 +3853,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Un-assign a job.
 
-        :param job_id: Id of the job to un-assign. Required.
+        :param job_id: The id of the job. Required.
         :type job_id: str
-        :param assignment_id: Id of the assignment to un-assign. Required.
+        :param assignment_id: The Id of the job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Is one of the following types:
          UnassignJobOptions, JSON, IO Default value is None.
@@ -3901,7 +3940,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param worker_id: Id of the worker. Required.
         :type worker_id: str
-        :param offer_id: Id of the offer. Required.
+        :param offer_id: The Id of the offer. Required.
         :type offer_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -4007,7 +4046,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param worker_id: Id of the worker. Required.
         :type worker_id: str
-        :param offer_id: Id of the offer. Required.
+        :param offer_id: The Id of the offer. Required.
         :type offer_id: str
         :param options: Request model for declining offer. Is one of the following types:
          DeclineJobOfferOptions, JSON, IO Default value is None.

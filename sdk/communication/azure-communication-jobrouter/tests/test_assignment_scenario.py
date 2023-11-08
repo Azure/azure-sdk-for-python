@@ -246,10 +246,10 @@ class TestAssignmentScenario(RouterRecordedTestCase):
         assignment_id = accept_job_offer_result.assignment_id
 
         # complete job
-        router_client.complete_job(job_identifier, CompleteJobOptions(assignment_id=assignment_id))
+        router_client.complete_job(job_identifier, assignment_id)
 
         # close job
-        router_client.close_job(job_identifier, CloseJobOptions(assignment_id=assignment_id))
+        router_client.close_job(job_identifier, assignment_id)
 
         # validate post closure job details
         queried_job: RouterJob = router_client.get_job(job_identifier)

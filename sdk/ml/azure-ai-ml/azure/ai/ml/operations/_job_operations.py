@@ -31,6 +31,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -176,6 +177,7 @@ class JobOperations(_ScopeDependentOperations):
             self._all_operations, self._operation_scope, self._operation_config
         )  # pylint: disable=line-too-long
 
+        self.service_client_08_2023_preview = kwargs.pop("service_client_08_2023_preview", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -664,13 +666,7 @@ class JobOperations(_ScopeDependentOperations):
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
-        result = self._operation_2023_02_preview.create_or_update(
-            id=rest_job_resource.name,  # type: ignore
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            body=rest_job_resource,
-            **kwargs,
-        )
+        result = self._create_or_update_with_different_version_api(rest_job_resource=rest_job_resource, **kwargs)
 
         if is_local_run(result):
             ws_base_url = self._all_operations.all_operations[
@@ -685,7 +681,10 @@ class JobOperations(_ScopeDependentOperations):
             # in case of local run, the first create/update call to MFE returns the
             # request for submitting to ES. Once we request to ES and start the run, we
             # need to put the same body to MFE to append user tags etc.
-            job_object = self._get_job(rest_job_resource.name)
+            if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
+                job_object = self._get_job_2308(rest_job_resource.name)
+            else:
+                job_object = self._get_job(rest_job_resource.name)
             if result.properties.tags is not None:
                 for tag_name, tag_value in rest_job_resource.properties.tags.items():
                     job_object.properties.tags[tag_name] = tag_value
@@ -698,27 +697,37 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._operation_2023_02_preview.create_or_update(
-                id=rest_job_resource.name,  # type: ignore
-                resource_group_name=self._operation_scope.resource_group_name,
-                workspace_name=self._workspace_name,
-                body=job_object,
-                **kwargs,
-            )
+            result = self._create_or_update_with_different_version_api(rest_job_resource=job_object, **kwargs)
+
         return self._resolve_azureml_id(Job._from_rest_object(result))
+
+    def _create_or_update_with_different_version_api(  # pylint: disable=name-too-long
+        self, rest_job_resource, **kwargs
+    ):
+        service_client_operation = self._operation_2023_02_preview
+        # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
+        if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
+            service_client_operation = self.service_client_08_2023_preview.jobs
+
+        result = service_client_operation.create_or_update(
+            id=rest_job_resource.name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            body=rest_job_resource,
+            **kwargs,
+        )
+
+        return result
 
     def _archive_or_restore(self, name: str, is_archived: bool):
         job_object = self._get_job(name)
+        if job_object.properties.job_type == RestJobType.PIPELINE:
+            job_object = self._get_job_2308(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
 
-        self._operation_2023_02_preview.create_or_update(
-            id=job_object.name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            body=job_object,
-        )
+        self._create_or_update_with_different_version_api(rest_job_resource=job_object)
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
@@ -994,6 +1003,17 @@ class JobOperations(_ScopeDependentOperations):
 
     def _get_job(self, name: str) -> JobBase:
         return self._operation_2023_02_preview.get(
+            id=name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            **self._kwargs,
+        )
+
+    # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
+    # We can remove this function once `_get_job` function has also been upgraded to 2023-08-01 api
+    def _get_job_2308(self, name: str) -> JobBase_2308:
+        service_client_operation = self.service_client_08_2023_preview.jobs
+        return service_client_operation.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,

@@ -101,9 +101,9 @@ class RouterWorkerSamplesAsync(object):
                     capacity=100,
                     queues=["worker-q-1", "worker-q-2"],
                     channels=[
-                        RouterChannel(channel_id = "WebChat", capacity_cost_per_job=1),
-                        RouterChannel(channel_id = "WebChatEscalated", capacity_cost_per_job=20),
-                        RouterChannel(channel_id = "Voip", capacity_cost_per_job=100),
+                        RouterChannel(channel_id="WebChat", capacity_cost_per_job=1),
+                        RouterChannel(channel_id="WebChatEscalated", capacity_cost_per_job=20),
+                        RouterChannel(channel_id="Voip", capacity_cost_per_job=100),
                     ],
                     labels={"Location": "NA", "English": 7, "O365": True, "Xbox_Support": False},
                     tags={"Name": "John Doe", "Department": "IT_HelpDesk"},
@@ -139,7 +139,7 @@ class RouterWorkerSamplesAsync(object):
             updated_router_worker: RouterWorker = await router_client.upsert_worker(
                 worker_id,
                 queues=["worker-q-3"],
-                channels=[RouterChannel(channel_id = "WebChatEscalated", capacity_cost_per_job=50)],
+                channels=[RouterChannel(channel_id="WebChatEscalated", capacity_cost_per_job=50)],
                 labels={"O365": "Supported", "Xbox_Support": None, "Xbox_Support_EN": True},
             )
 

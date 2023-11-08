@@ -471,7 +471,9 @@
         "Fproviders",
         "Fdeployments",
         "roups",
-        "mltable"
+        "mltable",
+        "wsid",
+        "runid"
       ]
     },
     {

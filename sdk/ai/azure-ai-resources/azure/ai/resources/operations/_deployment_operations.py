@@ -158,8 +158,12 @@ class DeploymentOperations:
                         default_instance_type, deployment, allowed_instance_types=allowed_instance_types
                     )
 
-                if "registries/azureml" in model_details.id:
+                if "registries/azureml/" in model_details.id:
                     default_instance_type = model_details.properties["inference-recommended-sku"]
+                    allowed_instance_types = []
+                    if "," in default_instance_type:
+                        allowed_instance_types = model_details.properties["inference-recommended-sku"].split(",")
+                        default_instance_type = allowed_instance_types[0]
                     min_sku_spec = model_details.properties["inference-min-sku-spec"].split("|")
                     self._check_default_instance_type_and_populate(
                         default_instance_type, deployment, min_sku_spec=min_sku_spec
@@ -230,8 +234,8 @@ class DeploymentOperations:
         shutil.rmtree(temp_dir.name)
         created_deployment = create_deployment_poller.result()
 
-        created_endpoint.traffic = {deployment.name: 100}
-        update_endpoint_poller = self._ml_client.begin_create_or_update(created_endpoint)
+        v2_endpoint.traffic = {deployment.name: 100}
+        update_endpoint_poller = self._ml_client.begin_create_or_update(v2_endpoint)
         updated_endpoint = update_endpoint_poller.result()
 
         return Deployment._from_v2_endpoint_deployment(updated_endpoint, deployment)

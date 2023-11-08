@@ -11,13 +11,15 @@ from pathlib import Path
 
 import mlflow
 import pandas as pd
+from azure.core.tracing.decorator import distributed_trace
+from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
 from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
-from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path
+from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
 from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
@@ -76,6 +78,8 @@ def _log_metrics(run_id, metrics):
     )
 
 
+@distributed_trace
+@monitor_with_activity(LOGGER, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
         evaluation_name=None,
         target=None,
@@ -275,7 +279,12 @@ def _evaluate(
             log_property_and_tag("_azureml.evaluate_artifacts",
                                  json.dumps([{"path": "eval_results.jsonl", "type": "table"}]))
             mlflow.log_param("task_type", task_type)
-            log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
+            if task_type == CHAT:
+                log_property("_azureml.chat_history_column", data_mapping.get("y_pred"))
+            # log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
+
+            if output_path:
+                _copy_artifact(tmp_path, output_path)
 
     evaluation_result = EvaluationResult(
         metrics_summary=metrics.get("metrics"),
@@ -283,10 +292,8 @@ def _evaluate(
             "eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"
         },
         tracking_uri=kwargs.get("tracking_uri"),
-        evaluation_id=run.info.run_id
+        evaluation_id=run.info.run_id,
     )
-    if output_path:
-        evaluation_result.download_evaluation_artifacts(path=output_path)
 
     return evaluation_result
 
@@ -325,6 +332,9 @@ def log_param_and_tag(key, value):
 def log_property_and_tag(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
     mlflow.set_tag(key, value)
+
+def log_property(key, value, logger=LOGGER):
+    _write_properties_to_run_history({key: value}, logger)
 
 
 def _get_chat_instance_table(metrics):
