@@ -7,6 +7,8 @@ import logging
 import time
 from typing import Optional, Union, Any, Tuple, cast
 
+from azure.eventhub._pyamqp.types import TYPE, VALUE, AMQPTypes
+
 from .._pyamqp import (
     error as errors,
     utils,
@@ -393,7 +395,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         source = Source(address=source, filters={})
         if offset is not None:
             filter_key = ApacheFilters.selector_filter
-            source.filters[filter_key] = (filter_key, utils.amqp_string_value(selector))
+            described_filter = {
+                TYPE: AMQPTypes.described,
+                VALUE: ({TYPE: AMQPTypes.symbol, VALUE: filter_key}, utils.amqp_string_value(selector))
+            }
+            source.filters[filter_key] = described_filter
         return source
 
     @staticmethod
