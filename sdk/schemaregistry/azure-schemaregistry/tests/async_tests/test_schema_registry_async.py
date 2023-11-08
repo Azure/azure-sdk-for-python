@@ -36,7 +36,7 @@ SchemaRegistryEnvironmentVariableLoader = functools.partial(
     schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
     schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
     schemaregistry_custom_fully_qualified_namespace="fake_resource_custom.servicebus.windows.net",
-    #schemaregistry_protobuf_fully_qualified_namespace="fake_resource_protobuf.servicebus.windows.net",
+    schemaregistry_protobuf_fully_qualified_namespace="fake_resource_protobuf.servicebus.windows.net",
     schemaregistry_group="fakegroup"
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -76,8 +76,8 @@ json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
 custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
 protobuf_args = (PROTOBUF_FORMAT, PROTOBUF_SCHEMA_STR)
 
-format_params = [avro_args, json_args, custom_args]
-format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
+format_params = [avro_args, json_args, custom_args, protobuf_args]
+format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT, PROTOBUF_FORMAT]
 
 class ArgPasser:
     def __call__(self, fn):
