@@ -110,6 +110,7 @@
     "eng/tox/tox.ini",
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
+    "sdk/storage/azure-storage-extensions/**/*.c",
     ".gitignore",
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
@@ -651,7 +652,7 @@
         "engelska",
         "fhir",
         "FHIR",
-        "naam",
+        "naam"
       ]
     },
     {
