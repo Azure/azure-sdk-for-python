@@ -7,6 +7,7 @@
 import hashlib
 import base64
 import hmac
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import HTTPPolicy
 from ._utils import get_current_utc_time
 
@@ -14,7 +15,7 @@ from ._utils import get_current_utc_time
 class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
     """Implementation of request-oauthlib except and retry logic."""
 
-    def __init__(self, credential, endpoint, id_credential):
+    def __init__(self, credential: AzureKeyCredential, endpoint: str, id_credential: str):
         super(AppConfigRequestsCredentialsPolicy, self).__init__()
         self._credential = credential
         self._host = str(endpoint[8:])
