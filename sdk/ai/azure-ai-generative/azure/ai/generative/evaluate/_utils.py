@@ -3,7 +3,9 @@
 # ---------------------------------------------------------
 import os.path
 import json
+import pathlib
 import re
+import shutil
 from pathlib import Path
 import pandas as pd
 
@@ -128,3 +130,12 @@ def _get_ai_studio_url(tracking_uri, evaluation_id):
                  f"/{ret[_WS_NAME]}"
 
     return studio_url
+
+
+def _copy_artifact(source, destination):
+    """
+    Copies files from source to destination.If destination does not exists creates it.
+    """
+
+    pathlib.Path(destination).mkdir(exist_ok=True, parents=True)
+    shutil.copy2(source, destination)

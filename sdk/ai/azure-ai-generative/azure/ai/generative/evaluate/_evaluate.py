@@ -19,7 +19,7 @@ from mlflow.exceptions import MlflowException
 from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
-from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path
+from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
 from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
@@ -283,6 +283,9 @@ def _evaluate(
                 log_property("_azureml.chat_history_column", data_mapping.get("y_pred"))
             # log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
 
+            if output_path:
+                _copy_artifact(tmp_path, output_path)
+
     evaluation_result = EvaluationResult(
         metrics_summary=metrics.get("metrics"),
         artifacts={
@@ -291,8 +294,6 @@ def _evaluate(
         tracking_uri=kwargs.get("tracking_uri"),
         evaluation_id=run.info.run_id,
     )
-    if output_path:
-        evaluation_result.download_evaluation_artifacts(path=output_path)
 
     return evaluation_result
 
