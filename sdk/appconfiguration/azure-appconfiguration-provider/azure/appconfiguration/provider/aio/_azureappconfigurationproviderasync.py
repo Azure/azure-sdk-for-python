@@ -406,7 +406,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
                 if (config.key, config.label) in self._refresh_on:
                     sentinel_keys[(config.key, config.label)] = config.etag
-        self._on_refresh = sentinel_keys
+        self._refresh_on = sentinel_keys
         self._dict = configuration_settings
 
     def _process_key_name(self, config):
