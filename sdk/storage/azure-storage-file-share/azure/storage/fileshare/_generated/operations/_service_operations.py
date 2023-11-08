@@ -47,7 +47,7 @@ def build_set_properties_request(
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -79,7 +79,7 @@ def build_get_properties_request(url: str, *, timeout: Optional[int] = None, **k
 
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -117,7 +117,7 @@ def build_list_shares_segment_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -210,7 +210,7 @@ class ServiceOperations:
 
         _content = self._serialize.body(storage_service_properties, "StorageServiceProperties", is_xml=True)
 
-        request = build_set_properties_request(
+        _request = build_set_properties_request(
             url=self._config.url,
             timeout=timeout,
             restype=restype,
@@ -218,16 +218,15 @@ class ServiceOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.set_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -242,9 +241,7 @@ class ServiceOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_properties(self, timeout: Optional[int] = None, **kwargs: Any) -> _models.StorageServiceProperties:
@@ -282,22 +279,21 @@ class ServiceOperations:
         comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
         cls: ClsType[_models.StorageServiceProperties] = kwargs.pop("cls", None)
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             timeout=timeout,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -314,11 +310,9 @@ class ServiceOperations:
         deserialized = self._deserialize("StorageServiceProperties", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_properties.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_shares_segment(
@@ -375,7 +369,7 @@ class ServiceOperations:
         comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
         cls: ClsType[_models.ListSharesResponse] = kwargs.pop("cls", None)
 
-        request = build_list_shares_segment_request(
+        _request = build_list_shares_segment_request(
             url=self._config.url,
             prefix=prefix,
             marker=marker,
@@ -384,16 +378,15 @@ class ServiceOperations:
             timeout=timeout,
             comp=comp,
             version=self._config.version,
-            template_url=self.list_shares_segment.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -410,8 +403,6 @@ class ServiceOperations:
         deserialized = self._deserialize("ListSharesResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    list_shares_segment.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore

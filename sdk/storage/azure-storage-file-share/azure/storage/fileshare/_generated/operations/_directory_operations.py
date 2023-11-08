@@ -57,7 +57,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -110,7 +110,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -151,7 +151,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -197,7 +197,7 @@ def build_set_properties_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -250,7 +250,7 @@ def build_set_metadata_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -280,7 +280,7 @@ def build_set_metadata_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_files_and_directories_segment_request(
+def build_list_files_and_directories_segment_request(  # pylint: disable=name-too-long
     url: str,
     *,
     prefix: Optional[str] = None,
@@ -299,7 +299,7 @@ def build_list_files_and_directories_segment_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -355,7 +355,7 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -406,7 +406,7 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -466,7 +466,7 @@ def build_rename_request(
 
     restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
+    version: Literal["2024-02-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-02-04"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -610,7 +610,7 @@ class DirectoryOperations:
         restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_create_request(
+        _request = build_create_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -624,16 +624,15 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -671,9 +670,7 @@ class DirectoryOperations:
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -713,7 +710,7 @@ class DirectoryOperations:
         restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
@@ -721,16 +718,15 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -769,9 +765,7 @@ class DirectoryOperations:
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -807,23 +801,22 @@ class DirectoryOperations:
         restype: Literal["directory"] = kwargs.pop("restype", _params.pop("restype", "directory"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             url=self._config.url,
             timeout=timeout,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -839,9 +832,7 @@ class DirectoryOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -911,7 +902,7 @@ class DirectoryOperations:
         comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_set_properties_request(
+        _request = build_set_properties_request(
             url=self._config.url,
             timeout=timeout,
             file_permission=file_permission,
@@ -925,16 +916,15 @@ class DirectoryOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -972,9 +962,7 @@ class DirectoryOperations:
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -1016,7 +1004,7 @@ class DirectoryOperations:
         comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_set_metadata_request(
+        _request = build_set_metadata_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -1025,16 +1013,15 @@ class DirectoryOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_metadata.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1054,9 +1041,7 @@ class DirectoryOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_metadata.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def list_files_and_directories_segment(
@@ -1124,7 +1109,7 @@ class DirectoryOperations:
         comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
         cls: ClsType[_models.ListFilesAndDirectoriesSegmentResponse] = kwargs.pop("cls", None)
 
-        request = build_list_files_and_directories_segment_request(
+        _request = build_list_files_and_directories_segment_request(
             url=self._config.url,
             prefix=prefix,
             sharesnapshot=sharesnapshot,
@@ -1138,16 +1123,15 @@ class DirectoryOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.list_files_and_directories_segment.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1166,11 +1150,9 @@ class DirectoryOperations:
         deserialized = self._deserialize("ListFilesAndDirectoriesSegmentResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    list_files_and_directories_segment.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_handles(
@@ -1226,7 +1208,7 @@ class DirectoryOperations:
         comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
         cls: ClsType[_models.ListHandlesResponse] = kwargs.pop("cls", None)
 
-        request = build_list_handles_request(
+        _request = build_list_handles_request(
             url=self._config.url,
             marker=marker,
             maxresults=maxresults,
@@ -1237,16 +1219,15 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
-            template_url=self.list_handles.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1265,11 +1246,9 @@ class DirectoryOperations:
         deserialized = self._deserialize("ListHandlesResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    list_handles.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def force_close_handles(  # pylint: disable=inconsistent-return-statements
@@ -1324,7 +1303,7 @@ class DirectoryOperations:
         comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_force_close_handles_request(
+        _request = build_force_close_handles_request(
             url=self._config.url,
             handle_id=handle_id,
             timeout=timeout,
@@ -1335,16 +1314,15 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
-            template_url=self.force_close_handles.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1367,9 +1345,7 @@ class DirectoryOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    force_close_handles.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def rename(  # pylint: disable=inconsistent-return-statements
@@ -1471,7 +1447,7 @@ class DirectoryOperations:
             _file_creation_time = copy_file_smb_info.file_creation_time
             _file_last_write_time = copy_file_smb_info.file_last_write_time
 
-        request = build_rename_request(
+        _request = build_rename_request(
             url=self._config.url,
             rename_source=rename_source,
             timeout=timeout,
@@ -1492,16 +1468,15 @@ class DirectoryOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.rename.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1539,6 +1514,4 @@ class DirectoryOperations:
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    rename.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore

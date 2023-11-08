@@ -167,7 +167,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_create_request(
+        _request = build_create_request(
             url=self._config.url,
             file_content_length=file_content_length,
             timeout=timeout,
@@ -189,16 +189,15 @@ class FileOperations:
             file_request_intent=self._config.file_request_intent,
             file_type_constant=file_type_constant,
             version=self._config.version,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -236,9 +235,7 @@ class FileOperations:
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def download(
@@ -286,7 +283,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_download_request(
+        _request = build_download_request(
             url=self._config.url,
             timeout=timeout,
             range=range,
@@ -295,16 +292,15 @@ class FileOperations:
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             version=self._config.version,
-            template_url=self.download.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -446,8 +442,6 @@ class FileOperations:
 
         return deserialized  # type: ignore
 
-    download.metadata = {"url": "{url}"}
-
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
         self,
@@ -491,7 +485,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
@@ -499,16 +493,15 @@ class FileOperations:
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -568,9 +561,7 @@ class FileOperations:
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -610,23 +601,22 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_delete_request(
+        _request = build_delete_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             version=self._config.version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -642,9 +632,7 @@ class FileOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_http_headers(  # pylint: disable=inconsistent-return-statements
@@ -738,7 +726,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_set_http_headers_request(
+        _request = build_set_http_headers_request(
             url=self._config.url,
             timeout=timeout,
             file_content_length=file_content_length,
@@ -759,16 +747,15 @@ class FileOperations:
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_http_headers.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -806,9 +793,7 @@ class FileOperations:
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_http_headers.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -856,7 +841,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_set_metadata_request(
+        _request = build_set_metadata_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -865,16 +850,15 @@ class FileOperations:
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_metadata.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -894,9 +878,7 @@ class FileOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_metadata.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def acquire_lease(  # pylint: disable=inconsistent-return-statements
@@ -953,7 +935,7 @@ class FileOperations:
         action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_acquire_lease_request(
+        _request = build_acquire_lease_request(
             url=self._config.url,
             timeout=timeout,
             duration=duration,
@@ -964,16 +946,15 @@ class FileOperations:
             comp=comp,
             action=action,
             version=self._config.version,
-            template_url=self.acquire_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -995,9 +976,7 @@ class FileOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    acquire_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def release_lease(  # pylint: disable=inconsistent-return-statements
@@ -1043,7 +1022,7 @@ class FileOperations:
         action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_release_lease_request(
+        _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -1053,16 +1032,15 @@ class FileOperations:
             comp=comp,
             action=action,
             version=self._config.version,
-            template_url=self.release_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1083,9 +1061,7 @@ class FileOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    release_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def change_lease(  # pylint: disable=inconsistent-return-statements
@@ -1140,7 +1116,7 @@ class FileOperations:
         action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_change_lease_request(
+        _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -1151,16 +1127,15 @@ class FileOperations:
             comp=comp,
             action=action,
             version=self._config.version,
-            template_url=self.change_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1182,9 +1157,7 @@ class FileOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    change_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def break_lease(  # pylint: disable=inconsistent-return-statements
@@ -1238,7 +1211,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_break_lease_request(
+        _request = build_break_lease_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
@@ -1248,16 +1221,15 @@ class FileOperations:
             comp=comp,
             action=action,
             version=self._config.version,
-            template_url=self.break_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1279,9 +1251,7 @@ class FileOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    break_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def upload_range(  # pylint: disable=inconsistent-return-statements
@@ -1360,7 +1330,7 @@ class FileOperations:
             _lease_id = lease_access_conditions.lease_id
         _content = optionalbody
 
-        request = build_upload_range_request(
+        _request = build_upload_range_request(
             url=self._config.url,
             range=range,
             content_length=content_length,
@@ -1375,16 +1345,15 @@ class FileOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.upload_range.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1409,9 +1378,7 @@ class FileOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    upload_range.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def upload_range_from_url(  # pylint: disable=inconsistent-return-statements
@@ -1496,7 +1463,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_upload_range_from_url_request(
+        _request = build_upload_range_from_url_request(
             url=self._config.url,
             range=range,
             copy_source=copy_source,
@@ -1511,19 +1478,19 @@ class FileOperations:
             file_last_written_mode=file_last_written_mode,
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             file_range_write_from_url=self._config.file_range_write_from_url,
             version=self._config.version,
-            template_url=self.upload_range_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1550,9 +1517,7 @@ class FileOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    upload_range_from_url.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_range_list(
@@ -1608,7 +1573,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_range_list_request(
+        _request = build_get_range_list_request(
             url=self._config.url,
             sharesnapshot=sharesnapshot,
             prevsharesnapshot=prevsharesnapshot,
@@ -1619,16 +1584,15 @@ class FileOperations:
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_range_list.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1649,11 +1613,9 @@ class FileOperations:
         deserialized = self._deserialize("ShareFileRangeList", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_range_list.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def start_copy(  # pylint: disable=inconsistent-return-statements
@@ -1736,7 +1698,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_start_copy_request(
+        _request = build_start_copy_request(
             url=self._config.url,
             copy_source=copy_source,
             timeout=timeout,
@@ -1755,16 +1717,15 @@ class FileOperations:
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             version=self._config.version,
-            template_url=self.start_copy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1784,9 +1745,7 @@ class FileOperations:
         response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    start_copy.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def abort_copy(  # pylint: disable=inconsistent-return-statements
@@ -1841,7 +1800,7 @@ class FileOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_abort_copy_request(
+        _request = build_abort_copy_request(
             url=self._config.url,
             copy_id=copy_id,
             timeout=timeout,
@@ -1851,16 +1810,15 @@ class FileOperations:
             comp=comp,
             copy_action_abort_constant=copy_action_abort_constant,
             version=self._config.version,
-            template_url=self.abort_copy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1876,9 +1834,7 @@ class FileOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    abort_copy.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def list_handles(
@@ -1930,7 +1886,7 @@ class FileOperations:
         comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
         cls: ClsType[_models.ListHandlesResponse] = kwargs.pop("cls", None)
 
-        request = build_list_handles_request(
+        _request = build_list_handles_request(
             url=self._config.url,
             marker=marker,
             maxresults=maxresults,
@@ -1940,16 +1896,15 @@ class FileOperations:
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
-            template_url=self.list_handles.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1968,11 +1923,9 @@ class FileOperations:
         deserialized = self._deserialize("ListHandlesResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    list_handles.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def force_close_handles(  # pylint: disable=inconsistent-return-statements
@@ -2023,7 +1976,7 @@ class FileOperations:
         comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_force_close_handles_request(
+        _request = build_force_close_handles_request(
             url=self._config.url,
             handle_id=handle_id,
             timeout=timeout,
@@ -2033,16 +1986,15 @@ class FileOperations:
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
-            template_url=self.force_close_handles.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2065,9 +2017,7 @@ class FileOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    force_close_handles.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def rename(  # pylint: disable=inconsistent-return-statements
@@ -2171,7 +2121,7 @@ class FileOperations:
         if file_http_headers is not None:
             _file_content_type = file_http_headers.file_content_type
 
-        request = build_rename_request(
+        _request = build_rename_request(
             url=self._config.url,
             rename_source=rename_source,
             timeout=timeout,
@@ -2192,16 +2142,15 @@ class FileOperations:
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
-            template_url=self.rename.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2239,6 +2188,4 @@ class FileOperations:
         response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    rename.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore

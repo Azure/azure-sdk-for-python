@@ -127,7 +127,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_create_request(
+        _request = build_create_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -137,16 +137,15 @@ class ShareOperations:
             root_squash=root_squash,
             restype=restype,
             version=self._config.version,
-            template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -164,9 +163,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -215,23 +212,22 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_properties_request(
+        _request = build_get_properties_request(
             url=self._config.url,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
             restype=restype,
             version=self._config.version,
-            template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -280,9 +276,7 @@ class ShareOperations:
         response_headers["x-ms-root-squash"] = self._deserialize("str", response.headers.get("x-ms-root-squash"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    get_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -335,7 +329,7 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_delete_request(
+        _request = build_delete_request(
             url=self._config.url,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
@@ -343,16 +337,15 @@ class ShareOperations:
             lease_id=_lease_id,
             restype=restype,
             version=self._config.version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -368,9 +361,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    delete.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def acquire_lease(  # pylint: disable=inconsistent-return-statements
@@ -435,7 +426,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_acquire_lease_request(
+        _request = build_acquire_lease_request(
             url=self._config.url,
             timeout=timeout,
             duration=duration,
@@ -446,16 +437,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.acquire_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -477,9 +467,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    acquire_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def release_lease(  # pylint: disable=inconsistent-return-statements
@@ -537,7 +525,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_release_lease_request(
+        _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -547,16 +535,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.release_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -577,9 +564,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    release_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def change_lease(  # pylint: disable=inconsistent-return-statements
@@ -642,7 +627,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_change_lease_request(
+        _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -653,16 +638,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.change_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -684,9 +668,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    change_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def renew_lease(  # pylint: disable=inconsistent-return-statements
@@ -744,7 +726,7 @@ class ShareOperations:
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_renew_lease_request(
+        _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
             timeout=timeout,
@@ -754,16 +736,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.renew_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -785,9 +766,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    renew_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def break_lease(  # pylint: disable=inconsistent-return-statements
@@ -858,7 +837,7 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_break_lease_request(
+        _request = build_break_lease_request(
             url=self._config.url,
             timeout=timeout,
             break_period=break_period,
@@ -869,16 +848,15 @@ class ShareOperations:
             action=action,
             restype=restype,
             version=self._config.version,
-            template_url=self.break_lease.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -901,9 +879,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    break_lease.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def create_snapshot(  # pylint: disable=inconsistent-return-statements
@@ -945,23 +921,22 @@ class ShareOperations:
         comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_create_snapshot_request(
+        _request = build_create_snapshot_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.create_snapshot.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -980,9 +955,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create_snapshot.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     async def create_permission(  # pylint: disable=inconsistent-return-statements
@@ -1102,7 +1075,7 @@ class ShareOperations:
         else:
             _json = self._serialize.body(share_permission, "SharePermission")
 
-        request = build_create_permission_request(
+        _request = build_create_permission_request(
             url=self._config.url,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
@@ -1112,16 +1085,15 @@ class ShareOperations:
             version=self._config.version,
             json=_json,
             content=_content,
-            template_url=self.create_permission.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1140,9 +1112,7 @@ class ShareOperations:
         )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    create_permission.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_permission(
@@ -1183,7 +1153,7 @@ class ShareOperations:
         comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
         cls: ClsType[_models.SharePermission] = kwargs.pop("cls", None)
 
-        request = build_get_permission_request(
+        _request = build_get_permission_request(
             url=self._config.url,
             file_permission_key=file_permission_key,
             timeout=timeout,
@@ -1191,16 +1161,15 @@ class ShareOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_permission.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1218,11 +1187,9 @@ class ShareOperations:
         deserialized = self._deserialize("SharePermission", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_permission.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -1281,7 +1248,7 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_set_properties_request(
+        _request = build_set_properties_request(
             url=self._config.url,
             timeout=timeout,
             quota=quota,
@@ -1291,16 +1258,15 @@ class ShareOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_properties.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1318,9 +1284,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_properties.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -1372,7 +1336,7 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_set_metadata_request(
+        _request = build_set_metadata_request(
             url=self._config.url,
             timeout=timeout,
             metadata=metadata,
@@ -1380,16 +1344,15 @@ class ShareOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.set_metadata.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1407,9 +1370,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_metadata.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_access_policy(
@@ -1457,23 +1418,22 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_access_policy_request(
+        _request = build_get_access_policy_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1493,11 +1453,9 @@ class ShareOperations:
         deserialized = self._deserialize("[SignedIdentifier]", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_access_policy.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def set_access_policy(  # pylint: disable=inconsistent-return-statements
@@ -1556,7 +1514,7 @@ class ShareOperations:
         else:
             _content = None
 
-        request = build_set_access_policy_request(
+        _request = build_set_access_policy_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
@@ -1565,16 +1523,15 @@ class ShareOperations:
             content_type=content_type,
             version=self._config.version,
             content=_content,
-            template_url=self.set_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1592,9 +1549,7 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    set_access_policy.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_statistics(
@@ -1642,23 +1597,22 @@ class ShareOperations:
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
 
-        request = build_get_statistics_request(
+        _request = build_get_statistics_request(
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.get_statistics.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1678,11 +1632,9 @@ class ShareOperations:
         deserialized = self._deserialize("ShareStats", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    get_statistics.metadata = {"url": "{url}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def restore(  # pylint: disable=inconsistent-return-statements
@@ -1736,7 +1688,7 @@ class ShareOperations:
         comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_restore_request(
+        _request = build_restore_request(
             url=self._config.url,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
@@ -1745,16 +1697,15 @@ class ShareOperations:
             restype=restype,
             comp=comp,
             version=self._config.version,
-            template_url=self.restore.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1775,6 +1726,4 @@ class ShareOperations:
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    restore.metadata = {"url": "{url}"}
+            return cls(pipeline_response, None, response_headers)  # type: ignore
