@@ -165,35 +165,37 @@ class FeatureStore(Workspace):
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
+        if workspace_object is not None:
+            return FeatureStore(
+                name=str(workspace_object.name),
+                id=workspace_object.id,
+                description=workspace_object.description,
+                tags=workspace_object.tags,
+                compute_runtime=ComputeRuntime._from_rest_object(
+                    workspace_object._feature_store_settings.compute_runtime
+                    if workspace_object._feature_store_settings
+                    else None
+                ),
+                display_name=workspace_object.display_name,
+                discovery_url=workspace_object.discovery_url,
+                location=workspace_object.location,
+                resource_group=workspace_object.resource_group,
+                hbi_workspace=workspace_object.hbi_workspace,
+                storage_account=workspace_object.storage_account,
+                container_registry=workspace_object.container_registry,
+                key_vault=workspace_object.key_vault,
+                application_insights=workspace_object.application_insights,
+                customer_managed_key=workspace_object.customer_managed_key,
+                image_build_compute=workspace_object.image_build_compute,
+                public_network_access=workspace_object.public_network_access,
+                identity=workspace_object.identity,
+                primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
+                managed_network=workspace_object.managed_network,
+                workspace_id=rest_obj.workspace_id,
+                feature_store_settings=workspace_object._feature_store_settings,
+            )
 
-        return FeatureStore(
-            name=workspace_object.name,
-            id=workspace_object.id,
-            description=workspace_object.description,
-            tags=workspace_object.tags,
-            compute_runtime=ComputeRuntime._from_rest_object(
-                workspace_object._feature_store_settings.compute_runtime
-                if workspace_object._feature_store_settings
-                else None
-            ),
-            display_name=workspace_object.display_name,
-            discovery_url=workspace_object.discovery_url,
-            location=workspace_object.location,
-            resource_group=workspace_object.resource_group,
-            hbi_workspace=workspace_object.hbi_workspace,
-            storage_account=workspace_object.storage_account,
-            container_registry=workspace_object.container_registry,
-            key_vault=workspace_object.key_vault,
-            application_insights=workspace_object.application_insights,
-            customer_managed_key=workspace_object.customer_managed_key,
-            image_build_compute=workspace_object.image_build_compute,
-            public_network_access=workspace_object.public_network_access,
-            identity=workspace_object.identity,
-            primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
-            managed_network=workspace_object.managed_network,
-            workspace_id=rest_obj.workspace_id,
-            feature_store_settings=workspace_object._feature_store_settings,
-        )
+        return None
 
     @classmethod
     def _load(
