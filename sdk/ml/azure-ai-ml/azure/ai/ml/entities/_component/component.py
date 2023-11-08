@@ -10,7 +10,7 @@ from typing import IO, TYPE_CHECKING, AnyStr, Callable, Dict, Iterable, Optional
 from marshmallow import INCLUDE
 from typing_extensions import Literal
 
-from ..._restclient.v2022_10_01.models import (
+from ..._restclient.v2023_08_01_preview.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,
