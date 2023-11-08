@@ -8,6 +8,13 @@ import types
 
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
 from corehttp.rest import HttpRequest as RestHttpRequest
+from corehttp.transport.requests import RequestsTransport
+from corehttp.transport.httpx import HttpXTransport, AsyncHttpXTransport
+from corehttp.transport.aiohttp import AioHttpTransport
+
+
+SYNC_TRANSPORTS = [RequestsTransport, HttpXTransport]
+ASYNC_TRANSPORTS = [AioHttpTransport, AsyncHttpXTransport]
 
 HTTP_REQUESTS = [RestHttpRequest]
 REQUESTS_TRANSPORT_RESPONSES = []
@@ -31,10 +38,6 @@ try:
     REQUESTS_TRANSPORT_RESPONSES = [RestRequestsTransportResponse]
 except ImportError:
     pass
-
-from corehttp.rest._http_response_impl import RestHttpClientTransportResponse
-
-HTTP_CLIENT_TRANSPORT_RESPONSES = [RestHttpClientTransportResponse]
 
 AIOHTTP_TRANSPORT_RESPONSES = []
 

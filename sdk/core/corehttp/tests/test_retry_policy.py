@@ -3,13 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the retry policy."""
-try:
-    from io import BytesIO
-except ImportError:
-    from cStringIO import StringIO as BytesIO
-
+from io import BytesIO
 import pytest
 from itertools import product
+from unittest.mock import Mock
+import tempfile
+import os
+import time
+from typing import Any
+
 from corehttp.exceptions import (
     BaseError,
     ServiceRequestError,
@@ -23,15 +25,7 @@ from corehttp.runtime.policies import (
 )
 from corehttp.runtime.pipeline import Pipeline, PipelineResponse, PipelineRequest
 from corehttp.transport import HttpTransport
-import tempfile
-import os
-import time
-from typing import Any
 
-try:
-    from unittest.mock import Mock
-except ImportError:
-    from mock import Mock
 from utils import HTTP_REQUESTS, request_and_responses_product, HTTP_RESPONSES, create_http_response
 
 
