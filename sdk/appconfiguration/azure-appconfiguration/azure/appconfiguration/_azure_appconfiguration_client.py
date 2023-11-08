@@ -76,8 +76,7 @@ class AzureAppConfigurationClient:
             )
         else:
             raise TypeError(
-                f"Unsupported credential: {type(credential)}. Use an instance of AzureKeyCredential "
-                "or a token credential from azure.identity"
+                f"Unsupported credential: {type(credential)}. Use an instance of token credential from azure.identity"
             )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfiguration(
