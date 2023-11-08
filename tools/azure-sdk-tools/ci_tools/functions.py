@@ -28,6 +28,11 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-ai-anomalydetector",
 ]
 
+NO_TESTS_ALLOWED = [
+    "azure-storage-extensions"
+]
+
+
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
 
 REGRESSION_EXCLUDED_PACKAGES = [

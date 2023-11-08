@@ -61,6 +61,8 @@ def discover_packages(setuppy_path, args):
             args.target_setup,
             args.package_type,
         )
+
+    logging.info(f"{packages}")
     return packages
 
 
