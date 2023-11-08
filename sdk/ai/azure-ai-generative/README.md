@@ -1,33 +1,61 @@
-# Azure Template Package client library for Python
+# Microsoft Azure SDK for Python
 
-This template package matches necessary patterns that the development team has established to create a unified SDK. The packages contained herein can be installed singly or as part of the `azure` namespace. Any other introductory text should go here.
-
+This is the Microsoft Azure MyService Management Client Library.
 This package has been tested with Python 3.7+.
+For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
-For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all.
+## _Disclaimer_
 
-# Getting started
+_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
-For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md)
+## Getting started
 
-# Key concepts
+### Prerequisites
 
-Bullet point list of your library's main concepts.
+- Python 3.7+ is required to use this package.
+- [Azure subscription](https://azure.microsoft.com/free/)
 
-# Examples
+### Install the package
 
-Examples of some of the key concepts for your library.
+```bash
+pip install azure-ai-generative
+pip install azure-identity
+```
 
-# Troubleshooting
+### Authentication
 
-Running into issues? This section should contain details as to what to do there.
+By default, [Azure Active Directory](https://aka.ms/awps/aad) token authentication depends on correct configure of following environment variables.
 
-# Next steps
+- `AZURE_CLIENT_ID` for Azure client ID.
+- `AZURE_TENANT_ID` for Azure tenant ID.
+- `AZURE_CLIENT_SECRET` for Azure client secret.
 
-More sample code should go here, along with links out to the appropriate example tests.
+In addition, Azure subscription ID can be configured via environment variable `AZURE_SUBSCRIPTION_ID`.
 
-# Contributing
+With above configuration, client can be authenticated by following code:
 
-If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
+```python
+from azure.identity import DefaultAzureCredential
+from azure.ai.generative import 
+import os
 
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
+sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
+client = (credential=DefaultAzureCredential(), subscription_id=sub_id)
+```
+
+## Examples
+
+Code samples for this package can be found at:
+- [Search MyService Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
+- [Azure Python Mgmt SDK Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
+
+
+## Troubleshooting
+
+## Next steps
+
+## Provide Feedback
+
+If you encounter any bugs or have suggestions, please file an issue in the
+[Issues](https://github.com/Azure/azure-sdk-for-python/issues)
+section of the project. 
