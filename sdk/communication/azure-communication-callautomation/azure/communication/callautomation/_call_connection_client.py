@@ -44,7 +44,7 @@ from ._generated.models import (
     PlayOptions,
     RecognizeOptions,
     MuteParticipantsRequest,
-    CancelAddParticipantOperationRequest,
+    CancelAddParticipantRequest,
     CustomCallingContext
 )
 from ._generated.models._enums import RecognizeInputType
@@ -768,15 +768,15 @@ class CallConnectionClient:
         :rtype: ~azure.communication.callautomation.CancelAddParticipantOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cancel_add_participant_operation_request = CancelAddParticipantOperationRequest(
+        cancel_add_participant_request = CancelAddParticipantRequest(
             invitation_id=invitation_id,
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url
         )
         process_repeatability_first_sent(kwargs)
-        response = self._call_connection_client.cancel_add_participant_operation(
+        response = self._call_connection_client.cancel_add_participant(
             self._call_connection_id,
-            cancel_add_participant_operation_request,
+            cancel_add_participant_request,
             **kwargs
         )
         return CancelAddParticipantOperationResult._from_generated(response) # pylint:disable=protected-access

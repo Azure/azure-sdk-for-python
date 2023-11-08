@@ -41,7 +41,7 @@ if TYPE_CHECKING:
         RecordingStateResponse as RecordingStateResultRest,
         MuteParticipantsResult as MuteParticipantsResultRest,
         SendDtmfTonesResult as SendDtmfTonesResultRest,
-        CancelAddParticipantOperationResponse as CancelAddParticipantOperationResultRest,
+        CancelAddParticipantResponse as CancelAddParticipantResultRest,
     )
 
 
@@ -643,8 +643,7 @@ class CancelAddParticipantOperationResult:
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls,
-                        cancel_add_participant_operation_result_generated: 'CancelAddParticipantOperationResultRest'):
+    def _from_generated(cls, cancel_add_participant_operation_result_generated: 'CancelAddParticipantResultRest'):
         return cls(
             invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
             operation_context=cancel_add_participant_operation_result_generated.operation_context
