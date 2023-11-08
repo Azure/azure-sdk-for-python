@@ -68,7 +68,7 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.25.0",
+        "azure-core<2.0.0,>=1.28.0",
         "isodate>=0.6.0",
     ],
 )

@@ -9,19 +9,8 @@ from typing import Any, Dict, List, Mapping, Optional, Union, cast, overload
 from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
-from azure.core.credentials import TokenCredential
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import (  # pylint:disable=non-abstract-transport-import,no-name-in-module
-    RequestsTransport,
-)
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-    BearerTokenCredentialPolicy,
-    ContentDecodePolicy,
-    RequestIdPolicy,
-)
+from azure.core.credentials import TokenCredential, AzureKeyCredential
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
@@ -33,20 +22,17 @@ from azure.core.exceptions import (
 from azure.core.utils import CaseInsensitiveDict
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
-from ._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from ._generated import AzureAppConfiguration
-from ._generated._configuration import AzureAppConfigurationConfiguration
 from ._generated.models import SnapshotUpdateParameters, SnapshotStatus
 from ._models import ConfigurationSetting, ConfigurationSettingsFilter, ConfigurationSnapshot
 from ._utils import (
-    get_endpoint_from_connection_string,
     prep_if_match,
     prep_if_none_match,
     get_key_filter,
     get_label_filter,
+    parse_connection_string,
 )
 from ._sync_token import SyncTokenPolicy
-from ._user_agent import USER_AGENT
 
 
 class AzureAppConfigurationClient:
@@ -54,9 +40,8 @@ class AzureAppConfigurationClient:
 
     :param str base_url: Base url of the service.
     :param credential: An object which can provide secrets for the app configuration service
-    :type credential: ~azure.appconfiguration.AppConfigConnectionStringCredential
-        or ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding this default
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
 
@@ -66,29 +51,36 @@ class AzureAppConfigurationClient:
     def __init__(self, base_url: str, credential: TokenCredential, **kwargs: Any) -> None:
         try:
             if not base_url.lower().startswith("http"):
-                base_url = "https://" + base_url
+                base_url = f"https://{base_url}"
         except AttributeError as exc:
             raise ValueError("Base URL must be a string.") from exc
 
         if not credential:
             raise ValueError("Missing credential")
 
-        self._credential_scopes = base_url.strip("/") + "/.default"
-
-        self._config = AzureAppConfigurationConfiguration(base_url, credential_scopes=self._credential_scopes, **kwargs)
-        self._config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
+        credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = SyncTokenPolicy()
 
-        pipeline = kwargs.get("pipeline")
-
-        if pipeline is None:
-            aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
-            pipeline = self._create_appconfig_pipeline(
-                credential=credential, credential_scopes=self._credential_scopes, aad_mode=aad_mode, **kwargs
+        if isinstance(credential, AzureKeyCredential):
+            id_credential = kwargs.pop("id_credential")
+            kwargs.update(
+                {
+                    "authentication_policy": AppConfigRequestsCredentialsPolicy(credential, base_url, id_credential),
+                }
             )
-
+        elif isinstance(credential, TokenCredential):
+            kwargs.update(
+                {
+                    "authentication_policy": BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+                }
+            )
+        else:
+            raise TypeError(
+                f"Unsupported credential: {type(credential)}. Use an instance of token credential from azure.identity"
+            )
+        # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfiguration(
-            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes, **kwargs
+            credential, base_url, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
         )
 
     @classmethod
@@ -109,45 +101,14 @@ class AzureAppConfigurationClient:
             connection_str = "<my connection string>"
             client = AzureAppConfigurationClient.from_connection_string(connection_str)
         """
-        base_url = "https://" + get_endpoint_from_connection_string(connection_string)
+        endpoint, id_credential, secret = parse_connection_string(connection_string)
+        # AzureKeyCredential type is for internal use, it's not exposed in public API.
         return cls(
-            credential=AppConfigConnectionStringCredential(connection_string),  # type: ignore
-            base_url=base_url,
-            **kwargs
+            credential=AzureKeyCredential(secret),  # type: ignore[arg-type]
+            base_url=endpoint,
+            id_credential=id_credential,
+            **kwargs,
         )
-
-    def _create_appconfig_pipeline(self, credential, credential_scopes, aad_mode=False, **kwargs):
-        transport = kwargs.get("transport")
-        policies = kwargs.get("policies")
-
-        if policies is None:  # [] is a valid policy list
-            if aad_mode:
-                if hasattr(credential, "get_token"):
-                    credential_policy = BearerTokenCredentialPolicy(credential, credential_scopes)
-                else:
-                    raise TypeError(
-                        "Please provide an instance from azure-identity "
-                        "or a class that implements the 'get_token protocol"
-                    )
-            else:
-                credential_policy = AppConfigRequestsCredentialsPolicy(credential)
-            policies = [
-                RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.retry_policy,
-                self._sync_token_policy,
-                credential_policy,
-                self._config.logging_policy,  # HTTP request/response log
-                DistributedTracingPolicy(**kwargs),
-                HttpLoggingPolicy(**kwargs),
-                ContentDecodePolicy(**kwargs),
-            ]
-
-        if not transport:
-            transport = RequestsTransport(**kwargs)
-
-        return Pipeline(transport, policies)
 
     @overload
     def list_configuration_settings(
@@ -221,7 +182,7 @@ class AzureAppConfigurationClient:
                     accept_datetime=accept_datetime,
                     select=select,
                     cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                    **kwargs
+                    **kwargs,
                 )
             key_filter, kwargs = get_key_filter(*args, **kwargs)
             label_filter, kwargs = get_label_filter(*args, **kwargs)
@@ -231,7 +192,7 @@ class AzureAppConfigurationClient:
                 accept_datetime=accept_datetime,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                **kwargs
+                **kwargs,
             )
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
@@ -243,7 +204,7 @@ class AzureAppConfigurationClient:
         label: Optional[str] = None,
         etag: Optional[str] = "*",
         match_condition: MatchConditions = MatchConditions.Unconditionally,
-        **kwargs
+        **kwargs,
     ) -> Union[None, ConfigurationSetting]:
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -293,7 +254,7 @@ class AzureAppConfigurationClient:
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
                 error_map=error_map,
-                **kwargs
+                **kwargs,
             )
             return ConfigurationSetting._from_generated(key_value)
         except ResourceNotModifiedError:
@@ -347,7 +308,7 @@ class AzureAppConfigurationClient:
         self,
         configuration_setting: ConfigurationSetting,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
-        **kwargs
+        **kwargs,
     ) -> ConfigurationSetting:
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -517,7 +478,7 @@ class AzureAppConfigurationClient:
                 accept_datetime=accept_datetime,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                **kwargs
+                **kwargs,
             )
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
@@ -571,7 +532,7 @@ class AzureAppConfigurationClient:
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
                     if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
-                    **kwargs
+                    **kwargs,
                 )
             else:
                 key_value = self._impl.delete_lock(
@@ -580,7 +541,7 @@ class AzureAppConfigurationClient:
                     if_match=prep_if_match(configuration_setting.etag, match_condition),
                     if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
                     error_map=error_map,
-                    **kwargs
+                    **kwargs,
                 )
             return ConfigurationSetting._from_generated(key_value)
         except binascii.Error as exc:
@@ -595,7 +556,7 @@ class AzureAppConfigurationClient:
         composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
+        **kwargs,
     ) -> LROPoller[ConfigurationSnapshot]:
         """Create a snapshot of the configuration settings.
 
@@ -641,7 +602,7 @@ class AzureAppConfigurationClient:
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> ConfigurationSnapshot:
         """Archive a configuration setting snapshot. It will update the status of a snapshot from "ready" to "archived".
         The retention period will start to count, the snapshot will expire when the entire retention period elapses.
@@ -672,7 +633,7 @@ class AzureAppConfigurationClient:
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
                 error_map=error_map,
-                **kwargs
+                **kwargs,
             )
             return ConfigurationSnapshot._from_generated(generated_snapshot)
         except binascii.Error:
@@ -685,7 +646,7 @@ class AzureAppConfigurationClient:
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ) -> ConfigurationSnapshot:
         """Recover a configuration setting snapshot. It will update the status of a snapshot from "archived" to "ready".
 
@@ -715,7 +676,7 @@ class AzureAppConfigurationClient:
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
                 error_map=error_map,
-                **kwargs
+                **kwargs,
             )
             return ConfigurationSnapshot._from_generated(generated_snapshot)
         except binascii.Error:
@@ -748,7 +709,7 @@ class AzureAppConfigurationClient:
         name: Optional[str] = None,
         fields: Optional[List[str]] = None,
         status: Optional[List[Union[str, SnapshotStatus]]] = None,
-        **kwargs
+        **kwargs,
     ) -> ItemPaged[ConfigurationSnapshot]:
         """List the configuration setting snapshots stored in the configuration service, optionally filtered by
         snapshot name, snapshot status and fields to present in return.
@@ -769,7 +730,7 @@ class AzureAppConfigurationClient:
                 select=fields,
                 status=status,
                 cls=lambda objs: [ConfigurationSnapshot._from_generated(x) for x in objs],
-                **kwargs
+                **kwargs,
             )
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
