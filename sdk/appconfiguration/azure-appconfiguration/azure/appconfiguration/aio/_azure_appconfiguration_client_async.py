@@ -11,7 +11,7 @@ from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AzureKeyCredentialPolicy
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -24,8 +24,6 @@ from azure.core.exceptions import (
 from azure.core.utils import CaseInsensitiveDict
 from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
-from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
-from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.aio import AzureAppConfiguration
 from .._generated.models import SnapshotUpdateParameters, SnapshotStatus
 from .._models import ConfigurationSetting, ConfigurationSettingsFilter, ConfigurationSnapshot
@@ -35,6 +33,7 @@ from .._utils import (
     prep_if_none_match,
     get_key_filter,
     get_label_filter,
+    parse_connection_string,
 )
 
 
@@ -43,8 +42,7 @@ class AzureAppConfigurationClient:
 
         :param str base_url: Base url of the service.
         :param credential: An object which can provide secrets for the app configuration service
-        :type credential:
-            ~azure.core.credentials_async.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
+        :type credential: ~azure.core.credentials_async.AsyncTokenCredential
         :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this default
             value may result in unsupported behavior.
         :paramtype api_version: str
@@ -55,9 +53,7 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(
-        self, base_url: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any
-    ) -> None:
+    def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = f"https://{base_url}"
@@ -70,32 +66,25 @@ class AzureAppConfigurationClient:
         credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
-        if isinstance(credential, AppConfigConnectionStringCredential):
-            self._impl = AzureAppConfiguration(
-                credential,  # type: ignore
-                base_url,
-                credential_scopes=credential_scopes,
-                authentication_policy=AppConfigRequestsCredentialsPolicy(credential),
-                per_call_policies=self._sync_token_policy,
-                **kwargs,
+        if isinstance(credential, AzureKeyCredential):
+            auth_policy = kwargs.pop("auth_policy")
+            kwargs.update(
+                {
+                    "authentication_policy": auth_policy,
+                }
             )
-        elif isinstance(credential, AzureKeyCredential):
-            self._impl = AzureAppConfiguration(
-                credential,
-                base_url,
-                credential_scopes=credential_scopes,
-                per_call_policies=self._sync_token_policy,
-                **kwargs,
+        elif isinstance(credential, AsyncTokenCredential):
+            kwargs.update(
+                {
+                    "authentication_policy": AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+                }
             )
         else:
-            self._impl = AzureAppConfiguration(
-                credential,  # type: ignore # mypy doesn't compare the type hint with the api surface in patch.py
-                base_url,
-                credential_scopes=credential_scopes,
-                per_call_policies=self._sync_token_policy,
-                authentication_policy=AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
-                **kwargs,
-            )
+            raise TypeError(f"Unsupported credential: {credential}")
+        # mypy doesn't compare the credential type hint with the API surface in patch.py
+        self._impl = AzureAppConfiguration(
+            credential, base_url, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
+        )
 
     @classmethod
     def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
@@ -117,9 +106,13 @@ class AzureAppConfigurationClient:
             async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
         """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
+        _, _, secret = parse_connection_string(connection_string)
+        credential = AzureKeyCredential(secret)
+        auth_policy = AzureKeyCredentialPolicy(credential, connection_string)
         return cls(
-            credential=AppConfigConnectionStringCredential(connection_string),  # type: ignore
+            credential=credential,  # type: ignore[arg-type] # AzureKeyCredential type is for internal use
             base_url=base_url,
+            auth_policy=auth_policy,
             **kwargs,
         )
 
