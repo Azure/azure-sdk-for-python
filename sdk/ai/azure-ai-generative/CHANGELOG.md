@@ -1,5 +1,8 @@
 # Release History
 
+## 1.0.0b2 (unreleased)
+- Fix LangChain importing path
+
 ## 1.0.0b1 (unreleased)
 - Try use langchain VectorStore and fallback to vendor.
 - Add azure-search-documents 11.4.0b11 and above support.
