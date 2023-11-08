@@ -372,9 +372,6 @@ class ContainerProxy(object):
         :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
-        :param bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
-            existing indexes and how it could use potential new indexes. Please note that this options will incur
-            overhead, so it should be enabled only when debugging slow queries.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -387,6 +384,9 @@ class ContainerProxy(object):
         :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this options will incur
+            overhead, so it should be enabled only when debugging slow queries.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -416,6 +416,7 @@ class ContainerProxy(object):
             feed_options["maxItemCount"] = max_item_count
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
+        populate_index_metrics = kwargs.pop("populate_index_metrics", None)
         if populate_index_metrics is not None:
             feed_options["populateIndexMetrics"] = populate_index_metrics
         if partition_key is not None:

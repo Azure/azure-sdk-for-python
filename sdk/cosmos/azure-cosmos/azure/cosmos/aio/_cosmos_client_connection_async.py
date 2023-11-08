@@ -2384,7 +2384,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 return __GetBodiesFromQueryResult(results)
 
         result, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
-        if http_constants.HttpHeaders.IndexUtilization in self.last_response_headers:
+        if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
             index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
             self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
