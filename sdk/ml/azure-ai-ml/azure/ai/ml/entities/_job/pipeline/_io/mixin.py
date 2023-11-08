@@ -119,7 +119,7 @@ class NodeIOMixin:
         return InputsAttrDict(input_dict)
 
     def _build_outputs_dict(
-        self, outputs: Dict[str, Output], *, output_definition_dict: Optional[dict] = None, none_data: bool = False
+        self, outputs: Dict, *, output_definition_dict: Optional[dict] = None, none_data: bool = False
     ) -> OutputsAttrDict:
         """Build an output attribute dict so user can get/set outputs by
         accessing attribute, eg: node1.outputs.xxx.
