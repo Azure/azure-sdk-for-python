@@ -17,6 +17,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import os
 import functools
 import pytest
 import json
@@ -63,8 +64,14 @@ JSON_SCHEMA = {
 }
 JSON_SCHEMA_STR = json.dumps(JSON_SCHEMA, separators=(",", ":"))
 CUSTOM_SCHEMA_STR = "My favorite color is yellow."
-with open(sys.path[0] + "/../person.proto", "r") as f:
-    PROTOBUF_SCHEMA_STR = f.read()
+proto_file = os.path.join(os.getcwd(), 'person.proto' )
+try:
+    with open(proto_file, "r") as f:
+        PROTOBUF_SCHEMA_STR = f.read()
+except FileNotFoundError:   # if running tests from async_tests folder
+    proto_file = os.path.join(os.getcwd(), '..', 'person.proto' )
+    with open(proto_file, "r") as f:
+        PROTOBUF_SCHEMA_STR = f.read()
 
 AVRO_FORMAT = "Avro"
 JSON_FORMAT = "Json"

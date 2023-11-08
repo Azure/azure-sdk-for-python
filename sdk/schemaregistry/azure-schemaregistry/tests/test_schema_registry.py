@@ -17,6 +17,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import os
 import functools
 import pytest
 import json
@@ -60,7 +61,8 @@ JSON_SCHEMA = {
 }
 JSON_SCHEMA_STR = json.dumps(JSON_SCHEMA, separators=(",", ":"))
 CUSTOM_SCHEMA_STR = "My favorite color is yellow."
-with open("person.proto", "r") as f:
+proto_file = os.path.join(os.getcwd(), 'person.proto' )
+with open(proto_file, "r") as f:
     PROTOBUF_SCHEMA_STR = f.read()
 
 AVRO_FORMAT = "Avro"
