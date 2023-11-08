@@ -265,6 +265,13 @@ class OnlineEndpoint(Endpoint):
             return False
         if self.auth_mode is None or other.auth_mode is None:
             return False
+        if self.name is None or other.name is None:
+            return (
+                self.auth_mode.lower() == other.auth_mode.lower()
+                and dict_eq(self.tags, other.tags)
+                and self.description == other.description
+                and dict_eq(self.traffic, other.traffic)
+            )
         # only compare mutable fields
         return (
             self.name.lower() == other.name.lower()

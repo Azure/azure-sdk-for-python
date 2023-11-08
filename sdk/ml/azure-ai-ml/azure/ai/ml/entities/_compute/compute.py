@@ -60,7 +60,7 @@ class Compute(Resource, RestTranslatableMixin):
         super().__init__(name=name, description=description, **kwargs)
         self.resource_id = resource_id
         self.location = location
-        self.tags = tags
+        self.tags = dict(tags) if tags else {}
 
     @property
     def type(self) -> Optional[str]:

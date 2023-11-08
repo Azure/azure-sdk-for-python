@@ -51,7 +51,7 @@ class Resource(abc.ABC):
     ) -> None:
         self.name = name
         self.description = description
-        self.tags: Optional[Dict] = dict(tags) if tags else {}
+        self.tags = dict(tags) if tags else {}
         self.properties = dict(properties) if properties else {}
         # Conditional assignment to prevent entity bloat when unused.
         print_as_yaml = kwargs.pop("print_as_yaml", in_jupyter_notebook())
@@ -108,7 +108,7 @@ class Resource(abc.ABC):
         return self._base_path
 
     @abc.abstractmethod
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> Any:
         """Dump the object content into a file.
 
         :param dest: The local path or file stream to write the YAML content to.

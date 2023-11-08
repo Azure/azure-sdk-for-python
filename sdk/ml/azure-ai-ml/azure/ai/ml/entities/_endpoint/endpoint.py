@@ -119,7 +119,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     def _from_rest_object(cls, obj: Any) -> Any:
         pass
 
-    def _merge_with(self, other: "Endpoint") -> None:
+    def _merge_with(self, other: Any) -> None:
         if other:
             if self.name != other.name:
                 msg = "The endpoint name: {} and {} are not matched when merging."

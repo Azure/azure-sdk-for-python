@@ -3,13 +3,13 @@
 # ---------------------------------------------------------
 
 import re
-from typing import Any
+from typing import Any, Optional
 
 from azure.ai.ml.constants._endpoint import EndpointConfigurations
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
-def validate_endpoint_or_deployment_name(name: str, is_deployment: bool = False) -> None:
+def validate_endpoint_or_deployment_name(name: Optional[str], is_deployment: bool = False) -> None:
     """Validates the name of an endpoint or a deployment
 
     A valid name of an endpoint or deployment:
