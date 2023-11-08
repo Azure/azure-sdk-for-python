@@ -5,5 +5,10 @@ type_check_samples = false
 verifytypes = false
 
 [tool.coverage.report]
-#omit = [ "*/sms/_shared/*" ]
-exclude_also = [ "*/sms/_shared/*" ]
+omit = [ "*/sms/_shared/*" ]
+#exclude_also = [ "*/sms/_shared/*" ]
+
+[tool.coverage.run]
+source = ["azure"]
+omit = [ "*/sms/_shared/*" ]
+#exclude_also = [ "*/sms/_shared/*" ]
