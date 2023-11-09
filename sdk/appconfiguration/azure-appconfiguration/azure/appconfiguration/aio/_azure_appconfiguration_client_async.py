@@ -118,7 +118,13 @@ class AzureAppConfigurationClient:
 
     @overload
     def list_configuration_settings(
-        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        key_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        accept_datetime: Optional[Union[datetime, str]] = None,
+        fields: Optional[List[str]] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """List the configuration settings stored in the configuration service, optionally filtered by
@@ -126,12 +132,12 @@ class AzureAppConfigurationClient:
 
         :keyword key_filter: filter results based on their keys. '*' can be
             used as wildcard in the beginning or end of the filter
-        :paramtype key_filter: str
+        :paramtype key_filter: str or None
         :keyword label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
-        :paramtype label_filter: str
+        :paramtype label_filter: str or None
         :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
-        :paramtype accept_datetime: ~datetime.datetime or str
+        :paramtype accept_datetime: ~datetime.datetime or str or None
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
@@ -211,7 +217,7 @@ class AzureAppConfigurationClient:
         key: str,
         label: Optional[str] = None,
         etag: Optional[str] = "*",
-        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
         **kwargs,
     ) -> Union[None, ConfigurationSetting]:
 
@@ -220,13 +226,13 @@ class AzureAppConfigurationClient:
         :param key: key of the ConfigurationSetting
         :type key: str
         :param label: label used to identify the ConfigurationSetting. Default is `None`.
-        :type label: str
+        :type label: str or None
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str or None
         :param match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions
+        :type match_condition: ~azure.core.MatchConditions or None
         :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
-        :paramtype accept_datetime: ~datetime.datetime or str
+        :paramtype accept_datetime: ~datetime.datetime or str or None
         :return: The matched ConfigurationSetting object
         :rtype: ~azure.appconfiguration.ConfigurationSetting or None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
@@ -455,13 +461,14 @@ class AzureAppConfigurationClient:
 
         :param key_filter: filter results based on their keys. '*' can be
             used as wildcard in the beginning or end of the filter
-        :type key_filter: str
+        :type key_filter: str or None
         :param label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
-        :type label_filter: str
+        :type label_filter: str or None
         :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
-        :paramtype accept_datetime: ~datetime.datetime or str
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :paramtype accept_datetime: ~datetime.datetime or str or None
+        :keyword fields: specify which fields to include in the results. Leave None to include all fields.
+        :type fields: list[str] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
