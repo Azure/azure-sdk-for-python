@@ -12,7 +12,7 @@ Azure Event Grid is a fully-managed intelligent event routing service that allow
 
 ## _Disclaimer_
 
-This is the first beta release of Azure EventGrid's `EventGridClient`, along with the GA `EventGridPublisherClient`. `EventGridClient` supports `publish_cloud_events`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, and `reject_cloud_events` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples) for further information. 
+This is a beta release of Azure EventGrid's `EventGridClient`, which along with the GA `EventGridPublisherClient`. `EventGridClient` supports `publish_cloud_events`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, `reject_cloud_events`, and `renew_cloud_event_locks` operations. Please refer to the [samples](https://github.com/Azure/azure-sdk-for-python/tree/feature/eventgrid/sdk/eventgrid/azure-eventgrid/samples/sync_samples/eventgrid_client_samples) for further information.
 
 ## Getting started
 
