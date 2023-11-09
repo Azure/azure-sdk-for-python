@@ -25,7 +25,7 @@ client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
 try:
     # Publish CloudEvent in binary mode with str encoded as bytes
     cloud_event_dict = {"data":b"HI", "source":"https://example.com", "type":"example", "datacontenttype":"text/plain"}
-    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict)
+    client.publish_cloud_events(topic_name=TOPIC_NAME, body=cloud_event_dict, binary_mode=True)
 
     # Publish CloudEvent in binary mode with json encoded as bytes
     cloud_event = CloudEvent(data=json.dumps({"hello":"data"}).encode("utf-8"), source="https://example.com", type="example", datacontenttype="application/json")
