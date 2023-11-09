@@ -56,12 +56,13 @@ def _get_format(content_type: str) -> SchemaFormat:
     try:
         format = content_type.split("serialization=")[1]
         try:
-            format = SchemaFormat(format)
+            return SchemaFormat(format)
         except ValueError:
-            format = SchemaFormat(format.capitalize())
+            return SchemaFormat(format.capitalize())
     except IndexError:
-        format = SchemaFormat.CUSTOM
-    return format
+        if 'protobuf' in content_type:
+            return SchemaFormat.PROTOBUF
+        return SchemaFormat.CUSTOM
 
 
 def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
