@@ -28,7 +28,6 @@ from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspac
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
