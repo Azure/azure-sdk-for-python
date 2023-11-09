@@ -124,7 +124,7 @@ class AzureAppConfigurationClient:
         label_filter: Optional[str] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """List the configuration settings stored in the configuration service, optionally filtered by
