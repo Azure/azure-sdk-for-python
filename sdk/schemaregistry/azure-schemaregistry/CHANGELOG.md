@@ -1,17 +1,11 @@
 # Release History
 
-## 1.3.0b3 (Unreleased)
+## 1.3.0b3 (2023-11-13)
 
 ### Features Added
 
 - `V2023_07_01` has been added to `ApiVersion` and set as the default api version.
   - `Protobuf` has been added to supported formats in `SchemaFormat`.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.3.0b2 (2023-08-09)
 
