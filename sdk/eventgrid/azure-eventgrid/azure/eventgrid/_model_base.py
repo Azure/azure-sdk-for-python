@@ -31,7 +31,7 @@ else:
 
 _LOGGER = logging.getLogger(__name__)
 
-__all__ = ["AzureJSONEncoder", "Model", "rest_field", "rest_discriminator"]
+__all__ = ["SdkJSONEncoder", "Model", "rest_field", "rest_discriminator"]
 
 TZ_UTC = timezone.utc
 
@@ -125,7 +125,7 @@ def _is_readonly(p):
         return False
 
 
-class AzureJSONEncoder(JSONEncoder):
+class SdkJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
     def __init__(self, *args, exclude_readonly: bool = False, format: typing.Optional[str] = None, **kwargs):
@@ -140,7 +140,7 @@ class AzureJSONEncoder(JSONEncoder):
                 return {k: v for k, v in o.items() if k not in readonly_props}
             return dict(o.items())
         try:
-            return super(AzureJSONEncoder, self).default(o)
+            return super(SdkJSONEncoder, self).default(o)
         except TypeError:
             if isinstance(o, _Null):
                 return None
@@ -157,7 +157,7 @@ class AzureJSONEncoder(JSONEncoder):
             except AttributeError:
                 # This will be raised when it hits value.total_seconds in the method above
                 pass
-            return super(AzureJSONEncoder, self).default(o)
+            return super(SdkJSONEncoder, self).default(o)
 
 
 _VALID_DATE = re.compile(r"\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}" + r"\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?")
@@ -553,7 +553,7 @@ class Model(_MyMutableMapping):
         if exclude_readonly:
             readonly_props = [p._rest_name for p in self._attr_to_rest_field.values() if _is_readonly(p)]
         for k, v in self.items():
-            if exclude_readonly and k in readonly_props:  # pyright: reportUnboundVariable=false
+            if exclude_readonly and k in readonly_props:  # pyright: ignore[reportUnboundVariable]
                 continue
             result[k] = Model._as_dict_value(v, exclude_readonly=exclude_readonly)
         return result
@@ -754,9 +754,12 @@ def _deserialize(
     value: typing.Any,
     module: typing.Optional[str] = None,
     rf: typing.Optional["_RestField"] = None,
+    format: typing.Optional[str] = None,
 ) -> typing.Any:
     if isinstance(value, PipelineResponse):
         value = value.http_response.json()
+    if rf is None and format:
+        rf = _RestField(format=format)
     deserializer = _get_deserialize_callable_from_annotation(deserializer, module, rf)
     return _deserialize_with_callable(deserializer, value)
 
