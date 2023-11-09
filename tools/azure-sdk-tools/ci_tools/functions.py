@@ -29,7 +29,6 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
 ]
 
 NO_TESTS_ALLOWED = [
-    "azure-storage-extensions"
 ]
 
 
