@@ -6,7 +6,7 @@
 import logging
 from typing import Any
 
-from marshmallow import ValidationError, INCLUDE, fields, post_load, validates
+from marshmallow import INCLUDE, fields, post_load
 
 from azure.ai.ml._schema import (
     ArmVersionedStr,
