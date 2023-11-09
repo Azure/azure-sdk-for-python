@@ -63,6 +63,7 @@ class DataSourcesOperations:
         data_source: _models.SearchIndexerDataSource,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -71,7 +72,7 @@ class DataSourcesOperations:
         """Creates a new datasource or updates a datasource if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Data-Source
 
         :param data_source_name: The name of the datasource to create or update. Required.
         :type data_source_name: str
@@ -86,6 +87,9 @@ class DataSourcesOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -105,6 +109,7 @@ class DataSourcesOperations:
         data_source: IO,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -113,7 +118,7 @@ class DataSourcesOperations:
         """Creates a new datasource or updates a datasource if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Data-Source
 
         :param data_source_name: The name of the datasource to create or update. Required.
         :type data_source_name: str
@@ -128,6 +133,9 @@ class DataSourcesOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -147,13 +155,14 @@ class DataSourcesOperations:
         data_source: Union[_models.SearchIndexerDataSource, IO],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
     ) -> _models.SearchIndexerDataSource:
         """Creates a new datasource or updates a datasource if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Data-Source
 
         :param data_source_name: The name of the datasource to create or update. Required.
         :type data_source_name: str
@@ -169,6 +178,9 @@ class DataSourcesOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -211,6 +223,7 @@ class DataSourcesOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -259,7 +272,7 @@ class DataSourcesOperations:
         """Deletes a datasource.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Delete-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Delete-Data-Source
 
         :param data_source_name: The name of the datasource to delete. Required.
         :type data_source_name: str
@@ -331,7 +344,7 @@ class DataSourcesOperations:
         """Retrieves a datasource definition.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Get-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Get-Data-Source
 
         :param data_source_name: The name of the datasource to retrieve. Required.
         :type data_source_name: str
@@ -399,10 +412,10 @@ class DataSourcesOperations:
         """Lists all datasources available for a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/List-Data-Sources
+           - https://docs.microsoft.com/rest/api/searchservice/List-Data-Sources
 
         :param select: Selects which top-level properties of the data sources to retrieve. Specified as
-         a comma-separated list of JSON property names, or ``*`` for all properties. The default is all
+         a comma-separated list of JSON property names, or '*' for all properties. The default is all
          properties. Default value is None.
         :type select: str
         :param request_options: Parameter group. Default value is None.
@@ -474,7 +487,7 @@ class DataSourcesOperations:
         """Creates a new datasource.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Data-Source
 
         :param data_source: The definition of the datasource to create. Required.
         :type data_source: ~search_service_client.models.SearchIndexerDataSource
@@ -501,7 +514,7 @@ class DataSourcesOperations:
         """Creates a new datasource.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Data-Source
 
         :param data_source: The definition of the datasource to create. Required.
         :type data_source: IO
@@ -526,7 +539,7 @@ class DataSourcesOperations:
         """Creates a new datasource.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Data-Source
 
         :param data_source: The definition of the datasource to create. Is either a
          SearchIndexerDataSource type or a IO type. Required.

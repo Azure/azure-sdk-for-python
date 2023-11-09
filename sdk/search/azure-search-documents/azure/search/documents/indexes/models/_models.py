@@ -35,31 +35,31 @@ class SearchIndexerSkillset(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the skillset.
+    :ivar name: The name of the skillset. Required.
     :vartype name: str
     :ivar description: The description of the skillset.
     :vartype description: str
-    :ivar skills: Required. A list of skills in the skillset.
-    :vartype skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
-    :ivar cognitive_services_account: Details about cognitive services to be used when running
+    :ivar skills: A list of skills in the skillset. Required.
+    :vartype skills: list[~search_service_client.models.SearchIndexerSkill]
+    :ivar cognitive_services_account: Details about the Azure AI service to be used when running
      skills.
-    :vartype cognitive_services_account:
-     ~azure.search.documents.indexes.models.CognitiveServicesAccount
-    :ivar knowledge_store: Definition of additional projections to azure blob, table, or files, of
+    :vartype cognitive_services_account: ~search_service_client.models.CognitiveServicesAccount
+    :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
      enriched data.
-    :vartype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
+    :vartype knowledge_store: ~search_service_client.models.SearchIndexerKnowledgeStore
+    :ivar index_projections: Definition of additional projections to secondary search index(es).
+    :vartype index_projections: ~search_service_client.models.SearchIndexerIndexProjections
     :ivar e_tag: The ETag of the skillset.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your skillset
      definition when you want full assurance that no one, not even Microsoft, can decrypt your
-     skillset definition in Azure Cognitive Search. Once you have encrypted your skillset
-     definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
-     this property to null. You can change this property as needed if you want to rotate your
-     encryption key; Your skillset definition will be unaffected. Encryption with customer-managed
-     keys is not available for free search services, and is only available for paid services created
-     on or after January 1, 2019.
-    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+     skillset definition. Once you have encrypted your skillset definition, it will always remain
+     encrypted. The search service will ignore attempts to set this property to null. You can change
+     this property as needed if you want to rotate your encryption key; Your skillset definition
+     will be unaffected. Encryption with customer-managed keys is not available for free search
+     services, and is only available for paid services created on or after January 1, 2019.
+    :vartype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
     """
 
     _validation = {
@@ -71,10 +71,23 @@ class SearchIndexerSkillset(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "skills": {"key": "skills", "type": "[SearchIndexerSkill]"},
-        "cognitive_services_account": {"key": "cognitiveServices", "type": "CognitiveServicesAccount"},
-        "knowledge_store": {"key": "knowledgeStore", "type": "SearchIndexerKnowledgeStore"},
+        "cognitive_services_account": {
+            "key": "cognitiveServices",
+            "type": "CognitiveServicesAccount",
+        },
+        "knowledge_store": {
+            "key": "knowledgeStore",
+            "type": "SearchIndexerKnowledgeStore",
+        },
+        "index_projections": {
+            "key": "indexProjections",
+            "type": "SearchIndexerIndexProjections",
+        },
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
-        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "encryption_key": {
+            "key": "encryptionKey",
+            "type": "SearchResourceEncryptionKey",
+        },
     }
 
     def __init__(
@@ -85,6 +98,7 @@ class SearchIndexerSkillset(_serialization.Model):
         description: Optional[str] = None,
         cognitive_services_account: Optional["CognitiveServicesAccount"] = None,
         knowledge_store: Optional["SearchIndexerKnowledgeStore"] = None,
+        index_projections: Optional["_models.SearchIndexerIndexProjections"] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
         **kwargs: Any
@@ -95,6 +109,7 @@ class SearchIndexerSkillset(_serialization.Model):
         self.skills = skills
         self.cognitive_services_account = cognitive_services_account
         self.knowledge_store = knowledge_store
+        self.index_projections = index_projections
         self.e_tag = e_tag
         self.encryption_key = encryption_key
 
@@ -102,7 +117,9 @@ class SearchIndexerSkillset(_serialization.Model):
         generated_skills = []
         for skill in self.skills:
             if hasattr(skill, "_to_generated"):
-                generated_skills.append(skill._to_generated())  # pylint:disable=protected-access
+                generated_skills.append(
+                    skill._to_generated()
+                )  # pylint:disable=protected-access
             else:
                 generated_skills.append(skill)
         assert len(generated_skills) == len(self.skills)
@@ -110,8 +127,11 @@ class SearchIndexerSkillset(_serialization.Model):
             name=getattr(self, "name", None),
             description=getattr(self, "description", None),
             skills=generated_skills,
-            cognitive_services_account=getattr(self, "cognitive_services_account", None),
+            cognitive_services_account=getattr(
+                self, "cognitive_services_account", None
+            ),
             knowledge_store=getattr(self, "knowledge_store", None),
+            index_projections=getattr(self, "index_projections", None),
             e_tag=getattr(self, "e_tag", None),
             encryption_key=getattr(self, "encryption_key", None),
         )
@@ -122,9 +142,13 @@ class SearchIndexerSkillset(_serialization.Model):
         for skill in skillset.skills:
             skill_cls = type(skill)
             if skill_cls in [_EntityRecognitionSkillV3]:
-                custom_skills.append(EntityRecognitionSkill._from_generated(skill))  # pylint:disable=protected-access
+                custom_skills.append(
+                    EntityRecognitionSkill._from_generated(skill)
+                )  # pylint:disable=protected-access
             elif skill_cls in [_SentimentSkillV3]:
-                custom_skills.append(SentimentSkill._from_generated(skill))  # pylint:disable=protected-access
+                custom_skills.append(
+                    SentimentSkill._from_generated(skill)
+                )  # pylint:disable=protected-access
             else:
                 custom_skills.append(skill)
         assert len(skillset.skills) == len(custom_skills)
@@ -250,7 +274,9 @@ class EntityRecognitionSkill(SearchIndexerSkill):
             return None
         kwargs = skill.as_dict()
         if isinstance(skill, _EntityRecognitionSkillV3):
-            return EntityRecognitionSkill(skill_version=EntityRecognitionSkillVersion.V3, **kwargs)
+            return EntityRecognitionSkill(
+                skill_version=EntityRecognitionSkillVersion.V3, **kwargs
+            )
         return None
 
 
@@ -415,6 +441,7 @@ class AnalyzeTextOptions(_serialization.Model):
         "text": {"key": "text", "type": "str"},
         "analyzer_name": {"key": "analyzerName", "type": "str"},
         "tokenizer_name": {"key": "tokenizerName", "type": "str"},
+        "normalizer_name": {"key": "normalizerName", "type": "str"},
         "token_filters": {"key": "tokenFilters", "type": "[str]"},
         "char_filters": {"key": "charFilters", "type": "[str]"},
     }
@@ -424,6 +451,7 @@ class AnalyzeTextOptions(_serialization.Model):
         self.text = kwargs["text"]
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.tokenizer_name = kwargs.get("tokenizer_name", None)
+        self.normalizer_name = kwargs.get("normalizer_name", None)
         self.token_filters = kwargs.get("token_filters", None)
         self.char_filters = kwargs.get("char_filters", None)
 
@@ -432,6 +460,7 @@ class AnalyzeTextOptions(_serialization.Model):
             text=self.text,
             analyzer=self.analyzer_name,
             tokenizer=self.tokenizer_name,
+            normalizer=self.normalizer_name,
             token_filters=self.token_filters,
             char_filters=self.char_filters,
         )
@@ -716,8 +745,12 @@ class SearchResourceEncryptionKey(_serialization.Model):
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
-            application_id = search_resource_encryption_key.access_credentials.application_id
-            application_secret = search_resource_encryption_key.access_credentials.application_secret
+            application_id = (
+                search_resource_encryption_key.access_credentials.application_id
+            )
+            application_secret = (
+                search_resource_encryption_key.access_credentials.application_secret
+            )
         else:
             application_id = None
             application_secret = None
@@ -800,7 +833,9 @@ class SynonymMap(_serialization.Model):
             name=synonym_map.name,
             synonyms=synonym_map.synonyms.split("\n"),
             # pylint:disable=protected-access
-            encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
+            encryption_key=SearchResourceEncryptionKey._from_generated(
+                synonym_map.encryption_key
+            ),
             e_tag=synonym_map.e_tag,
         )
 
@@ -866,6 +901,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             "type": "SearchResourceEncryptionKey",
         },
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
+        "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
     }
 
     def __init__(self, **kwargs):
@@ -875,10 +911,15 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         self.type = kwargs["type"]
         self.connection_string = kwargs["connection_string"]
         self.container = kwargs["container"]
-        self.data_change_detection_policy = kwargs.get("data_change_detection_policy", None)
-        self.data_deletion_detection_policy = kwargs.get("data_deletion_detection_policy", None)
+        self.data_change_detection_policy = kwargs.get(
+            "data_change_detection_policy", None
+        )
+        self.data_deletion_detection_policy = kwargs.get(
+            "data_deletion_detection_policy", None
+        )
         self.e_tag = kwargs.get("e_tag", None)
         self.encryption_key = kwargs.get("encryption_key", None)
+        self.identity = kwargs.get("identity", None)
 
     def _to_generated(self):
         if self.connection_string is None or self.connection_string == "":
@@ -896,12 +937,17 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_deletion_detection_policy=self.data_deletion_detection_policy,
             e_tag=self.e_tag,
             encryption_key=self.encryption_key,
+            identity=self.identity,
         )
 
     @classmethod
-    def _from_generated(cls, search_indexer_data_source) -> "SearchIndexerDataSourceConnection":
+    def _from_generated(
+        cls, search_indexer_data_source
+    ) -> "SearchIndexerDataSourceConnection":
         connection_string = (
-            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
+            search_indexer_data_source.credentials.connection_string
+            if search_indexer_data_source.credentials
+            else None
         )
         return cls(
             name=search_indexer_data_source.name,
@@ -913,6 +959,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
             e_tag=search_indexer_data_source.e_tag,
             encryption_key=search_indexer_data_source.encryption_key,
+            identity=search_indexer_data_source.identity,
         )
 
 
@@ -928,7 +975,11 @@ def unpack_analyzer(analyzer):
     if not analyzer:
         return None
     if isinstance(analyzer, _PatternAnalyzer):
-        return PatternAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
+        return PatternAnalyzer._from_generated(
+            analyzer
+        )  # pylint:disable=protected-access
     if isinstance(analyzer, _CustomAnalyzer):
-        return CustomAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
+        return CustomAnalyzer._from_generated(
+            analyzer
+        )  # pylint:disable=protected-access
     return analyzer

@@ -36,7 +36,7 @@ def build_count_request(*, x_ms_client_request_id: Optional[str] = None, **kwarg
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -67,25 +67,30 @@ def build_search_get_request(
     query_type: Optional[Union[str, _models.QueryType]] = None,
     scoring_parameters: Optional[List[str]] = None,
     scoring_profile: Optional[str] = None,
+    semantic_query: Optional[str] = None,
+    semantic_configuration: Optional[str] = None,
+    semantic_error_handling: Optional[Union[str, _models.SemanticErrorMode]] = None,
+    semantic_max_wait_in_milliseconds: Optional[int] = None,
+    debug: Optional[Union[str, _models.QueryDebugMode]] = None,
     search_fields: Optional[List[str]] = None,
+    query_language: Optional[Union[str, _models.QueryLanguage]] = None,
+    speller: Optional[Union[str, _models.Speller]] = None,
+    answers: Optional[Union[str, _models.QueryAnswerType]] = None,
     search_mode: Optional[Union[str, _models.SearchMode]] = None,
     scoring_statistics: Optional[Union[str, _models.ScoringStatistics]] = None,
     session_id: Optional[str] = None,
     select: Optional[List[str]] = None,
     skip: Optional[int] = None,
     top: Optional[int] = None,
-    x_ms_client_request_id: Optional[str] = None,
-    semantic_configuration: Optional[str] = None,
-    semantic_error_handling: Optional[Union[str, _models.SemanticErrorMode]] = None,
-    semantic_max_wait_in_milliseconds: Optional[int] = None,
-    answers: Optional[Union[str, _models.QueryAnswerType]] = None,
     captions: Optional[Union[str, _models.QueryCaptionType]] = None,
+    semantic_fields: Optional[List[str]] = None,
+    x_ms_client_request_id: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -118,8 +123,26 @@ def build_search_get_request(
         ]
     if scoring_profile is not None:
         _params["scoringProfile"] = _SERIALIZER.query("scoring_profile", scoring_profile, "str")
+    if semantic_query is not None:
+        _params["semanticQuery"] = _SERIALIZER.query("semantic_query", semantic_query, "str")
+    if semantic_configuration is not None:
+        _params["semanticConfiguration"] = _SERIALIZER.query("semantic_configuration", semantic_configuration, "str")
+    if semantic_error_handling is not None:
+        _params["semanticErrorHandling"] = _SERIALIZER.query("semantic_error_handling", semantic_error_handling, "str")
+    if semantic_max_wait_in_milliseconds is not None:
+        _params["semanticMaxWaitInMilliseconds"] = _SERIALIZER.query(
+            "semantic_max_wait_in_milliseconds", semantic_max_wait_in_milliseconds, "int", minimum=700
+        )
+    if debug is not None:
+        _params["debug"] = _SERIALIZER.query("debug", debug, "str")
     if search_fields is not None:
         _params["searchFields"] = _SERIALIZER.query("search_fields", search_fields, "[str]", div=",")
+    if query_language is not None:
+        _params["queryLanguage"] = _SERIALIZER.query("query_language", query_language, "str")
+    if speller is not None:
+        _params["speller"] = _SERIALIZER.query("speller", speller, "str")
+    if answers is not None:
+        _params["answers"] = _SERIALIZER.query("answers", answers, "str")
     if search_mode is not None:
         _params["searchMode"] = _SERIALIZER.query("search_mode", search_mode, "str")
     if scoring_statistics is not None:
@@ -132,19 +155,11 @@ def build_search_get_request(
         _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if top is not None:
         _params["$top"] = _SERIALIZER.query("top", top, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if semantic_configuration is not None:
-        _params["semanticConfiguration"] = _SERIALIZER.query("semantic_configuration", semantic_configuration, "str")
-    if semantic_error_handling is not None:
-        _params["semanticErrorHandling"] = _SERIALIZER.query("semantic_error_handling", semantic_error_handling, "str")
-    if semantic_max_wait_in_milliseconds is not None:
-        _params["semanticMaxWaitInMilliseconds"] = _SERIALIZER.query(
-            "semantic_max_wait_in_milliseconds", semantic_max_wait_in_milliseconds, "int", minimum=700
-        )
-    if answers is not None:
-        _params["answers"] = _SERIALIZER.query("answers", answers, "str")
     if captions is not None:
         _params["captions"] = _SERIALIZER.query("captions", captions, "str")
+    if semantic_fields is not None:
+        _params["semanticFields"] = _SERIALIZER.query("semantic_fields", semantic_fields, "[str]", div=",")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if x_ms_client_request_id is not None:
@@ -158,7 +173,7 @@ def build_search_post_request(*, x_ms_client_request_id: Optional[str] = None, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -188,7 +203,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -231,7 +246,7 @@ def build_suggest_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -272,7 +287,7 @@ def build_suggest_post_request(*, x_ms_client_request_id: Optional[str] = None, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -296,7 +311,7 @@ def build_index_request(*, x_ms_client_request_id: Optional[str] = None, **kwarg
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -334,7 +349,7 @@ def build_autocomplete_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -373,7 +388,7 @@ def build_autocomplete_post_request(*, x_ms_client_request_id: Optional[str] = N
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -526,22 +541,28 @@ class DocumentsOperations:
         _query_type = None
         _scoring_parameters = None
         _scoring_profile = None
+        _semantic_query = None
+        _semantic_configuration = None
+        _semantic_error_handling = None
+        _semantic_max_wait_in_milliseconds = None
+        _debug = None
         _search_fields = None
+        _query_language = None
+        _speller = None
+        _answers = None
         _search_mode = None
         _scoring_statistics = None
         _session_id = None
         _select = None
         _skip = None
         _top = None
-        _x_ms_client_request_id = None
-        _semantic_configuration = None
-        _semantic_error_handling = None
-        _semantic_max_wait_in_milliseconds = None
-        _answers = None
         _captions = None
+        _semantic_fields = None
+        _x_ms_client_request_id = None
         if search_options is not None:
             _answers = search_options.answers
             _captions = search_options.captions
+            _debug = search_options.debug
             _facets = search_options.facets
             _filter = search_options.filter
             _highlight_fields = search_options.highlight_fields
@@ -550,6 +571,7 @@ class DocumentsOperations:
             _include_total_result_count = search_options.include_total_result_count
             _minimum_coverage = search_options.minimum_coverage
             _order_by = search_options.order_by
+            _query_language = search_options.query_language
             _query_type = search_options.query_type
             _scoring_parameters = search_options.scoring_parameters
             _scoring_profile = search_options.scoring_profile
@@ -559,9 +581,12 @@ class DocumentsOperations:
             _select = search_options.select
             _semantic_configuration = search_options.semantic_configuration
             _semantic_error_handling = search_options.semantic_error_handling
+            _semantic_fields = search_options.semantic_fields
             _semantic_max_wait_in_milliseconds = search_options.semantic_max_wait_in_milliseconds
+            _semantic_query = search_options.semantic_query
             _session_id = search_options.session_id
             _skip = search_options.skip
+            _speller = search_options.speller
             _top = search_options.top
         if request_options is not None:
             _x_ms_client_request_id = request_options.x_ms_client_request_id
@@ -579,19 +604,24 @@ class DocumentsOperations:
             query_type=_query_type,
             scoring_parameters=_scoring_parameters,
             scoring_profile=_scoring_profile,
+            semantic_query=_semantic_query,
+            semantic_configuration=_semantic_configuration,
+            semantic_error_handling=_semantic_error_handling,
+            semantic_max_wait_in_milliseconds=_semantic_max_wait_in_milliseconds,
+            debug=_debug,
             search_fields=_search_fields,
+            query_language=_query_language,
+            speller=_speller,
+            answers=_answers,
             search_mode=_search_mode,
             scoring_statistics=_scoring_statistics,
             session_id=_session_id,
             select=_select,
             skip=_skip,
             top=_top,
-            x_ms_client_request_id=_x_ms_client_request_id,
-            semantic_configuration=_semantic_configuration,
-            semantic_error_handling=_semantic_error_handling,
-            semantic_max_wait_in_milliseconds=_semantic_max_wait_in_milliseconds,
-            answers=_answers,
             captions=_captions,
+            semantic_fields=_semantic_fields,
+            x_ms_client_request_id=_x_ms_client_request_id,
             api_version=api_version,
             headers=_headers,
             params=_params,
