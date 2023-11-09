@@ -127,6 +127,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "cibuildwheel",
     "aoai",
     "pyprojects",
     "certifi",
@@ -650,7 +651,7 @@
         "engelska",
         "fhir",
         "FHIR",
-        "naam",
+        "naam"
       ]
     },
     {
