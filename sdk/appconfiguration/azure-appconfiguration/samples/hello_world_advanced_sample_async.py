@@ -53,7 +53,7 @@ async def main():
     print("Fetched configuration setting:")
     print_configuration_setting(fetched_config_setting)
     print("")
-    
+
     print("List configuration settings")
     # [START list_config_setting]
     config_settings = client.list_configuration_settings(label_filter="MyLabel")

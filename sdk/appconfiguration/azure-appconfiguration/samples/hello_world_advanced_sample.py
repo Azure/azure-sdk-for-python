@@ -47,7 +47,7 @@ def main():
     # [END set_config_setting]
     print_configuration_setting(updated_config_setting)
     print("")
-    
+
     print("Get configuration setting")
     # [START get_config_setting]
     fetched_config_setting = client.get_configuration_setting(key="MyKey", label="MyLabel")
