@@ -22,7 +22,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UserErrorExceptio
 T = TypeVar("T")
 
 
-def _build_data_binding(data: Union[str, "PipelineInput", "Output"]) -> str:
+def _build_data_binding(data: Union[str, "PipelineInput", "Output"]) -> Union[str, Output]:
     """Build input builders to data bindings.
 
     :param data: The data to build a data binding from
@@ -30,6 +30,8 @@ def _build_data_binding(data: Union[str, "PipelineInput", "Output"]) -> str:
     :return: A data binding string if data isn't a str, otherwise data
     :rtype: str
     """
+    result: Union[str, Output] = ""
+
     if isinstance(data, (InputOutputBase)):
         # Build data binding when data is PipelineInput, Output
         result = data._data_binding()
@@ -41,7 +43,7 @@ def _build_data_binding(data: Union[str, "PipelineInput", "Output"]) -> str:
 
 def _resolve_builders_2_data_bindings(
     data: Union[list, dict, str, "PipelineInput", "Output"]
-) -> Union[list, dict, str]:
+) -> Union[dict, list, str, Output]:
     """Traverse data and build input builders inside it to data bindings.
 
     :param data: The bindings to resolve
@@ -171,7 +173,7 @@ class InputOutputBase(ABC):
             self._data._mode = mode
 
     @property
-    def description(self) -> str:
+    def description(self) -> Any:
         return self._description
 
     @description.setter
@@ -367,7 +369,7 @@ class NodeInput(InputOutputBase):
 
     def _to_job_input(self) -> Optional[Union[Input, str]]:
         """convert the input to Input, this logic will change if backend contract changes."""
-        result: Optional[Union[Input, str]] = None
+        result: Any = None
 
         if self._data is None:
             # None data means this input is not configured.
@@ -575,7 +577,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             )
 
     @property
-    def path(self) -> Optional[str]:
+    def path(self) -> Any:
         # For node output path,
         if self._data is not None and hasattr(self._data, "path"):
             return self._data.path

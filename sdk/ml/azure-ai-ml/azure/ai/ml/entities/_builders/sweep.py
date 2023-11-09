@@ -347,10 +347,7 @@ class Sweep(ParameterizedSweep, BaseNode):
                 Dict[str, SweepDistribution],
             ]
         """
-        search_space: Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
-        ] = {}
+        search_space: Dict = {}
         inputs: Dict = {}
         if built_inputs is not None:
             for input_name, input_obj in built_inputs.items():
