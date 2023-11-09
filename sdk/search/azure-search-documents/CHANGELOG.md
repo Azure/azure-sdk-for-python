@@ -32,6 +32,7 @@
   - `ScoringProfile`
   - `SemanticSearch`
 - Added `index_projections` support for `SearchIndexerSkillset`
+- Added `semantic_query` for `Search` method.
 
 ### Breaking Changes
 
