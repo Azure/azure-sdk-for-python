@@ -11,6 +11,7 @@ from . import AsyncChallengeAuthPolicy
 from .client_base import ApiVersion, DEFAULT_VERSION, _format_api_version, _SERIALIZER
 from .._sdk_moniker import SDK_MONIKER
 from .._generated.aio import KeyVaultClient as _KeyVaultClient
+from .._generated import models as _models
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -42,7 +43,7 @@ class AsyncKeyVaultClientBase(object):
                 # caller provided a configured client -> only models left to initialize
                 self._client = client
                 models = kwargs.get("generated_models")
-                self._models = models or _KeyVaultClient.models(api_version=self.api_version)
+                self._models = models or _models
                 return
 
             http_logging_policy = HttpLoggingPolicy(**kwargs)
@@ -58,7 +59,7 @@ class AsyncKeyVaultClientBase(object):
                 http_logging_policy=http_logging_policy,
                 **kwargs
             )
-            self._models = _KeyVaultClient.models(api_version=self.api_version)
+            self._models = _models
         except ValueError as exc:
             raise NotImplementedError(
                 f"This package doesn't support API version '{self.api_version}'. "

@@ -55,9 +55,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
 
@@ -85,9 +83,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
 
@@ -133,9 +129,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
 
@@ -179,9 +173,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
 
@@ -218,9 +210,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 assert distribution_policy_response is not None
                 DistributionPolicyValidator.validate_distribution_policy(
@@ -253,9 +243,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=identifier, offer_expires_after_seconds=10.0, mode=distribution_modes[0]
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(identifier, policy)
 
                 # add for cleanup
                 self.distribution_policy_ids[self._testMethodName].append(identifier)

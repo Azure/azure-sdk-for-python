@@ -10,14 +10,14 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Dict, Optional
     from datetime import datetime
-    from . import _generated_models as _models
+    from ._generated import models as _models
 
 
 class SecretProperties(object):
     """A secret's ID and attributes.
 
     :param attributes: The secret's attributes.
-    :type attributes: ~azure.keyvault.secrets._generated_models.SecretAttributes
+    :type attributes: ~azure.keyvault.secrets._generated.models.SecretAttributes
     :param secret_id: The secret's ID.
     :type secret_id: str or None
 

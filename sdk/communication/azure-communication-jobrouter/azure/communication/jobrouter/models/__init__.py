@@ -9,13 +9,9 @@
 from ._models import AcceptJobOfferResult
 from ._models import BestWorkerMode
 from ._models import CancelExceptionAction
-from ._models import CancelJobOptions
 from ._models import ClassificationPolicy
-from ._models import CloseJobOptions
-from ._models import CompleteJobOptions
 from ._models import ConditionalQueueSelectorAttachment
 from ._models import ConditionalWorkerSelectorAttachment
-from ._models import DeclineJobOfferOptions
 from ._models import DirectMapRouterRule
 from ._models import DistributionMode
 from ._models import DistributionPolicy
@@ -84,13 +80,9 @@ __all__ = [
     "AcceptJobOfferResult",
     "BestWorkerMode",
     "CancelExceptionAction",
-    "CancelJobOptions",
     "ClassificationPolicy",
-    "CloseJobOptions",
-    "CompleteJobOptions",
     "ConditionalQueueSelectorAttachment",
     "ConditionalWorkerSelectorAttachment",
-    "DeclineJobOfferOptions",
     "DirectMapRouterRule",
     "DistributionMode",
     "DistributionPolicy",
