@@ -208,7 +208,7 @@ class HttpRequest:
         self.headers: MutableMapping[str, str] = case_insensitive_dict(headers)
         self.files: Optional[Any] = files
         self.data: Optional[DataType] = data
-        self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]] = None
+        self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], Optional[str], Dict[str, Any]]] = None
 
     def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
