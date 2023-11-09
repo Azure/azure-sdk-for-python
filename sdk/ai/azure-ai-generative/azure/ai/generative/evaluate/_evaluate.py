@@ -98,21 +98,21 @@ def evaluate(
     :paramtype evaluation_name: Optional[str]
     :keyword target: Target to be evaluated. `target` and `data` both cannot be None
     :paramtype target: Optional[Callable]
-    :keyword data: Path to the data to be evaluated or passed to target if target it set.
+    :keyword data: Path to the data to be evaluated or passed to target if target is set.
         Only .jsonl format files are supported.  `target` and `data` both cannot be None
     :paramtype data: Optional[str]
     :keyword task_type: Task type for evaluation. This helps to pick a set of pre-defined metrics.
         Supported values are `qa` and `chat`
     :paramtype task_type: str
-    :keyword metrics_list: List of metrics to calculate.A default list is picked based on task_type of not set.
+    :keyword metrics_list: List of metrics to calculate. A default list is picked based on task_type if not set.
     :paramtype metrics_list: Optional[List[str]]
     :keyword model_config: GPT configuration details needed for AI-assisted metrics.
     :paramtype model_config: Dict[str, str]
     :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
     :paramtype data_mapping: Dict[str, str]
-    :keyword output_path: Save evaluation artifacts to local folder path
+    :keyword output_path: The local folder path to save evaluation artifacts to if set
     :paramtype output_path: Optional[str]
-    :keyword tracking_uri: Tracking uri to track evaluation results to AI Studio
+    :keyword tracking_uri: Tracking uri to log evaluation results to AI Studio
     :paramtype tracking_uri: Optional[str]
     :return: A EvaluationResult object.
     :rtype: ~azure.ai.generative.evaluate.EvaluationResult
