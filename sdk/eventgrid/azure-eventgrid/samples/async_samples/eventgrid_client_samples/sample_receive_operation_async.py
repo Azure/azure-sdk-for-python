@@ -12,8 +12,8 @@ from azure.core.exceptions import HttpResponseError
 
 EVENTGRID_KEY: str = os.environ["EVENTGRID_KEY"]
 EVENTGRID_ENDPOINT: str = os.environ["EVENTGRID_ENDPOINT"]
-TOPIC_NAME: str = os.environ["TOPIC_NAME"]
-EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENT_SUBSCRIPTION_NAME"]
+TOPIC_NAME: str = os.environ["EVENTGRID_TOPIC_NAME"]
+EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 
 # Create a client
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))

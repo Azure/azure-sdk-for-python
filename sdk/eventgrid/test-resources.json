@@ -27,13 +27,7 @@
           "description": "The application client secret used to run tests."
         }
       },
-      "location": {
-        "type": "string",
-        "defaultValue": "eastus",
-        "metadata": {
-          "description": "The resource location"
-        }
-      }
+
     },
     "variables": {
       "namespaceName": "[format('{0}-2', parameters('baseName'))]",
@@ -55,9 +49,9 @@
     "resources": [
       {
         "type": "Microsoft.EventGrid/namespaces",
-        "apiVersion": "2023-06-01-preview",
+        "apiVersion": "2023-12-15-preview",
         "name": "[variables('namespaceName')]",
-        "location": "[parameters('location')]",
+        "location": "[resourceGroup().location]",
         "sku": {
           "name": "Standard",
           "capacity": 1
@@ -69,7 +63,7 @@
       },
       {
         "type": "Microsoft.EventGrid/namespaces/topics",
-        "apiVersion": "2023-06-01-preview",
+        "apiVersion": "2023-12-15-preview",
         "name": "[format('{0}/{1}', variables('namespaceName'), variables('topicName'))]",
         "properties": {
           "publisherType": "Custom",
@@ -82,7 +76,7 @@
       },
       {
         "type": "Microsoft.EventGrid/namespaces/topics/eventSubscriptions",
-        "apiVersion": "2023-06-01-preview",
+        "apiVersion": "2023-12-15-preview",
         "name": "[format('{0}/{1}/{2}', variables('namespaceName'), variables('topicName'), variables('subscriptionName'))]",
         "properties": {
           "deliveryConfiguration": {
@@ -289,11 +283,11 @@
       },
       "EVENTGRID_KEY": {
         "type": "string",
-        "value": "[listKeys(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-06-01-preview').key1]"
+        "value": "[listKeys(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-12-15-preview').key1]"
       },
       "EVENTGRID_ENDPOINT": {
         "type": "string",
-        "value": "[format('https://{0}', reference(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-06-01-preview').topicsConfiguration.hostname)]"
+        "value": "[format('https://{0}', reference(resourceId('Microsoft.EventGrid/namespaces', variables('namespaceName')), '2023-12-15-preview').topicsConfiguration.hostname)]"
       },
       "EVENTGRID_TOPIC_NAME": {
         "type": "string",
