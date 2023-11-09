@@ -55,8 +55,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -89,8 +87,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -123,8 +119,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -157,8 +151,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -190,8 +182,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
