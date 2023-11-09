@@ -4,6 +4,7 @@
 - Try use langchain VectorStore and fallback to vendor.
 - Add azure-search-documents 11.4.0b11 and above support.
 - Invoke OpenAI with dynamic batch size.
+- Fix LangChain importing path
 
 ### Features Added
   - Connections refactored to have a base class and service-specific subclasses

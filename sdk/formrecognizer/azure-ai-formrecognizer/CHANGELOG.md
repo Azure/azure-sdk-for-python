@@ -1,15 +1,9 @@
 # Release History
 
-## 3.3.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 3.3.2 (2023-11-07)
 
 ### Bugs Fixed
 - Fixed incorrect data type for returned formula objects.
-
-### Other Changes
 
 ## 3.3.1 (2023-10-10)
 

@@ -375,10 +375,6 @@ class ClassificationPolicy(_model_base.Model):
 class CloseJobOptions(_model_base.Model):
     """Request payload for closing jobs.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar assignment_id: The assignment within which the job is to be closed. Required.
-    :vartype assignment_id: str
     :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
      custom values.
     :vartype disposition_code: str
@@ -391,8 +387,6 @@ class CloseJobOptions(_model_base.Model):
     :vartype note: str
     """
 
-    assignment_id: str = rest_field(name="assignmentId")
-    """The assignment within which the job is to be closed. Required."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
     """Indicates the outcome of the job, populate this field with your own custom values."""
     close_at: Optional[datetime.datetime] = rest_field(name="closeAt", format="rfc3339")
@@ -410,17 +404,11 @@ class CloseJobResult(_model_base.Model):
 class CompleteJobOptions(_model_base.Model):
     """Request payload for completing jobs.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar assignment_id: The assignment within the job to complete. Required.
-    :vartype assignment_id: str
     :ivar note: A note that will be appended to the jobs' Notes collection with the current
      timestamp.
     :vartype note: str
     """
 
-    assignment_id: str = rest_field(name="assignmentId")
-    """The assignment within the job to complete. Required."""
     note: Optional[str] = rest_field()
     """A note that will be appended to the jobs' Notes collection with the current timestamp."""
 
@@ -1305,7 +1293,7 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
      priority and worker selectors.
     :vartype classification_policy_id: str
     :ivar labels_to_upsert: Dictionary containing the labels to update (or add if not existing) in
-     key-value pairs.
+     key-value pairs.  Values must be primitive values - number, string, boolean.
     :vartype labels_to_upsert: dict[str, any]
     :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required. Default
      value is "reclassify".
@@ -1315,7 +1303,8 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
     classification_policy_id: Optional[str] = rest_field(name="classificationPolicyId")
     """The new classification policy that will determine queue, priority and worker selectors."""
     labels_to_upsert: Optional[Dict[str, Any]] = rest_field(name="labelsToUpsert")
-    """Dictionary containing the labels to update (or add if not existing) in key-value pairs."""
+    """Dictionary containing the labels to update (or add if not existing) in key-value pairs.  Values
+     must be primitive values - number, string, boolean."""
     kind: Literal["reclassify"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing a sub-type of ExceptionAction. Required. Default value is
      \"reclassify\"."""
@@ -1480,11 +1469,12 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype attached_worker_selectors:
      list[~azure.communication.jobrouter.models.RouterWorkerSelector]
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
-     engines to make decisions.
+     engines to make decisions. Values must be primitive values - number, string, boolean.
     :vartype labels: dict[str, any]
     :ivar assignments: A collection of the assignments of the job. Key is AssignmentId.
     :vartype assignments: dict[str, ~azure.communication.jobrouter.models.RouterJobAssignment]
-    :ivar tags: A set of non-identifying attributes attached to this job.
+    :ivar tags: A set of non-identifying attributes attached to this job. Values must be primitive
+     values - number, string, boolean.
     :vartype tags: dict[str, any]
     :ivar notes: Notes attached to a job, sorted by timestamp.
     :vartype notes: list[~azure.communication.jobrouter.models.RouterJobNote]
@@ -1529,11 +1519,12 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      satisfy in order to process this job."""
     labels: Optional[Dict[str, Any]] = rest_field()
     """A set of key/value pairs that are identifying attributes used by the rules engines to make
-     decisions."""
+     decisions. Values must be primitive values - number, string, boolean."""
     assignments: Optional[Dict[str, "_models.RouterJobAssignment"]] = rest_field(visibility=["read"])
     """A collection of the assignments of the job. Key is AssignmentId."""
     tags: Optional[Dict[str, Any]] = rest_field()
-    """A set of non-identifying attributes attached to this job."""
+    """A set of non-identifying attributes attached to this job. Values must be primitive values -
+     number, string, boolean."""
     notes: Optional[List["_models.RouterJobNote"]] = rest_field()
     """Notes attached to a job, sorted by timestamp."""
     scheduled_at: Optional[datetime.datetime] = rest_field(name="scheduledAt", visibility=["read"], format="rfc3339")
@@ -1574,6 +1565,8 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
 class RouterJobAssignment(_model_base.Model):
     """Assignment details of a job to a worker.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar assignment_id: The Id of the job assignment. Required.
@@ -1588,7 +1581,7 @@ class RouterJobAssignment(_model_base.Model):
     :vartype closed_at: ~datetime.datetime
     """
 
-    assignment_id: str = rest_field(name="assignmentId")
+    assignment_id: str = rest_field(name="assignmentId", visibility=["read"])
     """The Id of the job assignment. Required."""
     worker_id: Optional[str] = rest_field(name="workerId")
     """The Id of the Worker assigned to the job."""
@@ -1603,7 +1596,6 @@ class RouterJobAssignment(_model_base.Model):
     def __init__(
         self,
         *,
-        assignment_id: str,
         assigned_at: datetime.datetime,
         worker_id: Optional[str] = None,
         completed_at: Optional[datetime.datetime] = None,
@@ -1662,6 +1654,8 @@ class RouterJobNote(_model_base.Model):
 class RouterJobOffer(_model_base.Model):
     """An offer of a job to a worker.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
     :ivar offer_id: The Id of the offer. Required.
@@ -1676,7 +1670,7 @@ class RouterJobOffer(_model_base.Model):
     :vartype expires_at: ~datetime.datetime
     """
 
-    offer_id: str = rest_field(name="offerId")
+    offer_id: str = rest_field(name="offerId", visibility=["read"])
     """The Id of the offer. Required."""
     job_id: str = rest_field(name="jobId")
     """The Id of the job. Required."""
@@ -1691,7 +1685,6 @@ class RouterJobOffer(_model_base.Model):
     def __init__(
         self,
         *,
-        offer_id: str,
         job_id: str,
         capacity_cost: int,
         offered_at: Optional[datetime.datetime] = None,
@@ -1779,7 +1772,7 @@ class RouterQueue(_model_base.Model):
      is distributed to workers.
     :vartype distribution_policy_id: str
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
-     engines to make decisions.
+     engines to make decisions. Values must be primitive values - number, string, boolean.
     :vartype labels: dict[str, any]
     :ivar exception_policy_id: The ID of the exception policy that determines various job
      escalation rules.
@@ -1796,7 +1789,7 @@ class RouterQueue(_model_base.Model):
     """The ID of the distribution policy that will determine how a job is distributed to workers."""
     labels: Optional[Dict[str, Any]] = rest_field()
     """A set of key/value pairs that are identifying attributes used by the rules engines to make
-     decisions."""
+     decisions. Values must be primitive values - number, string, boolean."""
     exception_policy_id: Optional[str] = rest_field(name="exceptionPolicyId")
     """The ID of the exception policy that determines various job escalation rules."""
 
@@ -1834,6 +1827,7 @@ class RouterQueueSelector(_model_base.Model):
      "lessThanOrEqual", "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
+     Values must be primitive values - number, string, boolean.
     :vartype value: any
     """
 
@@ -1844,7 +1838,8 @@ class RouterQueueSelector(_model_base.Model):
      Required. Known values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanOrEqual\",
      \"greaterThan\", and \"greaterThanOrEqual\"."""
     value: Optional[Any] = rest_field()
-    """The value to compare against the actual label value with the given operator."""
+    """The value to compare against the actual label value with the given operator. Values must be
+     primitive values - number, string, boolean."""
 
     @overload
     def __init__(
@@ -1935,9 +1930,10 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :ivar capacity: The total capacity score this worker has to manage multiple concurrent jobs.
     :vartype capacity: int
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
-     engines to make decisions.
+     engines to make decisions. Values must be primitive values - number, string, boolean.
     :vartype labels: dict[str, any]
-    :ivar tags: A set of non-identifying attributes attached to this worker.
+    :ivar tags: A set of non-identifying attributes attached to this worker. Values must be
+     primitive values - number, string, boolean.
     :vartype tags: dict[str, any]
     :ivar channels: The channel(s) this worker can handle and their impact on the workers capacity.
     :vartype channels: list[~azure.communication.jobrouter.models.RouterChannel]
@@ -1964,9 +1960,10 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     """The total capacity score this worker has to manage multiple concurrent jobs."""
     labels: Optional[Dict[str, Any]] = rest_field()
     """A set of key/value pairs that are identifying attributes used by the rules engines to make
-     decisions."""
+     decisions. Values must be primitive values - number, string, boolean."""
     tags: Optional[Dict[str, Any]] = rest_field()
-    """A set of non-identifying attributes attached to this worker."""
+    """A set of non-identifying attributes attached to this worker. Values must be primitive values -
+     number, string, boolean."""
     channels: Optional[List["_models.RouterChannel"]] = rest_field()
     """The channel(s) this worker can handle and their impact on the workers capacity."""
     offers: Optional[List["_models.RouterJobOffer"]] = rest_field(visibility=["read"])
@@ -2066,6 +2063,7 @@ class RouterWorkerSelector(_model_base.Model):
      "lessThanOrEqual", "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
+     Values must be primitive values - number, string, boolean.
     :vartype value: any
     :ivar expires_after_seconds: Describes how long this label selector is valid in seconds.
     :vartype expires_after_seconds: float
@@ -2084,7 +2082,8 @@ class RouterWorkerSelector(_model_base.Model):
      Required. Known values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanOrEqual\",
      \"greaterThan\", and \"greaterThanOrEqual\"."""
     value: Optional[Any] = rest_field()
-    """The value to compare against the actual label value with the given operator."""
+    """The value to compare against the actual label value with the given operator. Values must be
+     primitive values - number, string, boolean."""
     expires_after_seconds: Optional[float] = rest_field(name="expiresAfterSeconds")
     """Describes how long this label selector is valid in seconds."""
     expedite: Optional[bool] = rest_field()
@@ -2335,7 +2334,8 @@ class StaticRouterRule(RouterRule, discriminator="static-rule"):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: The static value this rule always returns.
+    :ivar value: The static value this rule always returns. Values must be primitive values -
+     number, string, boolean.
     :vartype value: any
     :ivar kind: The type discriminator describing a sub-type of Rule. Required. Default value is
      "static-rule".
@@ -2343,7 +2343,8 @@ class StaticRouterRule(RouterRule, discriminator="static-rule"):
     """
 
     value: Optional[Any] = rest_field()
-    """The static value this rule always returns."""
+    """The static value this rule always returns. Values must be primitive values - number, string,
+     boolean."""
     kind: Literal["static-rule"] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing a sub-type of Rule. Required. Default value is
      \"static-rule\"."""

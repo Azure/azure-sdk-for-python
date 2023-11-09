@@ -92,6 +92,10 @@ class AIClient:
             workspace_name=project_name,
             **kwargs,
         )
+
+        if project_name:
+            ai_resource_name = ai_resource_name or self._ml_client.workspaces.get(project_name).workspace_hub.split("/")[-1]
+
         # Client scoped to the AI Resource for operations that need AI resource-scoping
         # instead of project scoping.
         self._ai_resource_ml_client = MLClient(
