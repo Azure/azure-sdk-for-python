@@ -4,10 +4,11 @@
 
 ### Features Added
 
-- Added new features to the EventGridClient that supports `publish_cloud_events`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, and `reject_cloud_events` operations. These features include a `renew_cloud_event_locks` operation, as well as a `release_with_delay` parameter on the `release_cloud_events` operation.
-- The `lock_tokens` parameter in `reject_cloud_events`, `release_cloud_events`, and `acknowledge_cloud_events` was renamed to `reject_options`, `release_options`, and `acknowledge_options`.
-- The `binary_mode` keyword argument on `publish_cloud_events` was added to allow for binary mode support when publishing single Cloud Events.
-- Added new models to support these new operations on EventGridClient.
+- Beta EventGridClient features were added on top of the last GA version of EventGrid.
+  - Added new features to the EventGridClient that supports `publish_cloud_events`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, and `reject_cloud_events` operations. These features include a `renew_cloud_event_locks` operation, as well as a `release_with_delay` parameter on the `release_cloud_events` operation.
+  - The `lock_tokens` parameter in `reject_cloud_events`, `release_cloud_events`, and `acknowledge_cloud_events` was renamed to `reject_options`, `release_options`, and `acknowledge_options`.
+  - The `binary_mode` keyword argument on `publish_cloud_events` was added to allow for binary mode support when publishing single Cloud Events.
+  - Added new models to support these new operations on EventGridClient.
 
 ## 4.16.0 (2023-11-08)
 
@@ -31,6 +32,7 @@
 
 ### Features Added
 
+- Beta EventGridClient features were removed for this and future GA versions.
 - Added new enum values to `SystemEventNames` related to Azure Container Services.
 
 ## 4.12.0b1 (2023-05-22)
