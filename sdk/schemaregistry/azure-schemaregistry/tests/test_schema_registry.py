@@ -30,14 +30,21 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader,
 
 # TODO: add protobuf env var for live testing when protobuf changes have been rolled out
 is_livetest = str(os.getenv("AZURE_TEST_RUN_LIVE")).lower()
-sr_namespaces = {
-    "schemaregistry_avro_fully_qualified_namespace": "fake_resource_avro.servicebus.windows.net",
-    "schemaregistry_json_fully_qualified_namespace": "fake_resource_json.servicebus.windows.net",
-    "schemaregistry_custom_fully_qualified_namespace": "fake_resource_custom.servicebus.windows.net",
-    "schemaregistry_group": "fakegroup"
-}
-if is_livetest == "false":
-    sr_namespaces["schemaregistry_protobuf_fully_qualified_namespace"] = "fake_resource_protobuf.servicebus.windows.net",
+if is_livetest == "true":   # protobuf changes have not been rolled out
+    sr_namespaces = {
+        "schemaregistry_avro_fully_qualified_namespace": "fake_resource_avro.servicebus.windows.net",
+        "schemaregistry_json_fully_qualified_namespace": "fake_resource_json.servicebus.windows.net",
+        "schemaregistry_custom_fully_qualified_namespace": "fake_resource_custom.servicebus.windows.net",
+        "schemaregistry_group": "fakegroup"
+    }
+else:
+    sr_namespaces = {
+        "schemaregistry_avro_fully_qualified_namespace": "fake_resource_avro.servicebus.windows.net",
+        "schemaregistry_json_fully_qualified_namespace": "fake_resource_json.servicebus.windows.net",
+        "schemaregistry_custom_fully_qualified_namespace": "fake_resource_custom.servicebus.windows.net",
+        "schemaregistry_protobuf_fully_qualified_namespace": "fake_resource_protobuf.servicebus.windows.net",
+        "schemaregistry_group": "fakegroup"
+    }
 
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
