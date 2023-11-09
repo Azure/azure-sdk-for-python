@@ -467,8 +467,7 @@ class AzureAppConfigurationClient:
         :type label_filter: str or None
         :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
-        :keyword fields: specify which fields to include in the results. Leave None to include all fields.
-        :type fields: list[str] or None
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields.
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
