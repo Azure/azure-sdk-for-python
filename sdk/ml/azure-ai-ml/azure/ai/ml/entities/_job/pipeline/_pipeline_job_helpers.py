@@ -21,7 +21,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 def process_sdk_component_job_io(
-    io: Dict[str, Union[str, float, bool, Input]],
+    io: Dict,
     io_binding_regex_list: List[str],
 ) -> Tuple[Dict, Dict[str, Union[str, float, bool, Input]]]:
     """Separates SDK ComponentJob inputs that are data bindings (i.e. string inputs prefixed with 'inputs.' or

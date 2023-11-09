@@ -36,7 +36,7 @@ class NodeIOMixin:
         return None
 
     @classmethod
-    def _validate_io(cls, value: dict, allowed_types: Optional[tuple], *, key: Optional[str] = None) -> None:
+    def _validate_io(cls, value: Any, allowed_types: Optional[tuple], *, key: Optional[str] = None) -> None:
         if allowed_types is None:
             return
 
@@ -52,7 +52,10 @@ class NodeIOMixin:
             )
 
     def _build_input(
-        self, name: str, meta: Input, data: Optional[Union[dict, int, bool, float, str, Output, "PipelineInput", Input]]
+        self,
+        name: str,
+        meta: Optional[Input],
+        data: Optional[Union[dict, int, bool, float, str, Output, "PipelineInput", Input]],
     ) -> NodeInput:
         # output mode of last node should not affect input mode of next node
         if isinstance(data, NodeOutput):
@@ -72,7 +75,7 @@ class NodeIOMixin:
                 self._validate_io(data, self._get_supported_inputs_types(), key=name)
         return NodeInput(port_name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name: str, meta: Output, data: Optional[Union[Output, str]]) -> NodeOutput:
+    def _build_output(self, name: str, meta: Optional[Output], data: Optional[Union[Output, str]]) -> NodeOutput:
         if isinstance(data, dict):
             data = Output(**data)
 
@@ -294,7 +297,7 @@ class NodeIOMixin:
         return {**dataset_literal_inputs, **input_bindings}
 
     @classmethod
-    def _from_rest_outputs(cls, outputs: Dict[str, Union[str, dict]]) -> Dict[str, Output]:
+    def _from_rest_outputs(cls, outputs: Dict[str, Union[str, dict]]) -> Dict:
         """Load outputs from rest outputs.
 
         :param outputs: The REST outputs
@@ -346,18 +349,21 @@ def flatten_dict(
     :rtype: Dict
     """
     _result = {}
-    for key, val in dct.items():
-        # to support passing dict value as parameter group
-        if allow_dict_fields and key in allow_dict_fields and isinstance(val, dict):
-            # for child dict, all values are allowed to be dict
-            for flattened_key, flattened_val in flatten_dict(val, _type, allow_dict_fields=list(val.keys())).items():
-                _result[key + "." + flattened_key] = flattened_val
-            continue
-        val = GroupInput.custom_class_value_to_attr_dict(val)
-        if isinstance(val, _type):
-            _result.update(val.flatten(group_parameter_name=key))
-            continue
-        _result[key] = val
+    if dct is not None:
+        for key, val in dct.items():
+            # to support passing dict value as parameter group
+            if allow_dict_fields and key in allow_dict_fields and isinstance(val, dict):
+                # for child dict, all values are allowed to be dict
+                for flattened_key, flattened_val in flatten_dict(
+                    val, _type, allow_dict_fields=list(val.keys())
+                ).items():
+                    _result[key + "." + flattened_key] = flattened_val
+                continue
+            val = GroupInput.custom_class_value_to_attr_dict(val)
+            if isinstance(val, _type):
+                _result.update(val.flatten(group_parameter_name=key))
+                continue
+            _result[key] = val
     return _result
 
 
@@ -496,12 +502,12 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
     """Provides ability to wrap pipeline job inputs/outputs and build data bindings
     dynamically."""
 
-    def _build_input(
-        self, name: str, meta: Input, data: Optional[Union[int, bool, float, str, Output, PipelineInput, Input]]
-    ) -> "PipelineInput":
+    def _build_input(self, name: str, meta: Optional[Input], data: Any) -> "PipelineInput":
         return PipelineInput(name=name, meta=meta, data=data, owner=self)
 
-    def _build_output(self, name: str, meta: Output, data: Optional[Union[Output, str]]) -> "PipelineOutput":
+    def _build_output(
+        self, name: str, meta: Optional[Union[Input, Output]], data: Optional[Union[Output, str]]
+    ) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
         result = PipelineOutput(port_name=name, meta=meta, data=data, owner=self)
         return result

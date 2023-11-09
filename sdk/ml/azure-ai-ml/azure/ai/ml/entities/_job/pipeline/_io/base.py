@@ -88,7 +88,7 @@ class InputOutputBase(ABC):
 
     def __init__(
         self,
-        meta: Union[Input, Output],
+        meta: Optional[Union[Input, Output]],
         data: Optional[Union[int, bool, float, str, Input, Output, "PipelineInput"]],
         default_data: Optional[Union[int, bool, float, str, Input, Output]] = None,
         **kwargs: Any,
@@ -280,7 +280,7 @@ class NodeInput(InputOutputBase):
     def __init__(
         self,
         port_name: str,
-        meta: Input,
+        meta: Optional[Input],
         *,
         data: Optional[Union[int, bool, float, str, Output, "PipelineInput", Input]] = None,
         owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
@@ -367,9 +367,9 @@ class NodeInput(InputOutputBase):
             )
         return _data
 
-    def _to_job_input(self) -> Optional[Union[Input, str]]:
+    def _to_job_input(self) -> Optional[Union[Input, str, Output]]:
         """convert the input to Input, this logic will change if backend contract changes."""
-        result: Any = None
+        result: Optional[Union[Input, str, Output]] = None
 
         if self._data is None:
             # None data means this input is not configured.
@@ -463,7 +463,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     def __init__(
         self,
         port_name: str,
-        meta: Union[Input, Output],
+        meta: Optional[Union[Input, Output]],
         *,
         data: Optional[Union[Output, str]] = None,
         owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
@@ -689,7 +689,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
 
-    def __init__(self, name: str, meta: Input, group_names: Optional[List[str]] = None, **kwargs: Any):
+    def __init__(self, name: str, meta: Optional[Input], group_names: Optional[List[str]] = None, **kwargs: Any):
         """Initialize a PipelineInput.
 
         :param name: The name of the input.
@@ -774,7 +774,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         full_name = "%s.%s" % (".".join(self._group_names), self._port_name) if self._group_names else self._port_name
         return f"${{{{parent.inputs.{full_name}}}}}"
 
-    def _to_input(self) -> Union[Input, Output]:
+    def _to_input(self) -> Optional[Union[Input, Output]]:
         """Convert pipeline input to component input for pipeline component.
 
         :return: The component input
