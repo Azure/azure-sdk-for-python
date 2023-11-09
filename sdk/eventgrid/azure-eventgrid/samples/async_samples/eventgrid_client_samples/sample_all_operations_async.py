@@ -13,8 +13,8 @@ from azure.eventgrid.aio import EventGridClient
 
 EVENTGRID_KEY: str = os.environ["EVENTGRID_KEY"]
 EVENTGRID_ENDPOINT: str = os.environ["EVENTGRID_ENDPOINT"]
-TOPIC_NAME: str = os.environ["TOPIC_NAME"]
-EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENT_SUBSCRIPTION_NAME"]
+TOPIC_NAME: str = os.environ["EVENTGRID_TOPIC_NAME"]
+EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 
 
 # Create a client
@@ -86,7 +86,7 @@ async def run():
                 release_result = await client.release_cloud_events(
                     topic_name=TOPIC_NAME,
                     event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                    lock_tokens=release_tokens,
+                    release_options=release_tokens,
                 )
             except HttpResponseError:
                 raise
@@ -100,7 +100,7 @@ async def run():
                 ack_result = await client.acknowledge_cloud_events(
                     topic_name=TOPIC_NAME,
                     event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                    lock_tokens=ack_tokens,
+                    acknowledge_options=ack_tokens,
                 )
             except HttpResponseError:
                 raise
@@ -114,7 +114,7 @@ async def run():
                 reject_result = await client.reject_cloud_events(
                     topic_name=TOPIC_NAME,
                     event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                    lock_tokens=reject_tokens,
+                    reject_options=reject_tokens,
                 )
             except HttpResponseError:
                 raise
