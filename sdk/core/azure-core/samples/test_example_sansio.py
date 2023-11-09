@@ -186,4 +186,4 @@ def test_example_per_call_policy():
     response: HttpResponse = client.send_request(request)
 
     # Checking that the response is coming from bing.
-    assert "bing" in response.request.url
+    assert "bing" in response.url
