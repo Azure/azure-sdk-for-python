@@ -339,23 +339,6 @@ def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
     return key, label
 
 
-def _is_retryable_error(error: HttpResponseError) -> bool:
-    """Determine whether the service error should be silently retried after a backoff period, or raised.
-    Don't know what errors this applies to yet, so just always raising for now.
-    :param error: The http error to check.
-    :type error: ~azure.core.exceptions.HttpResponseError
-    :return: Whether the error should be retried.
-    :rtype: bool
-    """
-    # 408: Request Timeout
-    # 429: Too Many Requests
-    # 500: Internal Server Error
-    # 502: Bad Gateway
-    # 503: Service Unavailable
-    # 504: Gateway Timeout
-    return error.status_code in [408, 429, 500, 502, 503, 504]
-
-
 class _RefreshTimer:
     """
     A timer that tracks the next refresh time and the number of attempts.
@@ -374,7 +357,7 @@ class _RefreshTimer:
         self._next_refresh_time = time.time() + self._interval
         self._attempts = 1
 
-    def retry(self) -> None:
+    def backoff(self) -> None:
         self._next_refresh_time = time.time() + self._calculate_backoff() / 1000
         self._attempts += 1
 
@@ -443,6 +426,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         if not self._refresh_timer.needs_refresh():
             logging.debug("Refresh called but refresh interval not elapsed.")
             return
+        success = False
         try:
             with self._update_lock:
                 need_refresh = False
@@ -483,24 +467,18 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         self._on_refresh_success()
                 # Even if we don't need to refresh, we should reset the timer
                 self._refresh_timer.reset()
+                success = True
                 return
-        except (ServiceRequestError, ServiceResponseError) as e:
-            logging.debug("Failed to refresh, retrying: %r", e)
-            self._refresh_timer.retry()
-        except HttpResponseError as e:
+        except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
-            self._refresh_timer.retry()
-            if _is_retryable_error(e):
-                return
+            self._refresh_timer.backoff()
             if self._on_refresh_error:
                 self._on_refresh_error(e)
                 return
             raise
-        except Exception as e:
-            if self._on_refresh_error:
-                self._on_refresh_error(e)
-                return
-            raise
+        finally:
+            if not success:
+                self._refresh_timer.backoff()
 
     def _load_all(self, **kwargs):
         configuration_settings = {}

@@ -42,7 +42,6 @@ from .._azureappconfigurationprovider import (
     _get_headers,
     _RefreshTimer,
     _build_sentinel,
-    _is_retryable_error,
 )
 from .._user_agent import USER_AGENT
 
@@ -324,7 +323,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         if not self._refresh_on:
             logging.debug("Refresh called but no refresh options set.")
             return
-
+        success = False
         try:
             async with self._update_lock:
                 if not self._refresh_timer.needs_refresh():
@@ -364,24 +363,18 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         await self._on_refresh_success()
                 # Even if we don't need to refresh, we should reset the timer
                 self._refresh_timer.reset()
+                success = True
                 return
-        except (ServiceRequestError, ServiceResponseError) as e:
-            logging.debug("Failed to refresh, retrying: %r", e)
-            self._refresh_timer.retry()
-        except HttpResponseError as e:
+        except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
-            self._refresh_timer.retry()
-            if _is_retryable_error(e):
-                return
+            self._refresh_timer.backoff()
             if self._on_refresh_error:
                 await self._on_refresh_error(e)
                 return
             raise
-        except Exception as e:
-            if self._on_refresh_error:
-                await self._on_refresh_error(e)
-                return
-            raise
+        finally:
+            if not success:
+                self._refresh_timer.backoff()
 
     async def _load_all(self, **kwargs):
         configuration_settings = {}
