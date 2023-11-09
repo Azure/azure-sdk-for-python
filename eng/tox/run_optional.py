@@ -1,5 +1,5 @@
 import argparse
-from ci_tools.scenario.generation import prepare_and_test
+from ci_tools.scenario.generation import prepare_and_test_optional
 
 
 if __name__ == "__main__":
@@ -25,4 +25,4 @@ if __name__ == "__main__":
     )
 
     args, _ = parser.parse_known_args()
-    exit(prepare_and_test(mapped_args=args))
+    exit(prepare_and_test_optional(mapped_args=args))

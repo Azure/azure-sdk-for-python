@@ -317,7 +317,7 @@ def build_and_discover_package(setuppy_path: str, dist_dir: str, target_setup: s
     return prebuilt_packages
 
 
-def prepare_and_test(mapped_args: argparse.Namespace) -> int:
+def prepare_and_test_optional(mapped_args: argparse.Namespace) -> int:
     parsed_package = ParsedSetup.from_path(mapped_args.target)
 
     if in_ci():
