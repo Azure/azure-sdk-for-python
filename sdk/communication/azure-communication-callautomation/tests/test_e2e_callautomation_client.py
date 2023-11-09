@@ -56,7 +56,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         # ensure invitation is sent
         time.sleep(3)
 
-        call_connection.cancel_add_participant(add_participant_result.invitation_id)
+        call_connection.cancel_add_participant_operation(add_participant_result.invitation_id)
 
         cancel_add_participant_succeeded_event = self.check_for_event('CancelAddParticipantSucceeded', call_connection._call_connection_id, timedelta(seconds=15))
 
