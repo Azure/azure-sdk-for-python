@@ -33,21 +33,14 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 # TODO: add protobuf env var for live testing when protobuf changes have been rolled out
 is_livetest = str(os.getenv("AZURE_TEST_RUN_LIVE")).lower()
-if is_livetest == "true":   # protobuf changes have not been rolled out
-    sr_namespaces = {
-        "schemaregistry_avro_fully_qualified_namespace": "fake_resource_avro.servicebus.windows.net",
-        "schemaregistry_json_fully_qualified_namespace": "fake_resource_json.servicebus.windows.net",
-        "schemaregistry_custom_fully_qualified_namespace": "fake_resource_custom.servicebus.windows.net",
-        "schemaregistry_group": "fakegroup"
-    }
-else:
-    sr_namespaces = {
-        "schemaregistry_avro_fully_qualified_namespace": "fake_resource_avro.servicebus.windows.net",
-        "schemaregistry_json_fully_qualified_namespace": "fake_resource_json.servicebus.windows.net",
-        "schemaregistry_custom_fully_qualified_namespace": "fake_resource_custom.servicebus.windows.net",
-        "schemaregistry_protobuf_fully_qualified_namespace": "fake_resource_protobuf.servicebus.windows.net",
-        "schemaregistry_group": "fakegroup"
-    }
+sr_namespaces = {
+    "schemaregistry_avro_fully_qualified_namespace": "fake_resource_avro.servicebus.windows.net",
+    "schemaregistry_json_fully_qualified_namespace": "fake_resource_json.servicebus.windows.net",
+    "schemaregistry_custom_fully_qualified_namespace": "fake_resource_custom.servicebus.windows.net",
+    "schemaregistry_group": "fakegroup"
+}
+if is_livetest != "true":
+    sr_namespaces["schemaregistry_protobuf_fully_qualified_namespace"] = "fake_resource_protobuf.servicebus.windows.net"
 
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
@@ -87,13 +80,8 @@ elif current_folder == "async_tests":
 else: #current_folder == "azure-schemaregistry"
     proto_file = os.path.join(os.getcwd(), 'tests', 'person.proto' )
 
-try:
-    with open(proto_file, "r") as f:
-        PROTOBUF_SCHEMA_STR = f.read()
-except FileNotFoundError:   # if running tests from async_tests folder
-    proto_file = os.path.join(os.getcwd(), '..', 'person.proto' )
-    with open(proto_file, "r") as f:
-        PROTOBUF_SCHEMA_STR = f.read()
+with open(proto_file, "r") as f:
+    PROTOBUF_SCHEMA_STR = f.read()
 
 AVRO_FORMAT = "Avro"
 JSON_FORMAT = "Json"
@@ -106,13 +94,11 @@ custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
 protobuf_args = (PROTOBUF_FORMAT, PROTOBUF_SCHEMA_STR)
 
 # TODO: add protobuf schema group to arm template + enable livetests
-is_livetest = str(os.getenv("AZURE_TEST_RUN_LIVE")).lower()
-if is_livetest == "true":   # protobuf changes have not been rolled out
-    format_params = [avro_args, json_args, custom_args]
-    format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
-else:
-    format_params = [avro_args, json_args, custom_args, protobuf_args]
-    format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT, PROTOBUF_FORMAT]
+format_params = [avro_args, json_args, custom_args]
+format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
+if is_livetest != "true":   # protobuf changes have not been rolled out
+    format_params.append(protobuf_args)
+    format_ids.append(PROTOBUF_FORMAT)
 
 class ArgPasser:
     def __call__(self, fn):
