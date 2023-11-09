@@ -37,7 +37,7 @@ def add_sanitizers(test_proxy):
     set_default_session_settings()
     add_oauth_response_sanitizer()
 
-    connection_str = os.environ.get('COMMUNICATION_SMS_LIVETEST_DYNAMIC_CONNECTION_STRING')
+    connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
     if connection_str is not None:
         endpoint, _ = parse_connection_str(connection_str)
         resource_name = endpoint.split(".")[0]
