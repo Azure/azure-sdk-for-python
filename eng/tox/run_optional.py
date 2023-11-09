@@ -13,14 +13,14 @@ if __name__ == "__main__":
         "-o",
         "--optional",
         dest="optional",
-        help="The target environment. If not matched to any of the named optional environments, hard exit. If not provided, all optional environments will be run.",
+        help="The target environment. If not provided, all optional environments will be run.",
         required=False,
     )
 
     parser.add_argument(
         "--temp",
         dest="temp_dir",
-        help="The target environment. If not matched to any of the named optional environments, hard exit. If not provided, all optional environments will be run.",
+        help="The temp directory this script will work in.",
         required=False,
     )
 

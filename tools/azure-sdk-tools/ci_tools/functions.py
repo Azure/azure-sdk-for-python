@@ -393,7 +393,7 @@ def pip_install(requirements: List[str], include_dependencies: bool = True, pyth
 
     exe = python_executable or sys.executable
 
-    command = [sys.executable, "-m", "pip", "install"]
+    command = [exe, "-m", "pip", "install"]
 
     if requirements:
         command.extend([req.strip() for req in requirements])
@@ -401,11 +401,11 @@ def pip_install(requirements: List[str], include_dependencies: bool = True, pyth
         return True
 
     try:
-        result = subprocess.check_call(command)
-        return True
+        subprocess.check_call(command)
     except subprocess.CalledProcessError as f:
         return False
 
+    return True
 
 def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
     """
@@ -472,12 +472,11 @@ def pytest(args: [], cwd: str = None, python_executable: str = None) -> bool:
     commands.extend(args)
 
     logging.info(commands)
-    breakpoint()
     if cwd:
         result = subprocess.run(commands, cwd=cwd)
     else:
         result = subprocess.run(commands)
-
+    
     return result.returncode == 0
 
 

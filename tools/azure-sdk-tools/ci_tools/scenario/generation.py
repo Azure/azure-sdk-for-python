@@ -1,16 +1,8 @@
-from typing import List, Any
-
 import argparse
 import os
 import sys
 import subprocess
 import shutil
-
-try:
-    import tomllib as toml
-except:
-    import tomli as toml
-import tomli_w as tomlw
 import logging
 
 from ci_tools.environment_exclusions import is_check_enabled
@@ -19,13 +11,11 @@ from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import (
     get_config_setting,
     discover_prebuilt_package,
-    pip_install_requirements_file,
     pip_install,
     pip_uninstall,
-    cleanup_directory,
 )
 from ci_tools.build import cleanup_build_artifacts, create_package
-from ci_tools.parsing import ParsedSetup, parse_require, parse_freeze_output
+from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import get_package_from_repo, find_whl, get_pip_list_output, pytest
 from .managed_virtual_env import ManagedVirtualEnv
 
@@ -38,20 +28,6 @@ def prepare_environment(package_folder: str, venv_directory: str, env_name: str)
     venv.create()
 
     return venv.python_executable
-
-
-def create_scenario_file(package_folder: str, optional_config: str) -> str:
-    """
-    Used to coalesce 3 items:
-        - The package being installed
-        - The dev_requirements for the package
-        - An optional config, which includes possible additions to the install list
-
-    And create a single file installable by `pip install -r <>`
-
-    This file will be dropped into the package root, but gitignored. It is regenerated with every invocation of the `optional` env.
-    """
-    pass
 
 
 def create_package_and_install(
@@ -359,9 +335,15 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
 
     for config in optional_configs:
         env_name = config.get("name")
+
+        if mapped_args.optional:
+            if env_name != mapped_args.optional:
+                logging.info(f"{env_name} does not match targeted environment {mapped_args.optional}, skipping this environment.")
+                continue
+
         environment_exe = prepare_environment(mapped_args.target, mapped_args.temp_dir, env_name)
 
-        # install package
+        # install the package (either building manually or pulling from prebuilt directory)
         create_package_and_install(
             distribution_directory=mapped_args.temp_dir,
             target_setup=mapped_args.target,
@@ -377,9 +359,8 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
         dev_reqs = os.path.join(mapped_args.target, "dev_requirements.txt")
         test_tools = os.path.join(mapped_args.target, "..", "..", "..", "eng", "test_tools.txt")
 
-        # install the dev requirements and test_tools requirements files
+        # install the dev requirements and test_tools requirements files to ensure tests can run
         install_result = pip_install(["-r", dev_reqs, "-r", test_tools], python_executable=environment_exe)
-
         if not install_result:
             logging.error(
                 f"Unable to complete installation of dev_requirements.txt/ci_tools.txt for {parsed_package.name}, check command output above."
@@ -387,6 +368,7 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
             config_results.append(False)
             break
 
+        # install any packages that are added in the optional config
         additional_installs = config.get("install", [])
         install_result = pip_install(additional_installs, python_executable=environment_exe)
         if not install_result:
@@ -396,7 +378,7 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
             config_results.append(False)
             break
 
-        # uninstall anything additional
+        # uninstall any configured packages from the optional config
         additional_uninstalls = config.get("uninstall", [])
         uninstall_result = pip_uninstall(additional_uninstalls, python_executable=environment_exe)
         if not uninstall_result:
@@ -406,7 +388,7 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
             config_results.append(False)
             break
 
-        # invoke tests with custom arguments if need be
+        # invoke tests
         pytest_args = [
             "-rsfE",
             f"--junitxml={mapped_args.target}/test-junit-optional-{env_name}.xml",
@@ -418,11 +400,8 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
             "--ignore=.eggs",
             mapped_args.target,
         ]
-
         pytest_args.extend(config.get("additional_pytest_args", []))
-
         logging.info(f"Invoking tests for package {parsed_package.name} and optional environment {env_name}")
-
         config_results.append(pytest(pytest_args, python_executable=environment_exe))
 
     if all(config_results):

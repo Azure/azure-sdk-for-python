@@ -13,10 +13,10 @@ strict_sphinx = true
 name = "no_requests"
 install = []
 uninstall = ["requests"]
-additional_pytest_args = ["-k", "_async.py"]
+additional_pytest_args = ["--ignore-glob='*_async.py'"]
 
 [[tool.azure-sdk-build.optional]]
 name = "no_aiohttp"
 install = []
 uninstall = ["aiohttp"]
-additional_pytest_args = ["-k", "not _async.py"]
+additional_pytest_args = ["-k", "_async.py"]

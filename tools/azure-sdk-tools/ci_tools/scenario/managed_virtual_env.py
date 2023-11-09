@@ -1,6 +1,7 @@
 import os, logging, glob, subprocess, sys
 from ci_tools.functions import cleanup_directory
 
+
 class ManagedVirtualEnv:
     def __init__(self, path: str, name: str):
         self.path = os.path.join(path, name)
