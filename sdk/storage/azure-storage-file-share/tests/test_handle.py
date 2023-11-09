@@ -213,7 +213,7 @@ class TestStorageHandle(StorageRecordedTestCase):
         assert handles_info['closed_handles_count'] > 1
         assert handles_info['failed_handles_count'] == 0
 
-    @pytest.mark.playback_test_only
+    # @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
     def test_list_handles_access_rights(self, **kwargs):
@@ -224,7 +224,7 @@ class TestStorageHandle(StorageRecordedTestCase):
         # only run when recording, or playing back in CI
 
         self._setup(storage_account_name, storage_account_key)
-        share = self.fsc.get_share_client('testshare')
+        share = self.fsc.get_share_client('mytestshare')
         root = share.get_directory_client('testdir')
         file_client = root.get_file_client('testfile.txt')
 
@@ -234,7 +234,7 @@ class TestStorageHandle(StorageRecordedTestCase):
         # Assert
         self._validate_handles(handles)
         handles[0]['access_rights'][0] == 'Write'
-
+        handles[0]['client_name'][0] is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
