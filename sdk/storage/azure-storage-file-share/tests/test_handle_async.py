@@ -34,6 +34,7 @@ class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
         # verify basic fields
         # path may or may not be present
         # last_connect_time_string has been missing in the test
+        assert handles[0].client_name is not None
         assert handles[0].id is not None
         assert handles[0].file_id is not None
         assert handles[0].parent_id is not None
@@ -94,7 +95,7 @@ class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
         assert handles_info['closed_handles_count'] > 1
         assert handles_info['failed_handles_count'] == 0
 
-    # @pytest.mark.playback_test_only
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy_async
     async def test_list_handles_access_rights(self, **kwargs):
@@ -117,7 +118,6 @@ class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
         # Assert
         self._validate_handles(handles)
         handles[0]['access_rights'][0] == 'Write'
-        handles[0]['client_name'][0] is not None
 
 
 # ------------------------------------------------------------------------------
