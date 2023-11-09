@@ -99,7 +99,9 @@ class DataTransferJob(Job, JobIOMixin):
         raise NotImplementedError("Not support submit standalone job for now")
 
     @classmethod
-    def _build_source_sink(cls, io_dict: Union[Dict, Database, FileSystem]) -> Union[(Database, FileSystem)]:
+    def _build_source_sink(
+        cls, io_dict: Optional[Union[Dict, Database, FileSystem]]
+    ) -> Optional[Union[(Database, FileSystem)]]:
         if io_dict is None:
             return io_dict
         if isinstance(io_dict, (Database, FileSystem)):
@@ -254,7 +256,7 @@ class DataTransferImportJob(DataTransferJob):
         """
 
         component: str = ""
-        if self.source.type == ExternalDataType.DATABASE:
+        if self.source is not None and self.source.type == ExternalDataType.DATABASE:
             component = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
             component = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
@@ -321,7 +323,7 @@ class DataTransferExportJob(DataTransferJob):
         :rtype: str
         """
         component: str = ""
-        if self.sink.type == ExternalDataType.DATABASE:
+        if self.sink is not None and self.sink.type == ExternalDataType.DATABASE:
             component = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
             msg = "Sink is a required field for export data task and we don't support exporting file system for now."

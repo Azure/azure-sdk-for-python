@@ -105,7 +105,7 @@ class _GroupAttrDict(InputsAttrDict):
     def __dir__(self) -> List:
         return list(super().__dir__()) + list(self.keys())
 
-    def flatten(self, group_parameter_name: Optional[str]) -> Dict[str, Input]:
+    def flatten(self, group_parameter_name: Optional[str]) -> Dict:
         # Return the flattened result of self
 
         group_parameter_name = group_parameter_name if group_parameter_name else ""

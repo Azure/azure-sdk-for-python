@@ -610,7 +610,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             # so we just leave the type inference work to backend
             self._data = Output(type=None)
 
-    def _build_data(self, data: T) -> T:
+    def _build_data(self, data: T) -> Any:
         """Build output data according to assigned input, eg: node.outputs.key = data
 
         :param data: The data
