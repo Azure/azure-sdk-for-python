@@ -14,7 +14,7 @@ from azure.mgmt.hybridcontainerservice import HybridContainerServiceMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hybridcontainerservice
 # USAGE
-    python list_orchestrators.py
+    python put_vm_skus.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,12 +29,18 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.hybrid_container_service.list_orchestrators(
+    response = client.begin_put_vm_skus(
         custom_location_resource_uri="subscriptions/a3e42606-29b1-4d7d-b1d9-9ff6b9d3c71b/resourceGroups/test-arcappliance-resgrp/providers/Microsoft.ExtendedLocation/customLocations/testcustomlocation",
-    )
+        skus={
+            "extendedLocation": {
+                "name": "/subscriptions/a3e42606-29b1-4d7d-b1d9-9ff6b9d3c71b/resourcegroups/test-arcappliance-resgrp/providers/microsoft.extendedlocation/customlocations/testcustomlocation",
+                "type": "CustomLocation",
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2022-09-01-preview/examples/ListOrchestrators.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2023-11-15-preview/examples/PutVmSkus.json
 if __name__ == "__main__":
     main()

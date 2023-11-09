@@ -10,23 +10,34 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentPoolProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AgentPoolProvisioningState."""
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    DELETING = "Deleting"
-    IN_PROGRESS = "InProgress"
-    CANCELED = "Canceled"
+    INTERNAL = "Internal"
 
 
-class AutoUpgradeOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates whether the Arc agents on the provisioned clusters be upgraded automatically to the
-    latest version. Defaults to Enabled.
+class AddonPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Observed phase of the addon on the target cluster. Possible values include: 'pending',
+    'provisioning', 'provisioning {HelmChartInstalled}', 'provisioning {MSICertificateDownloaded}',
+    'provisioned', 'deleting', 'failed', 'upgrading'.
     """
 
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
+    PENDING = "pending"
+    PROVISIONING = "provisioning"
+    PROVISIONING_HELM_CHART_INSTALLED_ = "provisioning {HelmChartInstalled}"
+    PROVISIONING_MSI_CERTIFICATE_DOWNLOADED_ = "provisioning {MSICertificateDownloaded}"
+    PROVISIONED = "provisioned"
+    DELETING = "deleting"
+    FAILED = "failed"
+    UPGRADING = "upgrading"
+
+
+class AzureHybridBenefit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether Azure Hybrid Benefit is opted in."""
+
+    TRUE = "True"
+    FALSE = "False"
+    NOT_APPLICABLE = "NotApplicable"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -38,48 +49,10 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
-class DeploymentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Observed deployment state of the Arc Agents on the target cluster. Possible values include:
-    'pending', 'provisioning', 'provisioned', 'deleting', 'failed', 'upgrading'.
-    """
+class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The extended location type."""
 
-    PENDING = "pending"
-    PROVISIONING = "provisioning"
-    PROVISIONED = "provisioned"
-    DELETING = "deleting"
-    FAILED = "failed"
-    UPGRADING = "upgrading"
-
-
-class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """LicenseType - The licenseType to use for Windows VMs. Windows_Server is used to enable Azure
-    Hybrid User Benefits for Windows VMs. Possible values include: 'None', 'Windows_Server'.
-    """
-
-    WINDOWS_SERVER = "Windows_Server"
-    NONE = "None"
-
-
-class LoadBalancerSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """LoadBalancerSku - The load balancer sku for the provisioned cluster. Possible values:
-    'unstacked-haproxy', 'stacked-kube-vip', 'stacked-metallb', 'unmanaged'. The default is
-    'unmanaged'.
-    """
-
-    UNSTACKED_HAPROXY = "unstacked-haproxy"
-    STACKED_KUBE_VIP = "stacked-kube-vip"
-    STACKED_METALLB = "stacked-metallb"
-    UNMANAGED = "unmanaged"
-
-
-class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Mode - AgentPoolMode represents mode of an agent pool. Possible values include: 'System', 'LB',
-    'User'. Default is 'User'.
-    """
-
-    SYSTEM = "System"
-    LB = "LB"
-    USER = "User"
+    CUSTOM_LOCATION = "CustomLocation"
 
 
 class NetworkPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -91,13 +64,42 @@ class NetworkPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FLANNEL = "flannel"
 
 
-class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OsType - OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
-    Possible values include: 'Linux', 'Windows'.
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
     """
 
-    LINUX = "Linux"
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+
+class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the OS SKU used by the agent pool. The default is CBLMariner if OSType is Linux. The
+    default is Windows2019 when OSType is Windows.
+    """
+
+    CBL_MARINER = "CBLMariner"
+    """Use Mariner as the OS for node images."""
+    WINDOWS2019 = "Windows2019"
+    """Use Windows2019 as the OS for node images."""
+    WINDOWS2022 = "Windows2022"
+    """Use Windows2022 as the OS for node images."""
+
+
+class OsSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The particular KubernetesVersion's Image's OS SKU (CBLMariner, Windows, Windows2022)."""
+
+    CBL_MARINER = "CBLMariner"
+    WINDOWS2019 = "Windows2019"
+    WINDOWS2022 = "Windows2022"
+
+
+class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The particular KubernetesVersion's Image's OS Type (Linux, Windows)."""
+
     WINDOWS = "Windows"
+    LINUX = "Linux"
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -113,11 +115,16 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATED = "Created"
 
 
-class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity used for the provisioned cluster. The type SystemAssigned, includes a
-    system created identity. The type None means no identity is assigned to the provisioned
-    cluster.
-    """
+class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
 
-    NONE = "None"
-    SYSTEM_ASSIGNED = "SystemAssigned"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    UPDATING = "Updating"
+    UPGRADING = "Upgrading"
+    IN_PROGRESS = "InProgress"
+    ACCEPTED = "Accepted"
+    CREATED = "Created"
