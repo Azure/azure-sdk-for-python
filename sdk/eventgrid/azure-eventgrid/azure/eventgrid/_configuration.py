@@ -8,7 +8,6 @@
 
 from typing import Any, TYPE_CHECKING, Union
 
-from azure.core.configuration import Configuration
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
@@ -19,9 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class EventGridClientConfiguration(    # pylint: disable=too-many-instance-attributes,name-too-long
-    Configuration
-):
+class EventGridClientConfiguration:    # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for EventGridClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -35,7 +32,7 @@ class EventGridClientConfiguration(    # pylint: disable=too-many-instance-attri
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2023-06-01-preview". Note that overriding this default value may result in unsupported
+     "2023-10-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -46,8 +43,7 @@ class EventGridClientConfiguration(    # pylint: disable=too-many-instance-attri
         credential: Union[AzureKeyCredential, "TokenCredential"],
         **kwargs: Any
     ) -> None:
-        super(EventGridClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop('api_version', "2023-06-01-preview")
+        api_version: str = kwargs.pop('api_version', "2023-10-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -59,6 +55,7 @@ class EventGridClientConfiguration(    # pylint: disable=too-many-instance-attri
         self.api_version = api_version
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://eventgrid.azure.net/.default'])
         kwargs.setdefault('sdk_moniker', 'eventgrid/{}'.format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _infer_policy(self, **kwargs):
@@ -77,9 +74,9 @@ class EventGridClientConfiguration(    # pylint: disable=too-many-instance-attri
         self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
             self.authentication_policy = self._infer_policy(**kwargs)

@@ -12,8 +12,8 @@ from azure.core.exceptions import HttpResponseError
 
 EVENTGRID_KEY: str = os.environ["EVENTGRID_KEY"]
 EVENTGRID_ENDPOINT: str = os.environ["EVENTGRID_ENDPOINT"]
-TOPIC_NAME: str = os.environ["TOPIC_NAME"]
-EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENT_SUBSCRIPTION_NAME"]
+TOPIC_NAME: str = os.environ["EVENTGRID_TOPIC_NAME"]
+EVENT_SUBSCRIPTION_NAME: str = os.environ["EVENTGRID_EVENT_SUBSCRIPTION_NAME"]
 
 # Create a client
 client = EventGridClient(EVENTGRID_ENDPOINT, AzureKeyCredential(EVENTGRID_KEY))
@@ -27,7 +27,7 @@ async def run():
             ack_events = await client.acknowledge_cloud_events(
                 topic_name=TOPIC_NAME,
                 event_subscription_name=EVENT_SUBSCRIPTION_NAME,
-                lock_tokens=lock_tokens,
+                acknowledge_options=lock_tokens,
             )
             print(ack_events)
     except HttpResponseError:

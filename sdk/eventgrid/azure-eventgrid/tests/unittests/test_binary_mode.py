@@ -7,7 +7,6 @@ import pytest
 import json
 import base64
 from azure.eventgrid._operations._patch import _to_http_request
-from azure.eventgrid._model_base import AzureJSONEncoder
 from azure.eventgrid.models import *
 from azure.core.messaging import CloudEvent
 

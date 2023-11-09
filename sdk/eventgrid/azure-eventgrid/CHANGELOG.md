@@ -22,6 +22,13 @@ This version and all future versions will require Python 3.8+.
 ### Features Added
 
 - Added new enums values to `SystemEventNames` related to Azure Storage and Azure VMware Solution.
+## 4.17.0b1 (2023-11-09)
+
+### Features Added
+
+- Added new features to the EventGridClient that supports `publish_cloud_events`, `receive_cloud_events`, `acknowledge_cloud_events` , `release_cloud_events`, and `reject_cloud_events` operations. These features include a `renew_cloud_event_locks` operation, as well as a `release_with_delay` parameter on the `release_cloud_events` operation.
+- `lock_tokens` parameter in `reject_cloud_events`, `release_cloud_events`, and `acknowledge_cloud_events` renamed to `reject_options`, `release_options`, and `acknowledge_options`.
+- Added new models to support these new operations on EventGridClient.
 
 ## 4.16.0 (2023-11-08)
 
