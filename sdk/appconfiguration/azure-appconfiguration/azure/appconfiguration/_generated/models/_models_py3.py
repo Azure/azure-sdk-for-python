@@ -317,26 +317,37 @@ class KeyValueListResult(_serialization.Model):
 
     :ivar items: The collection value.
     :vartype items: list[~azure.appconfiguration.models.KeyValue]
+    :ivar etag: An identifier representing the returned state of the resource.
+    :vartype etag: str
     :ivar next_link: The URI that can be used to request the next set of paged results.
     :vartype next_link: str
     """
 
     _attribute_map = {
         "items": {"key": "items", "type": "[KeyValue]"},
+        "etag": {"key": "etag", "type": "str"},
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self, *, items: Optional[List["_models.KeyValue"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        items: Optional[List["_models.KeyValue"]] = None,
+        etag: Optional[str] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword items: The collection value.
         :paramtype items: list[~azure.appconfiguration.models.KeyValue]
+        :keyword etag: An identifier representing the returned state of the resource.
+        :paramtype etag: str
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.items = items
+        self.etag = etag
         self.next_link = next_link
 
 
