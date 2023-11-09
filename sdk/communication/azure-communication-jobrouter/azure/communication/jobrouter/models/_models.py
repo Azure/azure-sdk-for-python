@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines,anomalous-backslash-in-string,name-too-long
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -297,6 +297,25 @@ class CancelJobOptions(_model_base.Model):
     """Indicates the outcome of the job, populate this field with your own custom values. If not
      provided, default value of \"Cancelled\" is set."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        note: Optional[str] = None,
+        disposition_code: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class CancelJobResult(_model_base.Model):
     """Response payload from cancelling a job."""
@@ -396,6 +415,26 @@ class CloseJobOptions(_model_base.Model):
     note: Optional[str] = rest_field()
     """A note that will be appended to the jobs' Notes collection with the current timestamp."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        disposition_code: Optional[str] = None,
+        close_at: Optional[datetime.datetime] = None,
+        note: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class CloseJobResult(_model_base.Model):
     """Response payload from closing a job."""
@@ -411,6 +450,24 @@ class CompleteJobOptions(_model_base.Model):
 
     note: Optional[str] = rest_field()
     """A note that will be appended to the jobs' Notes collection with the current timestamp."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        note: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class CompleteJobResult(_model_base.Model):
@@ -573,6 +630,24 @@ class DeclineJobOfferOptions(_model_base.Model):
      declined this job unless the worker is de-registered and re-registered.  If a RetryOfferAt time
      is provided, then the job will be re-matched to eligible workers at the retry time in UTC.  The
      worker that declined the job will also be eligible for the job at that time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        retry_offer_at: Optional[datetime.datetime] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class DeclineJobOfferResult(_model_base.Model):
