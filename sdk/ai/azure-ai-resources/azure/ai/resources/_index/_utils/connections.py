@@ -7,8 +7,8 @@ import os
 import re
 from typing import Optional, Union
 
-from azure.ai.resources.index._utils.logging import get_logger
-from azure.ai.resources.index._utils.requests import create_session_with_retry, send_post_request
+from azure.ai.resources._index._utils.logging import get_logger
+from azure.ai.resources._index._utils.requests import create_session_with_retry, send_post_request
 
 try:
     from azure.ai.resources.entities import BaseConnection

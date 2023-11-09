@@ -4,7 +4,7 @@ from typing import List
 
 import numpy as np
 
-from azure.ai.resources.index._langchain.vendor.utils.math import cosine_similarity
+from azure.ai.resources._index._langchain.vendor.utils.math import cosine_similarity
 
 
 def maximal_marginal_relevance(

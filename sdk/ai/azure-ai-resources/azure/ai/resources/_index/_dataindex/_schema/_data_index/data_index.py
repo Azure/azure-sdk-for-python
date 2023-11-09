@@ -52,7 +52,7 @@ class CitationRegexSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.resources.index._dataindex.entities.data_index import CitationRegex
+        from azure.ai.resources._index._dataindex.entities.data_index import CitationRegex
 
         return CitationRegex(**data)
 
@@ -139,7 +139,7 @@ class IndexSourceSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.resources.index._dataindex.entities.data_index import IndexSource
+        from azure.ai.resources._index._dataindex.entities.data_index import IndexSource
 
         return IndexSource(**data)
 
@@ -173,7 +173,7 @@ class EmbeddingSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.resources.index._dataindex.entities.data_index import Embedding
+        from azure.ai.resources._index._dataindex.entities.data_index import Embedding
 
         return Embedding(**data)
 
@@ -207,7 +207,7 @@ class IndexStoreSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.resources.index._dataindex.entities.data_index import IndexStore
+        from azure.ai.resources._index._dataindex.entities.data_index import IndexStore
 
         return IndexStore(**data)
 
@@ -221,6 +221,6 @@ class DataIndexSchema(DataSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.resources.index._dataindex.entities.data_index import DataIndex
+        from azure.ai.resources._index._dataindex.entities.data_index import DataIndex
 
         return DataIndex(**data)

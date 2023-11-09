@@ -9,7 +9,7 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.resources.index._dataindex._schema._data_index import DataIndexTypes
+from azure.ai.resources._index._dataindex._schema._data_index import DataIndexTypes
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Data
@@ -261,7 +261,7 @@ class DataIndex(Data):
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "DataIndex":
-        from azure.ai.resources.index._dataindex._schema._data_index import DataIndexSchema
+        from azure.ai.resources._index._dataindex._schema._data_index import DataIndexSchema
 
         data = data or {}
         params_override = params_override or []
@@ -273,6 +273,6 @@ class DataIndex(Data):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        from azure.ai.resources.index._dataindex._schema._data_index import DataIndexSchema
+        from azure.ai.resources._index._dataindex._schema._data_index import DataIndexSchema
 
         return DataIndexSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

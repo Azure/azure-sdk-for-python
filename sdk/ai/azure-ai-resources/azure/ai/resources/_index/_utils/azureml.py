@@ -4,7 +4,7 @@
 """Functions for interacting with AzureML."""
 from typing import Dict, List
 
-from azure.ai.resources.index._utils.logging import get_logger
+from azure.ai.resources._index._utils.logging import get_logger
 
 logger = get_logger(__name__)
 

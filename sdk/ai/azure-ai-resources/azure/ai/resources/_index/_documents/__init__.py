@@ -7,16 +7,16 @@ import re
 from pathlib import Path
 from typing import Callable, Iterable, Iterator, List, Optional, Union
 
-from azure.ai.resources.index._documents.chunking import ChunkedDocument, split_documents
-from azure.ai.resources.index._documents.cracking import (
+from azure.ai.resources._index._documents.chunking import ChunkedDocument, split_documents
+from azure.ai.resources._index._documents.cracking import (
     SUPPORTED_EXTENSIONS,
     BaseDocumentLoader,
     DocumentSource,
     crack_documents,
     files_to_document_source,
 )
-from azure.ai.resources.index._documents.document import Document, StaticDocument
-from azure.ai.resources.index._utils.logging import get_logger
+from azure.ai.resources._index._documents.document import Document, StaticDocument
+from azure.ai.resources._index._utils.logging import get_logger
 
 logger = get_logger(__name__)
 

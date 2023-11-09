@@ -6,11 +6,11 @@ import base64
 import json
 from typing import Any, Iterable, List, Optional, Tuple
 
-from azure.ai.resources.index._utils.logging import get_logger
-from azure.ai.resources.index._utils.requests import send_post_request
-from azure.ai.resources.index._langchain.vendor.embeddings.base import Embeddings
-from azure.ai.resources.index._langchain.vendor.schema.document import Document
-from azure.ai.resources.index._langchain.vendor.vectorstores.base import VectorStore
+from azure.ai.resources._index._utils.logging import get_logger
+from azure.ai.resources._index._utils.requests import send_post_request
+from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.vectorstores.base import VectorStore
 
 logger = get_logger("langchain.acs")
 

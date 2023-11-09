@@ -4,7 +4,7 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from azure.ai.resources.index._dataindex.entities._assets._artifacts.data import Data
+from azure.ai.resources._index._dataindex.entities._assets._artifacts.data import Data
 
 __all__ = [
     "Data",

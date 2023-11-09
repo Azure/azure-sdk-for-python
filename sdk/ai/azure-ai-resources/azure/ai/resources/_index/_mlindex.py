@@ -11,9 +11,9 @@ from typing import Any, Dict, Iterator, Optional, Union
 
 import yaml
 from azure.core.credentials import TokenCredential
-from azure.ai.resources.index._documents import Document, DocumentChunksIterator
-from azure.ai.resources.index._embeddings import EmbeddingsContainer
-from azure.ai.resources.index._utils.connections import (
+from azure.ai.resources._index._documents import Document, DocumentChunksIterator
+from azure.ai.resources._index._embeddings import EmbeddingsContainer
+from azure.ai.resources._index._utils.connections import (
     Connection,
     WorkspaceConnection,
     get_connection_credential,
@@ -21,7 +21,7 @@ from azure.ai.resources.index._utils.connections import (
     get_id_from_connection,
     get_target_from_connection,
 )
-from azure.ai.resources.index._utils.logging import (
+from azure.ai.resources._index._utils.logging import (
     get_logger,
     langchain_version,
     packages_versions_for_compatibility,
@@ -160,7 +160,7 @@ class MLIndex:
             activity_logger.activity_info["embeddings_api_type"] = self.embeddings_config.get("api_type", "none")
 
             if index_kind == "acs":
-                from azure.ai.resources.index._indexes.azure_search import import_azure_search_or_so_help_me
+                from azure.ai.resources._index._indexes.azure_search import import_azure_search_or_so_help_me
 
                 import_azure_search_or_so_help_me()
 
@@ -210,7 +210,7 @@ class MLIndex:
                         user_agent=f"azureml-rag=={version}/mlindex,langchain=={langchain_version}",
                     )
                 else:
-                    from azure.ai.resources.index._langchain.acs import AzureCognitiveSearchVectorStore
+                    from azure.ai.resources._index._langchain.acs import AzureCognitiveSearchVectorStore
 
                     logger.warning(f"azure-search-documents=={azure_search_documents_version} not compatible langchain.vectorstores.azuresearch yet, using REST client based VectorStore.")
 
@@ -235,7 +235,7 @@ class MLIndex:
                 store = None
                 engine = self.index_config.get("engine")
                 if engine == "langchain.vectorstores.FAISS":
-                    from azure.ai.resources.index._langchain.vendor.vectorstores.faiss import FAISS
+                    from azure.ai.resources._index._langchain.vendor.vectorstores.faiss import FAISS
 
                     embeddings = EmbeddingsContainer.from_metadata(self.embeddings_config.copy()).as_langchain_embeddings(credential=credential)
 
@@ -246,13 +246,13 @@ class MLIndex:
                         fs.download(f"{uri.rstrip('/')}/index.faiss", f"{str(tmpdir)}")
                         store = FAISS.load_local(str(tmpdir), embeddings)
                 elif engine.endswith("indexes.faiss.FaissAndDocStore"):
-                    from azure.ai.resources.index._indexes.faiss import FaissAndDocStore
+                    from azure.ai.resources._index._indexes.faiss import FaissAndDocStore
                     error_fmt_str = """Failed to import langchain faiss bridge module with: {e}\n"
                         This could be due to an incompatible change in langchain since this bridge was implemented.
                         If you understand what has changed you could implement your own wrapper of azure.ai.tools.mlindex._indexes.faiss.FaissAndDocStore.
                         """
                     try:
-                        from azure.ai.resources.index._langchain.faiss import azureml_faiss_as_langchain_faiss
+                        from azure.ai.resources._index._langchain.faiss import azureml_faiss_as_langchain_faiss
                     except Exception as e:
                         logger.warning(error_fmt_str.format(e=e))
                         azureml_faiss_as_langchain_faiss = None
@@ -277,7 +277,7 @@ class MLIndex:
         index_kind = self.index_config.get("kind", None)
         if index_kind == "acs":
             if self.index_config.get("field_mapping", {}).get("embedding", None) is None:
-                from azure.ai.resources.index._langchain.acs import AzureCognitiveSearchVectorStore
+                from azure.ai.resources._index._langchain.acs import AzureCognitiveSearchVectorStore
 
                 connection_credential = get_connection_credential(self.index_config, credential=credential)
 
@@ -307,7 +307,7 @@ class MLIndex:
         """
         Converts MLIndex config into a client for the underlying Index, may download files.
 
-        An azure.search.documents.SearchClient for acs indexes or an azure.ai.resources.index._indexes.indexFaissAndDocStore for faiss indexes.
+        An azure.search.documents.SearchClient for acs indexes or an azure.ai.resources._index._indexes.indexFaissAndDocStore for faiss indexes.
         """
         index_kind = self.index_config.get("kind", None)
         if index_kind == "acs":
@@ -321,7 +321,7 @@ class MLIndex:
                 user_agent=f"azureml-rag=={version}/mlindex"
             )
         elif index_kind == "faiss":
-            from azure.ai.resources.index._indexes.faiss import FaissAndDocStore
+            from azure.ai.resources._index._indexes.faiss import FaissAndDocStore
 
             embeddings = self.get_langchain_embeddings(credential=credential)
 
@@ -367,7 +367,7 @@ class MLIndex:
             else:
                 self.embeddings_config["connection_type"] = "workspace_connection"
                 if isinstance(embedding_connection, str):
-                    from azure.ai.resources.index._utils.connections import get_connection_by_id_v2
+                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
                     embedding_connection = get_connection_by_id_v2(embedding_connection, credential=credential)
                 self.embeddings_config["connection"] = {"id": get_id_from_connection(embedding_connection)}
         if index_connection:
@@ -376,7 +376,7 @@ class MLIndex:
             else:
                 self.index_config["connection_type"] = "workspace_connection"
                 if isinstance(index_connection, str):
-                    from azure.ai.resources.index._utils.connections import get_connection_by_id_v2
+                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
                     index_connection = get_connection_by_id_v2(index_connection, credential=credential)
                 self.index_config["connection"] = {"id": get_id_from_connection(index_connection)}
         self.save(just_config=True)
@@ -425,7 +425,7 @@ class MLIndex:
         -------
             MLIndex
         """
-        from azure.ai.resources.index._documents import DocumentChunksIterator, split_documents
+        from azure.ai.resources._index._documents import DocumentChunksIterator, split_documents
 
         with track_activity(logger, "MLIndex.from_files"):
             chunked_documents = DocumentChunksIterator(
@@ -512,7 +512,7 @@ class MLIndex:
                 if isinstance(embeddings_model, str):
                     connection_args = {}
                     if "open_ai" in embeddings_model:
-                        from azure.ai.resources.index._utils.connections import get_connection_by_id_v2
+                        from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
 
                         if embeddings_connection:
                             if isinstance(embeddings_connection, str):
@@ -598,8 +598,8 @@ class MLIndex:
                 uri=Path(output_path),
             )
         elif index_type == "acs":
-            from azure.ai.resources.index._tasks.update_acs import create_index_from_raw_embeddings
-            from azure.ai.resources.index._utils.connections import get_connection_by_id_v2
+            from azure.ai.resources._index._tasks.update_acs import create_index_from_raw_embeddings
+            from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
 
             if not index_connection:
                 index_config = {

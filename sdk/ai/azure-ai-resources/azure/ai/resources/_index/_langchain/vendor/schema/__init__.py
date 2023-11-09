@@ -6,7 +6,7 @@ from typing import (
     List,
 )
 
-from azure.ai.resources.index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
 
 
 class BaseRetriever(ABC):

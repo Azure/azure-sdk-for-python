@@ -10,10 +10,10 @@ import traceback
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.resources.index._embeddings import EmbeddingsContainer
-from azure.ai.resources.index._mlindex import MLIndex
-from azure.ai.resources.index._tasks.crack_and_chunk_and_embed import crack_and_chunk_and_embed, str2bool
-from azure.ai.resources.index._utils.logging import (
+from azure.ai.resources._index._embeddings import EmbeddingsContainer
+from azure.ai.resources._index._mlindex import MLIndex
+from azure.ai.resources._index._tasks.crack_and_chunk_and_embed import crack_and_chunk_and_embed, str2bool
+from azure.ai.resources._index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
     enable_stdout_logging,
@@ -74,23 +74,23 @@ def crack_and_chunk_and_embed_and_index(
 
         if index_type == "acs":
             logger.info(f"Creating ACS index from embeddings_container with config {index_config}")
-            from azure.ai.resources.index._tasks.update_acs import create_index_from_raw_embeddings
+            from azure.ai.resources._index._tasks.update_acs import create_index_from_raw_embeddings
 
             connection_args = {}
             if index_connection is not None:
                 connection_args["connection_type"] = "workspace_connection"
                 if isinstance(embeddings_connection, str):
-                    from azure.ai.resources.index._utils.connections import get_connection_by_id_v2
+                    from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
 
                     connection_args["connection"] = {"id": index_connection}
                     connection = get_connection_by_id_v2(index_connection)
                 else:
-                    from azure.ai.resources.index._utils.connections import get_id_from_connection
+                    from azure.ai.resources._index._utils.connections import get_id_from_connection
 
                     connection_args["connection"] = {"id": get_id_from_connection(index_connection)}
                     connection = index_connection
 
-                from azure.ai.resources.index._utils.connections import (
+                from azure.ai.resources._index._utils.connections import (
                     get_metadata_from_connection,
                     get_target_from_connection,
                 )
@@ -106,7 +106,7 @@ def crack_and_chunk_and_embed_and_index(
             )
         elif index_type == "faiss":
             logger.info(f"Creating Faiss index from embeddings_container with config {index_config}")
-            mlindex = embeddings_container.write_as_faiss_mlindex(output_path, engine="azure.ai.resources.index._indexes.faiss.FaissAndDocStore")
+            mlindex = embeddings_container.write_as_faiss_mlindex(output_path, engine="azure.ai.resources._index._indexes.faiss.FaissAndDocStore")
         else:
             raise ValueError(f"Unsupported index_type {index_type}")
 

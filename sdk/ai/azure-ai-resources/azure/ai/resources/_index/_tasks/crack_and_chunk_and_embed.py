@@ -12,15 +12,15 @@ from collections import OrderedDict
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.resources.index._documents import (
+from azure.ai.resources._index._documents import (
     DocumentChunksIterator,
 )
-from azure.ai.resources.index._documents.chunking import file_extension_splitters, split_documents
-from azure.ai.resources.index._documents.cracking import crack_documents, file_extension_loaders, files_to_document_source
-from azure.ai.resources.index._embeddings import DataEmbeddedDocument, EmbeddedDocumentSource, EmbeddingsContainer
-from azure.ai.resources.index._mlindex import MLIndex
-from azure.ai.resources.index._tasks.crack_and_chunk import custom_loading, get_activity_logging_filter, str2bool
-from azure.ai.resources.index._utils.logging import (
+from azure.ai.resources._index._documents.chunking import file_extension_splitters, split_documents
+from azure.ai.resources._index._documents.cracking import crack_documents, file_extension_loaders, files_to_document_source
+from azure.ai.resources._index._embeddings import DataEmbeddedDocument, EmbeddedDocumentSource, EmbeddingsContainer
+from azure.ai.resources._index._mlindex import MLIndex
+from azure.ai.resources._index._tasks.crack_and_chunk import custom_loading, get_activity_logging_filter, str2bool
+from azure.ai.resources._index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
     enable_stdout_logging,
@@ -60,7 +60,7 @@ def crack_and_chunk_and_embed(
             if isinstance(embeddings_connection, str):
                 connection_args["connection"] = {"id": embeddings_connection}
             else:
-                from azure.ai.resources.index._utils.connections import get_id_from_connection
+                from azure.ai.resources._index._utils.connections import get_id_from_connection
 
                 connection_args["connection"] = {"id": get_id_from_connection(embeddings_connection)}
 

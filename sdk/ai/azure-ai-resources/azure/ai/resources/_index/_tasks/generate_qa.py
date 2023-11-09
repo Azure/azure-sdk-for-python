@@ -12,11 +12,11 @@ from typing import Dict
 import openai
 import pandas as pd
 from azureml.core import Run
-from azure.ai.resources.index.data_generation.qa import QADataGenerator, GenerationResult, QAType
-from azure.ai.resources.index._utils.connections import (get_connection_by_id_v2,
+from azure.ai.resources._index.data_generation.qa import QADataGenerator, GenerationResult, QAType
+from azure.ai.resources._index._utils.connections import (get_connection_by_id_v2,
                                            get_connection_credential,
                                            connection_to_credential)
-from azure.ai.resources.index._utils.logging import (enable_appinsights_logging,
+from azure.ai.resources._index._utils.logging import (enable_appinsights_logging,
                                        enable_stdout_logging, get_logger,
                                        track_activity, _logger_factory)
 
@@ -26,7 +26,7 @@ logger = get_logger("generate_qa")
 
 def get_model_config(llm_config: Dict[str, str], openai_api_type: str, openai_api_version: str, activity_logger: Logger):
     """Get model_config from llm_config. llm_config format is used in Baker pipelines.
-    model_config format is accepted by `azure.ai.resources.index._models.init_llm()`."""
+    model_config format is accepted by `azure.ai.resources._index._models.init_llm()`."""
     model_config = llm_config.copy()
     model_config['kind'] = model_config['type']
     del model_config['type']

@@ -21,22 +21,22 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 import yaml
 from azure.core.credentials import TokenCredential
-from azure.ai.resources.index._documents import Document, DocumentChunksIterator, DocumentSource, StaticDocument
-from azure.ai.resources.index._embeddings.openai import OpenAIEmbedder
-from azure.ai.resources.index._langchain.vendor.document_loaders.base import BaseLoader
-from azure.ai.resources.index._langchain.vendor.embeddings.base import Embeddings as Embedder
-from azure.ai.resources.index._langchain.vendor.schema.document import Document as LangChainDocument
-from azure.ai.resources.index._models import init_open_ai_from_config, parse_model_uri
-from azure.ai.resources.index._utils.logging import get_logger, track_activity
-from azure.ai.resources.index._utils.tokens import tiktoken_cache_dir
+from azure.ai.resources._index._documents import Document, DocumentChunksIterator, DocumentSource, StaticDocument
+from azure.ai.resources._index._embeddings.openai import OpenAIEmbedder
+from azure.ai.resources._index._langchain.vendor.document_loaders.base import BaseLoader
+from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings as Embedder
+from azure.ai.resources._index._langchain.vendor.schema.document import Document as LangChainDocument
+from azure.ai.resources._index._models import init_open_ai_from_config, parse_model_uri
+from azure.ai.resources._index._utils.logging import get_logger, track_activity
+from azure.ai.resources._index._utils.tokens import tiktoken_cache_dir
 
 logger = get_logger(__name__)
 
 
 def _args_to_openai_embedder(arguments: dict):
     import openai
-    from azure.ai.resources.index._langchain.vendor.embeddings.openai import OpenAIEmbeddings
-    from azure.ai.resources.index._utils.logging import langchain_version
+    from azure.ai.resources._index._langchain.vendor.embeddings.openai import OpenAIEmbeddings
+    from azure.ai.resources._index._utils.logging import langchain_version
 
     arguments = init_open_ai_from_config(arguments)
 
@@ -97,7 +97,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
         )
         return embedder
     elif embedding_kind == "hugging_face":
-        from azure.ai.resources.index._langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
+        from azure.ai.resources._index._langchain.vendor.embeddings.huggingface import HuggingFaceEmbeddings
 
         args = copy.deepcopy(arguments)
 
@@ -144,7 +144,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
 def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[TokenCredential] = None) -> Callable[[List[str]], List[List[float]]]:
     """Get an embedding function from the given arguments."""
     if "open_ai" in embedding_kind:
-        # from azure.ai.resources.index._langchain.openai import patch_openai_embedding_retries
+        # from azure.ai.resources._index._langchain.openai import patch_openai_embedding_retries
 
         # embedder = _args_to_openai_embedder(arguments)
 
@@ -1039,8 +1039,8 @@ class EmbeddingsContainer:
             FaissClass = FAISS
             import_faiss_or_so_help_me = dependable_faiss_import
         elif engine.endswith("indexes.faiss.FaissAndDocStore"):
-            from azure.ai.resources.index._docstore import FileBasedDocstore
-            from azure.ai.resources.index._indexes.faiss import FaissAndDocStore, import_faiss_or_so_help_me
+            from azure.ai.resources._index._docstore import FileBasedDocstore
+            from azure.ai.resources._index._indexes.faiss import FaissAndDocStore, import_faiss_or_so_help_me
 
             def add_doc(doc_id, emb_doc, documents):
                 documents.append(
@@ -1095,7 +1095,7 @@ class EmbeddingsContainer:
 
     def write_as_faiss_mlindex(self, output_path: Path, engine: str = "langchain.vectorstores.FAISS"):
         """Writes the embeddings to a FAISS MLIndex file."""
-        from azure.ai.resources.index._mlindex import MLIndex
+        from azure.ai.resources._index._mlindex import MLIndex
 
         faiss_index = self.as_faiss_index(engine)
 

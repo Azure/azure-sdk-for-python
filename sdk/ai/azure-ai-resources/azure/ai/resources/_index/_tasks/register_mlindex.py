@@ -10,8 +10,8 @@ import traceback
 import fsspec
 import yaml
 from azureml.core import Run
-from azure.ai.resources.index._asset_client.client import get_rest_client, register_new_data_asset_version
-from azure.ai.resources.index._utils.logging import (
+from azure.ai.resources._index._asset_client.client import get_rest_client, register_new_data_asset_version
+from azure.ai.resources._index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
     enable_stdout_logging,

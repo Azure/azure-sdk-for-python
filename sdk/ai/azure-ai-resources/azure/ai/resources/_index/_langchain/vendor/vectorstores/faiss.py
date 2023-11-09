@@ -10,11 +10,11 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
 
-from azure.ai.resources.index._langchain.vendor.docstore.base import AddableMixin, Docstore
-from azure.ai.resources.index._langchain.vendor.schema.document import Document
-from azure.ai.resources.index._langchain.vendor.embeddings.base import Embeddings
-from azure.ai.resources.index._langchain.vendor.vectorstores.base import VectorStore
-from azure.ai.resources.index._langchain.vendor.vectorstores.utils import maximal_marginal_relevance
+from azure.ai.resources._index._langchain.vendor.docstore.base import AddableMixin, Docstore
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings
+from azure.ai.resources._index._langchain.vendor.vectorstores.base import VectorStore
+from azure.ai.resources._index._langchain.vendor.vectorstores.utils import maximal_marginal_relevance
 
 
 def dependable_faiss_import(no_avx2: Optional[bool] = None) -> Any:

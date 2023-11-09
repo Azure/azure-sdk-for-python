@@ -4,7 +4,7 @@
 """Azure Cognitive Search based Vector Index."""
 from types import ModuleType
 
-from azure.ai.resources.index._utils.logging import get_logger, version
+from azure.ai.resources._index._utils.logging import get_logger, version
 
 logger = get_logger("indexes.azure_search")
 

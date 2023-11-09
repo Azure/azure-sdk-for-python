@@ -10,7 +10,7 @@ from functools import lru_cache
 
 import pkg_resources
 
-COMPONENT_NAME = "azure.ai.resources.index"
+COMPONENT_NAME = "azure.ai.resources._index"
 instrumentation_key = ""
 
 # Gather versions of packages that are used in the RAG codebase to aid in discovering
@@ -141,7 +141,7 @@ class LoggerFactory:
     def get_logger(self, name, level=None):
         """Get a logger with the given name and level."""
         if name not in self.loggers:
-            logger = logging.getLogger(f"azure.ai.resources.index.{name}")
+            logger = logging.getLogger(f"azure.ai.resources._index.{name}")
             if level is not None:
                 logger.setLevel(level)
             else:

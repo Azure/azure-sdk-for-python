@@ -5,8 +5,8 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from azure.ai.resources.index._dataindex.entities import Data, CitationRegex, DataIndex, Embedding, IndexSource, IndexStore, index_data
-from azure.ai.resources.index._dataindex.operations import DataOperations
+from azure.ai.resources._index._dataindex.entities import Data, CitationRegex, DataIndex, Embedding, IndexSource, IndexStore, index_data
+from azure.ai.resources._index._dataindex.operations import DataOperations
 
 __all__ = [
     "DataOperations",

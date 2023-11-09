@@ -22,9 +22,9 @@ from typing import (
     TypeVar,
 )
 
-from azure.ai.resources.index._langchain.vendor.schema.document import Document
-from azure.ai.resources.index._langchain.vendor.embeddings.base import Embeddings
-from azure.ai.resources.index._langchain.vendor.schema import BaseRetriever
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings
+from azure.ai.resources._index._langchain.vendor.schema import BaseRetriever
 
 VST = TypeVar("VST", bound="VectorStore")
 

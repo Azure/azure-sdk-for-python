@@ -17,7 +17,7 @@ def tiktoken_cache_dir(cache_dir: Optional[Path] = "default"):
     """
     Set TikToken cache directory in environment while in context.
 
-    Default cache_dir is the encodings cached in `azure.ai.resources.index._utils.encodings`.
+    Default cache_dir is the encodings cached in `azure.ai.resources._index._utils.encodings`.
     cl100k_base and gpt2 encodings are cached.
     """
     if cache_dir == "default":

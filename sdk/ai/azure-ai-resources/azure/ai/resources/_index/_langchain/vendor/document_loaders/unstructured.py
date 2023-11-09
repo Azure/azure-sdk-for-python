@@ -5,8 +5,8 @@
 from abc import ABC, abstractmethod
 from typing import IO, Any, Callable, Dict, List, Optional, Sequence, Union
 
-from azure.ai.resources.index._langchain.vendor.schema.document import Document
-from azure.ai.resources.index._langchain.vendor.document_loaders.base import BaseLoader
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.document_loaders.base import BaseLoader
 
 
 def satisfies_min_unstructured_version(min_version: str) -> bool:

@@ -5,7 +5,7 @@
 import time
 from typing import Any, Dict, List, Optional
 
-from azure.ai.resources.index._utils.logging import get_logger
+from azure.ai.resources._index._utils.logging import get_logger
 
 logger = get_logger("embeddings.openai")
 

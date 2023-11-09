@@ -19,9 +19,9 @@ from azure.ai.ml.entities._job.pipeline._component_translatable import Component
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.resources.index._dataindex._schema._data_index import DataIndexTypes
-from azure.ai.resources.index._dataindex.constants._component import LLMRAGComponentUri
-from azure.ai.resources.index._dataindex.entities.data_index import DataIndex
+from azure.ai.resources._index._dataindex._schema._data_index import DataIndexTypes
+from azure.ai.resources._index._dataindex.constants._component import LLMRAGComponentUri
+from azure.ai.resources._index._dataindex.entities.data_index import DataIndex
 
 SUPPORTED_INPUTS = [
     LegacyAssetTypes.PATH,
@@ -240,8 +240,8 @@ def data_index_incremental_update_acs(
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
     input_data_override: Optional[Input] = None,
 ):
-    from azure.ai.resources.index._dataindex.data_index.models import build_model_protocol
-    from azure.ai.resources.index._dataindex.dsl._pipeline_decorator import pipeline
+    from azure.ai.resources._index._dataindex.data_index.models import build_model_protocol
+    from azure.ai.resources._index._dataindex.dsl._pipeline_decorator import pipeline
 
     crack_and_chunk_and_embed_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK_AND_EMBED)
     update_acs_index_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_UPDATE_ACS_INDEX)
@@ -394,8 +394,8 @@ def data_index_faiss(
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
     input_data_override: Optional[Input] = None,
 ):
-    from azure.ai.resources.index._dataindex.data_index.models import build_model_protocol
-    from azure.ai.resources.index._dataindex.dsl._pipeline_decorator import pipeline
+    from azure.ai.resources._index._dataindex.data_index.models import build_model_protocol
+    from azure.ai.resources._indexx._dataindex.dsl._pipeline_decorator import pipeline
 
     crack_and_chunk_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK)
     generate_embeddings_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_GENERATE_EMBEDDINGS)
@@ -532,8 +532,8 @@ def data_index_acs(
     identity: Optional[Union[ManagedIdentityConfiguration, UserIdentityConfiguration]] = None,
     input_data_override: Optional[Input] = None,
 ):
-    from azure.ai.resources.index._dataindex.data_index.models import build_model_protocol
-    from azure.ai.resources.index._dataindex.dsl._pipeline_decorator import pipeline
+    from azure.ai.resources._index._dataindex.data_index.models import build_model_protocol
+    from azure.ai.resources._index._dataindex.dsl._pipeline_decorator import pipeline
 
     crack_and_chunk_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_CRACK_AND_CHUNK)
     generate_embeddings_component = get_component_obj(ml_client, LLMRAGComponentUri.LLM_RAG_GENERATE_EMBEDDINGS)

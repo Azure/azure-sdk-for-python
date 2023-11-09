@@ -48,8 +48,8 @@ from typing import (
     cast,
 )
 
-from azure.ai.resources.index._langchain.vendor.schema.document import Document
-from azure.ai.resources.index._langchain.vendor.schema.document import BaseDocumentTransformer
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.schema.document import BaseDocumentTransformer
 
 logger = logging.getLogger(__name__)
 

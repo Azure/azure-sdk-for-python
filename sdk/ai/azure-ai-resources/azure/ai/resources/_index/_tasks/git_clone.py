@@ -7,8 +7,8 @@ import os
 import time
 import traceback
 
-from azure.ai.resources.index._utils.git import clone_repo, get_keyvault_authentication
-from azure.ai.resources.index._utils.logging import get_logger, enable_stdout_logging, enable_appinsights_logging, track_activity, _logger_factory
+from azure.ai.resources._index._utils.git import clone_repo, get_keyvault_authentication
+from azure.ai.resources._index._utils.logging import get_logger, enable_stdout_logging, enable_appinsights_logging, track_activity, _logger_factory
 
 logger = get_logger('git_clone')
 
@@ -16,7 +16,7 @@ def main(args, logger, activity_logger):
     try:
         connection_id = os.environ.get('AZUREML_WORKSPACE_CONNECTION_ID_GIT')
         if connection_id is not None and connection_id != '':
-            from azure.ai.resources.index._utils.connections import get_connection_by_id_v2
+            from azure.ai.resources._index._utils.connections import get_connection_by_id_v2
 
             connection = get_connection_by_id_v2(connection_id)
             if args.git_repository != connection['properties']['target']:

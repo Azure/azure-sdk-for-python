@@ -5,8 +5,8 @@
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.resources.index._documents import Document, StaticDocument
-from azure.ai.resources.index._utils.logging import get_logger
+from azure.ai.resources._index._documents import Document, StaticDocument
+from azure.ai.resources._index._utils.logging import get_logger
 
 logger = get_logger(__name__)
 

@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Any, Optional
 
 import mmh3
-from azure.ai.resources.index._utils.tokens import token_length_function
+from azure.ai.resources._index._utils.tokens import token_length_function
 
 
 @dataclass

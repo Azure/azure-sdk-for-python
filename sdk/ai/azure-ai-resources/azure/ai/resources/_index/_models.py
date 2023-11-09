@@ -8,12 +8,12 @@ import os
 from typing import Optional
 
 from azure.core.credentials import TokenCredential
-from azure.ai.resources.index._utils.connections import (
+from azure.ai.resources._index._utils.connections import (
     connection_to_credential,
     get_connection_by_id_v2,
     get_connection_credential,
 )
-from azure.ai.resources.index._utils.logging import get_logger
+from azure.ai.resources._index._utils.logging import get_logger
 
 logger = get_logger(__name__)
 

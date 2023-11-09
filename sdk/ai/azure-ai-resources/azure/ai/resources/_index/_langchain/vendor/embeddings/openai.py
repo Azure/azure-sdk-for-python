@@ -29,7 +29,7 @@ from tenacity import (
     wait_exponential,
 )
 
-from azure.ai.resources.index._langchain.vendor.embeddings.base import Embeddings
+from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings
 
 logger = logging.getLogger(__name__)
 

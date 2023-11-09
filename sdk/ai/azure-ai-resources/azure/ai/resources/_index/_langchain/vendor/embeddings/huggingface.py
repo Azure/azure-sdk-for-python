@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from azure.ai.resources.index._langchain.vendor.embeddings.base import Embeddings
+from azure.ai.resources._index._langchain.vendor.embeddings.base import Embeddings
 
 DEFAULT_MODEL_NAME = "sentence-transformers/all-mpnet-base-v2"
 DEFAULT_INSTRUCT_MODEL = "hkunlp/instructor-large"

@@ -21,8 +21,8 @@ from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.operations._data_operations import DataOperations, logger
-from azure.ai.resources.index._dataindex.data_index import index_data as index_data_func
-from azure.ai.resources.index._dataindex.entities.data_index import DataIndex
+from azure.ai.resources._index._dataindex.data_index import index_data as index_data_func
+from azure.ai.resources._index._dataindex.entities.data_index import DataIndex
 
 
 @monitor_with_activity(logger, "Data.IndexData", ActivityType.PUBLICAPI)

@@ -13,16 +13,16 @@ from pathlib import Path
 from typing import Iterator, List
 
 import pandas as pd
-from azure.ai.resources.index._documents import (
+from azure.ai.resources._index._documents import (
     SUPPORTED_EXTENSIONS,
     ChunkedDocument,
     Document,
     DocumentChunksIterator,
     DocumentSource,
 )
-from azure.ai.resources.index._documents.chunking import file_extension_splitters, split_documents
-from azure.ai.resources.index._documents.cracking import BaseDocumentLoader, crack_documents, file_extension_loaders
-from azure.ai.resources.index._utils.logging import (
+from azure.ai.resources._index._documents.chunking import file_extension_splitters, split_documents
+from azure.ai.resources._index._documents.cracking import BaseDocumentLoader, crack_documents, file_extension_loaders
+from azure.ai.resources._index._utils.logging import (
     _logger_factory,
     enable_appinsights_logging,
     enable_stdout_logging,

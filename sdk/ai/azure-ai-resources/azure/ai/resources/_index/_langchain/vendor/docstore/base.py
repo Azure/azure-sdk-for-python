@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Union
 
-from azure.ai.resources.index._langchain.vendor.schema.document import Document
+from azure.ai.resources._index._langchain.vendor.schema.document import Document
 
 
 class Docstore(ABC):
