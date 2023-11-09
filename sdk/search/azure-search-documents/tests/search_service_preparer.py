@@ -17,7 +17,7 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 
-SERVICE_URL_FMT = "https://{}.{}/indexes?api-version=2021-04-30-Preview"
+SERVICE_URL_FMT = "https://{}.{}/indexes?api-version=2023-11-01"
 TIME_TO_SLEEP = 3
 SEARCH_ENDPOINT_SUFFIX = environ.get("SEARCH_ENDPOINT_SUFFIX", "search.windows.net")
 
@@ -58,10 +58,6 @@ def _clean_up_indexes(endpoint, api_key):
     # wipe the synonym maps which seem to survive the index
     for map in client.get_synonym_maps():
         client.delete_synonym_map(map.name)
-
-    # wipe out any existing aliases
-    for alias in client.list_aliases():
-        client.delete_alias(alias)
 
     # wipe any existing indexes
     for index in client.list_indexes():

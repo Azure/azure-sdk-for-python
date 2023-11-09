@@ -65,10 +65,6 @@ parameters:
 jobs:
   - job: 'Build'
     timeoutInMinutes: 90
-    variables:
-      Codeql.Enabled: true
-      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
-      Codeql.SkipTaskAutoInjection: false
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -91,10 +87,6 @@ jobs:
     dependsOn: 
       - 'Build'
     timeoutInMinutes: 90
-    variables:
-      Codeql.Enabled: true
-      Codeql.BuildIdentifier: ${{ parameters.ServiceDirectory }}
-      Codeql.SkipTaskAutoInjection: false
 
     pool:
       name: azsdk-pool-mms-ubuntu-2004-general
@@ -158,6 +150,18 @@ jobs:
     pool:
       name: azsdk-pool-mms-win-2022-general
       vmImage: MMS2022
+
+    variables:
+      Codeql.SkipTaskAutoInjection: false
+      Codeql.Enabled: true
+      Codeql.Language: python
+      Codeql.BuildIdentifier: "${{ parameters.ServiceDirectory }}"
+      Codeql.SourceRoot: "sdk/${{ parameters.ServiceDirectory }}"
+
+    # per the guidance of the codeql team:
+    # https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/snippets/codeql-3000-other-issues#timeouts
+    timeoutInMinutes: 360
+
     steps:
       - template: /eng/common/pipelines/templates/steps/credscan.yml
         parameters:

@@ -1,10 +1,16 @@
 # Release History
 
-## 1.0.0b18 (Unreleased)
+## 1.0.0b19 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b18 (2023-11-06)
 
 ### Bugs Fixed
 
@@ -14,8 +20,6 @@
     ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
 - Remove metric namespace
     ([#32897](https://github.com/Azure/azure-sdk-for-python/pull/32897))
-
-### Other Changes
 
 ## 1.0.0b17 (2023-09-12)
 

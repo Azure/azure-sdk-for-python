@@ -34,29 +34,28 @@ def send_messages(servicebus_client, num_messages):
         print("Messages sent")
 
 def exceed_max_delivery(servicebus_client):
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=5)
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
     dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 
-                                                        max_wait_time=10,
                                                         sub_queue=ServiceBusSubQueue.DEAD_LETTER)
     with receiver:
-        received_msgs = receiver.receive_messages()
+        received_msgs = receiver.receive_messages(max_wait_time=5)
         while len(received_msgs) > 0:
             for msg in received_msgs:
                 print("Message delivery_count: {}".format(msg.delivery_count))
                 receiver.abandon_message(msg)
-            received_msgs = receiver.receive_messages()
+            received_msgs = receiver.receive_messages(max_wait_time=5)
 
     with dlq_receiver:
-        received_msgs = dlq_receiver.receive_messages(max_message_count=10)
+        received_msgs = dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:
             print("Deadletter message:")
             print(msg)
             dlq_receiver.complete_message(msg)
     
 def receive_messages(servicebus_client):
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=5)
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
     with receiver:
-        received_msgs = receiver.receive_messages(max_message_count=10)
+        received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:
             if msg.subject and msg.subject == "Good":
                 receiver.complete_message(msg)
@@ -69,13 +68,12 @@ def receive_messages(servicebus_client):
 
 def fix_deadletters(servicebus_client):
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=5)
-    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME,
-                                                        max_wait_time=5,
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
+    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, 
                                                         sub_queue=ServiceBusSubQueue.DEAD_LETTER)
     msgs_to_send = []
     with dlq_receiver:
-        received_dlq_msgs = dlq_receiver.receive_messages(max_message_count=10)
+        received_dlq_msgs = dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_dlq_msgs:
             if msg.subject and msg.subject == "Bad":
                 msg_copy = ServiceBusMessage(str(msg), subject="Good")
@@ -86,7 +84,7 @@ def fix_deadletters(servicebus_client):
         print("Resending fixed messages")
         sender.send_messages(msgs_to_send)
     with receiver:
-        received_msgs = receiver.receive_messages(max_message_count=10)
+        received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
         for msg in received_msgs:
             if msg.subject and msg.subject == "Good":
                 print("Received fixed message: Body={}, Subject={}".format(next(msg.body), msg.subject))

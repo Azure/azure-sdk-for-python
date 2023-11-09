@@ -470,7 +470,9 @@
         "Fproviders",
         "Fdeployments",
         "roups",
-        "mltable"
+        "mltable",
+        "wsid",
+        "runid"
       ]
     },
     {
@@ -899,7 +901,9 @@
       "filename": "sdk/monitor/azure-monitor-*/**/*",
       "words": [
         "ctxt",
-        "wday"
+        "wday",
+        "percentilesw",
+        "plotly"
       ]
     },
     {
