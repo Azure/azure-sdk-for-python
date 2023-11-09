@@ -23,11 +23,24 @@ class Output(_InputOutputBase):
     @overload
     def __init__(
         self,
-        type: Any,
+        type: str,
         path: Optional[str] = None,
         mode: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        ...
+
+    @overload
+    def __init__(
+        self,
+        path: str,
+        mode: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
+        ...
+
+    @overload
+    def __init__(self, type: Optional[str] = None) -> None:
         ...
 
     @overload
