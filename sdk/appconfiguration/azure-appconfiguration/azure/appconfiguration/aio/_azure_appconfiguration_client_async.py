@@ -217,7 +217,7 @@ class AzureAppConfigurationClient:
         key: str,
         label: Optional[str] = None,
         etag: Optional[str] = "*",
-        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs,
     ) -> Union[None, ConfigurationSetting]:
 
@@ -230,7 +230,7 @@ class AzureAppConfigurationClient:
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str or None
         :param match_condition: The match condition to use upon the etag
-        :type match_condition: ~azure.core.MatchConditions or None
+        :type match_condition: ~azure.core.MatchConditions
         :keyword accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
         :return: The matched ConfigurationSetting object
