@@ -355,7 +355,7 @@ class HttpRequest:
     def set_multipart_mixed(
         self,
         *requests: "HttpRequest",
-        policies: Optional[List[SansIOHTTPPolicy]] = None,
+        policies: Optional[List[SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]]] = None,
         boundary: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -422,7 +422,7 @@ class _HttpResponseBase:
 
     def __init__(
         self,
-        request: HttpRequest,
+        request: "HttpRequest",
         internal_response: Any,
         block_size: Optional[int] = None,
     ) -> None:
@@ -677,7 +677,7 @@ class PipelineClientBase:
         headers: Optional[Dict[str, str]] = None,
         content: Any = None,
         form_content: Optional[Dict[str, Any]] = None,
-    ) -> HttpRequest:
+    ) -> "HttpRequest":
         """Create a GET request object.
 
         :param str url: The request URL.
@@ -843,8 +843,8 @@ class PipelineClientBase:
         params: Optional[Dict[str, str]] = None,
         headers: Optional[Dict[str, str]] = None,
         *,
-        content: Optional[Union[bytes, str, Dict]] = None,
-        form_content: Optional[Dict] = None,
+        content: Optional[Union[bytes, str, Dict[Any, Any]]] = None,
+        form_content: Optional[Dict[Any, Any]] = None,
         **kwargs: Any,
     ) -> HttpRequest:
         """Create a OPTIONS request object.
