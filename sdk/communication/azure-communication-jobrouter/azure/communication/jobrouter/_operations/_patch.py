@@ -1348,7 +1348,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 
-        super()._complete_job(job_id=job_id, assignment_id = assignment_id, options=options, **kwargs)
+        super()._complete_job(job_id=job_id, assignment_id=assignment_id, options=options, **kwargs)
 
     @distributed_trace
     def close_job(
@@ -1387,7 +1387,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 
-        super()._close_job(job_id=job_id, assignment_id = assignment_id, options=options, **kwargs)
+        super()._close_job(job_id=job_id, assignment_id=assignment_id, options=options, **kwargs)
 
     # endregion Job
 
