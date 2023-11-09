@@ -9,6 +9,9 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Supported datetime type for keyword argument `accept_datetime` in `get_snapshot_configuration_settings()`, `list_snapshot_configuration_settings()` and `list_revisions()`.
+- Bumped minimum dependency on `azure-core` to `>=1.28.0`.
+- Updated the default `api_version` to "2023-10-01".
 
 ## 1.5.0b3 (2023-10-10)
 

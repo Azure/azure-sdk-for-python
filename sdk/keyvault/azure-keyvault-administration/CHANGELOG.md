@@ -1,6 +1,6 @@
 # Release History
 
-## 4.4.0b2 (Unreleased)
+## 4.4.0b3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.4.0b2 (2023-11-03)
+
+### Features Added
+- Added support for service API version `7.5-preview.1`
+- `KeyVaultBackupClient.begin_backup` and `KeyVaultBackupClient.begin_restore` now accept a `use_managed_identity`
+  keyword-only argument to enable authentication via Managed Identity
+
+### Other Changes
+- Key Vault API version `7.5-preview.1` is now the default
 
 ## 4.4.0b1 (2023-05-16)
 

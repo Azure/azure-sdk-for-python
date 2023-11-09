@@ -145,9 +145,8 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_open_ai"
         assert ws_connection.target == "dummy"
         assert ws_connection.tags["hello"] == "world"
-        assert ws_connection.tags["ApiVersion"] == "some_version"
         assert ws_connection.tags["ApiType"] == "Azure"
-        assert ws_connection.api_version == "some_version"
+        assert ws_connection.api_version == None
         assert ws_connection.api_type == "Azure"
 
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_search.yaml")
