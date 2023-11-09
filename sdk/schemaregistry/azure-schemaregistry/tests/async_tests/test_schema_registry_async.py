@@ -91,8 +91,14 @@ json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
 custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
 protobuf_args = (PROTOBUF_FORMAT, PROTOBUF_SCHEMA_STR)
 
-format_params = [avro_args, json_args, custom_args, protobuf_args]
-format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT, PROTOBUF_FORMAT]
+# TODO: add protobuf schema group to arm template + enable livetests
+is_livetest = str(os.getenv("AZURE_TEST_RUN_LIVE")).lower()
+if is_livetest == "true":   # protobuf changes have not been rolled out
+    format_params = [avro_args, json_args, custom_args]
+    format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
+else:
+    format_params = [avro_args, json_args, custom_args, protobuf_args]
+    format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT, PROTOBUF_FORMAT]
 
 class ArgPasser:
     def __call__(self, fn):
