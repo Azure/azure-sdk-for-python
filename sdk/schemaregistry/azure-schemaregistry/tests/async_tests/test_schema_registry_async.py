@@ -31,14 +31,21 @@ from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 
+# TODO: add protobuf env var for live testing when protobuf changes have been rolled out
+is_livetest = str(os.getenv("AZURE_TEST_RUN_LIVE")).lower()
+sr_namespaces = {
+    "schemaregistry_avro_fully_qualified_namespace": "fake_resource_avro.servicebus.windows.net",
+    "schemaregistry_json_fully_qualified_namespace": "fake_resource_json.servicebus.windows.net",
+    "schemaregistry_custom_fully_qualified_namespace": "fake_resource_custom.servicebus.windows.net",
+    "schemaregistry_group": "fakegroup"
+}
+if is_livetest == "false":
+    sr_namespaces["schemaregistry_protobuf_fully_qualified_namespace"] = "fake_resource_protobuf.servicebus.windows.net",
+
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
-    schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
-    schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
-    schemaregistry_custom_fully_qualified_namespace="fake_resource_custom.servicebus.windows.net",
-    schemaregistry_protobuf_fully_qualified_namespace="fake_resource_protobuf.servicebus.windows.net",
-    schemaregistry_group="fakegroup"
+    **sr_namespaces
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 JSON_SCHEMA = {
