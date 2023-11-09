@@ -268,7 +268,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         cls,
         items: Union[list, dict, str, NodeOutput, PipelineInput],
         raise_error: bool = True,
-        body_component: Optional[Component] = None,
+        body_component: Optional[Union[str, Component]] = None,
     ) -> MutableValidationResult:
         validation_result = cls._create_empty_validation_result()
         if items is not None:
@@ -300,7 +300,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     @classmethod
     def _validate_items_list(
-        cls, items: list, validation_result: MutableValidationResult, body_component: Optional[Component] = None
+        cls,
+        items: list,
+        validation_result: MutableValidationResult,
+        body_component: Optional[Union[str, Component]] = None,
     ) -> None:
         # pylint: disable=protected-access
         meta: dict = {}

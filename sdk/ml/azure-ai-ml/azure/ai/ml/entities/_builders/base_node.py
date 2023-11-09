@@ -124,9 +124,9 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         self,
         *,
         type: str = JobType.COMPONENT,  # pylint: disable=redefined-builtin
-        component: Component,
+        component: Any,
         inputs: Optional[Dict] = None,
-        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        outputs: Optional[Dict] = None,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
@@ -288,7 +288,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
             # If component is remote, return it's asset id
             return self._component.id
         # Otherwise, return the component version or arm id.
-        return self._component
+        res: Union[str, Component] = self._component
+        return res
 
     def _get_component_name(self) -> Optional[str]:
         # first use component version/job's display name or name as component name
@@ -480,13 +481,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         return cast(Dict, self._inputs)
 
     @property
-    def outputs(self) -> Dict[str, Union[str, Output]]:
+    def outputs(self) -> Dict:
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
         :rtype: Dict[str, Union[str, Output]]
         """
-        return cast(Dict[str, Union[str, Output]], self._outputs)
+        return cast(Dict, self._outputs)
 
     def __str__(self) -> str:
         try:
@@ -514,7 +515,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :return: The origin job outputs
         :rtype: Dict[str, Union[str, Output]]
         """
-        outputs: Dict[str, Union[str, Output]] = {}
+        outputs: Dict = {}
         if self.outputs is not None:
             for output_name, output_obj in self.outputs.items():
                 if isinstance(output_obj, NodeOutput):

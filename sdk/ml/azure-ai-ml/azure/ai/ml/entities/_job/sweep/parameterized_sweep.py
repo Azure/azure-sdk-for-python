@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Type, Union
+from typing import Any, Dict, Optional, Type, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -25,18 +25,6 @@ from .sampling_algorithm import (
     RestSamplingAlgorithm,
     SamplingAlgorithm,
     SamplingAlgorithmType,
-)
-from .search_space import (
-    Choice,
-    LogNormal,
-    LogUniform,
-    Normal,
-    QLogNormal,
-    QLogUniform,
-    QNormal,
-    QUniform,
-    Randint,
-    Uniform,
 )
 
 # pylint: disable=unnecessary-lambda
@@ -62,17 +50,8 @@ class ParameterizedSweep:
         limits: Optional[SweepJobLimits] = None,
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Union[Dict, Objective]] = None,
-        early_termination: Optional[
-            Union[EarlyTerminationPolicy, BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]
-        ] = None,
-        search_space: Optional[
-            Dict[
-                str,
-                Union[
-                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
-                ],
-            ]
-        ] = None,
+        early_termination: Optional[Any] = None,
+        search_space: Optional[Dict] = None,
         queue_settings: Optional[QueueSettings] = None,
     ) -> None:
         """
@@ -238,7 +217,7 @@ class ParameterizedSweep:
         )
 
     @property
-    def early_termination(self) -> Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]]:
+    def early_termination(self) -> Any:
         """Early termination policy for sweep job.
 
         :returns: Early termination policy for sweep job.
@@ -247,9 +226,7 @@ class ParameterizedSweep:
         return self._early_termination
 
     @early_termination.setter
-    def early_termination(
-        self, value: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]]
-    ) -> None:
+    def early_termination(self, value: Any) -> None:
         """Set early termination policy for sweep job.
 
         :param value: Early termination policy for sweep job.

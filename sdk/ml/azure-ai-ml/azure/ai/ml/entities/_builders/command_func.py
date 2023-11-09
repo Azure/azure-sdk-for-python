@@ -18,6 +18,7 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import (
+    DistributionConfiguration,
     MpiDistribution,
     PyTorchDistribution,
     RayDistribution,
@@ -129,7 +130,14 @@ def command(
     environment: Optional[Union[str, Environment]] = None,
     environment_variables: Optional[Dict] = None,
     distribution: Optional[
-        Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]
+        Union[
+            Dict,
+            MpiDistribution,
+            TensorFlowDistribution,
+            PyTorchDistribution,
+            RayDistribution,
+            DistributionConfiguration,
+        ]
     ] = None,
     compute: Optional[str] = None,
     inputs: Optional[Dict] = None,
