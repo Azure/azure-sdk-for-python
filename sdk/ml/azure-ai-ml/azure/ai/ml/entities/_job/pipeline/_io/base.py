@@ -35,7 +35,7 @@ def _build_data_binding(data: Union[str, "PipelineInput", "Output"]) -> str:
         result = data._data_binding()
     else:
         # Otherwise just return the data
-        result = str(data)
+        result = data
     return result
 
 
@@ -172,7 +172,7 @@ class InputOutputBase(ABC):
 
     @property
     def description(self) -> str:
-        return str(self._description)
+        return self._description
 
     @description.setter
     def description(self, description: str) -> None:
@@ -578,7 +578,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     def path(self) -> Optional[str]:
         # For node output path,
         if self._data is not None and hasattr(self._data, "path"):
-            return str(self._data.path)
+            return self._data.path
         return None
 
     @path.setter
