@@ -18,7 +18,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._model_base import AzureJSONEncoder, _deserialize
+from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import EventGridClientMixinABC
 
@@ -42,7 +42,7 @@ def build_event_grid_publish_cloud_event_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop('content_type')
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-10-01-preview"))
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -77,7 +77,7 @@ def build_event_grid_publish_cloud_events_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop('content_type')
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-10-01-preview"))
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -115,7 +115,7 @@ def build_event_grid_receive_cloud_events_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-10-01-preview"))
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -154,8 +154,8 @@ def build_event_grid_acknowledge_cloud_events_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-10-01-preview"))
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -171,9 +171,9 @@ def build_event_grid_acknowledge_cloud_events_request(  # pylint: disable=name-t
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    if content_type is not None:
-        _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    if content_type is not None:
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
     return HttpRequest(
         method="POST",
@@ -187,13 +187,15 @@ def build_event_grid_acknowledge_cloud_events_request(  # pylint: disable=name-t
 def build_event_grid_release_cloud_events_request(  # pylint: disable=name-too-long
     topic_name: str,
     event_subscription_name: str,
+    *,
+    release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-10-01-preview"))
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -207,11 +209,13 @@ def build_event_grid_release_cloud_events_request(  # pylint: disable=name-too-l
 
     # Construct parameters
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    if release_delay_in_seconds is not None:
+        _params['releaseDelayInSeconds'] = _SERIALIZER.query("release_delay_in_seconds", release_delay_in_seconds, 'int')
 
     # Construct headers
-    if content_type is not None:
-        _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    if content_type is not None:
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
     return HttpRequest(
         method="POST",
@@ -230,8 +234,8 @@ def build_event_grid_reject_cloud_events_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
-    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-10-01-preview"))
     accept = _headers.pop('Accept', "application/json")
 
     # Construct URL
@@ -247,9 +251,47 @@ def build_event_grid_reject_cloud_events_request(  # pylint: disable=name-too-lo
     _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
 
     # Construct headers
-    if content_type is not None:
-        _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
     _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    if content_type is not None:
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
+
+
+def build_event_grid_renew_cloud_event_locks_request(  # pylint: disable=name-too-long
+    topic_name: str,
+    event_subscription_name: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-10-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
+
+    # Construct URL
+    _url = "/topics/{topicName}/eventsubscriptions/{eventSubscriptionName}:renewLock"
+    path_format_arguments = {
+        "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
+        "eventSubscriptionName": _SERIALIZER.url("event_subscription_name", event_subscription_name, 'str'),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    if content_type is not None:
+        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
 
     return HttpRequest(
         method="POST",
@@ -302,9 +344,9 @@ class EventGridClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(event, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(event, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_event_grid_publish_cloud_event_request(
+        _request = build_event_grid_publish_cloud_event_request(
             topic_name=topic_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -315,11 +357,11 @@ class EventGridClientOperationsMixin(
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
+            _request,
             stream=_stream,
             **kwargs
         )
@@ -343,7 +385,7 @@ class EventGridClientOperationsMixin(
         if cls:
             return cls(pipeline_response, deserialized, {}) # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
 
 
@@ -386,9 +428,9 @@ class EventGridClientOperationsMixin(
             'cls', None
         )
 
-        _content = json.dumps(events, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(events, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_event_grid_publish_cloud_events_request(
+        _request = build_event_grid_publish_cloud_events_request(
             topic_name=topic_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -399,11 +441,11 @@ class EventGridClientOperationsMixin(
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
+            _request,
             stream=_stream,
             **kwargs
         )
@@ -427,7 +469,7 @@ class EventGridClientOperationsMixin(
         if cls:
             return cls(pipeline_response, deserialized, {}) # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
 
 
@@ -475,7 +517,7 @@ class EventGridClientOperationsMixin(
         )
 
         
-        request = build_event_grid_receive_cloud_events_request(
+        _request = build_event_grid_receive_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             max_events=max_events,
@@ -487,11 +529,11 @@ class EventGridClientOperationsMixin(
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
+            _request,
             stream=_stream,
             **kwargs
         )
@@ -515,7 +557,7 @@ class EventGridClientOperationsMixin(
         if cls:
             return cls(pipeline_response, deserialized, {}) # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
 
 
@@ -524,13 +566,13 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: _models.AcknowledgeOptions,
+        acknowledge_options: _models.AcknowledgeOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
-        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if at least
-        one event is successfully acknowledged. The response body will include the set of successfully
+        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
         acknowledged lockTokens, along with other failed lockTokens with their corresponding error
         information. Successfully acknowledged events will no longer be available to any consumer.
 
@@ -538,8 +580,8 @@ class EventGridClientOperationsMixin(
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: AcknowledgeOptions. Required.
-        :type lock_tokens: ~azure.eventgrid.models.AcknowledgeOptions
+        :param acknowledge_options: AcknowledgeOptions. Required.
+        :type acknowledge_options: ~azure.eventgrid.models.AcknowledgeOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -555,13 +597,13 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: JSON,
+        acknowledge_options: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
-        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if at least
-        one event is successfully acknowledged. The response body will include the set of successfully
+        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
         acknowledged lockTokens, along with other failed lockTokens with their corresponding error
         information. Successfully acknowledged events will no longer be available to any consumer.
 
@@ -569,8 +611,8 @@ class EventGridClientOperationsMixin(
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: AcknowledgeOptions. Required.
-        :type lock_tokens: JSON
+        :param acknowledge_options: AcknowledgeOptions. Required.
+        :type acknowledge_options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -586,13 +628,13 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: IO,
+        acknowledge_options: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
-        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if at least
-        one event is successfully acknowledged. The response body will include the set of successfully
+        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
         acknowledged lockTokens, along with other failed lockTokens with their corresponding error
         information. Successfully acknowledged events will no longer be available to any consumer.
 
@@ -600,8 +642,8 @@ class EventGridClientOperationsMixin(
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: AcknowledgeOptions. Required.
-        :type lock_tokens: IO
+        :param acknowledge_options: AcknowledgeOptions. Required.
+        :type acknowledge_options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -618,11 +660,11 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: Union[_models.AcknowledgeOptions, JSON, IO],
+        acknowledge_options: Union[_models.AcknowledgeOptions, JSON, IO],
         **kwargs: Any
     ) -> _models.AcknowledgeResult:
-        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if at least
-        one event is successfully acknowledged. The response body will include the set of successfully
+        """Acknowledge batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
         acknowledged lockTokens, along with other failed lockTokens with their corresponding error
         information. Successfully acknowledged events will no longer be available to any consumer.
 
@@ -630,10 +672,11 @@ class EventGridClientOperationsMixin(
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: AcknowledgeOptions. Is one of the following types: AcknowledgeOptions,
-         JSON, IO Required.
-        :type lock_tokens: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO
-        :keyword content_type: content type. Default value is None.
+        :param acknowledge_options: AcknowledgeOptions. Is one of the following types:
+         AcknowledgeOptions, JSON, IO Required.
+        :type acknowledge_options: ~azure.eventgrid.models.AcknowledgeOptions or JSON or IO
+        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
+         value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -649,19 +692,19 @@ class EventGridClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
         cls: ClsType[_models.AcknowledgeResult] = kwargs.pop(
             'cls', None
         )
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(lock_tokens, (IOBase, bytes)):
-            _content = lock_tokens
+        if isinstance(acknowledge_options, (IOBase, bytes)):
+            _content = acknowledge_options
         else:
-            _content = json.dumps(lock_tokens, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(acknowledge_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_event_grid_acknowledge_cloud_events_request(
+        _request = build_event_grid_acknowledge_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,
@@ -673,11 +716,11 @@ class EventGridClientOperationsMixin(
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
+            _request,
             stream=_stream,
             **kwargs
         )
@@ -701,7 +744,7 @@ class EventGridClientOperationsMixin(
         if cls:
             return cls(pipeline_response, deserialized, {}) # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
 
 
@@ -710,21 +753,25 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: _models.ReleaseOptions,
+        release_options: _models.ReleaseOptions,
         *,
+        release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReleaseResult:
-        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if at least one
-        event is successfully released. The response body will include the set of successfully released
+        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully released
         lockTokens, along with other failed lockTokens with their corresponding error information.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: ReleaseOptions. Required.
-        :type lock_tokens: ~azure.eventgrid.models.ReleaseOptions
+        :param release_options: ReleaseOptions. Required.
+        :type release_options: ~azure.eventgrid.models.ReleaseOptions
+        :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
+         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
+        :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -740,21 +787,25 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: JSON,
+        release_options: JSON,
         *,
+        release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReleaseResult:
-        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if at least one
-        event is successfully released. The response body will include the set of successfully released
+        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully released
         lockTokens, along with other failed lockTokens with their corresponding error information.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: ReleaseOptions. Required.
-        :type lock_tokens: JSON
+        :param release_options: ReleaseOptions. Required.
+        :type release_options: JSON
+        :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
+         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
+        :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -770,21 +821,25 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: IO,
+        release_options: IO,
         *,
+        release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ReleaseResult:
-        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if at least one
-        event is successfully released. The response body will include the set of successfully released
+        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully released
         lockTokens, along with other failed lockTokens with their corresponding error information.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: ReleaseOptions. Required.
-        :type lock_tokens: IO
+        :param release_options: ReleaseOptions. Required.
+        :type release_options: IO
+        :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
+         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
+        :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -801,21 +856,27 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: Union[_models.ReleaseOptions, JSON, IO],
+        release_options: Union[_models.ReleaseOptions, JSON, IO],
+        *,
+        release_delay_in_seconds: Optional[Union[int, _models.ReleaseDelay]] = None,
         **kwargs: Any
     ) -> _models.ReleaseResult:
-        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if at least one
-        event is successfully released. The response body will include the set of successfully released
+        """Release batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully released
         lockTokens, along with other failed lockTokens with their corresponding error information.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON, IO
+        :param release_options: ReleaseOptions. Is one of the following types: ReleaseOptions, JSON, IO
          Required.
-        :type lock_tokens: ~azure.eventgrid.models.ReleaseOptions or JSON or IO
-        :keyword content_type: content type. Default value is None.
+        :type release_options: ~azure.eventgrid.models.ReleaseOptions or JSON or IO
+        :keyword release_delay_in_seconds: Release cloud events with the specified delay in seconds.
+         Known values are: 0, 10, 60, 600, and 3600. Default value is None.
+        :paramtype release_delay_in_seconds: int or ~azure.eventgrid.models.ReleaseDelay
+        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
+         value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -831,21 +892,22 @@ class EventGridClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
         cls: ClsType[_models.ReleaseResult] = kwargs.pop(
             'cls', None
         )
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(lock_tokens, (IOBase, bytes)):
-            _content = lock_tokens
+        if isinstance(release_options, (IOBase, bytes)):
+            _content = release_options
         else:
-            _content = json.dumps(lock_tokens, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(release_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_event_grid_release_cloud_events_request(
+        _request = build_event_grid_release_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
+            release_delay_in_seconds=release_delay_in_seconds,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -855,11 +917,11 @@ class EventGridClientOperationsMixin(
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
+            _request,
             stream=_stream,
             **kwargs
         )
@@ -883,7 +945,7 @@ class EventGridClientOperationsMixin(
         if cls:
             return cls(pipeline_response, deserialized, {}) # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
 
 
@@ -892,19 +954,21 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: _models.RejectOptions,
+        reject_options: _models.RejectOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult:
-        """Reject batch of Cloud Events.
+        """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully rejected
+        lockTokens, along with other failed lockTokens with their corresponding error information.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: RejectOptions. Required.
-        :type lock_tokens: ~azure.eventgrid.models.RejectOptions
+        :param reject_options: RejectOptions. Required.
+        :type reject_options: ~azure.eventgrid.models.RejectOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -920,19 +984,21 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: JSON,
+        reject_options: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult:
-        """Reject batch of Cloud Events.
+        """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully rejected
+        lockTokens, along with other failed lockTokens with their corresponding error information.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: RejectOptions. Required.
-        :type lock_tokens: JSON
+        :param reject_options: RejectOptions. Required.
+        :type reject_options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -948,19 +1014,21 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: IO,
+        reject_options: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RejectResult:
-        """Reject batch of Cloud Events.
+        """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully rejected
+        lockTokens, along with other failed lockTokens with their corresponding error information.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: RejectOptions. Required.
-        :type lock_tokens: IO
+        :param reject_options: RejectOptions. Required.
+        :type reject_options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -977,19 +1045,22 @@ class EventGridClientOperationsMixin(
         self,
         topic_name: str,
         event_subscription_name: str,
-        lock_tokens: Union[_models.RejectOptions, JSON, IO],
+        reject_options: Union[_models.RejectOptions, JSON, IO],
         **kwargs: Any
     ) -> _models.RejectResult:
-        """Reject batch of Cloud Events.
+        """Reject batch of Cloud Events. The server responds with an HTTP 200 status code if the request
+        is successfully accepted. The response body will include the set of successfully rejected
+        lockTokens, along with other failed lockTokens with their corresponding error information.
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :param lock_tokens: RejectOptions. Is one of the following types: RejectOptions, JSON, IO
+        :param reject_options: RejectOptions. Is one of the following types: RejectOptions, JSON, IO
          Required.
-        :type lock_tokens: ~azure.eventgrid.models.RejectOptions or JSON or IO
-        :keyword content_type: content type. Default value is None.
+        :type reject_options: ~azure.eventgrid.models.RejectOptions or JSON or IO
+        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
+         value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -1005,19 +1076,19 @@ class EventGridClientOperationsMixin(
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('content-type', None))
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
         cls: ClsType[_models.RejectResult] = kwargs.pop(
             'cls', None
         )
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(lock_tokens, (IOBase, bytes)):
-            _content = lock_tokens
+        if isinstance(reject_options, (IOBase, bytes)):
+            _content = reject_options
         else:
-            _content = json.dumps(lock_tokens, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(reject_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_event_grid_reject_cloud_events_request(
+        _request = build_event_grid_reject_cloud_events_request(
             topic_name=topic_name,
             event_subscription_name=event_subscription_name,
             content_type=content_type,
@@ -1029,11 +1100,11 @@ class EventGridClientOperationsMixin(
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            request,
+            _request,
             stream=_stream,
             **kwargs
         )
@@ -1057,6 +1128,197 @@ class EventGridClientOperationsMixin(
         if cls:
             return cls(pipeline_response, deserialized, {}) # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
+
+
+
+    @overload
+    def renew_cloud_event_locks(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        renew_lock_options: _models.RenewLockOptions,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RenewCloudEventLocksResult:
+        """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
+        renewed lockTokens, along with other failed lockTokens with their corresponding error
+        information.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param event_subscription_name: Event Subscription Name. Required.
+        :type event_subscription_name: str
+        :param renew_lock_options: RenewLockOptions. Required.
+        :type renew_lock_options: ~azure.eventgrid.models.RenewLockOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
+         MutableMapping
+        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def renew_cloud_event_locks(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        renew_lock_options: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RenewCloudEventLocksResult:
+        """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
+        renewed lockTokens, along with other failed lockTokens with their corresponding error
+        information.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param event_subscription_name: Event Subscription Name. Required.
+        :type event_subscription_name: str
+        :param renew_lock_options: RenewLockOptions. Required.
+        :type renew_lock_options: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
+         MutableMapping
+        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def renew_cloud_event_locks(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        renew_lock_options: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.RenewCloudEventLocksResult:
+        """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
+        renewed lockTokens, along with other failed lockTokens with their corresponding error
+        information.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param event_subscription_name: Event Subscription Name. Required.
+        :type event_subscription_name: str
+        :param renew_lock_options: RenewLockOptions. Required.
+        :type renew_lock_options: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
+         MutableMapping
+        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+    @distributed_trace
+    def renew_cloud_event_locks(
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        renew_lock_options: Union[_models.RenewLockOptions, JSON, IO],
+        **kwargs: Any
+    ) -> _models.RenewCloudEventLocksResult:
+        """Renew lock for batch of Cloud Events. The server responds with an HTTP 200 status code if the
+        request is successfully accepted. The response body will include the set of successfully
+        renewed lockTokens, along with other failed lockTokens with their corresponding error
+        information.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param event_subscription_name: Event Subscription Name. Required.
+        :type event_subscription_name: str
+        :param renew_lock_options: RenewLockOptions. Is one of the following types: RenewLockOptions,
+         JSON, IO Required.
+        :type renew_lock_options: ~azure.eventgrid.models.RenewLockOptions or JSON or IO
+        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
+         value is None.
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: RenewCloudEventLocksResult. The RenewCloudEventLocksResult is compatible with
+         MutableMapping
+        :rtype: ~azure.eventgrid.models.RenewCloudEventLocksResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+        cls: ClsType[_models.RenewCloudEventLocksResult] = kwargs.pop(
+            'cls', None
+        )
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(renew_lock_options, (IOBase, bytes)):
+            _content = renew_lock_options
+        else:
+            _content = json.dumps(renew_lock_options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_event_grid_renew_cloud_event_locks_request(
+            topic_name=topic_name,
+            event_subscription_name=event_subscription_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            _request,
+            stream=_stream,
+            **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                 response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models.RenewCloudEventLocksResult,
+                response.json()
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {}) # type: ignore
+
+        return deserialized  # type: ignore
 
 
