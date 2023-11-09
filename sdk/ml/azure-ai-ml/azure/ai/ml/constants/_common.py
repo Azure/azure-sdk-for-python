@@ -334,6 +334,7 @@ class ArmConstants:
     APP_INSIGHTS = "AppInsights"
     LOG_ANALYTICS = "LogAnalytics"
     WORKSPACE = "Workspace"
+    CONTAINER_REGISTRY = "ContainerRegistry"
 
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
     AZURE_MGMT_STORAGE_API_VERSION = "2019-06-01"

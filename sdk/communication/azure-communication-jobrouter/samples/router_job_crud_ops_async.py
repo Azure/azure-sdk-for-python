@@ -113,7 +113,7 @@ class RouterJobSamplesAsync(object):
                 RouterWorker(
                     capacity=100,
                     available_for_offers=True,
-                    channels=[RouterChannel(channel_id = "general", capacity_cost_per_job=1)],
+                    channels=[RouterChannel(channel_id="general", capacity_cost_per_job=1)],
                     queues=[queue_id],
                 ),
             )
@@ -297,8 +297,8 @@ class RouterJobSamplesAsync(object):
                     worker_id,
                     offer_id,
                     DeclineJobOfferOptions(
-                        retry_offer_at = datetime.utcnow() + timedelta(0, 30),  # re-offer after 30 secs
-                    )
+                        retry_offer_at=datetime.utcnow() + timedelta(0, 30),  # re-offer after 30 secs
+                    ),
                 )
 
                 # [END decline_job_offer_async]
@@ -323,7 +323,7 @@ class RouterJobSamplesAsync(object):
 
             assignment_id = [k for k, v in queried_job.assignments.items()][0]
 
-            await router_client.complete_job(job_id, CompleteJobOptions(assignment_id=assignment_id))
+            await router_client.complete_job(job_id, assignment_id, CompleteJobOptions(note="Complete job"))
 
             queried_job: RouterJob = await router_client.get_job(job_id)
 
@@ -335,7 +335,8 @@ class RouterJobSamplesAsync(object):
                 RouterJob,
                 CloseJobOptions,
             )
-            await router_client.close_job(job_id, CloseJobOptions(assignment_id=assignment_id))
+
+            await router_client.close_job(job_id, assignment_id, CloseJobOptions(note="Close job"))
 
             queried_job: RouterJob = await router_client.get_job(job_id)
 
@@ -428,7 +429,7 @@ class RouterJobSamplesAsync(object):
         async with router_client:
             await router_client.delete_job(job_id)
 
-        # [END delete_job_async]
+            # [END delete_job_async]
 
             await router_client.cancel_job(self._job_w_cp_id)
             await router_client.delete_job(self._job_w_cp_id)
@@ -438,7 +439,7 @@ class RouterJobSamplesAsync(object):
 
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
-        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         async with router_admin_client:
             await router_admin_client.delete_classification_policy(self._classification_policy_id)
             await router_admin_client.delete_queue(self._queue_id)

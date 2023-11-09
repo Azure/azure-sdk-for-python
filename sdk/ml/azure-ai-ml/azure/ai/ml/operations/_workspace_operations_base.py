@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -716,6 +717,13 @@ class WorkspaceOperationsBase(ABC):
                 _set_val(param["endpoint_resource_id"], endpoint_resource_id)
                 _set_val(param["endpoint_kind"], endpoint_kind)
 
+            # Hubs must have an azure container registry on-provision. If none was provided, create one.
+            if not workspace.container_registry:
+                _set_val(param["containerRegistryOption"], "new")
+                container_registry = _generate_container_registry(workspace.name, resources_being_deployed)
+                _set_val(param["containerRegistryName"], container_registry)
+                _set_val(param["containerRegistryResourceGroupName"], self._resource_group_name)
+
         # Lean related param
         if workspace._kind and workspace._kind.lower() == PROJECT_WORKSPACE_KIND:
             if workspace.workspace_hub:
@@ -904,6 +912,27 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
         None,
     )
     return app_insights
+
+
+def _generate_container_registry(name: str, resources_being_deployed: dict) -> str:
+    """Generates a name for a container registry resource to be created with workspace based on workspace name,
+    sets name and type in resources_being_deployed.
+
+    :param name: The name for the related workspace.
+    :type name: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of container registry.
+    :rtype: str
+    """
+    # Application name only allows alphanumeric characters, periods, underscores,
+    # hyphens and parenthesis and cannot end in a period
+    con_reg = get_name_for_dependent_resource(name, "containerRegistry")
+    resources_being_deployed[con_reg] = (
+        ArmConstants.CONTAINER_REGISTRY,
+        None,
+    )
+    return con_reg
 
 
 class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
