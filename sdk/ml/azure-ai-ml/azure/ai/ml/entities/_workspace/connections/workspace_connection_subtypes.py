@@ -169,7 +169,7 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         api_version: Optional[str] = None,
-        kind: str,
+        kind: Optional[str] = None,
         **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type

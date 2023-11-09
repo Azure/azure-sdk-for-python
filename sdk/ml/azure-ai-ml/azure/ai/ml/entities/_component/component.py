@@ -9,7 +9,7 @@ from typing import IO, TYPE_CHECKING, Any, AnyStr, Callable, Dict, Iterable, Opt
 
 from marshmallow import INCLUDE
 
-from ..._restclient.v2022_10_01.models import (
+from ..._restclient.v2023_08_01_preview.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,

@@ -19,7 +19,7 @@ from mlflow.exceptions import MlflowException
 from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
-from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path
+from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
 from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
@@ -92,6 +92,41 @@ def evaluate(
         output_path=None,
         **kwargs
 ):
+    """Evaluates target or data with built-in evaluation metrics
+
+    :keyword evaluation_name: Display name of the evaluation.
+    :paramtype evaluation_name: Optional[str]
+    :keyword target: Target to be evaluated. `target` and `data` both cannot be None
+    :paramtype target: Optional[Callable]
+    :keyword data: Path to the data to be evaluated or passed to target if target is set.
+        Only .jsonl format files are supported.  `target` and `data` both cannot be None
+    :paramtype data: Optional[str]
+    :keyword task_type: Task type for evaluation. This helps to pick a set of pre-defined metrics.
+        Supported values are `qa` and `chat`
+    :paramtype task_type: str
+    :keyword metrics_list: List of metrics to calculate. A default list is picked based on task_type if not set.
+    :paramtype metrics_list: Optional[List[str]]
+    :keyword model_config: GPT configuration details needed for AI-assisted metrics.
+    :paramtype model_config: Dict[str, str]
+    :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
+    :paramtype data_mapping: Dict[str, str]
+    :keyword output_path: The local folder path to save evaluation artifacts to if set
+    :paramtype output_path: Optional[str]
+    :keyword tracking_uri: Tracking uri to log evaluation results to AI Studio
+    :paramtype tracking_uri: Optional[str]
+    :return: A EvaluationResult object.
+    :rtype: ~azure.ai.generative.evaluate.EvaluationResult
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ai_samples_evaluate.py
+            :start-after: [START evaluate_task_type_qa]
+            :end-before: [END evaluate_task_type_qa]
+            :language: python
+            :dedent: 8
+            :caption: Evaluates target or data with built-in evaluation metrics.
+    """
+
     results_list = []
     metrics_config = {}
     if "tracking_uri" in kwargs:
@@ -283,16 +318,17 @@ def _evaluate(
                 log_property("_azureml.chat_history_column", data_mapping.get("y_pred"))
             # log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
 
+            if output_path:
+                _copy_artifact(tmp_path, output_path)
+
     evaluation_result = EvaluationResult(
         metrics_summary=metrics.get("metrics"),
         artifacts={
             "eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"
         },
         tracking_uri=kwargs.get("tracking_uri"),
-        evaluation_id=run.info.run_id
+        evaluation_id=run.info.run_id,
     )
-    if output_path:
-        evaluation_result.download_evaluation_artifacts(path=output_path)
 
     return evaluation_result
 
