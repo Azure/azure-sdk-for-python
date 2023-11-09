@@ -1,10 +1,6 @@
 # Release History
 
-## 1.5.0b4 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.5.0 (2023-11-09)
 
 ### Bugs Fixed
 - Removed keyword argument `etag` in `set_read_only()` as it's not in use.
