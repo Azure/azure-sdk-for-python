@@ -165,7 +165,7 @@ def example_proxy_policy():
 def test_example_per_call_policy():
     """Per call policy example.
 
-    This sample example how to define your own policy and inject it with the "per_call_policies" parameter.
+    This example shows how to define your own policy and inject it with the "per_call_policies" parameter.
     """
     from azure.core.pipeline.policies import SansIOHTTPPolicy
 
