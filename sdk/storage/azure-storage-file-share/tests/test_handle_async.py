@@ -34,7 +34,6 @@ class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
         # verify basic fields
         # path may or may not be present
         # last_connect_time_string has been missing in the test
-        handles[0]['client_name'][0] is not None
         assert handles[0].id is not None
         assert handles[0].file_id is not None
         assert handles[0].parent_id is not None
@@ -117,7 +116,8 @@ class TestStorageHandleAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         self._validate_handles(handles)
-        handles[0]['access_rights'][0] == 'Write'
+        assert handles[0]['access_rights'][0] == 'Write'
+        assert handles[0]['client_name'][0] is not None
 
 
 # ------------------------------------------------------------------------------
