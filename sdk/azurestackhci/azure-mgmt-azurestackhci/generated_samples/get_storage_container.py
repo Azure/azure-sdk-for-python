@@ -29,13 +29,13 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.storagecontainers.retrieve(
+    response = client.storage_containers.get(
         resource_group_name="test-rg",
-        storagecontainers_name="Default_Container",
+        storage_container_name="Default_Container",
     )
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/GetStorageContainer.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/GetStorageContainer.json
 if __name__ == "__main__":
     main()

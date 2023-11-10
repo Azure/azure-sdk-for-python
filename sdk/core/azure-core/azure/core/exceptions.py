@@ -172,25 +172,29 @@ class ODataV4Format:
 
     Example of JSON:
 
-    error: {
-        "code": "ValidationError",
-        "message": "One or more fields contain incorrect values: ",
-        "details": [
-            {
+    .. code-block:: json
+
+        {
+            "error": {
                 "code": "ValidationError",
-                "target": "representation",
-                "message": "Parsing error(s): String '' does not match regex pattern '^[^{}/ :]+(?: :\\\\d+)?$'.
-                Path 'host', line 1, position 297."
-            },
-            {
-                "code": "ValidationError",
-                "target": "representation",
-                "message": "Parsing error(s): The input OpenAPI file is not valid for the OpenAPI specificate
-                https: //github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
-                (schema https://github.com/OAI/OpenAPI-Specification/blob/master/schemas/v2.0/schema.json)."
+                "message": "One or more fields contain incorrect values: ",
+                "details": [
+                    {
+                        "code": "ValidationError",
+                        "target": "representation",
+                        "message": "Parsing error(s): String '' does not match regex pattern '^[^{}/ :]+(?: :\\\\d+)?$'.
+                        Path 'host', line 1, position 297."
+                    },
+                    {
+                        "code": "ValidationError",
+                        "target": "representation",
+                        "message": "Parsing error(s): The input OpenAPI file is not valid for the OpenAPI specificate
+                        https: //github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
+                        (schema https://github.com/OAI/OpenAPI-Specification/blob/master/schemas/v2.0/schema.json)."
+                    }
+                ]
             }
-        ]
-    }
+        }
 
     :param dict json_object: A Python dict representing a ODataV4 JSON
     :ivar str ~.code: Its value is a service-defined error code.

@@ -159,11 +159,8 @@ def generate_account_sas(
     :type permission: ~azure.storage.queue.AccountSasPermissions or str
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC.
+        Azure will always convert values to UTC. If a date is passed in
+        without timezone info, it is assumed to be UTC.
     :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
@@ -262,6 +259,11 @@ def generate_queue_sas(
             :dedent: 12
             :caption: Generate a sas token.
     """
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     sas = QueueSharedAccessSignature(account_name, account_key)
     return sas.generate_queue(
         queue_name,

@@ -5,7 +5,9 @@
 import base64
 import functools
 import pickle
-from typing import TYPE_CHECKING
+from typing import Any, Optional, overload, TYPE_CHECKING
+
+from typing_extensions import Literal
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -31,23 +33,49 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
-    :paramtype api_version: ~azure.keyvault.administration.ApiVersion
+    :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
     """
 
-    # pylint:disable=protected-access
+    @overload
+    async def begin_backup(
+        self,
+        blob_storage_url: str,
+        *,
+        use_managed_identity: Literal[True],
+        continuation_token: Optional[str] = None,
+        **kwargs,
+    ) -> "AsyncLROPoller[KeyVaultBackupResult]":
+        ...
+
+    @overload
+    async def begin_backup(
+        self,
+        blob_storage_url: str,
+        *,
+        sas_token: str,
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> "AsyncLROPoller[KeyVaultBackupResult]":
+        ...
+
     @distributed_trace_async
     async def begin_backup(
-        self, blob_storage_url: str, sas_token: str, **kwargs
+        self, blob_storage_url: str, *args: str, **kwargs: Any
     ) -> "AsyncLROPoller[KeyVaultBackupResult]":
         """Begin a full backup of the Key Vault.
 
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
-            https://<account>.blob.core.windows.net/backup
-        :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
+            https://<account>.blob.core.windows.net/backup.
 
-        :keyword str continuation_token: a continuation token to restart polling from a saved state
+        :keyword str sas_token: Optional Shared Access Signature (SAS) token to authorize access to the blob. Required
+            unless `use_managed_identity` is set to True.
+        :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
+            will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
+            token has to be specified.
+        :paramtype use_managed_identity: Literal[True]
+        :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
         :returns: An AsyncLROPoller. Call `result()` on this object to get a :class:`KeyVaultBackupResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.keyvault.administration.KeyVaultBackupResult]
@@ -61,9 +89,17 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
         polling_interval = kwargs.pop("_polling_interval", 5)
-        sas_parameter = self._models.SASTokenParameter(storage_resource_uri=blob_storage_url, token=sas_token)
-
         continuation_token = kwargs.pop("continuation_token", None)
+        use_managed_identity = kwargs.pop("use_managed_identity", None)
+        # `sas_token` was formerly a required positional parameter
+        try:
+            sas_token: Optional[str] = args[0]
+        except IndexError:
+            sas_token = kwargs.pop("sas_token", None)
+        sas_parameter = self._models.SASTokenParameter(
+            storage_resource_uri=blob_storage_url, token=sas_token, use_managed_identity=use_managed_identity
+        )
+
         status_response = None
         if continuation_token:
             status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
@@ -85,16 +121,40 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         return await self._client.begin_full_backup(
             vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
-            cls=KeyVaultBackupResult._from_generated,
+            cls=KeyVaultBackupResult._from_generated,  # pylint: disable=protected-access
             continuation_token=status_response,
             polling=KeyVaultAsyncBackupClientPollingMethod(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
             ),
-            **kwargs
+            **kwargs,
         )
 
+    @overload
+    async def begin_restore(
+        self,
+        folder_url: str,
+        *,
+        use_managed_identity: Literal[True],
+        key_name: Optional[str] = None,
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> "AsyncLROPoller":
+        ...
+
+    @overload
+    async def begin_restore(
+        self,
+        folder_url: str,
+        *,
+        sas_token: str,
+        key_name: Optional[str] = None,
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> "AsyncLROPoller":
+        ...
+
     @distributed_trace_async
-    async def begin_restore(self, folder_url: str, sas_token: str, **kwargs) -> "AsyncLROPoller":
+    async def begin_restore(self, folder_url: str, *args: str, **kwargs: Any) -> "AsyncLROPoller":
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.
@@ -103,10 +163,15 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             backup. This would be the `folder_url` of a :class:`KeyVaultBackupResult` returned by
             :func:`begin_backup`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
-        :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
 
-        :keyword str continuation_token: a continuation token to restart polling from a saved state
-        :keyword str key_name: name of a single key in the backup. When set, only this key will be restored.
+        :keyword str sas_token: Optional Shared Access Signature (SAS) token to authorize access to the blob. Required
+            unless `use_managed_identity` is set to True.
+        :keyword use_managed_identity: Indicates which authentication method should be used. If set to True, Managed HSM
+            will use the configured user-assigned managed identity to authenticate with Azure Storage. Otherwise, a SAS
+            token has to be specified.
+        :paramtype use_managed_identity: Literal[True]
+        :keyword str key_name: Name of a single key in the backup. When set, only this key will be restored.
+        :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
         :returns: An AsyncLROPoller. Call `wait()` or `result()` on this object to wait for the operation to complete
             (the return value is None in either case).
@@ -127,11 +192,17 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
                 :caption: Restore a single key
                 :dedent: 8
         """
-        # AsyncLROBasePolling passes its kwargs to pipeline.run(), so we remove unexpected args before constructing it
+        status_response = None
+        polling_interval = kwargs.pop("_polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
         key_name = kwargs.pop("key_name", None)
+        use_managed_identity = kwargs.pop("use_managed_identity", None)
+        # `sas_token` was formerly a required positional parameter
+        try:
+            sas_token: Optional[str] = args[0]
+        except IndexError:
+            sas_token = kwargs.pop("sas_token", None)
 
-        status_response = None
         if continuation_token:
             status_url = base64.b64decode(continuation_token.encode()).decode("ascii")
             try:
@@ -150,9 +221,11 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             status_response = base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
 
         container_url, folder_name = parse_folder_url(folder_url)
-        sas_parameter = self._models.SASTokenParameter(storage_resource_uri=container_url, token=sas_token)
+        sas_parameter = self._models.SASTokenParameter(
+            storage_resource_uri=container_url, token=sas_token, use_managed_identity=use_managed_identity
+        )
         polling = KeyVaultAsyncBackupClientPollingMethod(
-            lro_algorithms=[KeyVaultBackupClientPolling()], timeout=kwargs.pop("_polling_interval", 5), **kwargs
+            lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
         )
 
         if key_name:
@@ -172,5 +245,5 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             cls=lambda *_: None,  # poller.result() returns None
             continuation_token=status_response,
             polling=polling,
-            **kwargs
+            **kwargs,
         )

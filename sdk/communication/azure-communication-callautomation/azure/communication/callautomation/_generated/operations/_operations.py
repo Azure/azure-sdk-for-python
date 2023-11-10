@@ -543,7 +543,7 @@ def build_call_media_stop_transcription_request(  # pylint: disable=name-too-lon
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/calling/callConnections/{callConnectionId}:StopTranscripition"
+    _url = "/calling/callConnections/{callConnectionId}:StopTranscription"
     path_format_arguments = {
         "callConnectionId": _SERIALIZER.url("call_connection_id", call_connection_id, "str"),
     }

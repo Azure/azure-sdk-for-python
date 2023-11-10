@@ -1,9 +1,20 @@
 # Release History
 
-## 12.8.0b1 (Unreleased)
+## 12.9.0b1 (Unreleased)
 
 ### Features Added
 
+
+## 12.8.0 (2023-11-07)
+
+### Features Added
+- Stable release of features from 12.18.0b1
+
+## 12.8.0b1 (2023-10-17)
+
+### Features Added
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
 
 ## 12.7.3 (2023-10-10)
 

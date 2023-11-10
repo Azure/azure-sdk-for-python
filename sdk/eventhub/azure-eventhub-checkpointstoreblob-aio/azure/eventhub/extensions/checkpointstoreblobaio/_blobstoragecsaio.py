@@ -59,9 +59,8 @@ class BlobCheckpointStore(CheckpointStore):
 
     @classmethod
     def from_connection_string(
-        cls, conn_str, container_name, *, credential=None, **kwargs
-    ):
-        # type: (str, str, Any, Optional[Any], Any) -> BlobCheckpointStore
+        cls, conn_str: str, container_name: str, *, credential: Optional[Any] = None, **kwargs: Any
+    ) -> "BlobCheckpointStore":
         """Create BlobCheckpointStore from a storage connection string.
 
         :param str conn_str:
