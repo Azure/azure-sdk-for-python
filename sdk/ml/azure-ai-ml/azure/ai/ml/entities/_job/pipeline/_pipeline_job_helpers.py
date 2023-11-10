@@ -36,8 +36,8 @@ def process_sdk_component_job_io(
       * The other dictionary contains any IO that is not a databinding that is yet to be turned into REST form
     :rtype: Tuple[Dict[str, str], Dict[str, Union[str, float, bool, Input]]]
     """
-    io_bindings: Dict = {}
-    dataset_literal_io: Dict = {}
+    io_bindings = {}
+    dataset_literal_io = {}
     legacy_io_binding_regex_list = [
         ComponentJobConstants.LEGACY_INPUT_PATTERN,
         ComponentJobConstants.LEGACY_OUTPUT_PATTERN,
