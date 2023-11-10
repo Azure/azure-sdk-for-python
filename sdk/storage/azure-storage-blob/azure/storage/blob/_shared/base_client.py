@@ -285,15 +285,15 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         batch_id = str(uuid.uuid1())
 
         request = self._client._client.post(  # pylint: disable=protected-access
-        url=(
-            f'{self.scheme}://{self.primary_hostname}/'
-            f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
-            f"comp=batch{kwargs.pop('sas', '')}{kwargs.pop('timeout', '')}"
-        ),
-        headers={
-            'x-ms-version': self.api_version,
-            "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False)
-        }
+            url=(
+                f'{self.scheme}://{self.primary_hostname}/'
+                f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
+                f"comp=batch{kwargs.pop('sas', '')}{kwargs.pop('timeout', '')}"
+            ),
+            headers={
+                'x-ms-version': self.api_version,
+                "Content-Type": "multipart/mixed; boundary=" + _get_batch_request_delimiter(batch_id, False, False)
+            }
         )
 
         policies = [StorageHeadersPolicy()]

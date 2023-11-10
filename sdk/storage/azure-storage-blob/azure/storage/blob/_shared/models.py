@@ -487,7 +487,7 @@ class Services(object):
         :param str string: Specify blob, queue, or file in
             in the string with the first letter of the word.
         :return: A Services object
-        :rtype: ~azure.storage.queue.Services
+        :rtype: ~azure.storage.blob.Services
         """
         res_blob = 'b' in string
         res_queue = 'q' in string
