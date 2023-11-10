@@ -113,7 +113,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
                 DistributionConfiguration,
             ]
         ] = None,
-        resources: Optional[JobResourceConfiguration] = None,
+        resources: Optional[Union[Dict, JobResourceConfiguration]] = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count

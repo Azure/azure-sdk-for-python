@@ -50,13 +50,13 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         self,
         *,
         name: str,
-        trigger: Union[CronTrigger, RecurrenceTrigger],
+        trigger: Optional[Union[CronTrigger, RecurrenceTrigger]],
         create_monitor: MonitorDefinition,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             name=name,
@@ -120,7 +120,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
                 ),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
-                trigger=self.trigger._to_rest_object(),
+                trigger=self.trigger._to_rest_object() if self.trigger is not None else None,
             )
         )
 

@@ -155,7 +155,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         limits: Optional[CommandJobLimits] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         distribution: Optional[
             Union[

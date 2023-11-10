@@ -5,7 +5,7 @@
 # pylint: disable=protected-access, too-many-lines
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 import isodate
 from typing_extensions import Literal
@@ -352,22 +352,23 @@ class MonitoringSignal(RestTranslatableMixin):
     def _from_rest_object(  # pylint: disable=too-many-return-statements
         cls, obj: RestMonitoringSignalBase
     ) -> Optional["MonitoringSignal"]:
+        res: Optional["MonitoringSignal"] = None
         if obj.signal_type == MonitoringSignalType.DATA_DRIFT:
-            return DataDriftSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.DATA_QUALITY:
-            return DataQualitySignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.PREDICTION_DRIFT:
-            return PredictionDriftSignal._from_rest_object(obj)
-        if obj.signal_type == "ModelPerformanceSignalBase":
-            return ModelPerformanceSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.FEATURE_ATTRIBUTION_DRIFT:
-            return FeatureAttributionDriftSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.CUSTOM:
-            return CustomMonitoringSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
-            return GenerationSafetyQualitySignal._from_rest_object(obj)
+            res = DataDriftSignal._from_rest_object(obj)
+        elif obj.signal_type == MonitoringSignalType.DATA_QUALITY:
+            res = DataQualitySignal._from_rest_object(obj)
+        elif obj.signal_type == MonitoringSignalType.PREDICTION_DRIFT:
+            res = PredictionDriftSignal._from_rest_object(obj)
+        elif obj.signal_type == "ModelPerformanceSignalBase":
+            res = ModelPerformanceSignal._from_rest_object(obj)
+        elif obj.signal_type == MonitoringSignalType.FEATURE_ATTRIBUTION_DRIFT:
+            res = cast(MonitoringSignal, FeatureAttributionDriftSignal._from_rest_object(obj))
+        elif obj.signal_type == MonitoringSignalType.CUSTOM:
+            res = cast(MonitoringSignal, CustomMonitoringSignal._from_rest_object(obj))
+        elif obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
+            res = cast(MonitoringSignal, GenerationSafetyQualitySignal._from_rest_object(obj))
 
-        return None
+        return res
 
 
 @experimental
@@ -448,7 +449,7 @@ class DataDriftSignal(DataSignal):
         reference_data: Optional[ReferenceData] = None,
         features: Optional[Union[List[str], MonitorFeatureFilter, Literal["all_features"]]] = None,
         feature_type_override: Optional[Dict[str, Union[str, MonitorFeatureDataType]]] = None,
-        metric_thresholds: Optional[List[MetricThreshold]] = None,
+        metric_thresholds: Optional[Union[DataDriftMetricThreshold, List[MetricThreshold]]] = None,
         alert_enabled: bool = True,
         data_segment: Optional[DataSegment] = None,
         properties: Optional[Dict[str, str]] = None,
@@ -647,7 +648,7 @@ class DataQualitySignal(DataSignal):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataDriftSignal":
+    def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataQualitySignal":
         return cls(
             production_data=ProductionData._from_rest_object(obj.production_data),
             reference_data=ReferenceData._from_rest_object(obj.reference_data),
@@ -692,7 +693,7 @@ class ModelSignal(MonitoringSignal):
         *,
         production_data: ProductionData,
         reference_data: ReferenceData,
-        metric_thresholds: List[MetricThreshold],
+        metric_thresholds: Union[ModelPerformanceMetricThreshold, List[MetricThreshold]],
         model_type: MonitorModelType,
         alert_enabled: bool = True,
     ) -> None:
@@ -874,7 +875,7 @@ class ModelPerformanceSignal(ModelSignal):
         return RestModelPerformanceSignal(
             production_data=self.production_data._to_rest_object() if self.production_data is not None else None,
             reference_data=self.reference_data._to_rest_object() if self.reference_data is not None else None,
-            metric_threshold=self.metric_thresholds._to_rest_object(model_type=self.model_type)
+            metric_threshold=self.metric_thresholds._to_rest_object()
             if isinstance(self.metric_thresholds, MetricThreshold)
             else None,
             data_segment=self.data_segment._to_rest_object() if self.data_segment else None,

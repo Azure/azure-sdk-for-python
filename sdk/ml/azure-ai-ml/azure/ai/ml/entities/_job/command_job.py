@@ -144,7 +144,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             if self.distribution and not isinstance(self.distribution, Dict)
             else None,
             tags=self.tags,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object()
+            if self.identity and not isinstance(self.identity, Dict)
+            else None,
             environment_variables=self.environment_variables,
             resources=resources._to_rest_object() if resources and not isinstance(resources, Dict) else None,
             limits=self.limits._to_rest_object() if self.limits else None,

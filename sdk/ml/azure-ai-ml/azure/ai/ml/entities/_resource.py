@@ -69,7 +69,7 @@ class Resource(abc.ABC):
         super().__init__(**kwargs)
 
     @property
-    def _source_path(self) -> Optional[str]:
+    def _source_path(self) -> Union[str, PathLike]:
         # source path is added to display file location for validation error messages
         # usually, base_path = Path(source_path).parent if source_path else os.getcwd()
         return self.__source_path

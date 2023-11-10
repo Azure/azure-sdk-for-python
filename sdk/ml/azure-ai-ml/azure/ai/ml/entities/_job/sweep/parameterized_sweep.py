@@ -97,15 +97,6 @@ class ParameterizedSweep:
         """
         return self._resources
 
-    @property
-    def limits(self) -> Optional[SweepJobLimits]:
-        """Limits for sweep job.
-
-        :returns: Limits for sweep job.
-        :rtype: ~azure.ai.ml.sweep.SweepJobLimits
-        """
-        return self._limits
-
     @resources.setter
     def resources(self, value: Union[dict, JobResourceConfiguration]) -> None:
         """Set Resources for sweep job.
@@ -116,6 +107,15 @@ class ParameterizedSweep:
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
         self._resources = value
+
+    @property
+    def limits(self) -> Optional[SweepJobLimits]:
+        """Limits for sweep job.
+
+        :returns: Limits for sweep job.
+        :rtype: ~azure.ai.ml.sweep.SweepJobLimits
+        """
+        return self._limits
 
     @limits.setter
     def limits(self, value: SweepJobLimits) -> None:

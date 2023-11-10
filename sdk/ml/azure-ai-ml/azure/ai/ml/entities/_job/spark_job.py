@@ -112,7 +112,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         kwargs[TYPE] = JobType.SPARK
 
         super().__init__(**kwargs)
-        self.conf = self.conf or {}
+        self.conf: Dict = self.conf or {}
         self.properties_sparkJob = self.properties or {}
         self.driver_cores = driver_cores
         self.driver_memory = driver_memory
@@ -153,7 +153,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         """The identity that the Spark job will use while running on compute.
 
         :return: The identity that the Spark job will use while running on compute.
@@ -233,7 +233,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             jars=self.jars,
             files=self.files,
             archives=self.archives,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object()
+            if self.identity and not isinstance(self.identity, dict)
+            else None,
             conf=conf,
             properties=self.properties_sparkJob,
             environment_id=self.environment,
@@ -375,7 +377,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
     def _validate(self) -> None:
         # TODO: make spark job schema validatable?
-        if self.resources:
+        if self.resources and not isinstance(self.resources, Dict):
             self.resources._validate()
         _validate_compute_or_resources(self.compute, self.resources)
         _validate_input_output_mode(self.inputs, self.outputs)
