@@ -24,6 +24,9 @@ from .._generated.models import (
     SynonymMap as _SynonymMap,
     DataSourceCredentials,
     AzureActiveDirectoryApplicationCredentials,
+    CognitiveServicesAccount,
+    SearchIndexerKnowledgeStore,
+    SearchIndexerIndexProjections,
 )
 
 
@@ -40,15 +43,15 @@ class SearchIndexerSkillset(_serialization.Model):
     :ivar description: The description of the skillset.
     :vartype description: str
     :ivar skills: A list of skills in the skillset. Required.
-    :vartype skills: list[~search_service_client.models.SearchIndexerSkill]
+    :vartype skills: list[~azure.search.documents.indexes.models.SearchIndexerSkill]
     :ivar cognitive_services_account: Details about the Azure AI service to be used when running
      skills.
-    :vartype cognitive_services_account: ~search_service_client.models.CognitiveServicesAccount
+    :vartype cognitive_services_account: ~azure.search.documents.indexes.models.CognitiveServicesAccount
     :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
      enriched data.
-    :vartype knowledge_store: ~search_service_client.models.SearchIndexerKnowledgeStore
+    :vartype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
     :ivar index_projections: Definition of additional projections to secondary search index(es).
-    :vartype index_projections: ~search_service_client.models.SearchIndexerIndexProjections
+    :vartype index_projections: ~azure.search.documents.indexes.models.SearchIndexerIndexProjections
     :ivar e_tag: The ETag of the skillset.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -59,7 +62,7 @@ class SearchIndexerSkillset(_serialization.Model):
      this property as needed if you want to rotate your encryption key; Your skillset definition
      will be unaffected. Encryption with customer-managed keys is not available for free search
      services, and is only available for paid services created on or after January 1, 2019.
-    :vartype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
+    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
     _validation = {
@@ -98,7 +101,7 @@ class SearchIndexerSkillset(_serialization.Model):
         description: Optional[str] = None,
         cognitive_services_account: Optional["CognitiveServicesAccount"] = None,
         knowledge_store: Optional["SearchIndexerKnowledgeStore"] = None,
-        index_projections: Optional["_models.SearchIndexerIndexProjections"] = None,
+        index_projections: Optional["SearchIndexerIndexProjections"] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
         **kwargs: Any
@@ -548,7 +551,7 @@ class PatternAnalyzer(LexicalAnalyzer):
     :vartype pattern: str
     :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
-    :vartype flags: list[str] or list[~search_service_client.models.RegexFlags]
+    :vartype flags: list[str] or list[~azure.search.documents.indexes.models.RegexFlags]
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
     """
@@ -617,7 +620,7 @@ class PatternTokenizer(LexicalTokenizer):
     :vartype pattern: str
     :ivar flags: List of regular expression flags. Possible values of each flag include: 'CANON_EQ',
      'CASE_INSENSITIVE', 'COMMENTS', 'DOTALL', 'LITERAL', 'MULTILINE', 'UNICODE_CASE', 'UNIX_LINES'.
-    :vartype flags: list[str] or list[~search_service_client.models.RegexFlags]
+    :vartype flags: list[str] or list[~azure.search.documents.indexes.models.RegexFlags]
     :ivar group: The zero-based ordinal of the matching group in the regular expression to
      extract into tokens. Use -1 if you want to use the entire pattern to split the input into
      tokens, irrespective of matching groups. Default is -1.

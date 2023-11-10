@@ -612,8 +612,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        skillset = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
-        result = await self._client.skillsets.create(skillset, **kwargs)
+        skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
+        result = await self._client.skillsets.create(skillset_gen, **kwargs)
         return SearchIndexerSkillset._from_generated(result)
 
     @distributed_trace_async
@@ -644,11 +644,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(skillset, match_condition)
         kwargs.update(access_condition)
-        skillset = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
+        skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
         result = await self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
-            skillset=skillset,
+            skillset=skillset_gen,
             prefer="return=representation",
             error_map=error_map,
             **kwargs

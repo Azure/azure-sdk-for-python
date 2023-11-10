@@ -620,9 +620,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         _validate_skillset(skillset)
-        skillset = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
+        skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
-        result = self._client.skillsets.create(skillset, **kwargs)
+        result = self._client.skillsets.create(skillset_gen, **kwargs)
         return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace
@@ -654,11 +654,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         error_map, access_condition = get_access_conditions(skillset, match_condition)
         kwargs.update(access_condition)
         _validate_skillset(skillset)
-        skillset = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
+        skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
         result = self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
-            skillset=skillset,
+            skillset=skillset_gen,
             prefer="return=representation",
             error_map=error_map,
             **kwargs
