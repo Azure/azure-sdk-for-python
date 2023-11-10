@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import abc
 from email.message import Message
 import json
@@ -48,6 +49,7 @@ from typing import (
     Sequence,
     MutableMapping,
     ContextManager,
+    TYPE_CHECKING,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -68,8 +70,11 @@ from ...utils._pipeline_transport_rest_shared import (
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-PipelineType = TypeVar("PipelineType")
 DataType = Union[bytes, str, Dict[str, Union[str, int]]]
+
+if TYPE_CHECKING:
+    # We need a transport to define a pipeline, this "if" avoid a circular import
+    from azure.core.pipeline import Pipeline
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -493,7 +498,7 @@ class _HttpResponseBase:
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline: PipelineType, **kwargs: Any) -> Iterator[bytes]:
+    def stream_download(self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download

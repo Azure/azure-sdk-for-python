@@ -25,7 +25,22 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
-    """Configuration for AutoML multi-label Image Classification job."""
+    """Configuration for AutoML multi-label Image Classification job.
+
+    :param primary_metric: The primary metric to use for optimization.
+    :type primary_metric: Optional[str, ~azure.ai.ml.automl.ClassificationMultilabelPrimaryMetrics]
+    :param kwargs: Job-specific arguments.
+    :type kwargs: Dict[str, Any]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_classification_multilabel_job]
+            :end-before: [END automl.automl_image_job.image_classification_multilabel_job]
+            :language: python
+            :dedent: 8
+            :caption: creating an automl image classification multilabel job
+    """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationMultilabelPrimaryMetrics.IOU
 
@@ -35,11 +50,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
         primary_metric: Optional[Union[str, ClassificationMultilabelPrimaryMetrics]] = None,
         **kwargs,
     ) -> None:
-        """Initialize a new AutoML multi-label Image Classification job.
 
-        :param primary_metric: The primary metric to use for optimization
-        :param kwargs: Job-specific arguments
-        """
         # Extract any super class init settings
         limits = kwargs.pop("limits", None)
         sweep = kwargs.pop("sweep", None)

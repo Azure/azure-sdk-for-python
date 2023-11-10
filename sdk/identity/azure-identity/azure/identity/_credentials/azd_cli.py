@@ -16,7 +16,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import resolve_tenant, within_dac
+from .._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
 from .._internal.decorators import log_get_token
 
 CLI_NOT_FOUND = (
@@ -35,11 +35,11 @@ class AzureDeveloperCliCredential:
     Azure Developer CLI is a command-line interface tool that allows developers to create, manage, and deploy
     resources in Azure. It's built on top of the Azure CLI and provides additional functionality specific
     to Azure developers. It allows users to authenticate as a user and/or a service principal against
-    `Azure Active Directory (Azure AD) <"https://learn.microsoft.com/azure/active-directory/fundamentals/">`__.
+    `Microsoft Entra ID <"https://learn.microsoft.com/azure/active-directory/fundamentals/">`__.
     The AzureDeveloperCliCredential authenticates in a development environment and acquires a token on behalf of
     the logged-in user or service principal in Azure Developer CLI. It acts as the Azure Developer CLI logged-in user
     or service principal and executes an Azure CLI command underneath to authenticate the application against
-    Azure Active Directory.
+    Microsoft Entra ID.
 
     To use this credential, the developer needs to authenticate locally in Azure Developer CLI using one of the
     commands below:
@@ -76,7 +76,8 @@ class AzureDeveloperCliCredential:
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
@@ -121,6 +122,11 @@ class AzureDeveloperCliCredential:
         if not scopes:
             raise ValueError("Missing scope in request. \n")
 
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
+
         commandString = " --scope ".join(scopes)
         command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
@@ -137,7 +143,7 @@ class AzureDeveloperCliCredential:
         if not token:
             sanitized_output = sanitize_output(output)
             message = (
-                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
                 f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
                 f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )

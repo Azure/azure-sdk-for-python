@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b17 (Unreleased)
+## 1.0.0b19 (Unreleased)
 
 ### Features Added
 
@@ -8,10 +8,25 @@
 
 ### Bugs Fixed
 
-- Handle missing or empty message data
-    ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
-
 ### Other Changes
+
+## 1.0.0b18 (2023-11-06)
+
+### Bugs Fixed
+
+- Default exception type for blank exceptions
+    ([#32327](https://github.com/Azure/azure-sdk-for-python/pull/32327))
+- Updated django samples with clearly artificial secret key
+    ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
+- Remove metric namespace
+    ([#32897](https://github.com/Azure/azure-sdk-for-python/pull/32897))
+
+## 1.0.0b17 (2023-09-12)
+
+### Bugs Fixed
+
+- Handle missing or empty message data
+    ([#31944](https://github.com/Azure/azure-sdk-for-python/pull/31944))
 
 ## 1.0.0b16 (2023-08-30)
 

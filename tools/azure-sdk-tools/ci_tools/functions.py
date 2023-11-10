@@ -1,13 +1,16 @@
 import fnmatch
 import subprocess
 import shutil
+import zipfile
+import tarfile
+import stat
 from ast import Not
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
 
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER
-from ci_tools.parsing import ParsedSetup, get_build_config
+from ci_tools.parsing import ParsedSetup, get_config_setting
 from pypi_tools.pypi import PyPIClient
 
 import os, sys, platform, glob, re, logging
@@ -24,6 +27,10 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-synapse",
     "azure-ai-anomalydetector",
 ]
+
+NO_TESTS_ALLOWED = [
+]
+
 
 META_PACKAGES = ["azure", "azure-mgmt", "azure-keyvault"]
 
@@ -58,6 +65,19 @@ omit_function_dict = {
     "Regression": omit_regression,
     "Omit_management": omit_mgmt,
 }
+
+
+def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    if path_to_zip_file.endswith(".zip"):
+        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+            zip_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+            return os.path.join(extract_location, extracted_dir)
+    else:
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+            return os.path.join(extract_location, extracted_dir)
 
 
 def apply_compatibility_filter(package_set: List[str]) -> List[str]:
@@ -107,7 +127,7 @@ def compare_python_version(version_spec: str) -> bool:
     # we want to be loud if we can't parse out a major version from the version string, not silently
     # fail and skip running samples on a platform we really should be
     if parsed_version is None:
-        raise InvalidVersion(f"Unable to parse the platform version. Unparsed value was \"{platform_version}\".")
+        raise InvalidVersion(f'Unable to parse the platform version. Unparsed value was "{platform_version}".')
     else:
         current_sys_version = parse(parsed_version[0])
         spec_set = SpecifierSet(version_spec)
@@ -201,26 +221,10 @@ def discover_targeted_packages(
     return sorted(collected_packages)
 
 
-def get_config_setting(package_path: str, setting: str, default: Any = True) -> Any:
-    # we should always take the override if one is present
-    override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
-    if override_value:
-        return override_value
-
-    # if no override, check for the config setting in the pyproject.toml
-    config = get_build_config(package_path)
-
-    if config:
-        if setting.lower() in config:
-            return config[setting.lower()]
-
-    return default
-
-
 def is_package_active(package_path: str):
     disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
 
-    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper()}", None)
+    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper().replace('-', '_')}", None)
 
     if override_value:
         return str_to_bool(override_value)
@@ -394,6 +398,45 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
     shutil.rmtree(os.path.join(pkg_root, ".tmp_whl_dir"))
 
 
+def replace_dev_reqs(file, pkg_root):
+    adjusted_req_lines = []
+
+    with open(file, "r") as f:
+        original_req_lines = list(line.strip() for line in f)
+
+    for line in original_req_lines:
+        args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
+        amended_line = " ".join(args)
+        extras = ""
+
+        if amended_line.endswith("]"):
+            amended_line, extras = amended_line.rsplit("[", maxsplit=1)
+            if extras:
+                extras = f"[{extras}"
+
+        adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root)}{extras}")
+
+    req_file_name = os.path.basename(file)
+    logging.info("Old {0}:{1}".format(req_file_name, original_req_lines))
+    logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
+
+    with open(file, "w") as f:
+        # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
+        # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
+        # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
+        f.write("\n".join(adjusted_req_lines))
+
+
+def is_relative_install_path(req: str, package_path: str) -> str:
+    possible_setup_path = os.path.join(package_path, req, "setup.py")
+
+    # blank lines are _allowed_ in a dev requirements. they should not resolve to the package_path erroneously
+    if not req:
+        return False
+
+    return os.path.exists(possible_setup_path)
+
+
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.
 
@@ -403,7 +446,7 @@ def build_whl_for_req(req: str, package_path: str) -> str:
     """
     from ci_tools.build import create_package
 
-    if ".." in req:
+    if is_relative_install_path(req, package_path):
         # Create temp path if it doesn't exist
         temp_dir = os.path.join(package_path, ".tmp_whl_dir")
         if not os.path.exists(temp_dir):
@@ -527,6 +570,28 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
             sys.exit(1)
 
     return None
+
+
+def error_handler_git_access(func, path, exc):
+    """
+    This function exists because the git idx file is written with strange permissions that prevent it from being
+    deleted. Due to this, we need to register an error handler that attempts to fix the file permissions before
+    re-attempting the delete operations.
+    """
+
+    if not os.access(path, os.W_OK):
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        raise
+
+
+def cleanup_directory(target_directory: str) -> None:
+    """Invokes a directory delete. Specifically handles the case where bad permissions on a git .idx file
+    prevent cleanup of the directory with a generic error.
+    """
+    if os.path.exists(target_directory):
+        shutil.rmtree(target_directory, ignore_errors=False, onerror=error_handler_git_access)
 
 
 def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type: str) -> List[str]:

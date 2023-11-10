@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Dict
 import json
 import hashlib
 import hmac
@@ -165,13 +165,13 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
 
 def _build_request(endpoint, content_type, events, *, channel_name=None):
     serialize = Serializer()
-    header_parameters = {}  # type: Dict[str, Any]
+    header_parameters: Dict[str, Any] = {}
     header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
 
     if channel_name:
         header_parameters['aeg-channel-name'] = channel_name
 
-    query_parameters = {}  # type: Dict[str, Any]
+    query_parameters: Dict[str, Any] = {}
     query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
 
     body = serialize.body(events, '[object]')

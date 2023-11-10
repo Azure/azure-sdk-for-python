@@ -130,8 +130,12 @@ class ServiceBusReceiver(
      performance but increase the chance that messages will expire while they are cached if they're not
      processed fast enough.
      The default value is 0, meaning messages will be received from the service and processed one at a time.
-     In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-     (if provided) within its request to the service.
+     In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
+     `max_message_count` (if provided) within its request to the service.
+     **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+     the in-memory prefetch buffer until they're received into the application. If the application ends before
+     the messages are received into the application, those messages will be lost and unable to be recovered.
+     Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
     :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
      Service Bus will associate it with some error messages for easier correlation of errors.
      If not specified, a unique id will be generated.
@@ -237,7 +241,9 @@ class ServiceBusReceiver(
     def __iter__(self):
         return self._iter_contextual_wrapper()
 
-    def _inner_next(self, wait_time=None):
+    def _inner_next(
+        self, wait_time: Optional[float] = None
+    ) -> "ServiceBusReceivedMessage":
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
@@ -247,11 +253,11 @@ class ServiceBusReceiver(
                 self._message_iter = None
                 raise
 
-    def __next__(self):
+    def __next__(self) -> ServiceBusReceivedMessage:
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
         try:
             self._receive_context.set()
-            message = self._inner_next()
+            message: ServiceBusReceivedMessage = self._inner_next()
             links = get_receive_links(message)
             with receive_trace_context_manager(self, links=links):
                 return message
@@ -295,8 +301,12 @@ class ServiceBusReceiver(
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-         (if provided) within its request to the service.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
+         `max_message_count` (if provided) within its request to the service.
+         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         the in-memory prefetch buffer until they're received into the application. If the application ends before
+         the messages are received into the application, those messages will be lost and unable to be recovered.
+         Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
@@ -336,22 +346,29 @@ class ServiceBusReceiver(
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR
             if self._max_wait_time
             else 0,
-            link_credit=self._prefetch_count,
-            # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
+            # set link_credit to at least 1 so that messages can be received
+            link_credit=self._prefetch_count + 1,
+            # If prefetch is "off", then keep_alive coroutine frequently listens on the connection for messages and
+            # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
-            if self._prefetch_count != 1
+            if self._prefetch_count != 0
             else 5,
             shutdown_after_timeout=False,
             link_properties={CONSUMER_IDENTIFIER: self._name},
         )
-        if self._prefetch_count == 1:
+        # When prefetch is 0 and receive mode is PEEK_LOCK, release messages when they're received.
+        # This will stop messages from expiring in the buffer and incrementing delivery count of a message.
+        # If RECEIVE_AND_DELETE mode, messages are settled and removed from the Service Bus entity immediately,
+        # so the regular _message_received callback should be used. This will ensure that all messages are added
+        # to the internal buffer since they cannot be re-received, even if not received during an active receive call.
+        if self._prefetch_count == 0 and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK:
             # pylint: disable=protected-access
             self._handler._message_received = functools.partial(
-                self._amqp_transport.enhanced_message_received, # type: ignore[attr-defined]
+                self._amqp_transport.enhanced_message_received,
                 self
             )
 
-    def _open(self):
+    def _open(self) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
@@ -402,11 +419,11 @@ class ServiceBusReceiver(
             if len(batch) >= max_message_count:
                 return [self._build_received_message(message) for message in batch]
 
-            # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
+            # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
             if (
                 max_message_count
-                and self._prefetch_count == 1
-                and max_message_count > 1
+                and self._prefetch_count == 0
+                and max_message_count >= 1
             ):
                 link_credit_needed = max_message_count - len(batch)
                 self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
@@ -442,7 +459,6 @@ class ServiceBusReceiver(
                 ):
                     batch.append(received_messages_queue.get())
                     received_messages_queue.task_done()
-
             return [self._build_received_message(message) for message in batch]
         finally:
             self._receive_context.clear()
@@ -663,7 +679,7 @@ class ServiceBusReceiver(
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
         start_time = time.time_ns()
-        messages = self._do_retryable_operation(
+        messages: List[ServiceBusReceivedMessage] = self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,

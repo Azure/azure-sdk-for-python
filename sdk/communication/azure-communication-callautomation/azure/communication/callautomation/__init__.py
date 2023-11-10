@@ -20,7 +20,8 @@ from ._models import (
     TransferCallResult,
     MediaStreamingConfiguration,
     ChannelAffinity,
-    MuteParticipantsResult
+    MuteParticipantsResult,
+    CancelAddParticipantResult,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -29,7 +30,6 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     CommunicationIdentifierKind,
     CommunicationCloudEnvironment,
-    MicrosoftBotIdentifier,
     UnknownIdentifier,
 )
 from ._generated.models._enums import (
@@ -67,6 +67,7 @@ __all__ = [
     "RemoveParticipantResult",
     "TransferCallResult",
     "MuteParticipantsResult",
+    "CancelAddParticipantResult",
 
     # common ACS communication identifier
     "CommunicationIdentifier",
@@ -75,7 +76,6 @@ __all__ = [
     "CommunicationUserIdentifier",
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
-    "MicrosoftBotIdentifier",
     "UnknownIdentifier",
 
     # enums
@@ -118,5 +118,8 @@ def __getattr__(name):
         )
         from ._models import ServerCallLocator
         return ServerCallLocator
-
+    if name == 'MicrosoftBotIdentifier':
+        warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
+        from ._shared.models  import _MicrosoftBotIdentifier
+        return _MicrosoftBotIdentifier
     raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")

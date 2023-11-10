@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._enums import KeyType
-    from ._generated_models import KeyAttributes
+    from ._generated.models import KeyAttributes
     from ._models import JsonWebKey
 
 
@@ -42,7 +42,7 @@ class KeyClient(KeyVaultClientBase):
     :type credential: :class:`~azure.core.credentials.TokenCredential`
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
-    :paramtype api_version: ~azure.keyvault.keys.ApiVersion
+    :paramtype api_version: ~azure.keyvault.keys.ApiVersion or str
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
 

@@ -10,8 +10,8 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -102,7 +102,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_pipeline_job_configurations.py
+        .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
             :start-after: [START configure_PipelineJob_and_PipelineJobSettings]
             :end-before: [END configure_PipelineJob_and_PipelineJobSettings]
             :language: python

@@ -7,6 +7,7 @@ application insights with the AzureMonitorTraceExporter.
 See more info on the requests instrumentation here:
 https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation/opentelemetry-instrumentation-requests
 """
+# mypy: disable-error-code="attr-defined"
 import os
 import requests
 from opentelemetry import trace

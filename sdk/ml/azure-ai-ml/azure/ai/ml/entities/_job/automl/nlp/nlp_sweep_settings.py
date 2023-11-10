@@ -12,7 +12,24 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 # pylint: disable=protected-access
 class NlpSweepSettings(RestTranslatableMixin):
-    """Sweep settings for all AutoML NLP tasks."""
+    """Sweep settings for all AutoML NLP tasks.
+
+    :param sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
+        Possible values include: "Grid", "Random", and "Bayesian".
+    :type sampling_algorithm: Union[str, ~azure.ai.ml.automl.SamplingAlgorithmType]
+    :param early_termination: Early termination policy to end poorly performing training candidates,
+        defaults to None.
+    :type early_termination: Optional[~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.nlp_sweep_settings]
+                :end-before: [END automl.nlp_sweep_settings]
+                :language: python
+                :dedent: 8
+                :caption: creating an nlp sweep settings
+    """
 
     def __init__(
         self,

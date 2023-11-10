@@ -45,7 +45,10 @@ class TestSearchClient(AzureRecordedTestCase):
         select = ["hotelName", "category", "description"]
         results = list(
             client.search(
-                search_text="WiFi", filter="category eq 'Budget'", select=",".join(select), order_by="hotelName desc"
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=",".join(select),
+                order_by="hotelName desc",
             )
         )
         assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
@@ -64,7 +67,12 @@ class TestSearchClient(AzureRecordedTestCase):
     def _test_get_search_filter_array(self, client):
         select = ["hotelName", "category", "description"]
         results = list(
-            client.search(search_text="WiFi", filter="category eq 'Budget'", select=select, order_by="hotelName desc")
+            client.search(
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=select,
+                order_by="hotelName desc",
+            )
         )
         assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
         expected = {

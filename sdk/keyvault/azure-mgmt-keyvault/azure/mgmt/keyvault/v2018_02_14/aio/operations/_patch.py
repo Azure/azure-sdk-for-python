@@ -35,6 +35,7 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
+
 class VaultsOperations(_VaultsOperations):
     @distributed_trace
     def list(self, top: Optional[int] = None, **kwargs: Any) -> AsyncIterable["_models.Resource"]:
@@ -131,6 +132,7 @@ class VaultsOperations(_VaultsOperations):
         return AsyncItemPaged(get_next, extract_data)
 
     list.metadata = {"url": "/subscriptions/{subscriptionId}/resources"}
+
 
 __all__: List[str] = ["VaultsOperations"]  # Add all objects you want publicly available to users at this package level
 

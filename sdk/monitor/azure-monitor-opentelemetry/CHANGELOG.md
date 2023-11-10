@@ -1,6 +1,39 @@
 # Release History
 
+## 1.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0 (2023-11-08)
+
+### Features Added
+
+- Add ability to specify which logger to export telemetry for via `logger_name` configuration
+    ([#32192](https://github.com/Azure/azure-sdk-for-python/pull/32192))
+- Add message ids for AppLens
+    ([#32195](https://github.com/Azure/azure-sdk-for-python/pull/32195))
+- Allow OTEL_PYTHON_DISABLED_INSTRUMENTATIONS functionality for Azure Core Tracing in Auto-instrumentation
+    ([#32331](https://github.com/Azure/azure-sdk-for-python/pull/32331))
+
+### Bugs Fixed
+
+- Updated django samples with clearly artificial secret key
+    ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
+
 ## 1.0.0 (2023-09-12)
+
+### Features Added
+
+- Add Azure resource detectors
+    ([#32087](https://github.com/Azure/azure-sdk-for-python/pull/32087))
+- Add instrumentation_options
+    ([#31793](https://github.com/Azure/azure-sdk-for-python/pull/31793))
 
 ### Other Changes
 

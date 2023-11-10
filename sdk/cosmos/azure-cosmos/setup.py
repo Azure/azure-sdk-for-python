@@ -53,8 +53,9 @@ setup(
     maintainer="Microsoft",
     maintainer_email="askdocdb@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
+    keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Operating System :: OS Independent",
@@ -71,6 +72,6 @@ setup(
     packages=find_packages(exclude=exclude_packages),
     python_requires=">=3.6",
     install_requires=[
-        'azure-core<2.0.0,>=1.23.0'
+        'azure-core<2.0.0,>=1.25.0'
     ],
 )

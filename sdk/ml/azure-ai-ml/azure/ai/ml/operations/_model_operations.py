@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long
+# pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long,too-many-statements
 
 from contextlib import contextmanager
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
+import re
+
 from marshmallow.exceptions import ValidationError as SchemaValidationError
-from azure.ai.ml.constants._common import REGISTRY_URI_FORMAT
 
 from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
@@ -24,13 +25,8 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    ListViewType,
-    ModelVersion,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
-)
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType, ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -38,7 +34,10 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import (
+    is_ARM_id_for_resource,
+    AMLVersionedArmId,
+)
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
@@ -53,20 +52,12 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
     get_storage_details_for_registry_assets,
 )
-from azure.ai.ml._utils._storage_utils import (
-    get_ds_name_and_path_prefix,
-    get_storage_client,
-)
-from azure.ai.ml._utils.utils import (
-    resolve_short_datastore_url,
-    validate_ml_flow_folder,
-)
-from azure.ai.ml.entities._assets import Model, ModelPackage, Environment
-from azure.ai.ml.entities._assets.workspace_asset_reference import (
-    WorkspaceAssetReference,
-)
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
+from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
+from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, REGISTRY_URI_FORMAT, AzureMLResourceType
+from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
+from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -95,7 +86,7 @@ class ModelOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
+        resources (ServiceClient082023Preview or ServiceClient102021Dataplane).
     :type service_client: typing.Union[
         ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
         ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
@@ -111,7 +102,7 @@ class ModelOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient042023Preview, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         all_operations: OperationsContainer = None,
         **kwargs: Dict,
@@ -150,7 +141,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_create_or_update]
                 :end-before: [END model_operations_create_or_update]
                 :language: python
@@ -317,7 +308,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_get]
                 :end-before: [END model_operations_get]
                 :language: python
@@ -366,7 +357,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_download]
                 :end-before: [END model_operations_download]
                 :language: python
@@ -449,7 +440,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_archive]
                 :end-before: [END model_operations_archive]
                 :language: python
@@ -485,7 +476,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_restore]
                 :end-before: [END model_operations_restore]
                 :language: python
@@ -524,7 +515,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_list]
                 :end-before: [END model_operations_list]
                 :language: python
@@ -586,7 +577,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_share]
                 :end-before: [END model_operations_share]
                 :language: python
@@ -678,13 +669,14 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_package]
                 :end-before: [END model_operations_package]
                 :language: python
                 :dedent: 8
                 :caption: Package a model example.
         """
+
         is_deployment_flow = kwargs.pop("skip_to_rest", False)
         if not is_deployment_flow:
             orchestrators = OperationOrchestrator(
@@ -734,11 +726,22 @@ class ModelOperations(_ScopeDependentOperations):
                     else package_request.base_environment_source.resource_id
                 )
 
-            if self._registry_name:
-                # create ARM id for the target environment
-                if package_request.target_environment_name:
-                    package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_name}"
+            # create ARM id for the target environment
+            if self._operation_scope._workspace_location and self._operation_scope._workspace_id:
+                package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
+            else:
+                ws = self._all_operations.all_operations.get("workspaces")
+                ws_details = ws.get(self._workspace_name)
+                workspace_location, workspace_id = (
+                    ws_details.location,
+                    ws_details._workspace_id,
+                )
+                package_request.target_environment_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/environments/{package_request.target_environment_id}"
 
+            if package_request.environment_version is not None:
+                package_request.target_environment_id = (
+                    package_request.target_environment_id + f"/versions/{package_request.environment_version}"
+                )
             package_request = package_request._to_rest_object()
 
         if self._registry_reference:
@@ -762,15 +765,21 @@ class ModelOperations(_ScopeDependentOperations):
         )
         if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
             return package_out
-        if hasattr(package_out, "target_environment_name"):
-            environment_name = package_out.target_environment_name
+        if hasattr(package_out, "target_environment_id"):
+            environment_id = package_out.target_environment_id
         else:
-            environment_name = package_out.additional_properties["targetEnvironmentName"]
+            environment_id = package_out.additional_properties["targetEnvironmentId"]
 
-        if hasattr(package_out, "target_environment_version"):
-            environment_version = package_out.target_environment_version
+        pattern = r"azureml://locations/(\w+)/workspaces/([\w-]+)/environments/([\w.-]+)/versions/(\d+)"
+        parsed_id = re.search(pattern, environment_id)
+
+        if parsed_id:
+            environment_name = parsed_id.group(3)
+            environment_version = parsed_id.group(4)
         else:
-            environment_version = package_out.additional_properties["targetEnvironmentVersion"]
+            parsed_id = AMLVersionedArmId(environment_id)
+            environment_name = parsed_id.asset_name
+            environment_version = parsed_id.asset_version
 
         module_logger.info("\nPackage Created")
         if package_out is not None and package_out.__class__.__name__ == "PackageResponse":

@@ -717,6 +717,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         """
         kwargs["type"] = EndpointComputeType.MANAGED.value
         self.private_network_connection = kwargs.pop("private_network_connection", None)
+        self.package_model = kwargs.pop("package_model", False)
 
         super(ManagedOnlineDeployment, self).__init__(
             name=name,

@@ -238,6 +238,21 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
+    def enhanced_message_received(*args, **kwargs) -> None:  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+        """
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
+        :param ~pyamqp.performatives.AttachFrame frame: Required if pyamqp.
+        :param ~uamqp.Message or ~pyamqp.message.Message message: The received message.
+        """
+
+    @staticmethod
+    @abstractmethod
     def build_received_message(receiver, message_type, received):
         """
         Build ServiceBusReceivedMessage.

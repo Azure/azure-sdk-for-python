@@ -1,14 +1,14 @@
 # Release History
 
-## 3.3.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 3.3.2 (2023-11-07)
 
 ### Bugs Fixed
+- Fixed incorrect data type for returned formula objects.
 
-### Other Changes
+## 3.3.1 (2023-10-10)
+
+### Features Added
+- Exposed `send_request()` method in each client to send custom requests using the client's existing pipeline. ([#32151](https://github.com/Azure/azure-sdk-for-python/issues/32151))
 
 ## 3.3.0 (2023-08-08)
 

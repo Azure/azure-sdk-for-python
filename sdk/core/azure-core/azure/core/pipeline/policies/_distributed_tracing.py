@@ -26,7 +26,7 @@
 """Traces network calls using the implementation library from the settings."""
 import logging
 import sys
-import urllib
+import urllib.parse
 from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type
 from types import TracebackType
 

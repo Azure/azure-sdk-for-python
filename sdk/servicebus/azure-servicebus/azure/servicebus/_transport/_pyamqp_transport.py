@@ -666,13 +666,19 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._receive_context.clear()
 
     @staticmethod
-    def enhanced_message_received(
+    def enhanced_message_received(  # pylint: disable=arguments-differ
         receiver: "ServiceBusReceiver",
         frame: "AttachFrame",
         message: "Message"
     ) -> None:
-        """
-        Receiver enhanced_message_received callback.
+        """Callback run on receipt of every message.
+
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
         :param ~pyamqp.performatives.AttachFrame frame: The attach frame.
         :param ~pyamqp.message.Message message: The received message.
@@ -682,6 +688,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if receiver._receive_context.is_set():
             receiver._handler._received_messages.put((frame, message))
         else:
+            # If receive_message or receive iterator is not being called, release message passed to callback.
             receiver._handler.settle_messages(frame[1], 'released')
 
     @staticmethod
@@ -742,35 +749,42 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
-        if settle_operation == MESSAGE_COMPLETE:
-            return handler.settle_messages(message._delivery_id, 'accepted')
-        if settle_operation == MESSAGE_ABANDON:
-            return handler.settle_messages(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=False
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return handler.settle_messages(
-                message._delivery_id,
-                'rejected',
-                error=AMQPError(
-                    condition=DEADLETTERNAME,
-                    description=dead_letter_error_description,
-                    info={
-                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                    }
+        try:
+            if settle_operation == MESSAGE_COMPLETE:
+                return handler.settle_messages(message._delivery_id, 'accepted')
+            if settle_operation == MESSAGE_ABANDON:
+                return handler.settle_messages(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=False
                 )
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return handler.settle_messages(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=True
-            )
+            if settle_operation == MESSAGE_DEAD_LETTER:
+                return handler.settle_messages(
+                    message._delivery_id,
+                    'rejected',
+                    error=AMQPError(
+                        condition=DEADLETTERNAME,
+                        description=dead_letter_error_description,
+                        info={
+                            RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                            RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                        }
+                    )
+                )
+            if settle_operation == MESSAGE_DEFER:
+                return handler.settle_messages(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=True
+                )
+        except AttributeError as ae:
+            raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except AMQPConnectionError as e:
+            raise RuntimeError("Connection lost during settle operation.") from e
+
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
