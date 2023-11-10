@@ -14,7 +14,8 @@ class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
         if item == "MICROSOFT_BOT":
             warnings.warn("MICROSOFT_BOT is deprecated and has been replaced by \
                           MICROSOFT_TEAMS_APP identifier.", DeprecationWarning)
-        return CaseInsensitiveEnumMeta.__getattribute__(cls, "MICROSOFT_TEAMS_APP")
+            return CaseInsensitiveEnumMeta.__getattribute__(cls, "MICROSOFT_TEAMS_APP")
+        return CaseInsensitiveEnumMeta.__getattribute__(cls, item)
 
 class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
     """Communication Identifier Kind.
