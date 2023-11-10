@@ -151,7 +151,7 @@ class NodeIOMixin:
                 output_dict[key] = output_val
         return OutputsAttrDict(output_dict)
 
-    def _build_inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def _build_inputs(self) -> Dict:
         """Build inputs of this component to a dict dict which maps output to
         actual value.
 
