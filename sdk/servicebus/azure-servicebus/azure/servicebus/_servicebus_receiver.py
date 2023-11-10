@@ -47,6 +47,8 @@ from ._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
+    MGMT_REQUEST_ENQUEUED_TIME_UTC,
+    REQUEST_RESPONSE_DELETE_BATCH_OPERATION
 )
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
@@ -853,6 +855,46 @@ class ServiceBusReceiver(
         links = get_receive_links(messages)
         with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
             return messages
+
+    def delete_batch_messages(
+        self,
+        max_message_count: int = 1,
+        *,
+        enqueued_time_older_than_utc: datetime.datetime = None,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
+    ) -> List[ServiceBusReceivedMessage]:
+        """  """
+        if kwargs:
+            warnings.warn(f"Unsupported keyword args: {kwargs}")
+        self._check_live()
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+        if not enqueued_time_older_than_utc:
+            enqueued_time_older_than_utc = 0
+        if int(max_message_count) < 0:
+            raise ValueError("max_message_count must be 1 or greater.")
+
+        self._open()
+        message = {
+            MGMT_REQUEST_ENQUEUED_TIME_UTC: self._amqp_transport.AMQP_LONG_VALUE(enqueued_time_older_than_utc),
+            MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
+        }
+
+        self._populate_message_properties(message)
+        handler = functools.partial(mgmt_handlers.batch_delete_op, receiver=self, amqp_transport=self._amqp_transport)
+        start_time = time.time_ns()
+        messages = self._mgmt_request_response_with_retry(
+            REQUEST_RESPONSE_DELETE_BATCH_OPERATION, message, handler, timeout=timeout
+        )
+        links = get_receive_links(messages)
+        with receive_trace_context_manager(self, span_name=SPAN_NAME_PEEK, links=links, start_time=start_time):
+            return messages
+
+
+
+
+
 
     def complete_message(self, message: ServiceBusReceivedMessage) -> None:
         """Complete the message.
