@@ -123,6 +123,7 @@ class Environment(Asset, LocalizableMixin):
         datastore: Optional[str] = None,
         **kwargs: Any,
     ):
+        self._arm_type: str = ""
         self.latest_version: str = ""
         self.image: Optional[str] = None
         inference_config = kwargs.pop("inference_config", None)
