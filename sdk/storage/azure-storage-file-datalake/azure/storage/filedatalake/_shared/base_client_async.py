@@ -160,18 +160,14 @@ class AsyncStorageAccountHostsMixin(object):
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
-        client = self._client
-        scheme = self.scheme
-        primary_hostname = self.primary_hostname
-        api_version = self.api_version
-        request = client._client.post(  # pylint: disable=protected-access
+        request = self._client._client.post(  # pylint: disable=protected-access
             url=(
-                f'{scheme}://{primary_hostname}/'
+                f'{self.scheme}://{self.primary_hostname}/'
                 f"{kwargs.pop('path', '')}?{kwargs.pop('restype', '')}"
                 f"comp=batch{kwargs.pop('sas', '')}{kwargs.pop('timeout', '')}"
             ),
             headers={
-                'x-ms-version': api_version
+                'x-ms-version': self.api_version
             }
         )
 
