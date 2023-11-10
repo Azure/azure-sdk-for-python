@@ -121,6 +121,7 @@ def __getattr__(name):
         from ._models import ServerCallLocator
         return ServerCallLocator
     if name == 'MicrosoftBotIdentifier':
-        warnings.warn(f"{name} is deprecated and should not be used. Please use MicrosoftTeamsAppIdentifier instead.", DeprecationWarning)
+        warnings.warn(f"{name} is deprecated and should not be used. Please use MicrosoftTeamsAppIdentifier instead.",
+                       DeprecationWarning)
         return MicrosoftTeamsAppIdentifier
     raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")
