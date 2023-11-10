@@ -33,7 +33,7 @@ class Simulator:
         userConnection: "AzureOpenAIModelConfiguration" = None,
         simulate_callback: Callable[[str, List[Dict], dict], str] = None,
     ):
-        self.userConnection = self._to_openai_chat_completion_model(userConnection)
+        self.userConnection = self._to_openai_chat_completion_model(userConnection) if userConnection else None
         self.systemConnection = self._to_openai_chat_completion_model(systemConnection)
         self.simulate_callback = simulate_callback
 
