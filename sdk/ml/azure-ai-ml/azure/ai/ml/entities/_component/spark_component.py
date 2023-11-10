@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from marshmallow import Schema
 
@@ -125,7 +125,7 @@ class SparkComponent(
             **kwargs,
         )
 
-        self.code: Union[str, os.PathLike] = code
+        self.code: Optional[Union[str, os.PathLike]] = code
         self.entry = entry
         self.py_files = py_files
         self.jars = jars
@@ -171,8 +171,9 @@ class SparkComponent(
         return validation_result
 
     def _to_dict(self) -> Dict:
-        res: dict = convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
-        return res
+        return cast(
+            dict, convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
+        )
 
     def _to_ordered_dict_for_yaml_dump(self) -> Dict:
         """Dump the component content into a sorted yaml string.
