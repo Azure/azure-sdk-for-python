@@ -200,7 +200,7 @@ class QADataGenerator:
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Export", ActivityType.INTERNALCALL)
-    def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]], output_format: OutputStructure = OutputStructure.PROMPTFLOW, field_mapping: Dict[str,str] = {"chat_history_key": "chat_history", "question_key": "question", "answer_key": "answer"}):
+    def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]], output_format: OutputStructure = OutputStructure.PROMPTFLOW, field_mapping: Dict[str,str] = {"chat_history_key": "chat_history", "question_key": "question", "answer_key": "ground_truth"}):
         """
             Writes results from QA gen to a jsonl file for Promptflow batch run
             results is either a list of questions and answers or list of list of questions and answers grouped by their chunk
@@ -219,8 +219,8 @@ class QADataGenerator:
                 raise Exception(f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key")
 
             question_key = field_mapping["question_key"]
-            answer_key = field_mapping["answer_key"]
-            chat_history_key = field_mapping["chat_history_key"]
+            answer_key = field_mapping.get("answer_key")
+            chat_history_key = field_mapping.get("chat_history_key", "chat_history")
             for qs_and_as in results:
                 chat_history = []
                 for question, answer in qs_and_as: 
@@ -233,7 +233,7 @@ class QADataGenerator:
                         # QnA columns:
                         data_dict[question_key].append(question)   
 
-                    data_dict["ground_truth"].append(answer)  # Consider generated answer as the ground truth
+                    data_dict[answer_key].append(answer)  # Consider generated answer as the ground truth
         else:
             for qs_and_as in results:
                 chat_history = []
