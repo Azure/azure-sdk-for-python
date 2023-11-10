@@ -26,6 +26,7 @@ from ._models import (
 from ._shared.models import (
     CommunicationIdentifier,
     PhoneNumberIdentifier,
+    MicrosoftTeamsAppIdentifier,
     MicrosoftTeamsUserIdentifier,
     CommunicationUserIdentifier,
     CommunicationIdentifierKind,
@@ -72,6 +73,7 @@ __all__ = [
     # common ACS communication identifier
     "CommunicationIdentifier",
     "PhoneNumberIdentifier",
+    "MicrosoftTeamsAppIdentifier",
     "MicrosoftTeamsUserIdentifier",
     "CommunicationUserIdentifier",
     "CommunicationIdentifierKind",
@@ -119,7 +121,6 @@ def __getattr__(name):
         from ._models import ServerCallLocator
         return ServerCallLocator
     if name == 'MicrosoftBotIdentifier':
-        warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
-        from ._shared.models  import _MicrosoftBotIdentifier
-        return _MicrosoftBotIdentifier
+        warnings.warn(f"{name} is deprecated and should not be used. Please use MicrosoftTeamsAppIdentifier instead.", DeprecationWarning)
+        return MicrosoftTeamsAppIdentifier
     raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")

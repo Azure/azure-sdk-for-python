@@ -3,6 +3,7 @@
 ## 1.1.0b2 (Unreleased)
 
 ### Features Added
+- Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
 
 ### Breaking Changes
 

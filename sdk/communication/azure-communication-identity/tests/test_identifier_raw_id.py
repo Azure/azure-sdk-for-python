@@ -377,6 +377,16 @@ class IdentifierRawIdTest(unittest.TestCase):
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
         )
         assert MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
+        ) == MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
+        )
+        assert MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
+        ) == MicrosoftTeamsAppIdentifier(
+            app_id="45ab2481-1c1c-4005-be24-0ffb879b1130"
+        )
+        assert MicrosoftTeamsAppIdentifier(
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
         ) == MicrosoftTeamsAppIdentifier(
             app_id="45ab2481-1c1c-4005-be24-0ffb879b1130", cloud="PUBLIC"
