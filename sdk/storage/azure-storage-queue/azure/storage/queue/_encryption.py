@@ -294,7 +294,6 @@ def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
     :rtype: bool
     """
     # If encryption_data is None, assume no encryption
-
     return bool(encryption_data and (encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2))
 
 
