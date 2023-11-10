@@ -200,7 +200,7 @@ class QADataGenerator:
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Export", ActivityType.INTERNALCALL)
-    def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]], output_format: OutputStructure = OutputStructure.PROMPTFLOW, field_mapping: Dict[str,str] = {"chat_history_key": "chat_history", "question_key": "question", "answer_key": "ground_truth"}):
+    def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]], output_format: OutputStructure = OutputStructure.PROMPTFLOW, field_mapping: Dict[str,str] = {"chat_history_key": "chat_history", "question_key": "question"}):
         """
             Writes results from QA gen to a jsonl file for Promptflow batch run
             results is either a list of questions and answers or list of list of questions and answers grouped by their chunk
@@ -213,13 +213,15 @@ class QADataGenerator:
         
         if output_format == OutputStructure.PROMPTFLOW:
             
-            if qa_type == QAType.CONVERSATION and not ("chat_history_key" in field_mapping and "question_key" in field_mapping and "answer_key" in field_mapping):
-                raise Exception("Field mapping for Promptflow output with Conversation must contain following keys: chat_history_key, question_key, answer_key")
+            if qa_type == QAType.CONVERSATION and not ("chat_history_key" in field_mapping and "question_key" in field_mapping):
+                raise Exception("Field mapping for Promptflow output with Conversation must contain following keys: chat_history_key, question_key")
+            # Only the question key is required in non-conversation cases, we can default to chat_history as chat_history_key
             elif not ("question_key" in field_mapping):
                 raise Exception(f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key")
 
             question_key = field_mapping["question_key"]
-            answer_key = field_mapping.get("answer_key")
+            # Set this here for parity with eval flows
+            answer_key = "ground_truth"
             chat_history_key = field_mapping.get("chat_history_key", "chat_history")
             for qs_and_as in results:
                 chat_history = []
