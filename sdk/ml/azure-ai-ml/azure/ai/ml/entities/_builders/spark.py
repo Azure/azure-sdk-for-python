@@ -315,7 +315,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
         :rtype: Union[str, PathLike]
         """
         if isinstance(self.component, Component):
-            _code: Union[str, PathLike] = self.component.code
+            _code: Optional[Union[str, PathLike]] = self.component.code
             return _code
         return None
 

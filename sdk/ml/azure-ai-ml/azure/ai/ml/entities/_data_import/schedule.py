@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ImportDataAction
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
@@ -43,13 +43,13 @@ class ImportDataSchedule(Schedule):
         self,
         *,
         name: str,
-        trigger: Union[CronTrigger, RecurrenceTrigger],
+        trigger: Optional[Union[CronTrigger, RecurrenceTrigger]],
         import_data: DataImport,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(
             name=name,
@@ -69,7 +69,7 @@ class ImportDataSchedule(Schedule):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ImportDataSchedule":
         data = data or {}
         params_override = params_override or []
@@ -83,7 +83,7 @@ class ImportDataSchedule(Schedule):
         )
 
     @classmethod
-    def _create_schema_for_validation(cls, context):
+    def _create_schema_for_validation(cls, context: Any) -> ImportDataScheduleSchema:
         return ImportDataScheduleSchema(context=context)
 
     @classmethod
@@ -110,6 +110,6 @@ class ImportDataSchedule(Schedule):
                 action=ImportDataAction(data_import_definition=self.import_data._to_rest_object()),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
-                trigger=self.trigger._to_rest_object(),
+                trigger=self.trigger._to_rest_object() if self.trigger is not None else None,
             )
         )
