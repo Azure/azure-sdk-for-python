@@ -316,7 +316,7 @@ class ComponentTranslatableMixin:
         output_type = None
         if not pipeline_job_dict or output is None:
             try:
-                if output is not None and not isinstance(output, (str, bool, int, float, dict)):
+                if not isinstance(output, (str, bool, int, float)):
                     output_type = output.type
             except AttributeError:
                 # default to url_folder if failed to get type
