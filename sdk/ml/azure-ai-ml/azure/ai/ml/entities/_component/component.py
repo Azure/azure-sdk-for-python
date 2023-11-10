@@ -101,7 +101,7 @@ class Component(
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         display_name: Optional[str] = None,
-        is_deterministic: bool = True,
+        is_deterministic: Optional[bool] = True,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         yaml_str: Optional[str] = None,
@@ -193,7 +193,7 @@ class Component(
         self._display_name = custom_display_name
 
     @property
-    def is_deterministic(self) -> bool:
+    def is_deterministic(self) -> Optional[bool]:
         """Whether the component is deterministic.
 
         :return: Whether the component is deterministic
@@ -423,7 +423,7 @@ class Component(
             properties=component_container_details.properties,
             type=NodeType._CONTAINER,
             # Set this field to None as it hold a default True in init.
-            is_deterministic=None,  # type: ignore
+            is_deterministic=None,
         )
         component.latest_version = component_container_details.latest_version
         return component
