@@ -234,7 +234,7 @@ class TestStorageHandle(StorageRecordedTestCase):
         # Assert
         self._validate_handles(handles)
         assert handles[0]['access_rights'][0] == 'Write'
-        assert handles[0]['client_name'][0] is not None
+        assert handles[0]['client_name'] is not None
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
