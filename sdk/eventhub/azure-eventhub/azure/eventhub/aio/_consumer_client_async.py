@@ -100,7 +100,7 @@ class EventHubConsumerClient(
     :paramtype transport_type: ~azure.eventhub.TransportType
     :keyword http_proxy: HTTP proxy settings. This must be a dictionary with the following
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
-    :paramtype http_proxy: dict[str, str or int] or None
+    :paramtype http_proxy: dict[str, str] or dict[str, int] or None
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword checkpoint_store: A manager that stores the partition load-balancing and checkpoint data
      when receiving events. The checkpoint store will be used in both cases of receiving from all partitions
