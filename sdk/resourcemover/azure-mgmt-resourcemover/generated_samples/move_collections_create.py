@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resourcemover/resource-manager/Microsoft.Migrate/stable/2021-08-01/examples/MoveCollections_Create.json
+# x-ms-original-file: specification/resourcemover/resource-manager/Microsoft.Migrate/stable/2023-08-01/examples/MoveCollections_Create.json
 if __name__ == "__main__":
     main()

@@ -88,23 +88,25 @@ class KeyVaultManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.keys = KeysOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vaults = VaultsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.keys = KeysOperations(self._client, self._config, self._serialize, self._deserialize, "2021-10-01")
+        self.vaults = VaultsOperations(self._client, self._config, self._serialize, self._deserialize, "2021-10-01")
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-10-01"
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-10-01"
         )
-        self.managed_hsms = ManagedHsmsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_hsms = ManagedHsmsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-10-01"
+        )
         self.mhsm_private_endpoint_connections = MHSMPrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-10-01"
         )
         self.mhsm_private_link_resources = MHSMPrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-10-01"
         )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.secrets = SecretsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2021-10-01")
+        self.secrets = SecretsOperations(self._client, self._config, self._serialize, self._deserialize, "2021-10-01")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

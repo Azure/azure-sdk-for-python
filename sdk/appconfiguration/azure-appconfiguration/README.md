@@ -202,7 +202,7 @@ added_config_setting = client.add_configuration_setting(config_setting)
 ```python
 added_config_setting.value = "new value"
 added_config_setting.content_type = "new content type"
-updated_config_setting = client.set_configuration_setting(config_setting)
+updated_config_setting = client.set_configuration_setting(added_config_setting)
 ```
 
 <!-- END SNIPPET -->
@@ -211,10 +211,10 @@ updated_config_setting = client.set_configuration_setting(config_setting)
 
 Get a previously stored Configuration Setting.
 
-<!-- SNIPPET:hello_world_sample.get_config_setting -->
+<!-- SNIPPET:hello_world_advanced_sample.get_config_setting -->
 
 ```python
-fetched_config_setting = client.get_configuration_setting(key="MyKey")
+fetched_config_setting = client.get_configuration_setting(key="MyKey", label="MyLabel")
 ```
 
 <!-- END SNIPPET -->
@@ -339,10 +339,10 @@ client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
 This async AzureAppConfigurationClient has the same method signatures as the sync ones except that they're async.
 For instance, to retrieve a Configuration Setting asynchronously, async_client can be used:
 
-<!-- SNIPPET:hello_world_sample_async.get_config_setting -->
+<!-- SNIPPET:hello_world_advanced_sample_async.get_config_setting -->
 
 ```python
-fetched_config_setting = await client.get_configuration_setting(key="MyKey")
+fetched_config_setting = await client.get_configuration_setting(key="MyKey", label="MyLabel")
 ```
 
 <!-- END SNIPPET -->

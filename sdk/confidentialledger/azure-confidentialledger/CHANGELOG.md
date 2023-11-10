@@ -1,5 +1,9 @@
 # Release History
 
+## 1.1.2 (Unreleased)
+### Other Changes
+- Replace legacy azure core http response import with the one from azure.core.rest
+
 ## 1.1.1 (2023-08-01)
 ### Bugs Fixed
 - Allow some `ResourceNotFoundError` occurrences in `begin_wait_for_commit` to account for unexpected loss of session stickiness. These errors may occur when the connected node changes and transactions have not been fully replicated.

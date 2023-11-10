@@ -15,7 +15,7 @@ from azure.communication.chat._shared.models import(
 from unittest_helpers import mock_response
 from azure.core.exceptions import HttpResponseError
 from datetime import datetime
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 
 from unittest.mock import Mock, patch
 
