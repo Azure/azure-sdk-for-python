@@ -333,6 +333,9 @@ class ContainerProxy(object):
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this options will incur
+            overhead, so it should be enabled only when debugging slow queries.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -375,6 +378,9 @@ class ContainerProxy(object):
         populate_query_metrics = kwargs.pop('populate_query_metrics', None)
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
+        populate_index_metrics = kwargs.pop("populate_index_metrics", None)
+        if populate_index_metrics is not None:
+            feed_options["populateIndexMetrics"] = populate_index_metrics
         enable_scan_in_query = kwargs.pop('enable_scan_in_query', None)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
