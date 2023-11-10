@@ -3,7 +3,7 @@
 ### 4.5.2b3 (Unreleased)
 
 #### Features Added
-* Added support for Index Metrics. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034)
+* Added support for capturing Index Metrics in query operations. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034)
 
 #### Breaking Changes
 
