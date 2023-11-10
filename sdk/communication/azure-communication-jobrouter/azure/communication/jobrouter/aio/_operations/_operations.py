@@ -290,7 +290,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -299,7 +299,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -364,7 +364,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -730,7 +730,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -739,7 +739,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -806,7 +806,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1172,7 +1172,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -1181,7 +1181,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -1246,7 +1246,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1612,7 +1612,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -1621,7 +1621,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -1686,7 +1686,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2054,7 +2054,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -2063,7 +2063,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -2128,7 +2128,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2308,7 +2308,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
     async def _cancel_job(  # pylint: disable=protected-access
         self,
         job_id: str,
-        options: Optional[_models._models.CancelJobOptions] = None,
+        options: Optional[_models.CancelJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2329,7 +2329,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @distributed_trace_async
     async def _cancel_job(  # pylint: disable=protected-access
-        self, job_id: str, options: Optional[Union[_models._models.CancelJobOptions, JSON, IO]] = None, **kwargs: Any
+        self, job_id: str, options: Optional[Union[_models.CancelJobOptions, JSON, IO]] = None, **kwargs: Any
     ) -> _models._models.CancelJobResult:
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
@@ -2416,7 +2416,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         job_id: str,
         assignment_id: str,
-        options: Optional[_models._models.CompleteJobOptions] = None,
+        options: Optional[_models.CompleteJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2452,7 +2452,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         job_id: str,
         assignment_id: str,
-        options: Optional[Union[_models._models.CompleteJobOptions, JSON, IO]] = None,
+        options: Optional[Union[_models.CompleteJobOptions, JSON, IO]] = None,
         **kwargs: Any
     ) -> _models._models.CompleteJobResult:
         """Completes an assigned job.
@@ -2543,7 +2543,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         job_id: str,
         assignment_id: str,
-        options: Optional[_models._models.CloseJobOptions] = None,
+        options: Optional[_models.CloseJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2579,7 +2579,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         job_id: str,
         assignment_id: str,
-        options: Optional[Union[_models._models.CloseJobOptions, JSON, IO]] = None,
+        options: Optional[Union[_models.CloseJobOptions, JSON, IO]] = None,
         **kwargs: Any
     ) -> _models._models.CloseJobResult:
         """Closes a completed job.
@@ -3100,7 +3100,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         worker_id: str,
         offer_id: str,
-        options: Optional[_models._models.DeclineJobOfferOptions] = None,
+        options: Optional[_models.DeclineJobOfferOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3136,7 +3136,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         self,
         worker_id: str,
         offer_id: str,
-        options: Optional[Union[_models._models.DeclineJobOfferOptions, JSON, IO]] = None,
+        options: Optional[Union[_models.DeclineJobOfferOptions, JSON, IO]] = None,
         **kwargs: Any
     ) -> _models._models.DeclineJobOfferResult:
         """Declines an offer to work on a job.
@@ -3494,7 +3494,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -3503,7 +3503,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -3568,7 +3568,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()

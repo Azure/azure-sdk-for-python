@@ -61,6 +61,7 @@ def discover_packages(setuppy_path, args):
             args.target_setup,
             args.package_type,
         )
+
     return packages
 
 

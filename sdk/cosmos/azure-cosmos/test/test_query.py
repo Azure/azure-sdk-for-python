@@ -2,6 +2,7 @@ import unittest
 import uuid
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos._retry_utility as retry_utility
+from azure.cosmos import http_constants
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
@@ -292,6 +293,34 @@ class QueryTest(unittest.TestCase):
         metrics = metrics_header.split(';')
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
+
+    def test_populate_index_metrics(self):
+        created_collection = self.created_db.create_container_if_not_exists("query_index_test",
+                                                                            PartitionKey(path="/pk"))
+
+        doc_id = 'MyId' + str(uuid.uuid4())
+        document_definition = {'pk': 'pk', 'id': doc_id}
+        created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk',
+            populate_index_metrics=True
+        )
+
+        iter_list = list(query_iterable)
+        self.assertEqual(iter_list[0]['id'], doc_id)
+
+        INDEX_HEADER_NAME = http_constants.HttpHeaders.IndexUtilization
+        self.assertTrue(INDEX_HEADER_NAME in created_collection.client_connection.last_response_headers)
+        index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
+        self.assertIsNotNone(index_metrics)
+        expected_index_metrics = {'UtilizedSingleIndexes': [{'FilterExpression': '', 'IndexSpec': '/pk/?',
+                                'FilterPreciseSet': True, 'IndexPreciseSet': True, 'IndexImpactScore': 'High'}],
+                                'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
+                                'PotentialCompositeIndexes': []}
+        self.assertDictEqual(expected_index_metrics, index_metrics)
 
     def test_max_item_count_honored_in_order_by_query(self):
         created_collection = self.created_db.create_container_if_not_exists(
