@@ -229,6 +229,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("populateQueryMetrics"):
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
+    if options.get("populateIndexMetrics"):
+        headers[http_constants.HttpHeaders.PopulateIndexMetrics] = options["populateIndexMetrics"]
+
     if options.get("responseContinuationTokenLimitInKb"):
         headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
             "responseContinuationTokenLimitInKb"]

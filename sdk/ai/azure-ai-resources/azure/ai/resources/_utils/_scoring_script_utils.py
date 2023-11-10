@@ -50,6 +50,13 @@ def run(raw_data: AMLRequest):
     """
     raw_data = json.loads(raw_data.data)
     messages = raw_data["messages"]
+    messages = [
+        {{
+            "role": message["role"],
+            "content": message["content"], 
+        }} 
+        for message in messages if message.get("kind", "text") == "text"
+    ]
     stream = raw_data.get("stream", False)
     session_state = raw_data.get("sessionState", raw_data.get("session_state", None))
     context = raw_data.get("context", {{}})
