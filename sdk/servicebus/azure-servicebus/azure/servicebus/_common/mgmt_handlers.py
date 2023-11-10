@@ -75,6 +75,27 @@ def peek_op(  # pylint: disable=inconsistent-return-statements
         _LOGGER, "Message peek failed.", condition, description, status_code
     )
 
+def batch_delete_op(  # pylint: disable=inconsistent-return-statements
+    status_code, message, description, receiver, amqp_transport
+):
+    condition = message.application_properties.get(
+        MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
+    )
+    if status_code == 200:
+        return message
+        # return amqp_transport.parse_received_message(
+        #     message,
+        #     message_type=ServiceBusReceivedMessage,
+        #     receiver=receiver,
+        #     is_peeked_message=True
+        #     )
+    if status_code in [202, 204]:
+        return []
+
+    amqp_transport.handle_amqp_mgmt_error( # pylint: disable=protected-access
+        _LOGGER, "Batch Delete failed.", condition, description, status_code
+    )
+
 
 def list_sessions_op(  # pylint: disable=inconsistent-return-statements
     status_code, message, description, amqp_transport
