@@ -41,6 +41,149 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Node in a Pool."""
 
 
+class BatchCertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateFormat enums."""
+
+    PFX = "pfx"
+    """The Certificate is a PFX (PKCS#12) formatted Certificate or Certificate chain."""
+    CER = "cer"
+    """The Certificate is a base64-encoded X.509 Certificate."""
+
+
+class BatchCertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateState enums."""
+
+    ACTIVE = "active"
+    """The Certificate is available for use in Pools."""
+    DELETING = "deleting"
+    """The user has requested that the Certificate be deleted, but the delete operation has not yet
+    #: completed. You may not reference the Certificate when creating or updating Pools."""
+    DELETE_FAILED = "deletefailed"
+    """The user requested that the Certificate be deleted, but there are Pools that still have
+    #: references to the Certificate, or it is still installed on one or more Nodes. (The latter can
+    #: occur if the Certificate has been removed from the Pool, but the Compute Node has not yet
+    #: restarted. Compute Nodes refresh their Certificates only when they restart.) You may use the
+    #: cancel Certificate delete operation to cancel the delete, or the delete Certificate operation
+    #: to retry the delete."""
+
+
+class BatchCertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateStoreLocation enums."""
+
+    CURRENT_USER = "currentuser"
+    """Certificates should be installed to the CurrentUser Certificate store."""
+    LOCAL_MACHINE = "localmachine"
+    """Certificates should be installed to the LocalMachine Certificate store."""
+
+
+class BatchCertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchCertificateVisibility enums."""
+
+    START_TASK = "starttask"
+    """The Certificate should be visible to the user account under which the StartTask is run. Note
+    #: that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
+    #: visible to the Task as well."""
+    TASK = "task"
+    """The Certificate should be visible to the user accounts under which Job Tasks are run."""
+    REMOTE_USER = "remoteuser"
+    """The Certificate should be visible to the user accounts under which users remotely access the
+    #: Compute Node."""
+
+
+class BatchJobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchJobAction enums."""
+
+    NONE = "none"
+    """Take no action."""
+    DISABLE = "disable"
+    """Disable the Job. This is equivalent to calling the disable Job API, with a disableTasks value
+    #: of requeue."""
+    TERMINATE = "terminate"
+    """Terminate the Job. The terminateReason in the Job's executionInfo is set to "TaskFailed"."""
+
+
+class BatchJobPreparationTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchJobPreparationTaskState enums."""
+
+    RUNNING = "running"
+    """The Task is currently running (including retrying)."""
+    COMPLETED = "completed"
+    """The Task has exited with exit code 0, or the Task has exhausted its retry limit, or the Batch
+    #: service was unable to start the Task due to Task preparation errors (such as resource file
+    #: download failures)."""
+
+
+class BatchJobReleaseTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchJobReleaseTaskState enums."""
+
+    RUNNING = "running"
+    """The Task is currently running (including retrying)."""
+    COMPLETED = "completed"
+    """The Task has exited with exit code 0, or the Task has exhausted its retry limit, or the Batch
+    #: service was unable to start the Task due to Task preparation errors (such as resource file
+    #: download failures)."""
+
+
+class BatchJobScheduleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchJobScheduleState enums."""
+
+    ACTIVE = "active"
+    """The Job Schedule is active and will create Jobs as per its schedule."""
+    COMPLETED = "completed"
+    """The Job Schedule has terminated, either by reaching its end time or by the user terminating it
+    #: explicitly."""
+    DISABLED = "disabled"
+    """The user has disabled the Job Schedule. The scheduler will not initiate any new Jobs will on
+    #: this schedule, but any existing active Job will continue to run."""
+    TERMINATING = "terminating"
+    """The Job Schedule has no more work to do, or has been explicitly terminated by the user, but the
+    #: termination operation is still in progress. The scheduler will not initiate any new Jobs for
+    #: this Job Schedule, nor is any existing Job active."""
+    DELETING = "deleting"
+    """The user has requested that the Job Schedule be deleted, but the delete operation is still in
+    #: progress. The scheduler will not initiate any new Jobs for this Job Schedule, and will delete
+    #: any existing Jobs and Tasks under the Job Schedule, including any active Job. The Job Schedule
+    #: will be deleted when all Jobs and Tasks under the Job Schedule have been deleted."""
+
+
+class BatchJobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchJobState enums."""
+
+    ACTIVE = "active"
+    """The Job is available to have Tasks scheduled."""
+    DISABLING = "disabling"
+    """A user has requested that the Job be disabled, but the disable operation is still in progress
+    #: (for example, waiting for Tasks to terminate)."""
+    DISABLED = "disabled"
+    """A user has disabled the Job. No Tasks are running, and no new Tasks will be scheduled."""
+    ENABLING = "enabling"
+    """A user has requested that the Job be enabled, but the enable operation is still in progress."""
+    TERMINATING = "terminating"
+    """The Job is about to complete, either because a Job Manager Task has completed or because the
+    #: user has terminated the Job, but the terminate operation is still in progress (for example,
+    #: because Job Release Tasks are running)."""
+    COMPLETED = "completed"
+    """All Tasks have terminated, and the system will not accept any more Tasks or any further changes
+    #: to the Job."""
+    DELETING = "deleting"
+    """A user has requested that the Job be deleted, but the delete operation is still in progress
+    #: (for example, because the system is still terminating running Tasks)."""
+
+
+class BatchNodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeCommunicationMode enums."""
+
+    DEFAULT = "default"
+    """The node communication mode is automatically set by the Batch service."""
+    CLASSIC = "classic"
+    """Nodes using the classic communication mode require inbound TCP communication on ports 29876 and
+    #: 29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on
+    #: port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags."""
+    SIMPLIFIED = "simplified"
+    """Nodes using the simplified communication mode require outbound TCP communication on port 443 to
+    #: the "BatchNodeManagement.{region}" service tag. No open inbound ports are required."""
+
+
 class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchNodeDeallocationOption enums."""
 
@@ -59,6 +202,21 @@ class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: periods have expired."""
 
 
+class BatchNodeDisableSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeDisableSchedulingOption enums."""
+
+    REQUEUE = "requeue"
+    """Terminate running Task processes and requeue the Tasks. The Tasks may run again on other
+    #: Compute Nodes, or when Task scheduling is re-enabled on this Compute Node. Enter offline state
+    #: as soon as Tasks have been terminated."""
+    TERMINATE = "terminate"
+    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
+    #: terminated, and will not run again. Enter offline state as soon as Tasks have been terminated."""
+    TASK_COMPLETION = "taskcompletion"
+    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Enter offline
+    #: state when all Tasks have completed."""
+
+
 class BatchNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchNodeFillType enums."""
 
@@ -67,6 +225,16 @@ class BatchNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PACK = "pack"
     """As many Tasks as possible (taskSlotsPerNode) should be assigned to each Compute Node in the
     #: Pool before any Tasks are assigned to the next Compute Node in the Pool."""
+
+
+class BatchNodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodePlacementPolicyType enums."""
+
+    REGIONAL = "regional"
+    """All nodes in the pool will be allocated in the same region."""
+    ZONAL = "zonal"
+    """Nodes in the pool will be spread across different availability zones with best effort
+    #: balancing."""
 
 
 class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -144,6 +312,112 @@ class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Node when it was preempted will be rescheduled when another Compute Node becomes available."""
 
 
+class BatchPoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchPoolIdentityType enums."""
+
+    USER_ASSIGNED = "UserAssigned"
+    """Batch pool has user assigned identities with it."""
+    NONE = "None"
+    """Batch pool has no identity associated with it. Setting ``None`` in update pool will remove
+    #: existing identities."""
+
+
+class BatchPoolLifetimeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchPoolLifetimeOption enums."""
+
+    JOB_SCHEDULE = "jobschedule"
+    """The Pool exists for the lifetime of the Job Schedule. The Batch Service creates the Pool when
+    #: it creates the first Job on the schedule. You may apply this option only to Job Schedules, not
+    #: to Jobs."""
+    JOB = "job"
+    """The Pool exists for the lifetime of the Job to which it is dedicated. The Batch service creates
+    #: the Pool when it creates the Job. If the 'job' option is applied to a Job Schedule, the Batch
+    #: service creates a new auto Pool for every Job created on the schedule."""
+
+
+class BatchPoolState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchPoolState enums."""
+
+    ACTIVE = "active"
+    """The Pool is available to run Tasks subject to the availability of Compute Nodes."""
+    DELETING = "deleting"
+    """The user has requested that the Pool be deleted, but the delete operation has not yet
+    #: completed."""
+
+
+class BatchStartTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchStartTaskState enums."""
+
+    RUNNING = "running"
+    """The StartTask is currently running."""
+    COMPLETED = "completed"
+    """The StartTask has exited with exit code 0, or the StartTask has failed and the retry limit has
+    #: reached, or the StartTask process did not run due to Task preparation errors (such as resource
+    #: file download failures)."""
+
+
+class BatchSubtaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchSubtaskState enums."""
+
+    PREPARING = "preparing"
+    """The Task has been assigned to a Compute Node, but is waiting for a required Job Preparation
+    #: Task to complete on the Compute Node. If the Job Preparation Task succeeds, the Task will move
+    #: to running. If the Job Preparation Task fails, the Task will return to active and will be
+    #: eligible to be assigned to a different Compute Node."""
+    RUNNING = "running"
+    """The Task is running on a Compute Node. This includes task-level preparation such as downloading
+    #: resource files or deploying Packages specified on the Task - it does not necessarily mean that
+    #: the Task command line has started executing."""
+    COMPLETED = "completed"
+    """The Task is no longer eligible to run, usually because the Task has finished successfully, or
+    #: the Task has finished unsuccessfully and has exhausted its retry limit. A Task is also marked
+    #: as completed if an error occurred launching the Task, or when the Task has been terminated."""
+
+
+class BatchTaskAddStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchTaskAddStatus enums."""
+
+    SUCCESS = "Success"
+    """The Task was added successfully."""
+    CLIENT_ERROR = "clienterror"
+    """The Task failed to add due to a client error and should not be retried without modifying the
+    #: request as appropriate."""
+    SERVER_ERROR = "servererror"
+    """Task failed to add due to a server error and can be retried without modification."""
+
+
+class BatchTaskExecutionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchTaskExecutionResult enums."""
+
+    SUCCESS = "success"
+    """The Task ran successfully."""
+    FAILURE = "failure"
+    """There was an error during processing of the Task. The failure may have occurred before the Task
+    #: process was launched, while the Task process was executing, or after the Task process exited."""
+
+
+class BatchTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchTaskState enums."""
+
+    ACTIVE = "active"
+    """The Task is queued and able to run, but is not currently assigned to a Compute Node. A Task
+    #: enters this state when it is created, when it is enabled after being disabled, or when it is
+    #: awaiting a retry after a failed run."""
+    PREPARING = "preparing"
+    """The Task has been assigned to a Compute Node, but is waiting for a required Job Preparation
+    #: Task to complete on the Compute Node. If the Job Preparation Task succeeds, the Task will move
+    #: to running. If the Job Preparation Task fails, the Task will return to active and will be
+    #: eligible to be assigned to a different Compute Node."""
+    RUNNING = "running"
+    """The Task is running on a Compute Node. This includes task-level preparation such as downloading
+    #: resource files or deploying Packages specified on the Task - it does not necessarily mean that
+    #: the Task command line has started executing."""
+    COMPLETED = "completed"
+    """The Task is no longer eligible to run, usually because the Task has finished successfully, or
+    #: the Task has finished unsuccessfully and has exhausted its retry limit. A Task is also marked
+    #: as completed if an error occurred launching the Task, or when the Task has been terminated."""
+
+
 class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CachingType enums."""
 
@@ -153,55 +427,6 @@ class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The caching mode for the disk is read only."""
     READ_WRITE = "readwrite"
     """The caching mode for the disk is read and write."""
-
-
-class CertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CertificateFormat enums."""
-
-    PFX = "pfx"
-    """The Certificate is a PFX (PKCS#12) formatted Certificate or Certificate chain."""
-    CER = "cer"
-    """The Certificate is a base64-encoded X.509 Certificate."""
-
-
-class CertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CertificateState enums."""
-
-    ACTIVE = "active"
-    """The Certificate is available for use in Pools."""
-    DELETING = "deleting"
-    """The user has requested that the Certificate be deleted, but the delete operation has not yet
-    #: completed. You may not reference the Certificate when creating or updating Pools."""
-    DELETE_FAILED = "deletefailed"
-    """The user requested that the Certificate be deleted, but there are Pools that still have
-    #: references to the Certificate, or it is still installed on one or more Nodes. (The latter can
-    #: occur if the Certificate has been removed from the Pool, but the Compute Node has not yet
-    #: restarted. Compute Nodes refresh their Certificates only when they restart.) You may use the
-    #: cancel Certificate delete operation to cancel the delete, or the delete Certificate operation
-    #: to retry the delete."""
-
-
-class CertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CertificateStoreLocation enums."""
-
-    CURRENT_USER = "currentuser"
-    """Certificates should be installed to the CurrentUser Certificate store."""
-    LOCAL_MACHINE = "localmachine"
-    """Certificates should be installed to the LocalMachine Certificate store."""
-
-
-class CertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CertificateVisibility enums."""
-
-    START_TASK = "starttask"
-    """The Certificate should be visible to the user account under which the StartTask is run. Note
-    #: that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
-    #: visible to the Task as well."""
-    TASK = "task"
-    """The Certificate should be visible to the user accounts under which Job Tasks are run."""
-    REMOTE_USER = "remoteuser"
-    """The Certificate should be visible to the user accounts under which users remotely access the
-    #: Compute Node."""
 
 
 class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -241,23 +466,8 @@ class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Ephemeral OS Disk is stored on the VM cache."""
 
 
-class DisableBatchNodeSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DisableBatchNodeSchedulingOption enums."""
-
-    REQUEUE = "requeue"
-    """Terminate running Task processes and requeue the Tasks. The Tasks may run again on other
-    #: Compute Nodes, or when Task scheduling is re-enabled on this Compute Node. Enter offline state
-    #: as soon as Tasks have been terminated."""
-    TERMINATE = "terminate"
-    """Terminate running Tasks. The Tasks will be completed with failureInfo indicating that they were
-    #: terminated, and will not run again. Enter offline state as soon as Tasks have been terminated."""
-    TASK_COMPLETION = "taskcompletion"
-    """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Enter offline
-    #: state when all Tasks have completed."""
-
-
-class DisableJobOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DisableJobOption enums."""
+class DisableBatchJobOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DisableBatchJobOption enums."""
 
     REQUEUE = "requeue"
     """Terminate running Tasks and requeue them. The Tasks will run again when the Job is enabled."""
@@ -305,6 +515,17 @@ class ErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The error is due to an internal server issue."""
 
 
+class ImageVerificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ImageVerificationType enums."""
+
+    VERIFIED = "verified"
+    """The Image is guaranteed to be compatible with the associated Compute Node agent SKU and all
+    #: Batch features have been confirmed to work as expected."""
+    UNVERIFIED = "unverified"
+    """The associated Compute Node agent SKU should have binary compatibility with the Image, but
+    #: specific functionality has not been verified."""
+
+
 class InboundEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """InboundEndpointProtocol enums."""
 
@@ -324,86 +545,6 @@ class IPAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Public IPs are provided by the user and will be used to provision the Compute Nodes."""
     NO_PUBLIC_I_P_ADDRESSES = "nopublicipaddresses"
     """No public IP Address will be created."""
-
-
-class JobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobAction enums."""
-
-    NONE = "none"
-    """Take no action."""
-    DISABLE = "disable"
-    """Disable the Job. This is equivalent to calling the disable Job API, with a disableTasks value
-    #: of requeue."""
-    TERMINATE = "terminate"
-    """Terminate the Job. The terminateReason in the Job's executionInfo is set to "TaskFailed"."""
-
-
-class JobPreparationTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobPreparationTaskState enums."""
-
-    RUNNING = "running"
-    """The Task is currently running (including retrying)."""
-    COMPLETED = "completed"
-    """The Task has exited with exit code 0, or the Task has exhausted its retry limit, or the Batch
-    #: service was unable to start the Task due to Task preparation errors (such as resource file
-    #: download failures)."""
-
-
-class JobReleaseTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobReleaseTaskState enums."""
-
-    RUNNING = "running"
-    """The Task is currently running (including retrying)."""
-    COMPLETED = "completed"
-    """The Task has exited with exit code 0, or the Task has exhausted its retry limit, or the Batch
-    #: service was unable to start the Task due to Task preparation errors (such as resource file
-    #: download failures)."""
-
-
-class JobScheduleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobScheduleState enums."""
-
-    ACTIVE = "active"
-    """The Job Schedule is active and will create Jobs as per its schedule."""
-    COMPLETED = "completed"
-    """The Job Schedule has terminated, either by reaching its end time or by the user terminating it
-    #: explicitly."""
-    DISABLED = "disabled"
-    """The user has disabled the Job Schedule. The scheduler will not initiate any new Jobs will on
-    #: this schedule, but any existing active Job will continue to run."""
-    TERMINATING = "terminating"
-    """The Job Schedule has no more work to do, or has been explicitly terminated by the user, but the
-    #: termination operation is still in progress. The scheduler will not initiate any new Jobs for
-    #: this Job Schedule, nor is any existing Job active."""
-    DELETING = "deleting"
-    """The user has requested that the Job Schedule be deleted, but the delete operation is still in
-    #: progress. The scheduler will not initiate any new Jobs for this Job Schedule, and will delete
-    #: any existing Jobs and Tasks under the Job Schedule, including any active Job. The Job Schedule
-    #: will be deleted when all Jobs and Tasks under the Job Schedule have been deleted."""
-
-
-class JobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """JobState enums."""
-
-    ACTIVE = "active"
-    """The Job is available to have Tasks scheduled."""
-    DISABLING = "disabling"
-    """A user has requested that the Job be disabled, but the disable operation is still in progress
-    #: (for example, waiting for Tasks to terminate)."""
-    DISABLED = "disabled"
-    """A user has disabled the Job. No Tasks are running, and no new Tasks will be scheduled."""
-    ENABLING = "enabling"
-    """A user has requested that the Job be enabled, but the enable operation is still in progress."""
-    TERMINATING = "terminating"
-    """The Job is about to complete, either because a Job Manager Task has completed or because the
-    #: user has terminated the Job, but the terminate operation is still in progress (for example,
-    #: because Job Release Tasks are running)."""
-    COMPLETED = "completed"
-    """All Tasks have terminated, and the system will not accept any more Tasks or any further changes
-    #: to the Job."""
-    DELETING = "deleting"
-    """A user has requested that the Job be deleted, but the delete operation is still in progress
-    #: (for example, because the system is still terminating running Tasks)."""
 
 
 class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -429,31 +570,7 @@ class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Deny access."""
 
 
-class NodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NodeCommunicationMode enums."""
-
-    DEFAULT = "default"
-    """The node communication mode is automatically set by the Batch service."""
-    CLASSIC = "classic"
-    """Nodes using the classic communication mode require inbound TCP communication on ports 29876 and
-    #: 29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on
-    #: port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags."""
-    SIMPLIFIED = "simplified"
-    """Nodes using the simplified communication mode require outbound TCP communication on port 443 to
-    #: the "BatchNodeManagement.{region}" service tag. No open inbound ports are required."""
-
-
-class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NodePlacementPolicyType enums."""
-
-    REGIONAL = "regional"
-    """All nodes in the pool will be allocated in the same region."""
-    ZONAL = "zonal"
-    """Nodes in the pool will be spread across different availability zones with best effort
-    #: balancing."""
-
-
-class OnAllTasksComplete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OnAllBatchTasksComplete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action the Batch service should take when all Tasks in the Job are in the completed state."""
 
     NO_ACTION = "noaction"
@@ -462,7 +579,7 @@ class OnAllTasksComplete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Terminate the Job. The Job's terminateReason is set to 'AllTasksComplete'."""
 
 
-class OnTaskFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OnBatchTaskFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OnTaskFailure enums."""
 
     NO_ACTION = "noaction"
@@ -491,39 +608,6 @@ class OutputFileUploadCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Upload the file(s) after the Task process exits, no matter what the exit code was."""
 
 
-class PoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PoolIdentityType enums."""
-
-    USER_ASSIGNED = "UserAssigned"
-    """Batch pool has user assigned identities with it."""
-    NONE = "None"
-    """Batch pool has no identity associated with it. Setting ``None`` in update pool will remove
-    #: existing identities."""
-
-
-class PoolLifetimeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PoolLifetimeOption enums."""
-
-    JOB_SCHEDULE = "jobschedule"
-    """The Pool exists for the lifetime of the Job Schedule. The Batch Service creates the Pool when
-    #: it creates the first Job on the schedule. You may apply this option only to Job Schedules, not
-    #: to Jobs."""
-    JOB = "job"
-    """The Pool exists for the lifetime of the Job to which it is dedicated. The Batch service creates
-    #: the Pool when it creates the Job. If the 'job' option is applied to a Job Schedule, the Batch
-    #: service creates a new auto Pool for every Job created on the schedule."""
-
-
-class PoolState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PoolState enums."""
-
-    ACTIVE = "active"
-    """The Pool is available to run Tasks subject to the availability of Compute Nodes."""
-    DELETING = "deleting"
-    """The user has requested that the Pool be deleted, but the delete operation has not yet
-    #: completed."""
-
-
 class SchedulingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SchedulingState enums."""
 
@@ -532,17 +616,6 @@ class SchedulingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "disabled"
     """No new Tasks will be scheduled on the Compute Node. Tasks already running on the Compute Node
     #: may still run to completion. All Compute Nodes start with scheduling enabled."""
-
-
-class StartTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """StartTaskState enums."""
-
-    RUNNING = "running"
-    """The StartTask is currently running."""
-    COMPLETED = "completed"
-    """The StartTask has exited with exit code 0, or the StartTask has failed and the retry limit has
-    #: reached, or the StartTask process did not run due to Task preparation errors (such as resource
-    #: file download failures)."""
 
 
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -563,76 +636,3 @@ class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The data disk should use standard locally redundant storage."""
     PREMIUM_L_R_S = "premium_lrs"
     """The data disk should use premium locally redundant storage."""
-
-
-class SubtaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SubtaskState enums."""
-
-    PREPARING = "preparing"
-    """The Task has been assigned to a Compute Node, but is waiting for a required Job Preparation
-    #: Task to complete on the Compute Node. If the Job Preparation Task succeeds, the Task will move
-    #: to running. If the Job Preparation Task fails, the Task will return to active and will be
-    #: eligible to be assigned to a different Compute Node."""
-    RUNNING = "running"
-    """The Task is running on a Compute Node. This includes task-level preparation such as downloading
-    #: resource files or deploying Packages specified on the Task - it does not necessarily mean that
-    #: the Task command line has started executing."""
-    COMPLETED = "completed"
-    """The Task is no longer eligible to run, usually because the Task has finished successfully, or
-    #: the Task has finished unsuccessfully and has exhausted its retry limit. A Task is also marked
-    #: as completed if an error occurred launching the Task, or when the Task has been terminated."""
-
-
-class TaskAddStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TaskAddStatus enums."""
-
-    SUCCESS = "Success"
-    """The Task was added successfully."""
-    CLIENT_ERROR = "clienterror"
-    """The Task failed to add due to a client error and should not be retried without modifying the
-    #: request as appropriate."""
-    SERVER_ERROR = "servererror"
-    """Task failed to add due to a server error and can be retried without modification."""
-
-
-class TaskExecutionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TaskExecutionResult enums."""
-
-    SUCCESS = "success"
-    """The Task ran successfully."""
-    FAILURE = "failure"
-    """There was an error during processing of the Task. The failure may have occurred before the Task
-    #: process was launched, while the Task process was executing, or after the Task process exited."""
-
-
-class TaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TaskState enums."""
-
-    ACTIVE = "active"
-    """The Task is queued and able to run, but is not currently assigned to a Compute Node. A Task
-    #: enters this state when it is created, when it is enabled after being disabled, or when it is
-    #: awaiting a retry after a failed run."""
-    PREPARING = "preparing"
-    """The Task has been assigned to a Compute Node, but is waiting for a required Job Preparation
-    #: Task to complete on the Compute Node. If the Job Preparation Task succeeds, the Task will move
-    #: to running. If the Job Preparation Task fails, the Task will return to active and will be
-    #: eligible to be assigned to a different Compute Node."""
-    RUNNING = "running"
-    """The Task is running on a Compute Node. This includes task-level preparation such as downloading
-    #: resource files or deploying Packages specified on the Task - it does not necessarily mean that
-    #: the Task command line has started executing."""
-    COMPLETED = "completed"
-    """The Task is no longer eligible to run, usually because the Task has finished successfully, or
-    #: the Task has finished unsuccessfully and has exhausted its retry limit. A Task is also marked
-    #: as completed if an error occurred launching the Task, or when the Task has been terminated."""
-
-
-class VerificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """VerificationType enums."""
-
-    VERIFIED = "verified"
-    """The Image is guaranteed to be compatible with the associated Compute Node agent SKU and all
-    #: Batch features have been confirmed to work as expected."""
-    UNVERIFIED = "unverified"
-    """The associated Compute Node agent SKU should have binary compatibility with the Image, but
-    #: specific functionality has not been verified."""

@@ -11,6 +11,7 @@ from typing import Optional, TYPE_CHECKING
 from azure.core import MatchConditions
 
 from ._configuration import BatchClientConfiguration
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core import PipelineClient
@@ -29,6 +30,8 @@ class BatchClientMixinABC(ABC):
 
 def quote_etag(etag: Optional[str]) -> Optional[str]:
     if not etag or etag == "*":
+        return etag
+    if etag.startswith("W/"):
         return etag
     if etag.startswith('"') and etag.endswith('"'):
         return etag

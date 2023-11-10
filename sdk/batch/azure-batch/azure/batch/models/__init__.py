@@ -6,138 +6,138 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AffinityInformation
-from ._models import ApplicationPackageReference
+from ._models import AffinityInfo
 from ._models import AuthenticationTokenSettings
-from ._models import AutoPoolSpecification
 from ._models import AutoScaleRun
 from ._models import AutoScaleRunError
 from ._models import AutoUserSpecification
 from ._models import AzureBlobFileSystemConfiguration
 from ._models import AzureFileShareConfiguration
 from ._models import BatchApplication
+from ._models import BatchApplicationPackageReference
+from ._models import BatchAutoPoolSpecification
 from ._models import BatchCertificate
+from ._models import BatchCertificateReference
 from ._models import BatchError
 from ._models import BatchErrorDetail
+from ._models import BatchErrorMessage
 from ._models import BatchJob
-from ._models import BatchJobCreateOptions
-from ._models import BatchJobDisableOptions
+from ._models import BatchJobConstraints
+from ._models import BatchJobCreateParameters
+from ._models import BatchJobDisableParameters
+from ._models import BatchJobExecutionInfo
+from ._models import BatchJobManagerTask
+from ._models import BatchJobNetworkConfiguration
+from ._models import BatchJobPreparationAndReleaseTaskStatus
+from ._models import BatchJobPreparationTask
+from ._models import BatchJobPreparationTaskExecutionInfo
+from ._models import BatchJobReleaseTask
+from ._models import BatchJobReleaseTaskExecutionInfo
 from ._models import BatchJobSchedule
-from ._models import BatchJobScheduleCreateOptions
-from ._models import BatchJobScheduleUpdateOptions
-from ._models import BatchJobTerminateOptions
-from ._models import BatchJobUpdateOptions
+from ._models import BatchJobScheduleCreateParameters
+from ._models import BatchJobScheduleExecutionInfo
+from ._models import BatchJobScheduleStatistics
+from ._models import BatchJobScheduleUpdateParameters
+from ._models import BatchJobSchedulingError
+from ._models import BatchJobSpecification
+from ._models import BatchJobStatistics
+from ._models import BatchJobTerminateParameters
+from ._models import BatchJobUpdateParameters
 from ._models import BatchNode
+from ._models import BatchNodeAgentInfo
+from ._models import BatchNodeCounts
+from ._models import BatchNodeDisableSchedulingParameters
 from ._models import BatchNodeEndpointConfiguration
 from ._models import BatchNodeError
+from ._models import BatchNodeFile
 from ._models import BatchNodeIdentityReference
-from ._models import BatchNodeInformation
-from ._models import BatchNodeRemoteLoginSettingsResult
-from ._models import BatchNodeUserCreateOptions
-from ._models import BatchNodeUserUpdateOptions
+from ._models import BatchNodeInfo
+from ._models import BatchNodePlacementConfiguration
+from ._models import BatchNodeRebootParameters
+from ._models import BatchNodeReimageParameters
+from ._models import BatchNodeRemoteLoginSettings
+from ._models import BatchNodeRemoveParameters
+from ._models import BatchNodeUserCreateParameters
+from ._models import BatchNodeUserUpdateParameters
+from ._models import BatchNodeVMExtension
 from ._models import BatchPool
-from ._models import BatchPoolCreateOptions
-from ._models import BatchPoolEnableAutoScaleOptions
-from ._models import BatchPoolEvaluateAutoScaleOptions
+from ._models import BatchPoolCreateParameters
+from ._models import BatchPoolEnableAutoScaleParameters
+from ._models import BatchPoolEndpointConfiguration
+from ._models import BatchPoolEvaluateAutoScaleParameters
 from ._models import BatchPoolIdentity
-from ._models import BatchPoolReplaceOptions
-from ._models import BatchPoolResizeOptions
-from ._models import BatchPoolUpdateOptions
+from ._models import BatchPoolInfo
+from ._models import BatchPoolNodeCounts
+from ._models import BatchPoolReplaceParameters
+from ._models import BatchPoolResizeParameters
+from ._models import BatchPoolResourceStatistics
+from ._models import BatchPoolSpecification
+from ._models import BatchPoolStatistics
+from ._models import BatchPoolUpdateParameters
+from ._models import BatchPoolUsageMetrics
+from ._models import BatchPoolUsageStatistics
+from ._models import BatchStartTask
+from ._models import BatchStartTaskInfo
+from ._models import BatchSubtask
 from ._models import BatchTask
+from ._models import BatchTaskAddCollectionResult
+from ._models import BatchTaskAddResult
 from ._models import BatchTaskCollection
-from ._models import BatchTaskCreateOptions
+from ._models import BatchTaskConstraints
+from ._models import BatchTaskContainerExecutionInfo
+from ._models import BatchTaskContainerSettings
+from ._models import BatchTaskCounts
+from ._models import BatchTaskCountsResult
+from ._models import BatchTaskCreateParameters
+from ._models import BatchTaskDependencies
+from ._models import BatchTaskExecutionInfo
+from ._models import BatchTaskFailureInfo
+from ._models import BatchTaskIdRange
+from ._models import BatchTaskInfo
 from ._models import BatchTaskListSubtasksResult
-from ._models import CertificateReference
+from ._models import BatchTaskSchedulingPolicy
+from ._models import BatchTaskSlotCounts
+from ._models import BatchTaskStatistics
 from ._models import CifsMountConfiguration
 from ._models import CloudServiceConfiguration
 from ._models import ContainerConfiguration
 from ._models import ContainerRegistry
 from ._models import DataDisk
-from ._models import DeleteCertificateError
+from ._models import DeleteBatchCertificateError
 from ._models import DiffDiskSettings
 from ._models import DiskEncryptionConfiguration
 from ._models import EnvironmentSetting
-from ._models import ErrorMessage
 from ._models import ExitCodeMapping
 from ._models import ExitCodeRangeMapping
 from ._models import ExitConditions
 from ._models import ExitOptions
 from ._models import FileProperties
 from ._models import HttpHeader
-from ._models import ImageInformation
+from ._models import ImageInfo
 from ._models import ImageReference
 from ._models import InboundEndpoint
 from ._models import InboundNATPool
 from ._models import InstanceViewStatus
-from ._models import JobConstraints
-from ._models import JobExecutionInformation
-from ._models import JobManagerTask
-from ._models import JobNetworkConfiguration
-from ._models import JobPreparationAndReleaseTaskExecutionInformation
-from ._models import JobPreparationTask
-from ._models import JobPreparationTaskExecutionInformation
-from ._models import JobReleaseTask
-from ._models import JobReleaseTaskExecutionInformation
-from ._models import JobScheduleExecutionInformation
-from ._models import JobScheduleStatistics
-from ._models import JobSchedulingError
-from ._models import JobSpecification
-from ._models import JobStatistics
 from ._models import LinuxUserConfiguration
 from ._models import MetadataItem
 from ._models import MountConfiguration
 from ._models import MultiInstanceSettings
-from ._models import NFSMountConfiguration
 from ._models import NameValuePair
 from ._models import NetworkConfiguration
 from ._models import NetworkSecurityGroupRule
-from ._models import NodeAgentInformation
-from ._models import NodeCounts
-from ._models import NodeDisableSchedulingOptions
-from ._models import NodeFile
-from ._models import NodePlacementConfiguration
-from ._models import NodeRebootOptions
-from ._models import NodeReimageOptions
-from ._models import NodeRemoveOptions
-from ._models import NodeVMExtension
+from ._models import NfsMountConfiguration
 from ._models import OSDisk
 from ._models import OutputFile
 from ._models import OutputFileBlobContainerDestination
 from ._models import OutputFileDestination
 from ._models import OutputFileUploadOptions
-from ._models import PoolEndpointConfiguration
-from ._models import PoolInformation
-from ._models import PoolNodeCounts
-from ._models import PoolSpecification
-from ._models import PoolStatistics
-from ._models import PoolUsageMetrics
-from ._models import PublicIPAddressConfiguration
-from ._models import RecentJob
+from ._models import PublicIpAddressConfiguration
+from ._models import RecentBatchJob
 from ._models import ResizeError
 from ._models import ResourceFile
-from ._models import ResourceStatistics
 from ._models import Schedule
-from ._models import StartTask
-from ._models import StartTaskInformation
-from ._models import SubtaskInformation
-from ._models import TaskAddCollectionResult
-from ._models import TaskAddResult
-from ._models import TaskConstraints
-from ._models import TaskContainerExecutionInformation
-from ._models import TaskContainerSettings
-from ._models import TaskCounts
-from ._models import TaskCountsResult
-from ._models import TaskDependencies
-from ._models import TaskExecutionInformation
-from ._models import TaskFailureInformation
-from ._models import TaskIdRange
-from ._models import TaskInformation
-from ._models import TaskSchedulingPolicy
-from ._models import TaskSlotCounts
-from ._models import TaskStatistics
-from ._models import UploadBatchServiceLogsOptions
+from ._models import UploadBatchServiceLogsParameters
 from ._models import UploadBatchServiceLogsResult
-from ._models import UsageStatistics
 from ._models import UserAccount
 from ._models import UserAssignedIdentity
 from ._models import UserIdentity
@@ -151,190 +151,190 @@ from ._models import WindowsUserConfiguration
 from ._enums import AccessScope
 from ._enums import AllocationState
 from ._enums import AutoUserScope
+from ._enums import BatchCertificateFormat
+from ._enums import BatchCertificateState
+from ._enums import BatchCertificateStoreLocation
+from ._enums import BatchCertificateVisibility
+from ._enums import BatchJobAction
+from ._enums import BatchJobPreparationTaskState
+from ._enums import BatchJobReleaseTaskState
+from ._enums import BatchJobScheduleState
+from ._enums import BatchJobState
+from ._enums import BatchNodeCommunicationMode
 from ._enums import BatchNodeDeallocationOption
+from ._enums import BatchNodeDisableSchedulingOption
 from ._enums import BatchNodeFillType
+from ._enums import BatchNodePlacementPolicyType
 from ._enums import BatchNodeRebootOption
 from ._enums import BatchNodeReimageOption
 from ._enums import BatchNodeState
+from ._enums import BatchPoolIdentityType
+from ._enums import BatchPoolLifetimeOption
+from ._enums import BatchPoolState
+from ._enums import BatchStartTaskState
+from ._enums import BatchSubtaskState
+from ._enums import BatchTaskAddStatus
+from ._enums import BatchTaskExecutionResult
+from ._enums import BatchTaskState
 from ._enums import CachingType
-from ._enums import CertificateFormat
-from ._enums import CertificateState
-from ._enums import CertificateStoreLocation
-from ._enums import CertificateVisibility
 from ._enums import ContainerType
 from ._enums import ContainerWorkingDirectory
 from ._enums import DependencyAction
 from ._enums import DiffDiskPlacement
-from ._enums import DisableBatchNodeSchedulingOption
-from ._enums import DisableJobOption
+from ._enums import DisableBatchJobOption
 from ._enums import DiskEncryptionTarget
 from ._enums import DynamicVNetAssignmentScope
 from ._enums import ElevationLevel
 from ._enums import ErrorCategory
 from ._enums import IPAddressProvisioningType
+from ._enums import ImageVerificationType
 from ._enums import InboundEndpointProtocol
-from ._enums import JobAction
-from ._enums import JobPreparationTaskState
-from ._enums import JobReleaseTaskState
-from ._enums import JobScheduleState
-from ._enums import JobState
 from ._enums import LoginMode
 from ._enums import NetworkSecurityGroupRuleAccess
-from ._enums import NodeCommunicationMode
-from ._enums import NodePlacementPolicyType
 from ._enums import OSType
-from ._enums import OnAllTasksComplete
-from ._enums import OnTaskFailure
+from ._enums import OnAllBatchTasksComplete
+from ._enums import OnBatchTaskFailure
 from ._enums import OutputFileUploadCondition
-from ._enums import PoolIdentityType
-from ._enums import PoolLifetimeOption
-from ._enums import PoolState
 from ._enums import SchedulingState
-from ._enums import StartTaskState
 from ._enums import StatusLevelTypes
 from ._enums import StorageAccountType
-from ._enums import SubtaskState
-from ._enums import TaskAddStatus
-from ._enums import TaskExecutionResult
-from ._enums import TaskState
-from ._enums import VerificationType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AffinityInformation",
-    "ApplicationPackageReference",
+    "AffinityInfo",
     "AuthenticationTokenSettings",
-    "AutoPoolSpecification",
     "AutoScaleRun",
     "AutoScaleRunError",
     "AutoUserSpecification",
     "AzureBlobFileSystemConfiguration",
     "AzureFileShareConfiguration",
     "BatchApplication",
+    "BatchApplicationPackageReference",
+    "BatchAutoPoolSpecification",
     "BatchCertificate",
+    "BatchCertificateReference",
     "BatchError",
     "BatchErrorDetail",
+    "BatchErrorMessage",
     "BatchJob",
-    "BatchJobCreateOptions",
-    "BatchJobDisableOptions",
+    "BatchJobConstraints",
+    "BatchJobCreateParameters",
+    "BatchJobDisableParameters",
+    "BatchJobExecutionInfo",
+    "BatchJobManagerTask",
+    "BatchJobNetworkConfiguration",
+    "BatchJobPreparationAndReleaseTaskStatus",
+    "BatchJobPreparationTask",
+    "BatchJobPreparationTaskExecutionInfo",
+    "BatchJobReleaseTask",
+    "BatchJobReleaseTaskExecutionInfo",
     "BatchJobSchedule",
-    "BatchJobScheduleCreateOptions",
-    "BatchJobScheduleUpdateOptions",
-    "BatchJobTerminateOptions",
-    "BatchJobUpdateOptions",
+    "BatchJobScheduleCreateParameters",
+    "BatchJobScheduleExecutionInfo",
+    "BatchJobScheduleStatistics",
+    "BatchJobScheduleUpdateParameters",
+    "BatchJobSchedulingError",
+    "BatchJobSpecification",
+    "BatchJobStatistics",
+    "BatchJobTerminateParameters",
+    "BatchJobUpdateParameters",
     "BatchNode",
+    "BatchNodeAgentInfo",
+    "BatchNodeCounts",
+    "BatchNodeDisableSchedulingParameters",
     "BatchNodeEndpointConfiguration",
     "BatchNodeError",
+    "BatchNodeFile",
     "BatchNodeIdentityReference",
-    "BatchNodeInformation",
-    "BatchNodeRemoteLoginSettingsResult",
-    "BatchNodeUserCreateOptions",
-    "BatchNodeUserUpdateOptions",
+    "BatchNodeInfo",
+    "BatchNodePlacementConfiguration",
+    "BatchNodeRebootParameters",
+    "BatchNodeReimageParameters",
+    "BatchNodeRemoteLoginSettings",
+    "BatchNodeRemoveParameters",
+    "BatchNodeUserCreateParameters",
+    "BatchNodeUserUpdateParameters",
+    "BatchNodeVMExtension",
     "BatchPool",
-    "BatchPoolCreateOptions",
-    "BatchPoolEnableAutoScaleOptions",
-    "BatchPoolEvaluateAutoScaleOptions",
+    "BatchPoolCreateParameters",
+    "BatchPoolEnableAutoScaleParameters",
+    "BatchPoolEndpointConfiguration",
+    "BatchPoolEvaluateAutoScaleParameters",
     "BatchPoolIdentity",
-    "BatchPoolReplaceOptions",
-    "BatchPoolResizeOptions",
-    "BatchPoolUpdateOptions",
+    "BatchPoolInfo",
+    "BatchPoolNodeCounts",
+    "BatchPoolReplaceParameters",
+    "BatchPoolResizeParameters",
+    "BatchPoolResourceStatistics",
+    "BatchPoolSpecification",
+    "BatchPoolStatistics",
+    "BatchPoolUpdateParameters",
+    "BatchPoolUsageMetrics",
+    "BatchPoolUsageStatistics",
+    "BatchStartTask",
+    "BatchStartTaskInfo",
+    "BatchSubtask",
     "BatchTask",
+    "BatchTaskAddCollectionResult",
+    "BatchTaskAddResult",
     "BatchTaskCollection",
-    "BatchTaskCreateOptions",
+    "BatchTaskConstraints",
+    "BatchTaskContainerExecutionInfo",
+    "BatchTaskContainerSettings",
+    "BatchTaskCounts",
+    "BatchTaskCountsResult",
+    "BatchTaskCreateParameters",
+    "BatchTaskDependencies",
+    "BatchTaskExecutionInfo",
+    "BatchTaskFailureInfo",
+    "BatchTaskIdRange",
+    "BatchTaskInfo",
     "BatchTaskListSubtasksResult",
-    "CertificateReference",
+    "BatchTaskSchedulingPolicy",
+    "BatchTaskSlotCounts",
+    "BatchTaskStatistics",
     "CifsMountConfiguration",
     "CloudServiceConfiguration",
     "ContainerConfiguration",
     "ContainerRegistry",
     "DataDisk",
-    "DeleteCertificateError",
+    "DeleteBatchCertificateError",
     "DiffDiskSettings",
     "DiskEncryptionConfiguration",
     "EnvironmentSetting",
-    "ErrorMessage",
     "ExitCodeMapping",
     "ExitCodeRangeMapping",
     "ExitConditions",
     "ExitOptions",
     "FileProperties",
     "HttpHeader",
-    "ImageInformation",
+    "ImageInfo",
     "ImageReference",
     "InboundEndpoint",
     "InboundNATPool",
     "InstanceViewStatus",
-    "JobConstraints",
-    "JobExecutionInformation",
-    "JobManagerTask",
-    "JobNetworkConfiguration",
-    "JobPreparationAndReleaseTaskExecutionInformation",
-    "JobPreparationTask",
-    "JobPreparationTaskExecutionInformation",
-    "JobReleaseTask",
-    "JobReleaseTaskExecutionInformation",
-    "JobScheduleExecutionInformation",
-    "JobScheduleStatistics",
-    "JobSchedulingError",
-    "JobSpecification",
-    "JobStatistics",
     "LinuxUserConfiguration",
     "MetadataItem",
     "MountConfiguration",
     "MultiInstanceSettings",
-    "NFSMountConfiguration",
     "NameValuePair",
     "NetworkConfiguration",
     "NetworkSecurityGroupRule",
-    "NodeAgentInformation",
-    "NodeCounts",
-    "NodeDisableSchedulingOptions",
-    "NodeFile",
-    "NodePlacementConfiguration",
-    "NodeRebootOptions",
-    "NodeReimageOptions",
-    "NodeRemoveOptions",
-    "NodeVMExtension",
+    "NfsMountConfiguration",
     "OSDisk",
     "OutputFile",
     "OutputFileBlobContainerDestination",
     "OutputFileDestination",
     "OutputFileUploadOptions",
-    "PoolEndpointConfiguration",
-    "PoolInformation",
-    "PoolNodeCounts",
-    "PoolSpecification",
-    "PoolStatistics",
-    "PoolUsageMetrics",
-    "PublicIPAddressConfiguration",
-    "RecentJob",
+    "PublicIpAddressConfiguration",
+    "RecentBatchJob",
     "ResizeError",
     "ResourceFile",
-    "ResourceStatistics",
     "Schedule",
-    "StartTask",
-    "StartTaskInformation",
-    "SubtaskInformation",
-    "TaskAddCollectionResult",
-    "TaskAddResult",
-    "TaskConstraints",
-    "TaskContainerExecutionInformation",
-    "TaskContainerSettings",
-    "TaskCounts",
-    "TaskCountsResult",
-    "TaskDependencies",
-    "TaskExecutionInformation",
-    "TaskFailureInformation",
-    "TaskIdRange",
-    "TaskInformation",
-    "TaskSchedulingPolicy",
-    "TaskSlotCounts",
-    "TaskStatistics",
-    "UploadBatchServiceLogsOptions",
+    "UploadBatchServiceLogsParameters",
     "UploadBatchServiceLogsResult",
-    "UsageStatistics",
     "UserAccount",
     "UserAssignedIdentity",
     "UserIdentity",
@@ -347,53 +347,53 @@ __all__ = [
     "AccessScope",
     "AllocationState",
     "AutoUserScope",
+    "BatchCertificateFormat",
+    "BatchCertificateState",
+    "BatchCertificateStoreLocation",
+    "BatchCertificateVisibility",
+    "BatchJobAction",
+    "BatchJobPreparationTaskState",
+    "BatchJobReleaseTaskState",
+    "BatchJobScheduleState",
+    "BatchJobState",
+    "BatchNodeCommunicationMode",
     "BatchNodeDeallocationOption",
+    "BatchNodeDisableSchedulingOption",
     "BatchNodeFillType",
+    "BatchNodePlacementPolicyType",
     "BatchNodeRebootOption",
     "BatchNodeReimageOption",
     "BatchNodeState",
+    "BatchPoolIdentityType",
+    "BatchPoolLifetimeOption",
+    "BatchPoolState",
+    "BatchStartTaskState",
+    "BatchSubtaskState",
+    "BatchTaskAddStatus",
+    "BatchTaskExecutionResult",
+    "BatchTaskState",
     "CachingType",
-    "CertificateFormat",
-    "CertificateState",
-    "CertificateStoreLocation",
-    "CertificateVisibility",
     "ContainerType",
     "ContainerWorkingDirectory",
     "DependencyAction",
     "DiffDiskPlacement",
-    "DisableBatchNodeSchedulingOption",
-    "DisableJobOption",
+    "DisableBatchJobOption",
     "DiskEncryptionTarget",
     "DynamicVNetAssignmentScope",
     "ElevationLevel",
     "ErrorCategory",
     "IPAddressProvisioningType",
+    "ImageVerificationType",
     "InboundEndpointProtocol",
-    "JobAction",
-    "JobPreparationTaskState",
-    "JobReleaseTaskState",
-    "JobScheduleState",
-    "JobState",
     "LoginMode",
     "NetworkSecurityGroupRuleAccess",
-    "NodeCommunicationMode",
-    "NodePlacementPolicyType",
     "OSType",
-    "OnAllTasksComplete",
-    "OnTaskFailure",
+    "OnAllBatchTasksComplete",
+    "OnBatchTaskFailure",
     "OutputFileUploadCondition",
-    "PoolIdentityType",
-    "PoolLifetimeOption",
-    "PoolState",
     "SchedulingState",
-    "StartTaskState",
     "StatusLevelTypes",
     "StorageAccountType",
-    "SubtaskState",
-    "TaskAddStatus",
-    "TaskExecutionResult",
-    "TaskState",
-    "VerificationType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

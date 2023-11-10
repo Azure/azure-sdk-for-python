@@ -121,7 +121,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchApplication"]:
         """Lists all of the applications available in the specified Account.
@@ -139,9 +139,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :return: An iterator like instance of BatchApplication
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchApplication]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -162,15 +163,20 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_applications_request(
+                _request = build_batch_list_applications_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
+                    time_out_in_seconds=time_out_in_seconds,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -182,12 +188,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -197,11 +208,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -221,7 +232,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         application_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchApplication:
@@ -235,9 +246,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param application_id: The ID of the Application. Required.
         :type application_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -261,19 +273,22 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchApplication] = kwargs.pop("cls", None)
 
-        request = build_batch_get_application_request(
+        _request = build_batch_get_application_request(
             application_id=application_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -307,12 +322,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         starttime: Optional[datetime.datetime] = None,
         endtime: Optional[datetime.datetime] = None,
-        filter: Optional[str] = None,
+        _filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PoolUsageMetrics"]:
+    ) -> AsyncIterable["_models.BatchPoolUsageMetrics"]:
         """Lists the usage metrics, aggregated by Pool across individual time intervals,
         for the specified Account.
 
@@ -330,9 +345,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword starttime: The earliest time from which to include metrics. This must be at least two
          and
          a half hours before the current time. If not specified this defaults to the
@@ -343,18 +359,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          before the current time. If not specified this defaults to the end time of the
          last aggregation interval currently available. Default value is None.
         :paramtype endtime: ~datetime.datetime
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics.
          Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PoolUsageMetrics
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.PoolUsageMetrics]
+        :paramtype _filter: str
+        :return: An iterator like instance of BatchPoolUsageMetrics
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPoolUsageMetrics]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.PoolUsageMetrics]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.BatchPoolUsageMetrics]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -367,18 +384,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_pool_usage_metrics_request(
+                _request = build_batch_list_pool_usage_metrics_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
+                    time_out_in_seconds=time_out_in_seconds,
                     starttime=starttime,
                     endtime=endtime,
-                    filter=filter,
+                    _filter=_filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -390,26 +412,31 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PoolUsageMetrics], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchPoolUsageMetrics], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -427,9 +454,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     @distributed_trace_async
     async def create_pool(  # pylint: disable=inconsistent-return-statements
         self,
-        body: _models.BatchPoolCreateOptions,
+        pool: _models.BatchPoolCreateParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -439,11 +466,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         secret project names. This information may appear in telemetry logs accessible
         to Microsoft Support engineers.
 
-        :param body: The Pool to be created. Required.
-        :type body: ~azure.batch.models.BatchPoolCreateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param pool: The Pool to be created. Required.
+        :type pool: ~azure.batch.models.BatchPoolCreateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -473,10 +501,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(pool, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_create_pool_request(
-            time_out=time_out,
+        _request = build_batch_create_pool_request(
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -484,11 +512,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -508,7 +539,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def list_pools(
@@ -516,10 +547,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
+        _select: Optional[List[str]] = None,
+        _expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchPool"]:
         """Lists all of the Pools in the specified Account.
@@ -533,17 +564,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-pools.
          Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
+        :paramtype _filter: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :keyword _expand: An OData $expand clause. Default value is None.
+        :paramtype _expand: list[str]
         :return: An iterator like instance of BatchPool
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPool]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -564,18 +597,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_pools_request(
+                _request = build_batch_list_pools_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
+                    _select=_select,
+                    _expand=_expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -587,12 +625,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -602,11 +645,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -626,12 +669,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Pool from the specified Account.
@@ -651,18 +694,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -673,6 +712,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -698,23 +742,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_delete_pool_request(
+        _request = build_batch_delete_pool_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -731,37 +778,33 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def pool_exists(
         self,
         pool_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> bool:
         """Gets basic properties of a Pool.
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -772,6 +815,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -797,23 +845,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_pool_exists_request(
+        _request = build_batch_pool_exists_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -833,7 +884,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
         return 200 <= response.status_code <= 299
 
     @distributed_trace_async
@@ -841,32 +892,28 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
+        _select: Optional[List[str]] = None,
+        _expand: Optional[List[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.BatchPool:
         """Gets information about the specified Pool.
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -877,10 +924,15 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :keyword _expand: An OData $expand clause. Default value is None.
+        :paramtype _expand: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchPool. The BatchPool is compatible with MutableMapping
@@ -906,25 +958,28 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchPool] = kwargs.pop("cls", None)
 
-        request = build_batch_get_pool_request(
+        _request = build_batch_get_pool_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            select=select,
-            expand=expand,
+            _select=_select,
+            _expand=_expand,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -956,14 +1011,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def update_pool(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        body: _models.BatchPoolUpdateOptions,
+        pool: _models.BatchPoolUpdateParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Pool.
@@ -974,20 +1029,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param body: The pool properties to update. Required.
-        :type body: ~azure.batch.models.BatchPoolUpdateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param pool: The pool properties to update. Required.
+        :type pool: ~azure.batch.models.BatchPoolUpdateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -998,6 +1049,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1029,27 +1085,30 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(pool, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_update_pool_request(
+        _request = build_batch_update_pool_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1069,14 +1128,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def disable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1086,9 +1145,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool on which to disable automatic scaling. Required.
         :type pool_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1112,19 +1172,22 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_disable_pool_auto_scale_request(
+        _request = build_batch_disable_pool_auto_scale_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1144,20 +1207,20 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def enable_pool_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        body: _models.BatchPoolEnableAutoScaleOptions,
+        parameters: _models.BatchPoolEnableAutoScaleParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Enables automatic scaling for a Pool.
@@ -1171,20 +1234,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param body: The options to use for enabling automatic scaling. Required.
-        :type body: ~azure.batch.models.BatchPoolEnableAutoScaleOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for enabling automatic scaling. Required.
+        :type parameters: ~azure.batch.models.BatchPoolEnableAutoScaleParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -1195,6 +1254,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1226,27 +1290,30 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_enable_pool_auto_scale_request(
+        _request = build_batch_enable_pool_auto_scale_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1266,15 +1333,15 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def evaluate_pool_auto_scale(
         self,
         pool_id: str,
-        body: _models.BatchPoolEvaluateAutoScaleOptions,
+        parameters: _models.BatchPoolEvaluateAutoScaleParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.AutoScaleRun:
@@ -1287,11 +1354,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :param pool_id: The ID of the Pool on which to evaluate the automatic scaling formula.
          Required.
         :type pool_id: str
-        :param body: The options to use for evaluating the automatic scaling formula. Required.
-        :type body: ~azure.batch.models.BatchPoolEvaluateAutoScaleOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for evaluating the automatic scaling formula. Required.
+        :type parameters: ~azure.batch.models.BatchPoolEvaluateAutoScaleParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1321,11 +1389,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[_models.AutoScaleRun] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_evaluate_pool_auto_scale_request(
+        _request = build_batch_evaluate_pool_auto_scale_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1333,11 +1401,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1370,14 +1441,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def resize_pool(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        body: _models.BatchPoolResizeOptions,
+        parameters: _models.BatchPoolResizeParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Changes the number of Compute Nodes that are assigned to a Pool.
@@ -1392,20 +1463,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param body: The options to use for resizing the pool. Required.
-        :type body: ~azure.batch.models.BatchPoolResizeOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for resizing the pool. Required.
+        :type parameters: ~azure.batch.models.BatchPoolResizeParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -1416,6 +1483,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1447,27 +1519,30 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_resize_pool_request(
+        _request = build_batch_resize_pool_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1487,19 +1562,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def stop_pool_resize(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Stops an ongoing resize operation on the Pool.
@@ -1514,18 +1589,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -1536,6 +1607,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -1561,23 +1637,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_stop_pool_resize_request(
+        _request = build_batch_stop_pool_resize_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1597,15 +1676,15 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def replace_pool_properties(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        body: _models.BatchPoolReplaceOptions,
+        pool: _models.BatchPoolReplaceParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1617,11 +1696,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to update. Required.
         :type pool_id: str
-        :param body: The options to use for replacing properties on the pool. Required.
-        :type body: ~azure.batch.models.BatchPoolReplaceOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param pool: The options to use for replacing properties on the pool. Required.
+        :type pool: ~azure.batch.models.BatchPoolReplaceParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1651,11 +1731,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(pool, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_replace_pool_properties_request(
+        _request = build_batch_replace_pool_properties_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1663,11 +1743,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1687,20 +1770,20 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def remove_nodes(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        body: _models.NodeRemoveOptions,
+        parameters: _models.BatchNodeRemoveParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Removes Compute Nodes from the specified Pool.
@@ -1711,20 +1794,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param body: The options to use for removing the node. Required.
-        :type body: ~azure.batch.models.NodeRemoveOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for removing the node. Required.
+        :type parameters: ~azure.batch.models.BatchNodeRemoveParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -1735,6 +1814,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -1766,27 +1850,30 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_remove_nodes_request(
+        _request = build_batch_remove_nodes_request(
             pool_id=pool_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1806,7 +1893,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def list_supported_images(
@@ -1814,10 +1901,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ImageInformation"]:
+    ) -> AsyncIterable["_models.ImageInfo"]:
         """Lists all Virtual Machine Images supported by the Azure Batch service.
 
         Lists all Virtual Machine Images supported by the Azure Batch service.
@@ -1829,21 +1916,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
          Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of ImageInformation
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.ImageInformation]
+        :paramtype _filter: str
+        :return: An iterator like instance of ImageInfo
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.ImageInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ImageInformation]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ImageInfo]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1856,16 +1945,21 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_supported_images_request(
+                _request = build_batch_list_supported_images_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1877,26 +1971,31 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ImageInformation], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.ImageInfo], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1917,10 +2016,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PoolNodeCounts"]:
+    ) -> AsyncIterable["_models.BatchPoolNodeCounts"]:
         """Gets the number of Compute Nodes in each state, grouped by Pool. Note that the
         numbers returned may not always be up to date. If you need exact node counts,
         use a list query.
@@ -1932,21 +2031,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
          Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of PoolNodeCounts
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.PoolNodeCounts]
+        :paramtype _filter: str
+        :return: An iterator like instance of BatchPoolNodeCounts
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPoolNodeCounts]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.PoolNodeCounts]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.BatchPoolNodeCounts]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1959,16 +2060,21 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_pool_node_counts_request(
+                _request = build_batch_list_pool_node_counts_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1980,26 +2086,31 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PoolNodeCounts], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchPoolNodeCounts], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2019,12 +2130,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         job_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Job.
@@ -2040,18 +2151,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job to delete. Required.
         :type job_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -2062,6 +2169,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -2087,23 +2199,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_delete_job_request(
+        _request = build_batch_delete_job_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2120,21 +2235,21 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_job(
         self,
         job_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
+        _select: Optional[List[str]] = None,
+        _expand: Optional[List[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.BatchJob:
         """Gets information about the specified Job.
@@ -2143,18 +2258,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job. Required.
         :type job_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -2165,10 +2276,15 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :keyword _expand: An OData $expand clause. Default value is None.
+        :paramtype _expand: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchJob. The BatchJob is compatible with MutableMapping
@@ -2194,25 +2310,28 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchJob] = kwargs.pop("cls", None)
 
-        request = build_batch_get_job_request(
+        _request = build_batch_get_job_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            select=select,
-            expand=expand,
+            _select=_select,
+            _expand=_expand,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2244,14 +2363,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def update_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        body: _models.BatchJobUpdateOptions,
+        job: _models.BatchJobUpdateParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -2262,20 +2381,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job whose properties you want to update. Required.
         :type job_id: str
-        :param body: The options to use for updating the Job. Required.
-        :type body: ~azure.batch.models.BatchJobUpdateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param job: The options to use for updating the Job. Required.
+        :type job: ~azure.batch.models.BatchJobUpdateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -2286,6 +2401,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2317,27 +2437,30 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(job, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_update_job_request(
+        _request = build_batch_update_job_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2357,20 +2480,20 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def replace_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        body: _models.BatchJob,
+        job: _models.BatchJob,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -2381,20 +2504,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job whose properties you want to update. Required.
         :type job_id: str
-        :param body: A job with updated properties. Required.
-        :type body: ~azure.batch.models.BatchJob
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param job: A job with updated properties. Required.
+        :type job: ~azure.batch.models.BatchJob
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -2405,6 +2524,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2436,27 +2560,30 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(job, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_replace_job_request(
+        _request = build_batch_replace_job_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2476,20 +2603,20 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def disable_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        body: _models.BatchJobDisableOptions,
+        parameters: _models.BatchJobDisableParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Disables the specified Job, preventing new Tasks from running.
@@ -2505,20 +2632,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job to disable. Required.
         :type job_id: str
-        :param body: The options to use for disabling the Job. Required.
-        :type body: ~azure.batch.models.BatchJobDisableOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for disabling the Job. Required.
+        :type parameters: ~azure.batch.models.BatchJobDisableParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -2529,6 +2652,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2560,27 +2688,30 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_disable_job_request(
+        _request = build_batch_disable_job_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2600,19 +2731,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def enable_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Enables the specified Job, allowing new Tasks to run.
@@ -2626,18 +2757,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job to enable. Required.
         :type job_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -2648,6 +2775,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -2673,23 +2805,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_enable_job_request(
+        _request = build_batch_enable_job_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2709,20 +2844,20 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def terminate_job(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        body: Optional[_models.BatchJobTerminateOptions] = None,
+        parameters: Optional[_models.BatchJobTerminateParameters] = None,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Job, marking it as completed.
@@ -2736,20 +2871,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
-        :param body: The options to use for terminating the Job. Default value is None.
-        :type body: ~azure.batch.models.BatchJobTerminateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for terminating the Job. Default value is None.
+        :type parameters: ~azure.batch.models.BatchJobTerminateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -2760,6 +2891,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -2791,30 +2927,33 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if body is not None:
-            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        if parameters is not None:
+            _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        request = build_batch_terminate_job_request(
+        _request = build_batch_terminate_job_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2834,14 +2973,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def create_job(  # pylint: disable=inconsistent-return-statements
         self,
-        body: _models.BatchJobCreateOptions,
+        job: _models.BatchJobCreateParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -2857,11 +2996,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         This information may appear in telemetry logs accessible to Microsoft Support
         engineers.
 
-        :param body: The Job to be created. Required.
-        :type body: ~azure.batch.models.BatchJobCreateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param job: The Job to be created. Required.
+        :type job: ~azure.batch.models.BatchJobCreateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -2891,10 +3031,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(job, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_create_job_request(
-            time_out=time_out,
+        _request = build_batch_create_job_request(
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2902,11 +3042,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2926,7 +3069,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def list_jobs(
@@ -2934,10 +3077,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
+        _select: Optional[List[str]] = None,
+        _expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchJob"]:
         """Lists all of the Jobs in the specified Account.
@@ -2951,17 +3094,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs.
          Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
+        :paramtype _filter: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :keyword _expand: An OData $expand clause. Default value is None.
+        :paramtype _expand: list[str]
         :return: An iterator like instance of BatchJob
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJob]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2982,18 +3127,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_jobs_request(
+                _request = build_batch_list_jobs_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
+                    _select=_select,
+                    _expand=_expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -3005,12 +3155,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -3020,11 +3175,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3046,10 +3201,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
+        _select: Optional[List[str]] = None,
+        _expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchJob"]:
         """Lists the Jobs that have been created under the specified Job Schedule.
@@ -3066,17 +3221,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule.
          Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
+        :paramtype _filter: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :keyword _expand: An OData $expand clause. Default value is None.
+        :paramtype _expand: list[str]
         :return: An iterator like instance of BatchJob
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJob]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3097,19 +3254,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_jobs_from_schedule_request(
+                _request = build_batch_list_jobs_from_schedule_request(
                     job_schedule_id=job_schedule_id,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
+                    _select=_select,
+                    _expand=_expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -3121,12 +3283,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -3136,11 +3303,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3162,11 +3329,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
+        _select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.JobPreparationAndReleaseTaskExecutionInformation"]:
+    ) -> AsyncIterable["_models.BatchJobPreparationAndReleaseTaskStatus"]:
         """Lists the execution status of the Job Preparation and Job Release Task for the
         specified Job across the Compute Nodes where the Job has run.
 
@@ -3186,24 +3353,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status.
          Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :return: An iterator like instance of JobPreparationAndReleaseTaskExecutionInformation
+        :paramtype _filter: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :return: An iterator like instance of BatchJobPreparationAndReleaseTaskStatus
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.JobPreparationAndReleaseTaskExecutionInformation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJobPreparationAndReleaseTaskStatus]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.JobPreparationAndReleaseTaskExecutionInformation]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.BatchJobPreparationAndReleaseTaskStatus]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -3216,18 +3385,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_job_preparation_and_release_task_status_request(
+                _request = build_batch_list_job_preparation_and_release_task_status_request(
                     job_id=job_id,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
-                    select=select,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
+                    _select=_select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -3239,28 +3413,31 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.JobPreparationAndReleaseTaskExecutionInformation], deserialized["value"]
-            )
+            list_of_elem = _deserialize(List[_models.BatchJobPreparationAndReleaseTaskStatus], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3280,10 +3457,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         job_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.TaskCountsResult:
+    ) -> _models.BatchTaskCountsResult:
         """Gets the Task counts for the specified Job.
 
         Task counts provide a count of the Tasks by active, running or completed Task
@@ -3293,17 +3470,18 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job. Required.
         :type job_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: TaskCountsResult. The TaskCountsResult is compatible with MutableMapping
-        :rtype: ~azure.batch.models.TaskCountsResult
+        :return: BatchTaskCountsResult. The BatchTaskCountsResult is compatible with MutableMapping
+        :rtype: ~azure.batch.models.BatchTaskCountsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -3317,21 +3495,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TaskCountsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchTaskCountsResult] = kwargs.pop("cls", None)
 
-        request = build_batch_get_job_task_counts_request(
+        _request = build_batch_get_job_task_counts_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3350,7 +3531,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TaskCountsResult, response.json())
+            deserialized = _deserialize(_models.BatchTaskCountsResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3360,9 +3541,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     @distributed_trace_async
     async def create_certificate(  # pylint: disable=inconsistent-return-statements
         self,
-        body: _models.BatchCertificate,
+        certificate: _models.BatchCertificate,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -3370,11 +3551,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         Creates a Certificate to the specified Account.
 
-        :param body: The Certificate to be created. Required.
-        :type body: ~azure.batch.models.BatchCertificate
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param certificate: The Certificate to be created. Required.
+        :type certificate: ~azure.batch.models.BatchCertificate
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3404,10 +3586,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(certificate, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_create_certificate_request(
-            time_out=time_out,
+        _request = build_batch_create_certificate_request(
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3415,11 +3597,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3439,7 +3624,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def list_certificates(
@@ -3447,9 +3632,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
+        _select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchCertificate"]:
         """Lists all of the Certificates that have been added to the specified Account.
@@ -3463,15 +3648,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
          Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
+        :paramtype _filter: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
         :return: An iterator like instance of BatchCertificate
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchCertificate]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3492,17 +3679,22 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_certificates_request(
+                _request = build_batch_list_certificates_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
-                    select=select,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
+                    _select=_select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -3514,12 +3706,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -3529,11 +3726,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3554,7 +3751,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         thumbprint_algorithm: str,
         thumbprint: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -3573,9 +3770,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type thumbprint_algorithm: str
         :param thumbprint: The thumbprint of the Certificate being deleted. Required.
         :type thumbprint: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3599,20 +3797,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_cancel_certificate_deletion_request(
+        _request = build_batch_cancel_certificate_deletion_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3632,7 +3833,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete_certificate(  # pylint: disable=inconsistent-return-statements
@@ -3640,7 +3841,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         thumbprint_algorithm: str,
         thumbprint: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -3661,9 +3862,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type thumbprint_algorithm: str
         :param thumbprint: The thumbprint of the Certificate to be deleted. Required.
         :type thumbprint: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3687,20 +3889,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_delete_certificate_request(
+        _request = build_batch_delete_certificate_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3719,7 +3924,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_certificate(
@@ -3727,9 +3932,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         thumbprint_algorithm: str,
         thumbprint: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        select: Optional[str] = None,
+        _select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.BatchCertificate:
         """Gets information about the specified Certificate.
@@ -3739,15 +3944,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type thumbprint_algorithm: str
         :param thumbprint: The thumbprint of the Certificate to get. Required.
         :type thumbprint: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchCertificate. The BatchCertificate is compatible with MutableMapping
@@ -3767,21 +3973,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchCertificate] = kwargs.pop("cls", None)
 
-        request = build_batch_get_certificate_request(
+        _request = build_batch_get_certificate_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            select=select,
+            _select=_select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3814,12 +4023,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         job_schedule_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> bool:
         """Checks the specified Job Schedule exists.
@@ -3828,18 +4037,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_schedule_id: The ID of the Job Schedule which you want to check. Required.
         :type job_schedule_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -3850,6 +4055,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: bool
@@ -3875,23 +4085,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_job_schedule_exists_request(
+        _request = build_batch_job_schedule_exists_request(
             job_schedule_id=job_schedule_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3911,7 +4124,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             response_headers["last-modified"] = self._deserialize("rfc-1123", response.headers.get("last-modified"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
         return 200 <= response.status_code <= 299
 
     @distributed_trace_async
@@ -3919,12 +4132,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         job_schedule_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Job Schedule from the specified Account.
@@ -3937,18 +4150,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_schedule_id: The ID of the Job Schedule to delete. Required.
         :type job_schedule_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -3959,6 +4168,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -3984,23 +4198,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_delete_job_schedule_request(
+        _request = build_batch_delete_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4017,39 +4234,35 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_job_schedule(
         self,
         job_schedule_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
+        _select: Optional[List[str]] = None,
+        _expand: Optional[List[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.BatchJobSchedule:
         """Gets information about the specified Job Schedule.
 
         :param job_schedule_id: The ID of the Job Schedule to get. Required.
         :type job_schedule_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4060,10 +4273,15 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :keyword _expand: An OData $expand clause. Default value is None.
+        :paramtype _expand: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchJobSchedule. The BatchJobSchedule is compatible with MutableMapping
@@ -4089,25 +4307,28 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchJobSchedule] = kwargs.pop("cls", None)
 
-        request = build_batch_get_job_schedule_request(
+        _request = build_batch_get_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            select=select,
-            expand=expand,
+            _select=_select,
+            _expand=_expand,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4139,14 +4360,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def update_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        body: _models.BatchJobScheduleUpdateOptions,
+        job_schedule: _models.BatchJobScheduleUpdateParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -4159,20 +4380,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_schedule_id: The ID of the Job Schedule to update. Required.
         :type job_schedule_id: str
-        :param body: The options to use for updating the Job Schedule. Required.
-        :type body: ~azure.batch.models.BatchJobScheduleUpdateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param job_schedule: The options to use for updating the Job Schedule. Required.
+        :type job_schedule: ~azure.batch.models.BatchJobScheduleUpdateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4183,6 +4400,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -4214,27 +4436,30 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(job_schedule, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_update_job_schedule_request(
+        _request = build_batch_update_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4254,20 +4479,20 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def replace_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
-        body: _models.BatchJobSchedule,
+        job_schedule: _models.BatchJobSchedule,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -4280,20 +4505,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_schedule_id: The ID of the Job Schedule to update. Required.
         :type job_schedule_id: str
-        :param body: A Job Schedule with updated properties. Required.
-        :type body: ~azure.batch.models.BatchJobSchedule
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param job_schedule: A Job Schedule with updated properties. Required.
+        :type job_schedule: ~azure.batch.models.BatchJobSchedule
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4304,6 +4525,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -4335,27 +4561,30 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(job_schedule, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_replace_job_schedule_request(
+        _request = build_batch_replace_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4375,19 +4604,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def disable_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Disables a Job Schedule.
@@ -4396,18 +4625,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_schedule_id: The ID of the Job Schedule to disable. Required.
         :type job_schedule_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4418,6 +4643,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -4443,23 +4673,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_disable_job_schedule_request(
+        _request = build_batch_disable_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4479,19 +4712,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def enable_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Enables a Job Schedule.
@@ -4500,18 +4733,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_schedule_id: The ID of the Job Schedule to enable. Required.
         :type job_schedule_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4522,6 +4751,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -4547,23 +4781,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_enable_job_schedule_request(
+        _request = build_batch_enable_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4583,19 +4820,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def terminate_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Terminates a Job Schedule.
@@ -4604,18 +4841,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_schedule_id: The ID of the Job Schedule to terminates. Required.
         :type job_schedule_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -4626,6 +4859,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -4651,23 +4889,26 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_terminate_job_schedule_request(
+        _request = build_batch_terminate_job_schedule_request(
             job_schedule_id=job_schedule_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4687,14 +4928,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def create_job_schedule(  # pylint: disable=inconsistent-return-statements
         self,
-        body: _models.BatchJobScheduleCreateOptions,
+        job_schedule: _models.BatchJobScheduleCreateParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -4702,11 +4943,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         Creates a Job Schedule to the specified Account.
 
-        :param body: The Job Schedule to be created. Required.
-        :type body: ~azure.batch.models.BatchJobScheduleCreateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param job_schedule: The Job Schedule to be created. Required.
+        :type job_schedule: ~azure.batch.models.BatchJobScheduleCreateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4736,10 +4978,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(job_schedule, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_create_job_schedule_request(
-            time_out=time_out,
+        _request = build_batch_create_job_schedule_request(
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4747,11 +4989,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4771,7 +5016,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def list_job_schedules(
@@ -4779,10 +5024,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
+        _select: Optional[List[str]] = None,
+        _expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchJobSchedule"]:
         """Lists all of the Job Schedules in the specified Account.
@@ -4796,17 +5041,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-schedules.
          Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
+        :paramtype _filter: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :keyword _expand: An OData $expand clause. Default value is None.
+        :paramtype _expand: list[str]
         :return: An iterator like instance of BatchJobSchedule
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJobSchedule]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4827,18 +5074,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_job_schedules_request(
+                _request = build_batch_list_job_schedules_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
+                    _select=_select,
+                    _expand=_expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -4850,12 +5102,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -4865,11 +5122,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4888,9 +5145,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def create_task(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        body: _models.BatchTaskCreateOptions,
+        task: _models.BatchTaskCreateParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -4902,11 +5159,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job to which the Task is to be created. Required.
         :type job_id: str
-        :param body: The Task to be created. Required.
-        :type body: ~azure.batch.models.BatchTaskCreateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param task: The Task to be created. Required.
+        :type task: ~azure.batch.models.BatchTaskCreateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4936,11 +5194,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(task, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_create_task_request(
+        _request = build_batch_create_task_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4948,11 +5206,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4972,7 +5233,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def list_tasks(
@@ -4981,10 +5242,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
+        _select: Optional[List[str]] = None,
+        _expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchTask"]:
         """Lists all of the Tasks that are associated with the specified Job.
@@ -5002,17 +5263,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-tasks.
          Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
+        :paramtype _filter: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :keyword _expand: An OData $expand clause. Default value is None.
+        :paramtype _expand: list[str]
         :return: An iterator like instance of BatchTask
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchTask]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5033,19 +5296,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_tasks_request(
+                _request = build_batch_list_tasks_request(
                     job_id=job_id,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
+                    _select=_select,
+                    _expand=_expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -5057,12 +5325,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -5072,11 +5345,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5095,12 +5368,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
     async def create_task_collection(
         self,
         job_id: str,
-        collection: _models.BatchTaskCollection,
+        task_collection: _models.BatchTaskCollection,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.TaskAddCollectionResult:
+    ) -> _models.BatchTaskAddCollectionResult:
         """Adds a collection of Tasks to the specified Job.
 
         Note that each Task must have a unique ID. The Batch service may not return the
@@ -5120,11 +5393,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
-        :param collection: The Tasks to be added. Required.
-        :type collection: ~azure.batch.models.BatchTaskCollection
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param task_collection: The Tasks to be added. Required.
+        :type task_collection: ~azure.batch.models.BatchTaskCollection
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5134,8 +5408,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
-        :rtype: ~azure.batch.models.TaskAddCollectionResult
+        :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with
+         MutableMapping
+        :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5152,13 +5427,13 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         content_type: str = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
         )
-        cls: ClsType[_models.TaskAddCollectionResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchTaskAddCollectionResult] = kwargs.pop("cls", None)
 
-        _content = json.dumps(collection, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(task_collection, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_create_task_collection_request(
+        _request = build_batch_create_task_collection_request(
             job_id=job_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5166,11 +5441,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5189,7 +5467,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TaskAddCollectionResult, response.json())
+            deserialized = _deserialize(_models.BatchTaskAddCollectionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5202,12 +5480,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         job_id: str,
         task_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a Task from the specified Job.
@@ -5222,18 +5500,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type job_id: str
         :param task_id: The ID of the Task to delete. Required.
         :type task_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5244,6 +5518,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -5269,24 +5548,27 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_delete_task_request(
+        _request = build_batch_delete_task_request(
             job_id=job_id,
             task_id=task_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5303,7 +5585,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_task(
@@ -5311,14 +5593,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         job_id: str,
         task_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        select: Optional[str] = None,
-        expand: Optional[str] = None,
+        _select: Optional[List[str]] = None,
+        _expand: Optional[List[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.BatchTask:
         """Gets information about the specified Task.
@@ -5331,18 +5613,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type job_id: str
         :param task_id: The ID of the Task to get information about. Required.
         :type task_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5353,10 +5631,15 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Default value is None.
-        :paramtype expand: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :keyword _expand: An OData $expand clause. Default value is None.
+        :paramtype _expand: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchTask. The BatchTask is compatible with MutableMapping
@@ -5382,26 +5665,29 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchTask] = kwargs.pop("cls", None)
 
-        request = build_batch_get_task_request(
+        _request = build_batch_get_task_request(
             job_id=job_id,
             task_id=task_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            select=select,
-            expand=expand,
+            _select=_select,
+            _expand=_expand,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5435,14 +5721,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         job_id: str,
         task_id: str,
-        body: _models.BatchTask,
+        task: _models.BatchTask,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Task.
@@ -5451,20 +5737,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type job_id: str
         :param task_id: The ID of the Task to update. Required.
         :type task_id: str
-        :param body: The Task to update. Required.
-        :type body: ~azure.batch.models.BatchTask
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param task: The Task to update. Required.
+        :type task: ~azure.batch.models.BatchTask
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5475,6 +5757,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
@@ -5506,28 +5793,31 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(task, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_replace_task_request(
+        _request = build_batch_replace_task_request(
             job_id=job_id,
             task_id=task_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5547,7 +5837,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def list_sub_tasks(
@@ -5555,9 +5845,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         job_id: str,
         task_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        select: Optional[str] = None,
+        _select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.BatchTaskListSubtasksResult:
         """Lists all of the subtasks that are associated with the specified multi-instance
@@ -5569,15 +5859,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type job_id: str
         :param task_id: The ID of the Task. Required.
         :type task_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchTaskListSubtasksResult. The BatchTaskListSubtasksResult is compatible with
@@ -5598,21 +5889,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchTaskListSubtasksResult] = kwargs.pop("cls", None)
 
-        request = build_batch_list_sub_tasks_request(
+        _request = build_batch_list_sub_tasks_request(
             job_id=job_id,
             task_id=task_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            select=select,
+            _select=_select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5646,12 +5940,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         job_id: str,
         task_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Terminates the specified Task.
@@ -5664,18 +5958,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type job_id: str
         :param task_id: The ID of the Task to terminate. Required.
         :type task_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5686,6 +5976,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -5711,24 +6006,27 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_terminate_task_request(
+        _request = build_batch_terminate_task_request(
             job_id=job_id,
             task_id=task_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5748,7 +6046,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def reactivate_task(  # pylint: disable=inconsistent-return-statements
@@ -5756,12 +6054,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         job_id: str,
         task_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Reactivates a Task, allowing it to run again even if its retry count has been
@@ -5779,18 +6077,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type job_id: str
         :param task_id: The ID of the Task to reactivate. Required.
         :type task_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -5801,6 +6095,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.coreMatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: None
@@ -5826,24 +6125,27 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_reactivate_task_request(
+        _request = build_batch_reactivate_task_request(
             job_id=job_id,
             task_id=task_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            etag=etag,
-            match_condition=match_condition,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            etag=etag,
+            match_condition=match_condition,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5863,7 +6165,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete_task_file(  # pylint: disable=inconsistent-return-statements
@@ -5872,7 +6174,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         task_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
@@ -5887,9 +6189,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5919,22 +6222,25 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_delete_task_file_request(
+        _request = build_batch_delete_task_file_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             recursive=recursive,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5951,7 +6257,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_task_file(
@@ -5960,7 +6266,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         task_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5975,9 +6281,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6015,11 +6322,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[bytes] = kwargs.pop("cls", None)
 
-        request = build_batch_get_task_file_request(
+        _request = build_batch_get_task_file_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -6028,11 +6335,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6057,10 +6367,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(bytes, response.json())
+        await response.read()
+        deserialized = response.content
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6074,7 +6382,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         task_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -6088,9 +6396,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6124,11 +6433,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_get_task_file_properties_request(
+        _request = build_batch_get_task_file_properties_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -6136,11 +6445,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6166,7 +6478,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
         return 200 <= response.status_code <= 299
 
     @distributed_trace
@@ -6177,11 +6489,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NodeFile"]:
+    ) -> AsyncIterable["_models.BatchNodeFile"]:
         """Lists the files in a Task's directory on its Compute Node.
 
         Lists the files in a Task's directory on its Compute Node.
@@ -6197,25 +6509,27 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-task-files.
          Default value is None.
-        :paramtype filter: str
+        :paramtype _filter: str
         :keyword recursive: Whether to list children of the Task directory. This parameter can be used
          in
          combination with the filter parameter to list specific type of files. Default value is None.
         :paramtype recursive: bool
-        :return: An iterator like instance of NodeFile
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.NodeFile]
+        :return: An iterator like instance of BatchNodeFile
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNodeFile]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.NodeFile]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.BatchNodeFile]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -6228,19 +6542,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_task_files_request(
+                _request = build_batch_list_task_files_request(
                     job_id=job_id,
                     task_id=task_id,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
                     recursive=recursive,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -6252,26 +6571,31 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NodeFile], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6291,9 +6615,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         node_id: str,
-        body: _models.BatchNodeUserCreateOptions,
+        user: _models.BatchNodeUserCreateParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6306,11 +6630,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type pool_id: str
         :param node_id: The ID of the machine on which you want to create a user Account. Required.
         :type node_id: str
-        :param body: The options to use for creating the user. Required.
-        :type body: ~azure.batch.models.BatchNodeUserCreateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param user: The options to use for creating the user. Required.
+        :type user: ~azure.batch.models.BatchNodeUserCreateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6340,12 +6665,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(user, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_create_node_user_request(
+        _request = build_batch_create_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6353,11 +6678,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6377,7 +6705,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def delete_node_user(  # pylint: disable=inconsistent-return-statements
@@ -6386,7 +6714,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         node_id: str,
         user_name: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6401,9 +6729,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type node_id: str
         :param user_name: The name of the user Account to delete. Required.
         :type user_name: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6427,21 +6756,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_delete_node_user_request(
+        _request = build_batch_delete_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6458,7 +6790,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def replace_node_user(  # pylint: disable=inconsistent-return-statements
@@ -6466,9 +6798,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         pool_id: str,
         node_id: str,
         user_name: str,
-        body: _models.BatchNodeUserUpdateOptions,
+        parameters: _models.BatchNodeUserUpdateParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6485,11 +6817,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type node_id: str
         :param user_name: The name of the user Account to update. Required.
         :type user_name: str
-        :param body: The options to use for updating the user. Required.
-        :type body: ~azure.batch.models.BatchNodeUserUpdateOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for updating the user. Required.
+        :type parameters: ~azure.batch.models.BatchNodeUserUpdateParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6519,13 +6852,13 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_replace_node_user_request(
+        _request = build_batch_replace_node_user_request(
             pool_id=pool_id,
             node_id=node_id,
             user_name=user_name,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6533,11 +6866,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6557,7 +6893,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_node(
@@ -6565,9 +6901,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         pool_id: str,
         node_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        select: Optional[str] = None,
+        _select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.BatchNode:
         """Gets information about the specified Compute Node.
@@ -6578,15 +6914,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to get information about. Required.
         :type node_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchNode. The BatchNode is compatible with MutableMapping
@@ -6606,21 +6943,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[_models.BatchNode] = kwargs.pop("cls", None)
 
-        request = build_batch_get_node_request(
+        _request = build_batch_get_node_request(
             pool_id=pool_id,
             node_id=node_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            select=select,
+            _select=_select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6653,9 +6993,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         node_id: str,
-        body: Optional[_models.NodeRebootOptions] = None,
+        parameters: Optional[_models.BatchNodeRebootParameters] = None,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6667,11 +7007,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param body: The options to use for rebooting the Compute Node. Default value is None.
-        :type body: ~azure.batch.models.NodeRebootOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for rebooting the Compute Node. Default value is None.
+        :type parameters: ~azure.batch.models.BatchNodeRebootParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6701,15 +7042,15 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if body is not None:
-            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        if parameters is not None:
+            _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        request = build_batch_reboot_node_request(
+        _request = build_batch_reboot_node_request(
             pool_id=pool_id,
             node_id=node_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6717,11 +7058,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6741,16 +7085,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def reimage_node(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
-        body: Optional[_models.NodeReimageOptions] = None,
+        parameters: Optional[_models.BatchNodeReimageParameters] = None,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6764,11 +7108,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :param body: The options to use for reimaging the Compute Node. Default value is None.
-        :type body: ~azure.batch.models.NodeReimageOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for reimaging the Compute Node. Default value is None.
+        :type parameters: ~azure.batch.models.BatchNodeReimageParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6798,15 +7143,15 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if body is not None:
-            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        if parameters is not None:
+            _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        request = build_batch_reimage_node_request(
+        _request = build_batch_reimage_node_request(
             pool_id=pool_id,
             node_id=node_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6814,11 +7159,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6838,16 +7186,16 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def disable_node_scheduling(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
         node_id: str,
-        body: Optional[_models.NodeDisableSchedulingOptions] = None,
+        parameters: Optional[_models.BatchNodeDisableSchedulingParameters] = None,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6861,12 +7209,13 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :param node_id: The ID of the Compute Node on which you want to disable Task scheduling.
          Required.
         :type node_id: str
-        :param body: The options to use for disabling scheduling on the Compute Node. Default value is
-         None.
-        :type body: ~azure.batch.models.NodeDisableSchedulingOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The options to use for disabling scheduling on the Compute Node. Default
+         value is None.
+        :type parameters: ~azure.batch.models.BatchNodeDisableSchedulingParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6896,15 +7245,15 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        if body is not None:
-            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        if parameters is not None:
+            _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
         else:
             _content = None
 
-        request = build_batch_disable_node_scheduling_request(
+        _request = build_batch_disable_node_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6912,11 +7261,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6936,7 +7288,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def enable_node_scheduling(  # pylint: disable=inconsistent-return-statements
@@ -6944,7 +7296,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         pool_id: str,
         node_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6958,9 +7310,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :param node_id: The ID of the Compute Node on which you want to enable Task scheduling.
          Required.
         :type node_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6984,20 +7337,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_enable_node_scheduling_request(
+        _request = build_batch_enable_node_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7017,7 +7373,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_node_remote_login_settings(
@@ -7025,10 +7381,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         pool_id: str,
         node_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.BatchNodeRemoteLoginSettingsResult:
+    ) -> _models.BatchNodeRemoteLoginSettings:
         """Gets the settings required for remote login to a Compute Node.
 
         Before you can remotely login to a Compute Node using the remote login
@@ -7042,18 +7398,19 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :param node_id: The ID of the Compute Node for which to obtain the remote login settings.
          Required.
         :type node_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: BatchNodeRemoteLoginSettingsResult. The BatchNodeRemoteLoginSettingsResult is
-         compatible with MutableMapping
-        :rtype: ~azure.batch.models.BatchNodeRemoteLoginSettingsResult
+        :return: BatchNodeRemoteLoginSettings. The BatchNodeRemoteLoginSettings is compatible with
+         MutableMapping
+        :rtype: ~azure.batch.models.BatchNodeRemoteLoginSettings
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7067,22 +7424,25 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.BatchNodeRemoteLoginSettingsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchNodeRemoteLoginSettings] = kwargs.pop("cls", None)
 
-        request = build_batch_get_node_remote_login_settings_request(
+        _request = build_batch_get_node_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7103,7 +7463,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.BatchNodeRemoteLoginSettingsResult, response.json())
+            deserialized = _deserialize(_models.BatchNodeRemoteLoginSettings, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7116,7 +7476,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         pool_id: str,
         node_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> bytes:
@@ -7132,9 +7492,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
          Protocol file. Required.
         :type node_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7158,20 +7519,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[bytes] = kwargs.pop("cls", None)
 
-        request = build_batch_get_node_remote_desktop_file_request(
+        _request = build_batch_get_node_remote_desktop_file_request(
             pool_id=pool_id,
             node_id=node_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7204,9 +7568,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         self,
         pool_id: str,
         node_id: str,
-        body: _models.UploadBatchServiceLogsOptions,
+        parameters: _models.UploadBatchServiceLogsParameters,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.UploadBatchServiceLogsResult:
@@ -7223,11 +7587,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
          Protocol file. Required.
         :type node_id: str
-        :param body: The Azure Batch service log files upload options. Required.
-        :type body: ~azure.batch.models.UploadBatchServiceLogsOptions
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :param parameters: The Azure Batch service log files upload options. Required.
+        :type parameters: ~azure.batch.models.UploadBatchServiceLogsParameters
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7258,12 +7623,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         )
         cls: ClsType[_models.UploadBatchServiceLogsResult] = kwargs.pop("cls", None)
 
-        _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_batch_upload_node_logs_request(
+        _request = build_batch_upload_node_logs_request(
             pool_id=pool_id,
             node_id=node_id,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -7271,11 +7636,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7308,9 +7676,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
+        _select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchNode"]:
         """Lists the Compute Nodes in the specified Pool.
@@ -7326,15 +7694,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool.
          Default value is None.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
+        :paramtype _filter: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
         :return: An iterator like instance of BatchNode
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNode]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7355,18 +7725,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_nodes_request(
+                _request = build_batch_list_nodes_request(
                     pool_id=pool_id,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
-                    select=select,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
+                    _select=_select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -7378,12 +7753,17 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -7393,11 +7773,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7419,11 +7799,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         node_id: str,
         extension_name: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        select: Optional[str] = None,
+        _select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> _models.NodeVMExtension:
+    ) -> _models.BatchNodeVMExtension:
         """Gets information about the specified Compute Node Extension.
 
         Gets information about the specified Compute Node Extension.
@@ -7432,23 +7812,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type pool_id: str
         :param node_id: The ID of the Compute Node that contains the extensions. Required.
         :type node_id: str
-        :param extension_name: The name of the of the Compute Node Extension that you want to get
-         information
+        :param extension_name: The name of the Compute Node Extension that you want to get information
          about. Required.
         :type extension_name: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: NodeVMExtension. The NodeVMExtension is compatible with MutableMapping
-        :rtype: ~azure.batch.models.NodeVMExtension
+        :return: BatchNodeVMExtension. The BatchNodeVMExtension is compatible with MutableMapping
+        :rtype: ~azure.batch.models.BatchNodeVMExtension
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7462,24 +7842,27 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.NodeVMExtension] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchNodeVMExtension] = kwargs.pop("cls", None)
 
-        request = build_batch_get_node_extension_request(
+        _request = build_batch_get_node_extension_request(
             pool_id=pool_id,
             node_id=node_id,
             extension_name=extension_name,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            select=select,
+            _select=_select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7500,7 +7883,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.NodeVMExtension, response.json())
+            deserialized = _deserialize(_models.BatchNodeVMExtension, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7515,10 +7898,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        select: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _select: Optional[List[str]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NodeVMExtension"]:
+    ) -> AsyncIterable["_models.BatchNodeVMExtension"]:
         """Lists the Compute Nodes Extensions in the specified Pool.
 
         Lists the Compute Nodes Extensions in the specified Pool.
@@ -7534,19 +7917,20 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword select: An OData $select clause. Default value is None.
-        :paramtype select: str
-        :return: An iterator like instance of NodeVMExtension
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.NodeVMExtension]
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _select: An OData $select clause. Default value is None.
+        :paramtype _select: list[str]
+        :return: An iterator like instance of BatchNodeVMExtension
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNodeVMExtension]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.NodeVMExtension]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.BatchNodeVMExtension]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7559,18 +7943,23 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_node_extensions_request(
+                _request = build_batch_list_node_extensions_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    select=select,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _select=_select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -7582,26 +7971,31 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NodeVMExtension], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchNodeVMExtension], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7623,7 +8017,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         node_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
@@ -7638,9 +8032,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7670,22 +8065,25 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_delete_node_file_request(
+        _request = build_batch_delete_node_file_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             recursive=recursive,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7702,7 +8100,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def get_node_file(
@@ -7711,7 +8109,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         node_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -7726,9 +8124,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7766,11 +8165,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[bytes] = kwargs.pop("cls", None)
 
-        request = build_batch_get_node_file_request(
+        _request = build_batch_get_node_file_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -7779,11 +8178,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7825,7 +8227,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         node_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -7839,9 +8241,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7875,11 +8278,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_batch_get_node_file_properties_request(
+        _request = build_batch_get_node_file_properties_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,
-            time_out=time_out,
+            time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -7887,11 +8290,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7917,7 +8323,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
         return 200 <= response.status_code <= 299
 
     @distributed_trace
@@ -7928,11 +8334,11 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        time_out: Optional[int] = None,
-        filter: Optional[str] = None,
+        time_out_in_seconds: Optional[int] = None,
+        _filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NodeFile"]:
+    ) -> AsyncIterable["_models.BatchNodeFile"]:
         """Lists all of the files in Task directories on the specified Compute Node.
 
         Lists all of the files in Task directories on the specified Compute Node.
@@ -7948,23 +8354,25 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        :keyword time_out_in_seconds: Sets the maximum time that the server can spend processing the
+         request,
+         in seconds. The default is 30 seconds. Default value is None.
+        :paramtype time_out_in_seconds: int
+        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
+         see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files.
          Default value is None.
-        :paramtype filter: str
+        :paramtype _filter: str
         :keyword recursive: Whether to list children of a directory. Default value is None.
         :paramtype recursive: bool
-        :return: An iterator like instance of NodeFile
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.NodeFile]
+        :return: An iterator like instance of BatchNodeFile
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNodeFile]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.NodeFile]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.BatchNodeFile]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7977,19 +8385,24 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_batch_list_node_files_request(
+                _request = build_batch_list_node_files_request(
                     pool_id=pool_id,
                     node_id=node_id,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
-                    time_out=time_out,
-                    filter=filter,
+                    time_out_in_seconds=time_out_in_seconds,
+                    _filter=_filter,
                     recursive=recursive,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -8001,26 +8414,31 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request.url = self._client.format_url(request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NodeFile], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
