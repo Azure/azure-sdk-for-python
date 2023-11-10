@@ -204,12 +204,12 @@ def replace_dev_reqs(file: str, pkg_root: str) -> None:
 
 
 def discover_packages(
-    setuppy_path: str, distribution_directory: str, target_setup: str, package_type: str, force_create: bool
+    setup_path: str, distribution_directory: str, target_setup: str, package_type: str, force_create: bool
 ):
     packages = []
     if os.getenv("PREBUILT_WHEEL_DIR") is not None and not force_create:
-        packages = discover_prebuilt_package(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path, package_type)
-        pkg = ParsedSetup.from_path(setuppy_path)
+        packages = discover_prebuilt_package(os.getenv("PREBUILT_WHEEL_DIR"), setup_path, package_type)
+        pkg = ParsedSetup.from_path(setup_path)
 
         if not packages:
             logging.error(
@@ -220,7 +220,7 @@ def discover_packages(
             exit(1)
     else:
         packages = build_and_discover_package(
-            setuppy_path,
+            setup_path,
             distribution_directory,
             target_setup,
             package_type,
@@ -301,11 +301,11 @@ def build_whl_for_req(req: str, package_path: str) -> str:
         return req
 
 
-def build_and_discover_package(setuppy_path: str, dist_dir: str, target_setup: str, package_type):
+def build_and_discover_package(setup_path: str, dist_dir: str, target_setup: str, package_type):
     if package_type == "wheel":
-        create_package(setuppy_path, dist_dir, enable_sdist=False)
+        create_package(setup_path, dist_dir, enable_sdist=False)
     else:
-        create_package(setuppy_path, dist_dir, enable_wheel=False)
+        create_package(setup_path, dist_dir, enable_wheel=False)
 
     prebuilt_packages = [
         f for f in os.listdir(dist_dir) if f.endswith(".whl" if package_type == "wheel" else ".tar.gz")

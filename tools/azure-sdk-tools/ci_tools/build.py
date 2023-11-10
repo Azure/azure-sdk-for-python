@@ -131,7 +131,6 @@ def cleanup_build_artifacts(build_folder):
     results = glob.glob(os.path.join(build_folder, "*.egg-info"))
 
     if results:
-        print(results[0])
         shutil.rmtree(results[0])
 
     # clean up build results

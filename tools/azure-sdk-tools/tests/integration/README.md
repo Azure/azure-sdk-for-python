@@ -8,7 +8,7 @@ See `test_package_discovery.py` or `proxy` folder for an examples.
 
 ## Manually created scenarios
 
-The second category of `integration` tests are those whos scenario is created specifically for the test. Those will be present under `scenarios`.
+The second category of `integration` tests are those whose scenario is created specifically for the test. Those will be present under `scenarios`.
 
 Each folder within the `scenarios` folder will be used by one or multiple integration tests.
 
