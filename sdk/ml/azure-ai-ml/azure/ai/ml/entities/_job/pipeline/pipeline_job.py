@@ -8,7 +8,7 @@ import logging
 import typing
 from functools import partial
 from pathlib import Path
-from typing import Any, Dict, Generator, List, Optional, Union
+from typing import Any, Dict, Generator, List, Optional, Union, cast
 
 from typing_extensions import Literal
 
@@ -160,7 +160,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         # If component is Pipeline component, jobs will be component.jobs
         self._jobs = (jobs or {}) if isinstance(component, str) else {}
 
-        self.component: Union[PipelineComponent, str] = component
+        self.component: Union[PipelineComponent, str] = cast(Union[PipelineComponent, str], component)
         if "type" not in kwargs:
             kwargs["type"] = JobType.PIPELINE
         if isinstance(component, PipelineComponent):
@@ -178,7 +178,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
         self._remove_pipeline_input()
         self.compute = compute
-        self._settings = None
+        self._settings: Any = None
         self.settings = settings
         self.identity = identity
         # TODO: remove default code & environment?
@@ -186,7 +186,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         self._default_environment = None
 
     @property
-    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def inputs(self) -> Dict:
         """Inputs of the pipeline job.
 
         :return: Inputs of the pipeline job.
@@ -377,7 +377,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         def _is_isolated_job(_validate_job_name: str) -> bool:
             def _try_get_data_bindings(
                 _name: str, _input_output_data: Union["_GroupAttrDict", "InputOutputBase"]
-            ) -> Optional[List[str]]:
+            ) -> Optional[List]:
                 """Try to get data bindings from input/output data, return None if not found.
                 :param _name: The name to use when flattening GroupAttrDict
                 :type _name: str
@@ -483,7 +483,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         """
         component = self._to_component(context, **kwargs)
 
-        return Pipeline(  # pylint: disable=abstract-class-instantiated
+        # pylint: disable=abstract-class-instantiated
+        return Pipeline(  # type: ignore
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.

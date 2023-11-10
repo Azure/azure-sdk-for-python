@@ -564,7 +564,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
             )
         return output_val
 
-    def _build_pipeline_outputs_dict(self, outputs: Dict[str, Union[Output, NodeOutput]]) -> OutputsAttrDict:
+    def _build_pipeline_outputs_dict(self, outputs: Dict) -> OutputsAttrDict:
         """Build an output attribute dict without output definition metadata.
         For pipeline outputs, its setting should be copied from node level outputs.
 
