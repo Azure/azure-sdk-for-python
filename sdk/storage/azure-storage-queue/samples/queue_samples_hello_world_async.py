@@ -23,6 +23,7 @@ USAGE:
 
 import asyncio
 import os
+import sys
 
 
 class QueueHelloWorldSamplesAsync(object):
@@ -30,6 +31,11 @@ class QueueHelloWorldSamplesAsync(object):
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     async def create_client_with_connection_string_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: create_client_with_connection_string_async")
+            sys.exit(1)
+
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
@@ -39,6 +45,11 @@ class QueueHelloWorldSamplesAsync(object):
             properties = await queue_service.get_service_properties()
 
     async def queue_and_messages_example_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: queue_and_messages_example_async")
+            sys.exit(1)
+
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
