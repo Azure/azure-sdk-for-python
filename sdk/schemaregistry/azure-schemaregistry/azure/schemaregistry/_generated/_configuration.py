@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureSchemaRegistryConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class AzureSchemaRegistryConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for AzureSchemaRegistry.
 
     Note that all parameters used to create this instance are saved as instance
@@ -29,14 +29,14 @@ class AzureSchemaRegistryConfiguration(Configuration):  # pylint: disable=too-ma
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-10". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-07-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         super(AzureSchemaRegistryConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2022-10")
+        api_version: str = kwargs.pop("api_version", "2023-07-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

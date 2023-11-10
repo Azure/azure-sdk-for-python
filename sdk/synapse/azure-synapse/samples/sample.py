@@ -19,7 +19,7 @@ class SynapseSamples:
 
     # Scenario 1: List all spark batch job under specific spark pool
     def list_spark_batch_jobs(self, spark_pool_name, workspace_name, detailed=True):
-        self.spark_batch_operation.list(workapce_name=workspace_name, spark_pool_name=spark_pool_name,
+        self.spark_batch_operation.list(workspace_name=workspace_name, spark_pool_name=spark_pool_name,
                                         detailed=detailed)
 
     # Scenario 2: Get a specific spark batch job with batch id

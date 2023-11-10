@@ -26,7 +26,7 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from packaging.version import parse
 
-from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, lambda_filter_azure_pkg, str_to_bool
+from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, NO_TESTS_ALLOWED, lambda_filter_azure_pkg, str_to_bool
 from ci_tools.parsing import parse_require, ParsedSetup
 
 DEV_REQ_FILE = "dev_requirements.txt"
@@ -126,6 +126,7 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
             )
         )
         or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
+        or pkg_name in NO_TESTS_ALLOWED
     ):
         return True
     else:
