@@ -135,29 +135,32 @@ class WorkspaceHub(Workspace):
                     rest_obj.workspace_hub_config
                 )
 
-        workspacehub_object = WorkspaceHub(
-            name=workspace_object.name,
-            description=workspace_object.description,
-            tags=workspace_object.tags,
-            display_name=workspace_object.display_name,
-            location=workspace_object.location,
-            resource_group=workspace_object.resource_group,
-            managed_network=workspace_object.managed_network,
-            customer_managed_key=workspace_object.customer_managed_key,
-            public_network_access=workspace_object.public_network_access,
-            identity=workspace_object.identity,
-            primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
-            storage_account=rest_obj.storage_account,
-            key_vault=rest_obj.key_vault,
-            container_registry=rest_obj.container_registry,
-            existing_workspaces=rest_obj.existing_workspaces,
-            workspace_id=rest_obj.workspace_id,
-            enable_data_isolation=rest_obj.enable_data_isolation,
-            workspace_hub_config=workspace_hub_config,
-            id=rest_obj.id,
-        )
-        workspacehub_object.set_associated_workspaces(rest_obj.associated_workspaces)
-        return workspacehub_object
+        if workspace_object is not None:
+            workspacehub_object = WorkspaceHub(
+                name=workspace_object.name if workspace_object.name is not None else "",
+                description=workspace_object.description,
+                tags=workspace_object.tags,
+                display_name=workspace_object.display_name,
+                location=workspace_object.location,
+                resource_group=workspace_object.resource_group,
+                managed_network=workspace_object.managed_network,
+                customer_managed_key=workspace_object.customer_managed_key,
+                public_network_access=workspace_object.public_network_access,
+                identity=workspace_object.identity,
+                primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
+                storage_account=rest_obj.storage_account,
+                key_vault=rest_obj.key_vault,
+                container_registry=rest_obj.container_registry,
+                existing_workspaces=rest_obj.existing_workspaces,
+                workspace_id=rest_obj.workspace_id,
+                enable_data_isolation=rest_obj.enable_data_isolation,
+                workspace_hub_config=workspace_hub_config,
+                id=rest_obj.id,
+            )
+            workspacehub_object.set_associated_workspaces(rest_obj.associated_workspaces)
+            return workspacehub_object
+
+        return None
 
     @classmethod
     def _load(

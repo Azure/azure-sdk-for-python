@@ -231,7 +231,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         self._create_job = create_job
         self._type = ScheduleType.JOB
 
-    @property
+    @property  # type: ignore
     def create_job(self) -> Union[Job, str]:
         """Return the job associated with the schedule.
 

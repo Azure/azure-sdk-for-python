@@ -282,19 +282,20 @@ class WorkspaceConnection(Resource):
         :rtype: Dict[str, str]
         """
         properties = rest_obj.properties
+        credentials: Any = None
         if properties.auth_type == ConnectionAuthType.PAT:
             credentials = PatTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
-        if properties.auth_type == ConnectionAuthType.SAS:
+        elif properties.auth_type == ConnectionAuthType.SAS:
             credentials = SasTokenConfiguration._from_workspace_connection_rest_object(properties.credentials)
-        if properties.auth_type == ConnectionAuthType.MANAGED_IDENTITY:
+        elif properties.auth_type == ConnectionAuthType.MANAGED_IDENTITY:
             credentials = ManagedIdentityConfiguration._from_workspace_connection_rest_object(properties.credentials)
-        if properties.auth_type == ConnectionAuthType.USERNAME_PASSWORD:
+        elif properties.auth_type == ConnectionAuthType.USERNAME_PASSWORD:
             credentials = UsernamePasswordConfiguration._from_workspace_connection_rest_object(properties.credentials)
-        if properties.auth_type == ConnectionAuthType.ACCESS_KEY:
+        elif properties.auth_type == ConnectionAuthType.ACCESS_KEY:
             credentials = AccessKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
-        if properties.auth_type == ConnectionAuthType.SERVICE_PRINCIPAL:
+        elif properties.auth_type == ConnectionAuthType.SERVICE_PRINCIPAL:
             credentials = ServicePrincipalConfiguration._from_workspace_connection_rest_object(properties.credentials)
-        if properties.auth_type == ConnectionAuthType.API_KEY:
+        elif properties.auth_type == ConnectionAuthType.API_KEY:
             credentials = ApiKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
 
         tags = properties.metadata if hasattr(properties, "metadata") else None

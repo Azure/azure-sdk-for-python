@@ -7,7 +7,7 @@ import abc
 import os
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union, cast
 
 from msrest import Serializer
 
@@ -60,7 +60,7 @@ class Resource(abc.ABC):
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
-        self.__source_path: Optional[str] = kwargs.pop("source_path", None)
+        self.__source_path: Union[str, PathLike] = kwargs.pop("source_path", "")
         self._base_path = kwargs.pop(BASE_PATH_CONTEXT_KEY, None) or os.getcwd()  # base path should never be None
         self._creation_context = kwargs.pop("creation_context", None)
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -96,7 +96,7 @@ class Resource(abc.ABC):
         :return: The creation metadata for the resource.
         :rtype: Optional[~azure.ai.ml.entities.SystemData]
         """
-        return self._creation_context
+        return cast(Optional[SystemData], self._creation_context)
 
     @property
     def base_path(self) -> str:
