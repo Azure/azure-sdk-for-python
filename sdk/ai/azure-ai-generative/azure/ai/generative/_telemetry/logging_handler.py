@@ -9,7 +9,7 @@
 import logging
 import platform
 import traceback
-import sys
+import os
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure.common import utils
@@ -40,9 +40,7 @@ test_subscriptions = [
 
 # activate operation id tracking
 config_integration.trace_integrations(["logging"])
-logging.basicConfig(
-    format="%(asctime)s traceId=%(traceId)s spanId=%(spanId)s %(message)s"
-)
+
 
 
 class OpsLogger:
