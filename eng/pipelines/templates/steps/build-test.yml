@@ -71,6 +71,7 @@ steps:
         --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
+    timeoutInMinutes: 45
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
