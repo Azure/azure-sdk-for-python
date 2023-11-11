@@ -79,7 +79,7 @@ def get_hotel_index(name: str):
         ),
     ]
     vector_search = VectorSearch(
-        profiles=[VectorSearchProfile(name="my-vector-config", algorithm="my-algorithms-config")],
+        profiles=[VectorSearchProfile(name="my-vector-config", algorithm_configuration_name="my-algorithms-config")],
         algorithms=[HnswAlgorithmConfiguration(name="my-vector-config")],
     )
     return SearchIndex(name=name, fields=fields, vector_search=vector_search)

@@ -1,6 +1,6 @@
 # Release History
 
-## 11.4.0 (Unreleased)
+## 11.4.0 (2023-10-13)
 
 ### Features Added
 
@@ -35,6 +35,9 @@
 
 ### Breaking Changes
 
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b11 may be affected.
+
 - Renamed `AnswerResult` to `QueryAnswerResult` and `CaptionResult` to `QueryCaptionResult`.
 - Renamed `SemanticErrorHandling` to `SemanticErrorMode`.
 - Renamed `RawVectorQuery` to `VectorizedQuery`.
@@ -43,8 +46,6 @@
 - Renamed `query_caption_highlight` to `query_caption_highlight_enabled`.
 - `query_language` and `query_speller` are not available for `Search` method in this stable release.
 - `alias` operations are not available in this stable release.
-
-### Bugs Fixed
 
 ### Other Changes
 
