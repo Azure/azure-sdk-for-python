@@ -9,7 +9,7 @@
 import logging
 import platform
 import traceback
-import sys
+import os
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure.common import utils
@@ -64,7 +64,6 @@ def get_appinsights_log_handler(
     *args,  # pylint: disable=unused-argument
     instrumentation_key=None,
     component_name=None,
-    enable_telemetry=True,
     **kwargs,
 ):
     """Enable the OpenCensus logging handler for specified logger and instrumentation key to send info to AppInsights.
@@ -77,8 +76,6 @@ def get_appinsights_log_handler(
     :paramtype instrumentation_key: str
     :keyword component_name: The component name.
     :paramtype component_name: str
-    :keyword enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
-    :paramtype enable_telemetry: bool
     :keyword kwargs: Optional keyword arguments for adding additional information to messages.
     :paramtype kwargs: dict
     :return: The logging handler.
@@ -88,6 +85,7 @@ def get_appinsights_log_handler(
         if instrumentation_key is None:
             instrumentation_key = INSTRUMENTATION_KEY
 
+        enable_telemetry = os.getenv("AZURE_AI_RESOURCES_ENABLE_LOGGING", True)
         if not in_jupyter_notebook() or not enable_telemetry:
             return logging.NullHandler()
 

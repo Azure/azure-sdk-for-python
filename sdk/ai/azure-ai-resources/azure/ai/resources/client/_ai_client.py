@@ -68,12 +68,10 @@ class AIClient:
             properties.update({"project_name": project_name})
 
         user_agent = USER_AGENT
-        enable_telemetry = kwargs.pop("enable_telemetry", True)
 
         app_insights_handler = get_appinsights_log_handler(
             user_agent,
             **{"properties": properties},
-            enable_telemetry=enable_telemetry,
         )
         app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
