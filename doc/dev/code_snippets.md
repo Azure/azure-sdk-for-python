@@ -10,7 +10,7 @@ All code snippets in README should be up to date and runnable. And we want to ha
 
 Samples need to store in the samples folder under each service. In each sample file, we use `# [START snippet_name]` & `# [END snippet_name]` to note a code snippet.
 
-**Note:** valid charictors for snippet name are [A-Z a-z0-9_]
+**Note:** valid characters for a snippet name are [A-Z a-z0-9_]
 
 A sample code snippet could be like:
 
