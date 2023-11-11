@@ -21,7 +21,6 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
@@ -94,8 +93,6 @@ class Sweep(ParameterizedSweep, BaseNode):
         ~azure.ai.ml.UserIdentityConfiguration]
     :param queue_settings: The queue settings for the job.
     :type queue_settings: ~azure.ai.ml.entities.QueueSettings
-    :param resources: Compute Resource configuration for the job.
-    :type resources: ~azure.ai.ml.entities.ResourceConfiguration
     """
 
     def __init__(
@@ -116,7 +113,6 @@ class Sweep(ParameterizedSweep, BaseNode):
             Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
-        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
         **kwargs: Any,
     ) -> None:
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
@@ -142,7 +138,6 @@ class Sweep(ParameterizedSweep, BaseNode):
             early_termination=early_termination,
             search_space=search_space,
             queue_settings=queue_settings,
-            resources=resources,
         )
 
         self.identity = identity
@@ -225,7 +220,6 @@ class Sweep(ParameterizedSweep, BaseNode):
             "early_termination",
             "search_space",
             "queue_settings",
-            "resources",
         ]
 
     def _to_rest_object(self, **kwargs: Any) -> dict:
@@ -316,7 +310,6 @@ class Sweep(ParameterizedSweep, BaseNode):
             outputs=self._job_outputs,
             identity=self.identity,
             queue_settings=self.queue_settings,
-            resources=self.resources,
         )
 
     @classmethod
@@ -354,10 +347,7 @@ class Sweep(ParameterizedSweep, BaseNode):
                 Dict[str, SweepDistribution],
             ]
         """
-        search_space: Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
-        ] = {}
+        search_space: Dict = {}
         inputs: Dict = {}
         if built_inputs is not None:
             for input_name, input_obj in built_inputs.items():

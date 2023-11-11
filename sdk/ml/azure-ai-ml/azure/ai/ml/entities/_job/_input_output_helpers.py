@@ -304,7 +304,7 @@ def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict
     return from_rest_inputs
 
 
-def to_rest_data_outputs(outputs: Optional[Dict[str, Output]]) -> Dict[str, RestJobOutput]:
+def to_rest_data_outputs(outputs: Optional[Dict]) -> Dict[str, RestJobOutput]:
     """Turns job outputs into REST format.
 
     :param outputs: Dictionary of dataset outputs from job
