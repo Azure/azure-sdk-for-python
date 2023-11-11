@@ -7,6 +7,11 @@ from typing import Dict
 
 _LOGGER = logging.getLogger(__name__)
 
+# Uncomment the following lines to show debug info
+# _LOGGER.setLevel(logging.DEBUG)
+# console_handler = logging.StreamHandler()
+# _LOGGER.addHandler(console_handler)
+
 snippets = {}
 not_up_to_date = False
 
@@ -64,7 +69,7 @@ def get_snippet(file: str) -> None:
         if identifier in snippets.keys():
             _LOGGER.warning(f'Found duplicated snippet name "{identifier}".')
             _LOGGER.warning(file)
-        _LOGGER.debug(f"Found: {file_obj.name}.{name}")
+        _LOGGER.debug(f"Found snippet: {file_obj.name}.{name}")
         snippets[identifier] = snippet
 
 
