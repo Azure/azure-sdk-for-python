@@ -30,14 +30,14 @@ class EventGridManagementClientConfiguration(Configuration):  # pylint: disable=
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure
      subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-12-15-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(EventGridManagementClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-06-01-preview")
+        api_version: str = kwargs.pop("api_version", "2023-12-15-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
