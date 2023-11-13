@@ -381,6 +381,7 @@ class SearchClient(HeadersMixin):
         search_text: str,
         suggester_name: str,
         *,
+        filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
@@ -435,7 +436,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search suggestions.
         """
-        filter_arg = kwargs.pop("filter", None)
+        filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
         query = SuggestQuery(
             search_text=search_text,
