@@ -33,7 +33,7 @@ class Simulator:
         userConnection: "AzureOpenAIModelConfiguration" = None,
         simulate_callback: Callable[[str, List[Dict], dict], str] = None,
     ):
-        self.userConnection = self._to_openai_chat_completion_model(userConnection)
+        self.userConnection = self._to_openai_chat_completion_model(userConnection) if userConnection else None
         self.systemConnection = self._to_openai_chat_completion_model(systemConnection)
         self.simulate_callback = simulate_callback
 
@@ -126,17 +126,23 @@ class Simulator:
 
         return self._to_chat_protocol(template, conversation_history, parameters)
 
-    def _get_citations(self, parameters, context_keys):
+    def _get_citations(self, parameters, context_keys, turn_num = None):
         citations = []
         for c_key in context_keys:
             if isinstance(parameters[c_key], dict):
-                for k, v in parameters[c_key].items():
-                    citations.append(
-                        {
-                            "id": k,
-                            "content": self._to_citation_content(v)
-                        }
-                    )
+                callback_citations = []
+                if "callback_citations" in parameters[c_key]:
+                    callback_citations = self._get_callback_citations(parameters[c_key], turn_num)
+                if callback_citations:
+                    citations.extend(callback_citations)
+                else:
+                    for k, v in parameters[c_key].items():
+                        citations.append(
+                            {
+                                "id": k,
+                                "content": self._to_citation_content(v)
+                            }
+                        )
             else:
                 citations.append(
                     {
@@ -154,12 +160,36 @@ class Simulator:
             return obj
         else:
             return json.dumps(obj)
+    
+    def _get_callback_citations(self, callback_citations: dict, turn_num: int = None):
+        if not turn_num:
+            return []
+        current_turn_citations = []
+        current_turn_str = "turn_" + str(turn_num)
+        if current_turn_str in callback_citations.keys():
+            citations = callback_citations[current_turn_str]
+            if isinstance(citations, dict):
+                for  k, v in citations.items():
+                    current_turn_citations.append(
+                        {
+                            "id": k,
+                            "content": self._to_citation_content(v)
+                        }
+                    )
+            else:
+                current_turn_citations.append(
+                    {
+                        "id": current_turn_str,
+                        "content": self._to_citation_content(citations)
+                    }
+                )
+        return current_turn_citations
 
     def _to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []
 
         for i, m in enumerate(conversation_history):
-            citations = self._get_citations(template_parameters, template.context_key)
+            citations = self._get_citations(template_parameters, template.context_key, i)
             messages.append(
                 {
                     "content": m.message,
