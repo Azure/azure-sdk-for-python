@@ -104,7 +104,16 @@ class TestQADataGenerator:
         filepath = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data", filename) 
 
         try:
-            assert filecmp.cmp(f"test_{qa_type}_{structure}.jsonl", filepath)
+            with open(filepath, 'r') as json_file:
+                expected_lines = list(json_file)
+
+            with open(f"test_{qa_type}_{structure}.jsonl", 'r') as json_file:
+                actual_lines = list(json_file)
+
+            assert len(expected_lines) == len(actual_lines)
+
+            for i in range(0,len(expected_lines)):
+                assert expected_lines[i] == actual_lines[i]
         except:
             raise
         finally:
