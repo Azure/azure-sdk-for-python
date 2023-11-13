@@ -67,8 +67,6 @@ class SharedTokenCacheCredential:
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
         :keyword str tenant_id: not used by this credential; any value provided will be ignored.
-        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
-            token. Defaults to False.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -102,7 +100,12 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
             self._client.__exit__(*args)
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
@@ -110,7 +113,7 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         if not self._client_initialized:
             self._initialize_client()
 
-        is_cae = bool(kwargs.get("enable_cae", False))
+        is_cae = enable_cae
         token_cache = self._cae_cache if is_cae else self._cache
 
         # Try to load the cache if it is None.

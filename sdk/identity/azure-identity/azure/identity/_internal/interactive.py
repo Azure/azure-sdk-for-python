@@ -9,7 +9,7 @@ import base64
 import json
 import logging
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Iterable
 from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
@@ -124,8 +124,6 @@ class InteractiveCredential(MsalCredential, ABC):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
         :keyword str tenant_id: optional tenant to include in the token request.
-        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
-            token. Defaults to False.
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
@@ -179,7 +177,9 @@ class InteractiveCredential(MsalCredential, ABC):
         _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-    def authenticate(self, **kwargs: Any) -> AuthenticationRecord:
+    def authenticate(
+        self, *, scopes: Optional[Iterable[str]] = None, claims: Optional[str] = None, **kwargs: Any
+    ) -> AuthenticationRecord:
         """Interactively authenticate a user.
 
         :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
@@ -192,7 +192,6 @@ class InteractiveCredential(MsalCredential, ABC):
           attribute gives a reason.
         """
 
-        scopes = kwargs.pop("scopes", None)
         if not scopes:
             if self._authority not in _DEFAULT_AUTHENTICATE_SCOPES:
                 # the credential is configured to use a cloud whose ARM scope we can't determine
@@ -202,7 +201,7 @@ class InteractiveCredential(MsalCredential, ABC):
 
             scopes = _DEFAULT_AUTHENTICATE_SCOPES[self._authority]
 
-        _ = self.get_token(*scopes, _allow_prompt=True, **kwargs)
+        _ = self.get_token(*scopes, _allow_prompt=True, claims=claims, **kwargs)
         return self._auth_record  # type: ignore
 
     @wrap_exceptions
