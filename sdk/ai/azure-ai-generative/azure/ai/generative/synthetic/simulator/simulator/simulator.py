@@ -33,11 +33,13 @@ class Simulator:
         userConnection: "AzureOpenAIModelConfiguration" = None,
         simulate_callback: Callable[[str, List[Dict], dict], str] = None,
     ):
-        self.userConnection = self._to_openai_chat_completion_model(userConnection) if userConnection else None
+        self.userConnection = self._to_openai_chat_completion_model(userConnection)
         self.systemConnection = self._to_openai_chat_completion_model(systemConnection)
         self.simulate_callback = simulate_callback
 
     def _to_openai_chat_completion_model(self, config: "AzureOpenAIModelConfiguration"):
+        if config == None:
+            return None
         token_manager = PlainTokenManager(
             openapi_key=config.api_key,
             auth_header="api-key",
