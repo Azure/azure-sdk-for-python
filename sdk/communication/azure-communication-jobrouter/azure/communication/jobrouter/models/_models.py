@@ -13,6 +13,15 @@ from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, ove
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
+from ._enums import (
+    DistributionModeKind,
+    ExceptionActionKind,
+    ExceptionTriggerKind,
+    JobMatchingModeKind,
+    QueueSelectorAttachmentKind,
+    RouterRuleKind,
+    WorkerSelectorAttachmentKind,
+)
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -85,12 +94,11 @@ class DistributionMode(_model_base.Model):
      they are matched with if you set this variable to true. This flag is intended more for
      temporary usage. By default, set to false.
     :vartype bypass_selectors: bool
-    :ivar kind: The type discriminator describing a sub-type of DistributionMode. Required. Default
-     value is None.
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of DistributionMode. Required. Known
+     values are: "bestWorker", "longestIdle", and "roundRobin".
+    :vartype kind: str or ~azure.communication.jobrouter.models.DistributionModeKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     min_concurrent_offers: Optional[int] = rest_field(name="minConcurrentOffers")
     """Governs the minimum desired number of active concurrent offers a job can have."""
     max_concurrent_offers: Optional[int] = rest_field(name="maxConcurrentOffers")
@@ -101,8 +109,8 @@ class DistributionMode(_model_base.Model):
      with if you set this variable to true. This flag is intended more for temporary usage. By
      default, set to false."""
     kind: Literal[None] = rest_discriminator(name="kind")
-    """The type discriminator describing a sub-type of DistributionMode. Required. Default value is
-     None."""
+    """The type discriminator describing a sub-type of DistributionMode. Required. Known values are:
+     \"bestWorker\", \"longestIdle\", and \"roundRobin\"."""
 
     @overload
     def __init__(
@@ -126,7 +134,7 @@ class DistributionMode(_model_base.Model):
         self.kind: Literal[None] = None
 
 
-class BestWorkerMode(DistributionMode, discriminator="best-worker"):
+class BestWorkerMode(DistributionMode, discriminator="bestWorker"):
     """Jobs are distributed to the worker with the strongest abilities available.
 
     All required parameters must be populated in order to send to server.
@@ -150,9 +158,9 @@ class BestWorkerMode(DistributionMode, discriminator="best-worker"):
     :ivar scoring_rule_options: Options to configure 'scoringRule'. If not set, default values are
      used.
     :vartype scoring_rule_options: ~azure.communication.jobrouter.models.ScoringRuleOptions
-    :ivar kind: The type discriminator describing a sub-type of Mode. Required. Default value is
-     "best-worker".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of Mode. Required. Discriminator value
+     for BestWorkerMode.
+    :vartype kind: str or ~azure.communication.jobrouter.models.BEST_WORKER
     """
 
     scoring_rule: Optional["_models.RouterRule"] = rest_field(name="scoringRule")
@@ -162,9 +170,9 @@ class BestWorkerMode(DistributionMode, discriminator="best-worker"):
      using a logistic function (https://en.wikipedia.org/wiki/Logistic_function)."""
     scoring_rule_options: Optional["_models.ScoringRuleOptions"] = rest_field(name="scoringRuleOptions")
     """Options to configure 'scoringRule'. If not set, default values are used."""
-    kind: Literal["best-worker"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of Mode. Required. Default value is
-     \"best-worker\"."""
+    kind: Literal[DistributionModeKind.BEST_WORKER] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of Mode. Required. Discriminator value for
+     BestWorkerMode."""
 
     @overload
     def __init__(
@@ -187,7 +195,7 @@ class BestWorkerMode(DistributionMode, discriminator="best-worker"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["best-worker"] = "best-worker"
+        self.kind: Literal[DistributionModeKind.BEST_WORKER] = DistributionModeKind.BEST_WORKER
 
 
 class ExceptionAction(_model_base.Model):
@@ -200,17 +208,16 @@ class ExceptionAction(_model_base.Model):
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
-    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required. Default
-     value is None.
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required. Known
+     values are: "cancel", "manualReclassify", and "reclassify".
+    :vartype kind: str or ~azure.communication.jobrouter.models.ExceptionActionKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     id: Optional[str] = rest_field()
     """Unique Id of the exception action."""
     kind: Literal[None] = rest_discriminator(name="kind")
-    """The type discriminator describing a sub-type of ExceptionAction. Required. Default value is
-     None."""
+    """The type discriminator describing a sub-type of ExceptionAction. Required. Known values are:
+     \"cancel\", \"manualReclassify\", and \"reclassify\"."""
 
     @overload
     def __init__(
@@ -245,18 +252,18 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
     :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
      custom values.
     :vartype disposition_code: str
-    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required. Default
-     value is "cancel".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
+     Discriminator value for CancelExceptionAction.
+    :vartype kind: str or ~azure.communication.jobrouter.models.CANCEL
     """
 
     note: Optional[str] = rest_field()
     """A note that will be appended to the jobs' Notes collection with the current timestamp."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
     """Indicates the outcome of the job, populate this field with your own custom values."""
-    kind: Literal["cancel"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of ExceptionAction. Required. Default value is
-     \"cancel\"."""
+    kind: Literal[ExceptionActionKind.CANCEL] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of ExceptionAction. Required. Discriminator value
+     for CancelExceptionAction."""
 
     @overload
     def __init__(
@@ -277,7 +284,7 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["cancel"] = "cancel"
+        self.kind: Literal[ExceptionActionKind.CANCEL] = ExceptionActionKind.CANCEL
 
 
 class CancelJobOptions(_model_base.Model):
@@ -485,14 +492,14 @@ class QueueSelectorAttachment(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of QueueSelectorAttachment. Required.
-     Default value is None.
-    :vartype kind: str
+     Known values are: "conditional", "passThrough", "ruleEngine", "static", and
+     "weightedAllocation".
+    :vartype kind: str or ~azure.communication.jobrouter.models.QueueSelectorAttachmentKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
-    """The type discriminator describing a sub-type of QueueSelectorAttachment. Required. Default
-     value is None."""
+    """The type discriminator describing a sub-type of QueueSelectorAttachment. Required. Known values
+     are: \"conditional\", \"passThrough\", \"ruleEngine\", \"static\", and \"weightedAllocation\"."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -511,17 +518,17 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
     :ivar queue_selectors: The queue selectors to attach. Required.
     :vartype queue_selectors: list[~azure.communication.jobrouter.models.RouterQueueSelector]
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-     Default value is "conditional".
-    :vartype kind: str
+     Discriminator value for ConditionalQueueSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.CONDITIONAL
     """
 
     condition: "_models.RouterRule" = rest_field()
     """The condition that must be true for the queue selectors to be attached. Required."""
     queue_selectors: List["_models.RouterQueueSelector"] = rest_field(name="queueSelectors")
     """The queue selectors to attach. Required."""
-    kind: Literal["conditional"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of queue selector attachment. Required. Default
-     value is \"conditional\"."""
+    kind: Literal[QueueSelectorAttachmentKind.CONDITIONAL] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of queue selector attachment. Required.
+     Discriminator value for ConditionalQueueSelectorAttachment."""
 
     @overload
     def __init__(
@@ -541,7 +548,7 @@ class ConditionalQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["conditional"] = "conditional"
+        self.kind: Literal[QueueSelectorAttachmentKind.CONDITIONAL] = QueueSelectorAttachmentKind.CONDITIONAL
 
 
 class WorkerSelectorAttachment(_model_base.Model):
@@ -555,14 +562,15 @@ class WorkerSelectorAttachment(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar kind: The type discriminator describing a sub-type of WorkerSelectorAttachment. Required.
-     Default value is None.
-    :vartype kind: str
+     Known values are: "conditional", "passThrough", "ruleEngine", "static", and
+     "weightedAllocation".
+    :vartype kind: str or ~azure.communication.jobrouter.models.WorkerSelectorAttachmentKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
-    """The type discriminator describing a sub-type of WorkerSelectorAttachment. Required. Default
-     value is None."""
+    """The type discriminator describing a sub-type of WorkerSelectorAttachment. Required. Known
+     values are: \"conditional\", \"passThrough\", \"ruleEngine\", \"static\", and
+     \"weightedAllocation\"."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -581,17 +589,17 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
     :ivar worker_selectors: The worker selectors to attach. Required.
     :vartype worker_selectors: list[~azure.communication.jobrouter.models.RouterWorkerSelector]
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-     Default value is "conditional".
-    :vartype kind: str
+     Discriminator value for ConditionalWorkerSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.CONDITIONAL
     """
 
     condition: "_models.RouterRule" = rest_field()
     """The condition that must be true for the worker selectors to be attached. Required."""
     worker_selectors: List["_models.RouterWorkerSelector"] = rest_field(name="workerSelectors")
     """The worker selectors to attach. Required."""
-    kind: Literal["conditional"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of worker selector attachment. Required. Default
-     value is \"conditional\"."""
+    kind: Literal[WorkerSelectorAttachmentKind.CONDITIONAL] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of worker selector attachment. Required.
+     Discriminator value for ConditionalWorkerSelectorAttachment."""
 
     @overload
     def __init__(
@@ -611,7 +619,7 @@ class ConditionalWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["conditional"] = "conditional"
+        self.kind: Literal[WorkerSelectorAttachmentKind.CONDITIONAL] = WorkerSelectorAttachmentKind.CONDITIONAL
 
 
 class DeclineJobOfferOptions(_model_base.Model):
@@ -665,42 +673,42 @@ class RouterRule(_model_base.Model):
     protocol.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    FunctionRouterRule, DirectMapRouterRule, ExpressionRouterRule, StaticRouterRule,
+    DirectMapRouterRule, ExpressionRouterRule, FunctionRouterRule, StaticRouterRule,
     WebhookRouterRule
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: The type discriminator describing a sub-type of RouterRule. Required. Default value
-     is None.
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of RouterRule. Required. Known values
+     are: "directMap", "expression", "function", "static", and "webhook".
+    :vartype kind: str or ~azure.communication.jobrouter.models.RouterRuleKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
-    """The type discriminator describing a sub-type of RouterRule. Required. Default value is None."""
+    """The type discriminator describing a sub-type of RouterRule. Required. Known values are:
+     \"directMap\", \"expression\", \"function\", \"static\", and \"webhook\"."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind: Literal[None] = None
 
 
-class DirectMapRouterRule(RouterRule, discriminator="direct-map-rule"):
+class DirectMapRouterRule(RouterRule, discriminator="directMap"):
     """A rule that return the same labels as the input labels.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Default value is
-     "direct-map-rule".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Discriminator value
+     for DirectMapRouterRule.
+    :vartype kind: str or ~azure.communication.jobrouter.models.DIRECT_MAP
     """
 
-    kind: Literal["direct-map-rule"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of Rule. Required. Default value is
-     \"direct-map-rule\"."""
+    kind: Literal[RouterRuleKind.DIRECT_MAP] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of Rule. Required. Discriminator value for
+     DirectMapRouterRule."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["direct-map-rule"] = "direct-map-rule"
+        self.kind: Literal[RouterRuleKind.DIRECT_MAP] = RouterRuleKind.DIRECT_MAP
 
 
 class DistributionPolicy(_model_base.Model):
@@ -850,22 +858,21 @@ class ExceptionTrigger(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required. Default
-     value is None.
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required. Known
+     values are: "queueLength" and "waitTime".
+    :vartype kind: str or ~azure.communication.jobrouter.models.ExceptionTriggerKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
-    """The type discriminator describing a sub-type of ExceptionTrigger. Required. Default value is
-     None."""
+    """The type discriminator describing a sub-type of ExceptionTrigger. Required. Known values are:
+     \"queueLength\" and \"waitTime\"."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind: Literal[None] = None
 
 
-class ExpressionRouterRule(RouterRule, discriminator="expression-rule"):
+class ExpressionRouterRule(RouterRule, discriminator="expression"):
     """A rule providing inline expression rules.
 
     All required parameters must be populated in order to send to server.
@@ -875,9 +882,9 @@ class ExpressionRouterRule(RouterRule, discriminator="expression-rule"):
     :ivar expression: The string containing the expression to evaluate. Should contain return
      statement with calculated values. Required.
     :vartype expression: str
-    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Default value is
-     "expression-rule".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Discriminator value
+     for ExpressionRouterRule.
+    :vartype kind: str or ~azure.communication.jobrouter.models.EXPRESSION
     """
 
     language: Optional[Union[str, "_models.ExpressionRouterRuleLanguage"]] = rest_field()
@@ -885,9 +892,9 @@ class ExpressionRouterRule(RouterRule, discriminator="expression-rule"):
     expression: str = rest_field()
     """The string containing the expression to evaluate. Should contain return statement with
      calculated values. Required."""
-    kind: Literal["expression-rule"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of Rule. Required. Default value is
-     \"expression-rule\"."""
+    kind: Literal[RouterRuleKind.EXPRESSION] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of Rule. Required. Discriminator value for
+     ExpressionRouterRule."""
 
     @overload
     def __init__(
@@ -907,10 +914,10 @@ class ExpressionRouterRule(RouterRule, discriminator="expression-rule"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["expression-rule"] = "expression-rule"
+        self.kind: Literal[RouterRuleKind.EXPRESSION] = RouterRuleKind.EXPRESSION
 
 
-class FunctionRouterRule(RouterRule, discriminator="azure-function-rule"):
+class FunctionRouterRule(RouterRule, discriminator="function"):
     """A rule providing a binding to an HTTP Triggered Azure Function.
 
     All required parameters must be populated in order to send to server.
@@ -919,18 +926,18 @@ class FunctionRouterRule(RouterRule, discriminator="azure-function-rule"):
     :vartype function_uri: str
     :ivar credential: Credentials used to access Azure function rule.
     :vartype credential: ~azure.communication.jobrouter.models.FunctionRouterRuleCredential
-    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Default value is
-     "azure-function-rule".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Discriminator value
+     for FunctionRouterRule.
+    :vartype kind: str or ~azure.communication.jobrouter.models.FUNCTION
     """
 
     function_uri: str = rest_field(name="functionUri")
     """URL for Azure Function. Required."""
     credential: Optional["_models.FunctionRouterRuleCredential"] = rest_field()
     """Credentials used to access Azure function rule."""
-    kind: Literal["azure-function-rule"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of Rule. Required. Default value is
-     \"azure-function-rule\"."""
+    kind: Literal[RouterRuleKind.FUNCTION] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of Rule. Required. Discriminator value for
+     FunctionRouterRule."""
 
     @overload
     def __init__(
@@ -950,7 +957,7 @@ class FunctionRouterRule(RouterRule, discriminator="azure-function-rule"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["azure-function-rule"] = "azure-function-rule"
+        self.kind: Literal[RouterRuleKind.FUNCTION] = RouterRuleKind.FUNCTION
 
 
 class FunctionRouterRuleCredential(_model_base.Model):
@@ -1009,22 +1016,21 @@ class JobMatchingMode(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: The type discriminator describing a sub-type of JobMatchingMode. Required. Default
-     value is None.
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of JobMatchingMode. Required. Known
+     values are: "queueAndMatch", "scheduleAndSuspend", and "suspend".
+    :vartype kind: str or ~azure.communication.jobrouter.models.JobMatchingModeKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
-    """The type discriminator describing a sub-type of JobMatchingMode. Required. Default value is
-     None."""
+    """The type discriminator describing a sub-type of JobMatchingMode. Required. Known values are:
+     \"queueAndMatch\", \"scheduleAndSuspend\", and \"suspend\"."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind: Literal[None] = None
 
 
-class LongestIdleMode(DistributionMode, discriminator="longest-idle"):
+class LongestIdleMode(DistributionMode, discriminator="longestIdle"):
     """Jobs are directed to the worker who has been idle longest.
 
     All required parameters must be populated in order to send to server.
@@ -1040,14 +1046,14 @@ class LongestIdleMode(DistributionMode, discriminator="longest-idle"):
      they are matched with if you set this variable to true. This flag is intended more for
      temporary usage. By default, set to false.
     :vartype bypass_selectors: bool
-    :ivar kind: The type discriminator describing a sub-type of Mode. Required. Default value is
-     "longest-idle".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of Mode. Required. Discriminator value
+     for LongestIdleMode.
+    :vartype kind: str or ~azure.communication.jobrouter.models.LONGEST_IDLE
     """
 
-    kind: Literal["longest-idle"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of Mode. Required. Default value is
-     \"longest-idle\"."""
+    kind: Literal[DistributionModeKind.LONGEST_IDLE] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of Mode. Required. Discriminator value for
+     LongestIdleMode."""
 
     @overload
     def __init__(
@@ -1068,10 +1074,10 @@ class LongestIdleMode(DistributionMode, discriminator="longest-idle"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["longest-idle"] = "longest-idle"
+        self.kind: Literal[DistributionModeKind.LONGEST_IDLE] = DistributionModeKind.LONGEST_IDLE
 
 
-class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manual-reclassify"):
+class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manualReclassify"):
     """An action that manually reclassifies a job by providing the queue, priority and worker
     selectors.
 
@@ -1085,9 +1091,9 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manual-rec
     :vartype priority: int
     :ivar worker_selectors: Updated WorkerSelectors.
     :vartype worker_selectors: list[~azure.communication.jobrouter.models.RouterWorkerSelector]
-    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required. Default
-     value is "manual-reclassify".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
+     Discriminator value for ManualReclassifyExceptionAction.
+    :vartype kind: str or ~azure.communication.jobrouter.models.MANUAL_RECLASSIFY
     """
 
     queue_id: Optional[str] = rest_field(name="queueId")
@@ -1096,9 +1102,9 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manual-rec
     """Updated Priority."""
     worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = rest_field(name="workerSelectors")
     """Updated WorkerSelectors."""
-    kind: Literal["manual-reclassify"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of ExceptionAction. Required. Default value is
-     \"manual-reclassify\"."""
+    kind: Literal[ExceptionActionKind.MANUAL_RECLASSIFY] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of ExceptionAction. Required. Discriminator value
+     for ManualReclassifyExceptionAction."""
 
     @overload
     def __init__(
@@ -1120,7 +1126,7 @@ class ManualReclassifyExceptionAction(ExceptionAction, discriminator="manual-rec
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["manual-reclassify"] = "manual-reclassify"
+        self.kind: Literal[ExceptionActionKind.MANUAL_RECLASSIFY] = ExceptionActionKind.MANUAL_RECLASSIFY
 
 
 class OAuth2WebhookClientCredential(_model_base.Model):
@@ -1158,7 +1164,7 @@ class OAuth2WebhookClientCredential(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator="pass-through"):
+class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator="passThrough"):
     """Attaches a queue selector where the value is passed through from the job label with the same
     key.
 
@@ -1171,8 +1177,8 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
      "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-     Default value is "pass-through".
-    :vartype kind: str
+     Discriminator value for PassThroughQueueSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.PASS_THROUGH
     """
 
     key: str = rest_field()
@@ -1181,9 +1187,9 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
     """Describes how the value of the label is compared to the value pass through. Required. Known
      values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanOrEqual\", \"greaterThan\", and
      \"greaterThanOrEqual\"."""
-    kind: Literal["pass-through"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of queue selector attachment. Required. Default
-     value is \"pass-through\"."""
+    kind: Literal[QueueSelectorAttachmentKind.PASS_THROUGH] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of queue selector attachment. Required.
+     Discriminator value for PassThroughQueueSelectorAttachment."""
 
     @overload
     def __init__(
@@ -1203,10 +1209,10 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["pass-through"] = "pass-through"
+        self.kind: Literal[QueueSelectorAttachmentKind.PASS_THROUGH] = QueueSelectorAttachmentKind.PASS_THROUGH
 
 
-class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="pass-through"):
+class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="passThrough"):
     """Attaches a worker selector where the value is passed through from the job label with the same
     key.
 
@@ -1222,8 +1228,8 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
      seconds.
     :vartype expires_after_seconds: float
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-     Default value is "pass-through".
-    :vartype kind: str
+     Discriminator value for PassThroughWorkerSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.PASS_THROUGH
     """
 
     key: str = rest_field()
@@ -1234,9 +1240,9 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
      \"greaterThanOrEqual\"."""
     expires_after_seconds: Optional[float] = rest_field(name="expiresAfterSeconds")
     """Describes how long the attached label selector is valid in seconds."""
-    kind: Literal["pass-through"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of worker selector attachment. Required. Default
-     value is \"pass-through\"."""
+    kind: Literal[WorkerSelectorAttachmentKind.PASS_THROUGH] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of worker selector attachment. Required.
+     Discriminator value for PassThroughWorkerSelectorAttachment."""
 
     @overload
     def __init__(
@@ -1257,30 +1263,30 @@ class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminato
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["pass-through"] = "pass-through"
+        self.kind: Literal[WorkerSelectorAttachmentKind.PASS_THROUGH] = WorkerSelectorAttachmentKind.PASS_THROUGH
 
 
-class QueueAndMatchMode(JobMatchingMode, discriminator="queue-and-match"):
+class QueueAndMatchMode(JobMatchingMode, discriminator="queueAndMatch"):
     """Describes a matching mode where matching worker to a job is automatically started after job is
     queued successfully.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: The type discriminator describing QueueAndMatchMode. Required. Default value is
-     "queue-and-match".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing QueueAndMatchMode. Required. Discriminator value
+     for QueueAndMatchMode.
+    :vartype kind: str or ~azure.communication.jobrouter.models.QUEUE_AND_MATCH
     """
 
-    kind: Literal["queue-and-match"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing QueueAndMatchMode. Required. Default value is
-     \"queue-and-match\"."""
+    kind: Literal[JobMatchingModeKind.QUEUE_AND_MATCH] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing QueueAndMatchMode. Required. Discriminator value for
+     QueueAndMatchMode."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["queue-and-match"] = "queue-and-match"
+        self.kind: Literal[JobMatchingModeKind.QUEUE_AND_MATCH] = JobMatchingModeKind.QUEUE_AND_MATCH
 
 
-class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queue-length"):
+class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queueLength"):
     """Trigger for an exception action on exceeding queue length.
 
     All required parameters must be populated in order to send to server.
@@ -1288,16 +1294,16 @@ class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queue-length"
     :ivar threshold: Threshold of number of jobs ahead in the queue to for this trigger to fire.
      Required.
     :vartype threshold: int
-    :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required. Default
-     value is "queue-length".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required.
+     Discriminator value for QueueLengthExceptionTrigger.
+    :vartype kind: str or ~azure.communication.jobrouter.models.QUEUE_LENGTH
     """
 
     threshold: int = rest_field()
     """Threshold of number of jobs ahead in the queue to for this trigger to fire. Required."""
-    kind: Literal["queue-length"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of ExceptionTrigger. Required. Default value is
-     \"queue-length\"."""
+    kind: Literal[ExceptionTriggerKind.QUEUE_LENGTH] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of ExceptionTrigger. Required. Discriminator value
+     for QueueLengthExceptionTrigger."""
 
     @overload
     def __init__(
@@ -1316,7 +1322,7 @@ class QueueLengthExceptionTrigger(ExceptionTrigger, discriminator="queue-length"
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["queue-length"] = "queue-length"
+        self.kind: Literal[ExceptionTriggerKind.QUEUE_LENGTH] = ExceptionTriggerKind.QUEUE_LENGTH
 
 
 class QueueWeightedAllocation(_model_base.Model):
@@ -1370,9 +1376,9 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
     :ivar labels_to_upsert: Dictionary containing the labels to update (or add if not existing) in
      key-value pairs.  Values must be primitive values - number, string, boolean.
     :vartype labels_to_upsert: dict[str, any]
-    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required. Default
-     value is "reclassify".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
+     Discriminator value for ReclassifyExceptionAction.
+    :vartype kind: str or ~azure.communication.jobrouter.models.RECLASSIFY
     """
 
     classification_policy_id: Optional[str] = rest_field(name="classificationPolicyId")
@@ -1380,9 +1386,9 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
     labels_to_upsert: Optional[Dict[str, Any]] = rest_field(name="labelsToUpsert")
     """Dictionary containing the labels to update (or add if not existing) in key-value pairs.  Values
      must be primitive values - number, string, boolean."""
-    kind: Literal["reclassify"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of ExceptionAction. Required. Default value is
-     \"reclassify\"."""
+    kind: Literal[ExceptionActionKind.RECLASSIFY] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of ExceptionAction. Required. Discriminator value
+     for ReclassifyExceptionAction."""
 
     @overload
     def __init__(
@@ -1403,7 +1409,7 @@ class ReclassifyExceptionAction(ExceptionAction, discriminator="reclassify"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["reclassify"] = "reclassify"
+        self.kind: Literal[ExceptionActionKind.RECLASSIFY] = ExceptionActionKind.RECLASSIFY
 
 
 class ReclassifyJobOptions(_model_base.Model):
@@ -1414,7 +1420,7 @@ class ReclassifyJobResult(_model_base.Model):
     """Response payload from reclassifying a job."""
 
 
-class RoundRobinMode(DistributionMode, discriminator="round-robin"):
+class RoundRobinMode(DistributionMode, discriminator="roundRobin"):
     """Jobs are distributed in order to workers, starting with the worker that is after the last
     worker to receive a job.
 
@@ -1431,14 +1437,14 @@ class RoundRobinMode(DistributionMode, discriminator="round-robin"):
      they are matched with if you set this variable to true. This flag is intended more for
      temporary usage. By default, set to false.
     :vartype bypass_selectors: bool
-    :ivar kind: The type discriminator describing a sub-type of Mode. Required. Default value is
-     "round-robin".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of Mode. Required. Discriminator value
+     for RoundRobinMode.
+    :vartype kind: str or ~azure.communication.jobrouter.models.ROUND_ROBIN
     """
 
-    kind: Literal["round-robin"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of Mode. Required. Default value is
-     \"round-robin\"."""
+    kind: Literal[DistributionModeKind.ROUND_ROBIN] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of Mode. Required. Discriminator value for
+     RoundRobinMode."""
 
     @overload
     def __init__(
@@ -1459,7 +1465,7 @@ class RoundRobinMode(DistributionMode, discriminator="round-robin"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["round-robin"] = "round-robin"
+        self.kind: Literal[DistributionModeKind.ROUND_ROBIN] = DistributionModeKind.ROUND_ROBIN
 
 
 class RouterChannel(_model_base.Model):
@@ -2191,7 +2197,7 @@ class RouterWorkerSelector(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="rule-engine"):
+class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="ruleEngine"):
     """Attaches queue selectors to a job when the RouterRule is resolved.
 
     All required parameters must be populated in order to send to server.
@@ -2199,15 +2205,15 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="
     :ivar rule: A RouterRule that resolves a collection of queue selectors to attach. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-     Default value is "rule-engine".
-    :vartype kind: str
+     Discriminator value for RuleEngineQueueSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.RULE_ENGINE
     """
 
     rule: "_models.RouterRule" = rest_field()
     """A RouterRule that resolves a collection of queue selectors to attach. Required."""
-    kind: Literal["rule-engine"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of queue selector attachment. Required. Default
-     value is \"rule-engine\"."""
+    kind: Literal[QueueSelectorAttachmentKind.RULE_ENGINE] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of queue selector attachment. Required.
+     Discriminator value for RuleEngineQueueSelectorAttachment."""
 
     @overload
     def __init__(
@@ -2226,10 +2232,10 @@ class RuleEngineQueueSelectorAttachment(QueueSelectorAttachment, discriminator="
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["rule-engine"] = "rule-engine"
+        self.kind: Literal[QueueSelectorAttachmentKind.RULE_ENGINE] = QueueSelectorAttachmentKind.RULE_ENGINE
 
 
-class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="rule-engine"):
+class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="ruleEngine"):
     """Attaches worker selectors to a job when a RouterRule is resolved.
 
     All required parameters must be populated in order to send to server.
@@ -2237,15 +2243,15 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator
     :ivar rule: A RouterRule that resolves a collection of worker selectors to attach. Required.
     :vartype rule: ~azure.communication.jobrouter.models.RouterRule
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-     Default value is "rule-engine".
-    :vartype kind: str
+     Discriminator value for RuleEngineWorkerSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.RULE_ENGINE
     """
 
     rule: "_models.RouterRule" = rest_field()
     """A RouterRule that resolves a collection of worker selectors to attach. Required."""
-    kind: Literal["rule-engine"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of worker selector attachment. Required. Default
-     value is \"rule-engine\"."""
+    kind: Literal[WorkerSelectorAttachmentKind.RULE_ENGINE] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of worker selector attachment. Required.
+     Discriminator value for RuleEngineWorkerSelectorAttachment."""
 
     @overload
     def __init__(
@@ -2264,10 +2270,10 @@ class RuleEngineWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["rule-engine"] = "rule-engine"
+        self.kind: Literal[WorkerSelectorAttachmentKind.RULE_ENGINE] = WorkerSelectorAttachmentKind.RULE_ENGINE
 
 
-class ScheduleAndSuspendMode(JobMatchingMode, discriminator="schedule-and-suspend"):
+class ScheduleAndSuspendMode(JobMatchingMode, discriminator="scheduleAndSuspend"):
     """Describes a matching mode used for scheduling jobs to be queued at a future time. At the
     specified time, matching worker to a job will not start automatically.
 
@@ -2275,16 +2281,16 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="schedule-and-suspen
 
     :ivar schedule_at: Scheduled time. Required.
     :vartype schedule_at: ~datetime.datetime
-    :ivar kind: The type discriminator describing ScheduleAndSuspendMode. Required. Default value
-     is "schedule-and-suspend".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing ScheduleAndSuspendMode. Required. Discriminator
+     value for ScheduleAndSuspendMode.
+    :vartype kind: str or ~azure.communication.jobrouter.models.SCHEDULE_AND_SUSPEND
     """
 
     schedule_at: datetime.datetime = rest_field(name="scheduleAt", format="rfc3339")
     """Scheduled time. Required."""
-    kind: Literal["schedule-and-suspend"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing ScheduleAndSuspendMode. Required. Default value is
-     \"schedule-and-suspend\"."""
+    kind: Literal[JobMatchingModeKind.SCHEDULE_AND_SUSPEND] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing ScheduleAndSuspendMode. Required. Discriminator value for
+     ScheduleAndSuspendMode."""
 
     @overload
     def __init__(
@@ -2303,7 +2309,7 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="schedule-and-suspen
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["schedule-and-suspend"] = "schedule-and-suspend"
+        self.kind: Literal[JobMatchingModeKind.SCHEDULE_AND_SUSPEND] = JobMatchingModeKind.SCHEDULE_AND_SUSPEND
 
 
 class ScoringRuleOptions(_model_base.Model):
@@ -2374,15 +2380,15 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
     :ivar queue_selector: The queue selector to attach. Required.
     :vartype queue_selector: ~azure.communication.jobrouter.models.RouterQueueSelector
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-     Default value is "static".
-    :vartype kind: str
+     Discriminator value for StaticQueueSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.STATIC
     """
 
     queue_selector: "_models.RouterQueueSelector" = rest_field(name="queueSelector")
     """The queue selector to attach. Required."""
-    kind: Literal["static"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of queue selector attachment. Required. Default
-     value is \"static\"."""
+    kind: Literal[QueueSelectorAttachmentKind.STATIC] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of queue selector attachment. Required.
+     Discriminator value for StaticQueueSelectorAttachment."""
 
     @overload
     def __init__(
@@ -2401,10 +2407,10 @@ class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="stat
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["static"] = "static"
+        self.kind: Literal[QueueSelectorAttachmentKind.STATIC] = QueueSelectorAttachmentKind.STATIC
 
 
-class StaticRouterRule(RouterRule, discriminator="static-rule"):
+class StaticRouterRule(RouterRule, discriminator="static"):
     """A rule providing static rules that always return the same result, regardless of input.
 
     All required parameters must be populated in order to send to server.
@@ -2412,17 +2418,17 @@ class StaticRouterRule(RouterRule, discriminator="static-rule"):
     :ivar value: The static value this rule always returns. Values must be primitive values -
      number, string, boolean.
     :vartype value: any
-    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Default value is
-     "static-rule".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Discriminator value
+     for StaticRouterRule.
+    :vartype kind: str or ~azure.communication.jobrouter.models.STATIC
     """
 
     value: Optional[Any] = rest_field()
     """The static value this rule always returns. Values must be primitive values - number, string,
      boolean."""
-    kind: Literal["static-rule"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of Rule. Required. Default value is
-     \"static-rule\"."""
+    kind: Literal[RouterRuleKind.STATIC] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of Rule. Required. Discriminator value for
+     StaticRouterRule."""
 
     @overload
     def __init__(
@@ -2441,7 +2447,7 @@ class StaticRouterRule(RouterRule, discriminator="static-rule"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["static-rule"] = "static-rule"
+        self.kind: Literal[RouterRuleKind.STATIC] = RouterRuleKind.STATIC
 
 
 class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="static"):
@@ -2452,15 +2458,15 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="st
     :ivar worker_selector: The worker selector to attach. Required.
     :vartype worker_selector: ~azure.communication.jobrouter.models.RouterWorkerSelector
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-     Default value is "static".
-    :vartype kind: str
+     Discriminator value for StaticWorkerSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.STATIC
     """
 
     worker_selector: "_models.RouterWorkerSelector" = rest_field(name="workerSelector")
     """The worker selector to attach. Required."""
-    kind: Literal["static"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of worker selector attachment. Required. Default
-     value is \"static\"."""
+    kind: Literal[WorkerSelectorAttachmentKind.STATIC] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of worker selector attachment. Required.
+     Discriminator value for StaticWorkerSelectorAttachment."""
 
     @overload
     def __init__(
@@ -2479,7 +2485,7 @@ class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="st
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["static"] = "static"
+        self.kind: Literal[WorkerSelectorAttachmentKind.STATIC] = WorkerSelectorAttachmentKind.STATIC
 
 
 class SuspendMode(JobMatchingMode, discriminator="suspend"):
@@ -2487,17 +2493,17 @@ class SuspendMode(JobMatchingMode, discriminator="suspend"):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar kind: The type discriminator describing SuspendMode. Required. Default value is
-     "suspend".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing SuspendMode. Required. Discriminator value for
+     SuspendMode.
+    :vartype kind: str or ~azure.communication.jobrouter.models.SUSPEND
     """
 
-    kind: Literal["suspend"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing SuspendMode. Required. Default value is \"suspend\"."""
+    kind: Literal[JobMatchingModeKind.SUSPEND] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing SuspendMode. Required. Discriminator value for SuspendMode."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["suspend"] = "suspend"
+        self.kind: Literal[JobMatchingModeKind.SUSPEND] = JobMatchingModeKind.SUSPEND
 
 
 class UnassignJobOptions(_model_base.Model):
@@ -2566,23 +2572,23 @@ class UnassignJobResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="wait-time"):
+class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="waitTime"):
     """Trigger for an exception action on exceeding wait time.
 
     All required parameters must be populated in order to send to server.
 
     :ivar threshold_seconds: Threshold for wait time for this trigger. Required.
     :vartype threshold_seconds: float
-    :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required. Default
-     value is "wait-time".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of ExceptionTrigger. Required.
+     Discriminator value for WaitTimeExceptionTrigger.
+    :vartype kind: str or ~azure.communication.jobrouter.models.WAIT_TIME
     """
 
     threshold_seconds: float = rest_field(name="thresholdSeconds")
     """Threshold for wait time for this trigger. Required."""
-    kind: Literal["wait-time"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of ExceptionTrigger. Required. Default value is
-     \"wait-time\"."""
+    kind: Literal[ExceptionTriggerKind.WAIT_TIME] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of ExceptionTrigger. Required. Discriminator value
+     for WaitTimeExceptionTrigger."""
 
     @overload
     def __init__(
@@ -2601,10 +2607,10 @@ class WaitTimeExceptionTrigger(ExceptionTrigger, discriminator="wait-time"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["wait-time"] = "wait-time"
+        self.kind: Literal[ExceptionTriggerKind.WAIT_TIME] = ExceptionTriggerKind.WAIT_TIME
 
 
-class WebhookRouterRule(RouterRule, discriminator="webhook-rule"):
+class WebhookRouterRule(RouterRule, discriminator="webhook"):
     """A rule providing a binding to an external web server.
 
     All required parameters must be populated in order to send to server.
@@ -2616,9 +2622,9 @@ class WebhookRouterRule(RouterRule, discriminator="webhook-rule"):
     :vartype client_credential: ~azure.communication.jobrouter.models.OAuth2WebhookClientCredential
     :ivar webhook_uri: Uri for Contoso's Web Server.
     :vartype webhook_uri: str
-    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Default value is
-     "webhook-rule".
-    :vartype kind: str
+    :ivar kind: The type discriminator describing a sub-type of Rule. Required. Discriminator value
+     for WebhookRouterRule.
+    :vartype kind: str or ~azure.communication.jobrouter.models.WEBHOOK
     """
 
     authorization_server_uri: Optional[str] = rest_field(name="authorizationServerUri")
@@ -2628,9 +2634,9 @@ class WebhookRouterRule(RouterRule, discriminator="webhook-rule"):
      https://www.oauth.com/oauth2-servers/access-tokens/client-credentials/."""
     webhook_uri: Optional[str] = rest_field(name="webhookUri")
     """Uri for Contoso's Web Server."""
-    kind: Literal["webhook-rule"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing a sub-type of Rule. Required. Default value is
-     \"webhook-rule\"."""
+    kind: Literal[RouterRuleKind.WEBHOOK] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing a sub-type of Rule. Required. Discriminator value for
+     WebhookRouterRule."""
 
     @overload
     def __init__(
@@ -2651,12 +2657,10 @@ class WebhookRouterRule(RouterRule, discriminator="webhook-rule"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["webhook-rule"] = "webhook-rule"
+        self.kind: Literal[RouterRuleKind.WEBHOOK] = RouterRuleKind.WEBHOOK
 
 
-class WeightedAllocationQueueSelectorAttachment(
-    QueueSelectorAttachment, discriminator="weighted-allocation-queue-selector"
-):
+class WeightedAllocationQueueSelectorAttachment(QueueSelectorAttachment, discriminator="weightedAllocation"):
     """Describes multiple sets of queue selectors, of which one will be selected and attached
     according to a weighting.
 
@@ -2665,15 +2669,15 @@ class WeightedAllocationQueueSelectorAttachment(
     :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.QueueWeightedAllocation]
     :ivar kind: The type discriminator describing the type of queue selector attachment. Required.
-     Default value is "weighted-allocation-queue-selector".
-    :vartype kind: str
+     Discriminator value for WeightedAllocationQueueSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.WEIGHTED_ALLOCATION
     """
 
     allocations: List["_models.QueueWeightedAllocation"] = rest_field()
     """A collection of percentage based weighted allocations. Required."""
-    kind: Literal["weighted-allocation-queue-selector"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of queue selector attachment. Required. Default
-     value is \"weighted-allocation-queue-selector\"."""
+    kind: Literal[QueueSelectorAttachmentKind.WEIGHTED_ALLOCATION] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of queue selector attachment. Required.
+     Discriminator value for WeightedAllocationQueueSelectorAttachment."""
 
     @overload
     def __init__(
@@ -2692,12 +2696,12 @@ class WeightedAllocationQueueSelectorAttachment(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["weighted-allocation-queue-selector"] = "weighted-allocation-queue-selector"
+        self.kind: Literal[
+            QueueSelectorAttachmentKind.WEIGHTED_ALLOCATION
+        ] = QueueSelectorAttachmentKind.WEIGHTED_ALLOCATION
 
 
-class WeightedAllocationWorkerSelectorAttachment(
-    WorkerSelectorAttachment, discriminator="weighted-allocation-worker-selector"
-):
+class WeightedAllocationWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="weightedAllocation"):
     """Describes multiple sets of worker selectors, of which one will be selected and attached
     according to a weighting.
 
@@ -2706,15 +2710,15 @@ class WeightedAllocationWorkerSelectorAttachment(
     :ivar allocations: A collection of percentage based weighted allocations. Required.
     :vartype allocations: list[~azure.communication.jobrouter.models.WorkerWeightedAllocation]
     :ivar kind: The type discriminator describing the type of worker selector attachment. Required.
-     Default value is "weighted-allocation-worker-selector".
-    :vartype kind: str
+     Discriminator value for WeightedAllocationWorkerSelectorAttachment.
+    :vartype kind: str or ~azure.communication.jobrouter.models.WEIGHTED_ALLOCATION
     """
 
     allocations: List["_models.WorkerWeightedAllocation"] = rest_field()
     """A collection of percentage based weighted allocations. Required."""
-    kind: Literal["weighted-allocation-worker-selector"] = rest_discriminator(name="kind")  # type: ignore
-    """The type discriminator describing the type of worker selector attachment. Required. Default
-     value is \"weighted-allocation-worker-selector\"."""
+    kind: Literal[WorkerSelectorAttachmentKind.WEIGHTED_ALLOCATION] = rest_discriminator(name="kind")  # type: ignore
+    """The type discriminator describing the type of worker selector attachment. Required.
+     Discriminator value for WeightedAllocationWorkerSelectorAttachment."""
 
     @overload
     def __init__(
@@ -2733,7 +2737,9 @@ class WeightedAllocationWorkerSelectorAttachment(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind: Literal["weighted-allocation-worker-selector"] = "weighted-allocation-worker-selector"
+        self.kind: Literal[
+            WorkerSelectorAttachmentKind.WEIGHTED_ALLOCATION
+        ] = WorkerSelectorAttachmentKind.WEIGHTED_ALLOCATION
 
 
 class WorkerWeightedAllocation(_model_base.Model):

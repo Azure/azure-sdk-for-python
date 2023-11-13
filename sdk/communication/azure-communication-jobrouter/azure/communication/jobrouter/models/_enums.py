@@ -10,11 +10,53 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class DistributionModeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported distribution mode types."""
+
+    BEST_WORKER = "bestWorker"
+    """Discriminator value for BestWorkerMode."""
+    LONGEST_IDLE = "longestIdle"
+    """Discriminator value for LongestIdleMode."""
+    ROUND_ROBIN = "roundRobin"
+    """Discriminator value for RoundRobinMode."""
+
+
+class ExceptionActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported exception action types."""
+
+    CANCEL = "cancel"
+    """Discriminator value for CancelExceptionAction."""
+    MANUAL_RECLASSIFY = "manualReclassify"
+    """Discriminator value for ManualReclassifyExceptionAction."""
+    RECLASSIFY = "reclassify"
+    """Discriminator value for ReclassifyExceptionAction."""
+
+
+class ExceptionTriggerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported exception trigger types."""
+
+    QUEUE_LENGTH = "queueLength"
+    """Discriminator value for QueueLengthExceptionTrigger."""
+    WAIT_TIME = "waitTime"
+    """Discriminator value for WaitTimeExceptionTrigger."""
+
+
 class ExpressionRouterRuleLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The available expression languages that can be configured."""
 
     POWER_FX = "powerFx"
     """PowerFx"""
+
+
+class JobMatchingModeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported matching mode types."""
+
+    QUEUE_AND_MATCH = "queueAndMatch"
+    """Discriminator value for QueueAndMatchMode."""
+    SCHEDULE_AND_SUSPEND = "scheduleAndSuspend"
+    """Discriminator value for ScheduleAndSuspendMode."""
+    SUSPEND = "suspend"
+    """Discriminator value for SuspendMode."""
 
 
 class LabelOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -32,6 +74,21 @@ class LabelOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Greater than"""
     GREATER_THAN_OR_EQUAL = "greaterThanOrEqual"
     """Greater than or equal"""
+
+
+class QueueSelectorAttachmentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported queue selector attachment types."""
+
+    CONDITIONAL = "conditional"
+    """Discriminator value for ConditionalQueueSelectorAttachment."""
+    PASS_THROUGH = "passThrough"
+    """Discriminator value for PassThroughQueueSelectorAttachment."""
+    RULE_ENGINE = "ruleEngine"
+    """Discriminator value for RuleEngineQueueSelectorAttachment."""
+    STATIC = "static"
+    """Discriminator value for StaticQueueSelectorAttachment."""
+    WEIGHTED_ALLOCATION = "weightedAllocation"
+    """Discriminator value for WeightedAllocationQueueSelectorAttachment."""
 
 
 class RouterJobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -97,6 +154,21 @@ class RouterJobStatusSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Completed or PendingSchedule or Scheduled or ScheduleFailed or WaitingForActivation."""
 
 
+class RouterRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported router rule types."""
+
+    DIRECT_MAP = "directMap"
+    """Discriminator value for DirectMapRouterRule."""
+    EXPRESSION = "expression"
+    """Discriminator value for ExpressionRouterRule."""
+    FUNCTION = "function"
+    """Discriminator value for FunctionRouterRule."""
+    STATIC = "static"
+    """Discriminator value for StaticRouterRule."""
+    WEBHOOK = "webhook"
+    """Discriminator value for WebhookRouterRule."""
+
+
 class RouterWorkerSelectorStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the worker selector."""
 
@@ -140,3 +212,18 @@ class ScoringRuleParameterSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     WORKER_SELECTORS = "workerSelectors"
     """Parameter to add worker selectors from the job to scoring payload.  Property is sent as
     #: ``selectors``."""
+
+
+class WorkerSelectorAttachmentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported worker selector attachment types."""
+
+    CONDITIONAL = "conditional"
+    """Discriminator value for ConditionalWorkerSelectorAttachment."""
+    PASS_THROUGH = "passThrough"
+    """Discriminator value for PassThroughWorkerSelectorAttachment."""
+    RULE_ENGINE = "ruleEngine"
+    """Discriminator value for RuleEngineWorkerSelectorAttachment."""
+    STATIC = "static"
+    """Discriminator value for StaticWorkerSelectorAttachment."""
+    WEIGHTED_ALLOCATION = "weightedAllocation"
+    """Discriminator value for WeightedAllocationWorkerSelectorAttachment."""
