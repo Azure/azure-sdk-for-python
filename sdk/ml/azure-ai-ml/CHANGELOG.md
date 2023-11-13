@@ -1,6 +1,6 @@
 # Release History
 
-## 1.12.0
+## 1.12.0 (unreleased)
 
 ### Features Added
 - Workspace Connections had 3 child classes added for open AI, cog search, and cog service connections.
