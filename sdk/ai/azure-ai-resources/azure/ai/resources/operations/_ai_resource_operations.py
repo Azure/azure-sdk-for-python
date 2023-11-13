@@ -9,6 +9,7 @@ from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
 from azure.ai.resources.entities import AIResource
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import Scope
+from azure.ai.ml.entities._workspace_hub._constants import ENDPOINT_AI_SERVICE_KIND
 from azure.core.polling import LROPoller
 
 from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
@@ -61,7 +62,13 @@ class AIResourceOperations:
     @distributed_trace
     @monitor_with_activity(logger, "AIResource.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(
-        self, *, ai_resource: AIResource, update_dependent_resources: bool = False, **kwargs
+        self,
+        *,
+        ai_resource: AIResource,
+        update_dependent_resources: bool = False,
+        endpoint_resource_id: str = None,
+        endpoint_kind: str = ENDPOINT_AI_SERVICE_KIND,
+        **kwargs,
     ) -> LROPoller[AIResource]:
         """Create a new AI resource.
 
@@ -70,12 +77,25 @@ class AIResourceOperations:
         :paramtype ai_resource: ~azure.ai.resources.entities.AIResource
         :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
         :paramtype update_dependent_resources: boolean
+        :keyword endpoint_resource_id: The UID of an AI service or Open AI resource.
+            The created hub will automatically create several
+            endpoints connecting to this resource, and creates its own otherwise.
+            If an Open AI resource ID is provided, then only a single Open AI
+            endpoint will be created. If set, then endpoint_resource_id should also be
+            set unless its default value is applicable.
+        :paramtype endpoint_resource_id: str
+        :keyword endpoint_kind: What kind of endpoint resource is being provided
+            by the endpoint_resource_id field. Defaults to "AIServices". The only other valid
+            input is "OpenAI".
+        :paramtype endpoint_kind: str
         :return: An instance of LROPoller that returns the created AI resource.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.resources.entities.AIResource]
         """
         return self._ml_client.workspace_hubs.begin_create(
             workspace_hub=ai_resource._workspace_hub,
             update_dependent_resources=update_dependent_resources,
+            endpoint_resource_id=endpoint_resource_id,
+            endpoint_kind=endpoint_kind,
             cls=lambda hub: AIResource._from_v2_workspace_hub(hub),
             **kwargs
         )

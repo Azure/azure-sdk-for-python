@@ -1,14 +1,10 @@
 # Release History
 
-## 5.11.5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.11.5 (2023-11-09)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed a pyAMQP error where events split across multiple TransferFrames were depleting the link credit by more than 1 credit per message. ([#32767](https://github.com/Azure/azure-sdk-for-python/pull/32767))
 
 ## 5.11.4 (2023-08-08)
 

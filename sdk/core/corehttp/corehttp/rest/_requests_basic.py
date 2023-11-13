@@ -27,8 +27,8 @@ from __future__ import annotations
 import logging
 import collections.abc as collections
 from typing import TYPE_CHECKING, Any
-import requests  # pylint: disable=networking-import-outside-azure-core-transport
-from requests.structures import CaseInsensitiveDict  # pylint: disable=networking-import-outside-azure-core-transport
+import requests  # pylint: disable=all
+from requests.structures import CaseInsensitiveDict  # pylint: disable=all
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
     ReadTimeoutError,
