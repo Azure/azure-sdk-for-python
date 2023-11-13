@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import asyncio
 
+
 async def analyze_image_async():
     # [START analyze_image_async]
 
@@ -51,8 +52,10 @@ async def analyze_image_async():
 
     # [END analyze_image_async]
 
+
 async def main():
     await analyze_image_async()
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

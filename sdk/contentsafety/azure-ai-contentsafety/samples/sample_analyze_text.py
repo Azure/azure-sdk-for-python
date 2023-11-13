@@ -48,5 +48,6 @@ def analyze_text():
 
     # [END analyze_text]
 
+
 if __name__ == "__main__":
     analyze_text()

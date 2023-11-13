@@ -28,20 +28,20 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._model_base import AzureJSONEncoder, _deserialize
+from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_content_safety_add_block_items_request,
+    build_blocklist_add_or_update_blocklist_items_request,
+    build_blocklist_create_or_update_text_blocklist_request,
+    build_blocklist_delete_text_blocklist_request,
+    build_blocklist_get_text_blocklist_item_request,
+    build_blocklist_get_text_blocklist_request,
+    build_blocklist_list_text_blocklist_items_request,
+    build_blocklist_list_text_blocklists_request,
+    build_blocklist_remove_blocklist_items_request,
     build_content_safety_analyze_image_request,
     build_content_safety_analyze_text_request,
-    build_content_safety_create_or_update_text_blocklist_request,
-    build_content_safety_delete_text_blocklist_request,
-    build_content_safety_get_text_blocklist_item_request,
-    build_content_safety_get_text_blocklist_request,
-    build_content_safety_list_text_blocklist_items_request,
-    build_content_safety_list_text_blocklists_request,
-    build_content_safety_remove_block_items_request,
 )
-from .._vendor import ContentSafetyClientMixinABC
+from .._vendor import BlocklistClientMixinABC, ContentSafetyClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -59,10 +59,10 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
-        A sync API for harmful content analysis for text. Currently, we support four categories: Hate,
-        SelfHarm, Sexual, Violence.
+        A synchronous API for the analysis of potentially harmful text content. Currently, it supports
+        four categories: Hate, SelfHarm, Sexual, and Violence.
 
-        :param body: The request of text analysis. Required.
+        :param body: The text analysis request. Required.
         :type body: ~azure.ai.contentsafety.models.AnalyzeTextOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -80,10 +80,10 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
-        A sync API for harmful content analysis for text. Currently, we support four categories: Hate,
-        SelfHarm, Sexual, Violence.
+        A synchronous API for the analysis of potentially harmful text content. Currently, it supports
+        four categories: Hate, SelfHarm, Sexual, and Violence.
 
-        :param body: The request of text analysis. Required.
+        :param body: The text analysis request. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -101,10 +101,10 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
-        A sync API for harmful content analysis for text. Currently, we support four categories: Hate,
-        SelfHarm, Sexual, Violence.
+        A synchronous API for the analysis of potentially harmful text content. Currently, it supports
+        four categories: Hate, SelfHarm, Sexual, and Violence.
 
-        :param body: The request of text analysis. Required.
+        :param body: The text analysis request. Required.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -122,10 +122,10 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
-        A sync API for harmful content analysis for text. Currently, we support four categories: Hate,
-        SelfHarm, Sexual, Violence.
+        A synchronous API for the analysis of potentially harmful text content. Currently, it supports
+        four categories: Hate, SelfHarm, Sexual, and Violence.
 
-        :param body: The request of text analysis. Is one of the following types: AnalyzeTextOptions,
+        :param body: The text analysis request. Is one of the following types: AnalyzeTextOptions,
          JSON, IO Required.
         :type body: ~azure.ai.contentsafety.models.AnalyzeTextOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
@@ -156,7 +156,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_content_safety_analyze_text_request(
             content_type=content_type,
@@ -199,10 +199,10 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
-        A sync API for harmful content analysis for image. Currently, we support four categories: Hate,
-        SelfHarm, Sexual, Violence.
+        A synchronous API for the analysis of potentially harmful image content. Currently, it supports
+        four categories: Hate, SelfHarm, Sexual, and Violence.
 
-        :param body: The analysis request of the image. Required.
+        :param body: The image analysis request. Required.
         :type body: ~azure.ai.contentsafety.models.AnalyzeImageOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -220,10 +220,10 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
-        A sync API for harmful content analysis for image. Currently, we support four categories: Hate,
-        SelfHarm, Sexual, Violence.
+        A synchronous API for the analysis of potentially harmful image content. Currently, it supports
+        four categories: Hate, SelfHarm, Sexual, and Violence.
 
-        :param body: The analysis request of the image. Required.
+        :param body: The image analysis request. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -241,10 +241,10 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
-        A sync API for harmful content analysis for image. Currently, we support four categories: Hate,
-        SelfHarm, Sexual, Violence.
+        A synchronous API for the analysis of potentially harmful image content. Currently, it supports
+        four categories: Hate, SelfHarm, Sexual, and Violence.
 
-        :param body: The analysis request of the image. Required.
+        :param body: The image analysis request. Required.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -262,11 +262,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
-        A sync API for harmful content analysis for image. Currently, we support four categories: Hate,
-        SelfHarm, Sexual, Violence.
+        A synchronous API for the analysis of potentially harmful image content. Currently, it supports
+        four categories: Hate, SelfHarm, Sexual, and Violence.
 
-        :param body: The analysis request of the image. Is one of the following types:
-         AnalyzeImageOptions, JSON, IO Required.
+        :param body: The image analysis request. Is one of the following types: AnalyzeImageOptions,
+         JSON, IO Required.
         :type body: ~azure.ai.contentsafety.models.AnalyzeImageOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
@@ -296,7 +296,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_content_safety_analyze_image_request(
             content_type=content_type,
@@ -333,18 +333,108 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_text_blocklist(self, blocklist_name: str, **kwargs: Any) -> _models.TextBlocklist:
-        """Get Text Blocklist By blocklistName.
 
-        Returns text blocklist details.
+class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
+    @overload
+    async def add_or_update_blocklist_items(
+        self,
+        blocklist_name: str,
+        options: _models.AddOrUpdateTextBlocklistItemsOptions,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AddOrUpdateTextBlocklistItemsResult:
+        """Add or update BlocklistItems To Text Blocklist.
+
+        Add or update blocklistItems to a text blocklist. You can add or update at most 100
+        blocklistItems in one request.
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
+        :param options: Options for adding or updating blocklist items. Required.
+        :type options: ~azure.ai.contentsafety.models.AddOrUpdateTextBlocklistItemsOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: TextBlocklist. The TextBlocklist is compatible with MutableMapping
-        :rtype: ~azure.ai.contentsafety.models.TextBlocklist
+        :return: AddOrUpdateTextBlocklistItemsResult. The AddOrUpdateTextBlocklistItemsResult is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.contentsafety.models.AddOrUpdateTextBlocklistItemsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def add_or_update_blocklist_items(
+        self, blocklist_name: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AddOrUpdateTextBlocklistItemsResult:
+        """Add or update BlocklistItems To Text Blocklist.
+
+        Add or update blocklistItems to a text blocklist. You can add or update at most 100
+        blocklistItems in one request.
+
+        :param blocklist_name: Text blocklist name. Required.
+        :type blocklist_name: str
+        :param options: Options for adding or updating blocklist items. Required.
+        :type options: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: AddOrUpdateTextBlocklistItemsResult. The AddOrUpdateTextBlocklistItemsResult is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.contentsafety.models.AddOrUpdateTextBlocklistItemsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def add_or_update_blocklist_items(
+        self, blocklist_name: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AddOrUpdateTextBlocklistItemsResult:
+        """Add or update BlocklistItems To Text Blocklist.
+
+        Add or update blocklistItems to a text blocklist. You can add or update at most 100
+        blocklistItems in one request.
+
+        :param blocklist_name: Text blocklist name. Required.
+        :type blocklist_name: str
+        :param options: Options for adding or updating blocklist items. Required.
+        :type options: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: AddOrUpdateTextBlocklistItemsResult. The AddOrUpdateTextBlocklistItemsResult is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.contentsafety.models.AddOrUpdateTextBlocklistItemsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def add_or_update_blocklist_items(
+        self, blocklist_name: str, options: Union[_models.AddOrUpdateTextBlocklistItemsOptions, JSON, IO], **kwargs: Any
+    ) -> _models.AddOrUpdateTextBlocklistItemsResult:
+        """Add or update BlocklistItems To Text Blocklist.
+
+        Add or update blocklistItems to a text blocklist. You can add or update at most 100
+        blocklistItems in one request.
+
+        :param blocklist_name: Text blocklist name. Required.
+        :type blocklist_name: str
+        :param options: Options for adding or updating blocklist items. Is one of the following types:
+         AddOrUpdateTextBlocklistItemsOptions, JSON, IO Required.
+        :type options: ~azure.ai.contentsafety.models.AddOrUpdateTextBlocklistItemsOptions or JSON or
+         IO
+        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
+         value is None.
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: AddOrUpdateTextBlocklistItemsResult. The AddOrUpdateTextBlocklistItemsResult is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.contentsafety.models.AddOrUpdateTextBlocklistItemsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -355,14 +445,24 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TextBlocklist] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AddOrUpdateTextBlocklistItemsResult] = kwargs.pop("cls", None)
 
-        _request = build_content_safety_get_text_blocklist_request(
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(options, (IOBase, bytes)):
+            _content = options
+        else:
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_blocklist_add_or_update_blocklist_items_request(
             blocklist_name=blocklist_name,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -387,7 +487,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TextBlocklist, response.json())
+            deserialized = _deserialize(_models.AddOrUpdateTextBlocklistItemsResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -405,7 +505,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.TextBlocklist:
         """Create Or Update Text Blocklist.
 
-        Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
+        Updates a text blocklist. If the blocklistName does not exist, a new blocklist will be created.
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
@@ -427,7 +527,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.TextBlocklist:
         """Create Or Update Text Blocklist.
 
-        Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
+        Updates a text blocklist. If the blocklistName does not exist, a new blocklist will be created.
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
@@ -449,7 +549,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.TextBlocklist:
         """Create Or Update Text Blocklist.
 
-        Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
+        Updates a text blocklist. If the blocklistName does not exist, a new blocklist will be created.
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
@@ -471,7 +571,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
     ) -> _models.TextBlocklist:
         """Create Or Update Text Blocklist.
 
-        Updates a text blocklist, if blocklistName does not exist, create a new blocklist.
+        Updates a text blocklist. If the blocklistName does not exist, a new blocklist will be created.
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
@@ -505,9 +605,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         if isinstance(resource, (IOBase, bytes)):
             _content = resource
         else:
-            _content = json.dumps(resource, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_content_safety_create_or_update_text_blocklist_request(
+        _request = build_blocklist_create_or_update_text_blocklist_request(
             blocklist_name=blocklist_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -579,7 +679,61 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_content_safety_delete_text_blocklist_request(
+        _request = build_blocklist_delete_text_blocklist_request(
+            blocklist_name=blocklist_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def get_text_blocklist(self, blocklist_name: str, **kwargs: Any) -> _models.TextBlocklist:
+        """Get Text Blocklist By blocklistName.
+
+        Returns text blocklist details.
+
+        :param blocklist_name: Text blocklist name. Required.
+        :type blocklist_name: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: TextBlocklist. The TextBlocklist is compatible with MutableMapping
+        :rtype: ~azure.ai.contentsafety.models.TextBlocklist
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TextBlocklist] = kwargs.pop("cls", None)
+
+        _request = build_blocklist_get_text_blocklist_request(
             blocklist_name=blocklist_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -597,14 +751,188 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TextBlocklist, response.json())
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_text_blocklist_item(
+        self, blocklist_name: str, blocklist_item_id: str, **kwargs: Any
+    ) -> _models.TextBlocklistItem:
+        """Get BlocklistItem By blocklistName And blocklistItemId.
+
+        Get blocklistItem by blocklistName and blocklistItemId from a text blocklist.
+
+        :param blocklist_name: Text blocklist name. Required.
+        :type blocklist_name: str
+        :param blocklist_item_id: The service will generate a BlocklistItemId, which will be a UUID.
+         Required.
+        :type blocklist_item_id: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: TextBlocklistItem. The TextBlocklistItem is compatible with MutableMapping
+        :rtype: ~azure.ai.contentsafety.models.TextBlocklistItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TextBlocklistItem] = kwargs.pop("cls", None)
+
+        _request = build_blocklist_get_text_blocklist_item_request(
+            blocklist_name=blocklist_name,
+            blocklist_item_id=blocklist_item_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TextBlocklistItem, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_text_blocklist_items(
+        self, blocklist_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.TextBlocklistItem"]:
+        """Get All BlocklistItems By blocklistName.
+
+        Get all blocklistItems in a text blocklist.
+
+        :param blocklist_name: Text blocklist name. Required.
+        :type blocklist_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of TextBlocklistItem
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.contentsafety.models.TextBlocklistItem]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[List[_models.TextBlocklistItem]] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_blocklist_list_text_blocklist_items_request(
+                    blocklist_name=blocklist_name,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.TextBlocklistItem], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_text_blocklists(self, **kwargs: Any) -> AsyncIterable["_models.TextBlocklist"]:
@@ -632,7 +960,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_content_safety_list_text_blocklists_request(
+                _request = build_blocklist_list_text_blocklists_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -693,171 +1021,23 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def add_block_items(
+    async def remove_blocklist_items(  # pylint: disable=inconsistent-return-statements
         self,
         blocklist_name: str,
-        body: _models.AddBlockItemsOptions,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.AddBlockItemsResult:
-        """Add BlockItems To Text Blocklist.
-
-        Add blockItems to a text blocklist. You can add at most 100 BlockItems in one request.
-
-        :param blocklist_name: Text blocklist name. Required.
-        :type blocklist_name: str
-        :param body: Required.
-        :type body: ~azure.ai.contentsafety.models.AddBlockItemsOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: AddBlockItemsResult. The AddBlockItemsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.contentsafety.models.AddBlockItemsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add_block_items(
-        self, blocklist_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AddBlockItemsResult:
-        """Add BlockItems To Text Blocklist.
-
-        Add blockItems to a text blocklist. You can add at most 100 BlockItems in one request.
-
-        :param blocklist_name: Text blocklist name. Required.
-        :type blocklist_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: AddBlockItemsResult. The AddBlockItemsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.contentsafety.models.AddBlockItemsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add_block_items(
-        self, blocklist_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AddBlockItemsResult:
-        """Add BlockItems To Text Blocklist.
-
-        Add blockItems to a text blocklist. You can add at most 100 BlockItems in one request.
-
-        :param blocklist_name: Text blocklist name. Required.
-        :type blocklist_name: str
-        :param body: Required.
-        :type body: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: AddBlockItemsResult. The AddBlockItemsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.contentsafety.models.AddBlockItemsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def add_block_items(
-        self, blocklist_name: str, body: Union[_models.AddBlockItemsOptions, JSON, IO], **kwargs: Any
-    ) -> _models.AddBlockItemsResult:
-        """Add BlockItems To Text Blocklist.
-
-        Add blockItems to a text blocklist. You can add at most 100 BlockItems in one request.
-
-        :param blocklist_name: Text blocklist name. Required.
-        :type blocklist_name: str
-        :param body: Is one of the following types: AddBlockItemsOptions, JSON, IO Required.
-        :type body: ~azure.ai.contentsafety.models.AddBlockItemsOptions or JSON or IO
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: AddBlockItemsResult. The AddBlockItemsResult is compatible with MutableMapping
-        :rtype: ~azure.ai.contentsafety.models.AddBlockItemsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AddBlockItemsResult] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_content_safety_add_block_items_request(
-            blocklist_name=blocklist_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AddBlockItemsResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def remove_block_items(  # pylint: disable=inconsistent-return-statements
-        self,
-        blocklist_name: str,
-        body: _models.RemoveBlockItemsOptions,
+        options: _models.RemoveTextBlocklistItemsOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
-        """Remove BlockItems From Text Blocklist.
+        """Remove BlocklistItems From Text Blocklist.
 
-        Remove blockItems from a text blocklist. You can remove at most 100 BlockItems in one request.
+        Remove blocklistItems from a text blocklist. You can remove at most 100 BlocklistItems in one
+        request.
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
-        :param body: Required.
-        :type body: ~azure.ai.contentsafety.models.RemoveBlockItemsOptions
+        :param options: Options for removing blocklist items. Required.
+        :type options: ~azure.ai.contentsafety.models.RemoveTextBlocklistItemsOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -869,17 +1049,18 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         """
 
     @overload
-    async def remove_block_items(  # pylint: disable=inconsistent-return-statements
-        self, blocklist_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    async def remove_blocklist_items(  # pylint: disable=inconsistent-return-statements
+        self, blocklist_name: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
-        """Remove BlockItems From Text Blocklist.
+        """Remove BlocklistItems From Text Blocklist.
 
-        Remove blockItems from a text blocklist. You can remove at most 100 BlockItems in one request.
+        Remove blocklistItems from a text blocklist. You can remove at most 100 BlocklistItems in one
+        request.
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
-        :param body: Required.
-        :type body: JSON
+        :param options: Options for removing blocklist items. Required.
+        :type options: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -891,17 +1072,18 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         """
 
     @overload
-    async def remove_block_items(  # pylint: disable=inconsistent-return-statements
-        self, blocklist_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    async def remove_blocklist_items(  # pylint: disable=inconsistent-return-statements
+        self, blocklist_name: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
-        """Remove BlockItems From Text Blocklist.
+        """Remove BlocklistItems From Text Blocklist.
 
-        Remove blockItems from a text blocklist. You can remove at most 100 BlockItems in one request.
+        Remove blocklistItems from a text blocklist. You can remove at most 100 BlocklistItems in one
+        request.
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
-        :param body: Required.
-        :type body: IO
+        :param options: Options for removing blocklist items. Required.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -913,17 +1095,19 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         """
 
     @distributed_trace_async
-    async def remove_block_items(  # pylint: disable=inconsistent-return-statements
-        self, blocklist_name: str, body: Union[_models.RemoveBlockItemsOptions, JSON, IO], **kwargs: Any
+    async def remove_blocklist_items(  # pylint: disable=inconsistent-return-statements
+        self, blocklist_name: str, options: Union[_models.RemoveTextBlocklistItemsOptions, JSON, IO], **kwargs: Any
     ) -> None:
-        """Remove BlockItems From Text Blocklist.
+        """Remove BlocklistItems From Text Blocklist.
 
-        Remove blockItems from a text blocklist. You can remove at most 100 BlockItems in one request.
+        Remove blocklistItems from a text blocklist. You can remove at most 100 BlocklistItems in one
+        request.
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
-        :param body: Is one of the following types: RemoveBlockItemsOptions, JSON, IO Required.
-        :type body: ~azure.ai.contentsafety.models.RemoveBlockItemsOptions or JSON or IO
+        :param options: Options for removing blocklist items. Is one of the following types:
+         RemoveTextBlocklistItemsOptions, JSON, IO Required.
+        :type options: ~azure.ai.contentsafety.models.RemoveTextBlocklistItemsOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -949,12 +1133,12 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(options, (IOBase, bytes)):
+            _content = options
         else:
-            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_content_safety_remove_block_items_request(
+        _request = build_blocklist_remove_blocklist_items_request(
             blocklist_name=blocklist_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -967,7 +1151,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -982,168 +1166,3 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get_text_blocklist_item(
-        self, blocklist_name: str, block_item_id: str, **kwargs: Any
-    ) -> _models.TextBlockItem:
-        """Get BlockItem By blocklistName And blockItemId.
-
-        Get blockItem By blockItemId from a text blocklist.
-
-        :param blocklist_name: Text blocklist name. Required.
-        :type blocklist_name: str
-        :param block_item_id: Block Item Id. It will be uuid. Required.
-        :type block_item_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: TextBlockItem. The TextBlockItem is compatible with MutableMapping
-        :rtype: ~azure.ai.contentsafety.models.TextBlockItem
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TextBlockItem] = kwargs.pop("cls", None)
-
-        _request = build_content_safety_get_text_blocklist_item_request(
-            blocklist_name=blocklist_name,
-            block_item_id=block_item_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TextBlockItem, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_text_blocklist_items(
-        self, blocklist_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.TextBlockItem"]:
-        """Get All BlockItems By blocklistName.
-
-        Get all blockItems in a text blocklist.
-
-        :param blocklist_name: Text blocklist name. Required.
-        :type blocklist_name: str
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of TextBlockItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.contentsafety.models.TextBlockItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TextBlockItem]] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_content_safety_list_text_blocklist_items_request(
-                    blocklist_name=blocklist_name,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TextBlockItem], deserialized["value"])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                if _stream:
-                    await response.read()  # Load the body in memory and close the socket
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
