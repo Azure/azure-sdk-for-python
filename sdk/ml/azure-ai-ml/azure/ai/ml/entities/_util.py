@@ -209,9 +209,7 @@ def get_md5_string(text: Optional[str]) -> str:
     :rtype: str
     """
     try:
-        if text is not None:
-            return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
-        return ""
+        return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
     except Exception as ex:
         raise ex
 
