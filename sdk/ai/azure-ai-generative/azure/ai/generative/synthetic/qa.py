@@ -191,10 +191,12 @@ class QADataGenerator:
 
     def _modify_conversation_questions(self, questions) -> Tuple[List[str], Dict]:
         response = _completion_with_retries(
-            messages=self._get_messages_for_modify_conversation(questions),
+            messages=self._get_messages_for_modify_conversation(questions[1:]),
             **self._chat_completion_params,
         )
         modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
+        # Keep proper nouns in first question of conversation
+        modified_questions.insert(0, questions[0])
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
         return modified_questions, response["usage"]
 
@@ -220,7 +222,7 @@ class QADataGenerator:
                 raise Exception(f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key")
 
             question_key = field_mapping["question_key"]
-            # Set this here for parity with eval flows
+            # Set this here for parity with eval
             answer_key = "ground_truth"
             chat_history_key = field_mapping.get("chat_history_key", "chat_history")
             for qs_and_as in results:
@@ -281,10 +283,12 @@ class QADataGenerator:
 
     async def _modify_conversation_questions_async(self, questions) -> Tuple[List[str], Dict]:
         response = await _completion_with_retries_async(
-            messages=self._get_messages_for_modify_conversation(questions),
+            messages=self._get_messages_for_modify_conversation(questions[1:]),
             **self._chat_completion_params,
         )
         modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
+        # Keep proper nouns in first question of conversation
+        modified_questions.insert(0, questions[0])
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
         return modified_questions, response["usage"]
 
