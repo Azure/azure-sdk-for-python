@@ -21,6 +21,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         refresh_interval=30,
         secret_resolver=None,
         key_vault_options=None,
+        on_refresh_success=None,
     ):
         cred = self.get_credential(AzureAppConfigurationClient)
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
@@ -37,6 +38,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 refresh_interval=refresh_interval,
                 user_agent="SDK/Integration",
                 keyvault_credential=keyvault_cred,
+                on_refresh_success=on_refresh_success,
             )
         if key_vault_options:
             if not key_vault_options.secret_resolver:
@@ -50,6 +52,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 refresh_interval=refresh_interval,
                 user_agent="SDK/Integration",
                 key_vault_options=key_vault_options,
+                on_refresh_success=on_refresh_success,
             )
         return load(
             credential=cred,
@@ -60,6 +63,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             refresh_interval=refresh_interval,
             user_agent="SDK/Integration",
             secret_resolver=secret_resolver,
+            on_refresh_success=on_refresh_success,
         )
 
     def create_client(
@@ -72,6 +76,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         refresh_interval=30,
         secret_resolver=None,
         key_vault_options=None,
+        on_refresh_success=None,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, keyvault_secret_url)
@@ -85,6 +90,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 refresh_interval=refresh_interval,
                 user_agent="SDK/Integration",
                 keyvault_credential=self.get_credential(AzureAppConfigurationClient),
+                on_refresh_success=on_refresh_success,
             )
         if key_vault_options:
             if not key_vault_options.secret_resolver:
@@ -99,6 +105,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
                 refresh_interval=refresh_interval,
                 user_agent="SDK/Integration",
                 key_vault_options=key_vault_options,
+                on_refresh_success=on_refresh_success,
             )
         return load(
             connection_string=appconfiguration_connection_string,
@@ -108,6 +115,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             refresh_interval=refresh_interval,
             user_agent="SDK/Integration",
             secret_resolver=secret_resolver,
+            on_refresh_success=on_refresh_success,
         )
 
 
