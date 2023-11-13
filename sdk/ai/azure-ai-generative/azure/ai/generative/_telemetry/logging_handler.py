@@ -42,20 +42,6 @@ test_subscriptions = [
 config_integration.trace_integrations(["logging"])
 
 
-
-class OpsLogger:
-    def __init__(self, name: str):
-        self.package_logger: logging.Logger = logging.getLogger(GEN_AI_INTERNAL_LOGGER_NAMESPACE + name)
-        self.package_logger.propagate = False
-        self.module_logger = logging.getLogger(name)
-        self.custom_dimensions = {}
-
-    def update_info(self, data: dict) -> None:
-        if "app_insights_handler" in data:
-            self.package_logger.addHandler(data.pop("app_insights_handler"))
-
-
-
 # cspell:ignore overriden
 def get_appinsights_log_handler(
     user_agent,
@@ -90,7 +76,7 @@ def get_appinsights_log_handler(
         if not in_jupyter_notebook() or not enable_telemetry:
             return logging.NullHandler()
 
-        if not user_agent or not user_agent.lower() == USER_AGENT.lower():
+        if not user_agent or ("azure-ai" not in user_agent):
             return logging.NullHandler()
 
         if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):

@@ -12,7 +12,7 @@ from pathlib import Path
 import mlflow
 import pandas as pd
 from azure.core.tracing.decorator import distributed_trace
-from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException

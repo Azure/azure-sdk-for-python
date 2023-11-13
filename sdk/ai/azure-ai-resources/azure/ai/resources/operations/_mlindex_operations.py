@@ -15,9 +15,9 @@ from azure.ai.ml.entities import AccountKeyConfiguration, Data
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 
 from azure.ai.resources.entities.mlindex import Index as MLIndex
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
+ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 

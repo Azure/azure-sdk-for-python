@@ -39,10 +39,10 @@ from azure.ai.resources.operations._ingest_data_to_index import ingest_data_to_i
 
 module_logger = logging.getLogger(__name__)
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, get_appinsights_log_handler, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, get_appinsights_log_handler, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
-logger = ops_logger.package_logger
+activity_logger = ActivityLogger(__name__)
+logger = activity_logger.package_logger
 
 @experimental
 class AIClient:

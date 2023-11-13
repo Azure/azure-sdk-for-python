@@ -45,16 +45,20 @@ test_subscriptions = [
 config_integration.trace_integrations(["logging"])
 
 
-class OpsLogger:
+class ActivityLogger:
     def __init__(self, name: str):
         self.package_logger: logging.Logger = logging.getLogger(GEN_AI_INTERNAL_LOGGER_NAMESPACE + name)
         self.package_logger.propagate = False
         self.module_logger = logging.getLogger(name)
         self.custom_dimensions = {}
 
-    def update_info(self, data: dict) -> None:
-        if "app_insights_handler" in data:
-            self.package_logger.addHandler(data.pop("app_insights_handler"))
+    def update_info(self, data: dict = None) -> None:
+        if data and "app_insights_handler" in data:
+                handler = data.pop("app_insights_handler")
+        else:
+            handler = get_appinsights_log_handler(USER_AGENT)
+        self.package_logger.addHandler(handler)
+
 
 
 
