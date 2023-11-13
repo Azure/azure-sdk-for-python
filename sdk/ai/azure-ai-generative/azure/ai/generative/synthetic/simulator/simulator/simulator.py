@@ -132,19 +132,22 @@ class Simulator:
         citations = []
         for c_key in context_keys:
             if isinstance(parameters[c_key], dict):
-                callback_citations = []
-                if "callback_citations" in parameters[c_key]:
-                    callback_citations = self._get_callback_citations(parameters[c_key], turn_num)
+                if "callback_citation_key" in parameters[c_key]:
+                    callback_citation_key = parameters[c_key]["callback_citation_key"]
+                    callback_citations = self._get_callback_citations(parameters[c_key][callback_citation_key], turn_num)
+                else:
+                    callback_citations = []
                 if callback_citations:
                     citations.extend(callback_citations)
                 else:
                     for k, v in parameters[c_key].items():
-                        citations.append(
-                            {
-                                "id": k,
-                                "content": self._to_citation_content(v)
-                            }
-                        )
+                        if k not in ["callback_citations", "callback_citation_key"]:
+                            citations.append(
+                                {
+                                    "id": k,
+                                    "content": self._to_citation_content(v)
+                                }
+                            )
             else:
                 citations.append(
                     {
@@ -156,13 +159,13 @@ class Simulator:
         return {
             "citations": citations
         }
-                    
+
     def _to_citation_content(self, obj):
         if isinstance(obj, str):
             return obj
         else:
             return json.dumps(obj)
-    
+
     def _get_callback_citations(self, callback_citations: dict, turn_num: int = None):
         if not turn_num:
             return []
