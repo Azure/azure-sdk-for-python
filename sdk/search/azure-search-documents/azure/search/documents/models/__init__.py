@@ -23,6 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+
 from .._generated.models import (
     AutocompleteMode,
     IndexAction,
@@ -31,6 +32,9 @@ from .._generated.models import (
     QueryAnswerType,
     QueryCaptionResult,
     QueryCaptionType,
+    QueryDebugMode,
+    QueryLanguage,
+    QuerySpellerType,
     QueryType,
     ScoringStatistics,
     SearchMode,
@@ -39,6 +43,7 @@ from .._generated.models import (
     SemanticSearchResultsType,
     VectorFilterMode,
     VectorizedQuery,
+    VectorizableTextQuery,
     VectorQuery,
 )
 
@@ -51,6 +56,9 @@ __all__ = (
     "QueryAnswerType",
     "QueryCaptionResult",
     "QueryCaptionType",
+    "QueryDebugMode",
+    "QueryLanguage",
+    "QuerySpellerType",
     "QueryType",
     "ScoringStatistics",
     "SearchMode",
@@ -59,5 +67,6 @@ __all__ = (
     "SemanticSearchResultsType",
     "VectorFilterMode",
     "VectorizedQuery",
+    "VectorizableTextQuery",
     "VectorQuery",
 )
