@@ -25,9 +25,9 @@ class TestMgmtPaloaltonetworksngfw(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_paloaltonetworksngfw(self, resource_group):
 
-        assert list(self.mgmt_client.operations.list()) == []
+        assert list(self.mgmt_client.local_rulestacks.list_by_resource_group(resource_group.name)) == []
 
-        assert list(self.mgmt_client.local_rulestacks.list_by_subscription()) == []
+        assert list(self.mgmt_client.operations.list())
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
