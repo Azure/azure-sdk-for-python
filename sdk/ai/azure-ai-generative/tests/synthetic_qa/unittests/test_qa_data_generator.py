@@ -90,7 +90,7 @@ class TestQADataGenerator:
         model_config = dict(api_base=API_BASE, api_key=API_KEY, deployment=DEPLOYMENT, model=MODEL)
         qa_generator = QADataGenerator(model_config)
         qas = list(zip(questions, answers))
-        qa_generator.export_to_file("test.jsonl", qa_type, qas, structure)
+        qa_generator.export_to_file(f"test_{qa_type}_{structure}.jsonl", qa_type, qas, structure)
         
         if qa_type == QAType.CONVERSATION and structure == OutputStructure.CHAT_PROTOCOL:
             filename = "generated_qa_chat_conv.jsonl"
@@ -104,9 +104,9 @@ class TestQADataGenerator:
         filepath = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data", filename) 
 
         try:
-            assert filecmp.cmp('test.jsonl', filepath)
+            assert filecmp.cmp(f"test_{qa_type}_{structure}.jsonl", filepath)
         except:
             raise
         finally:
             # clean up file
-            os.remove('test.jsonl')
+            os.remove(f"test_{qa_type}_{structure}.jsonl")
