@@ -664,7 +664,7 @@ function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
       Write-Host "======================================================================`n"
 
       $toxConfigPath = Resolve-Path "$RepoRoot/eng/tox/tox.ini"
-      Invoke-LoggedCommand "tox run -e generate -c `"$toxConfigPath`" --root ." -GroupOutput
+      Invoke-LoggedCommand "tox run -e generate -c `"$toxConfigPath`" --root ."
     }
     catch {
       Write-Host "##[error]Error generating project under directory $directory"
