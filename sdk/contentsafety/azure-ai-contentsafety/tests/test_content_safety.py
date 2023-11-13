@@ -4,13 +4,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os
 import functools
+import os
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-from azure.ai.contentsafety import ContentSafetyClient
-from azure.ai.contentsafety.models import AnalyzeTextOptions, ImageData, AnalyzeImageOptions, TextBlocklist
 from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+
+from azure.ai.contentsafety import ContentSafetyClient, BlocklistClient
+from azure.ai.contentsafety.models import AnalyzeTextOptions, ImageData, AnalyzeImageOptions, TextCategory
 
 ContentSafetyPreparer = functools.partial(
     EnvironmentVariableLoader,
@@ -21,8 +22,12 @@ ContentSafetyPreparer = functools.partial(
 
 
 class TestContentSafety(AzureRecordedTestCase):
-    def create_client(self, endpoint, key):
+    def create_contentsafety_client(self, endpoint, key):
         client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+        return client
+
+    def create_blocklist_client(self, endpoint, key):
+        client = BlocklistClient(endpoint, AzureKeyCredential(key))
         return client
 
 
@@ -30,7 +35,7 @@ class TestContentSafetyCase(TestContentSafety):
     @ContentSafetyPreparer()
     @recorded_by_proxy
     def test_analyze_text(self, content_safety_endpoint, content_safety_key):
-        client = self.create_client(content_safety_endpoint, content_safety_key)
+        client = self.create_contentsafety_client(content_safety_endpoint, content_safety_key)
         assert client is not None
 
         text_path = os.path.abspath(
@@ -41,16 +46,17 @@ class TestContentSafetyCase(TestContentSafety):
         response = client.analyze_text(request)
 
         assert response is not None
-        assert response.hate_result is not None
-        assert response.violence_result is not None
-        assert response.sexual_result is not None
-        assert response.self_harm_result is not None
-        assert response.hate_result.severity > 0
+        assert response.categories_analysis is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE) is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE) is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.SEXUAL) is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.SELF_HARM) is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE).severity > 0
 
     @ContentSafetyPreparer()
     @recorded_by_proxy
     def test_analyze_image(self, content_safety_endpoint, content_safety_key):
-        client = self.create_client(content_safety_endpoint, content_safety_key)
+        client = self.create_contentsafety_client(content_safety_endpoint, content_safety_key)
         assert client is not None
 
         image_path = os.path.abspath(
@@ -60,12 +66,14 @@ class TestContentSafetyCase(TestContentSafety):
             request = AnalyzeImageOptions(image=ImageData(content=file.read()))
         response = client.analyze_image(request)
 
-        assert response.violence_result.severity > 0
+        assert response is not None
+        assert response.categories_analysis is not None
+        assert next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE).severity > 0
 
     @ContentSafetyPreparer()
     @recorded_by_proxy
     def test_create_blocklist(self, content_safety_endpoint, content_safety_key):
-        client = self.create_client(content_safety_endpoint, content_safety_key)
+        client = self.create_blocklist_client(content_safety_endpoint, content_safety_key)
         assert client is not None
 
         name = "TestBlocklist"
