@@ -209,7 +209,9 @@ def get_md5_string(text: Optional[str]) -> str:
     :rtype: str
     """
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
+        if text is not None:
+            return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
+        return ""
     except Exception as ex:
         raise ex
 
@@ -495,14 +497,12 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     from azure.ai.ml.entities._job.pipeline._io import NodeOutput, OutputsAttrDict
     from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
-    _data: Any = None
-
     if isinstance(data, PipelineExpression):
-        _data = data.resolve()
+        data: Union[str, BaseNode] = data.resolve()
     if isinstance(data, (BaseNode, Pipeline)):
         # For the case use a node/pipeline node as the input, we use its only one output as the real input.
         # Here we set node = node.outputs, then the following logic will get the output object.
-        _data = data.outputs
+        data: OutputsAttrDict = data.outputs
     if isinstance(data, OutputsAttrDict):
         # For the case that use the outputs of another component as the input,
         # we use the only one output as the real input,
@@ -514,8 +514,8 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
                 no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
                 target=ErrorTarget.PIPELINE,
             )
-        _data = list(data.values())[0]
-    return _data
+        data: NodeOutput = list(data.values())[0]
+    return data
 
 
 def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]) -> None:
