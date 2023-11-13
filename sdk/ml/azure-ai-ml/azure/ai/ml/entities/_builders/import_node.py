@@ -56,8 +56,8 @@ class Import(BaseNode):
         self,
         *,
         component: Union[str, ImportComponent],
-        inputs: Optional[Dict[str, Any]] = None,
-        outputs: Optional[Dict[str, Output]] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
         **kwargs: Any,
     ) -> None:
         # validate init params are valid type

@@ -105,7 +105,7 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
     @classmethod
     def _resolve_cls_and_type(
         cls, data: Dict, params_override: Optional[List[Dict]] = None
-    ) -> Optional[Tuple]:  # pylint: disable=unused-argument
+    ) -> Tuple:  # pylint: disable=unused-argument
         from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
@@ -116,7 +116,7 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         return JobSchedule, None
 
     @property
-    def create_job(self) -> Optional[Any]:  # pylint: disable=useless-return
+    def create_job(self) -> None:  # pylint: disable=useless-return
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
         # return None here just to be explicit
         return None
@@ -231,7 +231,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         self._create_job = create_job
         self._type = ScheduleType.JOB
 
-    @property
+    @property  # type: ignore
     def create_job(self) -> Union[Job, str]:
         """Return the job associated with the schedule.
 

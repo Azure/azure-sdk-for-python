@@ -55,6 +55,8 @@ class ParameterizedSpark(SparkJobEntryMixin):
         args: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        self.args = None
+
         super().__init__(**kwargs)
         self.code = code
         self.entry = entry
