@@ -30,7 +30,7 @@ from azure.ai.resources._version import VERSION
 USER_AGENT = "{}/{}".format("azure-ai-resources", VERSION)
 
 
-GEN_AI_INTERNAL_LOGGER_NAMESPACE = "azure.ai.resources._telemetry"
+AI_RESOURCES_INTERNAL_LOGGER_NAMESPACE = "azure.ai.resources._telemetry"
 
 test_subscriptions = [
     "b17253fa-f327-42d6-9686-f3e553e24763",
@@ -47,7 +47,7 @@ config_integration.trace_integrations(["logging"])
 
 class ActivityLogger:
     def __init__(self, name: str):
-        self.package_logger: logging.Logger = logging.getLogger(GEN_AI_INTERNAL_LOGGER_NAMESPACE + name)
+        self.package_logger: logging.Logger = logging.getLogger(AI_RESOURCES_INTERNAL_LOGGER_NAMESPACE + name)
         self.package_logger.propagate = False
         self.module_logger = logging.getLogger(name)
         self.custom_dimensions = {}
@@ -58,8 +58,6 @@ class ActivityLogger:
         else:
             handler = get_appinsights_log_handler(USER_AGENT)
         self.package_logger.addHandler(handler)
-
-
 
 
 # cspell:ignore overriden
