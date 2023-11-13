@@ -82,17 +82,6 @@ class SampleTablesQuery(object):
                 for entity_chosen in queried_entities:
                     print(entity_chosen)
 
-                print("Sample for querying entities withtout metadata:")
-                print("Entities with name: marker")
-                parameters = {"name": "marker"}
-                name_filter = "Name eq @name"
-                headers = {"Accept": "application/json;odata=nometadata"}
-                queried_entities = table_client.query_entities(
-                    query_filter=name_filter, select=["Brand", "Color"], parameters=parameters, headers=headers
-                )
-                for entity_chosen in queried_entities:
-                    print(entity_chosen)
-
                 print("Sample for querying entities with multiple params:")
                 print("Entities with name: marker and brand: Crayola")
                 parameters = {"name": "marker", "brand": "Crayola"}

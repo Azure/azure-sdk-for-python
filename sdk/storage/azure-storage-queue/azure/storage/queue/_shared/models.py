@@ -5,8 +5,11 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-instance-attributes
 from enum import Enum
+from typing import Optional
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.configuration import Configuration
+from azure.core.pipeline.policies import UserAgentPolicy
 
 
 def get_enum_value(value):
@@ -269,7 +272,17 @@ class ResourceTypes(object):
         files(e.g. Put Blob, Query Entity, Get Messages, Create File, etc.)
     """
 
-    def __init__(self, service=False, container=False, object=False):  # pylint: disable=redefined-builtin
+    service: bool = False
+    container: bool = False
+    object: bool = False
+    _str: str
+
+    def __init__(
+        self,
+        service: bool = False,
+        container: bool = False,
+        object: bool = False  # pylint: disable=redefined-builtin
+    ) -> None:
         self.service = service
         self.container = container
         self.object = object
@@ -344,9 +357,34 @@ class AccountSasPermissions(object):
         To enable permanent delete on the blob is permitted.
         Valid for Object resource type of Blob only.
     """
-    def __init__(self, read=False, write=False, delete=False,
-                 list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False, delete_previous_version=False, **kwargs):
+
+    read: bool = False
+    write: bool = False
+    delete: bool = False
+    delete_previous_version: bool = False
+    list: bool = False
+    add: bool = False
+    create: bool = False
+    update: bool = False
+    process: bool = False
+    tag: bool = False
+    filter_by_tags: bool = False
+    set_immutability_policy: bool = False
+    permanent_delete: bool = False
+
+    def __init__(
+        self,
+        read: bool = False,
+        write: bool = False,
+        delete: bool = False,
+        list: bool = False,  # pylint: disable=redefined-builtin
+        add: bool = False,
+        create: bool = False,
+        update: bool = False,
+        process: bool = False,
+        delete_previous_version: bool = False,
+        **kwargs
+    ) -> None:
         self.read = read
         self.write = write
         self.delete = delete
@@ -423,7 +461,11 @@ class Services(object):
         Access for the `~azure.storage.fileshare.ShareServiceClient`
     """
 
-    def __init__(self, blob=False, queue=False, fileshare=False):
+    blob: bool = False
+    queue: bool = False
+    fileshare: bool = False
+
+    def __init__(self, blob: bool = False, queue: bool = False, fileshare: bool = False):
         self.blob = blob
         self.queue = queue
         self.fileshare = fileshare
@@ -463,22 +505,23 @@ class UserDelegationKey(object):
 
     The fields are saved as simple strings since the user does not have to interact with this object;
     to generate an identify SAS, the user can simply pass it to the right API.
-
-    :ivar str signed_oid:
-        Object ID of this token.
-    :ivar str signed_tid:
-        Tenant ID of the tenant that issued this token.
-    :ivar str signed_start:
-        The datetime this token becomes valid.
-    :ivar str signed_expiry:
-        The datetime this token expires.
-    :ivar str signed_service:
-        What service this key is valid for.
-    :ivar str signed_version:
-        The version identifier of the REST service that created this token.
-    :ivar str value:
-        The user delegation key.
     """
+
+    signed_oid: Optional[str] = None
+    """Object ID of this token."""
+    signed_tid: Optional[str] = None
+    """Tenant ID of the tenant that issued this token."""
+    signed_start: Optional[str] = None
+    """The datetime this token becomes valid."""
+    signed_expiry: Optional[str] = None
+    """The datetime this token expires."""
+    signed_service: Optional[str] = None
+    """What service this key is valid for."""
+    signed_version: Optional[str] = None
+    """The version identifier of the REST service that created this token."""
+    value: Optional[str] = None
+    """The user delegation key."""
+
     def __init__(self):
         self.signed_oid = None
         self.signed_tid = None
@@ -487,3 +530,52 @@ class UserDelegationKey(object):
         self.signed_service = None
         self.signed_version = None
         self.value = None
+
+
+class StorageConfiguration(Configuration):
+    """
+    Specifies the configurable values used in Azure Storage.
+
+    :param int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
+        uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
+        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+    :param int copy_polling_interval: The interval in seconds for polling copy operations.
+    :param int max_block_size: The maximum chunk size for uploading a block blob in chunks.
+        Defaults to 4*1024*1024, or 4MB.
+    :param int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
+        algorithm when uploading a block blob.
+    :param bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
+    :param int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
+    :param int min_large_chunk_upload_threshold: The max size for a single put operation.
+    :param int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+    :param int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
+        or 4MB.
+    :param int max_range_size: The max range size for file upload.
+
+    """
+
+    max_single_put_size: int
+    copy_polling_interval: int
+    max_block_size: int
+    min_large_block_upload_threshold: int
+    use_byte_buffer: bool
+    max_page_size: int
+    min_large_chunk_upload_threshold: int
+    max_single_get_size: int
+    max_chunk_get_size: int
+    max_range_size: int
+    user_agent_policy: UserAgentPolicy
+
+    def __init__(self, **kwargs):
+        super(StorageConfiguration, self).__init__(**kwargs)
+        self.max_single_put_size = kwargs.pop('max_single_put_size', 64 * 1024 * 1024)
+        self.copy_polling_interval = 15
+        self.max_block_size = kwargs.pop('max_block_size', 4 * 1024 * 1024)
+        self.min_large_block_upload_threshold = kwargs.get('min_large_block_upload_threshold', 4 * 1024 * 1024 + 1)
+        self.use_byte_buffer = kwargs.pop('use_byte_buffer', False)
+        self.max_page_size = kwargs.pop('max_page_size', 4 * 1024 * 1024)
+        self.min_large_chunk_upload_threshold = kwargs.pop('min_large_chunk_upload_threshold', 100 * 1024 * 1024 + 1)
+        self.max_single_get_size = kwargs.pop('max_single_get_size', 32 * 1024 * 1024)
+        self.max_chunk_get_size = kwargs.pop('max_chunk_get_size', 4 * 1024 * 1024)
+        self.max_range_size = kwargs.pop('max_range_size', 4 * 1024 * 1024)
