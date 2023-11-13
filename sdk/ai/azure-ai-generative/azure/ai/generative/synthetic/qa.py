@@ -191,12 +191,12 @@ class QADataGenerator:
 
     def _modify_conversation_questions(self, questions) -> Tuple[List[str], Dict]:
         response = _completion_with_retries(
-            messages=self._get_messages_for_modify_conversation(questions[1:]),
+            messages=self._get_messages_for_modify_conversation(questions),
             **self._chat_completion_params,
         )
         modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
         # Keep proper nouns in first question of conversation
-        modified_questions.insert(0, questions[0])
+        modified_questions[0] = questions[0]
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
         return modified_questions, response["usage"]
 
@@ -283,12 +283,13 @@ class QADataGenerator:
 
     async def _modify_conversation_questions_async(self, questions) -> Tuple[List[str], Dict]:
         response = await _completion_with_retries_async(
-            messages=self._get_messages_for_modify_conversation(questions[1:]),
+            messages=self._get_messages_for_modify_conversation(questions),
             **self._chat_completion_params,
         )
         modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
-        # Keep proper nouns in first question of conversation
-        modified_questions.insert(0, questions[0])
+        # Replace first question with unmodified question to keep subject
+        print(f"Questions before: {questions}")
+        modified_questions[0] = questions[0]
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
         return modified_questions, response["usage"]
 
