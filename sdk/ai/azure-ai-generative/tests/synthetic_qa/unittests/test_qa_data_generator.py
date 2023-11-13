@@ -90,7 +90,9 @@ class TestQADataGenerator:
         model_config = dict(api_base=API_BASE, api_key=API_KEY, deployment=DEPLOYMENT, model=MODEL)
         qa_generator = QADataGenerator(model_config)
         qas = list(zip(questions, answers))
-        qa_generator.export_to_file(f"test_{qa_type}_{structure}.jsonl", qa_type, qas, structure)
+        filepath = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data")
+        output_file = os.path.join(filepath, f"test_{qa_type}_{structure}.jsonl")
+        qa_generator.export_to_file(output_file, qa_type, qas, structure)
         
         if qa_type == QAType.CONVERSATION and structure == OutputStructure.CHAT_PROTOCOL:
             filename = "generated_qa_chat_conv.jsonl"
@@ -101,13 +103,13 @@ class TestQADataGenerator:
         elif qa_type == QAType.SHORT_ANSWER and structure == OutputStructure.PROMPTFLOW:
             filename = "generated_qa_pf_short.jsonl"
 
-        filepath = os.path.join(pathlib.Path(__file__).parent.parent.resolve(), "data", filename) 
+        expected_file = os.path.join(filepath, filename) 
 
         try:
-            with open(filepath, 'r') as json_file:
+            with open(expected_file, 'r') as json_file:
                 expected_lines = list(json_file)
 
-            with open(f"test_{qa_type}_{structure}.jsonl", 'r') as json_file:
+            with open(output_file, 'r') as json_file:
                 actual_lines = list(json_file)
 
             assert len(expected_lines) == len(actual_lines)
@@ -118,4 +120,4 @@ class TestQADataGenerator:
             raise
         finally:
             # clean up file
-            os.remove(f"test_{qa_type}_{structure}.jsonl")
+            os.remove(output_file)
