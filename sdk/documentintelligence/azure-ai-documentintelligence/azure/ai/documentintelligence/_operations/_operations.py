@@ -29,7 +29,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._model_base import AzureJSONEncoder, _deserialize
+from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import DocumentAnalysisClientMixinABC, DocumentModelAdministrationClientMixinABC
 
@@ -474,7 +474,7 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
             _content = analyze_request
         else:
             if analyze_request is not None:
-                _content = json.dumps(analyze_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+                _content = json.dumps(analyze_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
 
@@ -829,7 +829,7 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         if isinstance(classify_request, (IOBase, bytes)):
             _content = classify_request
         else:
-            _content = json.dumps(classify_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(classify_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_analysis_classify_document_request(
             classifier_id=classifier_id,
@@ -1104,7 +1104,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         if isinstance(build_request, (IOBase, bytes)):
             _content = build_request
         else:
-            _content = json.dumps(build_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(build_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_model_administration_build_document_model_request(
             content_type=content_type,
@@ -1315,7 +1315,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         if isinstance(compose_request, (IOBase, bytes)):
             _content = compose_request
         else:
-            _content = json.dumps(compose_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(compose_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_model_administration_compose_model_request(
             content_type=content_type,
@@ -1608,7 +1608,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         if isinstance(authorize_copy_request, (IOBase, bytes)):
             _content = authorize_copy_request
         else:
-            _content = json.dumps(authorize_copy_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(authorize_copy_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_model_administration_authorize_model_copy_request(
             content_type=content_type,
@@ -1668,7 +1668,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         if isinstance(copy_to_request, (IOBase, bytes)):
             _content = copy_to_request
         else:
-            _content = json.dumps(copy_to_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(copy_to_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_model_administration_copy_model_to_request(
             model_id=model_id,
@@ -2053,7 +2053,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2294,7 +2294,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         if isinstance(build_request, (IOBase, bytes)):
             _content = build_request
         else:
-            _content = json.dumps(build_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(build_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_document_model_administration_build_classifier_request(
             content_type=content_type,
@@ -2672,7 +2672,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )

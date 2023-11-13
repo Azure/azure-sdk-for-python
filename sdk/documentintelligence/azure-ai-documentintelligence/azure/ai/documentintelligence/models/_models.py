@@ -163,7 +163,7 @@ class AnalyzeDocumentRequest(_model_base.Model):
 class AnalyzeResult(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Document analysis result.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar api_version: API version used to produce this result. Required.
     :vartype api_version: str
@@ -269,7 +269,7 @@ class AnalyzeResult(_model_base.Model):  # pylint: disable=too-many-instance-att
 class AuthorizeCopyRequest(_model_base.Model):
     """Request body to authorize document model copy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar model_id: Unique document model name. Required.
     :vartype model_id: str
@@ -310,7 +310,7 @@ class AuthorizeCopyRequest(_model_base.Model):
 class AzureBlobContentSource(_model_base.Model):
     """Azure Blob Storage content.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar container_url: Azure Blob Storage container URL. Required.
     :vartype container_url: str
@@ -346,7 +346,7 @@ class AzureBlobContentSource(_model_base.Model):
 class AzureBlobFileListContentSource(_model_base.Model):
     """File list in Azure Blob Storage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar container_url: Azure Blob Storage container URL. Required.
     :vartype container_url: str
@@ -383,7 +383,7 @@ class AzureBlobFileListContentSource(_model_base.Model):
 class BoundingRegion(_model_base.Model):
     """Bounding polygon on a specific page of the input.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar page_number: 1-based page number of page containing the bounding region. Required.
     :vartype page_number: int
@@ -425,7 +425,7 @@ class BoundingRegion(_model_base.Model):
 class BuildDocumentClassifierRequest(_model_base.Model):
     """Request body to build a new custom document classifier.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar classifier_id: Unique document classifier name. Required.
     :vartype classifier_id: str
@@ -467,7 +467,7 @@ class BuildDocumentClassifierRequest(_model_base.Model):
 class BuildDocumentModelRequest(_model_base.Model):
     """Request body to build a new custom document model.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar model_id: Unique document model name. Required.
     :vartype model_id: str
@@ -624,7 +624,7 @@ class ClassifyDocumentRequest(_model_base.Model):
 class ComponentDocumentModelDetails(_model_base.Model):
     """A component of a composed document model.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar model_id: Unique document model name. Required.
     :vartype model_id: str
@@ -655,7 +655,7 @@ class ComponentDocumentModelDetails(_model_base.Model):
 class ComposeDocumentModelRequest(_model_base.Model):
     """Request body to create a composed document model from component document models.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar model_id: Unique document model name. Required.
     :vartype model_id: str
@@ -703,7 +703,7 @@ class CopyAuthorization(_model_base.Model):
     """Authorization to copy a document model to the specified target resource and
     modelId.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_resource_id: ID of the target Azure resource where the document model should be
      copied to. Required.
@@ -763,7 +763,7 @@ class CopyAuthorization(_model_base.Model):
 class CurrencyValue(_model_base.Model):
     """Currency field value.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar amount: Currency amount. Required.
     :vartype amount: float
@@ -804,7 +804,7 @@ class CurrencyValue(_model_base.Model):
 class CustomDocumentModelsDetails(_model_base.Model):
     """Details regarding custom document models.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar count: Number of custom document models in the current resource. Required.
     :vartype count: int
@@ -841,7 +841,7 @@ class CustomDocumentModelsDetails(_model_base.Model):
 class Document(_model_base.Model):
     """An object describing the location and semantic content of a document.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar doc_type: Document type. Required.
     :vartype doc_type: str
@@ -892,7 +892,7 @@ class Document(_model_base.Model):
 class DocumentBarcode(_model_base.Model):
     """A barcode object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Barcode kind. Required. Known values are: "QRCode", "PDF417", "UPCA", "UPCE",
      "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
@@ -953,7 +953,7 @@ class DocumentBarcode(_model_base.Model):
 class DocumentCaption(_model_base.Model):
     """A caption object describing a table or figure.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content: Content of the caption. Required.
     :vartype content: str
@@ -1003,7 +1003,7 @@ class OperationDetails(_model_base.Model):
     DocumentClassifierBuildOperationDetails, DocumentModelBuildOperationDetails,
     DocumentModelComposeOperationDetails, DocumentModelCopyToOperationDetails
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
@@ -1085,7 +1085,7 @@ class DocumentClassifierBuildOperationDetails(
 ):  # pylint: disable=too-many-instance-attributes
     """Get Operation response object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
@@ -1149,7 +1149,7 @@ class DocumentClassifierBuildOperationDetails(
 class DocumentClassifierDetails(_model_base.Model):
     """Document classifier info.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar classifier_id: Unique document classifier name. Required.
     :vartype classifier_id: str
@@ -1207,7 +1207,7 @@ class DocumentClassifierDetails(_model_base.Model):
 class DocumentField(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """An object representing the content and location of a field value.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Data type of the field value. Required. Known values are: "string", "date", "time",
      "phoneNumber", "number", "integer", "selectionMark", "countryRegion", "signature", "array",
@@ -1336,7 +1336,7 @@ class DocumentField(_model_base.Model):  # pylint: disable=too-many-instance-att
 class DocumentFieldSchema(_model_base.Model):
     """Description of the field semantic schema using a JSON Schema style syntax.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "phoneNumber", "number", "integer", "selectionMark", "countryRegion",
@@ -1391,7 +1391,7 @@ class DocumentFieldSchema(_model_base.Model):
 class DocumentFigure(_model_base.Model):
     """An object representing a figure in the document.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar bounding_regions: Bounding regions covering the figure.
     :vartype bounding_regions: list[~azure.ai.documentintelligence.models.BoundingRegion]
@@ -1442,7 +1442,7 @@ class DocumentFigure(_model_base.Model):
 class DocumentFootnote(_model_base.Model):
     """A footnote object describing a table or figure.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content: Content of the footnote. Required.
     :vartype content: str
@@ -1488,7 +1488,7 @@ class DocumentFootnote(_model_base.Model):
 class DocumentFormula(_model_base.Model):
     """A formula object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Formula kind. Required. Known values are: "inline" and "display".
     :vartype kind: str or ~azure.ai.documentintelligence.models.DocumentFormulaKind
@@ -1545,7 +1545,7 @@ class DocumentFormula(_model_base.Model):
 class DocumentKeyValueElement(_model_base.Model):
     """An object representing the field key or value in a key-value pair.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content: Concatenated content of the key-value element in reading order. Required.
     :vartype content: str
@@ -1588,7 +1588,7 @@ class DocumentKeyValuePair(_model_base.Model):
     """An object representing a form field with distinct field label (key) and field
     value (may be empty).
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: Field label of the key-value pair. Required.
     :vartype key: ~azure.ai.documentintelligence.models.DocumentKeyValueElement
@@ -1629,7 +1629,7 @@ class DocumentKeyValuePair(_model_base.Model):
 class DocumentLanguage(_model_base.Model):
     """An object representing the detected language for a given text span.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar locale: Detected language.  Value may an ISO 639-1 language code (ex. "en", "fr")
      or BCP 47 language tag (ex. "zh-Hans"). Required.
@@ -1675,7 +1675,7 @@ class DocumentLine(_model_base.Model):
     """A content line object consisting of an adjacent sequence of content elements,
     such as words and selection marks.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content: Concatenated content of the contained elements in reading order. Required.
     :vartype content: str
@@ -1722,7 +1722,7 @@ class DocumentLine(_model_base.Model):
 class DocumentList(_model_base.Model):
     """An object representing a list in the document.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar spans: Location of the list in the reading order concatenated content. Required.
     :vartype spans: list[~azure.ai.documentintelligence.models.DocumentSpan]
@@ -1758,7 +1758,7 @@ class DocumentList(_model_base.Model):
 class DocumentListItem(_model_base.Model):
     """An object representing a list item in the document.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar level: Level of the list item (1-indexed). Required.
     :vartype level: int
@@ -1811,7 +1811,7 @@ class DocumentModelBuildOperationDetails(
 ):  # pylint: disable=too-many-instance-attributes
     """Get Operation response object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
@@ -1877,7 +1877,7 @@ class DocumentModelComposeOperationDetails(
 ):  # pylint: disable=too-many-instance-attributes
     """Get Operation response object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
@@ -1944,7 +1944,7 @@ class DocumentModelCopyToOperationDetails(
 ):  # pylint: disable=too-many-instance-attributes
     """Get Operation response object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar operation_id: Operation ID. Required.
     :vartype operation_id: str
@@ -2012,7 +2012,7 @@ class DocumentModelCopyToOperationDetails(
 class DocumentModelDetails(_model_base.Model):
     """Document model info.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar model_id: Unique document model name. Required.
     :vartype model_id: str
@@ -2096,7 +2096,7 @@ class DocumentModelDetails(_model_base.Model):
 class DocumentPage(_model_base.Model):  # pylint: disable=too-many-instance-attributes
     """Content and layout elements extracted from a page from the input.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar page_number: 1-based page number in the input document. Required.
     :vartype page_number: int
@@ -2184,7 +2184,7 @@ class DocumentParagraph(_model_base.Model):
     """A paragraph object consisting with contiguous lines generally with common
     alignment and spacing.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar role: Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
      "pageNumber", "title", "sectionHeading", "footnote", and "formulaBlock".
@@ -2232,7 +2232,7 @@ class DocumentParagraph(_model_base.Model):
 class DocumentSection(_model_base.Model):
     """An object representing a section in the document.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar spans: Location of the section in the reading order concatenated content. Required.
     :vartype spans: list[~azure.ai.documentintelligence.models.DocumentSpan]
@@ -2269,7 +2269,7 @@ class DocumentSelectionMark(_model_base.Model):
     """A selection mark object representing check boxes, radio buttons, and other
     elements indicating a selection.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar state: State of the selection mark. Required. Known values are: "selected" and
      "unselected".
@@ -2323,7 +2323,7 @@ class DocumentSpan(_model_base.Model):
     """Contiguous region of the concatenated content property, specified as an offset
     and length.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar offset: Zero-based index of the content represented by the span. Required.
     :vartype offset: int
@@ -2359,7 +2359,7 @@ class DocumentSpan(_model_base.Model):
 class DocumentStyle(_model_base.Model):
     """An object representing observed text styles.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar is_handwritten: Is content handwritten?.
     :vartype is_handwritten: bool
@@ -2429,7 +2429,7 @@ class DocumentStyle(_model_base.Model):
 class DocumentTable(_model_base.Model):
     """A table object consisting table cells arranged in a rectangular layout.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar row_count: Number of rows in the table. Required.
     :vartype row_count: int
@@ -2490,7 +2490,7 @@ class DocumentTable(_model_base.Model):
 class DocumentTableCell(_model_base.Model):
     """An object representing the location and content of a table cell.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Table cell kind. Known values are: "content", "rowHeader", "columnHeader",
      "stubHead", and "description".
@@ -2563,7 +2563,7 @@ class DocumentTableCell(_model_base.Model):
 class DocumentTypeDetails(_model_base.Model):
     """Document type info.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar description: Document model description.
     :vartype description: str
@@ -2612,7 +2612,7 @@ class DocumentWord(_model_base.Model):
     delimited languages, such as Chinese, Japanese, and Korean, each character is
     represented as its own word.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar content: Text content of the word. Required.
     :vartype content: str
@@ -2664,7 +2664,7 @@ class DocumentWord(_model_base.Model):
 class Error(_model_base.Model):
     """The error object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: One of a server-defined set of error codes. Required.
     :vartype code: str
@@ -2716,7 +2716,7 @@ class Error(_model_base.Model):
 class ErrorResponse(_model_base.Model):
     """Error response object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error: Error info. Required.
     :vartype error: ~azure.ai.documentintelligence.models.Error
@@ -2786,7 +2786,7 @@ class InnerError(_model_base.Model):
 class QuotaDetails(_model_base.Model):
     """Quota used, limit, and next reset date/time.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar used: Amount of the resource quota used. Required.
     :vartype used: int
@@ -2827,7 +2827,7 @@ class QuotaDetails(_model_base.Model):
 class ResourceDetails(_model_base.Model):
     """General information regarding the current resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar custom_document_models: Details regarding custom document models. Required.
     :vartype custom_document_models:
