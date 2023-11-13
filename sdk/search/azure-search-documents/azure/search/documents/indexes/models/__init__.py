@@ -443,7 +443,6 @@ __all__ = (
     "VectorSearchAlgorithmKind",
     "VectorSearchAlgorithmMetric",
     "VectorSearchProfile",
-    "VectorSearch",
     "VectorSearchVectorizer",
     "VectorSearchVectorizerKind",
     "VisualFeature",
