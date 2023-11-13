@@ -169,7 +169,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             instance_count=self.instance_count,
             instance_type=self.instance_type,
             max_instance_count=self.max_instance_count,
-            properties=self.properties.as_dict() if self.properties is not None else None,
+            properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
             docker_args=self.docker_args,
             shm_size=self.shm_size,
         )
