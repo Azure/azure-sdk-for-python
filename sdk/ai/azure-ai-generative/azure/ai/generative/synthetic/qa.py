@@ -228,7 +228,7 @@ class QADataGenerator:
             for qs_and_as in results:
                 chat_history = []
                 for question, answer in qs_and_as: 
-                    data_dict[chat_history_key].append(json.dumps(chat_history))
+                    data_dict[chat_history_key].append(list(chat_history))
                     if qa_type == QAType.CONVERSATION:
                         # Chat History columns:
                         data_dict[question_key].append(question)
