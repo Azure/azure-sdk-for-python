@@ -38,7 +38,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_metrics_batch_request(
+def build_metrics_batch_batch_request(
     subscription_id: str,
     *,
     metricnamespace: str,
@@ -94,14 +94,14 @@ def build_metrics_batch_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class MetricsOperations:
+class MetricsBatchOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~monitor_batch_metrics_client.MonitorBatchMetricsClient`'s
-        :attr:`metrics` attribute.
+        :attr:`metrics_batch` attribute.
     """
 
     def __init__(self, *args, **kwargs):
@@ -199,9 +199,7 @@ class MetricsOperations:
                               for which the data was retrieved. Required.
                             "value": [
                                 {
-                                    "displayDescription": "str",  # Description
-                                      of this metric. Required.
-                                    "id": "str",  # The metric Id. Required.
+                                    "id": "str",  # the metric Id. Required.
                                     "name": {
                                         "value": "str",  # The invariant
                                           value. Required.
@@ -247,13 +245,15 @@ class MetricsOperations:
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # The resource type of the
+                                    "type": "str",  # the resource type of the
                                       metric resource. Required.
                                     "unit": "str",  # The unit of the metric.
                                       Required. Known values are: "Count", "Bytes", "Seconds",
                                       "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds",
                                       "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
                                       and "BitsPerSecond".
+                                    "displayDescription": "str",  # Optional.
+                                      Detailed description of this metric.
                                     "errorCode": "str",  # Optional. 'Success' or
                                       the error details on query failures for this metric.
                                     "errorMessage": "str"  # Optional. Error
@@ -357,9 +357,7 @@ class MetricsOperations:
                               for which the data was retrieved. Required.
                             "value": [
                                 {
-                                    "displayDescription": "str",  # Description
-                                      of this metric. Required.
-                                    "id": "str",  # The metric Id. Required.
+                                    "id": "str",  # the metric Id. Required.
                                     "name": {
                                         "value": "str",  # The invariant
                                           value. Required.
@@ -405,13 +403,15 @@ class MetricsOperations:
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # The resource type of the
+                                    "type": "str",  # the resource type of the
                                       metric resource. Required.
                                     "unit": "str",  # The unit of the metric.
                                       Required. Known values are: "Count", "Bytes", "Seconds",
                                       "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds",
                                       "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
                                       and "BitsPerSecond".
+                                    "displayDescription": "str",  # Optional.
+                                      Detailed description of this metric.
                                     "errorCode": "str",  # Optional. 'Success' or
                                       the error details on query failures for this metric.
                                     "errorMessage": "str"  # Optional. Error
@@ -522,9 +522,7 @@ class MetricsOperations:
                               for which the data was retrieved. Required.
                             "value": [
                                 {
-                                    "displayDescription": "str",  # Description
-                                      of this metric. Required.
-                                    "id": "str",  # The metric Id. Required.
+                                    "id": "str",  # the metric Id. Required.
                                     "name": {
                                         "value": "str",  # The invariant
                                           value. Required.
@@ -570,13 +568,15 @@ class MetricsOperations:
                                             ]
                                         }
                                     ],
-                                    "type": "str",  # The resource type of the
+                                    "type": "str",  # the resource type of the
                                       metric resource. Required.
                                     "unit": "str",  # The unit of the metric.
                                       Required. Known values are: "Count", "Bytes", "Seconds",
                                       "CountPerSecond", "BytesPerSecond", "Percent", "MilliSeconds",
                                       "ByteSeconds", "Unspecified", "Cores", "MilliCores", "NanoCores",
                                       and "BitsPerSecond".
+                                    "displayDescription": "str",  # Optional.
+                                      Detailed description of this metric.
                                     "errorCode": "str",  # Optional. 'Success' or
                                       the error details on query failures for this metric.
                                     "errorMessage": "str"  # Optional. Error
@@ -620,7 +620,7 @@ class MetricsOperations:
         else:
             _json = resource_ids
 
-        request = build_metrics_batch_request(
+        _request = build_metrics_batch_batch_request(
             subscription_id=subscription_id,
             metricnamespace=metricnamespace,
             metricnames=metricnames,
@@ -641,11 +641,11 @@ class MetricsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -662,6 +662,6 @@ class MetricsOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
