@@ -11,10 +11,6 @@
 - Workspace Hubs now properly create various endpoints, and surface a variable to select the resource they connect to via the
   'endpoint_resource_id' kwarg.
 
-### Breaking Changes
-
-### Other Changes
-
 ## 1.11.1 (2023-10-13)
 
 ### Bugs Fixed
