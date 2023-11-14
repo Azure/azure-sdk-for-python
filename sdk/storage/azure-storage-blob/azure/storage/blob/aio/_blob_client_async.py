@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
+from urllib.parse import urlparse, quote, unquote
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -151,6 +152,23 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
+
+    def _format_url(self, hostname):
+        container_name = self.container_name
+        if isinstance(container_name, str):
+            container_name = container_name.encode('UTF-8')
+        return f"{self.scheme}://{hostname}/{quote(container_name)}/{quote(self.blob_name, safe='~/')}{self._query_str}"
+    
+    def _encode_source_url(self, source_url):
+        parsed_source_url = urlparse(source_url)
+        source_scheme = parsed_source_url.scheme
+        source_hostname = parsed_source_url.netloc.rstrip('/')
+        source_path = unquote(parsed_source_url.path)
+        source_query = parsed_source_url.query
+        result = [f"{source_scheme}://{source_hostname}{quote(source_path, safe='~/')}"]
+        if source_query:
+            result.append(source_query)
+        return '?'.join(result)
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
