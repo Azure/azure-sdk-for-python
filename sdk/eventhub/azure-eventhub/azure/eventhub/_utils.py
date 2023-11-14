@@ -219,7 +219,7 @@ def get_last_enqueued_event_properties(event_data: EventData) -> Optional[Dict[s
     return None
 
 
-def parse_sas_credential(credential: AzureSasCredential) -> Tuple[str, int]:
+def parse_sas_credential(credential: AzureSasCredential) -> Tuple[str, Optional[int]]:
     sas = credential.signature
     parsed_sas = sas.split("&")
     expiry = None
