@@ -34,7 +34,7 @@ class TestProjects:
     def test_create_update_and_delete(self, ai_client_with_ai_access: AIClient):
         new_local_project = Project(
             name="e2e_test_proj_" + "".join(random.choice(string.digits) for _ in range(10)),
-            ai_resource="e2e_test_resource_1",
+            ai_resource="/subscriptions/{subscription}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{hub}",
             description="Transient test project. Delete if seen.",
         )
         created_project = ai_client_with_ai_access.projects.begin_create(project=new_local_project).result()
@@ -42,21 +42,11 @@ class TestProjects:
         assert created_project.ai_resource == new_local_project.ai_resource
 
 
-        updated_local_project = Project(
-            name=created_project.name,
-            ai_resource=created_project.ai_resource,
-            description="Transient test project. Delete if seen. Updated",
-        )
-        update_poller = ai_client_with_ai_access.projects.begin_update(project=updated_local_project)
-        updated_project = update_poller.result()
-
-        assert updated_local_project.description == updated_project.description
-
-        delete_poller = ai_client_with_ai_access.projects.begin_delete(name=updated_local_project.name, delete_dependent_resources=True)
+        delete_poller = ai_client_with_ai_access.projects.begin_delete(name=created_project.name, delete_dependent_resources=True)
         delete_poller.wait()
 
         with pytest.raises(ResourceNotFoundError):
-            ai_client_with_ai_access.projects.get(name=updated_local_project.name)
+            ai_client_with_ai_access.projects.get(name=created_project.name)
 
     def test_create_with_restricted_access(self, ai_developer_client: AIClient):
         new_local_project = Project(

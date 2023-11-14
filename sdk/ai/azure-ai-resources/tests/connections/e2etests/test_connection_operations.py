@@ -33,16 +33,14 @@ class TestConnections:
     def test_aoai_create_and_delete(self, ai_client_with_ai_access: AIClient):
         # randomize name to avoid stale key name collisions since
         # soft-delete doesn't seem to be fast enough to avoid recycling problems.
-        name = "e2etestConnection" + "".join(random.choice(string.digits) for _ in range(10))
-        conn_type = "azure_open_ai"
+        name = "e2eTestAOAIConn" + "".join(random.choice(string.digits) for _ in range(10))
         cred = ApiKeyConfiguration(key="1234567")
         target = "test-target"
 
         # create empty conn to test setters
-        local_conn = AzureOpenAIConnection(name="overwrite", type="overwrite", credentials=None, target="overwrite")
+        local_conn = AzureOpenAIConnection(name="overwrite", credentials=None, target="overwrite")
 
         local_conn.name = name
-        local_conn.type = conn_type
         local_conn.credentials = cred
         local_conn.target = target
 
@@ -57,4 +55,59 @@ class TestConnections:
         ai_client_with_ai_access.connections.delete(name)
         with pytest.raises(ResourceNotFoundError):
             ai_client_with_ai_access.connections.get(name)
-        import pdb; pdb.set_trace()
+
+    def test_search_create_and_delete(self, ai_client_with_ai_access: AIClient):
+        # randomize name to avoid stale key name collisions since
+        # soft-delete doesn't seem to be fast enough to avoid recycling problems.
+        name = "e2eTestSearchConn" + "".join(random.choice(string.digits) for _ in range(10))
+        conn_type = "azure_open_ai"
+        cred = ApiKeyConfiguration(key="1234567")
+        target = "test-target"
+
+        # create empty conn to test setters
+        local_conn = AzureAISearchConnection(name="overwrite", credentials=None, target="overwrite")
+
+        local_conn.name = name
+        local_conn.credentials = cred
+        local_conn.target = target
+
+        first_created_conn = ai_client_with_ai_access.connections.create_or_update(local_conn)
+
+        assert first_created_conn.name == name
+        assert first_created_conn.type == "cognitive_search"
+        assert first_created_conn.target == "test-target"
+        assert first_created_conn.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
+
+        ai_client_with_ai_access.connections.get(name)
+        ai_client_with_ai_access.connections.delete(name)
+        with pytest.raises(ResourceNotFoundError):
+            ai_client_with_ai_access.connections.get(name)
+
+    def test_service_create_and_delete(self, ai_client_with_ai_access: AIClient):
+        # randomize name to avoid stale key name collisions since
+        # soft-delete doesn't seem to be fast enough to avoid recycling problems.
+        name = "e2eTestServiceConn" + "".join(random.choice(string.digits) for _ in range(10))
+        cred = ApiKeyConfiguration(key="1234567")
+        target = "test-target"
+        kind = "ContentSafety"
+
+        # create empty conn to test setters
+        local_conn = AzureAIServiceConnection(name="overwrite", credentials=None, target="overwrite", kind="wrong")
+
+        local_conn.name = name
+        local_conn.credentials = cred
+        local_conn.target = target
+        local_conn.kind = kind
+
+        first_created_conn = ai_client_with_ai_access.connections.create_or_update(local_conn)
+
+        assert first_created_conn.name == name
+        assert first_created_conn.type == "cognitive_service"
+        assert first_created_conn.target == "test-target"
+        assert first_created_conn.kind == kind
+        assert first_created_conn.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
+
+        ai_client_with_ai_access.connections.get(name)
+        ai_client_with_ai_access.connections.delete(name)
+        with pytest.raises(ResourceNotFoundError):
+            ai_client_with_ai_access.connections.get(name)
