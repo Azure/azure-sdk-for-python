@@ -498,11 +498,13 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
     if isinstance(data, PipelineExpression):
-        data: Union[str, BaseNode] = data.resolve()
+        new_data: Union[str, BaseNode] = data.resolve()
+        return new_data
     if isinstance(data, (BaseNode, Pipeline)):
         # For the case use a node/pipeline node as the input, we use its only one output as the real input.
         # Here we set node = node.outputs, then the following logic will get the output object.
-        data: OutputsAttrDict = data.outputs
+        new_data: OutputsAttrDict = data.outputs
+        return new_data
     if isinstance(data, OutputsAttrDict):
         # For the case that use the outputs of another component as the input,
         # we use the only one output as the real input,
@@ -514,7 +516,8 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
                 no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
                 target=ErrorTarget.PIPELINE,
             )
-        data: NodeOutput = list(data.values())[0]
+        new_data: NodeOutput = list(data.values())[0]
+        return new_data
     return data
 
 
