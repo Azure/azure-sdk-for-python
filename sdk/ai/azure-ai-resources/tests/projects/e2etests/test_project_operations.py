@@ -9,14 +9,13 @@ from azure.core.exceptions import ResourceNotFoundError
 
 # Makes the following setup assumptions:
 # 2 projects already exist in the conftest's ai_client:
-# e2e_test_project_1 and e2e_test_project_2.
+# e2e_test_proj_1 and e2e_test_proj_2.
 # The former is the client's default project.
 
 @pytest.mark.e2etest
 class TestProjects:
-
     def test_project_get_and_list(self, ai_client_with_ai_access: AIClient):
-        expected_projects = ["e2e_test_project_1", "e2e_test_project_2"]
+        expected_projects = ["e2e_test_proj_1", "e2e_test_proj_2"]
         projects = ai_client_with_ai_access.projects.list()
         assert len(projects) >= len(expected_projects)
 
@@ -38,7 +37,7 @@ class TestProjects:
             ai_resource="e2e_test_resource_1",
             description="Transient test project. Delete if seen.",
         )
-        created_project = ai_client_with_ai_access.result()
+        created_project = ai_client_with_ai_access.projects.begin_create(project=new_local_project).result()
         assert created_project.name == new_local_project.name
         assert created_project.ai_resource == new_local_project.ai_resource
 
@@ -60,15 +59,14 @@ class TestProjects:
             ai_client_with_ai_access.projects.get(name=updated_local_project.name)
 
     def test_create_with_restricted_access(self, ai_developer_client: AIClient):
-        new_local_resource = Project(
+        new_local_project = Project(
             name="e2e_test_perm_proj_" + "".join(random.choice(string.digits) for _ in range(10)),
             description="Transient test object. Delete if seen.",
             resource_group=ai_developer_client.resource_group_name,
             ai_resource=ai_developer_client.ai_resource_name
         )
-        created_poller = ai_developer_client.projects.begin_create(ai_resource=new_local_resource)
-        created_resource = created_poller.result()
-        assert new_local_resource.name == created_resource.name
-        assert new_local_resource.description == created_resource.description
+        created_project = ai_developer_client.projects.begin_create(project=new_local_project).result()
+        assert new_local_project.name == created_project.name
+        assert new_local_project.description == created_project.description
 
         # Delete is not supported by this role, need to delete this outside the test via a cleaning script.
