@@ -11,7 +11,7 @@ import os.path
 import typing
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union, cast
 
 import pydash
 import strictyaml
@@ -219,7 +219,7 @@ class MutableValidationResult(ValidationResult):
 
     def try_raise(
         self,
-        raise_error: bool = True,
+        raise_error: Optional[bool] = True,
         *,
         error_func: Optional[typing.Callable[[str, str], Exception]] = None,
     ) -> "MutableValidationResult":
@@ -389,7 +389,7 @@ class ValidationResultBuilder:
             error.messages, data=error.data, error_on_unknown_field=error_on_unknown_field
         )
         if source_path:
-            obj.resolve_location_for_diagnostics(source_path, resolve_value=True)
+            obj.resolve_location_for_diagnostics(cast(str, source_path), resolve_value=True)
         return obj
 
     @classmethod

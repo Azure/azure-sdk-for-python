@@ -48,7 +48,7 @@ class ServiceInstance(RestTranslatableMixin, DictMixin):
 
     @classmethod
     # pylint: disable=arguments-differ
-    def _from_rest_object(cls, obj: ServiceInstanceResult, node_index: int) -> "ServiceInstance":
+    def _from_rest_object(cls, obj: ServiceInstanceResult, node_index: int) -> "ServiceInstance":  # type: ignore
         return cls(
             type=obj.type,
             port=obj.port,
