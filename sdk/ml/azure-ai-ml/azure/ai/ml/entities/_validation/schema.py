@@ -104,7 +104,7 @@ class SchemaValidatableMixin:
 
     @classmethod
     def _try_raise(
-        cls, validation_result: MutableValidationResult, *, raise_error: bool = True
+        cls, validation_result: MutableValidationResult, *, raise_error: typing.Optional[bool] = True
     ) -> MutableValidationResult:
         return validation_result.try_raise(raise_error=raise_error, error_func=cls._create_validation_error)
 
