@@ -152,8 +152,7 @@ def set_event_partition_key(
         raw_message.header.durable = True
 
 
-def event_position_selector(value, inclusive=False):
-    # type: (Union[int, str, datetime.datetime], bool) -> bytes
+def event_position_selector(value: Union[str, int, datetime.datetime], inclusive: bool=False) -> bytes:
     """Creates a selector expression of the offset.
 
     :param int or str or datetime.datetime value: The offset value to use for the offset.
@@ -178,8 +177,7 @@ def event_position_selector(value, inclusive=False):
     )
 
 
-def get_last_enqueued_event_properties(event_data):
-    # type: (EventData) -> Optional[Dict[str, Any]]
+def get_last_enqueued_event_properties(event_data: EventData) -> Optional[Dict[str, Any]]:
     """Extracts the last enqueued event in from the received event delivery annotations.
 
     :param ~azure.eventhub.EventData event_data: The received Event Data.
@@ -221,8 +219,7 @@ def get_last_enqueued_event_properties(event_data):
     return None
 
 
-def parse_sas_credential(credential):
-    # type: (AzureSasCredential) -> Tuple
+def parse_sas_credential(credential: AzureSasCredential) -> Tuple[str, int]:
     sas = credential.signature
     parsed_sas = sas.split("&")
     expiry = None
@@ -232,8 +229,7 @@ def parse_sas_credential(credential):
     return (sas, expiry)
 
 
-def transform_outbound_single_message(message, message_type, to_outgoing_amqp_message):
-    # type: (Union[AmqpAnnotatedMessage, EventData], Type[EventData], Callable) -> EventData
+def transform_outbound_single_message(message: Union[AmqpAnnotatedMessage, EventData], message_type: Type[EventData], to_outgoing_amqp_message: Callable) -> EventData:
     """
     This method serves multiple goals:
     1. update the internal message to reflect any updates to settable properties on EventData
@@ -264,8 +260,7 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
         )
 
 
-def decode_with_recurse(data, encoding="UTF-8"):
-    # type: (Any, str) -> Any
+def decode_with_recurse(data: Any, encoding: str="UTF-8") -> Any:
     # pylint:disable=isinstance-second-argument-not-valid-type
     """
     If data is of a compatible type, iterates through nested structure and decodes all binary

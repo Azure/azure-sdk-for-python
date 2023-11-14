@@ -63,16 +63,15 @@ _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
 
-def _parse_conn_str(conn_str, **kwargs):
-    # type: (str, Any) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
+def _parse_conn_str(conn_str: str, **kwargs: Dict[str, Any]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
-    entity_path = None  # type: Optional[str]
-    shared_access_signature = None  # type: Optional[str]
+    entity_path: Optional[str] = None
+    shared_access_signature: Optional[str] = None
     shared_access_signature_expiry = None
-    eventhub_name = kwargs.pop("eventhub_name", None)  # type: Optional[str]
-    check_case = kwargs.pop("check_case", False)  # type: bool
+    eventhub_name: Optional[str] = kwargs.pop("eventhub_name", None)
+    check_case: bool = kwargs.pop("check_case", False)
     conn_settings = core_parse_connection_string(
         conn_str, case_sensitive_keys=check_case
     )
@@ -148,8 +147,7 @@ def _parse_conn_str(conn_str, **kwargs):
     )
 
 
-def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> AccessToken
+def _generate_sas_token(uri: str, policy: str, key: str, expiry: Optional[timedelta] = None) -> AccessToken:
     """Create a shared access signature token as a string literal.
 
     :param str uri: The resource URI.
@@ -167,8 +165,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
     token = generate_sas_token(uri, policy, key, abs_expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
 
-def _build_uri(address, entity):
-    # type: (str, Optional[str]) -> str
+def _build_uri(address: str, entity: Optional[str]) -> str:
     parsed = urlparse(address)
     if parsed.path:
         return address
@@ -193,14 +190,12 @@ class EventHubSharedKeyCredential(object):
     :param str key: The shared access key.
     """
 
-    def __init__(self, policy, key):
-        # type: (str, str) -> None
+    def __init__(self, policy: str, key: str) -> None:
         self.policy = policy
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Dict[str, Any]) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -213,13 +208,11 @@ class EventhubAzureNamedKeyTokenCredential(object):
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     """
 
-    def __init__(self, azure_named_key_credential):
-        # type: (AzureNamedKeyCredential) -> None
+    def __init__(self, azure_named_key_credential: AzureNamedKeyCredential) -> None:
         self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Dict[str, Any]) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key
@@ -233,8 +226,7 @@ class EventHubSASTokenCredential(object):
     :param int expiry: The epoch timestamp
     """
 
-    def __init__(self, token, expiry):
-        # type: (str, int) -> None
+    def __init__(self, token: str, expiry: int) -> None:
         """
         :param str token: The shared access token string
         :param float expiry: The epoch timestamp
@@ -243,8 +235,7 @@ class EventHubSASTokenCredential(object):
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Dict[str, Any]) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
 
@@ -263,8 +254,7 @@ class EventhubAzureSasTokenCredential(object):
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
 
-    def __init__(self, azure_sas_credential):
-        # type: (AzureSasCredential) -> None
+    def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
         """The shared access token credential used for authentication
          when AzureSasCredential is provided.
 
@@ -274,8 +264,7 @@ class EventhubAzureSasTokenCredential(object):
         self._credential = azure_sas_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Dict[str, Any]) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
 
@@ -328,8 +317,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
     @staticmethod
-    def _from_connection_string(conn_str, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
+    def _from_connection_string(conn_str: str, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
         host, policy, key, entity, token, token_expiry = _parse_conn_str(
             conn_str, **kwargs
         )
@@ -370,14 +358,12 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             update_token=False,
         )
 
-    def _close_connection(self):
-        # type: () -> None
+    def _close_connection(self) -> None:
         self._conn_manager.reset_connection_if_broken()
 
     def _backoff(
-        self, retried_times, last_exception, timeout_time=None, entity_name=None
-    ):
-        # type: (int, Exception, Optional[int], Optional[str]) -> None
+        self, retried_times: int, last_exception: Exception, timeout_time: Optional[int]=None, entity_name: Optional[str]=None
+    ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(
             self._config.retry_mode,
@@ -479,12 +465,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             ]
         return output
 
-    def _get_partition_ids(self):
-        # type:() -> List[str]
+    def _get_partition_ids(self) -> List[str]:
         return self._get_eventhub_properties()["partition_ids"]
 
-    def _get_partition_properties(self, partition_id):
-        # type:(str) -> Dict[str, Any]
+    def _get_partition_properties(self, partition_id: str) -> Dict[str, Any]:
         mgmt_msg = self._amqp_transport.build_message(
             application_properties={
                 "name": self.eventhub_name,
@@ -492,7 +476,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             }
         )
         response = self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
-        partition_info = response.value  # type: Dict[bytes, Any]
+        partition_info: Dict[bytes, Any] = response.value
         output = {}
         if partition_info:
             output["eventhub_name"] = partition_info[b"name"].decode("utf-8")
@@ -512,8 +496,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             )
         return output
 
-    def _close(self):
-        # type:() -> None
+    def _close(self) -> None:
         self._conn_manager.close_connection()
 
 
@@ -607,8 +590,7 @@ class ConsumerProducerMixin(object):
                     )
                     raise last_exception from None
 
-    def close(self):
-        # type:() -> None
+    def close(self) -> None:
         """
         Close down the handler. If the handler has already closed,
         this will be a no op.
