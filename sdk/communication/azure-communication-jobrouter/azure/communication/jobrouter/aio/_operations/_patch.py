@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys
 import datetime
-from typing import List, Any, Optional, Dict, Union, AsyncIterable, overload, IO
+from typing import List, Any, Optional, Dict, Union, overload, IO
 
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
