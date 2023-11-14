@@ -642,11 +642,14 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             # None data means this output is not configured.
             result = None
         elif isinstance(self._data, str):
-            result = Output(path=self._data, mode=self.mode, name=self.name, version=self.version)
+            result = Output(
+                type=AssetTypes.URI_FOLDER, path=self._data, mode=self.mode, name=self.name, version=self.version
+            )
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
             result = Output(
+                type=AssetTypes.URI_FOLDER,
                 path=self._data._data_binding(),
                 mode=self.mode,
                 name=self._data.name,
