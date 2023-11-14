@@ -54,7 +54,7 @@ class ActivityLogger:
 
     def update_info(self, data: dict = None) -> None:
         if data and "app_insights_handler" in data:
-                handler = data.pop("app_insights_handler")
+            handler = data.pop("app_insights_handler")
         else:
             handler = get_appinsights_log_handler(USER_AGENT)
         self.package_logger.addHandler(handler)
@@ -99,7 +99,7 @@ def get_appinsights_log_handler(
                 return logging.NullHandler()
 
         child_namespace = component_name or __name__
-        current_logger = logging.getLogger(GEN_AI_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
+        current_logger = logging.getLogger(AI_RESOURCES_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
         current_logger.propagate = False
         current_logger.setLevel(logging.CRITICAL)
 
