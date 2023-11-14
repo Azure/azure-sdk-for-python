@@ -10,6 +10,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities import SparkJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.exceptions import ValidationException
+from marshmallow.exceptions import ValidationError
 
 
 @pytest.mark.unittest
@@ -35,10 +36,10 @@ class TestSparkJobSchema:
             cfg = yaml.safe_load(f)
             context = {BASE_PATH_CONTEXT_KEY: Path(test_path).parent}
             schema = SparkJobSchema(context=context)
-            internal_representation: SparkJob = SparkJob(**schema.load(cfg))
-            with pytest.raises(ValidationException) as ve:
+            with pytest.raises(ValidationError) as ve:
+                internal_representation: SparkJob = SparkJob(**schema.load(cfg))
                 source = internal_representation._to_rest_object()
-                assert ve.message == "runtime version should be either 3.2 or 3.3"
+                assert ve.message == "Version 3 is smaller than lower bound (3, 2)."
 
     def test_invalid_instance_type(self):
         test_path = "./tests/test_configs/spark_job/spark_job_invalid_instance_type.yml"
