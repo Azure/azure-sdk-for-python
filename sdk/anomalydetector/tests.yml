@@ -2,3 +2,5 @@ trigger: none
 
 stages:
   - template: ../../eng/pipelines/templates/jobs/python-analyze-weekly.yml
+    parameters:
+      ServiceDirectory: anomalydetector
