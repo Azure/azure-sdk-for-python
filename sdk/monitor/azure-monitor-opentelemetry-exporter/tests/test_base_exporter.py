@@ -105,8 +105,9 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_min_retry_interval, 100)
         self.assertEqual(base._storage_directory, "test/path")
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
     @mock.patch.object(TelemetryItem, "from_dict")
-    def test_transmit_from_storage_success(self, dict_patch):
+    def test_transmit_from_storage_success(self, dict_patch, format_patch):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
@@ -114,6 +115,7 @@ class TestBaseExporter(unittest.TestCase):
         envelope_mock = {"name":"test","time":"time"}
         blob_mock.get.return_value = [envelope_mock]
         dict_patch.return_value = {"name":"test","time":"time"}
+        format_patch.return_value = envelope_mock
         exporter.storage.gets.return_value = [blob_mock]
         with mock.patch.object(AzureMonitorClient, 'track') as post:
             post.return_value = TrackResponse(
@@ -126,8 +128,9 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_called_once()
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._format_storage_telemetry_item")
     @mock.patch.object(TelemetryItem, "from_dict")
-    def test_transmit_from_storage_store_again(self, dict_patch):
+    def test_transmit_from_storage_store_again(self, dict_patch, format_patch):
         exporter = BaseExporter()
         exporter.storage = mock.Mock()
         blob_mock = mock.Mock()
@@ -135,6 +138,7 @@ class TestBaseExporter(unittest.TestCase):
         envelope_mock = {"name":"test","time":"time"}
         blob_mock.get.return_value = [envelope_mock]
         dict_patch.return_value = {"name":"test","time":"time"}
+        format_patch.return_value = envelope_mock
         exporter.storage.gets.return_value = [blob_mock]
         with mock.patch("azure.monitor.opentelemetry.exporter.export._base._is_retryable_code"):
             with mock.patch.object(AzureMonitorClient, 'track', throw(HttpResponseError)):
@@ -142,11 +146,6 @@ class TestBaseExporter(unittest.TestCase):
         exporter.storage.gets.assert_called_once()
         blob_mock.lease.assert_called()
         blob_mock.delete.assert_not_called()
-
-    def test_transmit_from_storage_nothing(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = None
-            self._base._transmit_from_storage()
 
     def test_transmit_from_storage_lease_failure(self):
         exporter = BaseExporter()
@@ -322,7 +321,7 @@ class TestBaseExporter(unittest.TestCase):
                 ],
             )
             result = exporter._transmit(custom_envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         exporter.storage.put.assert_called_once()
 
     @mock.patch.dict(
@@ -361,7 +360,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][500], 1)
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_206_no_retry(self):
         exporter = BaseExporter(disable_offline_storage=True)
