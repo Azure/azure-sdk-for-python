@@ -228,13 +228,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             # it's written to handle InputOutputBase, but there will be loop import if we import InputOutputBase here
             self.path = str(path)
         else:
-            self.path = path        
-        if path_on_compute is not None and not isinstance(path_on_compute, str):
-            # this logic will make dsl data binding expression working in the same way as yaml
-            # it's written to handle InputOutputBase, but there will be loop import if we import InputOutputBase here
-            self.path_on_compute = str(path_on_compute)
-        else:
-            self.path_on_compute = path_on_compute
+            self.path = path
+        self.path_on_compute = path_on_compute
         self.mode = None if self._is_primitive_type else mode
         self._update_default(default)
         self.optional = optional
