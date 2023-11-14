@@ -33,4 +33,5 @@ extends:
     - name: azure-mgmt-machinelearningcompute
       safeName: azuremgmtmachinelearningcompute
     - name: azure-mgmt-guestconfig
-      safeName: azuremgmtguestconfig
+      safeName: azuremgmtguestconfig    - name: azure-ai-chatprotocol
+      safeName: azureaichatprotocol

@@ -1,0 +1,6 @@
+{
+  "commit": "b9fc96cd4464a6c097972f4dbf8c9b5a5b4ef558",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/machinelearning/Azure.AI.ChatProtocol",
+  "@azure-tools/typespec-python": "0.15.13"
+}
