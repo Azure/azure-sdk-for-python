@@ -1,0 +1,11 @@
+[packaging]
+package_name = "azure-storage-extensions"
+package_nspkg = "azure-storage-nspkg"
+package_pprint_name = "MyService Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true
+sample_link = ""
+exclude_folders = ""
