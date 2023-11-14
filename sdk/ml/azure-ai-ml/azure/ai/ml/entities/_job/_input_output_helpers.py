@@ -212,8 +212,6 @@ def to_rest_dataset_literal_inputs(
                 # set mode & pathOnCompute attribute manually for binding job input
                 if input_value.path_on_compute:
                     input_data.pathOnCompute = input_value.path_on_compute
-                if input_value.path_on_compute:
-                    input_data.pathOnCompute = input_value.path_on_compute
                 if input_value.mode:
                     input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
                 input_data.job_input_type = JobInputType.LITERAL
