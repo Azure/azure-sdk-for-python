@@ -5,6 +5,9 @@ parameters:
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
+  - name: JobName
+    type: string
+    default: 'Test'
 
 stages:
   - stage:
