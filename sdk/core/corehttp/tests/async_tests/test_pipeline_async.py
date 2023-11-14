@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import cast
+from unittest.mock import AsyncMock, PropertyMock
 
 from corehttp.rest import HttpRequest
 from corehttp.runtime import AsyncPipelineClient
@@ -232,3 +233,31 @@ async def test_basic_httpx_separate_session(port):
     await transport.close()
     assert transport.client
     await transport.client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_default_ssl_context():
+    class MockAiohttpSession:
+        async def __aenter__(self):
+            pass
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        async def close(self):
+            pass
+
+        async def open(self):
+            pass
+
+        async def request(self, method: str, url: str, **kwargs):
+            assert "ssl" not in kwargs
+            mock_response = AsyncMock(spec=aiohttp.ClientResponse)
+            type(mock_response).status = PropertyMock(return_value=200)
+            return mock_response
+
+    transport = AioHttpTransport(session=MockAiohttpSession(), session_owner=False)
+    pipeline = AsyncPipeline(transport=transport)
+
+    req = HttpRequest("GET", "https://bing.com")
+    await pipeline.run(req)
