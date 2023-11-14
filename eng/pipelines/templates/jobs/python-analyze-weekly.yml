@@ -10,7 +10,7 @@ parameters:
     default: 'Test'
 
 stages:
-  stage:
+  - stage:
     displayName: 'Analyze_${{ parameters.JobName }}'
     dependsOn: []
     jobs:
