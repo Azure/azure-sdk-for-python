@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import NumberVersionField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import NumberVersionField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 
 
