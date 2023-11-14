@@ -209,7 +209,9 @@ def get_md5_string(text: Optional[str]) -> str:
     :rtype: str
     """
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
+        if text is not None:
+            return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
+        return ""
     except Exception as ex:
         raise ex
 
@@ -356,7 +358,7 @@ def get_rest_dict_for_node_attrs(
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
         # pylint: disable=protected-access
-        _target_obj: RestTranslatableMixin = _dump_data_binding_expression_in_fields(copy.deepcopy(target_obj))
+        _target_obj = _dump_data_binding_expression_in_fields(copy.deepcopy(target_obj))
 
         from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
 
@@ -444,9 +446,7 @@ def resolve_pipeline_parameters(
     ...
 
 
-def resolve_pipeline_parameters(
-    pipeline_parameters: Optional[Dict[str, T]], remove_empty: bool = False
-) -> Optional[Dict[str, Union[T, str, "NodeOutput"]]]:
+def resolve_pipeline_parameters(pipeline_parameters: Optional[Dict], remove_empty: bool = False) -> Optional[Dict]:
     """Resolve pipeline parameters.
 
     1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.

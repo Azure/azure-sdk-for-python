@@ -272,7 +272,9 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             outputs=to_rest_data_outputs(self.outputs),
             identity=self.identity._to_job_rest_object() if self.identity else None,
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
-            resources=self.resources._to_rest_object() if self.resources else None,
+            resources=self.resources._to_rest_object()
+            if self.resources and not isinstance(self.resources, dict)
+            else None,
         )
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name

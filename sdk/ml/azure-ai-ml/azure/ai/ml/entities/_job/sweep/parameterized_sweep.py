@@ -89,7 +89,7 @@ class ParameterizedSweep:
             self.objective = objective
 
     @property
-    def resources(self) -> JobResourceConfiguration:
+    def resources(self) -> Optional[Union[dict, JobResourceConfiguration]]:
         """Resources for sweep job.
 
         :returns: Resources for sweep job.
@@ -98,7 +98,7 @@ class ParameterizedSweep:
         return self._resources
 
     @resources.setter
-    def resources(self, value: Union[dict, JobResourceConfiguration]) -> None:
+    def resources(self, value: Optional[Union[dict, JobResourceConfiguration]]) -> None:
         """Set Resources for sweep job.
 
         :param value: Compute Resource configuration for the job.
@@ -144,24 +144,26 @@ class ParameterizedSweep:
         properties: Optional[Dict] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
-        **kwargs,  # pylint: disable=unused-argument
-    ):
+        # pylint: disable=unused-argument
+        **kwargs: Any,
+    ) -> None:
         """Set resources for Sweep."""
         if self.resources is None:
             self.resources = JobResourceConfiguration()
 
-        if locations is not None:
-            self.resources.locations = locations
-        if instance_type is not None:
-            self.resources.instance_type = instance_type
-        if instance_count is not None:
-            self.resources.instance_count = instance_count
-        if properties is not None:
-            self.resources.properties = properties
-        if docker_args is not None:
-            self.resources.docker_args = docker_args
-        if shm_size is not None:
-            self.resources.shm_size = shm_size
+        if not isinstance(self.resources, dict):
+            if locations is not None:
+                self.resources.locations = locations
+            if instance_type is not None:
+                self.resources.instance_type = instance_type
+            if instance_count is not None:
+                self.resources.instance_count = instance_count
+            if properties is not None:
+                self.resources.properties = properties
+            if docker_args is not None:
+                self.resources.docker_args = docker_args
+            if shm_size is not None:
+                self.resources.shm_size = shm_size
 
     def set_limits(
         self,

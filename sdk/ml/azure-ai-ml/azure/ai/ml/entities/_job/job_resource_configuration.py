@@ -4,7 +4,7 @@
 
 import json
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
@@ -81,8 +81,7 @@ class Properties(BaseProperty):
                 key = self._KEY_MAPPING[key.lower()]
             result[key] = value
         # recursively convert Ordered Dict to dictionary
-        res: dict = convert_ordered_dict_to_dict(result)
-        return res
+        return cast(dict, convert_ordered_dict_to_dict(result))
 
 
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
