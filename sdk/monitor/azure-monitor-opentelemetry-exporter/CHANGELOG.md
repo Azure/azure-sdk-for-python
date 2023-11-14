@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fix deserialization of `TelemetryItem` from local storage
+    ([#32327](https://github.com/Azure/azure-sdk-for-python/pull/32327))
+
 ### Other Changes
 
 ## 1.0.0b18 (2023-11-06)
