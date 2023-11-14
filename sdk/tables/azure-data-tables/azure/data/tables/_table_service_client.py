@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Any, Dict
+from typing import Optional, Any, Dict, List
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -15,6 +15,9 @@ from ._generated.models import TableServiceProperties
 from ._models import (
     TableItem,
     LocationMode,
+    TableCorsRule,
+    TableMetrics,
+    TableAnalyticsLogging,
     TablePropertiesPaged,
     service_stats_deserialize,
     service_properties_deserialize,
@@ -125,7 +128,15 @@ class TableServiceClient(TablesBaseClient):
         return service_properties_deserialize(service_props)
 
     @distributed_trace
-    def set_service_properties(self, **kwargs) -> None:
+    def set_service_properties(
+        self,
+        *,
+        analytics_logging: Optional[TableAnalyticsLogging] = None,
+        hour_metrics: Optional[TableMetrics] = None,
+        minute_metrics: Optional[TableMetrics] = None,
+        cors: Optional[List[TableCorsRule]] = None,
+        **kwargs,
+    ) -> None:
         """Sets properties for an account's Table service endpoint,
          including properties for Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -140,12 +151,11 @@ class TableServiceClient(TablesBaseClient):
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        cors = kwargs.pop("cors", None)
         props = TableServiceProperties(
-            logging=kwargs.pop("analytics_logging", None),
-            hour_metrics=kwargs.pop("hour_metrics", None),
-            minute_metrics=kwargs.pop("minute_metrics", None),
-            cors=[c._to_generated() for c in cors] if cors else cors,  # pylint:disable=protected-access
+            logging=analytics_logging,
+            hour_metrics=hour_metrics,
+            minute_metrics=minute_metrics,
+            cors=[c._to_generated() for c in cors] if cors is not None else cors,  # pylint:disable=protected-access
         )
         try:
             self._client.service.set_properties(props, **kwargs)

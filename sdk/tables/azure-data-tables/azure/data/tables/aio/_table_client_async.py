@@ -271,19 +271,34 @@ class TableClient(AsyncTablesBaseClient):
 
     @overload
     async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
-        ...
-
-    @overload
-    async def delete_entity(self, entity: EntityType, **kwargs: Any) -> None:
-        ...
-
-    @distributed_trace_async
-    async def delete_entity(self, *args: Union[EntityType, str], **kwargs: Any) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 
         :param str partition_key: The partition key of the entity.
         :param str row_key: The row key of the entity.
+        :keyword str etag: Etag of the entity
+        :keyword match_condition: The condition under which to perform the operation.
+            Supported values include: MatchConditions.IfNotModified, MatchConditions.Unconditionally.
+            The default value is Unconditionally.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_insert_delete_entities_async.py
+                :start-after: [START delete_entity]
+                :end-before: [END delete_entity]
+                :language: python
+                :dedent: 8
+                :caption: Adding an entity to a Table
+        """
+
+    @overload
+    async def delete_entity(self, entity: EntityType, **kwargs: Any) -> None:
+        """Deletes the specified entity in a table. No error will be raised if
+        the entity or PartitionKey-RowKey pairing is not found.
+
         :param entity: The entity to delete
         :type entity: Union[TableEntity, Mapping[str, Any]]
         :keyword str etag: Etag of the entity
@@ -303,6 +318,9 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 8
                 :caption: Adding an entity to a Table
         """
+
+    @distributed_trace_async
+    async def delete_entity(self, *args: Union[EntityType, str], **kwargs: Any) -> None:
         try:
             entity = kwargs.pop("entity", None)
             if not entity:

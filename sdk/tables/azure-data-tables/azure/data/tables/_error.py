@@ -259,9 +259,9 @@ class TableTransactionError(HttpResponseError):
 
     def __init__(self, **kwargs: Any) -> None:
         super(TableTransactionError, self).__init__(**kwargs)
-        self.index: int = kwargs.get("index", self._extract_index())
+        self.index = kwargs.get("index", self._extract_index())
 
-    def _extract_index(self):
+    def _extract_index(self) -> int:
         try:
             message_sections = self.message.split(":", 1)
             return int(message_sections[0])
