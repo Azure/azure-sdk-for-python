@@ -6,7 +6,7 @@ import platform
 import re
 import sys
 import threading
-from typing import Iterable
+from typing import Any, Dict, Iterable, List
 
 import requests  # pylint: disable=networking-import-outside-azure-core-transport
 
@@ -56,7 +56,7 @@ class _StatsbeatFeature:
 # pylint: disable=R0902
 class _StatsbeatMetrics:
 
-    _COMMON_ATTRIBUTES = {
+    _COMMON_ATTRIBUTES: Dict[str, Any] = {
         "rp": _RP_NAMES[3],
         "attach": "sdk", # TODO: attach
         "cikey": None,
@@ -66,17 +66,17 @@ class _StatsbeatMetrics:
         "version": VERSION
     }
 
-    _NETWORK_ATTRIBUTES = {
+    _NETWORK_ATTRIBUTES: Dict[str, Any] = {
         "endpoint": _ENDPOINT_TYPES[0],  # breeze
         "host": None,
     }
 
-    _FEATURE_ATTRIBUTES = {
+    _FEATURE_ATTRIBUTES: Dict[str, Any] = {
         "feature": None,  # 64-bit long, bits represent features enabled
         "type": _FEATURE_TYPES.FEATURE,
     }
 
-    _INSTRUMENTATION_ATTRIBUTES = {
+    _INSTRUMENTATION_ATTRIBUTES: Dict[str, Any] = {
         "feature": 0,  # 64-bit long, bits represent instrumentations used
         "type": _FEATURE_TYPES.INSTRUMENTATION,
     }
@@ -111,7 +111,7 @@ class _StatsbeatMetrics:
         _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = _utils.get_instrumentations()
 
         self._vm_retry = True  # True if we want to attempt to find if in VM
-        self._vm_data = {}
+        self._vm_data: Dict[str, str] = {}
 
         # Initial metrics - metrics exported on application start
 
@@ -134,7 +134,7 @@ class _StatsbeatMetrics:
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
     def _get_attach_metric(self, options: CallbackOptions) -> Iterable[Observation]:
-        observations = []
+        observations: List[Observation] = []
         # Check if it is time to observe long interval metrics
         if not self._meets_long_interval_threshold(_ATTACH_METRIC_NAME[0]):
             return observations
@@ -152,7 +152,7 @@ class _StatsbeatMetrics:
         elif os.environ.get("FUNCTIONS_WORKER_RUNTIME") is not None:
             # Function apps
             rp = _RP_NAMES[1]
-            rpId = os.environ.get("WEBSITE_HOSTNAME")
+            rpId = os.environ.get("WEBSITE_HOSTNAME", '')
         elif self._vm_retry and self._get_azure_compute_metadata():
             # VM
             rp = _RP_NAMES[2]
@@ -169,7 +169,7 @@ class _StatsbeatMetrics:
         _StatsbeatMetrics._COMMON_ATTRIBUTES["os"] = os_type or platform.system()
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes['rpId'] = rpId
-        observations.append(Observation(1, dict(attributes)))
+        observations.append(Observation(1, dict(attributes))) # type: ignore
         return observations
 
     def _get_azure_compute_metadata(self) -> bool:
@@ -201,7 +201,7 @@ class _StatsbeatMetrics:
     # pylint: disable=unused-argument
     # pylint: disable=protected-access
     def _get_feature_metric(self, options: CallbackOptions) -> Iterable[Observation]:
-        observations = []
+        observations: List[Observation] = []
         # Check if it is time to observe long interval metrics
         if not self._meets_long_interval_threshold(_FEATURE_METRIC_NAME[0]):
             return observations
@@ -209,8 +209,8 @@ class _StatsbeatMetrics:
         # Don't send observation if no features enabled
         if self._feature is not _StatsbeatFeature.NONE:
             attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
-            observations.append(Observation(1, dict(attributes)))
+            attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES) # type: ignore
+            observations.append(Observation(1, dict(attributes))) # type: ignore
 
         # instrumentation metric
         # Don't send observation if no instrumentations enabled
@@ -218,8 +218,8 @@ class _StatsbeatMetrics:
         if instrumentation_bits != 0:
             _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = instrumentation_bits
             attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
-            attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
-            observations.append(Observation(1, dict(attributes)))
+            attributes.update(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES) # type: ignore
+            observations.append(Observation(1, dict(attributes))) # type: ignore
 
         return observations
 
@@ -289,7 +289,7 @@ class _StatsbeatMetrics:
         attributes["statusCode"] = 200
         with _REQUESTS_MAP_LOCK:
             # only observe if value is not 0
-            count = _REQUESTS_MAP.get(_REQ_SUCCESS_NAME[1], 0)
+            count = _REQUESTS_MAP.get(_REQ_SUCCESS_NAME[1], 0) # type: ignore
             if count != 0:
                 observations.append(
                     Observation(int(count), dict(attributes))
@@ -304,14 +304,14 @@ class _StatsbeatMetrics:
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         with _REQUESTS_MAP_LOCK:
-            for code, count in _REQUESTS_MAP.get(_REQ_FAILURE_NAME[1], {}).items():
+            for code, count in _REQUESTS_MAP.get(_REQ_FAILURE_NAME[1], {}).items(): # type: ignore
                 # only observe if value is not 0
                 if count != 0:
                     attributes["statusCode"] = code
                     observations.append(
                         Observation(int(count), dict(attributes))
                     )
-                    _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][code] = 0
+                    _REQUESTS_MAP[_REQ_FAILURE_NAME[1]][code] = 0 # type: ignore
         return observations
 
     # pylint: disable=unused-argument
@@ -324,8 +324,8 @@ class _StatsbeatMetrics:
             interval_duration = _REQUESTS_MAP.get(_REQ_DURATION_NAME[1], 0)
             interval_count = _REQUESTS_MAP.get("count", 0)
             # only observe if value is not 0
-            if interval_duration > 0 and interval_count > 0:
-                result = interval_duration / interval_count
+            if interval_duration > 0 and interval_count > 0: # type: ignore
+                result = interval_duration / interval_count # type: ignore
                 observations.append(
                     Observation(result * 1000, dict(attributes))
                 )
@@ -340,14 +340,14 @@ class _StatsbeatMetrics:
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         with _REQUESTS_MAP_LOCK:
-            for code, count in _REQUESTS_MAP.get(_REQ_RETRY_NAME[1], {}).items():
+            for code, count in _REQUESTS_MAP.get(_REQ_RETRY_NAME[1], {}).items(): # type: ignore
                 # only observe if value is not 0
                 if count != 0:
                     attributes["statusCode"] = code
                     observations.append(
                         Observation(int(count), dict(attributes))
                     )
-                    _REQUESTS_MAP[_REQ_RETRY_NAME[1]][code] = 0
+                    _REQUESTS_MAP[_REQ_RETRY_NAME[1]][code] = 0 # type: ignore
         return observations
 
     # pylint: disable=unused-argument
@@ -357,14 +357,14 @@ class _StatsbeatMetrics:
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         with _REQUESTS_MAP_LOCK:
-            for code, count in _REQUESTS_MAP.get(_REQ_THROTTLE_NAME[1], {}).items():
+            for code, count in _REQUESTS_MAP.get(_REQ_THROTTLE_NAME[1], {}).items(): # type: ignore
                 # only observe if value is not 0
                 if count != 0:
                     attributes["statusCode"] = code
                     observations.append(
                         Observation(int(count), dict(attributes))
                     )
-                    _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][code] = 0
+                    _REQUESTS_MAP[_REQ_THROTTLE_NAME[1]][code] = 0 # type: ignore
         return observations
 
     # pylint: disable=unused-argument
@@ -374,14 +374,14 @@ class _StatsbeatMetrics:
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
         with _REQUESTS_MAP_LOCK:
-            for code, count in _REQUESTS_MAP.get(_REQ_EXCEPTION_NAME[1], {}).items():
+            for code, count in _REQUESTS_MAP.get(_REQ_EXCEPTION_NAME[1], {}).items(): # type: ignore
                 # only observe if value is not 0
                 if count != 0:
                     attributes["exceptionType"] = code
                     observations.append(
                         Observation(int(count), dict(attributes))
                     )
-                    _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0
+                    _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0 # type: ignore
         return observations
 
 # cSpell:enable

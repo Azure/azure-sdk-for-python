@@ -50,6 +50,7 @@ def add_block_items():
     from azure.ai.contentsafety import BlocklistClient
     from azure.ai.contentsafety.models import AddOrUpdateTextBlocklistItemsResult, TextBlocklistItem
     from azure.core.credentials import AzureKeyCredential
+    from azure.ai.contentsafety.models import TextBlockItemInfo, AddBlockItemsOptions
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
@@ -70,9 +71,9 @@ def add_block_items():
         )
         if result and result.blocklist_items:
             print("\nBlock items added: ")
-            for block_item in result.blocklist_items:
+            for block_item in result.value:
                 print(
-                    f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, Description: {block_item.description}"
+                    f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}"
                 )
     except HttpResponseError as e:
         print("\nAdd block items failed: ")
@@ -107,9 +108,9 @@ def analyze_text_with_blocklists():
     try:
         # After you edit your blocklist, it usually takes effect in 5 minutes, please wait some time before analyzing with blocklist after editing.
         analysis_result = client.analyze_text(
-            AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], halt_on_blocklist_hit=False)
+            AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], break_by_blocklists=False)
         )
-        if analysis_result and analysis_result.blocklists_match:
+        if analysis_result and analysis_result.blocklists_match_results:
             print("\nBlocklist match results: ")
             for match_result in analysis_result.blocklists_match:
                 print(f"Block item was hit in text, Offset={match_result.offset}, Length={match_result.length}.")
@@ -281,7 +282,7 @@ def remove_block_items():
     import os
     from azure.ai.contentsafety import BlocklistClient
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.contentsafety.models import TextBlocklistItem, AddOrUpdateTextBlocklistItemsOptions, RemoveTextBlocklistItemsOptions
+    from azure.ai.contentsafety.models import TextBlockItemInfo, AddBlockItemsOptions, RemoveBlockItemsOptions
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
@@ -304,8 +305,8 @@ def remove_block_items():
         block_item_id = add_result.value[0].block_item_id
 
         # Remove this blockItem by blockItemId
-        client.remove_blocklist_items(
-            blocklist_name=blocklist_name, body=RemoveTextBlocklistItemsOptions(blocklist_item_ids=[block_item_id])
+        client.remove_block_items(
+            blocklist_name=blocklist_name, body=RemoveBlockItemsOptions(block_item_ids=[block_item_id])
         )
         print(f"\nRemoved blockItem: {add_result.value[0].block_item_id}")
     except HttpResponseError as e:

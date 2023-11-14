@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class AddOrUpdateTextBlocklistItemsOptions(_model_base.Model):
     """The request to add blocklistItems to a text blocklist.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blocklist_items: Array of blocklistItems to add. Required.
     :vartype blocklist_items: list[~azure.ai.contentsafety.models.TextBlocklistItem]
@@ -51,7 +51,7 @@ class AddOrUpdateTextBlocklistItemsOptions(_model_base.Model):
 class AddOrUpdateTextBlocklistItemsResult(_model_base.Model):
     """The response of adding blocklistItems to the text blocklist.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blocklist_items: Array of blocklistItems have been added. Required.
     :vartype blocklist_items: list[~azure.ai.contentsafety.models.TextBlocklistItem]
@@ -82,7 +82,7 @@ class AddOrUpdateTextBlocklistItemsResult(_model_base.Model):
 class AnalyzeImageOptions(_model_base.Model):
     """The image analysis request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar image: The image needs to be analyzed. Required.
     :vartype image: ~azure.ai.contentsafety.models.ImageData
@@ -127,7 +127,7 @@ class AnalyzeImageOptions(_model_base.Model):
 class AnalyzeImageResult(_model_base.Model):
     """The image analysis response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar categories_analysis: Analysis result for categories. Required.
     :vartype categories_analysis: list[~azure.ai.contentsafety.models.ImageCategoriesAnalysis]
@@ -158,7 +158,7 @@ class AnalyzeImageResult(_model_base.Model):
 class AnalyzeTextOptions(_model_base.Model):
     """The text analysis request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: The text needs to be analyzed. We support a maximum of 10k Unicode characters
      (Unicode code points) in the text of one request. Required.
@@ -221,7 +221,7 @@ class AnalyzeTextOptions(_model_base.Model):
 class AnalyzeTextResult(_model_base.Model):
     """The text analysis response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blocklists_match: The blocklist match details.
     :vartype blocklists_match: list[~azure.ai.contentsafety.models.TextBlocklistMatch]
@@ -257,7 +257,7 @@ class AnalyzeTextResult(_model_base.Model):
 class ImageCategoriesAnalysis(_model_base.Model):
     """Image analysis result.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar category: The image analysis category. Required. Known values are: "Hate", "SelfHarm",
      "Sexual", and "Violence".
@@ -335,7 +335,7 @@ class ImageData(_model_base.Model):
 class RemoveTextBlocklistItemsOptions(_model_base.Model):
     """The request to remove blocklistItems from a text blocklist.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blocklist_item_ids: Array of blocklistItemIds to remove. Required.
     :vartype blocklist_item_ids: list[str]
@@ -366,7 +366,7 @@ class RemoveTextBlocklistItemsOptions(_model_base.Model):
 class TextBlocklist(_model_base.Model):
     """Text Blocklist.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blocklist_name: Text blocklist name. Required.
     :vartype blocklist_name: str
@@ -404,7 +404,7 @@ class TextBlocklistItem(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blocklist_item_id: The service will generate a BlocklistItemId, which will be a UUID.
      Required.
@@ -445,7 +445,7 @@ class TextBlocklistItem(_model_base.Model):
 class TextBlocklistMatch(_model_base.Model):
     """The result of blocklist match.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar blocklist_name: The name of the matched blocklist. Required.
     :vartype blocklist_name: str
@@ -486,7 +486,7 @@ class TextBlocklistMatch(_model_base.Model):
 class TextCategoriesAnalysis(_model_base.Model):
     """Text analysis result.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar category: The text analysis category. Required. Known values are: "Hate", "SelfHarm",
      "Sexual", and "Violence".

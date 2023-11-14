@@ -4,11 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 """Tests for the retry policy."""
-try:
-    from io import BytesIO
-except ImportError:
-    from cStringIO import StringIO as BytesIO
-
+from io import BytesIO
 import tempfile
 import os
 import asyncio
