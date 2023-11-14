@@ -18,12 +18,13 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from .._blob_client import StorageAccountHostsMixin
+from .._blob_client_helpers import _parse_url
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
-from .._blob_client import BlobClient as BlobClientBase
 from .._deserialize import (
     deserialize_blob_properties,
     deserialize_pipeline_response_into_cls,
@@ -55,7 +56,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
+class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     :param str account_url:
@@ -130,13 +131,23 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        super(BlobClient, self).__init__(
-            account_url,
-            container_name=container_name,
-            blob_name=blob_name,
-            snapshot=snapshot,
-            credential=credential,
-            **kwargs)
+        parsed_url, sas_token, path_snapshot = _parse_url(account_url=account_url, container_name=container_name, blob_name=blob_name)
+        
+        self.container_name = container_name
+        self.blob_name = blob_name
+        try:
+            self.snapshot = snapshot.snapshot # type: ignore
+        except AttributeError:
+            try:
+                self.snapshot = snapshot['snapshot'] # type: ignore
+            except TypeError:
+                self.snapshot = snapshot or path_snapshot
+        self.version_id = kwargs.pop('version_id', None)
+
+        # This parameter is used for the hierarchy traversal. Give precedence to credential.
+        self._raw_credential = credential if credential else sas_token
+        self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
+        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)

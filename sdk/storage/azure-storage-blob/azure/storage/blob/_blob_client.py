@@ -20,6 +20,7 @@ from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, Reso
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
+from ._blob_client_helpers import _parse_url
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
 from ._shared.uploads import IterStreamer
@@ -164,19 +165,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError as exc:
-            raise ValueError("Account URL must be a string.") from exc
-        parsed_url = urlparse(account_url.rstrip('/'))
-
-        if not (container_name and blob_name):
-            raise ValueError("Please specify a container name and blob name.")
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
-
-        path_snapshot, sas_token = parse_query(parsed_url.query)
+        parsed_url, sas_token, path_snapshot = _parse_url(account_url=account_url, container_name=container_name, blob_name=blob_name)
 
         self.container_name = container_name
         self.blob_name = blob_name
