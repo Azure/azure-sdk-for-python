@@ -5,7 +5,7 @@
 
 import time
 import logging
-from typing import Optional, Union, Any, Tuple
+from typing import Optional, Union, Any, Tuple, Dict
 
 try:
     from uamqp import (
