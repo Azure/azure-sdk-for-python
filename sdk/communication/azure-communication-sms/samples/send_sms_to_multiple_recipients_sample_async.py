@@ -27,7 +27,7 @@ sys.path.append("..")
 
 class SmsMultipleRecipientsSampleAsync(object):
 
-    connection_string = os.getenv("COMMUNICATION_SMS_LIVETEST_DYNAMIC_CONNECTION_STRING")
+    connection_string = os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
     phone_number = os.getenv("SMS_PHONE_NUMBER")
         
     async def send_sms_to_multiple_recipients_async(self):

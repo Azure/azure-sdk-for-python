@@ -10,7 +10,7 @@ import datetime
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import MatchConditions
@@ -1286,7 +1286,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_distribution_policies(self, **kwargs: Any) -> Iterable["_models.DistributionPolicy"]:
+    def list_distribution_policies(self, **kwargs: Any) -> ItemPaged["_models.DistributionPolicy"]:
         """Retrieves existing distribution policies.
 
         Retrieves existing distribution policies.
@@ -1383,8 +1383,6 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         :param distribution_policy_id: The unique identifier of the policy. Required.
         :type distribution_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1725,7 +1723,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_classification_policies(self, **kwargs: Any) -> Iterable["_models.ClassificationPolicy"]:
+    def list_classification_policies(self, **kwargs: Any) -> ItemPaged["_models.ClassificationPolicy"]:
         """Retrieves existing classification policies.
 
         Retrieves existing classification policies.
@@ -1823,8 +1821,6 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         :param classification_policy_id: Unique identifier of this policy. Required.
         :type classification_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2165,7 +2161,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_exception_policies(self, **kwargs: Any) -> Iterable["_models.ExceptionPolicy"]:
+    def list_exception_policies(self, **kwargs: Any) -> ItemPaged["_models.ExceptionPolicy"]:
         """Retrieves existing exception policies.
 
         Retrieves existing exception policies.
@@ -2262,8 +2258,6 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         :param exception_policy_id: The Id of the exception policy. Required.
         :type exception_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2604,7 +2598,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_queues(self, **kwargs: Any) -> Iterable["_models.RouterQueue"]:
+    def list_queues(self, **kwargs: Any) -> ItemPaged["_models.RouterQueue"]:
         """Retrieves existing queues.
 
         Retrieves existing queues.
@@ -2699,8 +2693,6 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         :param queue_id: The Id of this queue. Required.
         :type queue_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3050,8 +3042,6 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: The id of the job. Required.
         :type job_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3578,7 +3568,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         scheduled_before: Optional[datetime.datetime] = None,
         scheduled_after: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RouterJob"]:
+    ) -> ItemPaged["_models.RouterJob"]:
         """Retrieves list of jobs based on filter parameters.
 
         Retrieves list of jobs based on filter parameters.
@@ -4489,8 +4479,6 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param worker_id: Id of the worker. Required.
         :type worker_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4544,7 +4532,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         queue_id: Optional[str] = None,
         has_capacity: Optional[bool] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RouterWorker"]:
+    ) -> ItemPaged["_models.RouterWorker"]:
         """Retrieves existing workers.
 
         Retrieves existing workers.
