@@ -19,7 +19,7 @@ class JobRouterAdministrationClientConfiguration:  # pylint: disable=too-many-in
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Required.
+    :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
      Note that overriding this default value may result in unsupported behavior.
@@ -56,7 +56,7 @@ class JobRouterClientConfiguration:  # pylint: disable=too-many-instance-attribu
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: Required.
+    :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
      Note that overriding this default value may result in unsupported behavior.
