@@ -9,6 +9,10 @@ from ._models_py3 import AnalyzeResult
 from ._models_py3 import AnalyzedTokenInfo
 from ._models_py3 import AsciiFoldingTokenFilter
 from ._models_py3 import AzureActiveDirectoryApplicationCredentials
+from ._models_py3 import AzureMachineLearningSkill
+from ._models_py3 import AzureOpenAIEmbeddingSkill
+from ._models_py3 import AzureOpenAIParameters
+from ._models_py3 import AzureOpenAIVectorizer
 from ._models_py3 import BM25Similarity
 from ._models_py3 import CharFilter
 from ._models_py3 import CjkBigramTokenFilter
@@ -23,6 +27,9 @@ from ._models_py3 import CustomAnalyzer
 from ._models_py3 import CustomEntity
 from ._models_py3 import CustomEntityAlias
 from ._models_py3 import CustomEntityLookupSkill
+from ._models_py3 import CustomNormalizer
+from ._models_py3 import CustomVectorizer
+from ._models_py3 import CustomWebApiParameters
 from ._models_py3 import DataChangeDetectionPolicy
 from ._models_py3 import DataDeletionDetectionPolicy
 from ._models_py3 import DataSourceCredentials
@@ -31,6 +38,7 @@ from ._models_py3 import DictionaryDecompounderTokenFilter
 from ._models_py3 import DistanceScoringFunction
 from ._models_py3 import DistanceScoringParameters
 from ._models_py3 import DocumentExtractionSkill
+from ._models_py3 import DocumentKeysOrIds
 from ._models_py3 import EdgeNGramTokenFilter
 from ._models_py3 import EdgeNGramTokenFilterV2
 from ._models_py3 import EdgeNGramTokenizer
@@ -49,6 +57,7 @@ from ._models_py3 import HighWaterMarkChangeDetectionPolicy
 from ._models_py3 import HnswAlgorithmConfiguration
 from ._models_py3 import HnswParameters
 from ._models_py3 import ImageAnalysisSkill
+from ._models_py3 import IndexerCurrentState
 from ._models_py3 import IndexerExecutionResult
 from ._models_py3 import IndexingParameters
 from ._models_py3 import IndexingParametersConfiguration
@@ -62,8 +71,10 @@ from ._models_py3 import KeywordTokenizerV2
 from ._models_py3 import LanguageDetectionSkill
 from ._models_py3 import LengthTokenFilter
 from ._models_py3 import LexicalAnalyzer
+from ._models_py3 import LexicalNormalizer
 from ._models_py3 import LexicalTokenizer
 from ._models_py3 import LimitTokenFilter
+from ._models_py3 import ListAliasesResult
 from ._models_py3 import ListDataSourcesResult
 from ._models_py3 import ListIndexersResult
 from ._models_py3 import ListIndexesResult
@@ -81,6 +92,7 @@ from ._models_py3 import MicrosoftLanguageTokenizer
 from ._models_py3 import NGramTokenFilter
 from ._models_py3 import NGramTokenFilterV2
 from ._models_py3 import NGramTokenizer
+from ._models_py3 import NativeBlobSoftDeleteDeletionDetectionPolicy
 from ._models_py3 import OcrSkill
 from ._models_py3 import OutputFieldMappingEntry
 from ._models_py3 import PIIDetectionSkill
@@ -95,17 +107,26 @@ from ._models_py3 import RequestOptions
 from ._models_py3 import ResourceCounter
 from ._models_py3 import ScoringFunction
 from ._models_py3 import ScoringProfile
+from ._models_py3 import SearchAlias
 from ._models_py3 import SearchError
 from ._models_py3 import SearchField
 from ._models_py3 import SearchIndex
 from ._models_py3 import SearchIndexer
+from ._models_py3 import SearchIndexerCache
 from ._models_py3 import SearchIndexerDataContainer
+from ._models_py3 import SearchIndexerDataIdentity
+from ._models_py3 import SearchIndexerDataNoneIdentity
 from ._models_py3 import SearchIndexerDataSource
+from ._models_py3 import SearchIndexerDataUserAssignedIdentity
 from ._models_py3 import SearchIndexerError
+from ._models_py3 import SearchIndexerIndexProjectionSelector
+from ._models_py3 import SearchIndexerIndexProjections
+from ._models_py3 import SearchIndexerIndexProjectionsParameters
 from ._models_py3 import SearchIndexerKnowledgeStore
 from ._models_py3 import SearchIndexerKnowledgeStoreBlobProjectionSelector
 from ._models_py3 import SearchIndexerKnowledgeStoreFileProjectionSelector
 from ._models_py3 import SearchIndexerKnowledgeStoreObjectProjectionSelector
+from ._models_py3 import SearchIndexerKnowledgeStoreParameters
 from ._models_py3 import SearchIndexerKnowledgeStoreProjection
 from ._models_py3 import SearchIndexerKnowledgeStoreProjectionSelector
 from ._models_py3 import SearchIndexerKnowledgeStoreTableProjectionSelector
@@ -127,6 +148,7 @@ from ._models_py3 import ServiceStatistics
 from ._models_py3 import ShaperSkill
 from ._models_py3 import ShingleTokenFilter
 from ._models_py3 import Similarity
+from ._models_py3 import SkillNames
 from ._models_py3 import SnowballTokenFilter
 from ._models_py3 import SoftDeleteColumnDeletionDetectionPolicy
 from ._models_py3 import SplitSkill
@@ -149,6 +171,7 @@ from ._models_py3 import UniqueTokenFilter
 from ._models_py3 import VectorSearch
 from ._models_py3 import VectorSearchAlgorithmConfiguration
 from ._models_py3 import VectorSearchProfile
+from ._models_py3 import VectorSearchVectorizer
 from ._models_py3 import WebApiSkill
 from ._models_py3 import WordDelimiterTokenFilter
 
@@ -165,12 +188,17 @@ from ._search_service_client_enums import EntityRecognitionSkillLanguage
 from ._search_service_client_enums import Enum0
 from ._search_service_client_enums import ImageAnalysisSkillLanguage
 from ._search_service_client_enums import ImageDetail
+from ._search_service_client_enums import IndexProjectionMode
 from ._search_service_client_enums import IndexerExecutionEnvironment
 from ._search_service_client_enums import IndexerExecutionStatus
+from ._search_service_client_enums import IndexerExecutionStatusDetail
 from ._search_service_client_enums import IndexerStatus
+from ._search_service_client_enums import IndexingMode
 from ._search_service_client_enums import KeyPhraseExtractionSkillLanguage
 from ._search_service_client_enums import LexicalAnalyzerName
+from ._search_service_client_enums import LexicalNormalizerName
 from ._search_service_client_enums import LexicalTokenizerName
+from ._search_service_client_enums import LineEnding
 from ._search_service_client_enums import MicrosoftStemmingTokenizerLanguage
 from ._search_service_client_enums import MicrosoftTokenizerLanguage
 from ._search_service_client_enums import OcrSkillLanguage
@@ -192,6 +220,7 @@ from ._search_service_client_enums import TokenCharacterKind
 from ._search_service_client_enums import TokenFilterName
 from ._search_service_client_enums import VectorSearchAlgorithmKind
 from ._search_service_client_enums import VectorSearchAlgorithmMetric
+from ._search_service_client_enums import VectorSearchVectorizerKind
 from ._search_service_client_enums import VisualFeature
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -203,6 +232,10 @@ __all__ = [
     "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",
     "AzureActiveDirectoryApplicationCredentials",
+    "AzureMachineLearningSkill",
+    "AzureOpenAIEmbeddingSkill",
+    "AzureOpenAIParameters",
+    "AzureOpenAIVectorizer",
     "BM25Similarity",
     "CharFilter",
     "CjkBigramTokenFilter",
@@ -217,6 +250,9 @@ __all__ = [
     "CustomEntity",
     "CustomEntityAlias",
     "CustomEntityLookupSkill",
+    "CustomNormalizer",
+    "CustomVectorizer",
+    "CustomWebApiParameters",
     "DataChangeDetectionPolicy",
     "DataDeletionDetectionPolicy",
     "DataSourceCredentials",
@@ -225,6 +261,7 @@ __all__ = [
     "DistanceScoringFunction",
     "DistanceScoringParameters",
     "DocumentExtractionSkill",
+    "DocumentKeysOrIds",
     "EdgeNGramTokenFilter",
     "EdgeNGramTokenFilterV2",
     "EdgeNGramTokenizer",
@@ -243,6 +280,7 @@ __all__ = [
     "HnswAlgorithmConfiguration",
     "HnswParameters",
     "ImageAnalysisSkill",
+    "IndexerCurrentState",
     "IndexerExecutionResult",
     "IndexingParameters",
     "IndexingParametersConfiguration",
@@ -256,8 +294,10 @@ __all__ = [
     "LanguageDetectionSkill",
     "LengthTokenFilter",
     "LexicalAnalyzer",
+    "LexicalNormalizer",
     "LexicalTokenizer",
     "LimitTokenFilter",
+    "ListAliasesResult",
     "ListDataSourcesResult",
     "ListIndexersResult",
     "ListIndexesResult",
@@ -275,6 +315,7 @@ __all__ = [
     "NGramTokenFilter",
     "NGramTokenFilterV2",
     "NGramTokenizer",
+    "NativeBlobSoftDeleteDeletionDetectionPolicy",
     "OcrSkill",
     "OutputFieldMappingEntry",
     "PIIDetectionSkill",
@@ -289,17 +330,26 @@ __all__ = [
     "ResourceCounter",
     "ScoringFunction",
     "ScoringProfile",
+    "SearchAlias",
     "SearchError",
     "SearchField",
     "SearchIndex",
     "SearchIndexer",
+    "SearchIndexerCache",
     "SearchIndexerDataContainer",
+    "SearchIndexerDataIdentity",
+    "SearchIndexerDataNoneIdentity",
     "SearchIndexerDataSource",
+    "SearchIndexerDataUserAssignedIdentity",
     "SearchIndexerError",
+    "SearchIndexerIndexProjectionSelector",
+    "SearchIndexerIndexProjections",
+    "SearchIndexerIndexProjectionsParameters",
     "SearchIndexerKnowledgeStore",
     "SearchIndexerKnowledgeStoreBlobProjectionSelector",
     "SearchIndexerKnowledgeStoreFileProjectionSelector",
     "SearchIndexerKnowledgeStoreObjectProjectionSelector",
+    "SearchIndexerKnowledgeStoreParameters",
     "SearchIndexerKnowledgeStoreProjection",
     "SearchIndexerKnowledgeStoreProjectionSelector",
     "SearchIndexerKnowledgeStoreTableProjectionSelector",
@@ -321,6 +371,7 @@ __all__ = [
     "ShaperSkill",
     "ShingleTokenFilter",
     "Similarity",
+    "SkillNames",
     "SnowballTokenFilter",
     "SoftDeleteColumnDeletionDetectionPolicy",
     "SplitSkill",
@@ -343,6 +394,7 @@ __all__ = [
     "VectorSearch",
     "VectorSearchAlgorithmConfiguration",
     "VectorSearchProfile",
+    "VectorSearchVectorizer",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
     "BlobIndexerDataToExtract",
@@ -358,12 +410,17 @@ __all__ = [
     "Enum0",
     "ImageAnalysisSkillLanguage",
     "ImageDetail",
+    "IndexProjectionMode",
     "IndexerExecutionEnvironment",
     "IndexerExecutionStatus",
+    "IndexerExecutionStatusDetail",
     "IndexerStatus",
+    "IndexingMode",
     "KeyPhraseExtractionSkillLanguage",
     "LexicalAnalyzerName",
+    "LexicalNormalizerName",
     "LexicalTokenizerName",
+    "LineEnding",
     "MicrosoftStemmingTokenizerLanguage",
     "MicrosoftTokenizerLanguage",
     "OcrSkillLanguage",
@@ -385,6 +442,7 @@ __all__ = [
     "TokenFilterName",
     "VectorSearchAlgorithmKind",
     "VectorSearchAlgorithmMetric",
+    "VectorSearchVectorizerKind",
     "VisualFeature",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
