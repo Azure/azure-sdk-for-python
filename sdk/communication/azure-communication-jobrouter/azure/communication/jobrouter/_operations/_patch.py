@@ -19,6 +19,7 @@ from typing import (
     IO,
 )
 from azure.core import MatchConditions
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from .. import models as _models
 from ._operations import (
@@ -242,7 +243,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not exception_policy_id:
             raise ValueError("exception_policy_id cannot be None.")
 
-        exception_policy = _models.ExceptionPolicy()
+        exception_policy: Union[_models.ExceptionPolicy, JSON, IO] = _models.ExceptionPolicy()
         if len(args) == 1:
             exception_policy = args[0]
 
@@ -269,7 +270,7 @@ class JobRouterAdministrationClientOperationsMixin(
     @distributed_trace
     def list_exception_policies(
         self, *, results_per_page: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[_models.ExceptionPolicy]:
+    ) -> ItemPaged[_models.ExceptionPolicy]:
         """Retrieves existing exception policies.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
@@ -511,7 +512,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not distribution_policy_id:
             raise ValueError("distribution_policy_id cannot be None.")
 
-        distribution_policy = _models.DistributionPolicy()
+        distribution_policy: Union[_models.DistributionPolicy, JSON, IO] = _models.DistributionPolicy()
         if len(args) == 1:
             distribution_policy = args[0]
 
@@ -541,7 +542,7 @@ class JobRouterAdministrationClientOperationsMixin(
     @distributed_trace
     def list_distribution_policies(
         self, *, results_per_page: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[_models.DistributionPolicy]:
+    ) -> ItemPaged[_models.DistributionPolicy]:
         """Retrieves existing distribution policies.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
@@ -792,7 +793,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
-        queue = _models.RouterQueue()
+        queue: Union[_models.RouterQueue, JSON, IO] = _models.RouterQueue()
         if len(args) == 1:
             queue = args[0]
 
@@ -819,7 +820,7 @@ class JobRouterAdministrationClientOperationsMixin(
         )
 
     @distributed_trace
-    def list_queues(self, *, results_per_page: Optional[int] = None, **kwargs: Any) -> Iterable[_models.RouterQueue]:
+    def list_queues(self, *, results_per_page: Optional[int] = None, **kwargs: Any) -> ItemPaged[_models.RouterQueue]:
         """Retrieves existing queues.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
@@ -1120,7 +1121,7 @@ class JobRouterAdministrationClientOperationsMixin(
         if not classification_policy_id:
             raise ValueError("classification_policy_id cannot be None.")
 
-        classification_policy = _models.ClassificationPolicy()
+        classification_policy: Union[_models.ClassificationPolicy, JSON, IO] = _models.ClassificationPolicy()
         if len(args) == 1:
             classification_policy = args[0]
 
@@ -1154,7 +1155,7 @@ class JobRouterAdministrationClientOperationsMixin(
     @distributed_trace
     def list_classification_policies(
         self, *, results_per_page: Optional[int] = None, **kwargs: Any
-    ) -> Iterable[_models.ClassificationPolicy]:
+    ) -> ItemPaged[_models.ClassificationPolicy]:
         """Retrieves existing classification policies.
 
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
@@ -1457,7 +1458,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
-        router_worker = _models.RouterWorker()
+        router_worker: Union[_models.RouterWorker, JSON, IO] = _models.RouterWorker()
         if len(args) == 1:
             router_worker = args[0]
 
@@ -1495,7 +1496,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         has_capacity: Optional[bool] = None,
         results_per_page: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[_models.RouterWorker]:
+    ) -> ItemPaged[_models.RouterWorker]:
         """Retrieves existing workers.
 
         :keyword state: If specified, select workers by worker status. Default value is "all".
@@ -1816,7 +1817,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
-        router_job = _models.RouterJob()
+        router_job: Union[_models.RouterJob, JSON, IO] = _models.RouterJob()
         if len(args) == 1:
             router_job = args[0]
 
@@ -1863,7 +1864,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         scheduled_after: Optional[Union[str, datetime.datetime]] = None,
         results_per_page: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable[_models.RouterJob]:
+    ) -> ItemPaged[_models.RouterJob]:
         """Retrieves list of jobs based on filter parameters.
 
         :keyword status: If specified, filter jobs by status. Default value is "all".
