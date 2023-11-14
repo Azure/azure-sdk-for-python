@@ -124,6 +124,7 @@ class WorkspaceOperationsBase(ABC):
                 workspace.tags.pop("createdByToolkit")
             existing_workspace.tags.update(workspace.tags)
             workspace.tags = existing_workspace.tags
+            # TODO do we want projects to do this?
             if workspace._kind != PROJECT_WORKSPACE_KIND:
                 workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
                 workspace.application_insights = workspace.application_insights or existing_workspace.application_insights

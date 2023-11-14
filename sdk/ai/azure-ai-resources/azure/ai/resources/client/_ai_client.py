@@ -250,6 +250,15 @@ class AIClient:
         :rtype: str
         """
         return self._scope.project_name
+    
+    @property
+    def ai_resource_name(self) -> Optional[str]:
+        """The AI resource in which AI resource dependent operations will be executed in.
+
+        :return: Default AI Resource name.
+        :rtype: str
+        """
+        return self._scope.ai_resource_name
 
     @property
     def tracking_uri(self):
