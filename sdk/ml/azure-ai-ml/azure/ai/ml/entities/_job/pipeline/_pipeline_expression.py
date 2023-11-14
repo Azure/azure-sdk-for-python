@@ -8,7 +8,7 @@ import re
 import tempfile
 from collections import namedtuple
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, DefaultOpenEncoding
@@ -370,7 +370,7 @@ class PipelineExpression(PipelineExpressionMixin):
             _postfix: List[str],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> Tuple[List[str], dict]:
-            if not _component_output._meta._is_primitive_type:
+            if _component_output._meta is not None and not _component_output._meta._is_primitive_type:
                 error_message = (
                     f"Component output {_component_output._port_name} in expression must "
                     f"be a primitive type with value {True!r}, "
@@ -498,7 +498,7 @@ class PipelineExpression(PipelineExpressionMixin):
         """
         if self._string_concatenation:
             return self._to_data_binding()
-        return self._create_component()
+        return cast(Union[str, "BaseNode"], self._create_component())
 
     @staticmethod
     def parse_pipeline_inputs_from_data_binding(data_binding: str) -> List[str]:
