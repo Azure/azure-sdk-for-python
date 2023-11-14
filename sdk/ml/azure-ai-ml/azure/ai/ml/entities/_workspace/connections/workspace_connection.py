@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union, List, Type
+from typing import IO, AnyStr, Dict, Optional, Union, List, Type, Any
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     AccessKeyAuthTypeWorkspaceConnectionProperties,
@@ -156,6 +156,25 @@ class WorkspaceConnection(Resource):
         ]
         """
         return self._credentials
+
+    @property
+    def metadata(self) -> Dict[str, Any]:
+        """Deprecated. Use tags.
+        :return: This connection's tags.
+        :rtype: Dict[str, Any]
+        """
+        return self.tags
+
+    @metadata.setter
+    def metadata(self, value: Dict[str, Any]):
+        """Deprecated. Use tags.
+        :param value: The new metadata for connection.
+            This completely overwrites the existing tags/metadata dictionary.
+        :type value: Dict[str, Any]
+        """
+        if not value:
+            return
+        self.tags = value
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the workspace connection spec into a file in yaml format.
