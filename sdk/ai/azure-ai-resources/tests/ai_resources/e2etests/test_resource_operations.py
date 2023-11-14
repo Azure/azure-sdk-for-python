@@ -7,32 +7,13 @@ from azure.ai.resources.entities import AIResource
 from azure.core.exceptions import ResourceNotFoundError
 
 # NOTE: Expect 2 AI Projects to exist already in the provided AI Client's resource group:
-# e2e_test_resource_1 and e2e_test_resource_2. Furthermore, the former is expected
+# e2e_test_res_1 and e2e_test_res_2. Furthermore, the former is expected
 # to be the client's default AI resource
 
 @pytest.mark.e2etest
 class TestResources:
-
-    # Code to recreate needed AI resources
-    not_a_real_test = '''
-    def test_run_me_to_create_needed_resources_for_other_tests(self, ai_client: AIClient):
-        new_local_resource = AIResource(
-            name="e2e_test_resource_1",
-            description="e2e testing resource. Do NOT DELETE",
-            resource_group=ai_client.resource_group_name,
-        )
-        created_poller = ai_client.ai_resources.begin_create(ai_resource=new_local_resource)
-        new_local_resource = AIResource(
-            name="e2e_test_resource_2",
-            description="e2e testing resource. Do NOT DELETE",
-            resource_group=ai_client.resource_group_name,
-        )
-        created_poller = ai_client.ai_resources.begin_create(ai_resource=new_local_resource)
-    '''
-
-
     def test_resource_get_and_list(self, ai_client_with_ai_access: AIClient):
-        expected_resources = ["e2e_test_resource_1", "e2e_test_resource_2"]
+        expected_resources = ["e2e_test_res_1", "e2e_test_res_2"]
         resources = ai_client_with_ai_access.ai_resources.list()
         assert len(resources) >= len(expected_resources)
         expected_count = 0
