@@ -66,6 +66,10 @@ class AIClient:
             properties.update({"ai_resource_name": ai_resource_name})
         if project_name:
             properties.update({"project_name": project_name})
+            
+        team_name = kwargs.get("team_name")
+        if team_name:
+            properties.update({"team_name": team_name})
 
         user_agent = USER_AGENT
 
