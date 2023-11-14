@@ -39,6 +39,8 @@ def _get_annotation_by_value(val: Any) -> Union["Input", Type["Input"]]:
     from .enum_input import EnumInput
     from .input import Input
 
+    annotation: Any = None
+
     def _is_dataset(data: Any) -> bool:
         from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 
@@ -170,7 +172,7 @@ def _get_param_with_standard_annotation(
         # Create instance if is type class
         complete_annotation = anno
         if _is_dsl_type_cls(anno):
-            if anno is not None and not isinstance(anno, str):
+            if anno is not None and not isinstance(anno, (str, Input, Output)):
                 complete_annotation = anno()
         if complete_annotation is not None and not isinstance(complete_annotation, str):
             complete_annotation._port_name = name
