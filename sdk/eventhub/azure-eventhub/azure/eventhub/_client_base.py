@@ -63,7 +63,7 @@ _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
 
-def _parse_conn_str(conn_str: str, **kwargs: Dict[str, Any]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
+def _parse_conn_str(conn_str: str, **kwargs: Any) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
@@ -195,7 +195,7 @@ class EventHubSharedKeyCredential(object):
         self.key = key
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes: str, **kwargs: Dict[str, Any]) -> AccessToken:  # pylint:disable=unused-argument
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -212,7 +212,7 @@ class EventhubAzureNamedKeyTokenCredential(object):
         self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes: str, **kwargs: Dict[str, Any]) -> AccessToken:  # pylint:disable=unused-argument
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key
@@ -235,7 +235,7 @@ class EventHubSASTokenCredential(object):
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes: str, **kwargs: Dict[str, Any]) -> AccessToken:  # pylint:disable=unused-argument
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
 
@@ -264,7 +264,7 @@ class EventhubAzureSasTokenCredential(object):
         self._credential = azure_sas_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes: str, **kwargs: Dict[str, Any]) -> AccessToken:  # pylint:disable=unused-argument
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
 
@@ -317,7 +317,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
     @staticmethod
-    def _from_connection_string(conn_str: str, **kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:
         host, policy, key, entity, token, token_expiry = _parse_conn_str(
             conn_str, **kwargs
         )

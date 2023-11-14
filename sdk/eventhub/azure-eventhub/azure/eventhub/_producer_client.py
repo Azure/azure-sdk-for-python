@@ -528,7 +528,7 @@ class EventHubProducerClient(
         )
         return cls(**constructor_args)
 
-    def send_event(self, event_data: Union[EventData, AmqpAnnotatedMessage], **kwargs: Dict[str, Any]) -> None:
+    def send_event(self, event_data: Union[EventData, AmqpAnnotatedMessage], **kwargs: Any) -> None:
         """
         Sends an event data.
         By default, the method will block until acknowledgement is received or operation times out.
@@ -597,7 +597,7 @@ class EventHubProducerClient(
             else:
                 raise
 
-    def send_batch(self, event_data_batch: EventDataBatch, **kwargs: Dict[str, Any]) -> None:
+    def send_batch(self, event_data_batch: EventDataBatch, **kwargs: Any) -> None:
         # pylint: disable=protected-access
         """
         Sends a batch of event data.
@@ -700,7 +700,7 @@ class EventHubProducerClient(
             else:
                 raise
 
-    def create_batch(self, **kwargs: Dict[str, Any]) -> EventDataBatch:
+    def create_batch(self, **kwargs: Any) -> EventDataBatch:
         """Create an EventDataBatch object with the max size of all content being constrained by max_size_in_bytes.
 
         The max_size_in_bytes should be no greater than the max allowed message size defined by the service.

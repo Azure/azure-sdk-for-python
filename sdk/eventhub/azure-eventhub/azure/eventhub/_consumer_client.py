@@ -156,7 +156,7 @@ class EventHubConsumerClient(
         eventhub_name: str,
         consumer_group: str,
         credential: CredentialTypes,
-        **kwargs: Dict[str, Any]
+        **kwargs: Any
     ) -> None:
 
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
@@ -200,7 +200,7 @@ class EventHubConsumerClient(
         partition_id: str,
         event_position: Union[str, int, datetime.datetime],
         on_event_received: Callable[[PartitionContext, EventData], None],
-        **kwargs: Dict[str, Any]
+        **kwargs: Any
     ) -> EventHubConsumer:
         owner_level = kwargs.get("owner_level")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
@@ -227,7 +227,7 @@ class EventHubConsumerClient(
         return handler
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, consumer_group: str, **kwargs: Dict[str, Any]) -> "EventHubConsumerClient":
+    def from_connection_string(cls, conn_str: str, consumer_group: str, **kwargs: Any) -> "EventHubConsumerClient":
         """Create an EventHubConsumerClient from a connection string.
 
         :param str conn_str: The connection string of an Event Hub.
@@ -381,7 +381,7 @@ class EventHubConsumerClient(
                 except KeyError:
                     pass
 
-    def receive(self, on_event: Callable[["PartitionContext", Optional["EventData"]], None], **kwargs: Dict[str, Any]) -> None:
+    def receive(self, on_event: Callable[["PartitionContext", Optional["EventData"]], None], **kwargs: Any) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event: The callback function for handling a received event. The callback takes two
@@ -456,7 +456,7 @@ class EventHubConsumerClient(
 
         self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
 
-    def receive_batch(self, on_event_batch: Callable[["PartitionContext", List["EventData"]], None], **kwargs: Dict[str, Any]) -> None:
+    def receive_batch(self, on_event_batch: Callable[["PartitionContext", List["EventData"]], None], **kwargs: Any) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event_batch: The callback function for handling a batch of received events. The callback takes two

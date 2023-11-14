@@ -384,7 +384,7 @@ if uamqp_installed:
                     raise producer._condition
 
         @staticmethod
-        def set_message_partition_key(message: Message, partition_key: Union[bytes, str], **kwargs: Dict[str, Any]) -> Message:  # pylint:disable=unused-argument
+        def set_message_partition_key(message: Message, partition_key: Union[bytes, str], **kwargs: Any) -> Message:  # pylint:disable=unused-argument
             """Set the partition key as an annotation on a uamqp message.
 
             :param uamqp.Message message: The message to update.
