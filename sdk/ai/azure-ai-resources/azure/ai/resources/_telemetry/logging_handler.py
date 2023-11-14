@@ -87,8 +87,8 @@ def get_appinsights_log_handler(
         if instrumentation_key is None:
             instrumentation_key = INSTRUMENTATION_KEY
 
-        enable_telemetry = os.getenv("AZURE_AI_RESOURCES_ENABLE_LOGGING", True)
-        if not in_jupyter_notebook() or not enable_telemetry:
+        enable_telemetry = os.getenv("AZURE_AI_RESOURCES_ENABLE_LOGGING", "True")
+        if not in_jupyter_notebook() or enable_telemetry == "False":
             return logging.NullHandler()
 
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():
