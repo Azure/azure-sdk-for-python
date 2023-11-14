@@ -1383,8 +1383,6 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         :param distribution_policy_id: The unique identifier of the policy. Required.
         :type distribution_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1823,8 +1821,6 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         :param classification_policy_id: Unique identifier of this policy. Required.
         :type classification_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2262,8 +2258,6 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         :param exception_policy_id: The Id of the exception policy. Required.
         :type exception_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2699,8 +2693,6 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         :param queue_id: The Id of this queue. Required.
         :type queue_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3050,8 +3042,6 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param job_id: The id of the job. Required.
         :type job_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4489,8 +4479,6 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         :param worker_id: Id of the worker. Required.
         :type worker_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

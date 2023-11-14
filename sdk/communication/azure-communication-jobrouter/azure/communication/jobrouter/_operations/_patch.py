@@ -91,15 +91,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_exception_policy(
-            self,
-            exception_policy_id: str,
-            resource: _models.ExceptionPolicy,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        exception_policy_id: str,
+        resource: _models.ExceptionPolicy,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Creates or updates a exception policy.
 
@@ -129,15 +129,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_exception_policy(
-            self,
-            exception_policy_id: str,
-            resource: JSON,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        exception_policy_id: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Creates or updates a exception policy.
 
@@ -167,15 +167,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_exception_policy(
-            self,
-            exception_policy_id: str,
-            resource: IO,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        exception_policy_id: str,
+        resource: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Creates or updates a exception policy.
 
@@ -353,15 +353,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_distribution_policy(
-            self,
-            distribution_policy_id: str,
-            resource: _models.DistributionPolicy,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        distribution_policy_id: str,
+        resource: _models.DistributionPolicy,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Creates or updates a distribution policy.
 
@@ -391,15 +391,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_distribution_policy(
-            self,
-            distribution_policy_id: str,
-            resource: JSON,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        distribution_policy_id: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Creates or updates a distribution policy.
 
@@ -429,15 +429,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_distribution_policy(
-            self,
-            distribution_policy_id: str,
-            resource: IO,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        distribution_policy_id: str,
+        resource: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Creates or updates a distribution policy.
 
@@ -632,15 +632,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_queue(
-            self,
-            queue_id: str,
-            resource: _models.RouterQueue,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        queue_id: str,
+        resource: _models.RouterQueue,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.RouterQueue:
         """Creates or updates a queue.
 
@@ -670,15 +670,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_queue(
-            self,
-            queue_id: str,
-            resource: JSON,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        queue_id: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.RouterQueue:
         """Creates or updates a queue.
 
@@ -708,15 +708,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_queue(
-            self,
-            queue_id: str,
-            resource: IO,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        queue_id: str,
+        resource: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.RouterQueue:
         """Creates or updates a queue.
 
@@ -949,15 +949,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_classification_policy(
-            self,
-            classification_policy_id: str,
-            resource: _models.ClassificationPolicy,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        classification_policy_id: str,
+        resource: _models.ClassificationPolicy,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Creates or updates a classification policy.
 
@@ -987,15 +987,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_classification_policy(
-            self,
-            classification_policy_id: str,
-            resource: JSON,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        classification_policy_id: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Creates or updates a classification policy.
 
@@ -1025,15 +1025,15 @@ class JobRouterAdministrationClientOperationsMixin(
 
     @overload
     def upsert_classification_policy(
-            self,
-            classification_policy_id: str,
-            resource: IO,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        classification_policy_id: str,
+        resource: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Creates or updates a classification policy.
 
@@ -1273,15 +1273,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     @overload
     def upsert_worker(
-            self,
-            worker_id: str,
-            resource: _models.RouterWorker,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        worker_id: str,
+        resource: _models.RouterWorker,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.RouterWorker:
         """Creates or updates a worker.
 
@@ -1311,15 +1311,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     @overload
     def upsert_worker(
-            self,
-            worker_id: str,
-            resource: JSON,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        worker_id: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.RouterWorker:
         """Creates or updates a worker.
 
@@ -1349,15 +1349,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     @overload
     def upsert_worker(
-            self,
-            worker_id: str,
-            resource: IO,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        worker_id: str,
+        resource: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.RouterWorker:
         """Creates or updates a worker.
 
@@ -1637,15 +1637,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     @overload
     def upsert_job(
-            self,
-            job_id: str,
-            resource: _models.RouterJob,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        job_id: str,
+        resource: _models.RouterJob,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.RouterJob:
         """Creates or updates a router job.
 
@@ -1675,15 +1675,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     @overload
     def upsert_job(
-            self,
-            job_id: str,
-            resource: JSON,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        job_id: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.RouterJob:
         """Creates or updates a router job.
 
@@ -1713,15 +1713,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     @overload
     def upsert_job(
-            self,
-            job_id: str,
-            resource: IO,
-            *,
-            content_type: str = "application/merge-patch+json",
-            if_unmodified_since: Optional[datetime.datetime] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        job_id: str,
+        resource: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.RouterJob:
         """Creates or updates a router job.
 
