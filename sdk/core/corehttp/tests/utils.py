@@ -8,16 +8,41 @@ import types
 
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
 from corehttp.rest import HttpRequest as RestHttpRequest
-from corehttp.transport.requests import RequestsTransport
-from corehttp.transport.httpx import HttpXTransport, AsyncHttpXTransport
-from corehttp.transport.aiohttp import AioHttpTransport
 
 
-SYNC_TRANSPORTS = [RequestsTransport, HttpXTransport]
-ASYNC_TRANSPORTS = [AioHttpTransport, AsyncHttpXTransport]
+SYNC_TRANSPORTS = []
+ASYNC_TRANSPORTS = []
+
+AIOHTTP_TRANSPORT_RESPONSES = []
+REQUESTS_TRANSPORT_RESPONSES = []
+
+try:
+    from corehttp.rest._requests_basic import RestRequestsTransportResponse
+    from corehttp.transport.requests import RequestsTransport
+
+    SYNC_TRANSPORTS.append(RequestsTransport)
+    REQUESTS_TRANSPORT_RESPONSES = [RestRequestsTransportResponse]
+except (ImportError, SyntaxError):
+    pass
+
+try:
+    from corehttp.rest._aiohttp import RestAioHttpTransportResponse
+    from corehttp.transport.aiohttp import AioHttpTransport
+
+    ASYNC_TRANSPORTS.append(AioHttpTransport)
+    AIOHTTP_TRANSPORT_RESPONSES = [RestAioHttpTransportResponse]
+except (ImportError, SyntaxError):
+    pass
+
+try:
+    from corehttp.transport.httpx import HttpXTransport, AsyncHttpXTransport
+
+    SYNC_TRANSPORTS.append(HttpXTransport)
+    ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
+except (ImportError, SyntaxError):
+    pass
 
 HTTP_REQUESTS = [RestHttpRequest]
-REQUESTS_TRANSPORT_RESPONSES = []
 
 from corehttp.rest._http_response_impl import HttpResponseImpl as RestHttpResponse
 
@@ -29,22 +54,6 @@ try:
     from corehttp.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
 
     ASYNC_HTTP_RESPONSES = [RestAsyncHttpResponse]
-except (ImportError, SyntaxError):
-    pass
-
-try:
-    from corehttp.rest._requests_basic import RestRequestsTransportResponse
-
-    REQUESTS_TRANSPORT_RESPONSES = [RestRequestsTransportResponse]
-except ImportError:
-    pass
-
-AIOHTTP_TRANSPORT_RESPONSES = []
-
-try:
-    from corehttp.rest._aiohttp import RestAioHttpTransportResponse
-
-    AIOHTTP_TRANSPORT_RESPONSES = [RestAioHttpTransportResponse]
 except (ImportError, SyntaxError):
     pass
 

@@ -59,6 +59,7 @@ conda/assembly/
 conda/assembled/
 conda/downloaded/
 conda/conda-env/
+scenario_*.txt
 
 # tox environment folders
 .tox/

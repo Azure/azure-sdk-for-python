@@ -127,6 +127,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "spinup",
     "cibuildwheel",
     "aoai",
     "pyprojects",
