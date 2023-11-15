@@ -166,7 +166,7 @@ class WorkspaceConnection(Resource):
         return self.tags
 
     @metadata.setter
-    def metadata(self, value: Dict[str, Any]):
+    def metadata(self, value: Dict[str, Any]) -> None:
         """Deprecated. Use tags.
         :param value: The new metadata for connection.
             This completely overwrites the existing tags/metadata dictionary.

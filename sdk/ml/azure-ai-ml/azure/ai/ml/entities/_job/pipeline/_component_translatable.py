@@ -316,8 +316,7 @@ class ComponentTranslatableMixin:
         output_type = None
         if not pipeline_job_dict or output is None:
             try:
-                if not isinstance(output, (str, bool, int, float)):
-                    output_type = output.type
+                output_type = output.type  # type: ignore
             except AttributeError:
                 # default to url_folder if failed to get type
                 output_type = AssetTypes.URI_FOLDER
