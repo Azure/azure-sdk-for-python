@@ -42,14 +42,3 @@ __all__ = [
     "PhoneNumberProperties",
     "UnknownIdentifier",
 ]
-
-def __getattr__(name):
-    if name == 'MicrosoftBotProperties':
-        warnings.warn(f"{name} is deprecated and should not be used. Please use MicrosoftTeamsAppProperties instead.",
-                      DeprecationWarning)
-        return MicrosoftTeamsAppProperties
-    if name == 'MicrosoftBotIdentifier':
-        warnings.warn(f"{name} is deprecated and should not be used. Please use MicrosoftTeamsAppIdentifier instead.",
-                      DeprecationWarning)
-        return MicrosoftTeamsAppIdentifier
-    raise AttributeError(f"module 'azure.communication.identity' has no attribute {name}")
