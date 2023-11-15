@@ -116,7 +116,7 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         return JobSchedule, None
 
     @property
-    def create_job(self) -> None:  # pylint: disable=useless-return
+    def create_job(self) -> Any:  # pylint: disable=useless-return
         module_logger.warning("create_job is not a valid property of %s", str(type(self)))
         # return None here just to be explicit
         return None
@@ -231,7 +231,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         self._create_job = create_job
         self._type = ScheduleType.JOB
 
-    @property  # type: ignore
+    @property
     def create_job(self) -> Union[Job, str]:
         """Return the job associated with the schedule.
 
@@ -342,7 +342,6 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
         schedule = JobSchedule(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             **load_from_dict(JobScheduleSchema, data, context, **kwargs),
-            **{create_job_key: None},
         )
         schedule.create_job = create_job
         return schedule

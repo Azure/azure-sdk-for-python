@@ -163,7 +163,7 @@ class WorkspaceConnection(Resource):
         :return: This connection's tags.
         :rtype: Dict[str, Any]
         """
-        return self.tags
+        return self.tags if self.tags is not None else {}
 
     @metadata.setter
     def metadata(self, value: Dict[str, Any]) -> None:

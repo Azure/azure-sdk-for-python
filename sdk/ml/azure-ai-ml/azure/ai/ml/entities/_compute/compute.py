@@ -46,7 +46,7 @@ class Compute(Resource, RestTranslatableMixin):
         location: Optional[str] = None,
         description: Optional[str] = None,
         resource_id: Optional[str] = None,
-        tags: Optional[dict] = None,
+        tags: Optional[Dict] = None,
         **kwargs: Any,
     ) -> None:
         self._type: Optional[str] = kwargs.pop("type", None)

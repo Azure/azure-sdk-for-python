@@ -90,9 +90,10 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         )
 
     def _to_rest_object(self) -> RestSchedule:
-        tags = {
-            **self.tags,
-        }
+        if self.tags is not None:
+            tags = {
+                **self.tags,
+            }
         # default data window size is calculated based on the trigger frequency
         # by default 7 days if user provides incorrect recurrence frequency
         # or a cron expression
@@ -167,5 +168,6 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         self.create_monitor._populate_default_signal_information()
 
     def _set_baseline_data_trailing_tags_for_signal(self, signal_name: str) -> None:
-        self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"
-        self.tags[f"{signal_name}.baselinedata.datarange.window_size"] = "P7D"
+        if self.tags is not None:
+            self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"
+            self.tags[f"{signal_name}.baselinedata.datarange.window_size"] = "P7D"
