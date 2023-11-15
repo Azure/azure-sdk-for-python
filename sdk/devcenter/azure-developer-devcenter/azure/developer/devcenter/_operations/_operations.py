@@ -29,7 +29,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import DevCenterClientMixinABC
+from .._vendor import DeploymentEnvironmentsClientMixinABC, DevBoxesClientMixinABC, DevCenterClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -92,7 +92,7 @@ def build_dev_center_get_project_request(project_name: str, **kwargs: Any) -> Ht
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_pools_request(
+def build_dev_boxes_list_pools_request(
     project_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -122,7 +122,7 @@ def build_dev_center_list_pools_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_get_pool_request(project_name: str, pool_name: str, **kwargs: Any) -> HttpRequest:
+def build_dev_boxes_get_pool_request(project_name: str, pool_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -147,7 +147,7 @@ def build_dev_center_get_pool_request(project_name: str, pool_name: str, **kwarg
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_schedules_request(
+def build_dev_boxes_list_schedules_request(
     project_name: str, pool_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -178,7 +178,7 @@ def build_dev_center_list_schedules_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_get_schedule_request(
+def build_dev_boxes_get_schedule_request(
     project_name: str, pool_name: str, schedule_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -206,7 +206,7 @@ def build_dev_center_get_schedule_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_all_dev_boxes_request(  # pylint: disable=name-too-long
+def build_dev_boxes_list_all_dev_boxes_request(  # pylint: disable=name-too-long
     *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -231,7 +231,7 @@ def build_dev_center_list_all_dev_boxes_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_all_dev_boxes_by_user_request(  # pylint: disable=name-too-long
+def build_dev_boxes_list_all_dev_boxes_by_user_request(  # pylint: disable=name-too-long
     user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -261,7 +261,7 @@ def build_dev_center_list_all_dev_boxes_by_user_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_dev_boxes_request(
+def build_dev_boxes_list_dev_boxes_request(
     project_name: str, user_id: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -292,7 +292,7 @@ def build_dev_center_list_dev_boxes_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_get_dev_box_request(
+def build_dev_boxes_get_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -320,7 +320,7 @@ def build_dev_center_get_dev_box_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_create_dev_box_request(
+def build_dev_boxes_create_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -351,7 +351,7 @@ def build_dev_center_create_dev_box_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_delete_dev_box_request(
+def build_dev_boxes_delete_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -379,7 +379,7 @@ def build_dev_center_delete_dev_box_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_start_dev_box_request(
+def build_dev_boxes_start_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -407,7 +407,7 @@ def build_dev_center_start_dev_box_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_stop_dev_box_request(
+def build_dev_boxes_stop_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, *, hibernate: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -437,7 +437,7 @@ def build_dev_center_stop_dev_box_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_restart_dev_box_request(
+def build_dev_boxes_restart_dev_box_request(
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -465,7 +465,7 @@ def build_dev_center_restart_dev_box_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_get_remote_connection_request(  # pylint: disable=name-too-long
+def build_dev_boxes_get_remote_connection_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -493,7 +493,7 @@ def build_dev_center_get_remote_connection_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_dev_box_actions_request(  # pylint: disable=name-too-long
+def build_dev_boxes_list_dev_box_actions_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -521,7 +521,7 @@ def build_dev_center_list_dev_box_actions_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_get_dev_box_action_request(  # pylint: disable=name-too-long
+def build_dev_boxes_get_dev_box_action_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, action_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -550,7 +550,7 @@ def build_dev_center_get_dev_box_action_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_skip_dev_box_action_request(  # pylint: disable=name-too-long
+def build_dev_boxes_skip_action_request(
     project_name: str, user_id: str, dev_box_name: str, action_name: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -573,7 +573,7 @@ def build_dev_center_skip_dev_box_action_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_dev_center_delay_dev_box_action_request(  # pylint: disable=name-too-long
+def build_dev_boxes_delay_action_request(
     project_name: str,
     user_id: str,
     dev_box_name: str,
@@ -609,7 +609,7 @@ def build_dev_center_delay_dev_box_action_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_delay_all_dev_box_actions_request(  # pylint: disable=name-too-long
+def build_dev_boxes_delay_all_actions_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, dev_box_name: str, *, delay_until: datetime.datetime, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -638,7 +638,7 @@ def build_dev_center_delay_all_dev_box_actions_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_all_environments_request(  # pylint: disable=name-too-long
+def build_deployment_environments_list_all_environments_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -666,7 +666,7 @@ def build_dev_center_list_all_environments_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_environments_request(  # pylint: disable=name-too-long
+def build_deployment_environments_list_environments_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -695,7 +695,7 @@ def build_dev_center_list_environments_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_get_environment_request(
+def build_deployment_environments_get_environment_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, environment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -723,7 +723,7 @@ def build_dev_center_get_environment_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_create_or_update_environment_request(  # pylint: disable=name-too-long
+def build_deployment_environments_create_or_update_environment_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, environment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -754,7 +754,7 @@ def build_dev_center_create_or_update_environment_request(  # pylint: disable=na
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_delete_environment_request(  # pylint: disable=name-too-long
+def build_deployment_environments_delete_environment_request(  # pylint: disable=name-too-long
     project_name: str, user_id: str, environment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -782,7 +782,7 @@ def build_dev_center_delete_environment_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_catalogs_request(
+def build_deployment_environments_list_catalogs_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -810,7 +810,9 @@ def build_dev_center_list_catalogs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_get_catalog_request(project_name: str, catalog_name: str, **kwargs: Any) -> HttpRequest:
+def build_deployment_environments_get_catalog_request(  # pylint: disable=name-too-long
+    project_name: str, catalog_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -835,7 +837,7 @@ def build_dev_center_get_catalog_request(project_name: str, catalog_name: str, *
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_environment_definitions_request(  # pylint: disable=name-too-long
+def build_deployment_environments_list_environment_definitions_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -863,7 +865,7 @@ def build_dev_center_list_environment_definitions_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_environment_definitions_by_catalog_request(  # pylint: disable=name-too-long
+def build_deployment_environments_list_environment_definitions_by_catalog_request(  # pylint: disable=name-too-long
     project_name: str, catalog_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -892,7 +894,7 @@ def build_dev_center_list_environment_definitions_by_catalog_request(  # pylint:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_get_environment_definition_request(  # pylint: disable=name-too-long
+def build_deployment_environments_get_environment_definition_request(  # pylint: disable=name-too-long
     project_name: str, catalog_name: str, definition_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -920,7 +922,7 @@ def build_dev_center_get_environment_definition_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_dev_center_list_environment_types_request(  # pylint: disable=name-too-long
+def build_deployment_environments_list_environment_types_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -948,7 +950,7 @@ def build_dev_center_list_environment_types_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disable=too-many-public-methods
+class DevCenterClientOperationsMixin(DevCenterClientMixinABC):
     @distributed_trace
     def list_projects(
         self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
@@ -1126,6 +1128,8 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         return cast(JSON, deserialized)  # type: ignore
 
+
+class DevBoxesClientOperationsMixin(DevBoxesClientMixinABC):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_pools(
         self, project_name: str, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
@@ -1210,7 +1214,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_pools_request(
+                _request = build_dev_boxes_list_pools_request(
                     project_name=project_name,
                     filter=filter,
                     top=top,
@@ -1351,7 +1355,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_pool_request(
+        _request = build_dev_boxes_get_pool_request(
             project_name=project_name,
             pool_name=pool_name,
             api_version=self._config.api_version,
@@ -1446,7 +1450,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_schedules_request(
+                _request = build_dev_boxes_list_schedules_request(
                     project_name=project_name,
                     pool_name=pool_name,
                     filter=filter,
@@ -1555,7 +1559,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_schedule_request(
+        _request = build_dev_boxes_get_schedule_request(
             project_name=project_name,
             pool_name=pool_name,
             schedule_name=schedule_name,
@@ -1697,7 +1701,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_all_dev_boxes_request(
+                _request = build_dev_boxes_list_all_dev_boxes_request(
                     filter=filter,
                     top=top,
                     api_version=self._config.api_version,
@@ -1865,7 +1869,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_all_dev_boxes_by_user_request(
+                _request = build_dev_boxes_list_all_dev_boxes_by_user_request(
                     user_id=user_id,
                     filter=filter,
                     top=top,
@@ -2036,7 +2040,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_dev_boxes_request(
+                _request = build_dev_boxes_list_dev_boxes_request(
                     project_name=project_name,
                     user_id=user_id,
                     filter=filter,
@@ -2202,7 +2206,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_dev_box_request(
+        _request = build_dev_boxes_get_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2266,7 +2270,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             _json = body
 
-        _request = build_dev_center_create_dev_box_request(
+        _request = build_dev_boxes_create_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -2844,7 +2848,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_delete_dev_box_request(
+        _request = build_dev_boxes_delete_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3005,7 +3009,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_start_dev_box_request(
+        _request = build_dev_boxes_start_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3160,7 +3164,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_stop_dev_box_request(
+        _request = build_dev_boxes_stop_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3319,7 +3323,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_restart_dev_box_request(
+        _request = build_dev_boxes_restart_dev_box_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3500,7 +3504,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_remote_connection_request(
+        _request = build_dev_boxes_get_remote_connection_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3587,7 +3591,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_dev_box_actions_request(
+                _request = build_dev_boxes_list_dev_box_actions_request(
                     project_name=project_name,
                     user_id=user_id,
                     dev_box_name=dev_box_name,
@@ -3701,7 +3705,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_dev_box_action_request(
+        _request = build_dev_boxes_get_dev_box_action_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3742,7 +3746,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def skip_dev_box_action(  # pylint: disable=inconsistent-return-statements
+    def skip_action(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, user_id: str, dev_box_name: str, action_name: str, **kwargs: Any
     ) -> None:
         """Skips an occurrence of an action.
@@ -3756,8 +3760,6 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         :type dev_box_name: str
         :param action_name: The name of an action that will take place on a Dev Box. Required.
         :type action_name: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3775,7 +3777,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_skip_dev_box_action_request(
+        _request = build_dev_boxes_skip_action_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3789,7 +3791,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3806,7 +3808,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def delay_dev_box_action(
+    def delay_action(
         self,
         project_name: str,
         user_id: str,
@@ -3865,7 +3867,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_delay_dev_box_action_request(
+        _request = build_dev_boxes_delay_action_request(
             project_name=project_name,
             user_id=user_id,
             dev_box_name=dev_box_name,
@@ -3907,7 +3909,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def delay_all_dev_box_actions(
+    def delay_all_actions(
         self, project_name: str, user_id: str, dev_box_name: str, *, delay_until: datetime.datetime, **kwargs: Any
     ) -> Iterable[JSON]:
         """Delays all actions.
@@ -3979,7 +3981,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_delay_all_dev_box_actions_request(
+                _request = build_dev_boxes_delay_all_actions_request(
                     project_name=project_name,
                     user_id=user_id,
                     dev_box_name=dev_box_name,
@@ -4043,6 +4045,10 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         return ItemPaged(get_next, extract_data)
 
+
+class DeploymentEnvironmentsClientOperationsMixin(  # pylint: disable=name-too-long
+    DeploymentEnvironmentsClientMixinABC
+):
     @distributed_trace
     def list_all_environments(self, project_name: str, *, top: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Lists the environments for a project.
@@ -4106,7 +4112,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_all_environments_request(
+                _request = build_deployment_environments_list_all_environments_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,
@@ -4236,7 +4242,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_environments_request(
+                _request = build_deployment_environments_list_environments_request(
                     project_name=project_name,
                     user_id=user_id,
                     top=top,
@@ -4363,7 +4369,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_environment_request(
+        _request = build_deployment_environments_get_environment_request(
             project_name=project_name,
             user_id=user_id,
             environment_name=environment_name,
@@ -4427,7 +4433,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         else:
             _json = body
 
-        _request = build_dev_center_create_or_update_environment_request(
+        _request = build_deployment_environments_create_or_update_environment_request(
             project_name=project_name,
             user_id=user_id,
             environment_name=environment_name,
@@ -4810,7 +4816,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_delete_environment_request(
+        _request = build_deployment_environments_delete_environment_request(
             project_name=project_name,
             user_id=user_id,
             environment_name=environment_name,
@@ -4994,7 +5000,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_catalogs_request(
+                _request = build_deployment_environments_list_catalogs_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,
@@ -5091,7 +5097,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_catalog_request(
+        _request = build_deployment_environments_get_catalog_request(
             project_name=project_name,
             catalog_name=catalog_name,
             api_version=self._config.api_version,
@@ -5196,7 +5202,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_environment_definitions_request(
+                _request = build_deployment_environments_list_environment_definitions_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,
@@ -5327,7 +5333,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_environment_definitions_by_catalog_request(
+                _request = build_deployment_environments_list_environment_definitions_by_catalog_request(
                     project_name=project_name,
                     catalog_name=catalog_name,
                     top=top,
@@ -5457,7 +5463,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_dev_center_get_environment_definition_request(
+        _request = build_deployment_environments_get_environment_definition_request(
             project_name=project_name,
             catalog_name=catalog_name,
             definition_name=definition_name,
@@ -5538,7 +5544,7 @@ class DevCenterClientOperationsMixin(DevCenterClientMixinABC):  # pylint: disabl
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_dev_center_list_environment_types_request(
+                _request = build_deployment_environments_list_environment_types_request(
                     project_name=project_name,
                     top=top,
                     api_version=self._config.api_version,

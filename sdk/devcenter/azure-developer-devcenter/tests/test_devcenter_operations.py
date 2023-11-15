@@ -20,7 +20,7 @@ class TestDevcenter(AzureRecordedTestCase):
     def create_client(self, endpoint):
         credential = self.get_credential(DevCenterClient)
         return DevCenterClient(endpoint, credential=credential)
-    
+
     @DevcenterPowerShellPreparer()
     @recorded_by_proxy
     def test_devbox_operations(self, **kwargs):
@@ -50,16 +50,12 @@ class TestDevcenter(AzureRecordedTestCase):
         assert schedules_response.next()["name"] == schedule_response["name"]
 
         # Create DevBox
-        create_devbox_response = client.begin_create_dev_box(
-            project_name, user, devbox_name, {"poolName": pool_name}
-        )
+        create_devbox_response = client.begin_create_dev_box(project_name, user, devbox_name, {"poolName": pool_name})
         devbox_result = create_devbox_response.result()
         assert devbox_result["provisioningState"] in ["Succeeded", "ProvisionedWithWarning"]
 
         # Actions
-        action_response = client.get_dev_box_action(
-            project_name, default_user, devbox_name, "schedule-default"
-        )
+        action_response = client.get_dev_box_action(project_name, default_user, devbox_name, "schedule-default")
         next_time_str = action_response["next"]["scheduledTime"]
         next_time_date = datetime.strptime(next_time_str, time_format)
         assert action_response["name"] == "schedule-default"
@@ -151,9 +147,7 @@ class TestDevcenter(AzureRecordedTestCase):
         assert filtered_catalog_response[0]["name"] == catalog_response["name"]
 
         # Environment Definitions
-        env_definition_response = client.get_environment_definition(
-            project_name, catalog_name, env_definition_name
-        )
+        env_definition_response = client.get_environment_definition(project_name, catalog_name, env_definition_name)
         assert env_definition_response["name"] == env_definition_name
 
         all_env_definition_response = client.list_environment_definitions(project_name)
@@ -166,9 +160,7 @@ class TestDevcenter(AzureRecordedTestCase):
             and filtered_all_env_definition_response[0]["name"] == env_definition_response["name"]
         )
 
-        env_definitions_response = client.list_environment_definitions_by_catalog(
-            project_name, catalog_name
-        )
+        env_definitions_response = client.list_environment_definitions_by_catalog(project_name, catalog_name)
         filtered_env_definitions_response = filter(lambda x: x["name"] == env_definition_name, env_definitions_response)
         filtered_env_definitions_response = list(filtered_env_definitions_response)
         assert (
