@@ -575,10 +575,10 @@ class EventHubProducerClient(
         :raises OperationTimeoutError: If the value specified by the timeout parameter elapses before the event can be
          sent in non-buffered mode or the events can be enqueued into the buffered in buffered mode.
         """
-        input_pid: str = kwargs.get("partition_id")
+        input_pid = kwargs.get("partition_id")
         pid = input_pid or ALL_PARTITIONS
-        partition_key: str = kwargs.get("partition_key")
-        send_timeout: float = kwargs.get("timeout")
+        partition_key = kwargs.get("partition_key")
+        send_timeout = kwargs.get("timeout")
         try:
             try:
                 cast(EventHubProducer, self._producers[pid]).send(
