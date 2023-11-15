@@ -188,7 +188,6 @@ class TestChatThreadClient(unittest.TestCase):
                                 {
                                     "id": "id",
                                     "attachmentType": "image",
-                                    "extension": "png",
                                     "name": "name.png",
                                     "url": "https://endpoint/threads/chatThreadId/images/imageId/views/original",
                                     "previewUrl": "https://endpoint/threads/chatThreadId/images/imageId/views/preview",

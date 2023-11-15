@@ -73,8 +73,6 @@ class ChatAttachment:
     :vartype id: str
     :ivar attachment_type: The type of attachment. Required. Known values are: "image".
     :vartype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
-    :ivar extension: The file extension of the attachment, if available.
-    :vartype extension: str or None
     :ivar name: The name of the attachment content.
     :vartype name: str or None
     :ivar url: The URL where the attachment can be downloaded.
@@ -89,7 +87,6 @@ class ChatAttachment:
     ) -> None:
         self.id = kwargs['id']
         self.attachment_type = kwargs['attachment_type']
-        self.extension = kwargs.get('extension', None)
         self.name = kwargs.get('name', None)
         self.url = kwargs.get('url', None)
         self.preview_url = kwargs.get('preview_url', None)
@@ -99,7 +96,6 @@ class ChatAttachment:
         return cls(
             id=chat_attachment.id,
             attachment_type=chat_attachment.attachment_type,
-            extension=chat_attachment.extension,
             name=chat_attachment.name,
             url=chat_attachment.url,
             preview_url=chat_attachment.preview_url
@@ -109,7 +105,6 @@ class ChatAttachment:
         return ChatAttachmentAutorest(
             id=self.id,
             attachment_type=self.attachment_type,
-            extension=self.extension,
             name=self.name,
             url=self.url,
             preview_url=self.preview_url

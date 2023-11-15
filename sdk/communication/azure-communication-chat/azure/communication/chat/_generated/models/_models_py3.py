@@ -75,8 +75,6 @@ class ChatAttachment(_serialization.Model):
     :vartype id: str
     :ivar attachment_type: The type of attachment. Required. "image"
     :vartype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
-    :ivar extension: The file extension of the attachment, if available.
-    :vartype extension: str
     :ivar name: The name of the attachment content.
     :vartype name: str
     :ivar url: The URL where the attachment can be downloaded.
@@ -93,7 +91,6 @@ class ChatAttachment(_serialization.Model):
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "attachment_type": {"key": "attachmentType", "type": "str"},
-        "extension": {"key": "extension", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "url": {"key": "url", "type": "str"},
         "preview_url": {"key": "previewUrl", "type": "str"},
@@ -104,7 +101,6 @@ class ChatAttachment(_serialization.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         attachment_type: Union[str, "_models.ChatAttachmentType"],
-        extension: Optional[str] = None,
         name: Optional[str] = None,
         url: Optional[str] = None,
         preview_url: Optional[str] = None,
@@ -115,8 +111,6 @@ class ChatAttachment(_serialization.Model):
         :paramtype id: str
         :keyword attachment_type: The type of attachment. Required. "image"
         :paramtype attachment_type: str or ~azure.communication.chat.models.ChatAttachmentType
-        :keyword extension: The file extension of the attachment, if available.
-        :paramtype extension: str
         :keyword name: The name of the attachment content.
         :paramtype name: str
         :keyword url: The URL where the attachment can be downloaded.
@@ -127,7 +121,6 @@ class ChatAttachment(_serialization.Model):
         super().__init__(**kwargs)
         self.id = id
         self.attachment_type = attachment_type
-        self.extension = extension
         self.name = name
         self.url = url
         self.preview_url = preview_url
