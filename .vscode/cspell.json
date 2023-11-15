@@ -1208,6 +1208,7 @@
         "ruamel",
         "reprcrash",
         "etests",
+        "etest",
         "RMSE",
         "azmonitoring",
         "smirnov"

@@ -27,14 +27,14 @@ def ai_client(
     e2e_subscription_id: str,
     e2e_resource_group: str,
     e2e_project_name: str,
-    e2e_team_name: str,
+    e2e_ai_resource_name: str,
     credential: TokenCredential,
 ) -> AIClient:
     return AIClient(
         subscription_id=e2e_subscription_id,
         resource_group_name=e2e_resource_group,
-        team_name=e2e_team_name,
         project_name=e2e_project_name,
+        ai_resource_name=e2e_ai_resource_name,
         credential=credential,
     )
 
@@ -119,7 +119,8 @@ def sanitized_environment_variables(
         {
             "AI_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
             "AI_RESOURCE_GROUP": "00000",
-            "AI_WORKSPACE_NAME": "00000",
+            "AI_RESOURCE_NAME": "00000",
+            "AI_PROJECT_NAME": "00000",
             "AI_FEATURE_STORE_NAME": "00000",
             "AI_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
             "AI_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,
@@ -143,17 +144,16 @@ def e2e_resource_group(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the resource group to use for end-to-end tests"""
     return sanitized_environment_variables["AI_RESOURCE_GROUP"]
 
-
-@pytest.fixture()
-def e2e_team_name(sanitized_environment_variables: Dict[str, str]) -> str:
-    """Return the team name to use for end-to-end tests"""
-    return sanitized_environment_variables["AI_TEAM_NAME"]
-
-
 @pytest.fixture()
 def e2e_project_name(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the project name to use for end-to-end tests"""
     return sanitized_environment_variables["AI_PROJECT_NAME"]
+
+@pytest.fixture()
+def e2e_ai_resource_name(sanitized_environment_variables: Dict[str, str]) -> str:
+    """Return the ai resource name to use for end-to-end tests"""
+    return sanitized_environment_variables["AI_RESOURCE_NAME"]
+
 
 @pytest.fixture()
 def e2e_openai_api_base(sanitized_environment_variables: Dict[str, str]) -> str:
@@ -186,20 +186,3 @@ def credential() -> TokenCredential:
         return ClientSecretCredential(tenant_id, sp_id, sp_secret)
 
     return FakeTokenCredential()
-
-
-@pytest.fixture(scope="session")
-def azure_credentials():
-    try:
-        credential = AzureCliCredential(process_timeout=60)
-        # Check if given credential can get token successfully.
-        credential.get_token("https://management.azure.com/.default")
-    except Exception:
-        try:
-            credential = DefaultAzureCredential(process_timeout=60)
-            # Check if given credential can get token successfully.
-            credential.get_token("https://management.azure.com/.default")
-        except Exception:
-            credential = InteractiveBrowserCredential()
-
-    return credential
