@@ -273,7 +273,7 @@ class EventhubAzureSasTokenCredential(object):
         :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
-        return AccessToken(signature, expiry)
+        return AccessToken(signature, cast(int, expiry))
 
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes

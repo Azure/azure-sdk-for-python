@@ -210,7 +210,7 @@ class EventhubAzureSasTokenCredentialAsync(object):
         :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
-        return AccessToken(signature, expiry)
+        return AccessToken(signature, cast(int, expiry))
 
 
 class ClientBaseAsync(ClientBase):
