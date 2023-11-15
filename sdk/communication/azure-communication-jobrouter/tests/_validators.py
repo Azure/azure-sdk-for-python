@@ -46,6 +46,13 @@ from azure.communication.jobrouter.models import (
     ExpressionRouterRule,
     LabelOperator,
     RouterJobNote,
+    RouterRuleKind,
+    DistributionModeKind,
+    ExceptionTriggerKind,
+    ExceptionActionKind,
+    QueueSelectorAttachmentKind,
+    WorkerSelectorAttachmentKind,
+    JobMatchingModeKind,
 )
 
 
@@ -64,15 +71,15 @@ class DistributionPolicyValidator(object):
 
     @staticmethod
     def validate_longest_idle_mode(distribution_policy, mode, **kwargs):
-        assert distribution_policy.mode.kind == "longest-idle"
+        assert distribution_policy.mode.kind == DistributionModeKind.LONGEST_IDLE
 
     @staticmethod
     def validate_round_robin_mode(distribution_policy, mode, **kwargs):
-        assert distribution_policy.mode.kind == "round-robin"
+        assert distribution_policy.mode.kind == DistributionModeKind.ROUND_ROBIN
 
     @staticmethod
     def validate_best_worker_mode(distribution_policy, mode, **kwargs):
-        assert distribution_policy.mode.kind == "best-worker"
+        assert distribution_policy.mode.kind == DistributionModeKind.BEST_WORKER
         # TODO: Add more validations for best worker mode
 
     @staticmethod
@@ -93,18 +100,18 @@ class DistributionPolicyValidator(object):
     @staticmethod
     def validate_distribution_policy(distribution_policy, **kwargs):
 
-        if not kwargs.get("identifier", None):
+        if kwargs.get("identifier", None) is not None:
             DistributionPolicyValidator.validate_id(distribution_policy, kwargs.pop("identifier"))
 
-        if not kwargs.get("name", None):
+        if kwargs.get("name", None) is not None:
             DistributionPolicyValidator.validate_name(distribution_policy, kwargs.pop("name"))
 
-        if not kwargs.get("offer_expires_after_seconds", None):
+        if kwargs.get("offer_expires_after_seconds", None) is not None:
             DistributionPolicyValidator.validate_offer_ttl(
                 distribution_policy, kwargs.pop("offer_expires_after_seconds")
             )
 
-        if not kwargs.get("mode", None):
+        if kwargs.get("mode", None) is not None:
             DistributionPolicyValidator.validate_distribution_mode(distribution_policy, kwargs.pop("mode"))
 
 

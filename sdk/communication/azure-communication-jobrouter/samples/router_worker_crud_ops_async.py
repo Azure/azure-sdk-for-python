@@ -21,9 +21,7 @@ import asyncio
 
 
 class RouterWorkerSamplesAsync(object):
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
-    if not endpoint:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
+    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
 
     _worker_id = "sample_worker"
     _distribution_policy_id = "sample_dp_policy"
