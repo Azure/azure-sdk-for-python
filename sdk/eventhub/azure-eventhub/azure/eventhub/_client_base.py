@@ -63,7 +63,10 @@ _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
 
 
-def _parse_conn_str(conn_str: str, **kwargs: Any) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
+def _parse_conn_str(
+        conn_str: str,
+        **kwargs: Any
+    ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
@@ -362,7 +365,11 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._conn_manager.reset_connection_if_broken()
 
     def _backoff(
-        self, retried_times: int, last_exception: Exception, timeout_time: Optional[int]=None, entity_name: Optional[str]=None
+        self,
+        retried_times: int,
+        last_exception: Exception,
+        timeout_time: Optional[int]=None,
+        entity_name: Optional[str]=None
     ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(

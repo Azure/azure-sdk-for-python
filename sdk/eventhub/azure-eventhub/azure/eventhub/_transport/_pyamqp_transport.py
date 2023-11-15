@@ -335,7 +335,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             raise OperationTimeoutError(message=str(exc), details=exc) from exc
 
     @staticmethod
-    def set_message_partition_key(message: Message, partition_key: Optional[Union[bytes, str]], **kwargs: Any) -> Message:
+    def set_message_partition_key(
+        message: Message,
+        partition_key: Optional[Union[bytes, str]],
+        **kwargs: Any
+    ) -> Message:
         """Set the partition key as an annotation on a uamqp message.
         :param ~pyamqp.message.Message message: The message to update.
         :param str partition_key: The partition key value.

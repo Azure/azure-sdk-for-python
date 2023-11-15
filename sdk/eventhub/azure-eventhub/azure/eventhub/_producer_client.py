@@ -326,6 +326,7 @@ class EventHubProducerClient(
                 self._producers[p_id] = None
 
     def _get_max_message_size(self) -> None:
+        # pylint: disable=protected-access
         with self._lock:
             if not self._max_message_size_on_link:
                 cast(
@@ -362,7 +363,11 @@ class EventHubProducerClient(
                     send_timeout=send_timeout,
                 )
 
-    def _create_producer(self, partition_id: Optional[str]=None, send_timeout: Optional[float]=None) -> EventHubProducer:
+    def _create_producer(
+            self,
+            partition_id: Optional[str]=None,
+            send_timeout: Optional[float]=None
+        ) -> EventHubProducer:
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         send_timeout = (
             self._config.send_timeout if send_timeout is None else send_timeout

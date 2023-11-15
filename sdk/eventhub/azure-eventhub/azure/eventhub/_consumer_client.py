@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Union, Any, Callable
 
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
@@ -16,12 +16,8 @@ from ._eventprocessor.common import LoadBalancingStrategy
 if TYPE_CHECKING:
     import datetime
     from typing import (  # pylint: disable=ungrouped-imports
-        Any,
-        Union,
         Dict,
         Tuple,
-        Callable,
-        List,
         Optional,
     )
     from ._eventprocessor.partition_context import PartitionContext
@@ -155,7 +151,7 @@ class EventHubConsumerClient(
         fully_qualified_namespace: str,
         eventhub_name: str,
         consumer_group: str,
-        credential: CredentialTypes,
+        credential: "CredentialTypes",
         **kwargs: Any
     ) -> None:
 
@@ -198,8 +194,8 @@ class EventHubConsumerClient(
         self,
         consumer_group: str,
         partition_id: str,
-        event_position: Union[str, int, datetime.datetime],
-        on_event_received: Callable[[PartitionContext, EventData], None],
+        event_position: Union[str, int, "datetime.datetime"],
+        on_event_received: Callable[["PartitionContext", "EventData"], None],
         **kwargs: Any
     ) -> EventHubConsumer:
         owner_level = kwargs.get("owner_level")
@@ -456,7 +452,11 @@ class EventHubConsumerClient(
 
         self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
 
-    def receive_batch(self, on_event_batch: Callable[["PartitionContext", List["EventData"]], None], **kwargs: Any) -> None:
+    def receive_batch(
+            self,
+            on_event_batch: Callable[["PartitionContext", List["EventData"]], None],
+            **kwargs: Any
+        ) -> None:
         """Receive events from partition(s), with optional load-balancing and checkpointing.
 
         :param on_event_batch: The callback function for handling a batch of received events. The callback takes two

@@ -229,7 +229,11 @@ def parse_sas_credential(credential: AzureSasCredential) -> Tuple[str, Optional[
     return (sas, expiry)
 
 
-def transform_outbound_single_message(message: Union[AmqpAnnotatedMessage, EventData], message_type: Type[EventData], to_outgoing_amqp_message: Callable) -> EventData:
+def transform_outbound_single_message(
+        message: Union[AmqpAnnotatedMessage, EventData],
+        message_type: Type[EventData],
+        to_outgoing_amqp_message: Callable
+    ) -> EventData:
     """
     This method serves multiple goals:
     1. update the internal message to reflect any updates to settable properties on EventData
