@@ -164,6 +164,11 @@ test:
     - azure.mgmt.azurestackhci.aio.operations
     - azure.mgmt.azurestackhci.models
     - azure.mgmt.azurestackhci.operations
+    - azure.mgmt.avs
+    - azure.mgmt.avs.aio
+    - azure.mgmt.avs.aio.operations
+    - azure.mgmt.avs.models
+    - azure.mgmt.avs.operations
     - azure.mgmt.baremetalinfrastructure
     - azure.mgmt.baremetalinfrastructure.aio
     - azure.mgmt.baremetalinfrastructure.aio.operations
@@ -326,11 +331,26 @@ test:
     - azure.mgmt.confluent.aio.operations
     - azure.mgmt.confluent.models
     - azure.mgmt.confluent.operations
+    - azure.mgmt.connectedvmware
+    - azure.mgmt.connectedvmware.aio
+    - azure.mgmt.connectedvmware.aio.operations
+    - azure.mgmt.connectedvmware.models
+    - azure.mgmt.connectedvmware.operations
+    - azure.mgmt.consumption
+    - azure.mgmt.consumption.aio
+    - azure.mgmt.consumption.aio.operations
+    - azure.mgmt.consumption.models
+    - azure.mgmt.consumption.operations
     - azure.mgmt.containerinstance
     - azure.mgmt.containerinstance.aio
     - azure.mgmt.containerinstance.aio.operations
     - azure.mgmt.containerinstance.models
     - azure.mgmt.containerinstance.operations
+    - azure.mgmt.containerregistry
+    - azure.mgmt.containerregistry.aio
+    - azure.mgmt.containerregistry.aio.operations
+    - azure.mgmt.containerregistry.models
+    - azure.mgmt.containerregistry.operations
     - azure.mgmt.containerservice
     - azure.mgmt.containerservice.aio
     - azure.mgmt.containerservice.v2017_07_01
@@ -453,6 +473,11 @@ test:
     - azure.mgmt.containerservice.v2021_03_01.aio.operations
     - azure.mgmt.containerservice.v2021_03_01.models
     - azure.mgmt.containerservice.v2021_03_01.operations
+    - azure.mgmt.containerservicefleet
+    - azure.mgmt.containerservicefleet.aio
+    - azure.mgmt.containerservicefleet.aio.operations
+    - azure.mgmt.containerservicefleet.models
+    - azure.mgmt.containerservicefleet.operations
     - azure.mgmt.cdn
     - azure.mgmt.cdn.aio
     - azure.mgmt.cdn.aio.operations
@@ -547,6 +572,11 @@ test:
     - azure.mgmt.datafactory.aio.operations
     - azure.mgmt.datafactory.models
     - azure.mgmt.datafactory.operations
+    - azure.mgmt.datalake.store
+    - azure.mgmt.datalake.store.aio
+    - azure.mgmt.datalake.store.aio.operations
+    - azure.mgmt.datalake.store.models
+    - azure.mgmt.datalake.store.operations
     - azure.mgmt.datamigration
     - azure.mgmt.datamigration.aio
     - azure.mgmt.datamigration.aio.operations
@@ -567,6 +597,11 @@ test:
     - azure.mgmt.databricks.aio.operations
     - azure.mgmt.databricks.models
     - azure.mgmt.databricks.operations
+    - azure.mgmt.datadog
+    - azure.mgmt.datadog.aio
+    - azure.mgmt.datadog.aio.operations
+    - azure.mgmt.datadog.models
+    - azure.mgmt.datadog.operations
     - azure.mgmt.deploymentmanager
     - azure.mgmt.deploymentmanager.aio
     - azure.mgmt.deploymentmanager.aio.operations
@@ -629,6 +664,11 @@ test:
     - azure.mgmt.digitaltwins.v2023_01_31.aio.operations
     - azure.mgmt.digitaltwins.v2023_01_31.models
     - azure.mgmt.digitaltwins.v2023_01_31.operations
+    - azure.mgmt.dns
+    - azure.mgmt.dns.aio
+    - azure.mgmt.dns.aio.operations
+    - azure.mgmt.dns.models
+    - azure.mgmt.dns.operations
     - azure.mgmt.dnsresolver
     - azure.mgmt.dnsresolver.aio
     - azure.mgmt.dnsresolver.aio.operations
@@ -651,6 +691,11 @@ test:
     - azure.mgmt.elastic.aio.operations
     - azure.mgmt.elastic.models
     - azure.mgmt.elastic.operations
+    - azure.mgmt.eventgrid
+    - azure.mgmt.eventgrid.aio
+    - azure.mgmt.eventgrid.aio.operations
+    - azure.mgmt.eventgrid.models
+    - azure.mgmt.eventgrid.operations
     - azure.mgmt.eventhub
     - azure.mgmt.eventhub.aio
     - azure.mgmt.eventhub.v2015_08_01
@@ -684,6 +729,11 @@ test:
     - azure.mgmt.frontdoor.aio.operations
     - azure.mgmt.frontdoor.models
     - azure.mgmt.frontdoor.operations
+    - azure.mgmt.graphservices
+    - azure.mgmt.graphservices.aio
+    - azure.mgmt.graphservices.aio.operations
+    - azure.mgmt.graphservices.models
+    - azure.mgmt.graphservices.operations
     - azure.mgmt.hanaonazure
     - azure.mgmt.hanaonazure.aio
     - azure.mgmt.hanaonazure.aio.operations
@@ -704,6 +754,11 @@ test:
     - azure.mgmt.hybridcompute.aio.operations
     - azure.mgmt.hybridcompute.models
     - azure.mgmt.hybridcompute.operations
+    - azure.mgmt.hybridconnectivity
+    - azure.mgmt.hybridconnectivity.aio
+    - azure.mgmt.hybridconnectivity.aio.operations
+    - azure.mgmt.hybridconnectivity.models
+    - azure.mgmt.hybridconnectivity.operations
     - azure.mgmt.hybridkubernetes
     - azure.mgmt.hybridkubernetes.aio
     - azure.mgmt.hybridkubernetes.aio.operations
@@ -761,6 +816,11 @@ test:
     - azure.mgmt.iothub.v2020_03_01.aio.operations
     - azure.mgmt.iothub.v2020_03_01.models
     - azure.mgmt.iothub.v2020_03_01.operations
+    - azure.mgmt.iothubprovisioningservices
+    - azure.mgmt.iothubprovisioningservices.aio
+    - azure.mgmt.iothubprovisioningservices.aio.operations
+    - azure.mgmt.iothubprovisioningservices.models
+    - azure.mgmt.iothubprovisioningservices.operations
     - azure.mgmt.keyvault
     - azure.mgmt.keyvault.aio
     - azure.mgmt.keyvault.v2016_10_01
@@ -860,6 +920,11 @@ test:
     - azure.mgmt.maintenance.aio.operations
     - azure.mgmt.maintenance.models
     - azure.mgmt.maintenance.operations
+    - azure.mgmt.managednetworkfabric
+    - azure.mgmt.managednetworkfabric.aio
+    - azure.mgmt.managednetworkfabric.aio.operations
+    - azure.mgmt.managednetworkfabric.models
+    - azure.mgmt.managednetworkfabric.operations
     - azure.mgmt.managedservices
     - azure.mgmt.managedservices.aio
     - azure.mgmt.managedservices.aio.operations
@@ -1039,6 +1104,11 @@ test:
     - azure.mgmt.network.aio.operations
     - azure.mgmt.network.models
     - azure.mgmt.network.operations
+    - azure.mgmt.networkcloud
+    - azure.mgmt.networkcloud.aio
+    - azure.mgmt.networkcloud.aio.operations
+    - azure.mgmt.networkcloud.models
+    - azure.mgmt.networkcloud.operations
     - azure.mgmt.nginx
     - azure.mgmt.nginx.aio
     - azure.mgmt.nginx.aio.operations
@@ -1069,6 +1139,16 @@ test:
     - azure.mgmt.orbital.aio.operations
     - azure.mgmt.orbital.models
     - azure.mgmt.orbital.operations
+    - azure.mgmt.operationsmanagement
+    - azure.mgmt.operationsmanagement.aio
+    - azure.mgmt.operationsmanagement.aio.operations
+    - azure.mgmt.operationsmanagement.models
+    - azure.mgmt.operationsmanagement.operations
+    - azure.mgmt.paloaltonetworksngfw
+    - azure.mgmt.paloaltonetworksngfw.aio
+    - azure.mgmt.paloaltonetworksngfw.aio.operations
+    - azure.mgmt.paloaltonetworksngfw.models
+    - azure.mgmt.paloaltonetworksngfw.operations
     - azure.mgmt.peering
     - azure.mgmt.peering.aio
     - azure.mgmt.peering.aio.operations
@@ -1104,6 +1184,11 @@ test:
     - azure.mgmt.qumulo.aio.operations
     - azure.mgmt.qumulo.models
     - azure.mgmt.qumulo.operations
+    - azure.mgmt.quota
+    - azure.mgmt.quota.aio
+    - azure.mgmt.quota.aio.operations
+    - azure.mgmt.quota.models
+    - azure.mgmt.quota.operations
     - azure.mgmt.rdbms
     - azure.mgmt.rdbms.mariadb
     - azure.mgmt.rdbms.mariadb.aio
@@ -1145,6 +1230,11 @@ test:
     - azure.mgmt.recoveryservicesbackup.passivestamp.aio.operations
     - azure.mgmt.recoveryservicesbackup.passivestamp.models
     - azure.mgmt.recoveryservicesbackup.passivestamp.operations
+    - azure.mgmt.recoveryservicessiterecovery
+    - azure.mgmt.recoveryservicessiterecovery.aio
+    - azure.mgmt.recoveryservicessiterecovery.aio.operations
+    - azure.mgmt.recoveryservicessiterecovery.models
+    - azure.mgmt.recoveryservicessiterecovery.operations
     - azure.mgmt.redhatopenshift
     - azure.mgmt.redhatopenshift.aio
     - azure.mgmt.redhatopenshift.v2020_04_30
@@ -1362,6 +1452,11 @@ test:
     - azure.mgmt.resource.templatespecs.v2019_06_01_preview.aio.operations
     - azure.mgmt.resource.templatespecs.v2019_06_01_preview.models
     - azure.mgmt.resource.templatespecs.v2019_06_01_preview.operations
+    - azure.mgmt.resourceconnector
+    - azure.mgmt.resourceconnector.aio
+    - azure.mgmt.resourceconnector.aio.operations
+    - azure.mgmt.resourceconnector.models
+    - azure.mgmt.resourceconnector.operations
     - azure.mgmt.search
     - azure.mgmt.search.aio
     - azure.mgmt.search.aio.operations
@@ -1375,6 +1470,11 @@ test:
     - azure.mgmt.securityinsight.aio.operations
     - azure.mgmt.securityinsight.models
     - azure.mgmt.securityinsight.operations
+    - azure.mgmt.selfhelp
+    - azure.mgmt.selfhelp.aio
+    - azure.mgmt.selfhelp.aio.operations
+    - azure.mgmt.selfhelp.models
+    - azure.mgmt.selfhelp.operations
     - azure.mgmt.serialconsole
     - azure.mgmt.serialconsole.aio
     - azure.mgmt.serialconsole.aio.operations
@@ -1515,6 +1615,11 @@ test:
     - azure.mgmt.timeseriesinsights.aio.operations
     - azure.mgmt.timeseriesinsights.models
     - azure.mgmt.timeseriesinsights.operations
+    - azure.mgmt.trafficmanager
+    - azure.mgmt.trafficmanager.aio
+    - azure.mgmt.trafficmanager.aio.operations
+    - azure.mgmt.trafficmanager.models
+    - azure.mgmt.trafficmanager.operations
     - azure.mgmt.voiceservices
     - azure.mgmt.voiceservices.aio
     - azure.mgmt.voiceservices.aio.operations
