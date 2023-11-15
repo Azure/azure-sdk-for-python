@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import warnings
 from ._communication_identity_client import CommunicationIdentityClient
 from ._generated.models import CommunicationTokenScope
 
