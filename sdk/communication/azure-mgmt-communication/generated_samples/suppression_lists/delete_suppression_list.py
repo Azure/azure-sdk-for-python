@@ -14,7 +14,7 @@ from azure.mgmt.communication import CommunicationServiceManagementClient
     pip install azure-identity
     pip install azure-mgmt-communication
 # USAGE
-    python create_or_update.py
+    python delete_suppression_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         subscription_id="11112222-3333-4444-5555-666677778888",
     )
 
-    response = client.email_services.begin_create_or_update(
+    client.suppression_lists.delete(
         resource_group_name="MyResourceGroup",
         email_service_name="MyEmailServiceResource",
-        parameters={"location": "Global", "properties": {"dataLocation": "United States"}},
-    ).result()
-    print(response)
+        domain_name="mydomain.com",
+        suppression_list_name="aaaa1111-bbbb-2222-3333-aaaa11112222",
+    )
 
 
-# x-ms-original-file: specification/communication/resource-manager/Microsoft.Communication/preview/2023-06-01-preview/examples/emailServices/createOrUpdate.json
+# x-ms-original-file: specification/communication/resource-manager/Microsoft.Communication/preview/2023-06-01-preview/examples/suppressionLists/deleteSuppressionList.json
 if __name__ == "__main__":
     main()

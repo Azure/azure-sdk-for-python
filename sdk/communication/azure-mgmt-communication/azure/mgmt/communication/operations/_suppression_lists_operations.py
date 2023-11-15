@@ -37,7 +37,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_by_domains_request(
+def build_list_by_domain_request(
     resource_group_name: str, email_service_name: str, domain_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -49,7 +49,7 @@ def build_list_by_domains_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/senderUsernames",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/suppressionLists",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -59,7 +59,7 @@ def build_list_by_domains_request(
         "emailServiceName": _SERIALIZER.url(
             "email_service_name", email_service_name, "str", max_length=63, min_length=1, pattern=r"^[a-zA-Z0-9-]+$"
         ),
-        "domainName": _SERIALIZER.url("domain_name", domain_name, "str", max_length=253, min_length=1),
+        "domainName": _SERIALIZER.url("domain_name", domain_name, "str", max_length=253, min_length=1, pattern=r".*"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -77,7 +77,7 @@ def build_get_request(
     resource_group_name: str,
     email_service_name: str,
     domain_name: str,
-    sender_username: str,
+    suppression_list_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -90,7 +90,7 @@ def build_get_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/senderUsernames/{senderUsername}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/suppressionLists/{suppressionListName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -100,8 +100,15 @@ def build_get_request(
         "emailServiceName": _SERIALIZER.url(
             "email_service_name", email_service_name, "str", max_length=63, min_length=1, pattern=r"^[a-zA-Z0-9-]+$"
         ),
-        "domainName": _SERIALIZER.url("domain_name", domain_name, "str", max_length=253, min_length=1),
-        "senderUsername": _SERIALIZER.url("sender_username", sender_username, "str", max_length=253, min_length=1),
+        "domainName": _SERIALIZER.url("domain_name", domain_name, "str", max_length=253, min_length=1, pattern=r".*"),
+        "suppressionListName": _SERIALIZER.url(
+            "suppression_list_name",
+            suppression_list_name,
+            "str",
+            max_length=253,
+            min_length=1,
+            pattern=r"^[a-zA-Z0-9-]+$",
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -119,7 +126,7 @@ def build_create_or_update_request(
     resource_group_name: str,
     email_service_name: str,
     domain_name: str,
-    sender_username: str,
+    suppression_list_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -133,7 +140,7 @@ def build_create_or_update_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/senderUsernames/{senderUsername}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/suppressionLists/{suppressionListName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -143,8 +150,15 @@ def build_create_or_update_request(
         "emailServiceName": _SERIALIZER.url(
             "email_service_name", email_service_name, "str", max_length=63, min_length=1, pattern=r"^[a-zA-Z0-9-]+$"
         ),
-        "domainName": _SERIALIZER.url("domain_name", domain_name, "str", max_length=253, min_length=1),
-        "senderUsername": _SERIALIZER.url("sender_username", sender_username, "str", max_length=253, min_length=1),
+        "domainName": _SERIALIZER.url("domain_name", domain_name, "str", max_length=253, min_length=1, pattern=r".*"),
+        "suppressionListName": _SERIALIZER.url(
+            "suppression_list_name",
+            suppression_list_name,
+            "str",
+            max_length=253,
+            min_length=1,
+            pattern=r"^[a-zA-Z0-9-]+$",
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -164,7 +178,7 @@ def build_delete_request(
     resource_group_name: str,
     email_service_name: str,
     domain_name: str,
-    sender_username: str,
+    suppression_list_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
@@ -177,7 +191,7 @@ def build_delete_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/senderUsernames/{senderUsername}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/suppressionLists/{suppressionListName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -187,8 +201,15 @@ def build_delete_request(
         "emailServiceName": _SERIALIZER.url(
             "email_service_name", email_service_name, "str", max_length=63, min_length=1, pattern=r"^[a-zA-Z0-9-]+$"
         ),
-        "domainName": _SERIALIZER.url("domain_name", domain_name, "str", max_length=253, min_length=1),
-        "senderUsername": _SERIALIZER.url("sender_username", sender_username, "str", max_length=253, min_length=1),
+        "domainName": _SERIALIZER.url("domain_name", domain_name, "str", max_length=253, min_length=1, pattern=r".*"),
+        "suppressionListName": _SERIALIZER.url(
+            "suppression_list_name",
+            suppression_list_name,
+            "str",
+            max_length=253,
+            min_length=1,
+            pattern=r"^[a-zA-Z0-9-]+$",
+        ),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -202,14 +223,14 @@ def build_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class SenderUsernamesOperations:
+class SuppressionListsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.communication.CommunicationServiceManagementClient`'s
-        :attr:`sender_usernames` attribute.
+        :attr:`suppression_lists` attribute.
     """
 
     models = _models
@@ -222,12 +243,12 @@ class SenderUsernamesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_by_domains(
+    def list_by_domain(
         self, resource_group_name: str, email_service_name: str, domain_name: str, **kwargs: Any
-    ) -> Iterable["_models.SenderUsernameResource"]:
-        """ListBy_Domains.
+    ) -> Iterable["_models.SuppressionListResource"]:
+        """List.
 
-        List all valid sender usernames for a domains resource.
+        List all suppression lists for a domains resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -237,16 +258,16 @@ class SenderUsernamesOperations:
         :param domain_name: The name of the Domains resource. Required.
         :type domain_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SenderUsernameResource or the result of
+        :return: An iterator like instance of either SuppressionListResource or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.communication.models.SenderUsernameResource]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.communication.models.SuppressionListResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SenderUsernameResourceCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SuppressionListResourceCollection] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -259,13 +280,13 @@ class SenderUsernamesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_domains_request(
+                request = build_list_by_domain_request(
                     resource_group_name=resource_group_name,
                     email_service_name=email_service_name,
                     domain_name=domain_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list_by_domains.metadata["url"],
+                    template_url=self.list_by_domain.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -291,7 +312,7 @@ class SenderUsernamesOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("SenderUsernameResourceCollection", pipeline_response)
+            deserialized = self._deserialize("SuppressionListResourceCollection", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -315,17 +336,22 @@ class SenderUsernamesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_domains.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/senderUsernames"
+    list_by_domain.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/suppressionLists"
     }
 
     @distributed_trace
     def get(
-        self, resource_group_name: str, email_service_name: str, domain_name: str, sender_username: str, **kwargs: Any
-    ) -> _models.SenderUsernameResource:
+        self,
+        resource_group_name: str,
+        email_service_name: str,
+        domain_name: str,
+        suppression_list_name: str,
+        **kwargs: Any
+    ) -> _models.SuppressionListResource:
         """Get.
 
-        Get a valid sender username for a domains resource.
+        Get a SuppressionList resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -334,11 +360,11 @@ class SenderUsernamesOperations:
         :type email_service_name: str
         :param domain_name: The name of the Domains resource. Required.
         :type domain_name: str
-        :param sender_username: The valid sender Username. Required.
-        :type sender_username: str
+        :param suppression_list_name: The name of the suppression list. Required.
+        :type suppression_list_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SenderUsernameResource or the result of cls(response)
-        :rtype: ~azure.mgmt.communication.models.SenderUsernameResource
+        :return: SuppressionListResource or the result of cls(response)
+        :rtype: ~azure.mgmt.communication.models.SuppressionListResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -353,13 +379,13 @@ class SenderUsernamesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.SenderUsernameResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SuppressionListResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
             email_service_name=email_service_name,
             domain_name=domain_name,
-            sender_username=sender_username,
+            suppression_list_name=suppression_list_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata["url"],
@@ -381,7 +407,7 @@ class SenderUsernamesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SenderUsernameResource", pipeline_response)
+        deserialized = self._deserialize("SuppressionListResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -389,7 +415,7 @@ class SenderUsernamesOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/senderUsernames/{senderUsername}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/suppressionLists/{suppressionListName}"
     }
 
     @overload
@@ -398,16 +424,16 @@ class SenderUsernamesOperations:
         resource_group_name: str,
         email_service_name: str,
         domain_name: str,
-        sender_username: str,
-        parameters: _models.SenderUsernameResource,
+        suppression_list_name: str,
+        parameters: _models.SuppressionListResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SenderUsernameResource:
+    ) -> _models.SuppressionListResource:
         """Create Or Update.
 
-        Add a new SenderUsername resource under the parent Domains resource or update an existing
-        SenderUsername resource.
+        Add a new SuppressionList resource under the parent Domains resource or update an existing
+        SuppressionList resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -416,16 +442,16 @@ class SenderUsernamesOperations:
         :type email_service_name: str
         :param domain_name: The name of the Domains resource. Required.
         :type domain_name: str
-        :param sender_username: The valid sender Username. Required.
-        :type sender_username: str
+        :param suppression_list_name: The name of the suppression list. Required.
+        :type suppression_list_name: str
         :param parameters: Parameters for the create or update operation. Required.
-        :type parameters: ~azure.mgmt.communication.models.SenderUsernameResource
+        :type parameters: ~azure.mgmt.communication.models.SuppressionListResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SenderUsernameResource or the result of cls(response)
-        :rtype: ~azure.mgmt.communication.models.SenderUsernameResource
+        :return: SuppressionListResource or the result of cls(response)
+        :rtype: ~azure.mgmt.communication.models.SuppressionListResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -435,16 +461,16 @@ class SenderUsernamesOperations:
         resource_group_name: str,
         email_service_name: str,
         domain_name: str,
-        sender_username: str,
+        suppression_list_name: str,
         parameters: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.SenderUsernameResource:
+    ) -> _models.SuppressionListResource:
         """Create Or Update.
 
-        Add a new SenderUsername resource under the parent Domains resource or update an existing
-        SenderUsername resource.
+        Add a new SuppressionList resource under the parent Domains resource or update an existing
+        SuppressionList resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -453,16 +479,16 @@ class SenderUsernamesOperations:
         :type email_service_name: str
         :param domain_name: The name of the Domains resource. Required.
         :type domain_name: str
-        :param sender_username: The valid sender Username. Required.
-        :type sender_username: str
+        :param suppression_list_name: The name of the suppression list. Required.
+        :type suppression_list_name: str
         :param parameters: Parameters for the create or update operation. Required.
         :type parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SenderUsernameResource or the result of cls(response)
-        :rtype: ~azure.mgmt.communication.models.SenderUsernameResource
+        :return: SuppressionListResource or the result of cls(response)
+        :rtype: ~azure.mgmt.communication.models.SuppressionListResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -472,14 +498,14 @@ class SenderUsernamesOperations:
         resource_group_name: str,
         email_service_name: str,
         domain_name: str,
-        sender_username: str,
-        parameters: Union[_models.SenderUsernameResource, IO],
+        suppression_list_name: str,
+        parameters: Union[_models.SuppressionListResource, IO],
         **kwargs: Any
-    ) -> _models.SenderUsernameResource:
+    ) -> _models.SuppressionListResource:
         """Create Or Update.
 
-        Add a new SenderUsername resource under the parent Domains resource or update an existing
-        SenderUsername resource.
+        Add a new SuppressionList resource under the parent Domains resource or update an existing
+        SuppressionList resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -488,17 +514,17 @@ class SenderUsernamesOperations:
         :type email_service_name: str
         :param domain_name: The name of the Domains resource. Required.
         :type domain_name: str
-        :param sender_username: The valid sender Username. Required.
-        :type sender_username: str
+        :param suppression_list_name: The name of the suppression list. Required.
+        :type suppression_list_name: str
         :param parameters: Parameters for the create or update operation. Is either a
-         SenderUsernameResource type or a IO type. Required.
-        :type parameters: ~azure.mgmt.communication.models.SenderUsernameResource or IO
+         SuppressionListResource type or a IO type. Required.
+        :type parameters: ~azure.mgmt.communication.models.SuppressionListResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SenderUsernameResource or the result of cls(response)
-        :rtype: ~azure.mgmt.communication.models.SenderUsernameResource
+        :return: SuppressionListResource or the result of cls(response)
+        :rtype: ~azure.mgmt.communication.models.SuppressionListResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -514,7 +540,7 @@ class SenderUsernamesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SenderUsernameResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SuppressionListResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -522,13 +548,13 @@ class SenderUsernamesOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "SenderUsernameResource")
+            _json = self._serialize.body(parameters, "SuppressionListResource")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             email_service_name=email_service_name,
             domain_name=domain_name,
-            sender_username=sender_username,
+            suppression_list_name=suppression_list_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
@@ -554,10 +580,10 @@ class SenderUsernamesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("SenderUsernameResource", pipeline_response)
+            deserialized = self._deserialize("SuppressionListResource", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("SenderUsernameResource", pipeline_response)
+            deserialized = self._deserialize("SuppressionListResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -565,16 +591,21 @@ class SenderUsernamesOperations:
         return deserialized  # type: ignore
 
     create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/senderUsernames/{senderUsername}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/suppressionLists/{suppressionListName}"
     }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, email_service_name: str, domain_name: str, sender_username: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        email_service_name: str,
+        domain_name: str,
+        suppression_list_name: str,
+        **kwargs: Any
     ) -> None:
         """Delete.
 
-        Operation to delete a SenderUsernames resource.
+        Delete a SuppressionList.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -583,8 +614,8 @@ class SenderUsernamesOperations:
         :type email_service_name: str
         :param domain_name: The name of the Domains resource. Required.
         :type domain_name: str
-        :param sender_username: The valid sender Username. Required.
-        :type sender_username: str
+        :param suppression_list_name: The name of the suppression list. Required.
+        :type suppression_list_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -608,7 +639,7 @@ class SenderUsernamesOperations:
             resource_group_name=resource_group_name,
             email_service_name=email_service_name,
             domain_name=domain_name,
-            sender_username=sender_username,
+            suppression_list_name=suppression_list_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata["url"],
@@ -634,5 +665,5 @@ class SenderUsernamesOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/senderUsernames/{senderUsername}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Communication/emailServices/{emailServiceName}/domains/{domainName}/suppressionLists/{suppressionListName}"
     }
