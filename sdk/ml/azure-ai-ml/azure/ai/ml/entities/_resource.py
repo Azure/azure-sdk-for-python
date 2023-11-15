@@ -51,7 +51,7 @@ class Resource(abc.ABC):
     ) -> None:
         self.name = name
         self.description = description
-        self.tags = dict(tags) if tags else {}
+        self.tags: Optional[Dict] = dict(tags) if tags else {}
         self.properties = dict(properties) if properties else {}
         # Conditional assignment to prevent entity bloat when unused.
         print_as_yaml = kwargs.pop("print_as_yaml", in_jupyter_notebook())

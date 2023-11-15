@@ -46,8 +46,9 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="azure_open_ai", credentials=credentials, **kwargs)
 
-        self.tags[CONNECTION_API_VERSION_KEY] = api_version
-        self.tags[CONNECTION_API_TYPE_KEY] = api_type
+        if self.tags is not None:
+            self.tags[CONNECTION_API_VERSION_KEY] = api_version
+            self.tags[CONNECTION_API_TYPE_KEY] = api_type
 
     @property
     def api_version(self) -> Optional[str]:
@@ -68,7 +69,8 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         :param value: The new api version to set.
         :type value: str
         """
-        self.tags[CONNECTION_API_VERSION_KEY] = value
+        if self.tags is not None:
+            self.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
     def api_type(self) -> Optional[str]:
@@ -89,7 +91,8 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         :param value: The new api type to set.
         :type value: str
         """
-        self.tags[CONNECTION_API_TYPE_KEY] = value
+        if self.tags is not None:
+            self.tags[CONNECTION_API_TYPE_KEY] = value
 
 
 @experimental
@@ -120,7 +123,8 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_search", credentials=credentials, **kwargs)
 
-        self.tags[CONNECTION_API_VERSION_KEY] = api_version
+        if self.tags is not None:
+            self.tags[CONNECTION_API_VERSION_KEY] = api_version
 
     @property
     def api_version(self) -> Optional[str]:
@@ -141,7 +145,8 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         :param value: The new api version to set.
         :type value: str
         """
-        self.tags[CONNECTION_API_VERSION_KEY] = value
+        if self.tags is not None:
+            self.tags[CONNECTION_API_VERSION_KEY] = value
 
 
 @experimental
@@ -175,8 +180,9 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_service", credentials=credentials, **kwargs)
 
-        self.tags[CONNECTION_API_VERSION_KEY] = api_version
-        self.tags[CONNECTION_KIND_KEY] = kind
+        if self.tags is not None:
+            self.tags[CONNECTION_API_VERSION_KEY] = api_version
+            self.tags[CONNECTION_KIND_KEY] = kind
 
     @property
     def api_version(self) -> Optional[str]:
@@ -197,7 +203,8 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         :param value: The new api version to set.
         :type value: str
         """
-        self.tags[CONNECTION_API_VERSION_KEY] = value
+        if self.tags is not None:
+            self.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
     def kind(self) -> Optional[str]:
@@ -218,4 +225,5 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         :param value: The new kind to set.
         :type value: str
         """
-        self.tags[CONNECTION_KIND_KEY] = value
+        if self.tags is not None:
+            self.tags[CONNECTION_KIND_KEY] = value
