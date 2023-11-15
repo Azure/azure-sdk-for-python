@@ -46,7 +46,7 @@ class Compute(Resource, RestTranslatableMixin):
         location: Optional[str] = None,
         description: Optional[str] = None,
         resource_id: Optional[str] = None,
-        tags: Optional[dict] = None,
+        tags: Optional[Dict] = None,
         **kwargs: Any,
     ) -> None:
         self._type: Optional[str] = kwargs.pop("type", None)
@@ -60,7 +60,7 @@ class Compute(Resource, RestTranslatableMixin):
         super().__init__(name=name, description=description, **kwargs)
         self.resource_id = resource_id
         self.location = location
-        self.tags = tags
+        self.tags = dict(tags) if tags else {}
 
     @property
     def type(self) -> Optional[str]:
