@@ -5,7 +5,7 @@ import os
 import tempfile
 import time
 from enum import Enum
-from typing import List, Optional, Any
+from typing import Dict, List, Optional, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -402,7 +402,7 @@ def _update_requests_map(type_name, value=None):
             _REQUESTS_MAP[type_name][value] = prev + 1
 
 
-_MONITOR_DOMAIN_MAPPING = {
+_MONITOR_DOMAIN_MAPPING: Dict[str: MonitorDomain] = {
     "EventData": TelemetryEventData,
     "ExceptionData": TelemetryExceptionData,
     "MessageData": MessageData,
@@ -418,11 +418,11 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
     # After TelemetryItem.from_dict, all base_data fields are stored in
     # additional_properties as a dict instead of in item.data.base_data itself
     # item.data.base_data is also of type MonitorDomain instead of a child class
-    if hasattr(item, "data"):
+    if hasattr(item, "data") and item.data is not None:
         if hasattr(item.data, "base_data") and isinstance(item.data.base_data, MonitorDomain):
-            if hasattr(item.data, "base_type"):
+            if hasattr(item.data, "base_type") and isinstance(item.data.base_type, str):
                 base_type = _MONITOR_DOMAIN_MAPPING.get(item.data.base_type)
-                # Apply deseralization of additional_properties and store that as base_data
+                # Apply deserialization of additional_properties and store that as base_data
                 if base_type:
                     item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties)
                     item.data.base_data.additional_properties = None
