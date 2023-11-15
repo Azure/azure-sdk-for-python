@@ -529,7 +529,7 @@ stages:
                 - package: azure-mgmt-digitaltwins
                   version: 6.4.0
                 - package: azure-mgmt-dns
-                  version: 8.0.1
+                  version: 8.1.0
                 - package: azure-mgmt-dnsresolver
                   version: 1.0.0
                 - package: azure-mgmt-dynatrace
