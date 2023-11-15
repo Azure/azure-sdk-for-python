@@ -1208,7 +1208,6 @@
         "ruamel",
         "reprcrash",
         "etests",
-        "etest",
         "RMSE",
         "azmonitoring",
         "smirnov"
@@ -1381,6 +1380,12 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-resources/**",
+      "words": [
+        "etest"
       ]
     },
     {
