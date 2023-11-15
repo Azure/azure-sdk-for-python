@@ -63,13 +63,13 @@ def generate_typespec(folder: Path) -> None:
 def generate(folder: Path = Path(".")) -> None:
     if (folder / "swagger" / "README.md").exists():
         generate_autorest(folder)
-        if check_post_process(folder):
-            run_post_process(folder)
     elif (folder / "tsp-location.yaml").exists():
         generate_typespec(folder)
     else:
         raise ValueError("Didn't find swagger/README.md nor tsp_location.yaml")
 
+    if check_post_process(folder):
+        run_post_process(folder)
 
 def generate_main() -> None:
     """Main method"""
