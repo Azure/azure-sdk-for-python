@@ -207,6 +207,27 @@ class BaseConnection:
             return
         self._workspace_connection.tags = value
 
+    @property
+    def metadata(self) -> Dict[str, Any]:
+        """Deprecated. Use tags.
+
+        :return: This connection's tags/metadata.
+        :rtype: Dict[str, Any]
+        """
+        return self._workspace_connection.tags
+
+    @metadata.setter
+    def metadata(self, value: Dict[str, Any]):
+        """Deprecated. Use tags.
+
+        :param value: The new tags/metadata for connection.
+            This completely overwrites the existing tags/metadata dictionary.
+        :type value: Dict[str, Any]
+        """
+        if not value:
+            return
+        self._workspace_connection.tags = value
+
     def set_current_environment(self, credential: Optional[TokenCredential] = None):
         """Sets the current environment to use the connection. To use AAD auth for AzureOpenAI connetion, pass in a credential object.
         Only certain types of connections make use of this function. Those that don't will raise an error if this is called.

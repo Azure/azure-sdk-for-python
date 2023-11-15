@@ -49,13 +49,13 @@ setup(
             "sdk_analyze_deps=ci_tools.dependency_analysis:analyze_dependencies",
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
             "sdk_verify_keywords=ci_tools.keywords_verify:entrypoint",
-            "multiapi_combiner=packaging_tools.multiapi_combiner:combine",
+            "multiapi_combiner=packaging_tools.multiapi_combiner:combine"
         ],
     },
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
         ":python_version<'3.11'": ["tomli==2.0.1"],
-        "build": ["six", "setuptools", "pyparsing", "certifi"],
+        "build": ["six", "setuptools", "pyparsing", "certifi", "cibuildwheel"],
         "conda": ["beautifulsoup4"]
     },
 )

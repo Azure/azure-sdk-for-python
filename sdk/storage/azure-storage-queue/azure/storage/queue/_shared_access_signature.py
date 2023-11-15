@@ -4,24 +4,25 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, TYPE_CHECKING
-)
+from typing import Any, Optional, TYPE_CHECKING, Union
+from urllib.parse import parse_qs
 
 from azure.storage.queue._shared import sign_string
 from azure.storage.queue._shared.constants import X_MS_VERSION
 from azure.storage.queue._shared.models import Services
-from azure.storage.queue._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
-    QueryStringConstants
+from azure.storage.queue._shared.shared_access_signature import (
+    QueryStringConstants,
+    SharedAccessSignature,
+    _SharedAccessHelper
+)
 
 if TYPE_CHECKING:
-    from datetime import datetime
     from azure.storage.queue import (
-        ResourceTypes,
         AccountSasPermissions,
-        QueueSasPermissions
+        QueueSasPermissions,
+        ResourceTypes
     )
-    from typing import Any
+    from datetime import datetime
 
 class QueueSharedAccessSignature(SharedAccessSignature):
     '''
@@ -31,7 +32,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     '''
 
-    def __init__(self, account_name, account_key):
+    def __init__(self, account_name: str, account_key: str) -> None:
         '''
         :param str account_name:
             The storage account name used to generate the shared access signatures.
@@ -40,21 +41,28 @@ class QueueSharedAccessSignature(SharedAccessSignature):
         '''
         super(QueueSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
 
-    def generate_queue(self, queue_name, permission=None,
-                       expiry=None, start=None, policy_id=None,
-                       ip=None, protocol=None):
+    def generate_queue(
+        self, queue_name: str,
+        permission: Optional[Union["QueueSasPermissions", str]] = None,
+        expiry: Optional[Union["datetime", str]] = None,
+        start: Optional[Union["datetime", str]] = None,
+        policy_id: Optional[str] = None,
+        ip: Optional[str] = None,
+        protocol: Optional[str] = None
+    ) -> str:
         '''
         Generates a shared access signature for the queue.
         Use the returned signature with the sas_token parameter of QueueService.
         :param str queue_name:
             Name of queue.
-        :param QueueSasPermissions permission:
+        :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Permissions must be ordered read, add, update, process.
             Required unless an id is given referencing a stored access policy
             which contains this field. This field must be omitted if it has been
             specified in an associated stored access policy.
+        :type permission: ~azure.storage.queue.QueueSasPermissions or str
         :param expiry:
             The time at which the shared access signature becomes invalid.
             Required unless an id is given referencing a stored access policy
@@ -62,14 +70,14 @@ class QueueSharedAccessSignature(SharedAccessSignature):
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
+        :type start: ~datetime.datetime or str
         :param str policy_id:
             A unique value up to 64 characters in length that correlates to a
             stored access policy.
@@ -95,7 +103,7 @@ class QueueSharedAccessSignature(SharedAccessSignature):
 
 class _QueueSharedAccessHelper(_SharedAccessHelper):
 
-    def add_resource_signature(self, account_name, account_key, path):  # pylint: disable=arguments-differ
+    def add_resource_signature(self, account_name: str, account_key: str, path: str):  # pylint: disable=arguments-differ
         def get_value_to_append(query):
             return_value = self.query_dict.get(query) or ''
             return return_value + '\n'
@@ -126,15 +134,15 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
 
 
 def generate_account_sas(
-        account_name,  # type: str
-        account_key,  # type: str
-        resource_types,  # type: Union[ResourceTypes, str]
-        permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        ip=None,  # type: Optional[str]
-        **kwargs  # type: "Any"
-    ):  # type: (...) -> str
+    account_name: str,
+    account_key: str,
+    resource_types: Union["ResourceTypes", str],
+    permission: Union["AccountSasPermissions", str],
+    expiry: Optional[Union["datetime", str]],
+    start: Optional[Union["datetime", str]] = None,
+    ip: Optional[str] = None,
+    **kwargs: Any
+) -> str:
     """Generates a shared access signature for the queue service.
 
     Use the returned signature with the credential parameter of any Queue Service.
@@ -145,16 +153,14 @@ def generate_account_sas(
         The account key, also called shared key or access key, to generate the shared access signature.
     :param ~azure.storage.queue.ResourceTypes resource_types:
         Specifies the resource types that are accessible with the account SAS.
-    :param ~azure.storage.queue.AccountSasPermissions permission:
+    :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
+    :type permission: ~azure.storage.queue.AccountSasPermissions or str
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC.
+        Azure will always convert values to UTC. If a date is passed in
+        without timezone info, it is assumed to be UTC.
     :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
@@ -183,20 +189,20 @@ def generate_account_sas(
         start=start,
         ip=ip,
         **kwargs
-    ) # type: ignore
+    )
 
 
 def generate_queue_sas(
-        account_name,  # type: str
-        queue_name,  # type: str
-        account_key,  # type: str
-        permission=None,  # type: Optional[Union[QueueSasPermissions, str]]
-        expiry=None,  # type: Optional[Union[datetime, str]]
-        start=None,  # type: Optional[Union[datetime, str]]
-        policy_id=None,  # type: Optional[str]
-        ip=None,  # type: Optional[str]
-        **kwargs  # type: "Any"
-    ):  # type: (...) -> str
+    account_name: str,
+    queue_name: str,
+    account_key: str,
+    permission: Optional[Union["QueueSasPermissions", str]] = None,
+    expiry: Optional[Union["datetime", str]] = None,
+    start: Optional[Union["datetime", str]] = None,
+    policy_id: Optional[str] = None,
+    ip: Optional[str] = None,
+    **kwargs: Any
+) -> str:
     """Generates a shared access signature for a queue.
 
     Use the returned signature with the credential parameter of any Queue Service.
@@ -207,12 +213,13 @@ def generate_queue_sas(
         The name of the queue.
     :param str account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
-    :param ~azure.storage.queue.QueueSasPermissions permission:
+    :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless a policy_id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
+    :type permission: ~azure.storage.queue.QueueSasPermissions or str
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless a policy_id is given referencing a stored access policy
@@ -252,6 +259,11 @@ def generate_queue_sas(
             :dedent: 12
             :caption: Generate a sas token.
     """
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     sas = QueueSharedAccessSignature(account_name, account_key)
     return sas.generate_queue(
         queue_name,
@@ -262,3 +274,13 @@ def generate_queue_sas(
         ip=ip,
         **kwargs
     )
+
+def _is_credential_sastoken(credential: Any) -> bool:
+    if not credential or not isinstance(credential, str):
+        return False
+
+    sas_values = QueryStringConstants.to_list()
+    parsed_query = parse_qs(credential.lstrip("?"))
+    if parsed_query and all(k in sas_values for k in parsed_query):
+        return True
+    return False

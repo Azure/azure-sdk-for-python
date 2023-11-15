@@ -127,6 +127,8 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "spinup",
+    "cibuildwheel",
     "aoai",
     "pyprojects",
     "certifi",
@@ -470,7 +472,9 @@
         "Fproviders",
         "Fdeployments",
         "roups",
-        "mltable"
+        "mltable",
+        "wsid",
+        "runid"
       ]
     },
     {
@@ -648,7 +652,7 @@
         "engelska",
         "fhir",
         "FHIR",
-        "naam",
+        "naam"
       ]
     },
     {
