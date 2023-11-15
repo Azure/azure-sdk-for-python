@@ -1650,8 +1650,6 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         :param model_id: Unique document model name. Required.
         :type model_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2271,8 +2269,6 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         :param classifier_id: Unique document classifier name. Required.
         :type classifier_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
