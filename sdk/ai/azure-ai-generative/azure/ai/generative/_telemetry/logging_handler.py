@@ -86,7 +86,7 @@ def get_appinsights_log_handler(
         if not in_jupyter_notebook() or enable_telemetry == "False":
             return logging.NullHandler()
 
-        if not user_agent or ("azure-ai" not in user_agent):
+        if not user_agent or not any(name in user_agent.lower() for name in ["azure-ai-generative", "azure-ai-resources"]):
             return logging.NullHandler()
 
         if "properties" in kwargs and "subscription_id" in kwargs.get("properties"):
