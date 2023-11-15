@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines,anomalous-backslash-in-string,name-too-long
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -98,7 +98,7 @@ class DistributionMode(_model_base.Model):
      values are: "bestWorker", "longestIdle", and "roundRobin".
     :vartype kind: str or ~azure.communication.jobrouter.models.DistributionModeKind
     """
-    __mapping__: Dict[str, _model_base.Model] = {}
+
     min_concurrent_offers: Optional[int] = rest_field(name="minConcurrentOffers")
     """Governs the minimum desired number of active concurrent offers a job can have."""
     max_concurrent_offers: Optional[int] = rest_field(name="maxConcurrentOffers")
@@ -213,7 +213,6 @@ class ExceptionAction(_model_base.Model):
     :vartype kind: str or ~azure.communication.jobrouter.models.ExceptionActionKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     id: Optional[str] = rest_field()
     """Unique Id of the exception action."""
     kind: Literal[None] = rest_discriminator(name="kind")
@@ -497,7 +496,6 @@ class QueueSelectorAttachment(_model_base.Model):
     :vartype kind: str or ~azure.communication.jobrouter.models.QueueSelectorAttachmentKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of QueueSelectorAttachment. Required. Known values
      are: \"conditional\", \"passThrough\", \"ruleEngine\", \"static\", and \"weightedAllocation\"."""
@@ -568,7 +566,6 @@ class WorkerSelectorAttachment(_model_base.Model):
     :vartype kind: str or ~azure.communication.jobrouter.models.WorkerSelectorAttachmentKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of WorkerSelectorAttachment. Required. Known
      values are: \"conditional\", \"passThrough\", \"ruleEngine\", \"static\", and
@@ -685,7 +682,6 @@ class RouterRule(_model_base.Model):
     :vartype kind: str or ~azure.communication.jobrouter.models.RouterRuleKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of RouterRule. Required. Known values are:
      \"directMap\", \"expression\", \"function\", \"static\", and \"webhook\"."""
@@ -866,7 +862,6 @@ class ExceptionTrigger(_model_base.Model):
     :vartype kind: str or ~azure.communication.jobrouter.models.ExceptionTriggerKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of ExceptionTrigger. Required. Known values are:
      \"queueLength\" and \"waitTime\"."""
@@ -1024,7 +1019,6 @@ class JobMatchingMode(_model_base.Model):
     :vartype kind: str or ~azure.communication.jobrouter.models.JobMatchingModeKind
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
     kind: Literal[None] = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of JobMatchingMode. Required. Known values are:
      \"queueAndMatch\", \"scheduleAndSuspend\", and \"suspend\"."""
