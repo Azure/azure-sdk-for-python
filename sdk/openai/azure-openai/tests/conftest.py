@@ -33,12 +33,16 @@ WHISPER_AZURE = "whisper_azure"
 WHISPER_AZURE_AD = "whisper_azuread"
 WHISPER_ALL = ["whisper_azure", "whisper_azuread", "openai"]
 DALLE_AZURE = "dalle_azure"
+DALLE_AZURE_AD = "dalle_azuread"
+DALLE_ALL = ["dalle_azure", "dalle_azuread", "openai"]
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
 ENV_AZURE_OPENAI_KEY = "AZURE_OPENAI_KEY"
 ENV_AZURE_OPENAI_WHISPER_ENDPOINT = "AZURE_OPENAI_WHISPER_ENDPOINT"
 ENV_AZURE_OPENAI_WHISPER_KEY = "AZURE_OPENAI_WHISPER_KEY"
+ENV_AZURE_OPENAI_DALLE_ENDPOINT = "AZURE_OPENAI_DALLE_ENDPOINT"
+ENV_AZURE_OPENAI_DALLE_KEY = "AZURE_OPENAI_DALLE_KEY"
 ENV_SUBSCRIPTION_ID = "AZURE_SUBSCRIPTION_ID"
 ENV_TENANT_ID = "AZURE_TENANT_ID"
 ENV_CLIENT_ID = "AZURE_CLIENT_ID"
@@ -52,7 +56,7 @@ ENV_AZURE_OPENAI_COMPLETIONS_NAME = "text-davinci-003"
 ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo-16k"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
 ENV_AZURE_OPENAI_AUDIO_NAME = "whisper"
-ENV_AZURE_OPENAI_DALLE_NAME = "Dalle3"
+ENV_AZURE_OPENAI_DALLE_NAME = "dall-e-3"
 
 ENV_OPENAI_KEY = "OPENAI_KEY"
 ENV_OPENAI_COMPLETIONS_MODEL = "text-davinci-003"
@@ -101,6 +105,8 @@ def azure_openai_creds():
         "search_index": os.getenv(ENV_AZURE_OPENAI_SEARCH_INDEX),
         "audio_name": ENV_AZURE_OPENAI_AUDIO_NAME,
         "audio_model": ENV_OPENAI_AUDIO_MODEL,
+        "dalle_name": ENV_AZURE_OPENAI_DALLE_NAME,
+        "dalle_model": ENV_OPENAI_DALLE_MODEL,
     }
 
 # openai>=1.0.0 ---------------------------------------------------------------------------
@@ -137,7 +143,18 @@ def client(api_type):
             azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
-
+    elif api_type == "dalle_azure":
+        client = openai.AzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_DALLE_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_DALLE_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+    elif api_type == "dalle_azuread":
+        client = openai.AzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_DALLE_ENDPOINT),
+            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
     return client
 
 
@@ -173,7 +190,18 @@ def client_async(api_type):
             azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
-
+    elif api_type == "dalle_azure":
+        client = openai.AsyncAzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_DALLE_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_DALLE_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+    elif api_type == "dalle_azuread":
+        client = openai.AsyncAzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_DALLE_ENDPOINT),
+            azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
     return client
 
 
@@ -201,7 +229,7 @@ def build_kwargs(args, api_type):
         elif api_type == "openai":
             return {"model": ENV_OPENAI_EMBEDDINGS_MODEL}
     if test_feature.startswith("test_dall_e"):
-        if api_type in ["azure", "azuread"]:
+        if api_type in ["dalle_azure", "dalle_azuread"]:
             return {"model": ENV_AZURE_OPENAI_DALLE_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_DALLE_MODEL}
