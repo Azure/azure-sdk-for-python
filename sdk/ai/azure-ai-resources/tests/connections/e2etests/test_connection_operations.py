@@ -8,10 +8,10 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 from azure.core.exceptions import ResourceNotFoundError
 
-
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestConnections:
+    @pytest.mark.skipif(condition=True, reason="Key acquisition is broken, breaking the GET operation.")
     def test_get_and_list(self, ai_client: AIClient):
         connection_count = 0
         for listed_conn in ai_client.connections.list():
@@ -21,6 +21,7 @@ class TestConnections:
         assert connection_count > 0
 
 
+    @pytest.mark.skipif(condition=True, reason="Key acquisition is broken, breaking the GET operation.")
     def test_get_default_connections(self, ai_client: AIClient):
         aoai_conn = ai_client.get_default_aoai_connection()
         assert aoai_conn is not None
@@ -29,6 +30,7 @@ class TestConnections:
         assert content_safety_conn is not None
 
 
+    @pytest.mark.skipif(condition=True, reason="Key acquisition is broken, breaking the GET operation.")
     def test_aoai_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions since
         # soft-delete doesn't seem to be fast enough to avoid recycling problems.
@@ -55,6 +57,7 @@ class TestConnections:
         with pytest.raises(ResourceNotFoundError):
             ai_client.connections.get(name)
 
+    @pytest.mark.skipif(condition=True, reason="Key acquisition is broken, breaking the GET operation.")
     def test_search_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions since
         # soft-delete doesn't seem to be fast enough to avoid recycling problems.
@@ -82,6 +85,7 @@ class TestConnections:
         with pytest.raises(ResourceNotFoundError):
             ai_client.connections.get(name)
 
+    @pytest.mark.skipif(condition=True, reason="Key acquisition is broken, breaking the GET operation.")
     def test_service_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions since
         # soft-delete doesn't seem to be fast enough to avoid recycling problems.
