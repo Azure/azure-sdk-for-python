@@ -1,6 +1,4 @@
-import random
-import string
-
+from typing import Callable
 import pytest
 
 from azure.ai.resources.client import AIClient
@@ -31,10 +29,10 @@ class TestConnections:
         assert content_safety_conn is not None
 
 
-    def test_aoai_create_and_delete(self, ai_client: AIClient):
+    def test_aoai_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions since
         # soft-delete doesn't seem to be fast enough to avoid recycling problems.
-        name = "e2eTestAOAIConn" + "".join(random.choice(string.digits) for _ in range(10))
+        name = "testAOAIConn" + rand_num()
         cred = ApiKeyConfiguration(key="1234567")
         target = "test-target"
 
@@ -57,10 +55,10 @@ class TestConnections:
         with pytest.raises(ResourceNotFoundError):
             ai_client.connections.get(name)
 
-    def test_search_create_and_delete(self, ai_client: AIClient):
+    def test_search_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions since
         # soft-delete doesn't seem to be fast enough to avoid recycling problems.
-        name = "e2eTestSearchConn" + "".join(random.choice(string.digits) for _ in range(10))
+        name = "e2eTestSearchConn" + rand_num()
         conn_type = "azure_open_ai"
         cred = ApiKeyConfiguration(key="1234567")
         target = "test-target"
@@ -84,10 +82,10 @@ class TestConnections:
         with pytest.raises(ResourceNotFoundError):
             ai_client.connections.get(name)
 
-    def test_service_create_and_delete(self, ai_client: AIClient):
+    def test_service_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions since
         # soft-delete doesn't seem to be fast enough to avoid recycling problems.
-        name = "e2eTestServiceConn" + "".join(random.choice(string.digits) for _ in range(10))
+        name = "e2eTestServiceConn" + rand_num()
         cred = ApiKeyConfiguration(key="1234567")
         target = "test-target"
         kind = "ContentSafety"

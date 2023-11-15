@@ -1,11 +1,10 @@
-import random
-import string
+from typing import Callable
 import pytest
 
 from azure.ai.resources.client import AIClient
 from azure.ai.resources.entities import AIResource
 from azure.core.exceptions import ResourceNotFoundError
-
+from devtools_testutils import  is_live
 # NOTE: Expect 2 AI Projects to exist already in the provided AI Client's resource group:
 # e2e_test_res_1 and e2e_test_res_2. Furthermore, the former is expected
 # to be the client's default AI resource
@@ -29,9 +28,10 @@ class TestResources:
         assert expected_count == len(expected_resources)
 
     # DEV NOTE: due to how long it takes for 3 LROPollers to resolve, this test can easily take a couple minutes to run in live mode
-    def test_create_update_and_delete(self, ai_client: AIClient):
+    @pytest.mark.skipif(condition=not is_live(), reason="Random generation in ARM template(?) makes create recordings useless.")
+    def test_create_update_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         new_local_resource = AIResource(
-            name="e2e_test_resource_" + "".join(random.choice(string.digits) for _ in range(10)),
+            name="test_resource_" + rand_num(),
             description="Transient test object. Delete if seen.",
             resource_group=ai_client.resource_group_name,
         )

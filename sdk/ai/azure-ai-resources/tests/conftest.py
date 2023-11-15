@@ -5,7 +5,9 @@ from typing import Dict
 
 import pytest
 
-import pytest
+from typing import Callable
+import random
+
 from devtools_testutils import (
     FakeTokenCredential,
     add_body_key_sanitizer,
@@ -15,12 +17,27 @@ from devtools_testutils import (
     is_live,
     set_custom_default_matcher,
 )
-from devtools_testutils.proxy_fixtures import EnvironmentVariableSanitizer
+from devtools_testutils.proxy_fixtures import (
+    EnvironmentVariableSanitizer,
+    VariableRecorder
+)
 
 from azure.ai.resources.client import AIClient
 from azure.ai.ml import MLClient
 from azure.core.credentials import TokenCredential
-from azure.identity import AzureCliCredential, ClientSecretCredential,  DefaultAzureCredential, InteractiveBrowserCredential
+from azure.identity import AzureCliCredential, ClientSecretCredential
+
+@pytest.fixture
+def rand_num(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random number string between 1 and 10000000"""
+
+    def generate_random_string():
+        random_string = f"{str(random.randint(1, 10000000))}"
+        return variable_recorder.get_or_record("00000000", random_string)
+
+    return generate_random_string
+
+
 
 @pytest.fixture()
 def ai_client(

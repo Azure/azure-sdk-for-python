@@ -1,10 +1,10 @@
-import random
-import string
+from typing import Callable
 import pytest
 
 from azure.ai.resources.client import AIClient
-from azure.ai.resources.entities import Project, AIResource
+from azure.ai.resources.entities import Project
 from azure.core.exceptions import ResourceNotFoundError
+from devtools_testutils import  is_live
 
 # Makes the following setup assumptions:
 # 2 projects already exist in the conftest's ai_client:
@@ -31,9 +31,10 @@ class TestProjects:
         assert expected_count == len(expected_projects)
 
     # DEV NOTE: due to how long it takes for 3 LROPollers to resolve, this test can easily take a couple minutes to run in live mode
-    def test_create_update_and_delete(self, ai_client: AIClient):
+    @pytest.mark.skipif(condition=not is_live(), reason="Random generation in ARM template(?) makes create recordings useless.")
+    def test_create_update_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         new_local_project = Project(
-            name="e2e_test_proj_" + "".join(random.choice(string.digits) for _ in range(10)),
+            name="e2eTestProj" + rand_num(),
             ai_resource=f"/subscriptions/{ai_client.subscription_id}/resourceGroups/{ai_client.resource_group_name}"
              + f"/providers/Microsoft.MachineLearningServices/workspaces/{ai_client.ai_resource_name}",
             description="Transient test project. Delete if seen.",
@@ -56,7 +57,7 @@ class TestProjects:
     @pytest.mark.skipif(condition=True, reason="permissions issues require manual value injection and execution.")
     def test_create_with_restricted_access(self, ai_developer_client: AIClient):
         new_local_project = Project(
-            name="e2e_test_perm_proj_" + "".join(random.choice(string.digits) for _ in range(10)),
+            name="e2e_test_perm_proj",
             description="Transient test object. Delete if seen.",
             resource_group=ai_developer_client.resource_group_name,
             ai_resource=ai_developer_client.ai_resource_name
