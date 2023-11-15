@@ -19,8 +19,6 @@ In all of these cases, a `logging.NullHandler` is returned from `get_appinsights
 
 ### What do we log?
 
-The basic Kusto query for azure-generative-ai logs can be found [here](https://ms.portal.azure.com/#view/Microsoft_OperationsManagementSuite_Workspace/Logs.ReactView/resourceId/%2Fsubscriptions%2F589c7ae9-223e-45e3-a191-98433e0821a9%2FresourceGroups%2Fvienna-sdk%2Fproviders%2Fmicrosoft.insights%2Fcomponents%2Fvienna-sdk-unitedstates/source/LogsBlade.AnalyticsShareLinkToQuery/q/H4sIAAAAAAAAA42PwW7CQAxE73yF2VNyAIk7qYTa%252F4isjZWs1LUj29sUxMezuZD2grjO88x4XDGS7e6wTKQEnjKZY57howMcpTlN2gLy8IecgWVp2qen6oYjQaXqtiSfIFyip5%252Fk10%252FJ8zc5DWGrEHNNPDaxmEv%252BqrlsSdiOxUj7msTewr6DsHro16m2r%252BiyEujeC9isSiZFI%252FWjSplf%252Bv%252Bf9oyZtpnbC1HYMbFBwFtROmA6VJ0U62YKDxOKl7dSAQAA). This query can be adapted to filter for specific log levels, operations, and other properties.
-
 The logging structure depends on access to the AIClient, which is passed to the operations class in the constructor. 
 
 If logging has been configured for a method, the following information will be logged:
