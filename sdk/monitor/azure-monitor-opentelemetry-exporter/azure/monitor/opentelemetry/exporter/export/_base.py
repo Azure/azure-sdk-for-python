@@ -425,4 +425,5 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
                 # Apply deseralization of additional_properties and store that as base_data
                 if base_type:
                     item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties)
+                    item.data.base_data.additional_properties = None
     return item
