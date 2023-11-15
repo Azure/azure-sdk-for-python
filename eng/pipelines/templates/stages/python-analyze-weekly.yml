@@ -10,6 +10,7 @@ parameters:
     default: 'Test'
 
 stages:
+- ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
   - stage:
     displayName: 'Analyze_${{ parameters.JobName }}'
     dependsOn: []
