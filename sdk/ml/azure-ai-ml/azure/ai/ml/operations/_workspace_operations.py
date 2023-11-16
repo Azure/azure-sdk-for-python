@@ -255,7 +255,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                     module_logger.info(
                         "User don't have enough permission to create project workspace, trying to join the workspaceHub default resource group"
                     )
-                    return self.begin_join(workspace, **kwargs)
+                    return self._begin_join(workspace, **kwargs)
             raise error
 
     @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
@@ -364,7 +364,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         return poller
 
     @distributed_trace
-    def begin_join(self, workspace: Workspace, **kwargs: Dict) -> LROPoller[Workspace]:
+    def _begin_join(self, workspace: Workspace, **kwargs: Dict) -> LROPoller[Workspace]:
         """Join a WorkspaceHub by creating a project workspace under workspaceHub's default resource group.
 
         :param workspace: Project workspace definition to create

@@ -60,7 +60,6 @@ class ConnectionOperations:
 
         # It's by design that both API and V2 SDK don't include the secrets from API response, the following
         # code fills the gap
-        # TODO do we still want this?
         if not connection.credentials.key:
             list_secrets_response = self._ml_client.connections._operation.list_secrets(
                 connection_name=name,
