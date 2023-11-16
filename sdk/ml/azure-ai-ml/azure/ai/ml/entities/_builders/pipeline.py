@@ -9,6 +9,7 @@ from marshmallow import Schema
 
 from azure.ai.ml.entities._component.component import Component, NodeType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ..._schema import PathAwareSchema
@@ -142,7 +143,6 @@ class Pipeline(BaseNode):
         }
 
     def _to_job(self) -> "PipelineJob":
-        from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 
         return PipelineJob(
             name=self.name,
