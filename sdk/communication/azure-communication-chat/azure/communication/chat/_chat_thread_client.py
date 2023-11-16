@@ -543,14 +543,11 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 add_chat_participants_request=add_thread_participants_request,
                 **kwargs)
 
-
-            if hasattr(add_chat_participants_result, 'invalid_participants') and \
-                    add_chat_participants_result.invalid_participants is not None:
-                response = CommunicationErrorResponseConverter._convert( # pylint:disable=protected-access
+            if hasattr(add_chat_participants_result, 'invalid_participants'):
+                response = CommunicationErrorResponseConverter.convert(
                     participants=thread_participants,
                     chat_errors=add_chat_participants_result.invalid_participants
                 )
-
         return response
 
     @distributed_trace

@@ -32,7 +32,8 @@ class ChatParticipant:
         *,
         identifier: CommunicationIdentifier,
         display_name: Optional[str] = None,
-        share_history_time: Optional[datetime.datetime] = None
+        share_history_time: Optional[datetime.datetime] = None,
+        **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
         """
         :keyword identifier: Identifies a participant in Azure Communication services. A
@@ -101,15 +102,6 @@ class ChatAttachment:
             preview_url=chat_attachment.preview_url
         )
 
-    def _to_generated(self):
-        return ChatAttachmentAutorest(
-            id=self.id,
-            attachment_type=self.attachment_type,
-            name=self.name,
-            url=self.url,
-            preview_url=self.preview_url
-        )
-
 
 class ChatMessage: # pylint: disable=too-many-instance-attributes
     """Chat message.
@@ -159,26 +151,22 @@ class ChatMessage: # pylint: disable=too-many-instance-attributes
         self.metadata = kwargs.get('metadata')
 
     @classmethod
-    def _get_message_type(cls, chat_message_type):
-        for message_type in ChatMessageType:
-            value = message_type.value
-            if value == chat_message_type:
-                return message_type
-        raise AttributeError(chat_message_type)
-
-    @classmethod
     def _from_generated(cls, chat_message):
 
         sender_communication_identifier = chat_message.sender_communication_identifier
         if sender_communication_identifier is not None:
             sender_communication_identifier = deserialize_identifier(chat_message.sender_communication_identifier)
-
+        try:
+            message_type = ChatMessageType(chat_message.type)
+        except ValueError:
+            message_type = chat_message.type
+        content = ChatMessageContent._from_generated(chat_message.content) if chat_message.content else None  # pylint:disable=protected-access
         return cls(
             id=chat_message.id,
-            type=cls._get_message_type(chat_message.type),
+            type=message_type,
             sequence_id=chat_message.sequence_id,
             version=chat_message.version,
-            content=ChatMessageContent._from_generated(chat_message.content), # pylint:disable=protected-access
+            content=content,
             sender_display_name=chat_message.sender_display_name,
             created_on=chat_message.created_on,
             sender=sender_communication_identifier,
@@ -261,7 +249,7 @@ class ChatThreadProperties:
     :ivar created_on: The timestamp when the chat thread was created.
     :vartype created_on: ~datetime.datetime
     :ivar created_by: the chat thread owner.
-    :vartype created_by: CommunicationIdentifier
+    :vartype created_by: ~azure.communication.chat.CommunicationIdentifier
     """
 
     # pylint:disable=protected-access
