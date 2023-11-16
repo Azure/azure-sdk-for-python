@@ -5,9 +5,11 @@
 # -------------------------------------------------------------------------
 import concurrent.futures
 import requests.utils
-import pytest
+
+from corehttp.rest import HttpRequest
 from corehttp.transport.requests import RequestsTransport
-from utils import HTTP_REQUESTS, REQUESTS_TRANSPORT_RESPONSES, create_transport_response
+from corehttp.rest._requests_basic import RestRequestsTransportResponse
+from utils import create_transport_response, SYNC_TRANSPORT_RESPONSES
 
 
 def test_threading_basic_requests():
@@ -26,9 +28,8 @@ def test_threading_basic_requests():
         assert future.result()
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_requests_auto_headers(port, http_request):
-    request = http_request("POST", "http://localhost:{}/basic/string".format(port))
+def test_requests_auto_headers(port):
+    request = HttpRequest("POST", "http://localhost:{}/basic/string".format(port))
     with RequestsTransport() as sender:
         response = sender.send(request)
         auto_headers = response._internal_response.request.headers
@@ -52,17 +53,16 @@ def _create_requests_response(http_response, body_bytes, headers=None):
     return response
 
 
-@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
-def test_requests_response_text(http_response):
-
+def test_requests_response_text():
     for encoding in ["utf-8", "utf-8-sig", None]:
-        res = _create_requests_response(http_response, b"\xef\xbb\xbf56", {"Content-Type": "text/plain"})
+        res = _create_requests_response(
+            RestRequestsTransportResponse, b"\xef\xbb\xbf56", {"Content-Type": "text/plain"}
+        )
         res.read()
         assert res.text(encoding) == "56", "Encoding {} didn't work".format(encoding)
 
 
-@pytest.mark.parametrize("http_response", REQUESTS_TRANSPORT_RESPONSES)
-def test_repr(http_response):
-    res = _create_requests_response(http_response, b"\xef\xbb\xbf56", {"Content-Type": "text/plain"})
+def test_repr():
+    res = _create_requests_response(RestRequestsTransportResponse, b"\xef\xbb\xbf56", {"Content-Type": "text/plain"})
     class_name = "HttpResponse"
     assert repr(res) == "<{}: 200 OK, Content-Type: text/plain>".format(class_name)

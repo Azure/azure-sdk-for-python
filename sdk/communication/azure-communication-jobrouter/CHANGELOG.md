@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2023-11-01)
 
 ### Features Added
 - `JobRouterAdministrationClient`
@@ -89,8 +89,6 @@
 - `RouterWorkerItem`
 - `RouterJobItem`
 - `RouterQueueAssignment`
-
-### Bugs Fixed
 
 ### Other Changes
 - `ClassificationPolicy`

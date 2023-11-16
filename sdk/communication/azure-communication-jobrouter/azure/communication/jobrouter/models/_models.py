@@ -34,25 +34,25 @@ if TYPE_CHECKING:
 
 
 class AcceptJobOfferResult(_model_base.Model):
-    """Response containing Id's for the worker, job, and assignment from an accepted offer.
+    """Response containing ids for the worker, job, and assignment from an accepted offer.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar assignment_id: The assignment Id that assigns a worker that has accepted an offer to a
+    :ivar assignment_id: Id of job assignment that assigns a worker that has accepted an offer to a
      job. Required.
     :vartype assignment_id: str
-    :ivar job_id: The Id of the job assigned. Required.
+    :ivar job_id: Id of the job assigned. Required.
     :vartype job_id: str
-    :ivar worker_id: The Id of the worker that has been assigned this job. Required.
+    :ivar worker_id: Id of the worker that has been assigned this job. Required.
     :vartype worker_id: str
     """
 
     assignment_id: str = rest_field(name="assignmentId")
-    """The assignment Id that assigns a worker that has accepted an offer to a job. Required."""
+    """Id of job assignment that assigns a worker that has accepted an offer to a job. Required."""
     job_id: str = rest_field(name="jobId")
-    """The Id of the job assigned. Required."""
+    """Id of the job assigned. Required."""
     worker_id: str = rest_field(name="workerId")
-    """The Id of the worker that has been assigned this job. Required."""
+    """Id of the worker that has been assigned this job. Required."""
 
     @overload
     def __init__(
@@ -90,9 +90,9 @@ class DistributionMode(_model_base.Model):
      have.
     :vartype max_concurrent_offers: int
     :ivar bypass_selectors: If set to true, then router will match workers to jobs even if they
-     don't match label selectors. Warning: You may get workers that are not qualified for the job
-     they are matched with if you set this variable to true. This flag is intended more for
-     temporary usage. By default, set to false.
+     don't match label selectors. Warning: You may get workers that are not qualified for a job they
+     are matched with if you set this variable to true. This flag is intended more for temporary
+     usage. By default, set to false.
     :vartype bypass_selectors: bool
     :ivar kind: The type discriminator describing a sub-type of DistributionMode. Required. Known
      values are: "bestWorker", "longestIdle", and "roundRobin".
@@ -105,9 +105,9 @@ class DistributionMode(_model_base.Model):
     """Governs the maximum number of active concurrent offers a job can have."""
     bypass_selectors: Optional[bool] = rest_field(name="bypassSelectors")
     """If set to true, then router will match workers to jobs even if they don't match label
-     selectors. Warning: You may get workers that are not qualified for the job they are matched
-     with if you set this variable to true. This flag is intended more for temporary usage. By
-     default, set to false."""
+     selectors. Warning: You may get workers that are not qualified for a job they are matched with
+     if you set this variable to true. This flag is intended more for temporary usage. By default,
+     set to false."""
     kind: Literal[None] = rest_discriminator(name="kind")
     """The type discriminator describing a sub-type of DistributionMode. Required. Known values are:
      \"bestWorker\", \"longestIdle\", and \"roundRobin\"."""
@@ -146,9 +146,9 @@ class BestWorkerMode(DistributionMode, discriminator="bestWorker"):
      have.
     :vartype max_concurrent_offers: int
     :ivar bypass_selectors: If set to true, then router will match workers to jobs even if they
-     don't match label selectors. Warning: You may get workers that are not qualified for the job
-     they are matched with if you set this variable to true. This flag is intended more for
-     temporary usage. By default, set to false.
+     don't match label selectors. Warning: You may get workers that are not qualified for a job they
+     are matched with if you set this variable to true. This flag is intended more for temporary
+     usage. By default, set to false.
     :vartype bypass_selectors: bool
     :ivar scoring_rule: Define a scoring rule to use, when calculating a score to determine the
      best worker. If not set, will use a default scoring formula that uses the number of job labels
@@ -247,10 +247,10 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
 
     :ivar id: Unique Id of the exception action.
     :vartype id: str
-    :ivar note: A note that will be appended to the jobs' Notes collection with the current
+    :ivar note: A note that will be appended to a job's notes collection with the current
      timestamp.
     :vartype note: str
-    :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
+    :ivar disposition_code: Indicates the outcome of a job, populate this field with your own
      custom values.
     :vartype disposition_code: str
     :ivar kind: The type discriminator describing a sub-type of ExceptionAction. Required.
@@ -259,9 +259,9 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
     """
 
     note: Optional[str] = rest_field()
-    """A note that will be appended to the jobs' Notes collection with the current timestamp."""
+    """A note that will be appended to a job's notes collection with the current timestamp."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
-    """Indicates the outcome of the job, populate this field with your own custom values."""
+    """Indicates the outcome of a job, populate this field with your own custom values."""
     kind: Literal[ExceptionActionKind.CANCEL] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing a sub-type of ExceptionAction. Required. Discriminator value
      for CancelExceptionAction."""
@@ -289,20 +289,20 @@ class CancelExceptionAction(ExceptionAction, discriminator="cancel"):
 
 
 class CancelJobOptions(_model_base.Model):
-    """Request payload for deleting a job.
+    """Request payload for cancelling a job.
 
-    :ivar note: A note that will be appended to the jobs' Notes collection with the current
+    :ivar note: A note that will be appended to a job's Notes collection with the current
      timestamp.
     :vartype note: str
-    :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
+    :ivar disposition_code: Indicates the outcome of a job, populate this field with your own
      custom values. If not provided, default value of "Cancelled" is set.
     :vartype disposition_code: str
     """
 
     note: Optional[str] = rest_field()
-    """A note that will be appended to the jobs' Notes collection with the current timestamp."""
+    """A note that will be appended to a job's Notes collection with the current timestamp."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
-    """Indicates the outcome of the job, populate this field with your own custom values. If not
+    """Indicates the outcome of a job, populate this field with your own custom values. If not
      provided, default value of \"Cancelled\" is set."""
 
     @overload
@@ -338,21 +338,20 @@ class ClassificationPolicy(_model_base.Model):
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
-    :ivar id: Unique identifier of this policy. Required.
+    :ivar id: Id of a classification policy. Required.
     :vartype id: str
     :ivar name: Friendly name of this policy.
     :vartype name: str
-    :ivar fallback_queue_id: The fallback queue to select if the queue selector doesn't find a
-     match.
+    :ivar fallback_queue_id: Id of a fallback queue to select if queue selector attachments doesn't
+     find a match.
     :vartype fallback_queue_id: str
-    :ivar queue_selector_attachments: The queue selector attachments used to resolve a queue for a
-     given job.
+    :ivar queue_selector_attachments: Queue selector attachments used to resolve a queue for a job.
     :vartype queue_selector_attachments:
      list[~azure.communication.jobrouter.models.QueueSelectorAttachment]
-    :ivar prioritization_rule: The rule to determine a priority score for a given job.
+    :ivar prioritization_rule: A rule to determine a priority score for a job.
     :vartype prioritization_rule: ~azure.communication.jobrouter.models.RouterRule
-    :ivar worker_selector_attachments: The worker selector attachments used to attach worker
-     selectors to a given job.
+    :ivar worker_selector_attachments: Worker selector attachments used to attach worker selectors
+     to a job.
     :vartype worker_selector_attachments:
      list[~azure.communication.jobrouter.models.WorkerSelectorAttachment]
     """
@@ -360,21 +359,21 @@ class ClassificationPolicy(_model_base.Model):
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
-    """Unique identifier of this policy. Required."""
+    """Id of a classification policy. Required."""
     name: Optional[str] = rest_field()
     """Friendly name of this policy."""
     fallback_queue_id: Optional[str] = rest_field(name="fallbackQueueId")
-    """The fallback queue to select if the queue selector doesn't find a match."""
+    """Id of a fallback queue to select if queue selector attachments doesn't find a match."""
     queue_selector_attachments: Optional[List["_models.QueueSelectorAttachment"]] = rest_field(
         name="queueSelectorAttachments"
     )
-    """The queue selector attachments used to resolve a queue for a given job."""
+    """Queue selector attachments used to resolve a queue for a job."""
     prioritization_rule: Optional["_models.RouterRule"] = rest_field(name="prioritizationRule")
-    """The rule to determine a priority score for a given job."""
+    """A rule to determine a priority score for a job."""
     worker_selector_attachments: Optional[List["_models.WorkerSelectorAttachment"]] = rest_field(
         name="workerSelectorAttachments"
     )
-    """The worker selector attachments used to attach worker selectors to a given job."""
+    """Worker selector attachments used to attach worker selectors to a job."""
 
     @overload
     def __init__(
@@ -402,26 +401,26 @@ class ClassificationPolicy(_model_base.Model):
 class CloseJobOptions(_model_base.Model):
     """Request payload for closing jobs.
 
-    :ivar disposition_code: Indicates the outcome of the job, populate this field with your own
+    :ivar disposition_code: Indicates the outcome of a job, populate this field with your own
      custom values.
     :vartype disposition_code: str
     :ivar close_at: If not provided, worker capacity is released immediately along with a
      JobClosedEvent notification. If provided, worker capacity is released along with a
      JobClosedEvent notification at a future time in UTC.
     :vartype close_at: ~datetime.datetime
-    :ivar note: A note that will be appended to the jobs' Notes collection with the current
+    :ivar note: A note that will be appended to a job's Notes collection with the current
      timestamp.
     :vartype note: str
     """
 
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
-    """Indicates the outcome of the job, populate this field with your own custom values."""
+    """Indicates the outcome of a job, populate this field with your own custom values."""
     close_at: Optional[datetime.datetime] = rest_field(name="closeAt", format="rfc3339")
     """If not provided, worker capacity is released immediately along with a JobClosedEvent
      notification. If provided, worker capacity is released along with a JobClosedEvent notification
      at a future time in UTC."""
     note: Optional[str] = rest_field()
-    """A note that will be appended to the jobs' Notes collection with the current timestamp."""
+    """A note that will be appended to a job's Notes collection with the current timestamp."""
 
     @overload
     def __init__(
@@ -451,13 +450,13 @@ class CloseJobResult(_model_base.Model):
 class CompleteJobOptions(_model_base.Model):
     """Request payload for completing jobs.
 
-    :ivar note: A note that will be appended to the jobs' Notes collection with the current
+    :ivar note: A note that will be appended to a job's Notes collection with the current
      timestamp.
     :vartype note: str
     """
 
     note: Optional[str] = rest_field()
-    """A note that will be appended to the jobs' Notes collection with the current timestamp."""
+    """A note that will be appended to a job's Notes collection with the current timestamp."""
 
     @overload
     def __init__(
@@ -724,27 +723,27 @@ class DistributionPolicy(_model_base.Model):
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
-    :ivar id: The unique identifier of the policy. Required.
+    :ivar id: Id of a distribution policy. Required.
     :vartype id: str
-    :ivar name: The human readable name of the policy.
+    :ivar name: Friendly name of this policy.
     :vartype name: str
-    :ivar offer_expires_after_seconds: The number of seconds after which any offers created under
-     this policy will be expired.
+    :ivar offer_expires_after_seconds: Number of seconds after which any offers created under this
+     policy will be expired.
     :vartype offer_expires_after_seconds: float
-    :ivar mode: Abstract base class for defining a distribution mode.
+    :ivar mode: Mode governing the specific distribution method.
     :vartype mode: ~azure.communication.jobrouter.models.DistributionMode
     """
 
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
-    """The unique identifier of the policy. Required."""
+    """Id of a distribution policy. Required."""
     name: Optional[str] = rest_field()
-    """The human readable name of the policy."""
+    """Friendly name of this policy."""
     offer_expires_after_seconds: Optional[float] = rest_field(name="offerExpiresAfterSeconds")
-    """The number of seconds after which any offers created under this policy will be expired."""
+    """Number of seconds after which any offers created under this policy will be expired."""
     mode: Optional["_models.DistributionMode"] = rest_field()
-    """Abstract base class for defining a distribution mode."""
+    """Mode governing the specific distribution method."""
 
     @overload
     def __init__(
@@ -776,9 +775,9 @@ class ExceptionPolicy(_model_base.Model):
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
-    :ivar id: The Id of the exception policy. Required.
+    :ivar id: Id of an exception policy. Required.
     :vartype id: str
-    :ivar name: The name of the exception policy.
+    :ivar name: Friendly name of this policy.
     :vartype name: str
     :ivar exception_rules: A collection of exception rules on the exception policy.
     :vartype exception_rules: list[~azure.communication.jobrouter.models.ExceptionRule]
@@ -787,9 +786,9 @@ class ExceptionPolicy(_model_base.Model):
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
-    """The Id of the exception policy. Required."""
+    """Id of an exception policy. Required."""
     name: Optional[str] = rest_field()
-    """The name of the exception policy."""
+    """Friendly name of this policy."""
     exception_rules: Optional[List["_models.ExceptionRule"]] = rest_field(name="exceptionRules")
     """A collection of exception rules on the exception policy."""
 
@@ -818,7 +817,7 @@ class ExceptionRule(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Id of the exception rule. Required.
+    :ivar id: Id of an exception rule. Required.
     :vartype id: str
     :ivar trigger: The trigger for this exception rule. Required.
     :vartype trigger: ~azure.communication.jobrouter.models.ExceptionTrigger
@@ -827,7 +826,7 @@ class ExceptionRule(_model_base.Model):
     """
 
     id: str = rest_field()
-    """Id of the exception rule. Required."""
+    """Id of an exception rule. Required."""
     trigger: "_models.ExceptionTrigger" = rest_field()
     """The trigger for this exception rule. Required."""
     actions: List["_models.ExceptionAction"] = rest_field()
@@ -855,7 +854,7 @@ class ExceptionRule(_model_base.Model):
 
 
 class ExceptionTrigger(_model_base.Model):
-    """The trigger for this exception rule.
+    """Abstract base class for defining a trigger for exception rules.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     QueueLengthExceptionTrigger, WaitTimeExceptionTrigger
@@ -884,8 +883,8 @@ class ExpressionRouterRule(RouterRule, discriminator="expression"):
 
     :ivar language: The expression language to compile to and execute. "powerFx"
     :vartype language: str or ~azure.communication.jobrouter.models.ExpressionRouterRuleLanguage
-    :ivar expression: The string containing the expression to evaluate. Should contain return
-     statement with calculated values. Required.
+    :ivar expression: An expression to evaluate. Should contain return statement with calculated
+     values. Required.
     :vartype expression: str
     :ivar kind: The type discriminator describing a sub-type of Rule. Required. Discriminator value
      for ExpressionRouterRule.
@@ -895,8 +894,7 @@ class ExpressionRouterRule(RouterRule, discriminator="expression"):
     language: Optional[Union[str, "_models.ExpressionRouterRuleLanguage"]] = rest_field()
     """The expression language to compile to and execute. \"powerFx\""""
     expression: str = rest_field()
-    """The string containing the expression to evaluate. Should contain return statement with
-     calculated values. Required."""
+    """An expression to evaluate. Should contain return statement with calculated values. Required."""
     kind: Literal[RouterRuleKind.EXPRESSION] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing a sub-type of Rule. Required. Discriminator value for
      ExpressionRouterRule."""
@@ -1048,9 +1046,9 @@ class LongestIdleMode(DistributionMode, discriminator="longestIdle"):
      have.
     :vartype max_concurrent_offers: int
     :ivar bypass_selectors: If set to true, then router will match workers to jobs even if they
-     don't match label selectors. Warning: You may get workers that are not qualified for the job
-     they are matched with if you set this variable to true. This flag is intended more for
-     temporary usage. By default, set to false.
+     don't match label selectors. Warning: You may get workers that are not qualified for a job they
+     are matched with if you set this variable to true. This flag is intended more for temporary
+     usage. By default, set to false.
     :vartype bypass_selectors: bool
     :ivar kind: The type discriminator describing a sub-type of Mode. Required. Discriminator value
      for LongestIdleMode.
@@ -1171,7 +1169,7 @@ class OAuth2WebhookClientCredential(_model_base.Model):
 
 
 class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator="passThrough"):
-    """Attaches a queue selector where the value is passed through from the job label with the same
+    """Attaches a queue selector where the value is passed through from a job's label with the same
     key.
 
     All required parameters must be populated in order to send to server.
@@ -1219,7 +1217,7 @@ class PassThroughQueueSelectorAttachment(QueueSelectorAttachment, discriminator=
 
 
 class PassThroughWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="passThrough"):
-    """Attaches a worker selector where the value is passed through from the job label with the same
+    """Attaches a worker selector where the value is passed through from a job's label with the same
     key.
 
     All required parameters must be populated in order to send to server.
@@ -1439,9 +1437,9 @@ class RoundRobinMode(DistributionMode, discriminator="roundRobin"):
      have.
     :vartype max_concurrent_offers: int
     :ivar bypass_selectors: If set to true, then router will match workers to jobs even if they
-     don't match label selectors. Warning: You may get workers that are not qualified for the job
-     they are matched with if you set this variable to true. This flag is intended more for
-     temporary usage. By default, set to false.
+     don't match label selectors. Warning: You may get workers that are not qualified for a job they
+     are matched with if you set this variable to true. This flag is intended more for temporary
+     usage. By default, set to false.
     :vartype bypass_selectors: bool
     :ivar kind: The type discriminator describing a sub-type of Mode. Required. Discriminator value
      for RoundRobinMode.
@@ -1479,7 +1477,7 @@ class RouterChannel(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar channel_id: Id of the channel. Required.
+    :ivar channel_id: Id of a channel. Required.
     :vartype channel_id: str
     :ivar capacity_cost_per_job: The amount of capacity that an instance of a job of this channel
      will consume of the total worker capacity. Required.
@@ -1490,7 +1488,7 @@ class RouterChannel(_model_base.Model):
     """
 
     channel_id: str = rest_field(name="channelId")
-    """Id of the channel. Required."""
+    """Id of a channel. Required."""
     capacity_cost_per_job: int = rest_field(name="capacityCostPerJob")
     """The amount of capacity that an instance of a job of this channel will consume of the total
      worker capacity. Required."""
@@ -1527,31 +1525,31 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
-    :ivar id: The id of the job. Required.
+    :ivar id: Id of a job. Required.
     :vartype id: str
     :ivar channel_reference: Reference to an external parent context, eg. call ID.
     :vartype channel_reference: str
-    :ivar status: The status of the Job. Known values are: "pendingClassification", "queued",
+    :ivar status: The status of the job. Known values are: "pendingClassification", "queued",
      "assigned", "completed", "closed", "cancelled", "classificationFailed", "created",
      "pendingSchedule", "scheduled", "scheduleFailed", and "waitingForActivation".
     :vartype status: str or ~azure.communication.jobrouter.models.RouterJobStatus
-    :ivar enqueued_at: The time a job was queued in UTC.
+    :ivar enqueued_at: Timestamp a job was queued in UTC.
     :vartype enqueued_at: ~datetime.datetime
     :ivar channel_id: The channel identifier. eg. voice, chat, etc.
     :vartype channel_id: str
-    :ivar classification_policy_id: The Id of the Classification policy used for classifying a job.
+    :ivar classification_policy_id: Id of a classification policy used for classifying this job.
     :vartype classification_policy_id: str
-    :ivar queue_id: The Id of the Queue that this job is queued to.
+    :ivar queue_id: Id of a queue that this job is queued to.
     :vartype queue_id: str
-    :ivar priority: The priority of this job.
+    :ivar priority: Priority of this job.
     :vartype priority: int
     :ivar disposition_code: Reason code for cancelled or closed jobs.
     :vartype disposition_code: str
-    :ivar requested_worker_selectors: A collection of manually specified label selectors, which a
+    :ivar requested_worker_selectors: A collection of manually specified worker selectors, which a
      worker must satisfy in order to process this job.
     :vartype requested_worker_selectors:
      list[~azure.communication.jobrouter.models.RouterWorkerSelector]
-    :ivar attached_worker_selectors: A collection of label selectors attached by a classification
+    :ivar attached_worker_selectors: A collection of worker selectors attached by a classification
      policy, which a worker must satisfy in order to process this job.
     :vartype attached_worker_selectors:
      list[~azure.communication.jobrouter.models.RouterWorkerSelector]
@@ -1575,34 +1573,34 @@ class RouterJob(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
-    """The id of the job. Required."""
+    """Id of a job. Required."""
     channel_reference: Optional[str] = rest_field(name="channelReference")
     """Reference to an external parent context, eg. call ID."""
     status: Optional[Union[str, "_models.RouterJobStatus"]] = rest_field(visibility=["read"])
-    """The status of the Job. Known values are: \"pendingClassification\", \"queued\", \"assigned\",
+    """The status of the job. Known values are: \"pendingClassification\", \"queued\", \"assigned\",
      \"completed\", \"closed\", \"cancelled\", \"classificationFailed\", \"created\",
      \"pendingSchedule\", \"scheduled\", \"scheduleFailed\", and \"waitingForActivation\"."""
     enqueued_at: Optional[datetime.datetime] = rest_field(name="enqueuedAt", visibility=["read"], format="rfc3339")
-    """The time a job was queued in UTC."""
+    """Timestamp a job was queued in UTC."""
     channel_id: Optional[str] = rest_field(name="channelId")
     """The channel identifier. eg. voice, chat, etc."""
     classification_policy_id: Optional[str] = rest_field(name="classificationPolicyId")
-    """The Id of the Classification policy used for classifying a job."""
+    """Id of a classification policy used for classifying this job."""
     queue_id: Optional[str] = rest_field(name="queueId")
-    """The Id of the Queue that this job is queued to."""
+    """Id of a queue that this job is queued to."""
     priority: Optional[int] = rest_field()
-    """The priority of this job."""
+    """Priority of this job."""
     disposition_code: Optional[str] = rest_field(name="dispositionCode")
     """Reason code for cancelled or closed jobs."""
     requested_worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = rest_field(
         name="requestedWorkerSelectors"
     )
-    """A collection of manually specified label selectors, which a worker must satisfy in order to
+    """A collection of manually specified worker selectors, which a worker must satisfy in order to
      process this job."""
     attached_worker_selectors: Optional[List["_models.RouterWorkerSelector"]] = rest_field(
         name="attachedWorkerSelectors", visibility=["read"]
     )
-    """A collection of label selectors attached by a classification policy, which a worker must
+    """A collection of worker selectors attached by a classification policy, which a worker must
      satisfy in order to process this job."""
     labels: Optional[Dict[str, Any]] = rest_field()
     """A set of key/value pairs that are identifying attributes used by the rules engines to make
@@ -1656,28 +1654,28 @@ class RouterJobAssignment(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar assignment_id: The Id of the job assignment. Required.
+    :ivar assignment_id: Id of a job assignment. Required.
     :vartype assignment_id: str
-    :ivar worker_id: The Id of the Worker assigned to the job.
+    :ivar worker_id: Id of the Worker assigned to the job.
     :vartype worker_id: str
-    :ivar assigned_at: The assignment time of the job in UTC. Required.
+    :ivar assigned_at: Timestamp when the job was assigned to a worker in UTC. Required.
     :vartype assigned_at: ~datetime.datetime
-    :ivar completed_at: The time the job was marked as completed after being assigned in UTC.
+    :ivar completed_at: Timestamp when the job was marked as completed after being assigned in UTC.
     :vartype completed_at: ~datetime.datetime
-    :ivar closed_at: The time the job was marked as closed after being completed in UTC.
+    :ivar closed_at: Timestamp when the job was marked as closed after being completed in UTC.
     :vartype closed_at: ~datetime.datetime
     """
 
     assignment_id: str = rest_field(name="assignmentId", visibility=["read"])
-    """The Id of the job assignment. Required."""
+    """Id of a job assignment. Required."""
     worker_id: Optional[str] = rest_field(name="workerId")
-    """The Id of the Worker assigned to the job."""
+    """Id of the Worker assigned to the job."""
     assigned_at: datetime.datetime = rest_field(name="assignedAt", format="rfc3339")
-    """The assignment time of the job in UTC. Required."""
+    """Timestamp when the job was assigned to a worker in UTC. Required."""
     completed_at: Optional[datetime.datetime] = rest_field(name="completedAt", format="rfc3339")
-    """The time the job was marked as completed after being assigned in UTC."""
+    """Timestamp when the job was marked as completed after being assigned in UTC."""
     closed_at: Optional[datetime.datetime] = rest_field(name="closedAt", format="rfc3339")
-    """The time the job was marked as closed after being completed in UTC."""
+    """Timestamp when the job was marked as closed after being completed in UTC."""
 
     @overload
     def __init__(
@@ -1745,28 +1743,28 @@ class RouterJobOffer(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar offer_id: The Id of the offer. Required.
+    :ivar offer_id: Id of an offer. Required.
     :vartype offer_id: str
-    :ivar job_id: The Id of the job. Required.
+    :ivar job_id: Id of the job. Required.
     :vartype job_id: str
     :ivar capacity_cost: The capacity cost consumed by the job offer. Required.
     :vartype capacity_cost: int
-    :ivar offered_at: The time the offer was created in UTC.
+    :ivar offered_at: Timestamp when the offer was created in UTC.
     :vartype offered_at: ~datetime.datetime
-    :ivar expires_at: The time that the offer will expire in UTC.
+    :ivar expires_at: Timestamp when the offer will expire in UTC.
     :vartype expires_at: ~datetime.datetime
     """
 
     offer_id: str = rest_field(name="offerId", visibility=["read"])
-    """The Id of the offer. Required."""
+    """Id of an offer. Required."""
     job_id: str = rest_field(name="jobId")
-    """The Id of the job. Required."""
+    """Id of the job. Required."""
     capacity_cost: int = rest_field(name="capacityCost")
     """The capacity cost consumed by the job offer. Required."""
     offered_at: Optional[datetime.datetime] = rest_field(name="offeredAt", format="rfc3339")
-    """The time the offer was created in UTC."""
+    """Timestamp when the offer was created in UTC."""
     expires_at: Optional[datetime.datetime] = rest_field(name="expiresAt", format="rfc3339")
-    """The time that the offer will expire in UTC."""
+    """Timestamp when the offer will expire in UTC."""
 
     @overload
     def __init__(
@@ -1851,34 +1849,34 @@ class RouterQueue(_model_base.Model):
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
-    :ivar id: The Id of this queue. Required.
+    :ivar id: Id of a queue. Required.
     :vartype id: str
-    :ivar name: The name of this queue.
+    :ivar name: Friendly name of this queue.
     :vartype name: str
-    :ivar distribution_policy_id: The ID of the distribution policy that will determine how a job
-     is distributed to workers.
+    :ivar distribution_policy_id: Id of a distribution policy that will determine how a job is
+     distributed to workers.
     :vartype distribution_policy_id: str
     :ivar labels: A set of key/value pairs that are identifying attributes used by the rules
      engines to make decisions. Values must be primitive values - number, string, boolean.
     :vartype labels: dict[str, any]
-    :ivar exception_policy_id: The ID of the exception policy that determines various job
-     escalation rules.
+    :ivar exception_policy_id: Id of an exception policy that determines various job escalation
+     rules.
     :vartype exception_policy_id: str
     """
 
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
-    """The Id of this queue. Required."""
+    """Id of a queue. Required."""
     name: Optional[str] = rest_field()
-    """The name of this queue."""
+    """Friendly name of this queue."""
     distribution_policy_id: Optional[str] = rest_field(name="distributionPolicyId")
-    """The ID of the distribution policy that will determine how a job is distributed to workers."""
+    """Id of a distribution policy that will determine how a job is distributed to workers."""
     labels: Optional[Dict[str, Any]] = rest_field()
     """A set of key/value pairs that are identifying attributes used by the rules engines to make
      decisions. Values must be primitive values - number, string, boolean."""
     exception_policy_id: Optional[str] = rest_field(name="exceptionPolicyId")
-    """The ID of the exception policy that determines various job escalation rules."""
+    """Id of an exception policy that determines various job escalation rules."""
 
     @overload
     def __init__(
@@ -2007,12 +2005,11 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
 
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
-    :ivar id: Id of the worker. Required.
+    :ivar id: Id of a worker. Required.
     :vartype id: str
-    :ivar state: The current state of the worker. Known values are: "active", "draining", and
-     "inactive".
+    :ivar state: Current state of a worker. Known values are: "active", "draining", and "inactive".
     :vartype state: str or ~azure.communication.jobrouter.models.RouterWorkerState
-    :ivar queues: The queue(s) that this worker can receive work from.
+    :ivar queues: Collection of queue(s) that this worker can receive work from.
     :vartype queues: list[str]
     :ivar capacity: The total capacity score this worker has to manage multiple concurrent jobs.
     :vartype capacity: int
@@ -2022,7 +2019,8 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :ivar tags: A set of non-identifying attributes attached to this worker. Values must be
      primitive values - number, string, boolean.
     :vartype tags: dict[str, any]
-    :ivar channels: The channel(s) this worker can handle and their impact on the workers capacity.
+    :ivar channels: Collection of channel(s) this worker can handle and their impact on the workers
+     capacity.
     :vartype channels: list[~azure.communication.jobrouter.models.RouterChannel]
     :ivar offers: A list of active offers issued to this worker.
     :vartype offers: list[~azure.communication.jobrouter.models.RouterJobOffer]
@@ -2038,11 +2036,11 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
     id: str = rest_field(visibility=["read"])
-    """Id of the worker. Required."""
+    """Id of a worker. Required."""
     state: Optional[Union[str, "_models.RouterWorkerState"]] = rest_field(visibility=["read"])
-    """The current state of the worker. Known values are: \"active\", \"draining\", and \"inactive\"."""
+    """Current state of a worker. Known values are: \"active\", \"draining\", and \"inactive\"."""
     queues: Optional[List[str]] = rest_field()
-    """The queue(s) that this worker can receive work from."""
+    """Collection of queue(s) that this worker can receive work from."""
     capacity: Optional[int] = rest_field()
     """The total capacity score this worker has to manage multiple concurrent jobs."""
     labels: Optional[Dict[str, Any]] = rest_field()
@@ -2052,7 +2050,7 @@ class RouterWorker(_model_base.Model):  # pylint: disable=too-many-instance-attr
     """A set of non-identifying attributes attached to this worker. Values must be primitive values -
      number, string, boolean."""
     channels: Optional[List["_models.RouterChannel"]] = rest_field()
-    """The channel(s) this worker can handle and their impact on the workers capacity."""
+    """Collection of channel(s) this worker can handle and their impact on the workers capacity."""
     offers: Optional[List["_models.RouterJobOffer"]] = rest_field(visibility=["read"])
     """A list of active offers issued to this worker."""
     assigned_jobs: Optional[List["_models.RouterWorkerAssignment"]] = rest_field(
@@ -2094,9 +2092,9 @@ class RouterWorkerAssignment(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar assignment_id: The Id of the assignment. Required.
+    :ivar assignment_id: Id of the assignment. Required.
     :vartype assignment_id: str
-    :ivar job_id: The Id of the Job assigned. Required.
+    :ivar job_id: Id of the job assigned. Required.
     :vartype job_id: str
     :ivar capacity_cost: The amount of capacity this assignment has consumed on the worker.
      Required.
@@ -2106,9 +2104,9 @@ class RouterWorkerAssignment(_model_base.Model):
     """
 
     assignment_id: str = rest_field(name="assignmentId")
-    """The Id of the assignment. Required."""
+    """Id of the assignment. Required."""
     job_id: str = rest_field(name="jobId")
-    """The Id of the Job assigned. Required."""
+    """Id of the job assigned. Required."""
     capacity_cost: int = rest_field(name="capacityCost")
     """The amount of capacity this assignment has consumed on the worker. Required."""
     assigned_at: datetime.datetime = rest_field(name="assignedAt", format="rfc3339")
@@ -2146,7 +2144,7 @@ class RouterWorkerSelector(_model_base.Model):
     :ivar key: The label key to query against. Required.
     :vartype key: str
     :ivar label_operator: Describes how the value of the label is compared to the value defined on
-     the label selector. Required. Known values are: "equal", "notEqual", "lessThan",
+     the worker selector. Required. Known values are: "equal", "notEqual", "lessThan",
      "lessThanOrEqual", "greaterThan", and "greaterThanOrEqual".
     :vartype label_operator: str or ~azure.communication.jobrouter.models.LabelOperator
     :ivar value: The value to compare against the actual label value with the given operator.
@@ -2154,9 +2152,9 @@ class RouterWorkerSelector(_model_base.Model):
     :vartype value: any
     :ivar expires_after_seconds: Describes how long this label selector is valid in seconds.
     :vartype expires_after_seconds: float
-    :ivar expedite: Pushes the job to the front of the queue as long as this selector is active.
+    :ivar expedite: Pushes a job to the front of the queue as long as this selector is active.
     :vartype expedite: bool
-    :ivar status: The status of the worker selector. Known values are: "active" and "expired".
+    :ivar status: Status of the worker selector. Known values are: "active" and "expired".
     :vartype status: str or ~azure.communication.jobrouter.models.RouterWorkerSelectorStatus
     :ivar expires_at: The time at which this worker selector expires in UTC.
     :vartype expires_at: ~datetime.datetime
@@ -2165,7 +2163,7 @@ class RouterWorkerSelector(_model_base.Model):
     key: str = rest_field()
     """The label key to query against. Required."""
     label_operator: Union[str, "_models.LabelOperator"] = rest_field(name="labelOperator")
-    """Describes how the value of the label is compared to the value defined on the label selector.
+    """Describes how the value of the label is compared to the value defined on the worker selector.
      Required. Known values are: \"equal\", \"notEqual\", \"lessThan\", \"lessThanOrEqual\",
      \"greaterThan\", and \"greaterThanOrEqual\"."""
     value: Optional[Any] = rest_field()
@@ -2174,9 +2172,9 @@ class RouterWorkerSelector(_model_base.Model):
     expires_after_seconds: Optional[float] = rest_field(name="expiresAfterSeconds")
     """Describes how long this label selector is valid in seconds."""
     expedite: Optional[bool] = rest_field()
-    """Pushes the job to the front of the queue as long as this selector is active."""
+    """Pushes a job to the front of the queue as long as this selector is active."""
     status: Optional[Union[str, "_models.RouterWorkerSelectorStatus"]] = rest_field(visibility=["read"])
-    """The status of the worker selector. Known values are: \"active\" and \"expired\"."""
+    """Status of the worker selector. Known values are: \"active\" and \"expired\"."""
     expires_at: Optional[datetime.datetime] = rest_field(name="expiresAt", visibility=["read"], format="rfc3339")
     """The time at which this worker selector expires in UTC."""
 
@@ -2285,7 +2283,7 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="scheduleAndSuspend"
 
     All required parameters must be populated in order to send to server.
 
-    :ivar schedule_at: Scheduled time. Required.
+    :ivar schedule_at: Requested schedule time. Required.
     :vartype schedule_at: ~datetime.datetime
     :ivar kind: The type discriminator describing ScheduleAndSuspendMode. Required. Discriminator
      value for ScheduleAndSuspendMode.
@@ -2293,7 +2291,7 @@ class ScheduleAndSuspendMode(JobMatchingMode, discriminator="scheduleAndSuspend"
     """
 
     schedule_at: datetime.datetime = rest_field(name="scheduleAt", format="rfc3339")
-    """Scheduled time. Required."""
+    """Requested schedule time. Required."""
     kind: Literal[JobMatchingModeKind.SCHEDULE_AND_SUSPEND] = rest_discriminator(name="kind")  # type: ignore
     """The type discriminator describing ScheduleAndSuspendMode. Required. Discriminator value for
      ScheduleAndSuspendMode."""
@@ -2324,11 +2322,10 @@ class ScoringRuleOptions(_model_base.Model):
     :ivar batch_size: Set batch size when 'isBatchScoringEnabled' is set to true. Defaults to 20 if
      not configured.
     :vartype batch_size: int
-    :ivar scoring_parameters: List of extra parameters from the job that will be sent as part of
-     the payload to scoring rule. If not set, the job's labels (sent in the payload as ``job``\ )
-     and the job's worker selectors (sent in the payload as ``selectors``\ ) are added to the
-     payload of the scoring rule by default. Note: Worker labels are always sent with scoring
-     payload.
+    :ivar scoring_parameters: List of extra parameters from a job that will be sent as part of the
+     payload to scoring rule. If not set, a job's labels (sent in the payload as ``job``\ ) and a
+     job's worker selectors (sent in the payload as ``selectors``\ ) are added to the payload of the
+     scoring rule by default. Note: Worker labels are always sent with scoring payload.
     :vartype scoring_parameters: list[str or
      ~azure.communication.jobrouter.models.ScoringRuleParameterSelector]
     :ivar is_batch_scoring_enabled: If set to true, will score workers in batches, and the
@@ -2345,8 +2342,8 @@ class ScoringRuleOptions(_model_base.Model):
     scoring_parameters: Optional[List[Union[str, "_models.ScoringRuleParameterSelector"]]] = rest_field(
         name="scoringParameters"
     )
-    """List of extra parameters from the job that will be sent as part of the payload to scoring rule.
-     If not set, the job's labels (sent in the payload as ``job``\ ) and the job's worker selectors
+    """List of extra parameters from a job that will be sent as part of the payload to scoring rule.
+     If not set, a job's labels (sent in the payload as ``job``\ ) and a job's worker selectors
      (sent in the payload as ``selectors``\ ) are added to the payload of the scoring rule by
      default. Note: Worker labels are always sent with scoring payload."""
     is_batch_scoring_enabled: Optional[bool] = rest_field(name="isBatchScoringEnabled")
@@ -2379,7 +2376,7 @@ class ScoringRuleOptions(_model_base.Model):
 
 
 class StaticQueueSelectorAttachment(QueueSelectorAttachment, discriminator="static"):
-    """Describes a queue selector that will be attached to the job.
+    """Describes a queue selector that will be attached to a job.
 
     All required parameters must be populated in order to send to server.
 
@@ -2457,7 +2454,7 @@ class StaticRouterRule(RouterRule, discriminator="static"):
 
 
 class StaticWorkerSelectorAttachment(WorkerSelectorAttachment, discriminator="static"):
-    """Describes a worker selector that will be attached to the job.
+    """Describes a worker selector that will be attached to a job.
 
     All required parameters must be populated in order to send to server.
 
@@ -2515,13 +2512,13 @@ class SuspendMode(JobMatchingMode, discriminator="suspend"):
 class UnassignJobOptions(_model_base.Model):
     """Request payload for unassigning a job.
 
-    :ivar suspend_matching: If SuspendMatching is true, then the job is not queued for re-matching
+    :ivar suspend_matching: If SuspendMatching is true, then a job is not queued for re-matching
      with a worker.
     :vartype suspend_matching: bool
     """
 
     suspend_matching: Optional[bool] = rest_field(name="suspendMatching")
-    """If SuspendMatching is true, then the job is not queued for re-matching with a worker."""
+    """If SuspendMatching is true, then a job is not queued for re-matching with a worker."""
 
     @overload
     def __init__(
@@ -2547,14 +2544,14 @@ class UnassignJobResult(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar job_id: The Id of the job unassigned. Required.
+    :ivar job_id: Id of an unassigned job. Required.
     :vartype job_id: str
     :ivar unassignment_count: The number of times a job is unassigned. At a maximum 3. Required.
     :vartype unassignment_count: int
     """
 
     job_id: str = rest_field(name="jobId")
-    """The Id of the job unassigned. Required."""
+    """Id of an unassigned job. Required."""
     unassignment_count: int = rest_field(name="unassignmentCount")
     """The number of times a job is unassigned. At a maximum 3. Required."""
 
