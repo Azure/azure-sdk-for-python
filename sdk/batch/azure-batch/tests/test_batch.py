@@ -102,7 +102,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             # self.assertEqual(err.error.code, code)
             assert err.error.code == code
         except Exception as err:
-            self.fail("Expected BatchErrorExcption, instead got: {!r}".format(err))
+            self.fail("Expected BatchErrorException, instead got: {!r}".format(err))
 
     async def assertCreateTasksError(self, code, func, *args, **kwargs):
         try:
@@ -292,7 +292,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         await self.assertBatchError(
             "InvalidPropertyValue",
             client.create_pool,
-            body=test_network_pool,
+            pool=test_network_pool,
             timeout=45,
         )
 
@@ -312,7 +312,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ),
         )
         await self.assertBatchError(
-            "InvalidPropertyValue", client.create_pool, body=test_image_pool, timeout=45
+            "InvalidPropertyValue", client.create_pool, pool=test_image_pool, timeout=45
         )
 
         # Test Create Pool with Data Disk
