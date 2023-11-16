@@ -8,14 +8,19 @@ import warnings
 from typing_extensions import TypedDict, Protocol
 from azure.core import CaseInsensitiveEnumMeta
 
+
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
     def __getattribute__(cls, item):
-        if item == "MICROSOFT_BOT":
+        if item.upper() == "MICROSOFT_BOT":
             warnings.warn("MICROSOFT_BOT is deprecated and should not be used.", DeprecationWarning)
         return CaseInsensitiveEnumMeta.__getattribute__(cls, item)
 
-class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
+
+# The Chat SDK is diverging to not use the DeprecatedEnumMeta until the new 
+# replacement for the BotIdentifier is released to prevent exposing the deprecated
+# enum value.
+class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Communication Identifier Kind.
 
     For checking yet unknown identifiers it is better to rely on the presence of the `raw_id` property,
@@ -28,7 +33,6 @@ class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
     COMMUNICATION_USER = "communication_user"
     PHONE_NUMBER = "phone_number"
     MICROSOFT_TEAMS_USER = "microsoft_teams_user"
-    MICROSOFT_BOT = "microsoft_bot"
 
 
 class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
