@@ -58,7 +58,7 @@ def mock_workspace_operation_aug_2023_preview(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2023_08_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
-        credentials=mock_credential,        
+        credentials=mock_credential,
         dataplane_client=mock_aml_services_workspace_dataplane,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
