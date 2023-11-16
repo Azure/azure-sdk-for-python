@@ -1,6 +1,15 @@
 
-# Azure Ai Documentintelligence client library for Python
-<!-- write necessary description of service -->
+# Azure AI Document Intelligence client library for Python
+Azure AI Document Intelligence ([previously known as Form Recognizer][service-rename]) is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
+
+- Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
+- Document - Analyze key-value pairs in addition to general layout from documents.
+- Read - Read page information from documents.
+- Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
+- Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
+- Classifiers - Build custom classification models that combine layout and language features to accurately detect and identify documents you process within your application.
+- Add-on capabilities - Extract barcodes/QR codes, formulas, font/style, etc. or enable high resolution mode for large documents with optional parameters.
+
 
 ## Getting started
 
@@ -14,7 +23,7 @@ python -m pip install azure-ai-documentintelligence
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Ai Documentintelligence instance.
+- An existing Azure AI Document Intelligence instance.
 
 ## Contributing
 
