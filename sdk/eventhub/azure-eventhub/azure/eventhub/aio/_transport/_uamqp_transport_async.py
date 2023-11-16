@@ -194,7 +194,7 @@ if uamqp_installed:
             return client
 
         @staticmethod
-        def message_received_async(consumer, message: Message) -> None:
+        def message_received_async(consumer, message: "Message") -> None:
             consumer._message_buffer.append(message) # pylint: disable=protected-access
 
         @staticmethod

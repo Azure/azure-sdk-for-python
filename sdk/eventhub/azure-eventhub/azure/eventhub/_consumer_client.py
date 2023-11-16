@@ -179,10 +179,10 @@ class EventHubConsumerClient(
         self._lock = threading.Lock()
         self._event_processors: Dict[Tuple[str, str], EventProcessor] = {}
 
-    def __enter__(self):
+    def __enter__(self) -> "EventHubConsumerClient":
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def _create_consumer(

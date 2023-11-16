@@ -131,7 +131,7 @@ class EventHubSharedKeyCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     async def get_token(
-        self, *scopes, **kwargs # pylint:disable=unused-argument
+        self, *scopes: str, **kwargs: Any # pylint:disable=unused-argument
     ) -> AccessToken:
         if not scopes:
             raise ValueError("No token scope provided.")
@@ -175,8 +175,8 @@ class EventhubAzureNamedKeyTokenCredentialAsync(object): # pylint: disable=name-
     """
 
     def __init__(self, azure_named_key_credential: AzureNamedKeyCredential) -> None:
-        self._credential = azure_named_key_credential
-        self.token_type = b"servicebus.windows.net:sastoken"
+        self._credential: AzureNamedKeyCredential = azure_named_key_credential
+        self.token_type: bytes = b"servicebus.windows.net:sastoken"
 
     async def get_token(
         self, *scopes, **kwargs # pylint:disable=unused-argument

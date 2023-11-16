@@ -9,7 +9,7 @@ from typing_extensions import Literal
 
 if TYPE_CHECKING:
     try:
-        from uamqp import types as uamqp_types
+        from uamqp.types import AMQPSymbol
     except ImportError:
         uamqp_types = None
 
@@ -27,12 +27,12 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     CONNECTION_CLOSING_STATES: Tuple
 
     # define symbols
-    PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["product"]]
-    VERSION_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["version"]]
-    FRAMEWORK_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["framework"]]
-    PLATFORM_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["platform"]]
-    USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["user-agent"]]
-    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal[b'x-opt-partition-key']]
+    PRODUCT_SYMBOL: Union["AMQPSymbol", Literal["product"]]
+    VERSION_SYMBOL: Union["AMQPSymbol", Literal["version"]]
+    FRAMEWORK_SYMBOL: Union["AMQPSymbol", Literal["framework"]]
+    PLATFORM_SYMBOL: Union["AMQPSymbol", Literal["platform"]]
+    USER_AGENT_SYMBOL: Union["AMQPSymbol", Literal["user-agent"]]
+    PROP_PARTITION_KEY_AMQP_SYMBOL: Union["AMQPSymbol", Literal[b'x-opt-partition-key']]
 
 
     @staticmethod

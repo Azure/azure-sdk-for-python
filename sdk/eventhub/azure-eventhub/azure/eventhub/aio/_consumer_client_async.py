@@ -160,7 +160,7 @@ class EventHubConsumerClient(
         eventhub_name: str,
         consumer_group: str,
         credential: "CredentialTypes",
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
