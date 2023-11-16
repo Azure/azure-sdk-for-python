@@ -18,8 +18,9 @@ from common_tasks import (
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
-from ci_tools.functions import build_whl_for_req, cleanup_directory
-from pkg_resources import parse_requirements
+from ci_tools.scenario.generation import replace_dev_reqs
+from ci_tools.functions import cleanup_directory
+from pkg_resources import parse_requirements, RequirementParseError
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
@@ -110,33 +111,6 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
             # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
             f.write("\n".join(all_adjustments))
-
-
-def replace_dev_reqs(file, pkg_root):
-    adjusted_req_lines = []
-
-    with open(file, "r") as f:
-        for line in f:
-            args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
-            amended_line = " ".join(args)
-
-            if amended_line.endswith("]"):
-                trim_amount = amended_line[::-1].index("[") + 1
-                amended_line = amended_line[0 : (len(amended_line) - trim_amount)]
-
-            adjusted_req_lines.append(amended_line)
-
-    req_file_name = os.path.basename(file)
-    logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
-
-    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
-    logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
-
-    with open(file, "w") as f:
-        # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
-        # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
-        # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
-        f.write("\n".join(adjusted_req_lines))
 
 
 def collect_log_files(working_dir):

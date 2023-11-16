@@ -17,13 +17,13 @@ os.environ['PYTHONHASHSEED'] = '0'
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    azure_keyvault_url = os.getenv("azure_keyvault_url", "https://vaultname.vault.azure.net")
+    azure_keyvault_url = os.getenv("AZURE_KEYVAULT_URL", "https://vaultname.vault.azure.net")
     azure_keyvault_url = azure_keyvault_url.rstrip("/")
-    keyvault_tenant_id = os.getenv("keyvault_tenant_id", "keyvault_tenant_id")
-    keyvault_subscription_id = os.getenv("keyvault_subscription_id", "keyvault_subscription_id")
-    azure_managedhsm_url = os.environ.get("azure_managedhsm_url","https://managedhsmvaultname.managedhsm.azure.net")
+    keyvault_tenant_id = os.getenv("KEYVAULT_TENANT_ID", "keyvault_tenant_id")
+    keyvault_subscription_id = os.getenv("KEYVAULT_SUBSCRIPTION_ID", "keyvault_subscription_id")
+    azure_managedhsm_url = os.environ.get("AZURE_MANAGEDHSM_URL","https://managedhsmvaultname.managedhsm.azure.net")
     azure_managedhsm_url = azure_managedhsm_url.rstrip("/")
-    azure_attestation_uri = os.environ.get("azure_keyvault_attestation_url","https://fakeattestation.azurewebsites.net")
+    azure_attestation_uri = os.environ.get("AZURE_KEYVAULT_ATTESTATION_URL","https://fakeattestation.azurewebsites.net")
     azure_attestation_uri = azure_attestation_uri.rstrip('/')
     storage_name = os.environ.get("BLOB_STORAGE_ACCOUNT_NAME", "blob_storage_account_name")
     storage_endpoint_suffix = os.environ.get("KEYVAULT_STORAGE_ENDPOINT_SUFFIX", "keyvault_endpoint_suffix")

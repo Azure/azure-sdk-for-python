@@ -12,14 +12,14 @@ from urllib.parse import urlparse
 import yaml
 
 from .._artifacts._artifact_utilities import get_datastore_info, get_storage_client
-from .._restclient.v2023_04_01_preview.operations import (  # pylint: disable = unused-import
+from .._restclient.v2023_10_01.operations import (  # pylint: disable = unused-import
     FeaturesetContainersOperations,
     FeaturesetVersionsOperations,
     FeaturestoreEntityContainersOperations,
     FeaturestoreEntityVersionsOperations,
 )
 from ..constants._common import DefaultOpenEncoding
-from ..exceptions import ValidationException, ErrorTarget, ErrorCategory, ValidationErrorType
+from ..exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from ..operations._datastore_operations import DatastoreOperations
 from ._storage_utils import AzureMLDatastorePathUri
 from .utils import load_yaml

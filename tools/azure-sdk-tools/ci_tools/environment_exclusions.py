@@ -4,8 +4,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from ci_tools.functions import get_config_setting
+from ci_tools.parsing import get_config_setting
 import os
+from typing import Any
 
 # --------------------------------------------------------------------------------------------------------------------
 # DO NOT add packages to the below lists. They are used to omit packages that will never run type checking.
@@ -34,13 +35,13 @@ IGNORE_PACKAGES = [
 ]
 
 
-def is_check_enabled(package_path: str, check: str, default: bool = True) -> bool:
+def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool:
     """
     Single-use function to evaluate whether or not a given check should run against a package.
 
     In order:
      - Checks <CHECK>_OPT_OUT for package name.
-     - Honors override variable if one is present: <PACKAGE-NAME>_<CHECK>.
+     - Honors override variable if one is present: <PACKAGE_NAME>_<CHECK>. (Note the _ in the package name, `-` is not a valid env variable character.)
      - Finally falls back to the pyproject.toml at package root (if one exists) for a tools setting enabling/disabling <check>.
     """
     if package_path.endswith("setup.py"):
@@ -49,13 +50,10 @@ def is_check_enabled(package_path: str, check: str, default: bool = True) -> boo
     if package_path == ".":
         package_path = os.getcwd()
 
-    enabled = default
-    package_name = os.path.basename(package_path)
-
     # now pull the new pyproject.toml configuration
-    config = get_config_setting(package_path, check.strip().lower(), True)
+    config = get_config_setting(package_path, check.strip().lower(), default)
 
-    return config and enabled
+    return config
 
 
 def filter_tox_environment_string(namespace_argument: str, package_path: str) -> str:

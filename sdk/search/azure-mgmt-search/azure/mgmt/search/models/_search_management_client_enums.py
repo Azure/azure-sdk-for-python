@@ -144,6 +144,22 @@ class SearchEncryptionWithCmk(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: set to 'Disabled'."""
 
 
+class SearchSemanticSearch(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sets options that control the availability of semantic search. This configuration is only
+    possible for certain Azure Cognitive Search SKUs in certain locations.
+    """
+
+    DISABLED = "disabled"
+    """Indicates that semantic search is disabled for the search service."""
+    FREE = "free"
+    """Enables semantic search on a search service and indicates that it is to be used within the
+    #: limits of the free tier. This would cap the volume of semantic search requests and is offered
+    #: at no extra charge. This is the default for newly provisioned search services."""
+    STANDARD = "standard"
+    """Enables semantic search on a search service as a billable feature, with higher throughput and
+    #: volume of semantic search queries."""
+
+
 class SearchServiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the search service. Possible values include: 'running': The search service is
     running and no provisioning operations are underway. 'provisioning': The search service is
@@ -170,8 +186,6 @@ class SearchServiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "error"
     """The search service is in error state, indicating either a failure to provision or to be
     #: deleted."""
-    STOPPED = "stopped"
-    """The search service is in a subscription that's disabled."""
 
 
 class SharedPrivateLinkResourceAsyncOperationResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):

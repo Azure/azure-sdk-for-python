@@ -16,10 +16,8 @@ except ImportError:
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
 from azure.core.utils import parse_connection_string
-from azure.core.pipeline.transport import (
-    HttpTransport,
-    HttpRequest,
-)
+from azure.core.rest import HttpRequest
+from azure.core.pipeline.transport import HttpTransport
 from azure.core.pipeline.policies import (
     RedirectPolicy,
     ContentDecodePolicy,
@@ -262,16 +260,17 @@ class TablesBaseClient(AccountHostsMixin):
         :param table_name: The table name.
         :type table_name: str
         :param reqs: The HTTP request.
-        :type reqs: ~azure.core.pipeline.transport.HttpRequest
+        :type reqs: ~azure.core.pipeline.rest.HttpRequest
         :return: A list of batch part metadata in response.
         :rtype: list[Mapping[str, Any]]
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
 
-        changeset = HttpRequest("POST", None)  # type: ignore
+        changeset = HttpRequest("POST", "")
         changeset.set_multipart_mixed(*reqs, policies=policies, boundary=f"changeset_{uuid4()}")  # type: ignore
-        request = self._client._client.post(  # pylint: disable=protected-access
+        request = HttpRequest(
+            method="POST",
             url=f"{self.scheme}://{self._primary_hostname}/$batch",
             headers={
                 "x-ms-version": self.api_version,
@@ -287,8 +286,7 @@ class TablesBaseClient(AccountHostsMixin):
             enforce_https=False,
             boundary=f"batch_{uuid4()}",
         )
-        pipeline_response = self._client._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
-        response = pipeline_response.http_response
+        response = self._client.send_request(request, stream=True, **kwargs)
         if response.status_code == 413:
             raise _decode_error(
                 response, error_message="The transaction request was too large", error_type=RequestTooLargeError
@@ -298,7 +296,8 @@ class TablesBaseClient(AccountHostsMixin):
             _validate_tablename_error(decoded, table_name)
             raise decoded
 
-        parts = list(response.parts())
+        # The parts() method is defined on the back-compat mixin, not the protocol.
+        parts = list(response.parts())  # type: ignore[attr-defined]
         error_parts = [p for p in parts if not 200 <= p.status_code < 300]
         if any(error_parts):
             if error_parts[0].status_code == 413:

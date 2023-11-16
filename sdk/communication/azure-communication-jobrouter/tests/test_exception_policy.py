@@ -55,23 +55,23 @@ class TestExceptionPolicy(RouterRecordedTestCase):
                 self.classification_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.classification_policy_ids[self._testMethodName]):
-                    router_client.delete_classification_policy(id=policy_id)
+                    router_client.delete_classification_policy(classification_policy_id=policy_id)
 
             if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                 for policy_id in set(self.queue_ids[self._testMethodName]):
-                    router_client.delete_queue(id=policy_id)
+                    router_client.delete_queue(queue_id=policy_id)
 
             if self._testMethodName in self.distribution_policy_ids and any(
                 self.distribution_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                    router_client.delete_distribution_policy(id=policy_id)
+                    router_client.delete_distribution_policy(distribution_policy_id=policy_id)
 
             if self._testMethodName in self.exception_policy_ids and any(
                 self.exception_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.exception_policy_ids[self._testMethodName]):
-                    router_client.delete_exception_policy(id=policy_id)
+                    router_client.delete_exception_policy(exception_policy_id=policy_id)
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp"
@@ -86,9 +86,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
             name=distribution_policy_id,
         )
 
-        distribution_policy = client.create_distribution_policy(
-            id=distribution_policy_id, distribution_policy=policy
-        )
+        distribution_policy = client.upsert_distribution_policy(distribution_policy_id, policy)
 
         # add for cleanup later
         if self._testMethodName in self.distribution_policy_ids:
@@ -109,7 +107,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
             distribution_policy_id=self.get_distribution_policy_id(), name=job_queue_id, labels=queue_labels
         )
 
-        job_queue = client.create_queue(id=job_queue_id, queue=job_queue)
+        job_queue = client.upsert_queue(job_queue_id, job_queue)
 
         # add for cleanup later
         if self._testMethodName in self.queue_ids:
@@ -129,9 +127,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
             fallback_queue_id=self.get_job_queue_id(),
         )
 
-        classification_policy = client.create_classification_policy(
-            id=cp_id, classification_policy=classification_policy
-        )
+        classification_policy = client.upsert_classification_policy(cp_id, classification_policy)
 
         # add for cleanup later
         if self._testMethodName in self.classification_policy_ids:
@@ -166,18 +162,14 @@ class TestExceptionPolicy(RouterRecordedTestCase):
         for trigger in exception_triggers:
             for action in updated_exception_actions:
 
-                exception_rules = {
-                    "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                }
+                exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                 exception_policy: ExceptionPolicy = ExceptionPolicy(
                     exception_rules=exception_rules,
                     name=ep_identifier,
                 )
 
-                exception_policy = router_client.create_exception_policy(
-                    id=ep_identifier, exception_policy=exception_policy
-                )
+                exception_policy = router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                 # add for cleanup
                 self.exception_policy_ids[self._testMethodName] = [ep_identifier]
@@ -211,14 +203,12 @@ class TestExceptionPolicy(RouterRecordedTestCase):
 
         for trigger in exception_triggers:
             for action in updated_exception_actions:
-                exception_rules = {
-                    "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                }
+                exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                 exception_policy: ExceptionPolicy = ExceptionPolicy(exception_rules=exception_rules, name=ep_identifier)
 
-                exception_policy: ExceptionPolicy = router_client.create_exception_policy(
-                    id=ep_identifier, exception_policy=exception_policy
+                exception_policy: ExceptionPolicy = router_client.upsert_exception_policy(
+                    ep_identifier, exception_policy
                 )
 
                 # add for cleanup
@@ -229,14 +219,13 @@ class TestExceptionPolicy(RouterRecordedTestCase):
                     exception_policy, identifier=ep_identifier, name=ep_identifier, exception_rules=exception_rules
                 )
 
-                updated_exception_rules = {
-                    "fakeExceptionRuleId": None,  # existing rule is set to delete
-                    "fakeExceptionRuleId2": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action}),
-                }
+                updated_exception_rules = [
+                    ExceptionRule(id="fakeExceptionRuleId2", trigger=trigger, actions=[action]),
+                ]
 
                 exception_policy.exception_rules = updated_exception_rules
 
-                exception_policy = router_client.update_exception_policy(ep_identifier, exception_policy)
+                exception_policy = router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                 assert exception_policy is not None
                 ExceptionPolicyValidator.validate_exception_policy(
@@ -270,15 +259,11 @@ class TestExceptionPolicy(RouterRecordedTestCase):
 
         for trigger in exception_triggers:
             for action in updated_exception_actions:
-                exception_rules = {
-                    "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                }
+                exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                 exception_policy: ExceptionPolicy = ExceptionPolicy(exception_rules=exception_rules, name=ep_identifier)
 
-                exception_policy = router_client.create_exception_policy(
-                    id=ep_identifier, exception_policy=exception_policy
-                )
+                exception_policy = router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                 # add for cleanup
                 self.exception_policy_ids[self._testMethodName] = [ep_identifier]
@@ -288,12 +273,11 @@ class TestExceptionPolicy(RouterRecordedTestCase):
                     exception_policy, identifier=ep_identifier, name=ep_identifier, exception_rules=exception_rules
                 )
 
-                updated_exception_rules = {
-                    "fakeExceptionRuleId": None,  # existing rule is set to delete
-                    "fakeExceptionRuleId2": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action}),
-                }
+                updated_exception_rules = [
+                    ExceptionRule(id="fakeExceptionRuleId2", trigger=trigger, actions=[action]),
+                ]
 
-                exception_policy = router_client.update_exception_policy(
+                exception_policy = router_client.upsert_exception_policy(
                     ep_identifier, name=ep_identifier, exception_rules=updated_exception_rules
                 )
 
@@ -329,15 +313,11 @@ class TestExceptionPolicy(RouterRecordedTestCase):
 
         for trigger in exception_triggers:
             for action in updated_exception_actions:
-                exception_rules = {
-                    "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                }
+                exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                 exception_policy: ExceptionPolicy = ExceptionPolicy(exception_rules=exception_rules, name=ep_identifier)
 
-                exception_policy = router_client.create_exception_policy(
-                    id=ep_identifier, exception_policy=exception_policy
-                )
+                exception_policy = router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                 # add for cleanup
                 self.exception_policy_ids[self._testMethodName] = [ep_identifier]
@@ -347,7 +327,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
                     exception_policy, identifier=ep_identifier, name=ep_identifier, exception_rules=exception_rules
                 )
 
-                queried_exception_policy = router_client.get_exception_policy(id=ep_identifier)
+                queried_exception_policy = router_client.get_exception_policy(exception_policy_id=ep_identifier)
 
                 assert queried_exception_policy is not None
                 ExceptionPolicyValidator.validate_exception_policy(
@@ -381,15 +361,11 @@ class TestExceptionPolicy(RouterRecordedTestCase):
 
         for trigger in exception_triggers:
             for action in updated_exception_actions:
-                exception_rules = {
-                    "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                }
+                exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                 exception_policy: ExceptionPolicy = ExceptionPolicy(exception_rules=exception_rules, name=ep_identifier)
 
-                exception_policy = router_client.create_exception_policy(
-                    id=ep_identifier, exception_policy=exception_policy
-                )
+                exception_policy = router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                 # add for cleanup
                 self.exception_policy_ids[self._testMethodName] = [ep_identifier]
@@ -399,9 +375,9 @@ class TestExceptionPolicy(RouterRecordedTestCase):
                     exception_policy, identifier=ep_identifier, name=ep_identifier, exception_rules=exception_rules
                 )
 
-                router_client.delete_exception_policy(id=ep_identifier)
+                router_client.delete_exception_policy(exception_policy_id=ep_identifier)
                 with pytest.raises(ResourceNotFoundError) as nfe:
-                    router_client.get_exception_policy(id=ep_identifier)
+                    router_client.get_exception_policy(exception_policy_id=ep_identifier)
                 assert nfe.value.reason == "Not Found"
                 assert nfe.value.status_code == 404
 
@@ -433,17 +409,13 @@ class TestExceptionPolicy(RouterRecordedTestCase):
         for trigger in exception_triggers:
             for action in updated_exception_actions:
                 for identifier in ep_identifiers:
-                    exception_rules = {
-                        "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                    }
+                    exception_rules = [ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         exception_rules=exception_rules, name=identifier
                     )
 
-                    exception_policy = router_client.create_exception_policy(
-                        id=identifier, exception_policy=exception_policy
-                    )
+                    exception_policy = router_client.upsert_exception_policy(identifier, exception_policy)
 
                     policy_count += 1
 
@@ -463,13 +435,13 @@ class TestExceptionPolicy(RouterRecordedTestCase):
                     assert len(list_of_policies) <= 2
 
                     for policy_item in list_of_policies:
-                        response_at_creation = created_ep_response.get(policy_item.exception_policy.id, None)
+                        response_at_creation = created_ep_response.get(policy_item.id, None)
 
                         if not response_at_creation:
                             continue
 
                         ExceptionPolicyValidator.validate_exception_policy(
-                            policy_item.exception_policy,
+                            policy_item,
                             identifier=response_at_creation.id,
                             name=response_at_creation.name,
                             exception_rules=response_at_creation.exception_rules,
