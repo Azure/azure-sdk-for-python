@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import Optional, Union, Any, Tuple, cast, Dict
+from typing import Optional, Union, Any, Tuple, cast
 
 from .._pyamqp import (
     error as errors,
