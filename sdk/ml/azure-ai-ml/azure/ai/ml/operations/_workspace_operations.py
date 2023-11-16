@@ -244,7 +244,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         except HttpResponseError as error:
             if error.status_code == 403 and workspace._kind == PROJECT_WORKSPACE_KIND:
                 resource_group = kwargs.get("resource_group") or self._resource_group_name
-                hub_name, hub_rg = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
+                hub_name, _ = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
                 rest_workspace_obj = self._operation.get(resource_group, hub_name)
                 hub_default_workspace_resource_group = get_resource_group_name_from_resource_group_id(
                     rest_workspace_obj.workspace_hub_config.default_workspace_resource_group
@@ -252,10 +252,11 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                 # we only want to try joining the workspaceHub when the default workspace resource group
                 # is same with the user provided resource group.
                 if hub_default_workspace_resource_group == resource_group:
-                    module_logger.info(
-                        "User don't have enough permission to create project workspace, "
+                    log_msg = (
+                        "User lacked permission to create project workspace,"
                         + "trying to join the workspaceHub default resource group."
                     )
+                    module_logger.info(log_msg)
                     return self._begin_join(workspace, **kwargs)
             raise error
 
