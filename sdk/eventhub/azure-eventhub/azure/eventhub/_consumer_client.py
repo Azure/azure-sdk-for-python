@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
-from typing import TYPE_CHECKING, List, Union, Any, Callable
+from typing import TYPE_CHECKING, List, Union, Any, Callable, Optional, Dict, Tuple
 
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
@@ -15,11 +15,6 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 if TYPE_CHECKING:
     import datetime
-    from typing import (  # pylint: disable=ungrouped-imports
-        Dict,
-        Tuple,
-        Optional,
-    )
     from ._eventprocessor.partition_context import PartitionContext
     from ._common import EventData
     from ._client_base import CredentialTypes
