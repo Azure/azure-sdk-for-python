@@ -5,7 +5,7 @@ import os
 import tempfile
 import time
 from enum import Enum
-from typing import Dict, List, Optional, Any
+from typing import List, Optional, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
@@ -424,7 +424,6 @@ def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
                 base_type = _MONITOR_DOMAIN_MAPPING.get(item.data.base_type)
                 # Apply deserialization of additional_properties and store that as base_data
                 if base_type:
-                    # type: ignore
-                    item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties)
-                    item.data.base_data.additional_properties = None
+                    item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties) # type: ignore
+                    item.data.base_data.additional_properties = None # type: ignore
     return item
