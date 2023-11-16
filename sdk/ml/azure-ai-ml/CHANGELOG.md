@@ -1,5 +1,13 @@
 # Release History
 
+## 1.12.1 (2023-11-17)
+
+### Bugs Fixed
+- Addressed null value issue with workspace connection kinds
+- Re-Added workspace connection metadata legacy value to address holdover issues.
+- Added support for developer-role users to create lean workspaces.
+- Fix an issue with pipeline deployments
+
 ## 1.12.0 (2023-11-13)
 
 ### Features Added
