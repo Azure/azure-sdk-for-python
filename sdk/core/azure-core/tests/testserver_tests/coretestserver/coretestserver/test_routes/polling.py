@@ -171,7 +171,7 @@ def polling_with_options_final_get_with_location():
     return Response('{"returnedFrom": "locationHeaderUrl"}', status=200)
 
 @polling_api.route("/location/api-version/add", methods=["PUT"])
-def location():
+def location_api_version_add():
     base_url = get_base_url(request)
     return Response(
         status=201,
@@ -181,7 +181,7 @@ def location():
     )
 
 @polling_api.route("/location/api-version/replace", methods=["PUT"])
-def location():
+def location_api_version_replace():
     base_url = get_base_url(request)
     return Response(
         status=201,
@@ -191,7 +191,7 @@ def location():
     )
 
 @polling_api.route("/location/api-version/polling", methods=["GET"])
-def location():
+def location_api_version_polling():
     base_url = get_base_url(request)
     query_string = get_query_string(request)
     assert_with_message("query string", "api-version=2023-11-15", query_string)
