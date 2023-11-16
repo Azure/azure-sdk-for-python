@@ -166,4 +166,9 @@ def get_base_url(request):
     return "http://" + request.host
 
 
+
+def get_query_string(request):
+    return request.query_string.decode()
+
+
 __all__ = ["assert_with_message", "get_dict", "jsonify"]

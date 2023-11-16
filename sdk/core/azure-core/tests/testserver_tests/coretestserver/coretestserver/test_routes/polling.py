@@ -8,7 +8,7 @@ from flask import (
     Blueprint,
     request,
 )
-from .helpers import get_base_url, assert_with_message
+from .helpers import get_base_url, assert_with_message, get_query_string
 
 polling_api = Blueprint("polling_api", __name__)
 
@@ -169,3 +169,30 @@ def polling_with_options_first():
 @polling_api.route("/final-get-with-location", methods=["GET"])
 def polling_with_options_final_get_with_location():
     return Response('{"returnedFrom": "locationHeaderUrl"}', status=200)
+
+@polling_api.route("/location/api-version/add", methods=["PUT"])
+def location():
+    base_url = get_base_url(request)
+    return Response(
+        status=201,
+        headers={
+            "location": "{}/polling/location/api-version/polling".format(base_url),
+        },
+    )
+
+@polling_api.route("/location/api-version/replace", methods=["PUT"])
+def location():
+    base_url = get_base_url(request)
+    return Response(
+        status=201,
+        headers={
+            "location": "{}/polling/location/api-version/polling?api-version=0000-00-00".format(base_url),
+        },
+    )
+
+@polling_api.route("/location/api-version/polling", methods=["GET"])
+def location():
+    base_url = get_base_url(request)
+    query_string = get_query_string(request)
+    assert_with_message("query string", "api-version=2023-11-15", query_string)
+    return Response('{"location_result": true}', status=200)
