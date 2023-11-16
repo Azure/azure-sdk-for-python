@@ -195,7 +195,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         self.mini_batch_error_threshold = mini_batch_error_threshold
         self._resources = resources
         self.environment_variables = {} if environment_variables is None else environment_variables
-        self.identity = identity
+        self._identity = identity
         if isinstance(self.component, ParallelComponent):
             self.resources = self.resources or copy.deepcopy(self.component.resources)
             self.input_data = self.input_data or self.component.input_data
@@ -284,9 +284,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         :type value: Union[dict[str, str], ~azure.ai.ml.ManagedIdentityConfiguration,
             ~azure.ai.ml.AmlTokenConfiguration, ~azure.ai.ml.UserIdentityConfiguration]
         """
-        print(f"value is {value}")
         if isinstance(value, dict):
-            print("is dict")
             identity_schema = UnionField(
                 [
                     NestedField(ManagedIdentitySchema, unknown=INCLUDE),
@@ -295,7 +293,6 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
                 ]
             )
             value = identity_schema._deserialize(value=value, attr=None, data=None)
-            print(value)
         self._identity = value
 
     @property
