@@ -332,6 +332,10 @@ class CachedNodeResolver(object):
                 )
                 self._cache[component_hash] = cache_content
                 cache_contents_to_resolve.append(cache_content)
+                logger.warning(
+                    f"Cannot find cache of [{node._component.name}], add component has {component_hash} to disk cache,"
+                    f" disk cache length [{len(self._cache)}]"
+                )
         self._nodes_to_resolve.clear()
         return dict_of_nodes_to_resolve, cache_contents_to_resolve
 
