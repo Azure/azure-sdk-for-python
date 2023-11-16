@@ -171,7 +171,9 @@ class CachedNodeResolver(object):
             return _YAML_SOURCE_PREFIX + object_hash.hexdigest()
         # For components without code, like pipeline component, their dependencies have already
         # been resolved before calling this function, so we can use their anonymous hash directly
-        return _ANONYMOUS_HASH_PREFIX + component._get_anonymous_hash()  # pylint: disable=protected-access
+        disk_hash = _ANONYMOUS_HASH_PREFIX + component._get_anonymous_hash()  # pylint: disable=protected-access
+        logger.warning(f"{component.name} component hash is {disk_hash}")
+        return disk_hash
 
     @staticmethod
     def calc_on_disk_hash_for_component(component: Component, in_memory_hash: str) -> str:
@@ -215,7 +217,9 @@ class CachedNodeResolver(object):
             object_hash.update(in_memory_hash.encode("utf-8"))
 
             object_hash.update(content_hash.encode("utf-8"))
-            return _CODE_INVOLVED_PREFIX + object_hash.hexdigest()
+            disk_hash = _CODE_INVOLVED_PREFIX + object_hash.hexdigest()
+            logger.warning(f"{component.name} calc on disk hash is {disk_hash}")
+            return disk_hash
 
     @property
     def _on_disk_cache_dir(self) -> Path:
