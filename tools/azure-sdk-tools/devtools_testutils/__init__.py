@@ -50,7 +50,7 @@ from .sanitizers import (
     set_session_recording_options,
 )
 from .cert import create_combined_bundle
-from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording
+from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording, trim_kwargs_from_test_function
 from .fake_credentials import FakeTokenCredential
 
 __all__ = [
@@ -93,6 +93,7 @@ __all__ = [
     "recorded_by_proxy",
     "recorded_test",
     "test_proxy",
+    "trim_kwargs_from_test_function",
     "set_bodiless_matcher",
     "set_custom_default_matcher",
     "set_default_function_settings",
