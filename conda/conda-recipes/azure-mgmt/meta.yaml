@@ -504,9 +504,10 @@ test:
     - azure.mgmt.containerservice.v2021_03_01.operations
     - azure.mgmt.containerservicefleet
     - azure.mgmt.containerservicefleet.aio
-    - azure.mgmt.containerservicefleet.aio.operations
-    - azure.mgmt.containerservicefleet.models
-    - azure.mgmt.containerservicefleet.operations
+    - azure.mgmt.containerservicefleet.v2023_10_15.aio
+    - azure.mgmt.containerservicefleet.v2023_10_15.aio.operations
+    - azure.mgmt.containerservicefleet.v2023_10_15.models
+    - azure.mgmt.containerservicefleet.v2023_10_15.operations
     - azure.mgmt.cdn
     - azure.mgmt.cdn.aio
     - azure.mgmt.cdn.aio.operations
