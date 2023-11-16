@@ -118,8 +118,8 @@ For more details, refer to the documentation in [tests.md][recording_updates].
 
 [azure_sdk_assets]: https://github.com/Azure/azure-sdk-assets
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md
-[generate_assets_json]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/transition-scripts/generate-assets-json.ps1
+[generate_assets_json]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/onboarding/generate-assets-json.ps1
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [powershell]: https://learn.microsoft.com/powershell/scripting/install/installing-powershell?view=powershell-latest
 [recording_updates]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#update-test-recordings
-[transition_script]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/testproxy/transition-scripts
+[transition_script]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/testproxy/onboarding

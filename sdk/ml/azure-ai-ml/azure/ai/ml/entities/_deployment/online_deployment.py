@@ -9,7 +9,7 @@ import os
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Tuple, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import EndpointComputeType
@@ -210,8 +210,12 @@ class OnlineDeployment(Deployment):
         """
         return self._provisioning_state
 
-    def _generate_dependencies(self) -> typing.Any:
-        """Convert dependencies into ARM id or REST wrapper."""
+    def _generate_dependencies(self) -> Tuple[RestCodeConfiguration, str, str]:
+        """Convert dependencies into ARM id or REST wrapper.
+
+        :return: A 3-tuple of the code configuration, environment ID, and model ID.
+        :rtype: Tuple[RestCodeConfiguration, str, str]
+        """
         code = None
 
         if self.code_configuration:
@@ -713,6 +717,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         """
         kwargs["type"] = EndpointComputeType.MANAGED.value
         self.private_network_connection = kwargs.pop("private_network_connection", None)
+        self.package_model = kwargs.pop("package_model", False)
 
         super(ManagedOnlineDeployment, self).__init__(
             name=name,

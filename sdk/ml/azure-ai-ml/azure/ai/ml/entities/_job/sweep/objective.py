@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Objective as RestObjective
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Objective as RestObjective
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -18,8 +18,7 @@ class Objective(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
             :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
             :language: python

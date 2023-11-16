@@ -60,7 +60,7 @@ class AggregationFunctionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AlwaysEncryptedEnclaveType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of enclave requested on the database i.e. Default or VBS enclaves."""
+    """Type of enclave requested on the elastic pool."""
 
     DEFAULT = "Default"
     VBS = "VBS"
@@ -149,7 +149,7 @@ class AutomaticTuningServerReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AvailabilityZoneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the availability zone the database is pinned to."""
+    """Specifies the availability zone the pool's primary replica is pinned to."""
 
     NO_PREFERENCE = "NoPreference"
     ONE = "1"
@@ -493,6 +493,20 @@ class FailoverGroupReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
+
+
+class FreeLimitExhaustionBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the behavior when monthly free limits are exhausted for the free database.
+
+    AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of the
+    month.
+
+    BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+    overage will be billed.
+    """
+
+    AUTO_PAUSE = "AutoPause"
+    BILL_OVER_USAGE = "BillOverUsage"
 
 
 class GeoBackupPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

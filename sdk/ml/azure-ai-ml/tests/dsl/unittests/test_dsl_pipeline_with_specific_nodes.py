@@ -211,8 +211,7 @@ class TestDSLPipelineWithSpecificNodes:
                 goal="maximize",
                 sampling_algorithm="random",
             )
-            # Todo: this is a workaround method, a long term task will track
-            sweep_job.resources.instance_type = "cpularge"
+            sweep_job.set_resources(instance_type="cpularge")
             sweep_job.compute = "test-aks-large"
             sweep_job.set_limits(max_total_trials=10)
 

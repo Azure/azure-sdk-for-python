@@ -53,7 +53,7 @@ def build_list_file_systems_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["account"] = kwargs.pop("resource", _params.pop("resource", "account"))
-    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

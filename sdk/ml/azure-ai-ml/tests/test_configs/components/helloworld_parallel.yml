@@ -7,17 +7,18 @@ display_name: BatchScore
 description: parallel component for batch score
 
 inputs:
-  component_in_number:
-    description: A number
-    type: number
-    default: 10.99
-    optional: false
   component_in_path:
     description: A path
     type: uri_folder
+  label:
+    description: A label
+    type: string
+  model:
+    description: Type of model
+    type: string
 
 outputs:
-  results:
+  scoring_summary:
     type: mltable
 
 task:
@@ -27,7 +28,6 @@ task:
   program_arguments: >- # optional
     --label ${{inputs.label}}
     --model ${{inputs.model}}
-    --output ${{outputs.scored_result}}
   append_row_to: ${{outputs.scoring_summary}} # optional, If Null, equals to summary_only mode in v1.
   environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33
 

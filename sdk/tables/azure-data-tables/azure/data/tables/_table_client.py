@@ -21,14 +21,20 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
-from ._error import _decode_error, _process_table_error, _reprocess_error, _reraise_error, _validate_tablename_error
+from ._error import (
+    _decode_error,
+    _process_table_error,
+    _reprocess_error,
+    _validate_tablename_error,
+    _validate_key_values,
+)
 from ._generated.models import SignedIdentifier, TableProperties
 from ._serialize import (
     serialize_iso,
     _parameter_filter_substitution,
-    _get_match_headers,
     _add_entity_properties,
     _prepare_key,
+    _get_match_condition,
 )
 from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
@@ -319,7 +325,7 @@ class TableClient(TablesBaseClient):
                 etag = entity.metadata.get("etag", None)
             except (AttributeError, TypeError):
                 pass
-        if_match = _get_match_headers(
+        match_condition = _get_match_condition(
             etag=etag,
             match_condition=match_condition or MatchConditions.Unconditionally,
         )
@@ -329,7 +335,8 @@ class TableClient(TablesBaseClient):
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                if_match=if_match,
+                etag=etag,
+                match_condition=match_condition,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -366,13 +373,10 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             decoded = _decode_error(error.response, error.message)
-            if decoded.error_code == "PropertiesNeedValue":
-                if entity.get("PartitionKey") is None:
-                    raise ValueError("PartitionKey must be present in an entity") from error
-                if entity.get("RowKey") is None:
-                    raise ValueError("RowKey must be present in an entity") from error
+            _validate_key_values(decoded, entity.get("PartitionKey"), entity.get("RowKey"))
             _validate_tablename_error(decoded, self.table_name)
-            _reraise_error(error)
+            # We probably should have been raising decoded error before removing _reraise_error()
+            raise error
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
@@ -405,16 +409,16 @@ class TableClient(TablesBaseClient):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)  # type: ignore
+                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
-        if_match = _get_match_headers(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally,
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
         entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
+
         try:
             metadata = None
             content = None
@@ -424,7 +428,8 @@ class TableClient(TablesBaseClient):
                     partition_key=_prepare_key(partition_key),
                     row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
-                    if_match=if_match,
+                    etag=etag,
+                    match_condition=match_condition,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs,
                 )
@@ -433,7 +438,8 @@ class TableClient(TablesBaseClient):
                     table=self.table_name,
                     partition_key=_prepare_key(partition_key),
                     row_key=_prepare_key(row_key),
-                    if_match=if_match,
+                    etag=etag,
+                    match_condition=match_condition,
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs,
@@ -639,13 +645,10 @@ class TableClient(TablesBaseClient):
                 :caption: Using transactions to send multiple requests at once
         """
         batched_requests = TableBatchOperations(
-            self._client,
-            self._client._serialize,  # pylint: disable=protected-access
-            self._client._deserialize,  # pylint: disable=protected-access
-            self._client._config,  # pylint: disable=protected-access
-            self.table_name,
+            config=self._client._config,  # pylint: disable=protected-access
+            endpoint=f"{self.scheme}://{self._primary_hostname}",
+            table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            **kwargs,
         )
         try:
             for operation in operations:
@@ -655,4 +658,10 @@ class TableClient(TablesBaseClient):
                 "The value of 'operations' must be an iterator "
                 "of Tuples. Please check documentation for correct Tuple format."
             ) from exc
-        return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
+
+        try:
+            return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
+        except HttpResponseError as ex:
+            if ex.status_code == 400 and not batched_requests.requests:
+                return []
+            raise

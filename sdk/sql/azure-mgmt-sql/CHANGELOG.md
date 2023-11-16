@@ -1,5 +1,16 @@
 # Release History
 
+## 4.0.0b12 (2023-08-30)
+
+### Features Added
+
+  - Model Database has a new parameter encryption_protector_auto_rotation
+  - Model Database has a new parameter free_limit_exhaustion_behavior
+  - Model Database has a new parameter use_free_limit
+  - Model DatabaseUpdate has a new parameter encryption_protector_auto_rotation
+  - Model DatabaseUpdate has a new parameter free_limit_exhaustion_behavior
+  - Model DatabaseUpdate has a new parameter use_free_limit
+
 ## 4.0.0b11 (2023-07-28)
 
 ### Features Added

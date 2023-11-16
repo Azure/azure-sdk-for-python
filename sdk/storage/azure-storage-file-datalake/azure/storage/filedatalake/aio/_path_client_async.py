@@ -12,7 +12,7 @@ from typing import ( # pylint: disable=unused-import
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
-from .._serialize import get_api_version
+from .._serialize import get_api_version, compare_api_versions
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._path_client import PathClient as PathClientBase
 from .._models import DirectoryProperties, AccessControlChangeResult, AccessControlChangeFailure, \
@@ -51,6 +51,9 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
     """
     def __init__(
             self, account_url: str,
@@ -241,9 +244,24 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :returns: A dictionary containing information about the deleted path.
         :rtype: Dict[str, Any]
         """
-        options = self._delete_path_options(**kwargs)
+        # Perform paginated delete only if using OAuth, deleting a directory, and api version is 2023-08-03 or later
+        # The pagination is only for ACL checks, the final request remains the atomic delete operation
+        paginated = None
+        if (compare_api_versions(self.api_version, '2023-08-03') >= 0 and
+            hasattr(self.credential, 'get_token') and
+            kwargs.get('recursive')):  # Directory delete will always specify recursive
+            paginated = True
+
+        options = self._delete_path_options(paginated, **kwargs)
         try:
-            return await self._client.path.delete(**options)
+            response_headers = await self._client.path.delete(**options)
+            # Loop until continuation token is None for paginated delete
+            while response_headers['continuation']:
+                response_headers = await self._client.path.delete(
+                    continuation=response_headers['continuation'],
+                    **options)
+
+            return response_headers
         except HttpResponseError as error:
             process_storage_error(error)
 

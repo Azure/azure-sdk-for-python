@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 from azure.core.credentials import AccessToken
 from datetime import datetime
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 from azure.communication.chat.aio import ChatThreadClient
 from azure.communication.chat import (
     ChatParticipant,
@@ -27,7 +27,7 @@ def _convert_datetime_to_utc_int(input):
     return int(calendar.timegm(input.utctimetuple()))
 
 
-async def mock_get_token():
+async def mock_get_token(*_, **__):
     return AccessToken("some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=TZ_UTC)))
 
 credential = Mock(get_token=mock_get_token)

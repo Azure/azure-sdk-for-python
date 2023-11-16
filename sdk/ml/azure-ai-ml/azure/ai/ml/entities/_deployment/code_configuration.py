@@ -24,8 +24,7 @@ class CodeConfiguration(DictMixin):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START code_configuration]
             :end-before: [END code_configuration]
             :language: python

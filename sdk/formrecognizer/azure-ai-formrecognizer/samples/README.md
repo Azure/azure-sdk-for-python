@@ -12,7 +12,7 @@ urlFragment: formrecognizer-samples
 # Samples for Azure Form Recognizer client library for Python
 
 > Note: Starting with version 2022-08-31, a new set of clients were introduced to leverage the newest features
-> of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
+> of the Document Intelligence service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version 3.1.X or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 
 These code samples show common scenario operations with the Azure Form Recognizer client library.
@@ -45,7 +45,12 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_classify_document_from_url.py][sample_classify_document_from_url] and [sample_classify_document_from_url_async.py][sample_classify_document_from_url_async]|Classify documents from URL with a custom classification model.|
 |[sample_build_classifier.py][sample_build_classifier] and [sample_build_classifier_async.py][sample_build_classifier_async]|Build a custom document classifier.|
 |[sample_manage_classifiers.py][sample_manage_classifiers] and [sample_manage_classifiers_async.py][sample_manage_classifiers_async]|Manage custom document classification models.|
-
+|[sample_send_request.py][sample_send_request] and [sample_send_request_async.py][sample_send_request_async]|Use the `send_request` client method.|
+|[sample_analyze_addon_barcodes.py][sample_analyze_addon_barcodes] and [sample_analyze_addon_barcodes_async.py][sample_analyze_addon_barcodes_async]|Extract barcodes using the add-on capability.|
+|[sample_analyze_addon_fonts.py][sample_analyze_addon_fonts] and [sample_analyze_addon_fonts_async.py][sample_analyze_addon_fonts_async]|Extract font information using the add-on capability.|
+|[sample_analyze_addon_formulas.py][sample_analyze_addon_formulas] and [sample_analyze_addon_formulas_async.py][sample_analyze_addon_formulas_async]|Extract formulas using the add-on capability.|
+|[sample_analyze_addon_highres.py][sample_analyze_addon_highres] and [sample_analyze_addon_highres_async.py][sample_analyze_addon_highres_async]|Recognize text with improved quality using the add-on capability.|
+|[sample_analyze_addon_languages.py][sample_analyze_addon_languages] and [sample_analyze_addon_languages_async.py][sample_analyze_addon_languages_async]|Detect languages using the add-on capability.|
 
 ## Samples for client library versions 3.1.X
 
@@ -117,50 +122,62 @@ what you can do with the Azure Form Recognizer client library.
 
 <!-- V3.2+ links -->
 
-[sample_auth]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_authentication.py
-[sample_auth_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_authentication_async.py
-[sample_analyze_layout]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_layout.py
-[sample_analyze_layout_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_layout_async.py
-[sample_analyze_general_documents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_general_documents.py
-[sample_analyze_general_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_general_documents_async.py
-[sample_analyze_invoices]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_invoices.py
-[sample_analyze_invoices_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_invoices_async.py
-[sample_analyze_business_cards]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_business_cards.py
-[sample_analyze_business_cards_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_business_cards_async.py
-[sample_analyze_identity_documents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_identity_documents.py
-[sample_analyze_identity_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_identity_documents_async.py
-[sample_analyze_receipts]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_receipts.py
-[sample_analyze_receipts_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_receipts_async.py
-[sample_analyze_custom_documents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_custom_documents.py
-[sample_analyze_custom_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_custom_documents_async.py
-[sample_build_model]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_build_model.py
-[sample_build_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_build_model_async.py
-[sample_composed_model]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_compose_model.py
-[sample_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_compose_model_async.py
-[sample_manage_models]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_manage_models.py
-[sample_manage_models_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_manage_models_async.py
-[sample_get_operations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_get_operations.py
-[sample_get_operations_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_get_operations_async.py
-[sample_copy]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_copy_model_to.py
-[sample_copy_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_copy_model_to_async.py
-[sample_get_words_on_document_line]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_get_words_on_document_line.py
-[sample_get_words_on_document_line_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_get_words_on_document_line_async.py
-[sample_convert_to_and_from_dict_v3_2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_convert_to_and_from_dict.py
-[sample_convert_to_and_from_dict_async_v3_2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_convert_to_and_from_dict_async.py
-[sample_analyze_read]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_read.py
-[sample_analyze_read_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_read_async.py
-[sample_analyze_tax_us_w2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_analyze_tax_us_w2.py
-[sample_analyze_tax_us_w2_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_analyze_tax_us_w2_async.py
+[sample_auth]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_authentication.py
+[sample_auth_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_authentication_async.py
+[sample_analyze_layout]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_layout.py
+[sample_analyze_layout_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_layout_async.py
+[sample_analyze_general_documents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_general_documents.py
+[sample_analyze_general_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_general_documents_async.py
+[sample_analyze_invoices]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_invoices.py
+[sample_analyze_invoices_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_invoices_async.py
+[sample_analyze_business_cards]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_business_cards.py
+[sample_analyze_business_cards_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_business_cards_async.py
+[sample_analyze_identity_documents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_identity_documents.py
+[sample_analyze_identity_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_identity_documents_async.py
+[sample_analyze_receipts]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_receipts.py
+[sample_analyze_receipts_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_receipts_async.py
+[sample_analyze_custom_documents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_custom_documents.py
+[sample_analyze_custom_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_custom_documents_async.py
+[sample_build_model]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_build_model.py
+[sample_build_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_build_model_async.py
+[sample_composed_model]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_compose_model.py
+[sample_composed_model_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_compose_model_async.py
+[sample_manage_models]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_manage_models.py
+[sample_manage_models_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_manage_models_async.py
+[sample_get_operations]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_get_operations.py
+[sample_get_operations_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_get_operations_async.py
+[sample_copy]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_copy_model_to.py
+[sample_copy_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_copy_model_to_async.py
+[sample_get_words_on_document_line]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_get_words_on_document_line.py
+[sample_get_words_on_document_line_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_get_words_on_document_line_async.py
+[sample_convert_to_and_from_dict_v3_2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_convert_to_and_from_dict.py
+[sample_convert_to_and_from_dict_async_v3_2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_convert_to_and_from_dict_async.py
+[sample_analyze_read]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_read.py
+[sample_analyze_read_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_read_async.py
+[sample_analyze_tax_us_w2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_tax_us_w2.py
+[sample_analyze_tax_us_w2_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_tax_us_w2_async.py
 [sample_get_elements_with_spans]: https://aka.ms/azsdk/python/formrecognizer/spansamplesync
 [sample_get_elements_with_spans_async]: https://aka.ms/azsdk/python/formrecognizer/spansampleasync
-[sample_classify_document]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_classify_document.py
-[sample_classify_document_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_classify_document_async.py
-[sample_classify_document_from_url]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_classify_document_from_url.py
-[sample_classify_document_from_url_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_classify_document_from_url_async.py
-[sample_build_classifier]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_build_classifier.py
-[sample_build_classifier_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_build_classifier_async.py
-[sample_manage_classifiers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_manage_classifiers.py
-[sample_manage_classifiers_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/async_samples/sample_manage_classifiers_async.py
+[sample_classify_document]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_classify_document.py
+[sample_classify_document_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_classify_document_async.py
+[sample_classify_document_from_url]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_classify_document_from_url.py
+[sample_classify_document_from_url_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_classify_document_from_url_async.py
+[sample_build_classifier]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_build_classifier.py
+[sample_build_classifier_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_build_classifier_async.py
+[sample_manage_classifiers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_manage_classifiers.py
+[sample_manage_classifiers_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_manage_classifiers_async.py
+[sample_send_request]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_send_request.py
+[sample_send_request_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_send_request_async.py
+[sample_analyze_addon_barcodes]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_barcodes.py
+[sample_analyze_addon_barcodes_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_addon_barcodes_async.py
+[sample_analyze_addon_fonts]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_fonts.py
+[sample_analyze_addon_fonts_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_addon_fonts_async.py
+[sample_analyze_addon_formulas]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_formulas.py
+[sample_analyze_addon_formulas_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_addon_formulas_async.py
+[sample_analyze_addon_highres]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_highres.py
+[sample_analyze_addon_highres_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_addon_highres_async.py
+[sample_analyze_addon_languages]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_languages.py
+[sample_analyze_addon_languages_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_analyze_addon_languages_async.py
 
 
 <!-- V3.1 links -->

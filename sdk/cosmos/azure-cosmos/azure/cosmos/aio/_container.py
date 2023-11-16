@@ -22,9 +22,14 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Awaitable, List
-from azure.core.async_paging import AsyncItemPaged
 
+from typing import Any, Dict, Optional, Union, cast, Awaitable, List, Tuple
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
+    
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 
@@ -35,7 +40,7 @@ from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
 from ._scripts import ScriptsProxy
-from ..partition_key import NonePartitionKeyValue
+from ..partition_key import NonePartitionKeyValue, PartitionKey
 
 __all__ = ("ContainerProxy",)
 
@@ -126,6 +131,9 @@ class ContainerProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
         :returns: Dict representing the retrieved container.
@@ -176,6 +184,9 @@ class ContainerProxy(object):
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A dict representing the new item.
         :rtype: Dict[str, Any]
@@ -222,6 +233,9 @@ class ContainerProxy(object):
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :returns: Dict representing the item to be retrieved.
         :rtype: Dict[str, Any]
@@ -268,6 +282,9 @@ class ContainerProxy(object):
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -316,16 +333,22 @@ class ContainerProxy(object):
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this options will incur
+            overhead, so it should be enabled only when debugging slow queries.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
-        :keyword int response_continuation_token_limit_in_kb: **provisional keyword** The size limit in kb of the
+        :keyword int continuation_token_limit: **provisional keyword** The size limit in kb of the
         response continuation token in the query response. Valid values are positive integers.
         A value of 0 is the same as not passing a value (default no limit).
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
 
@@ -355,12 +378,16 @@ class ContainerProxy(object):
         populate_query_metrics = kwargs.pop('populate_query_metrics', None)
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
+        populate_index_metrics = kwargs.pop("populate_index_metrics", None)
+        if populate_index_metrics is not None:
+            feed_options["populateIndexMetrics"] = populate_index_metrics
         enable_scan_in_query = kwargs.pop('enable_scan_in_query', None)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         partition_key = kwargs.pop('partition_key', None)
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
+            kwargs["containerProperties"] = self._get_properties
         else:
             feed_options["enableCrossPartitionQuery"] = True
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
@@ -369,9 +396,9 @@ class ContainerProxy(object):
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         correlated_activity_id = GenerateGuidId()
         feed_options["correlatedActivityId"] = correlated_activity_id
-        response_continuation_token_limit_in_kb = kwargs.pop("response_continuation_token_limit_in_kb", None)
-        if response_continuation_token_limit_in_kb is not None:
-            feed_options["responseContinuationTokenLimitInKb"] = response_continuation_token_limit_in_kb
+        continuation_token_limit = kwargs.pop("continuation_token_limit", None)
+        if continuation_token_limit is not None:
+            feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
@@ -406,6 +433,9 @@ class ContainerProxy(object):
         :paramtype partition_key: Union[str, int, float, bool]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -458,6 +488,9 @@ class ContainerProxy(object):
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A dict representing the upserted item.
         :rtype: Dict[str, Any]
@@ -506,6 +539,9 @@ class ContainerProxy(object):
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
             given id does not exist.
         :returns: A dict representing the item after replace went through.
@@ -537,7 +573,7 @@ class ContainerProxy(object):
         patch_operations: List[Dict[str, Any]],
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """ **Provisional method** Patches the specified item with the provided operations if it
+        """ Patches the specified item with the provided operations if it
          exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -556,6 +592,9 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword Literal["High", "Low"] priority_level: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: A dict representing the item after the patch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
@@ -847,3 +886,38 @@ class ContainerProxy(object):
                                                                   options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, None)
+
+    @distributed_trace_async
+    async def execute_item_batch(
+            self,
+            batch_operations: List[Tuple[Any]],
+            partition_key: Union[str, int, float, bool],
+            **kwargs) -> List[Dict[str, Any]]:
+        """ Executes the transactional batch for the specified partition key.
+
+        :param batch_operations: The batch of operations to be executed.
+        :type batch_operations: List[Tuple[Any]]
+        :param partition_key: The partition key value of the batch operations.
+        :type partition_key: Union[str, int, float, bool]
+        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: A list representing the items after the batch operations went through.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
+        :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
+        :rtype: List[Dict[str, Any]]
+        """
+        request_options = _build_options(kwargs)
+        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        response_hook = kwargs.pop('response_hook', None)
+        request_options["disableAutomaticIdGeneration"] = True
+
+        result = await self.client_connection.Batch(
+            collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, result)
+        return result

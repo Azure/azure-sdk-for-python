@@ -38,7 +38,7 @@ __all__ = [
 ]
 
 
-def get_function_and_class_name(func: Callable, *args) -> str:
+def get_function_and_class_name(func: Callable, *args: object) -> str:
     """
     Given a function and its unamed arguments, returns class_name.function_name. It assumes the first argument
     is `self`. If there are no arguments then it only returns the function name.

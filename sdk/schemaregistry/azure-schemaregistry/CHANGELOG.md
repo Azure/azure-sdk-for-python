@@ -1,6 +1,6 @@
 # Release History
 
-## 1.3.0b2 (Unreleased)
+## 1.3.0b4 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,27 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.3.0b3 (2023-11-09)
+
+### Features Added
+
+- `V2023_07_01` has been added to `ApiVersion` and set as the default api version.
+  - `Protobuf` has been added to supported formats in `SchemaFormat`.
+
+### Other Changes
+
+- Added support for Python 3.12.
+
+## 1.3.0b2 (2023-08-09)
+
+### Features Added
+
+The following features are experimental and may be removed:
+
+- Sync and async `JsonSchemaEncoder` have been added under `azure.schemaregistry.encoder.jsonencoder`.
+- `InvalidContentError` and `JsonSchemaDraftIdentifier` have been added under `azure.schemaregistry.encoder.jsonencoder` for use with the `JsonSchemaEncoder`.
+- `MessageType`, `MessageContent`, `SchemaContentValidate`, `SchemaEncoder` have been added under `azure.schemaregistry` as protocols to define/for use with the `JsonSchemaEncoder` and future encoder implementations.
 
 ## 1.3.0b1 (2023-01-12)
 
@@ -21,6 +42,10 @@
 ### Bugs Fixed
 
 - Fixed a bug in sync/async `register_schema` and `get_schema_properties` that did not accept case insensitive strings as an argument to the `format` parameter.
+
+### Other Changes
+
+- Added support for Python 3.11.
 
 ## 1.2.0 (2022-10-10)
 

@@ -51,7 +51,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -92,7 +92,7 @@ def build_set_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +130,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -168,7 +168,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -213,7 +213,7 @@ def build_list_paths_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -265,7 +265,7 @@ def build_list_blob_hierarchy_segment_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
+    version: Literal["2023-05-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-05-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL

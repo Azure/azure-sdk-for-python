@@ -30,6 +30,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/Azure/azure-sdk-for-python',
+    keywords="azure, azure sdk",
     author='Microsoft Corporation',
     author_email='azuresdkengsysadmins@microsoft.com',
 

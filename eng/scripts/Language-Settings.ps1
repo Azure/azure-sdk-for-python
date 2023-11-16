@@ -1,13 +1,14 @@
 $Language = "python"
 $LanguageDisplayName = "Python"
 $PackageRepository = "PyPI"
-$packagePattern = "*.zip"
+$packagePattern = "*.tar.gz"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/python-packages.csv"
 $BlobStorageUrl = "https://azuresdkdocs.blob.core.windows.net/%24web?restype=container&comp=list&prefix=python%2F&delimiter=%2F"
 $GithubUri = "https://github.com/Azure/azure-sdk-for-python"
 $PackageRepositoryUri = "https://pypi.org/project"
 
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
+."$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
@@ -22,7 +23,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   try
   {
     Push-Location $RepoRoot
-    python -m pip install "./tools/azure-sdk-tools[build]" -q -I
+    $null = python -m pip install "./tools/azure-sdk-tools[build]" -q -I
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
@@ -86,7 +87,7 @@ function IsPythonPackageVersionPublished($pkgId, $pkgVersion)
   }
 }
 
-# Parse out package publishing information given a python sdist of ZIP format.
+# Parse out package publishing information given a python sdist of tar.gz format.
 function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
 {
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
@@ -101,7 +102,8 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $readmeContent = ""
 
   New-Item -ItemType Directory -Force -Path $workFolder
-  Expand-Archive -Path $pkg -DestinationPath $workFolder
+  Write-Host "tar -zxvf $pkg -C $workFolder"
+  tar -zxvf $pkg -C $workFolder
 
   $changeLogLoc = @(Get-ChildItem -Path $workFolder -Recurse -Include "CHANGELOG.md")[0]
   if ($changeLogLoc) {
@@ -130,16 +132,26 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
 # Stage and Upload Docs to blob Storage
 function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
-  $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".zip")}
+  $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".tar.gz")}
 
   foreach ($Item in $PublishedDocs)
   {
-    $PkgName = $Item.BaseName
+    $PkgName = $Item.BaseName.Replace(".tar", "")
     $ZippedDocumentationPath = Join-Path -Path $DocLocation -ChildPath $Item.Name
     $UnzippedDocumentationPath = Join-Path -Path $DocLocation -ChildPath $PkgName
     $VersionFileLocation = Join-Path -Path $UnzippedDocumentationPath -ChildPath "version.txt"
 
-    Expand-Archive -Force -Path $ZippedDocumentationPath -DestinationPath $UnzippedDocumentationPath
+    if (!(Test-Path $UnzippedDocumentationPath)) {
+      New-Item -Path $UnzippedDocumentationPath -ItemType Directory
+    }
+
+    Write-Host "tar -zxvf $ZippedDocumentationPath -C $UnzippedDocumentationPath"
+    tar -zxvf $ZippedDocumentationPath -C $UnzippedDocumentationPath
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Error "tar failed with exit code $LASTEXITCODE."
+      exit $LASTEXITCODE
+    }
 
     $Version = $(Get-Content $VersionFileLocation).Trim()
 
@@ -476,8 +488,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
         };
         exclude_path = @("test*","example*","sample*","doc*");
       }
-    }
-    else {
+    } else {
       $package = [ordered]@{
           package_info = [ordered]@{
             name = $packageName;
@@ -578,6 +589,7 @@ function Get-python-DocsMsMetadataForPackage($PackageInfo) {
     DocsMsReadMeName = $readmeName
     LatestReadMeLocation  = 'docs-ref-services/latest'
     PreviewReadMeLocation = 'docs-ref-services/preview'
+    LegacyReadMeLocation  = 'docs-ref-services/legacy'
     Suffix = ''
   }
 }
@@ -601,10 +613,15 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
   }
 
   $allSucceeded = $true
-  foreach ($package in $PackageInfos) {
+  foreach ($item in $PackageInfos) {
+    # Some packages 
+    if ($item.Version -eq 'IGNORE') { 
+      continue
+    }
+
     $result = ValidatePackage `
-      -packageName $package.Name `
-      -packageVersion $package.Version `
+      -packageName $item.Name `
+      -packageVersion "==$($item.Version)" `
       -PackageSourceOverride $PackageSourceOverride `
       -DocValidationImageId $DocValidationImageId
 
@@ -622,4 +639,49 @@ function Get-python-EmitterName() {
 
 function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
   return "--option @azure-tools/typespec-python.emitter-output-dir=$projectDirectory/"
+}
+
+function Get-python-DirectoriesForGeneration () {
+  return Get-ChildItem "$RepoRoot/sdk" -Directory
+  | Get-ChildItem -Directory
+  | Where-Object { $_ -notmatch "-mgmt-" }
+  | Where-Object { (Test-Path "$_/tsp-location.yaml") }
+  # TODO: Reenable swagger generation when tox generate supports arbitrary generator versions
+  # -or (Test-Path "$_/swagger/README.md")
+}
+
+function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
+  $packageDirectories = Get-Content $PackageDirectoriesFile | ConvertFrom-Json
+  
+  $directoriesWithErrors = @()
+
+  foreach ($directory in $packageDirectories) {
+    Push-Location $RepoRoot/sdk/$directory
+    try {
+      Write-Host "`n`n======================================================================"
+      Write-Host "Generating project under directory 'sdk/$directory'" -ForegroundColor Yellow
+      Write-Host "======================================================================`n"
+
+      $toxConfigPath = Resolve-Path "$RepoRoot/eng/tox/tox.ini"
+      Invoke-LoggedCommand "tox run -e generate -c `"$toxConfigPath`" --root ."
+    }
+    catch {
+      Write-Host "##[error]Error generating project under directory $directory"
+      Write-Host $_.Exception.Message
+      $directoriesWithErrors += $directory
+    }
+    finally {
+      Pop-Location
+    }
+  }
+
+  if($directoriesWithErrors.Count -gt 0) {
+    Write-Host "##[error]Generation errors found in $($directoriesWithErrors.Count) directories:"
+
+    foreach ($directory in $directoriesWithErrors) {
+      Write-Host "  $directory"
+    }
+
+    exit 1
+  }
 }

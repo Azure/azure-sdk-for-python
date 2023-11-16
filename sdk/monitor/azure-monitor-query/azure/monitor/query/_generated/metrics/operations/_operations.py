@@ -20,13 +20,11 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -55,7 +53,7 @@ def build_metric_definitions_list_request(
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -94,7 +92,7 @@ def build_metrics_list_request(
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timespan is not None:
@@ -138,7 +136,7 @@ def build_metric_namespaces_list_request(
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -189,9 +187,8 @@ class MetricDefinitionsOperations:
                     "category": "str",  # Optional. Custom category name for this metric.
                     "dimensions": [
                         {
-                            "value": "str",  # the invariant value. Required.
-                            "localizedValue": "str"  # Optional. the locale specific
-                              value.
+                            "value": "str",  # The invariant value. Required.
+                            "localizedValue": "str"  # Optional. The display name.
                         }
                     ],
                     "displayDescription": "str",  # Optional. Detailed description of this
@@ -212,8 +209,8 @@ class MetricDefinitionsOperations:
                     "metricClass": "str",  # Optional. The class of the metric. Known values are:
                       "Availability", "Transactions", "Errors", "Latency", and "Saturation".
                     "name": {
-                        "value": "str",  # the invariant value. Required.
-                        "localizedValue": "str"  # Optional. the locale specific value.
+                        "value": "str",  # The invariant value. Required.
+                        "localizedValue": "str"  # Optional. The display name.
                     },
                     "namespace": "str",  # Optional. the namespace the metric belongs to.
                     "primaryAggregationType": "str",  # Optional. the primary aggregation type
@@ -248,20 +245,20 @@ class MetricDefinitionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_metric_definitions_list_request(
+                _request = build_metric_definitions_list_request(
                     resource_uri=resource_uri,
                     metricnamespace=metricnamespace,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request.url = self._client.format_url(request.url)
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -271,15 +268,17 @@ class MetricDefinitionsOperations:
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -328,7 +327,10 @@ class MetricsOperations:
         :keyword timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Default value is None.
         :paramtype timespan: str
-        :keyword interval: The interval (i.e. timegrain) of the query. Default value is None.
+        :keyword interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
+         Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
+         span requested.
+         *Examples: PT15M, PT1H, P1D, FULL*. Default value is None.
         :paramtype interval: ~datetime.timedelta
         :keyword metricnames: The names of the metrics (comma separated) to retrieve. Special case: If
          a metricname itself has a comma in it then use %2 to indicate it. Eg: 'Metric,Name1' should be
@@ -382,28 +384,28 @@ class MetricsOperations:
                         {
                             "id": "str",  # the metric Id. Required.
                             "name": {
-                                "value": "str",  # the invariant value. Required.
-                                "localizedValue": "str"  # Optional. the locale
-                                  specific value.
+                                "value": "str",  # The invariant value. Required.
+                                "localizedValue": "str"  # Optional. The display
+                                  name.
                             },
                             "timeseries": [
                                 {
                                     "data": [
                                         {
                                             "timeStamp": "2020-02-20
-                                              00:00:00",  # the timestamp for the metric value in ISO
+                                              00:00:00",  # The timestamp for the metric value in ISO
                                               8601 format. Required.
                                             "average": 0.0,  # Optional.
-                                              the average value in the time range.
+                                              The average value in the time range.
                                             "count": 0.0,  # Optional.
-                                              the number of samples in the time range. Can be used to
+                                              The number of samples in the time range. Can be used to
                                               determine the number of values that contributed to the
                                               average value.
                                             "maximum": 0.0,  # Optional.
-                                              the greatest value in the time range.
+                                              The greatest value in the time range.
                                             "minimum": 0.0,  # Optional.
-                                              the least value in the time range.
-                                            "total": 0.0  # Optional. the
+                                              The least value in the time range.
+                                            "total": 0.0  # Optional. The
                                               sum of all of the values in the time range.
                                         }
                                     ],
@@ -411,12 +413,12 @@ class MetricsOperations:
                                         {
                                             "name": {
                                                 "value": "str",  #
-                                                  the invariant value. Required.
+                                                  The invariant value. Required.
                                                 "localizedValue":
-                                                  "str"  # Optional. the locale specific value.
+                                                  "str"  # Optional. The display name.
                                             },
                                             "value": "str"  # Optional.
-                                              the value of the metadata.
+                                              The value of the metadata.
                                         }
                                     ]
                                 }
@@ -437,10 +439,12 @@ class MetricsOperations:
                     ],
                     "cost": 0,  # Optional. The integer value representing the relative cost of
                       the query.
-                    "interval": "1 day, 0:00:00",  # Optional. The interval (window size) for
-                      which the metric data was returned in.  This may be adjusted in the future and
-                      returned back from what was originally requested.  This is not present if a
-                      metadata request was made.
+                    "interval": "str",  # Optional. The interval (window size) for which the
+                      metric data was returned in ISO 8601 duration format with a special case for
+                      'FULL' value that returns single datapoint for entire time span requested (""
+                      *Examples: PT15M, PT1H, P1D, FULL*"" ).  This may be adjusted and different from
+                      what was originally requested if AutoAdjustTimegrain=true is specified. This is
+                      not present if a metadata request was made.
                     "namespace": "str",  # Optional. The namespace of the metrics being queried.
                     "resourceregion": "str"  # Optional. The region of the resource being queried
                       for metrics.
@@ -460,7 +464,7 @@ class MetricsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_metrics_list_request(
+        _request = build_metrics_list_request(
             resource_uri=resource_uri,
             timespan=timespan,
             interval=interval,
@@ -475,16 +479,18 @@ class MetricsOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -494,9 +500,9 @@ class MetricsOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
 
 class MetricNamespacesOperations:
@@ -561,20 +567,20 @@ class MetricNamespacesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_metric_namespaces_list_request(
+                _request = build_metric_namespaces_list_request(
                     resource_uri=resource_uri,
                     start_time=start_time,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
-                request.url = self._client.format_url(request.url)
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request.url = self._client.format_url(request.url)
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -584,15 +590,17 @@ class MetricNamespacesOperations:
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 

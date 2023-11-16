@@ -54,7 +54,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -78,7 +78,7 @@ class ApplyUpdate(Resource):
      information.
     :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     :ivar status: The status. Known values are: "Pending", "InProgress", "Completed", "RetryNow",
-     and "RetryLater".
+     "RetryLater", "NoUpdatesPending", "Cancel", and "Cancelled".
     :vartype status: str or ~azure.mgmt.maintenance.models.UpdateStatus
     :ivar resource_id: The resourceId.
     :vartype resource_id: str
@@ -109,11 +109,11 @@ class ApplyUpdate(Resource):
         status: Optional[Union[str, "_models.UpdateStatus"]] = None,
         resource_id: Optional[str] = None,
         last_update_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: The status. Known values are: "Pending", "InProgress", "Completed",
-         "RetryNow", and "RetryLater".
+         "RetryNow", "RetryLater", "NoUpdatesPending", "Cancel", and "Cancelled".
         :paramtype status: str or ~azure.mgmt.maintenance.models.UpdateStatus
         :keyword resource_id: The resourceId.
         :paramtype resource_id: str
@@ -146,6 +146,8 @@ class ConfigurationAssignment(Resource):
     :vartype maintenance_configuration_id: str
     :ivar resource_id: The unique resourceId.
     :vartype resource_id: str
+    :ivar filter: Properties of the configuration assignment.
+    :vartype filter: ~azure.mgmt.maintenance.models.ConfigurationAssignmentFilterProperties
     """
 
     _validation = {
@@ -163,6 +165,7 @@ class ConfigurationAssignment(Resource):
         "location": {"key": "location", "type": "str"},
         "maintenance_configuration_id": {"key": "properties.maintenanceConfigurationId", "type": "str"},
         "resource_id": {"key": "properties.resourceId", "type": "str"},
+        "filter": {"key": "properties.filter", "type": "ConfigurationAssignmentFilterProperties"},
     }
 
     def __init__(
@@ -171,8 +174,9 @@ class ConfigurationAssignment(Resource):
         location: Optional[str] = None,
         maintenance_configuration_id: Optional[str] = None,
         resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        filter: Optional["_models.ConfigurationAssignmentFilterProperties"] = None,  # pylint: disable=redefined-builtin
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Location of the resource.
         :paramtype location: str
@@ -180,11 +184,67 @@ class ConfigurationAssignment(Resource):
         :paramtype maintenance_configuration_id: str
         :keyword resource_id: The unique resourceId.
         :paramtype resource_id: str
+        :keyword filter: Properties of the configuration assignment.
+        :paramtype filter: ~azure.mgmt.maintenance.models.ConfigurationAssignmentFilterProperties
         """
         super().__init__(**kwargs)
         self.location = location
         self.maintenance_configuration_id = maintenance_configuration_id
         self.resource_id = resource_id
+        self.filter = filter
+
+
+class ConfigurationAssignmentFilterProperties(_serialization.Model):
+    """Azure query for the update configuration.
+
+    :ivar resource_types: List of allowed resources.
+    :vartype resource_types: list[str]
+    :ivar resource_groups: List of allowed resource groups.
+    :vartype resource_groups: list[str]
+    :ivar os_types: List of allowed operating systems.
+    :vartype os_types: list[str]
+    :ivar locations: List of locations to scope the query to.
+    :vartype locations: list[str]
+    :ivar tag_settings: Tag settings for the VM.
+    :vartype tag_settings: ~azure.mgmt.maintenance.models.TagSettingsProperties
+    """
+
+    _attribute_map = {
+        "resource_types": {"key": "resourceTypes", "type": "[str]"},
+        "resource_groups": {"key": "resourceGroups", "type": "[str]"},
+        "os_types": {"key": "osTypes", "type": "[str]"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "tag_settings": {"key": "tagSettings", "type": "TagSettingsProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_types: Optional[List[str]] = None,
+        resource_groups: Optional[List[str]] = None,
+        os_types: Optional[List[str]] = None,
+        locations: Optional[List[str]] = None,
+        tag_settings: Optional["_models.TagSettingsProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_types: List of allowed resources.
+        :paramtype resource_types: list[str]
+        :keyword resource_groups: List of allowed resource groups.
+        :paramtype resource_groups: list[str]
+        :keyword os_types: List of allowed operating systems.
+        :paramtype os_types: list[str]
+        :keyword locations: List of locations to scope the query to.
+        :paramtype locations: list[str]
+        :keyword tag_settings: Tag settings for the VM.
+        :paramtype tag_settings: ~azure.mgmt.maintenance.models.TagSettingsProperties
+        """
+        super().__init__(**kwargs)
+        self.resource_types = resource_types
+        self.resource_groups = resource_groups
+        self.os_types = os_types
+        self.locations = locations
+        self.tag_settings = tag_settings
 
 
 class ErrorDetails(_serialization.Model):
@@ -202,7 +262,7 @@ class ErrorDetails(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Service-defined error code. This code serves as a sub-status for the HTTP error
          code specified in the response.
@@ -238,8 +298,8 @@ class InputLinuxParameters(_serialization.Model):
         package_name_masks_to_exclude: Optional[List[str]] = None,
         package_name_masks_to_include: Optional[List[str]] = None,
         classifications_to_include: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword package_name_masks_to_exclude: Package names to be excluded for patching.
         :paramtype package_name_masks_to_exclude: list[str]
@@ -267,20 +327,12 @@ class InputPatchConfiguration(_serialization.Model):
     :ivar linux_parameters: Input parameters specific to patching Linux machine. For Windows
      machines, do not pass this property.
     :vartype linux_parameters: ~azure.mgmt.maintenance.models.InputLinuxParameters
-    :ivar pre_tasks: List of pre tasks. e.g. [{'source' :'runbook', 'taskScope': 'Global',
-     'parameters': { 'arg1': 'value1'}}].
-    :vartype pre_tasks: list[~azure.mgmt.maintenance.models.TaskProperties]
-    :ivar post_tasks: List of post tasks. e.g. [{'source' :'runbook', 'taskScope': 'Resource',
-     'parameters': { 'arg1': 'value1'}}].
-    :vartype post_tasks: list[~azure.mgmt.maintenance.models.TaskProperties]
     """
 
     _attribute_map = {
         "reboot_setting": {"key": "rebootSetting", "type": "str"},
         "windows_parameters": {"key": "windowsParameters", "type": "InputWindowsParameters"},
         "linux_parameters": {"key": "linuxParameters", "type": "InputLinuxParameters"},
-        "pre_tasks": {"key": "tasks.preTasks", "type": "[TaskProperties]"},
-        "post_tasks": {"key": "tasks.postTasks", "type": "[TaskProperties]"},
     }
 
     def __init__(
@@ -289,10 +341,8 @@ class InputPatchConfiguration(_serialization.Model):
         reboot_setting: Union[str, "_models.RebootOptions"] = "IfRequired",
         windows_parameters: Optional["_models.InputWindowsParameters"] = None,
         linux_parameters: Optional["_models.InputLinuxParameters"] = None,
-        pre_tasks: Optional[List["_models.TaskProperties"]] = None,
-        post_tasks: Optional[List["_models.TaskProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword reboot_setting: Possible reboot preference as defined by the user based on which it
          would be decided to reboot the machine or not after the patch operation is completed. Known
@@ -304,19 +354,11 @@ class InputPatchConfiguration(_serialization.Model):
         :keyword linux_parameters: Input parameters specific to patching Linux machine. For Windows
          machines, do not pass this property.
         :paramtype linux_parameters: ~azure.mgmt.maintenance.models.InputLinuxParameters
-        :keyword pre_tasks: List of pre tasks. e.g. [{'source' :'runbook', 'taskScope': 'Global',
-         'parameters': { 'arg1': 'value1'}}].
-        :paramtype pre_tasks: list[~azure.mgmt.maintenance.models.TaskProperties]
-        :keyword post_tasks: List of post tasks. e.g. [{'source' :'runbook', 'taskScope': 'Resource',
-         'parameters': { 'arg1': 'value1'}}].
-        :paramtype post_tasks: list[~azure.mgmt.maintenance.models.TaskProperties]
         """
         super().__init__(**kwargs)
         self.reboot_setting = reboot_setting
         self.windows_parameters = windows_parameters
         self.linux_parameters = linux_parameters
-        self.pre_tasks = pre_tasks
-        self.post_tasks = post_tasks
 
 
 class InputWindowsParameters(_serialization.Model):
@@ -346,8 +388,8 @@ class InputWindowsParameters(_serialization.Model):
         kb_numbers_to_include: Optional[List[str]] = None,
         classifications_to_include: Optional[List[str]] = None,
         exclude_kbs_requiring_reboot: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kb_numbers_to_exclude: Windows KBID to be excluded for patching.
         :paramtype kb_numbers_to_exclude: list[str]
@@ -376,7 +418,7 @@ class ListApplyUpdate(_serialization.Model):
         "value": {"key": "value", "type": "[ApplyUpdate]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ApplyUpdate"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ApplyUpdate"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of apply updates.
         :paramtype value: list[~azure.mgmt.maintenance.models.ApplyUpdate]
@@ -396,7 +438,7 @@ class ListConfigurationAssignmentsResult(_serialization.Model):
         "value": {"key": "value", "type": "[ConfigurationAssignment]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ConfigurationAssignment"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ConfigurationAssignment"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of configuration Assignments.
         :paramtype value: list[~azure.mgmt.maintenance.models.ConfigurationAssignment]
@@ -416,7 +458,7 @@ class ListMaintenanceConfigurationsResult(_serialization.Model):
         "value": {"key": "value", "type": "[MaintenanceConfiguration]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MaintenanceConfiguration"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.MaintenanceConfiguration"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of maintenance Configurations.
         :paramtype value: list[~azure.mgmt.maintenance.models.MaintenanceConfiguration]
@@ -436,7 +478,7 @@ class ListUpdatesResult(_serialization.Model):
         "value": {"key": "value", "type": "[Update]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Update"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Update"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The pending updates.
         :paramtype value: list[~azure.mgmt.maintenance.models.Update]
@@ -548,8 +590,8 @@ class MaintenanceConfiguration(Resource):  # pylint: disable=too-many-instance-a
         duration: Optional[str] = None,
         time_zone: Optional[str] = None,
         recur_every: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Gets or sets location of the resource.
         :paramtype location: str
@@ -626,7 +668,7 @@ class MaintenanceError(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetails"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Details of the error.
         :paramtype error: ~azure.mgmt.maintenance.models.ErrorDetails
@@ -666,8 +708,8 @@ class Operation(_serialization.Model):
         origin: Optional[str] = None,
         properties: Optional[JSON] = None,
         is_data_action: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -715,8 +757,8 @@ class OperationInfo(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Name of the provider.
         :paramtype provider: str
@@ -745,7 +787,7 @@ class OperationsListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: A collection of operations.
         :paramtype value: list[~azure.mgmt.maintenance.models.Operation]
@@ -791,8 +833,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -818,45 +860,38 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TaskProperties(_serialization.Model):
-    """Task properties of the software update configuration.
+class TagSettingsProperties(_serialization.Model):
+    """Tag filter information for the VM.
 
-    :ivar parameters: Gets or sets the parameters of the task.
-    :vartype parameters: dict[str, str]
-    :ivar source: Gets or sets the name of the runbook.
-    :vartype source: str
-    :ivar task_scope: Global Task execute once when schedule trigger. Resource task execute for
-     each VM. Known values are: "Global" and "Resource".
-    :vartype task_scope: str or ~azure.mgmt.maintenance.models.TaskScope
+    :ivar tags: Dictionary of tags with its list of values.
+    :vartype tags: dict[str, list[str]]
+    :ivar filter_operator: Filter VMs by Any or All specified tags. Known values are: "All" and
+     "Any".
+    :vartype filter_operator: str or ~azure.mgmt.maintenance.models.TagOperators
     """
 
     _attribute_map = {
-        "parameters": {"key": "parameters", "type": "{str}"},
-        "source": {"key": "source", "type": "str"},
-        "task_scope": {"key": "taskScope", "type": "str"},
+        "tags": {"key": "tags", "type": "{[str]}"},
+        "filter_operator": {"key": "filterOperator", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        parameters: Optional[Dict[str, str]] = None,
-        source: Optional[str] = None,
-        task_scope: Union[str, "_models.TaskScope"] = "Global",
-        **kwargs
-    ):
+        tags: Optional[Dict[str, List[str]]] = None,
+        filter_operator: Optional[Union[str, "_models.TagOperators"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword parameters: Gets or sets the parameters of the task.
-        :paramtype parameters: dict[str, str]
-        :keyword source: Gets or sets the name of the runbook.
-        :paramtype source: str
-        :keyword task_scope: Global Task execute once when schedule trigger. Resource task execute for
-         each VM. Known values are: "Global" and "Resource".
-        :paramtype task_scope: str or ~azure.mgmt.maintenance.models.TaskScope
+        :keyword tags: Dictionary of tags with its list of values.
+        :paramtype tags: dict[str, list[str]]
+        :keyword filter_operator: Filter VMs by Any or All specified tags. Known values are: "All" and
+         "Any".
+        :paramtype filter_operator: str or ~azure.mgmt.maintenance.models.TagOperators
         """
         super().__init__(**kwargs)
-        self.parameters = parameters
-        self.source = source
-        self.task_scope = task_scope
+        self.tags = tags
+        self.filter_operator = filter_operator
 
 
 class Update(_serialization.Model):
@@ -869,7 +904,7 @@ class Update(_serialization.Model):
      "Redeploy".
     :vartype impact_type: str or ~azure.mgmt.maintenance.models.ImpactType
     :ivar status: The status. Known values are: "Pending", "InProgress", "Completed", "RetryNow",
-     and "RetryLater".
+     "RetryLater", "NoUpdatesPending", "Cancel", and "Cancelled".
     :vartype status: str or ~azure.mgmt.maintenance.models.UpdateStatus
     :ivar impact_duration_in_sec: Duration of impact in seconds.
     :vartype impact_duration_in_sec: int
@@ -898,8 +933,8 @@ class Update(_serialization.Model):
         impact_duration_in_sec: Optional[int] = None,
         not_before: Optional[datetime.datetime] = None,
         resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword maintenance_scope: The impact area. Known values are: "Host", "Resource", "OSImage",
          "Extension", "InGuestPatch", "SQLDB", and "SQLManagedInstance".
@@ -908,7 +943,7 @@ class Update(_serialization.Model):
          "Redeploy".
         :paramtype impact_type: str or ~azure.mgmt.maintenance.models.ImpactType
         :keyword status: The status. Known values are: "Pending", "InProgress", "Completed",
-         "RetryNow", and "RetryLater".
+         "RetryNow", "RetryLater", "NoUpdatesPending", "Cancel", and "Cancelled".
         :paramtype status: str or ~azure.mgmt.maintenance.models.UpdateStatus
         :keyword impact_duration_in_sec: Duration of impact in seconds.
         :paramtype impact_duration_in_sec: int

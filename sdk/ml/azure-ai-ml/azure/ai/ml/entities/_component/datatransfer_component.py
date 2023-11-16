@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, NoReturn, Optional, Union
 
 from marshmallow import Schema
 
@@ -12,7 +12,7 @@ from azure.ai.ml._schema.component.data_transfer_component import (
     DataTransferImportComponentSchema,
 )
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, COMPONENT_TYPE, AssetTypes
 from azure.ai.ml.constants._component import DataTransferTaskType, ExternalDataType, NodeType
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs.output import Output
@@ -28,11 +28,11 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 
     :param task: Task type in the data transfer component. Possible values are "copy_data",
                  "import_data", and "export_data".
-    :type task: str, optional
+    :type task: str
     :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: dict, optional
+    :type inputs: dict
     :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: dict, optional
+    :type outputs: dict
     :param kwargs: Additional parameters for the data transfer component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
         Details will be provided in the error message.
@@ -51,8 +51,8 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
 
         kwargs[COMPONENT_TYPE] = NodeType.DATA_TRANSFER
         # Set default base path
-        if "base_path" not in kwargs:
-            kwargs["base_path"] = Path(".")
+        if BASE_PATH_CONTEXT_KEY not in kwargs:
+            kwargs[BASE_PATH_CONTEXT_KEY] = Path(".")
 
         super().__init__(
             inputs=inputs,
@@ -75,7 +75,6 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         return self._task
 
     def _to_dict(self) -> Dict:
-        """Dump the data transfer component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(DataTransferComponent, self)._to_dict()})
 
     def __str__(self):
@@ -133,11 +132,11 @@ class DataTransferCopyComponent(DataTransferComponent):
 
     :param data_copy_mode: Data copy mode in the copy task.
                            Possible values are "merge_with_overwrite" and "fail_if_conflict".
-    :type data_copy_mode: str, optional
+    :type data_copy_mode: str
     :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: dict, optional
+    :type inputs: dict
     :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: dict, optional
+    :type outputs: dict
     :param kwargs: Additional parameters for the data transfer copy component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
         Details will be provided in the error message.
@@ -229,10 +228,10 @@ class DataTransferImportComponent(DataTransferComponent):
     """DataTransfer import component version, used to define a data transfer import component.
 
     :param source: The data source of the file system or database.
-    :type source: dict, optional
+    :type source: dict
     :param outputs: Mapping of output data bindings used in the job.
                     Default value is an output port with the key "sink" and the type "mltable".
-    :type outputs: dict, optional
+    :type outputs: dict
     :param kwargs: Additional parameters for the data transfer import component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
         Details will be provided in the error message.
@@ -259,7 +258,8 @@ class DataTransferImportComponent(DataTransferComponent):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
 
-    def __call__(self, *args, **kwargs):
+    # pylint: disable-next=docstring-missing-param
+    def __call__(self, *args, **kwargs) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 
         msg = "DataTransfer component is not callable for import task."
@@ -276,9 +276,9 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     """DataTransfer export component version, used to define a data transfer export component.
 
     :param sink: The sink of external data and databases.
-    :type sink: Union[Dict, Database, FileSystem], optional
+    :type sink: Union[Dict, Database, FileSystem]
     :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: dict, optional
+    :type inputs: dict
     :param kwargs: Additional parameters for the data transfer export component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the component cannot be successfully validated.
         Details will be provided in the error message.
@@ -304,7 +304,8 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)
 
-    def __call__(self, *args, **kwargs):
+    # pylint: disable-next=docstring-missing-param
+    def __call__(self, *args, **kwargs) -> NoReturn:
         """Call ComponentVersion as a function and get a Component object."""
 
         msg = "DataTransfer component is not callable for export task."

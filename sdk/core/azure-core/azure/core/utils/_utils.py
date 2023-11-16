@@ -148,7 +148,7 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
     def __len__(self) -> int:
         return len(self._store)
 
-    def lowerkey_items(self):
+    def lowerkey_items(self) -> Iterator[Tuple[str, Any]]:
         return ((lower_case_key, pair[1]) for lower_case_key, pair in self._store.items())
 
     def __eq__(self, other: Any) -> bool:

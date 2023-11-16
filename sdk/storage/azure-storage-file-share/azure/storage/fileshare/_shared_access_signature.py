@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (
+from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, List, TYPE_CHECKING
 )
 
@@ -245,7 +245,7 @@ def generate_account_sas(
         account_key,  # type: str
         resource_types,  # type: Union[ResourceTypes, str]
         permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
+        expiry,  # type: Union[datetime, str]
         start=None,  # type: Optional[Union[datetime, str]]
         ip=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -265,16 +265,10 @@ def generate_account_sas(
     :param ~azure.storage.fileshare.AccountSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has been
-        specified in an associated stored access policy.
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC.
+        Azure will always convert values to UTC. If a date is passed in without
+        timezone info, it is assumed to be UTC.
     :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
@@ -390,6 +384,11 @@ def generate_share_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     sas = FileSharedAccessSignature(account_name, account_key)
     return sas.generate_share(
         share_name=share_name,
@@ -481,6 +480,11 @@ def generate_file_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     sas = FileSharedAccessSignature(account_name, account_key)
     if len(file_path) > 1:
         dir_path = '/'.join(file_path[:-1])

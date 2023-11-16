@@ -6,9 +6,9 @@ import os.path
 import pydash
 from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
-from ..._schema import AnonymousEnvironmentSchema, NestedField, StringTransformedEnum, UnionField
+from ..._schema import NestedField, StringTransformedEnum, UnionField
 from ..._schema.component.component import ComponentSchema
-from ..._schema.core.fields import ArmVersionedStr, CodeField, RegistryStr
+from ..._schema.core.fields import ArmVersionedStr, CodeField, EnvironmentField, RegistryStr
 from ..._schema.job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils.utils import get_valid_dot_keys_with_wildcard
@@ -187,14 +187,8 @@ class InternalSparkComponentSchema(InternalComponentSchema):
         pass_original=True,
     )
 
-    environment = UnionField(
-        [
-            # unlike other internal component, internal spark component do not use internal environment schema
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-            NestedField(InternalEnvironmentSchema),
-        ],
+    environment = EnvironmentField(
+        extra_fields=[NestedField(InternalEnvironmentSchema)],
         allow_none=True,
     )
 

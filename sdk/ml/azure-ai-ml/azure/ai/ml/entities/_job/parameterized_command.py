@@ -45,7 +45,7 @@ class ParameterizedCommand:
     ~azure.ai.ml.entities.CommandComponent.
 
     :param command: The command to be executed. Defaults to "".
-    :type command: str, optional
+    :type command: str
     :param resources: The compute resource configuration for the command.
     :type resources: Optional[Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]]
     :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
@@ -62,7 +62,7 @@ class ParameterizedCommand:
     :param queue_settings: The queue settings for the job.
     :type queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
     """
 
     def __init__(

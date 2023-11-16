@@ -31,13 +31,12 @@ def main():
         resource_name="MadhaviVault",
     )
 
-    response = client.replicationv_centers.begin_delete(
+    client.replicationv_centers.begin_delete(
         fabric_name="MadhaviFabric",
         vcenter_name="esx-78",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/ReplicationvCenters_Delete.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/ReplicationvCenters_Delete.json
 if __name__ == "__main__":
     main()

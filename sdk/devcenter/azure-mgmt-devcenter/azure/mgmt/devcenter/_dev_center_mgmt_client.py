@@ -17,10 +17,13 @@ from ._configuration import DevCenterMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
     AttachedNetworksOperations,
+    CatalogDevBoxDefinitionsOperations,
     CatalogsOperations,
     CheckNameAvailabilityOperations,
+    CustomizationTasksOperations,
     DevBoxDefinitionsOperations,
     DevCentersOperations,
+    EnvironmentDefinitionsOperations,
     EnvironmentTypesOperations,
     GalleriesOperations,
     ImageVersionsOperations,
@@ -78,6 +81,14 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
     :vartype check_name_availability:
      azure.mgmt.devcenter.operations.CheckNameAvailabilityOperations
+    :ivar catalog_dev_box_definitions: CatalogDevBoxDefinitionsOperations operations
+    :vartype catalog_dev_box_definitions:
+     azure.mgmt.devcenter.operations.CatalogDevBoxDefinitionsOperations
+    :ivar customization_tasks: CustomizationTasksOperations operations
+    :vartype customization_tasks: azure.mgmt.devcenter.operations.CustomizationTasksOperations
+    :ivar environment_definitions: EnvironmentDefinitionsOperations operations
+    :vartype environment_definitions:
+     azure.mgmt.devcenter.operations.EnvironmentDefinitionsOperations
     :ivar skus: SkusOperations operations
     :vartype skus: azure.mgmt.devcenter.operations.SkusOperations
     :ivar pools: PoolsOperations operations
@@ -92,8 +103,8 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-04-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-10-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -142,6 +153,15 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.catalog_dev_box_definitions = CatalogDevBoxDefinitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.customization_tasks = CustomizationTasksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.environment_definitions = EnvironmentDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)

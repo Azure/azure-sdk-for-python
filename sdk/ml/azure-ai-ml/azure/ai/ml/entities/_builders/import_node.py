@@ -37,18 +37,18 @@ class Import(BaseNode):
     :param component: Id or instance of the import component/job to be run for the step.
     :type component: ~azure.ai.ml.entities._component.import_component.ImportComponent
     :param inputs: Input parameters to the import.
-    :type inputs: Dict[str, str], optional
+    :type inputs: Dict[str, str]
     :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities.Output]], optional
+    :type outputs: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
     :param name: Name of the import.
     :type name: str
     :param description: Description of the import.
-    :type description: str, optional
+    :type description: str
     :param display_name: Display name of the job.
-    :type display_name: str, optional
+    :type display_name: str
     :param experiment_name: Name of the experiment the job will be created under,
         if None is provided, the default will be set to the current directory name.
-    :type experiment_name: str, optional
+    :type experiment_name: str
     """
 
     def __init__(
@@ -162,8 +162,13 @@ class Import(BaseNode):
 
         return ImportSchema(context=context)
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "Import":
-        """Call Import as a function will return a new instance each time."""
+        """Call Import as a function will return a new instance each time.
+
+        :return: An Import node.
+        :rtype: Import
+        """
         if isinstance(self._component, Component):
             # call this to validate inputs
             node = self._component(*args, **kwargs)

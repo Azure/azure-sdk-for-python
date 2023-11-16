@@ -15,7 +15,7 @@ from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
 
-from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, SERVERLESS_COMPUTE_TEST_PARAMETERS
+from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
 
 def assert_the_same_path(actual_path, expected_path):
@@ -37,23 +37,27 @@ class TestPipelineJobValidate:
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_error",
         [
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/with_invalid_component.yml",
                 # only type matched error message in "component
                 r"Missing data for required field\.",
+                id="missing_required_field",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml",
                 # not allowed type
                 "Value 'unsupported' passed is not in set",
+                id="not_allowed_type",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml",
                 "In order to specify an existing codes, please provide",
+                id="invalid_component_content",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_referencing_component_file.yml",
                 "In order to specify an existing components, please provide the correct registry",
+                id="invalid_pipeline_referencing_component_file",
             ),
         ],
     )
@@ -64,7 +68,7 @@ class TestPipelineJobValidate:
     @pytest.mark.parametrize(
         "pipeline_job_path, expected_validation_result",
         [
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/with_invalid_value_in_component.yml",
                 # only type matched error message in "component
                 {
@@ -78,8 +82,9 @@ class TestPipelineJobValidate:
                     "path": "jobs.hello_world_component.component.code",
                     "value": "azureml:name-only",
                 },
+                id="invalid_code_in_component",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/with_invalid_component.yml",
                 # only type matched error message in "component
                 {
@@ -88,8 +93,9 @@ class TestPipelineJobValidate:
                     "path": "jobs.hello_world_component.component.environment",
                     "value": None,
                 },
+                id="missing_required_field",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/type_sensitive_component_error.yml",
                 # not allowed type
                 {
@@ -98,8 +104,9 @@ class TestPipelineJobValidate:
                     "path": "jobs.hello_world_unsupported_type.type",
                     "value": "unsupported",
                 },
+                id="not_allowed_type",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml",
                 {
                     "location": f"{Path('./tests/test_configs/pipeline_jobs/job_with_incorrect_component_content/pipeline.yml').absolute()}#line 8",
@@ -112,6 +119,7 @@ class TestPipelineJobValidate:
                     "path": "jobs.hello_python_world_job.component.code",
                     "value": None,
                 },
+                id="invalid_component_content",
             ),
         ],
     )
@@ -252,17 +260,20 @@ class TestPipelineJobValidate:
     @pytest.mark.parametrize(
         "pipeline_output_path, error_message",
         [
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_without_name.yaml",
                 "Output name is required when output version is specified.",
+                id="register_pipeline_output_without_name",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_without_name.yaml",
                 "Output name is required when output version is specified.",
+                id="register_node_output_without_name",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_with_invalid_name.yaml",
                 "The output name pipeline_output@ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.",
+                id="register_pipeline_output_with_invalid_name",
             ),
         ],
     )
@@ -271,7 +282,32 @@ class TestPipelineJobValidate:
             pipeline = load_job(source=pipeline_output_path)
         assert error_message in str(e.value)
 
-    @pytest.mark.parametrize("test_case,expected_error_message", SERVERLESS_COMPUTE_TEST_PARAMETERS)
+    @pytest.mark.parametrize(
+        "test_case,expected_error_message",
+        [
+            # test matrix: <pipeline-default-compute> + <step-compute>
+            pytest.param(
+                "none_pipeline_default_compute_invalid",
+                {
+                    "jobs.vanilla_node.compute": "Compute not set",
+                    "jobs.node_with_resources.compute": "Compute not set",
+                    "jobs.pipeline_node.jobs.vanilla_node.compute": "Compute not set",
+                    "jobs.pipeline_node.jobs.node_with_resources.compute": "Compute not set",
+                },
+                id="none_pipeline_default_compute_invalid",
+            ),  # invalid: none + none / none + resources
+            pytest.param(
+                "none_pipeline_default_compute_valid",
+                None,
+                id="none_pipeline_default_compute_valid",
+            ),  # valid: none + resources / none + serverless / none + compute target
+            pytest.param(
+                "serverless_pipeline_default_compute_valid",
+                None,
+                id="serverless_pipeline_default_compute_valid",
+            ),  # valid serverless + <step-compute> (any combination should be valid)
+        ],
+    )
     def test_pipeline_job_with_serverless_compute(
         self, test_case: str, expected_error_message: Optional[List[str]]
     ) -> None:
@@ -286,17 +322,19 @@ class TestPipelineJobValidate:
     @pytest.mark.parametrize(
         "pipeline_output_path, error_message",
         [
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_invalid_output_type.yaml",
                 "Outputs field only support type mltable for database and uri_folder for file_system",
+                id="import_data_invalid_output_type",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type.yaml",
                 "Inputs field only support type uri_file for database and uri_folder for file_system",
+                id="export_data_invalid_input_type",
             ),
         ],
     )
-    def test_data_transfer_job(self, pipeline_output_path, error_message):
+    def test_data_transfer_job(self, pipeline_output_path: str, error_message: str):
         pipeline = load_job(source=pipeline_output_path)
         validate_result = pipeline._validate()
         assert error_message in str(validate_result.error_messages)
@@ -304,18 +342,20 @@ class TestPipelineJobValidate:
     @pytest.mark.parametrize(
         "pipeline_output_path, error_message",
         [
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_with_reference_component_file."
                 "yaml",
                 "In order to specify an existing None, please provide the correct registry path prefixed with 'azureml",
+                id="import_data_with_reference_component_file",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_with_reference_componen_file.yaml",
                 "In order to specify an existing None, please provide the correct registry path prefixed with 'azureml",
+                id="export_data_with_reference_component_file",
             ),
         ],
     )
-    def test_load_data_transfer_job_with_reference_component_file(self, pipeline_output_path, error_message):
+    def test_load_data_transfer_job_with_reference_component_file(self, pipeline_output_path: str, error_message: str):
         with pytest.raises(ValidationError) as ex:
             load_job(pipeline_output_path)
             assert error_message in ex.__str__()
@@ -596,7 +636,7 @@ class TestDSLPipelineJobValidate:
 
         dsl_pipeline: PipelineJob = pipeline(10, job_input)
 
-        with patch("azure.ai.ml.entities._validation.module_logger.warning") as mock_logging:
+        with patch("azure.ai.ml.entities._validation.core.module_logger.warning") as mock_logging:
             dsl_pipeline._validate(raise_error=True)
             mock_logging.assert_called_with("Warnings: [jobs.node1.jeff_special_option: Unknown field.]")
 
@@ -623,8 +663,7 @@ class TestDSLPipelineJobValidate:
         dsl_pipeline: PipelineJob = pipeline(10, job_input)
 
         validation_result = dsl_pipeline._validate()
-        assert "jobs.node2.limits" in validation_result.error_messages
-        assert validation_result.error_messages["jobs.node2.limits"] == "Missing data for required field."
+        assert validation_result.error_messages == {"jobs.node2.limits": "Missing data for required field."}
 
     def test_node_schema_validation(self) -> None:
         path = "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml"
@@ -646,7 +685,7 @@ class TestDSLPipelineJobValidate:
             ),
         )
 
-        with patch("azure.ai.ml.entities._validation.module_logger.info") as mock_logging:
+        with patch("azure.ai.ml.entities._validation.core.module_logger.info") as mock_logging:
             pipeline._validate()
             mock_logging.assert_not_called()
 

@@ -157,7 +157,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def compute_name(self) -> str:
-        """Name of the compute to be used."""
+        """Name of the compute to be used.
+
+        :return: Compute name
+        :rtype: str
+        """
         return self._compute_name
 
     @compute_name.setter
@@ -166,7 +170,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def queue(self) -> str:
-        """The name of the YARN queue to which submitted."""
+        """The name of the YARN queue to which submitted.
+
+        :return: YARN queue name
+        :rtype: str
+        """
         return self._queue
 
     @queue.setter
@@ -179,6 +187,9 @@ class HDInsight(InternalBaseNode):
 
         It's the same format as JVM memory strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte,
         megabyte, gigabyte and terabyte respectively. Example values are 10k, 10m and 10g.
+
+        :return: Amount of memory to use for the driver process
+        :rtype: str
         """
         return self._driver_memory
 
@@ -188,7 +199,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def driver_cores(self) -> int:
-        """Number of cores to use for the driver process."""
+        """Number of cores to use for the driver process.
+
+        :return: Number of cores to use for the driver process.
+        :rtype: int
+        """
         return self._driver_cores
 
     @driver_cores.setter
@@ -201,6 +216,9 @@ class HDInsight(InternalBaseNode):
 
         It's the same format as JVM memory strings. Use lower-case suffixes, e.g. k, m, g, t, and p, for kilobyte,
         megabyte, gigabyte and terabyte respectively. Example values are 10k, 10m and 10g.
+
+        :return: The executor memory
+        :rtype: str
         """
         return self._executor_memory
 
@@ -210,7 +228,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def executor_cores(self) -> int:
-        """Number of cores to use for each executor."""
+        """Number of cores to use for each executor.
+
+        :return: The number of cores to use for each executor
+        :rtype: int
+        """
         return self._executor_cores
 
     @executor_cores.setter
@@ -219,7 +241,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def number_executors(self) -> int:
-        """Number of executors to launch for this session."""
+        """Number of executors to launch for this session.
+
+        :return: The number of executors to launch
+        :rtype: int
+        """
         return self._number_executors
 
     @number_executors.setter
@@ -228,7 +254,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def conf(self) -> Union[dict, str]:
-        """Spark configuration properties."""
+        """Spark configuration properties.
+
+        :return: The spark configuration properties.
+        :rtype: Union[dict, str]
+        """
         return self._conf
 
     @conf.setter
@@ -237,7 +267,11 @@ class HDInsight(InternalBaseNode):
 
     @property
     def hdinsight_spark_job_name(self) -> str:
-        """The name of this session."""
+        """
+
+        :return: The name of this session
+        :rtype: str
+        """
         return self._hdinsight_spark_job_name
 
     @hdinsight_spark_job_name.setter

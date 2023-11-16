@@ -21,9 +21,14 @@ module_logger = logging.getLogger(__name__)
 
 
 def _find_deepest_dictionary(data: dict) -> dict:
-    """
-    Find deepest dictionary in nested dictionary.
+    """Find deepest dictionary in nested dictionary.
+
     Used here to get nested error message. Can't be in utils.py due to circular import.
+
+    :param data: The dictionary
+    :type data: dict
+    :return: The deepest dictionary
+    :rtype: dict
     """
 
     for v in data.values():
@@ -33,8 +38,14 @@ def _find_deepest_dictionary(data: dict) -> dict:
     return data
 
 
-def get_entity_type(error: Union[SchemaValidationError, ValidationException]) -> Tuple[str, str]:
-    """Get entity name from schema type referenced in the error."""
+def get_entity_type(error: Union[str, SchemaValidationError, ValidationException]) -> Tuple[str, str]:
+    """Get entity name from schema type referenced in the error.
+
+    :param error: The validation error
+    :type error: Union[str, SchemaValidationError, ValidationException]
+    :return: The entity type and additional details
+    :rtype: Tuple[str, str]
+    """
     details = ""
 
     error_name = error.exc_msg if hasattr(error, "exc_msg") else error.split(":")[0]
@@ -71,9 +82,19 @@ def get_entity_type(error: Union[SchemaValidationError, ValidationException]) ->
 
 
 def format_details_section(
-    error: Union[SchemaValidationError, ValidationException], details: str, entity_type: str
+    error: Union[str, SchemaValidationError, ValidationException], details: str, entity_type: str
 ) -> Tuple[Dict[str, bool], str]:
-    """Builds strings for details of the error message template's Details section."""
+    """Builds strings for details of the error message template's Details section.
+
+    :param error: The validation error
+    :type error: Union[str, SchemaValidationError, ValidationException]
+    :param details: The details
+    :type details: str
+    :param entity_type: The entity type
+    :type entity_type: str
+    :return: Error type map and formatted message
+    :rtype: Tuple[Dict[str, bool], str]
+    """
 
     error_types = {
         ValidationErrorType.INVALID_VALUE: False,
@@ -147,7 +168,17 @@ def format_details_section(
 def format_errors_and_resolutions_sections(
     entity_type: str, error_types: Dict[str, bool], cli: bool
 ) -> Tuple[str, str]:
-    """Builds strings for details of the error message template's Errors and Resolutions sections."""
+    """Builds strings for details of the error message template's Errors and Resolutions sections.
+
+    :param entity_type: The entity type
+    :type entity_type: str
+    :param error_types: A dict that specifies which errors were encountered
+    :type error_types: Dict[str, bool]
+    :param cli: Whether this was invoked from Azure CLI AzureML extension.
+    :type cli: bool
+    :return: Error and Resolution messages
+    :rtype: Tuple[str, str]
+    """
 
     resolutions = ""
     errors = ""
@@ -202,8 +233,18 @@ def format_create_validation_error(
     cli: bool = False,
     raw_error: Optional[str] = None,
 ) -> str:
-    """
-    Formats a detailed error message for validation errors.
+    """Formats a detailed error message for validation errors.
+
+    :param error: The validation error
+    :type error: Union[SchemaValidationError, ValidationException]
+    :param yaml_operation: Whether the exception was caused by yaml validation.
+    :type yaml_operation: bool
+    :param cli: Whether is invoked from Azure CLI AzureML Extension. Defaults to False
+    :type cli: bool
+    :param raw_error: The raw exception message
+    :type raw_error: Optional[str]
+    :return: Formatted error message
+    :rtype: str
     """
     from azure.ai.ml._schema._datastore import (
         AzureBlobSchema,

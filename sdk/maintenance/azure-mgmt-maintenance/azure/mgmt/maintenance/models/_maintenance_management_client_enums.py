@@ -22,34 +22,34 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ImpactType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The impact type."""
 
-    #: Pending updates has no impact on resource.
     NONE = "None"
-    #: Pending updates can freeze network or disk io operation on resource.
+    """Pending updates has no impact on resource."""
     FREEZE = "Freeze"
-    #: Pending updates can cause resource to restart.
+    """Pending updates can freeze network or disk io operation on resource."""
     RESTART = "Restart"
-    #: Pending updates can redeploy resource.
+    """Pending updates can cause resource to restart."""
     REDEPLOY = "Redeploy"
+    """Pending updates can redeploy resource."""
 
 
 class MaintenanceScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets maintenanceScope of the configuration."""
 
-    #: This maintenance scope controls installation of azure platform updates i.e. services on
-    #: physical nodes hosting customer VMs.
     HOST = "Host"
-    #: This maintenance scope controls the default update maintenance of the Azure Resource
+    """This maintenance scope controls installation of azure platform updates i.e. services on
+    #: physical nodes hosting customer VMs."""
     RESOURCE = "Resource"
-    #: This maintenance scope controls os image installation on VM/VMSS
+    """This maintenance scope controls the default update maintenance of the Azure Resource"""
     OS_IMAGE = "OSImage"
-    #: This maintenance scope controls extension installation on VM/VMSS
+    """This maintenance scope controls os image installation on VM/VMSS"""
     EXTENSION = "Extension"
-    #: This maintenance scope controls installation of windows and linux packages on VM/VMSS
+    """This maintenance scope controls extension installation on VM/VMSS"""
     IN_GUEST_PATCH = "InGuestPatch"
-    #: This maintenance scope controls installation of SQL server platform updates.
+    """This maintenance scope controls installation of windows and linux packages on VM/VMSS"""
     SQLDB = "SQLDB"
-    #: This maintenance scope controls installation of SQL managed instance platform update.
+    """This maintenance scope controls installation of SQL server platform updates."""
     SQL_MANAGED_INSTANCE = "SQLManagedInstance"
+    """This maintenance scope controls installation of SQL managed instance platform update."""
 
 
 class RebootOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -62,32 +62,40 @@ class RebootOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALWAYS = "Always"
 
 
-class TaskScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Global Task execute once when schedule trigger. Resource task execute for each VM."""
+class TagOperators(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Filter VMs by Any or All specified tags."""
 
-    GLOBAL = "Global"
-    RESOURCE = "Resource"
+    ALL = "All"
+    ANY = "Any"
 
 
 class UpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status."""
 
-    #: There are pending updates to be installed.
     PENDING = "Pending"
-    #: Updates installation are in progress.
+    """There are pending updates to be installed."""
     IN_PROGRESS = "InProgress"
-    #: All updates are successfully applied.
+    """Updates installation are in progress."""
     COMPLETED = "Completed"
-    #: Updates installation failed but are ready to retry again.
+    """All updates are successfully applied."""
     RETRY_NOW = "RetryNow"
-    #: Updates installation failed and should be retried later.
+    """Updates installation failed but are ready to retry again."""
     RETRY_LATER = "RetryLater"
+    """Updates installation failed and should be retried later."""
+    NO_UPDATES_PENDING = "NoUpdatesPending"
+    """No updates are pending."""
+    CANCEL = "Cancel"
+    """Cancel the schedule and stop creating PMR for resources part of it. Applicable to Maintenance
+    #: Configuration resource type only."""
+    CANCELLED = "Cancelled"
+    """Send the Cancelled response to the user if request came to cancel the schedule. Applicable to
+    #: Maintenance Configuration resource type only."""
 
 
 class Visibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the visibility of the configuration. The default value is 'Custom'."""
 
-    #: Only visible to users with permissions.
     CUSTOM = "Custom"
-    #: Visible to all users.
+    """Only visible to users with permissions."""
     PUBLIC = "Public"
+    """Visible to all users."""

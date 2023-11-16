@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any
+from typing import Optional, Callable, TYPE_CHECKING, Union, Awaitable, Mapping, Any, NamedTuple
 from ._constants import EMPTY_LABEL
 
 if TYPE_CHECKING:
@@ -53,3 +53,8 @@ class SettingSelector:
     def __init__(self, *, key_filter: str, label_filter: Optional[str] = EMPTY_LABEL):
         self.key_filter = key_filter
         self.label_filter = label_filter
+
+
+class WatchKey(NamedTuple):
+    key: str
+    label: str = EMPTY_LABEL

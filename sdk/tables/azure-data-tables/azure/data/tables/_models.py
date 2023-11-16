@@ -485,7 +485,7 @@ class TableItem:
     Represents an Azure TableItem.
     Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
 
-    :param str name: The name of the table.
+    :ivar str name: The name of the table.
     """
 
     def __init__(self, name: str) -> None:

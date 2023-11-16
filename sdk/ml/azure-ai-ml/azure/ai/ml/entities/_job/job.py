@@ -16,6 +16,7 @@ from typing import IO, AnyStr, Dict, Optional, Type, Union
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -69,7 +70,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     :param compute: Information about the compute resources associated with the job.
     :type compute: Optional[str]
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
     """
 
     def __init__(
@@ -167,7 +168,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :type kwargs: dict
+        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
@@ -247,14 +248,14 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :param cls: Indicates that this is a class method.
         :type cls: class
         :param data: Data Dictionary, defaults to None
-        :type data: Dict, optional
+        :type data: Dict
         :param yaml_path: YAML Path, defaults to None
-        :type yaml_path: Union[PathLike, str], optional
+        :type yaml_path: Union[PathLike, str]
         :param params_override: Fields to overwrite on top of the yaml file.
             Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
-        :type params_override: List[Dict], optional
+        :type params_override: List[Dict]
         :keyword kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :paramtype kwargs: dict
         :raises Exception: An exception
         :return: Loaded job object.
         :rtype: Job
@@ -278,7 +279,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         return job
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[JobBase, Run]) -> "Job":  # pylint: disable=too-many-return-statements
+    def _from_rest_object(  # pylint: disable=too-many-return-statements
+        cls, obj: Union[JobBase, JobBase_2308, Run]
+    ) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark

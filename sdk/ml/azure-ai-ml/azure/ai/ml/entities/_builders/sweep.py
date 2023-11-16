@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import pydash
 from marshmallow import EXCLUDE, Schema
@@ -45,6 +45,7 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
 
@@ -61,7 +62,7 @@ class Sweep(ParameterizedSweep, BaseNode):
     Base class for sweep node.
 
     This class should not be instantiated directly. Instead, it should be created via the builder function: sweep.
-    
+
     :param trial: The ID or instance of the command component or job to be run for the step.
     :type trial: Union[~azure.ai.ml.entities.CommandComponent, str]
     :param compute: The compute definition containing the compute information for the step.
@@ -92,6 +93,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         ~azure.ai.ml.UserIdentityConfiguration]
     :param queue_settings: The queue settings for the job.
     :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+    :param resources: Compute Resource configuration for the job.
+    :type resources: ~azure.ai.ml.entities.ResourceConfiguration
     """
 
     def __init__(
@@ -117,6 +120,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
+        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
         **kwargs,
     ) -> None:
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
@@ -142,6 +146,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             early_termination=early_termination,
             search_space=search_space,
             queue_settings=queue_settings,
+            resources=resources,
         )
 
         self.identity = identity
@@ -223,6 +228,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             "early_termination",
             "search_space",
             "queue_settings",
+            "resources",
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
@@ -310,6 +316,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             outputs=self._job_outputs,
             identity=self.identity,
             queue_settings=self.queue_settings,
+            resources=self.resources,
         )
 
     @classmethod
@@ -333,11 +340,21 @@ class Sweep(ParameterizedSweep, BaseNode):
         return SweepSchema(context=context)
 
     @classmethod
-    def _get_origin_inputs_and_search_space(cls, built_inputs: Dict[str, NodeInput]):
+    def _get_origin_inputs_and_search_space(
+        cls, built_inputs: Optional[Dict[str, NodeInput]]
+    ) -> Tuple[Dict[str, Union[Input, str, bool, int, float]], Dict[str, SweepDistribution]]:
         """Separate mixed true inputs & search space definition from inputs of
         this node and return them.
 
         Input will be restored to Input/LiteralInput before returned.
+
+        :param built_inputs: The built inputs
+        :type built_inputs: Optional[Dict[str, NodeInput]]
+        :return: A tuple of the inputs and search space
+        :rtype: Tuple[
+                Dict[str, Union[Input, str, bool, int, float]],
+                Dict[str, SweepDistribution],
+            ]
         """
         search_space: Dict[
             str,

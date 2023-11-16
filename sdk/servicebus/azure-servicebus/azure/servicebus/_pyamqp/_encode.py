@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# pylint: disable=too-many-lines
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 import calendar
 import struct
@@ -78,6 +78,9 @@ def encode_null(output, *args, **kwargs):  # pylint: disable=unused-argument
     # type: (bytearray, Any, Any) -> None
     """
     encoding code="0x40" category="fixed" width="0" label="the null value"
+
+    :param bytearray output: The output buffer to write to.
+    :param any args: Ignored.
     """
     output.extend(ConstructorBytes.null)
 
@@ -91,6 +94,10 @@ def encode_boolean(
     <encoding name="false" code="0x42" category="fixed" width="0" label="the boolean value false"/>
     <encoding code="0x56" category="fixed" width="1"
         label="boolean with the octet 0x00 being false and octet 0x01 being true"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param bool value: The boolean to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
     """
     value = bool(value)
     if with_constructor:
@@ -107,6 +114,10 @@ def encode_ubyte(
     # type: (bytearray, Union[int, bytes], bool, Any) -> None
     """
     <encoding code="0x50" category="fixed" width="1" label="8-bit unsigned integer"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param int or bytes value: The ubyte to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
     """
     try:
         value = int(value)
@@ -116,8 +127,8 @@ def encode_ubyte(
     try:
         output.extend(_construct(ConstructorBytes.ubyte, with_constructor))
         output.extend(struct.pack(">B", abs(value)))
-    except struct.error:
-        raise ValueError("Unsigned byte value must be 0-255")
+    except struct.error as exc:
+        raise ValueError("Unsigned byte value must be 0-255") from exc
 
 
 def encode_ushort(
@@ -126,13 +137,17 @@ def encode_ushort(
     # type: (bytearray, int, bool, Any) -> None
     """
     <encoding code="0x60" category="fixed" width="2" label="16-bit unsigned integer in network byte order"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param int value: The ushort to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
     """
     value = int(value)
     try:
         output.extend(_construct(ConstructorBytes.ushort, with_constructor))
         output.extend(struct.pack(">H", abs(value)))
-    except struct.error:
-        raise ValueError("Unsigned byte value must be 0-65535")
+    except struct.error as exc:
+        raise ValueError("Unsigned byte value must be 0-65535") from exc
 
 
 def encode_uint(output, value, with_constructor=True, use_smallest=True):
@@ -142,6 +157,11 @@ def encode_uint(output, value, with_constructor=True, use_smallest=True):
     <encoding name="smalluint" code="0x52" category="fixed" width="1"
         label="unsigned integer value in the range 0 to 255 inclusive"/>
     <encoding code="0x70" category="fixed" width="4" label="32-bit unsigned integer in network byte order"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param int value: The uint to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     value = int(value)
     if value == 0:
@@ -154,8 +174,8 @@ def encode_uint(output, value, with_constructor=True, use_smallest=True):
             return
         output.extend(_construct(ConstructorBytes.uint_large, with_constructor))
         output.extend(struct.pack(">I", abs(value)))
-    except struct.error:
-        raise ValueError("Value supplied for unsigned int invalid: {}".format(value))
+    except struct.error as exc:
+        raise ValueError("Value supplied for unsigned int invalid: {}".format(value)) from exc
 
 
 def encode_ulong(output, value, with_constructor=True, use_smallest=True):
@@ -165,6 +185,11 @@ def encode_ulong(output, value, with_constructor=True, use_smallest=True):
     <encoding name="smallulong" code="0x53" category="fixed" width="1"
         label="unsigned long value in the range 0 to 255 inclusive"/>
     <encoding code="0x80" category="fixed" width="8" label="64-bit unsigned integer in network byte order"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param int value: The ulong to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     value = int(value)
     if value == 0:
@@ -177,8 +202,8 @@ def encode_ulong(output, value, with_constructor=True, use_smallest=True):
             return
         output.extend(_construct(ConstructorBytes.ulong_large, with_constructor))
         output.extend(struct.pack(">Q", abs(value)))
-    except struct.error:
-        raise ValueError("Value supplied for unsigned long invalid: {}".format(value))
+    except struct.error as exc:
+        raise ValueError("Value supplied for unsigned long invalid: {}".format(value)) from exc
 
 
 def encode_byte(
@@ -187,13 +212,17 @@ def encode_byte(
     # type: (bytearray, int, bool, Any) -> None
     """
     <encoding code="0x51" category="fixed" width="1" label="8-bit two's-complement integer"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param byte value: The byte to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
     """
     value = int(value)
     try:
         output.extend(_construct(ConstructorBytes.byte, with_constructor))
         output.extend(struct.pack(">b", value))
-    except struct.error:
-        raise ValueError("Byte value must be -128-127")
+    except struct.error as exc:
+        raise ValueError("Byte value must be -128-127") from exc
 
 
 def encode_short(
@@ -202,13 +231,17 @@ def encode_short(
     # type: (bytearray, int, bool, Any) -> None
     """
     <encoding code="0x61" category="fixed" width="2" label="16-bit two's-complement integer in network byte order"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param int value: The short to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
     """
     value = int(value)
     try:
         output.extend(_construct(ConstructorBytes.short, with_constructor))
         output.extend(struct.pack(">h", value))
-    except struct.error:
-        raise ValueError("Short value must be -32768-32767")
+    except struct.error as exc:
+        raise ValueError("Short value must be -32768-32767") from exc
 
 
 def encode_int(output, value, with_constructor=True, use_smallest=True):
@@ -216,6 +249,11 @@ def encode_int(output, value, with_constructor=True, use_smallest=True):
     """
     <encoding name="smallint" code="0x54" category="fixed" width="1" label="8-bit two's-complement integer"/>
     <encoding code="0x71" category="fixed" width="4" label="32-bit two's-complement integer in network byte order"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param int value: The int to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     value = int(value)
     try:
@@ -225,8 +263,8 @@ def encode_int(output, value, with_constructor=True, use_smallest=True):
             return
         output.extend(_construct(ConstructorBytes.int_large, with_constructor))
         output.extend(struct.pack(">i", value))
-    except struct.error:
-        raise ValueError("Value supplied for int invalid: {}".format(value))
+    except struct.error as exc:
+        raise ValueError("Value supplied for int invalid: {}".format(value)) from exc
 
 
 def encode_long(output, value, with_constructor=True, use_smallest=True):
@@ -234,6 +272,11 @@ def encode_long(output, value, with_constructor=True, use_smallest=True):
     """
     <encoding name="smalllong" code="0x55" category="fixed" width="1" label="8-bit two's-complement integer"/>
     <encoding code="0x81" category="fixed" width="8" label="64-bit two's-complement integer in network byte order"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param int value: The UUID to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     if isinstance(value, datetime):
         value = (calendar.timegm(value.utctimetuple()) * 1000) + (
@@ -247,8 +290,8 @@ def encode_long(output, value, with_constructor=True, use_smallest=True):
             return
         output.extend(_construct(ConstructorBytes.long_large, with_constructor))
         output.extend(struct.pack(">q", value))
-    except struct.error:
-        raise ValueError("Value supplied for long invalid: {}".format(value))
+    except struct.error as exc:
+        raise ValueError("Value supplied for long invalid: {}".format(value)) from exc
 
 
 def encode_float(
@@ -257,6 +300,10 @@ def encode_float(
     # type: (bytearray, float, bool, Any) -> None
     """
     <encoding name="ieee-754" code="0x72" category="fixed" width="4" label="IEEE 754-2008 binary32"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param float value: The value to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
     """
     value = float(value)
     output.extend(_construct(ConstructorBytes.float, with_constructor))
@@ -269,6 +316,10 @@ def encode_double(
     # type: (bytearray, float, bool, Any) -> None
     """
     <encoding name="ieee-754" code="0x82" category="fixed" width="8" label="IEEE 754-2008 binary64"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param float value: The double to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
     """
     value = float(value)
     output.extend(_construct(ConstructorBytes.double, with_constructor))
@@ -282,6 +333,10 @@ def encode_timestamp(
     """
     <encoding name="ms64" code="0x83" category="fixed" width="8"
         label="64-bit two's-complement integer representing milliseconds since the unix epoch"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param int or datetime value: The timestamp to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
     """
     value = cast(datetime, value)
     if isinstance(value, datetime):
@@ -300,6 +355,10 @@ def encode_uuid(
     # type: (bytearray, Union[uuid.UUID, str, bytes], bool, Any) -> None
     """
     <encoding code="0x98" category="fixed" width="16" label="UUID as defined in section 4.1.2 of RFC-4122"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param uuid.UUID or str or bytes value: The UUID to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
     """
     if isinstance(value, str):
         value = uuid.UUID(value).bytes
@@ -318,6 +377,11 @@ def encode_binary(output, value, with_constructor=True, use_smallest=True):
     """
     <encoding name="vbin8" code="0xa0" category="variable" width="1" label="up to 2^8 - 1 octets of binary data"/>
     <encoding name="vbin32" code="0xb0" category="variable" width="4" label="up to 2^32 - 1 octets of binary data"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param bytes or bytearray value: The value to encode.
+    :param bool with_constructor: Whether to include the constructor in the output.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     length = len(value)
     if use_smallest and length <= 255:
@@ -329,8 +393,8 @@ def encode_binary(output, value, with_constructor=True, use_smallest=True):
         output.extend(_construct(ConstructorBytes.binary_large, with_constructor))
         output.extend(struct.pack(">L", length))
         output.extend(value)
-    except struct.error:
-        raise ValueError("Binary data to long to encode")
+    except struct.error as exc:
+        raise ValueError("Binary data to long to encode") from exc
 
 
 def encode_string(output, value, with_constructor=True, use_smallest=True):
@@ -340,6 +404,11 @@ def encode_string(output, value, with_constructor=True, use_smallest=True):
         label="up to 2^8 - 1 octets worth of UTF-8 Unicode (with no byte order mark)"/>
     <encoding name="str32-utf8" code="0xb1" category="variable" width="4"
         label="up to 2^32 - 1 octets worth of UTF-8 Unicode (with no byte order mark)"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param str value: The string to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     if isinstance(value, str):
         value = value.encode("utf-8")
@@ -353,8 +422,8 @@ def encode_string(output, value, with_constructor=True, use_smallest=True):
         output.extend(_construct(ConstructorBytes.string_large, with_constructor))
         output.extend(struct.pack(">L", length))
         output.extend(value)
-    except struct.error:
-        raise ValueError("String value too long to encode.")
+    except struct.error as exc:
+        raise ValueError("String value too long to encode.") from exc
 
 
 def encode_symbol(output, value, with_constructor=True, use_smallest=True):
@@ -364,6 +433,11 @@ def encode_symbol(output, value, with_constructor=True, use_smallest=True):
         label="up to 2^8 - 1 seven bit ASCII characters representing a symbolic value"/>
     <encoding name="sym32" code="0xb3" category="variable" width="4"
         label="up to 2^32 - 1 seven bit ASCII characters representing a symbolic value"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param bytes or str value: The value to encode.
+    :param bool with_constructor: Whether to include the constructor byte.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     if isinstance(value, str):
         value = value.encode("utf-8")
@@ -377,8 +451,8 @@ def encode_symbol(output, value, with_constructor=True, use_smallest=True):
         output.extend(_construct(ConstructorBytes.symbol_large, with_constructor))
         output.extend(struct.pack(">L", length))
         output.extend(value)
-    except struct.error:
-        raise ValueError("Symbol value too long to encode.")
+    except struct.error as exc:
+        raise ValueError("Symbol value too long to encode.") from exc
 
 
 def encode_list(output, value, with_constructor=True, use_smallest=True):
@@ -390,6 +464,11 @@ def encode_list(output, value, with_constructor=True, use_smallest=True):
         label="up to 2^8 - 1 list elements with total size less than 2^8 octets"/>
     <encoding name="list32" code="0xd0" category="compound" width="4"
         label="up to 2^32 - 1 list elements with total size less than 2^32 octets"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param iterable value: The list to encode.
+    :param bool with_constructor: Whether to include the constructor in the output.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     count = len(cast(Sized, value))
     if use_smallest and count == 0:
@@ -409,8 +488,8 @@ def encode_list(output, value, with_constructor=True, use_smallest=True):
             output.extend(_construct(ConstructorBytes.list_large, with_constructor))
             output.extend(struct.pack(">L", encoded_size + 4))
             output.extend(struct.pack(">L", count))
-        except struct.error:
-            raise ValueError("List is too large or too long to be encoded.")
+        except struct.error as exc:
+            raise ValueError("List is too large or too long to be encoded.") from exc
     output.extend(encoded_values)
 
 def encode_map(output, value, with_constructor=True, use_smallest=True):
@@ -420,6 +499,11 @@ def encode_map(output, value, with_constructor=True, use_smallest=True):
         label="up to 2^8 - 1 octets of encoded map data"/>
     <encoding name="map32" code="0xd1" category="compound" width="4"
         label="up to 2^32 - 1 octets of encoded map data"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param dict value: The value to encode.
+    :param bool with_constructor: Whether to include the constructor in the output.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     count = len(cast(Sized, value)) * 2
     encoded_size = 0
@@ -442,8 +526,8 @@ def encode_map(output, value, with_constructor=True, use_smallest=True):
             output.extend(_construct(ConstructorBytes.map_large, with_constructor))
             output.extend(struct.pack(">L", encoded_size + 4))
             output.extend(struct.pack(">L", count))
-        except struct.error:
-            raise ValueError("Map is too large or too long to be encoded.")
+        except struct.error as exc:
+            raise ValueError("Map is too large or too long to be encoded.") from exc
     output.extend(encoded_values)
 
 
@@ -456,9 +540,9 @@ def _check_element_type(item, element_type):
     try:
         if item["TYPE"] != element_type:
             raise TypeError("All elements in an array must be the same type.")
-    except (KeyError, TypeError):
+    except (KeyError, TypeError) as exc:
         if not isinstance(item, element_type):
-            raise TypeError("All elements in an array must be the same type.")
+            raise TypeError("All elements in an array must be the same type.") from exc
     return element_type
 
 
@@ -469,6 +553,11 @@ def encode_array(output, value, with_constructor=True, use_smallest=True):
         label="up to 2^8 - 1 array elements with total size less than 2^8 octets"/>
     <encoding name="array32" code="0xf0" category="array" width="4"
         label="up to 2^32 - 1 array elements with total size less than 2^32 octets"/>
+
+    :param bytearray output: The output buffer to write to.
+    :param iterable value: The array to encode.
+    :param bool with_constructor: Whether to include the constructor in the output.
+    :param bool use_smallest: Whether to use the smallest possible encoding.
     """
     count = len(cast(Sized, value))
     encoded_size = 0
@@ -494,8 +583,8 @@ def encode_array(output, value, with_constructor=True, use_smallest=True):
             output.extend(_construct(ConstructorBytes.array_large, with_constructor))
             output.extend(struct.pack(">L", encoded_size + 4))
             output.extend(struct.pack(">L", count))
-        except struct.error:
-            raise ValueError("Array is too large or too long to be encoded.")
+        except struct.error as exc:
+            raise ValueError("Array is too large or too long to be encoded.") from exc
     output.extend(encoded_values)
 
 
@@ -514,6 +603,10 @@ def encode_fields(value):
     entries or the set of allowed keys.
 
     <type name="fields" class="restricted" source="map"/>
+
+    :param dict or None value: The field values to encode.
+    :return: The encoded field values.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -535,6 +628,10 @@ def encode_annotations(value):
     amqp-error.
 
     <type name="annotations" class="restricted" source="map"/>
+
+    :param dict or None value: The annotations to encode.
+    :return: The encoded annotations.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -564,6 +661,10 @@ def encode_application_properties(value):
     Intermediaries may use the data within this structure for the purposes of filtering or routing.
     The keys of this map are restricted to be of type string (which excludes the possibility of a null key)
     and the values are restricted to be of simple types only, that is (excluding map, list, and array types).
+
+    :param dict value: The application properties to encode.
+    :return: The encoded application properties.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -580,6 +681,10 @@ def encode_message_id(value):
     <type name="message-id-uuid" class="restricted" source="uuid" provides="message-id"/>
     <type name="message-id-binary" class="restricted" source="binary" provides="message-id"/>
     <type name="message-id-string" class="restricted" source="string" provides="message-id"/>
+
+    :param any value: The message ID to encode.
+    :return: The encoded message ID.
+    :rtype: dict
     """
     if isinstance(value, int):
         return {TYPE: AMQPTypes.ulong, VALUE: value}
@@ -611,6 +716,10 @@ def encode_node_properties(value):
           more symbols which are valid distribution-modes. That is, the value MUST be of the same type as would be valid
           in a field defined with the following attributes:
           type="symbol" multiple="true" requires="distribution-mode"
+
+    :param dict value: The node properties.
+    :return: The encoded node properties.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -641,6 +750,10 @@ def encode_filter_set(value):
 
     Filter types are a defined extension point. The filter types that a given source supports will be indicated
     by the capabilities of the source.
+
+    :param dict value: A set of named filters.
+    :return: A set of encoded named filters.
+    :rtype: dict
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
@@ -652,14 +765,19 @@ def encode_filter_set(value):
         else:
             if isinstance(name, str):
                 name = name.encode("utf-8")  # type: ignore
-            try:
-                descriptor, filter_value = data
-                described_filter = {
-                    TYPE: AMQPTypes.described,
-                    VALUE: ({TYPE: AMQPTypes.symbol, VALUE: descriptor}, filter_value),
-                }
-            except ValueError:
-                described_filter = data
+            if isinstance(data, (str, bytes)):
+                described_filter = data # type: ignore
+            # handle the situation when data is a tuple or list of length 2
+            else:
+                try:
+                    descriptor, filter_value = data
+                    described_filter = {
+                        TYPE: AMQPTypes.described,
+                        VALUE: ({TYPE: AMQPTypes.symbol, VALUE: descriptor}, filter_value),
+                    }
+                # if its not a type that is known, raise the error from the server
+                except (ValueError, TypeError):
+                    described_filter = data
 
         cast(List, fields[VALUE]).append(
             ({TYPE: AMQPTypes.symbol, VALUE: name}, described_filter)
@@ -671,6 +789,8 @@ def encode_unknown(output, value, **kwargs):
     # type: (bytearray, Optional[Any], Any) -> None
     """
     Dynamic encoding according to the type of `value`.
+    :param bytearray output: The output buffer.
+    :param any value: The value to encode.
     """
     if value is None:
         encode_null(output, **kwargs)

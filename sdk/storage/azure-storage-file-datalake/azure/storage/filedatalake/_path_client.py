@@ -20,9 +20,19 @@ from ._deserialize import process_storage_error
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._models import LocationMode, DirectoryProperties, AccessControlChangeResult, AccessControlChanges, \
     AccessControlChangeCounters, AccessControlChangeFailure
-from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
-    get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions, \
-    get_api_version, get_cpk_info, convert_datetime_to_rfc1123
+from ._serialize import (
+    add_metadata_headers,
+    compare_api_versions,
+    convert_datetime_to_rfc1123,
+    convert_dfs_url_to_blob_url,
+    get_access_conditions,
+    get_api_version,
+    get_cpk_info,
+    get_lease_id,
+    get_mod_conditions,
+    get_path_http_headers,
+    get_source_mod_conditions,
+)
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
@@ -54,6 +64,9 @@ class PathClient(StorageAccountHostsMixin):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
     """
     def __init__(
             self, account_url: str,
@@ -288,13 +301,12 @@ class PathClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @staticmethod
-    def _delete_path_options(**kwargs):
-        # type: (**Any) -> Dict[str, Any]
-
+    def _delete_path_options(paginated: Optional[bool], **kwargs) -> Dict[str, Any]:
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
         options = {
+            'paginated': paginated,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
@@ -337,9 +349,24 @@ class PathClient(StorageAccountHostsMixin):
         :returns: A dictionary containing information about the deleted path.
         :rtype: Dict[str, Any]
         """
-        options = self._delete_path_options(**kwargs)
+        # Perform paginated delete only if using OAuth, deleting a directory, and api version is 2023-08-03 or later
+        # The pagination is only for ACL checks, the final request remains the atomic delete operation
+        paginated = None
+        if (compare_api_versions(self.api_version, '2023-08-03') >= 0 and
+            hasattr(self.credential, 'get_token') and
+            kwargs.get('recursive')):  # Directory delete will always specify recursive
+            paginated = True
+
+        options = self._delete_path_options(paginated, **kwargs)
         try:
-            return self._client.path.delete(**options)
+            response_headers = self._client.path.delete(**options)
+            # Loop until continuation token is None for paginated delete
+            while response_headers['continuation']:
+                response_headers = self._client.path.delete(
+                    continuation=response_headers['continuation'],
+                    **options)
+
+            return response_headers
         except HttpResponseError as error:
             process_storage_error(error)
 

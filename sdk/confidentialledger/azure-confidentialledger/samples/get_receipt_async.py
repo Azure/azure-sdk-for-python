@@ -50,7 +50,7 @@ async def main():
     # i.e. https://<ledger id>.confidential-ledger.azure.com
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
-    identity_service_client = ConfidentialLedgerCertificateClient()
+    identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
         ledger_certificate = await identity_service_client.get_ledger_identity(
             ledger_id
@@ -83,14 +83,14 @@ async def main():
                 # Write a ledger entry.
                 try:
                     entry_contents = "Hello world!"
-                    post_poller = await ledger_client.begin_create_ledger_entry(
+                    post_poller = await ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
                         {"contents": entry_contents}
                     )
                     post_entry_result = await post_poller.result()
                     transaction_id = post_entry_result["transactionId"]
                     print(f"Wrote '{entry_contents}' to the ledger at transaction {transaction_id}.")
                 except HttpResponseError as e:
-                    print("Request failed: {}".format(e.response.json()))
+                    print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise
 
                 # Get a receipt for a ledger entry.
@@ -105,13 +105,13 @@ async def main():
                         "For more information about receipts, please see "
                         "https://microsoft.github.io/CCF/main/audit/receipts.html#receipts"
                     )
-                    get_receipt_poller = await ledger_client.begin_get_receipt(transaction_id)
+                    get_receipt_poller = await ledger_client.begin_get_receipt(transaction_id)  # type: ignore[attr-defined]
                     get_receipt_result = await get_receipt_poller.result()
                     print(
                         f'Receipt for transaction id {transaction_id}: {get_receipt_result}'
                     )
                 except HttpResponseError as e:
-                    print("Request failed: {}".format(e.response.json()))
+                    print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
                     raise
 
 

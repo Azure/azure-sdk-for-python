@@ -54,7 +54,13 @@ class RunOperations(_ScopeDependentOperations):
         )
 
     def _translate_from_rest_object(self, job_object: Run) -> Optional[_BaseJob]:
-        """Handle errors during list operation."""
+        """Handle errors during list operation.
+
+        :param job_object: The job object
+        :type job_object: Run
+        :return: A job entity if parsing was successful
+        :rtype: Optional[_BaseJob]
+        """
         try:
             from_rest_job = Job._from_rest_object(job_object)
             from_rest_job._id = NAMED_RESOURCE_ID_FORMAT.format(
