@@ -21,7 +21,7 @@ from azure.ai.ml._utils.utils import (
     _get_workspace_base_url,
     modified_operation_client,
 )
-from azure.ai.ml.constants._common import Scope
+from azure.ai.ml.constants._common import Scope, AzureMLResourceType
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
@@ -33,7 +33,6 @@ from azure.ai.ml.entities import (
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
-from azure.ai.ml.constants._common import Scope, AzureMLResourceType
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -250,10 +249,12 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                 hub_default_workspace_resource_group = get_resource_group_name_from_resource_group_id(
                     rest_workspace_obj.workspace_hub_config.default_workspace_resource_group
                 )
-                # we only want to try joining the workspaceHub when the default workspace resource group is same with the user provided resource group.
+                # we only want to try joining the workspaceHub when the default workspace resource group
+                # is same with the user provided resource group.
                 if hub_default_workspace_resource_group == resource_group:
                     module_logger.info(
-                        "User don't have enough permission to create project workspace, trying to join the workspaceHub default resource group"
+                        "User don't have enough permission to create project workspace, "
+                        + "trying to join the workspaceHub default resource group."
                     )
                     return self._begin_join(workspace, **kwargs)
             raise error
@@ -380,7 +381,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
             )
 
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        workspace_hub_name, hub_rg = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
+        workspace_hub_name, _ = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
         rest_workspace_obj = self._operation.get(resource_group, workspace_hub_name)
 
         # override the location to the same as the workspaceHub
@@ -392,9 +393,9 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
         workspace_base_uri = _get_workspace_base_url(workspace_operations, workspace_hub_name, self._requests_pipeline)
 
+        # pylint:disable=unused-argument
         def callback(_, deserialized, args):
             return Workspace._from_rest_object(deserialized)
-
 
         with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):
             result = self.dataplane_workspace_operations.begin_hub_join(
