@@ -9,7 +9,8 @@
 import logging
 import platform
 import traceback
-import sys
+
+from typing import Union, Dict
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure.common import utils
@@ -50,7 +51,7 @@ class OpsLogger:
         self.package_logger: logging.Logger = logging.getLogger(GEN_AI_INTERNAL_LOGGER_NAMESPACE + name)
         self.package_logger.propagate = False
         self.module_logger = logging.getLogger(name)
-        self.custom_dimensions = {}
+        self.custom_dimensions: Dict[str, Union[str, Dict]] = {}
 
     def update_info(self, data: dict) -> None:
         if "app_insights_handler" in data:

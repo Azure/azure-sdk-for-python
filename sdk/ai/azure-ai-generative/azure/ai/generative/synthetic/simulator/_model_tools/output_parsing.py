@@ -165,7 +165,7 @@ def try_parse_samples(
     n_inputs: int,
     n_samples: int,
     job_idx: int
-) -> Tuple[int, List[List[dict]]]:
+) -> Tuple[int, List[Optional[List[dict]]]]:
     '''Try to parse a list of samples into a list of examples.
 
     Args:
@@ -178,7 +178,7 @@ def try_parse_samples(
     Returns:
         Tuple[int, List[List[dict]]]: Number of failed samples, and list of examples.
     '''
-    output_examples = []
+    output_examples: List[Optional[List[Dict]]] = []
     num_failed = 0
 
     # For each sample returned from model

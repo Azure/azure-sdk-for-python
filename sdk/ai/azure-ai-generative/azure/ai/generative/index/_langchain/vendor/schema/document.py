@@ -14,7 +14,7 @@ class Document:
 
     page_content: str
     """String text."""
-    metadata: dict = field(default_factory=list)
+    metadata: dict = field(default_factory=dict)
     """Arbitrary metadata about the page content (e.g., source, relationships to other
         documents, etc.).
     """

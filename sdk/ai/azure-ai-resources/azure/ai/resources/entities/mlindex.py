@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 
 import yaml
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
+from pathlib import Path
 from dataclasses import dataclass
 
 from azure.ai.ml.entities import Data
@@ -13,7 +14,7 @@ from azure.ai.resources.entities import AzureOpenAIConnection, AzureAISearchConn
 @dataclass
 class Index:
     name: str
-    path: str
+    path: Union[str, Path]
     version: str = None
     description: Optional[str] = None
     tags: Optional[Dict[str, str]] = None

@@ -108,7 +108,7 @@ def _write_properties_to_run_history(properties: dict, logger) -> None:
         logger.error("Fail writing properties '%s' to run history: %s", properties, e)
 
 
-def _get_ai_studio_url(tracking_uri, evaluation_id):
+def _get_ai_studio_url(tracking_uri: str, evaluation_id: str):
     _PROJECT_INFO_REGEX = (
         r".*/subscriptions/(.+)/resourceGroups/(.+)"
         r"/providers/Microsoft.MachineLearningServices/workspaces/([^/]+)"
@@ -116,7 +116,7 @@ def _get_ai_studio_url(tracking_uri, evaluation_id):
 
     pattern = re.compile(_PROJECT_INFO_REGEX)
 
-    mo = pattern.match(tracking_uri)
+    mo: re.Match[str] = pattern.match(tracking_uri)
 
     ret = {}
     ret[_SUB_ID] = mo.group(1)

@@ -41,7 +41,7 @@ class OpenAIEmbedder:
         elif batch_size is None:
             batch_size = 1000
         self.batch_size = int(batch_size)
-        self._dynamic_batch_size = None
+        self._dynamic_batch_size: Optional[int] = None
 
         if max_retries is None:
             max_retries = 20
@@ -90,7 +90,7 @@ class OpenAIEmbedder:
         return params
 
     @property
-    def _retryable_openai_errors(self) -> List[Exception]:
+    def _retryable_openai_errors(self) -> List:
         import openai
         return [
             openai.error.Timeout,
@@ -128,7 +128,7 @@ class OpenAIEmbedder:
                     )
                     self._dynamic_batch_size = 1
                 logger.warning(f"Reducing batch_size to {self._dynamic_batch_size} and retrying.")
-                embedding_response = {"data": []}
+                embedding_response: Dict[str, List] = {"data": []}
                 for i in range(0, len(tokenized_texts), self._dynamic_batch_size):
                     embedding_response["data"].extend(
                         self._embed_request(

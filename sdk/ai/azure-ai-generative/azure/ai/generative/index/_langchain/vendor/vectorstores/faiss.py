@@ -112,7 +112,7 @@ class FAISS(VectorStore):
         # Add to the index, the index_to_id mapping, and the docstore.
         starting_len = len(self.index_to_docstore_id)
         faiss = dependable_faiss_import()
-        vector = np.array(embeddings, dtype=np.float32)
+        vector: np.ndarray = np.array(embeddings, dtype=np.float32)
         if self._normalize_L2:
             faiss.normalize_L2(vector)
         self.index.add(vector)
@@ -203,7 +203,7 @@ class FAISS(VectorStore):
             in float for each. Lower score represents more similarity.
         """
         faiss = dependable_faiss_import()
-        vector = np.array([embedding], dtype=np.float32)
+        vector: np.ndarray = np.array([embedding], dtype=np.float32)
         if self._normalize_L2:
             faiss.normalize_L2(vector)
         scores, indices = self.index.search(vector, k if filter is None else fetch_k)

@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Union, Optional, Sequence
 from azure.ai.generative.synthetic.simulator._conversation import (
     ConversationBot,
     ConversationRole,
+    ConversationTurn,
     simulate_conversation,
 )
 from azure.ai.generative.synthetic.simulator._model_tools.models import (
@@ -13,7 +14,7 @@ from azure.ai.generative.synthetic.simulator._model_tools.models import (
     AsyncHTTPClientWithRetry,
 )
 from azure.ai.generative.synthetic.simulator import _template_dir as template_dir
-from azure.ai.generative.synthetic.simulator._model_tools import APITokenManager, OpenAIChatCompletionsModel
+from azure.ai.generative.synthetic.simulator._model_tools import APITokenManager, OpenAIChatCompletionsModel, LLMBase
 
 
 import logging
@@ -22,22 +23,22 @@ import asyncio
 import threading
 import json
 
-BASIC_MD = os.path.join(template_dir, "basic.md")
-USER_MD = os.path.join(template_dir, "user.md")
+BASIC_MD = os.path.join(template_dir, "basic.md")  # type: ignore[has-type]
+USER_MD = os.path.join(template_dir, "user.md")  # type: ignore[has-type]
 
 
 class Simulator:
     def __init__(
         self,
-        systemConnection: "AzureOpenAIModelConfiguration" = None,
-        userConnection: "AzureOpenAIModelConfiguration" = None,
-        simulate_callback: Callable[[str, List[Dict], dict], str] = None,
+        systemConnection: Optional["AzureOpenAIModelConfiguration"] = None,  # type: ignore[name-defined]
+        userConnection: Optional["AzureOpenAIModelConfiguration"] = None,  # type: ignore[name-defined]
+        simulate_callback: Optional[Callable[[str, Sequence[Union[Dict, ConversationTurn]], Optional[Dict]], str]] = None,
     ):
         self.userConnection = self._to_openai_chat_completion_model(userConnection)
         self.systemConnection = self._to_openai_chat_completion_model(systemConnection)
         self.simulate_callback = simulate_callback
 
-    def _to_openai_chat_completion_model(self, config: "AzureOpenAIModelConfiguration"):
+    def _to_openai_chat_completion_model(self, config: "AzureOpenAIModelConfiguration"):  # type: ignore[name-defined]
         token_manager = PlainTokenManager(
             openapi_key=config.api_key,
             auth_header="api-key",
@@ -53,10 +54,10 @@ class Simulator:
 
     def create_bot(
         self,
-        role: str,
+        role: ConversationRole,
         conversation_template: str,
         instantiation_parameters: dict,
-        model: OpenAIChatCompletionsModel = None,
+        model: Union[LLMBase, OpenAIChatCompletionsModel],  # type: ignore[arg-type]
     ):
         bot = ConversationBot(
             role=role,
@@ -68,7 +69,7 @@ class Simulator:
 
     def setup_bot(
         self,
-        role: str,
+        role: Union[str, ConversationRole],
         template: str,
         parameters: dict
     ):
@@ -89,7 +90,7 @@ class Simulator:
 
     async def simulate_async(
         self,
-        template: "Template",
+        template: str,
         parameters: dict,
         max_conversation_turns: int,
         api_call_retry_max_count: int = 3,

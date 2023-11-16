@@ -57,7 +57,7 @@ class MLIndex:
     index_config: dict
     embeddings_config: dict
 
-    def __init__(self, uri: Optional[Union[str, Path, object]] = None, mlindex_config: Optional[dict] = None):
+    def __init__(self, uri: Optional[Union[str, Path]] = None, mlindex_config: Optional[dict] = None):
         """
         Initialize MLIndex from a URI or AzureML Data Asset.
 
@@ -246,7 +246,7 @@ class MLIndex:
                 from fsspec.core import url_to_fs
 
                 store = None
-                engine = self.index_config.get("engine")
+                engine: str = self.index_config.get("engine")
                 if engine == "langchain.vectorstores.FAISS":
                     embeddings = EmbeddingsContainer.from_metadata(
                         self.embeddings_config.copy()
@@ -657,7 +657,7 @@ class MLIndex:
             # TODO: This means new snapshots will be created for every run, ideally there'd be a use container as readonly vs persist snapshot option
             embeddings.save(
                 str(
-                    embeddings_container
+                    Path(embeddings_container)
                     / f"{now.strftime('%Y%m%d')}_{now.strftime('%H%M%S')}_{str(uuid.uuid4()).split('-')[0]}"
                 )
             )
@@ -730,12 +730,12 @@ class MLIndex:
                 index_config = {
                     **index_config,
                     **{
-                        "endpoint": index_connection.target
+                        "endpoint": (index_connection.target
                         if hasattr(index_connection, "target")
-                        else index_connection["properties"]["target"],
-                        "api_version": index_connection.metadata.get("apiVersion", "2023-07-01-preview")
+                        else index_connection["properties"]["target"]),
+                        "api_version": (index_connection.metadata.get("apiVersion", "2023-07-01-preview")
                         if hasattr(index_connection, "metadata")
-                        else index_connection["properties"]["metadata"].get("apiVersion", "2023-07-01-preview"),
+                        else index_connection["properties"]["metadata"].get("apiVersion", "2023-07-01-preview")),
                     },
                 }
                 connection_args = {
@@ -758,7 +758,7 @@ class MLIndex:
                 connection_args = {"connection_type": "environment", "connection": {"key": "PINECONE_API_KEY"}}
             else:
                 if isinstance(index_connection, str):
-                    index_connection = get_connection_by_id_v2(index_connection, credential=credential)
+                    index_connection = get_connection_by_id_v2(index_connection, credential=credential)  # type: ignore[assignment,used-before-def]
                 index_config = {
                     **index_config,
                     **{"environment": index_connection["properties"]["metadata"]["environment"]},
@@ -780,7 +780,7 @@ class MLIndex:
 
         return mlindex
 
-    def save(self, output_uri: Optional[str], just_config: bool = False):
+    def save(self, output_uri: str, just_config: bool = False):
         """
         Save the MLIndex to a uri.
 

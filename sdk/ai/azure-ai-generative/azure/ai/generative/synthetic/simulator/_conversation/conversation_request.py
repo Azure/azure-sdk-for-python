@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict
+from typing import Dict, Optional
 
 from .conversation_writer import ConversationWriter
 
 
 class ConversationRequest:
     def __init__(
-        self, template: str, instantiation: Dict[str, str], writer: ConversationWriter=None
+        self, template: str, instantiation: Dict[str, str], writer: Optional[ConversationWriter] = None
     ):
         self._template = template
         self._instantiation = instantiation

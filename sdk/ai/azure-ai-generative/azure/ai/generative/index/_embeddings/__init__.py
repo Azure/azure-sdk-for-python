@@ -38,7 +38,7 @@ def _args_to_openai_embedder(arguments: dict):
     from azure.ai.generative.index._langchain.vendor.embeddings.openai import OpenAIEmbeddings
     from azure.ai.generative.index._utils.logging import langchain_version
 
-    arguments = init_open_ai_from_config(arguments)
+    arguments = init_open_ai_from_config(arguments, credential=None)
 
     if langchain_version > "0.0.154":
         embedder = OpenAIEmbeddings(
@@ -278,12 +278,12 @@ class EmbeddedDocument(ABC):
         self.metadata = metadata
 
     @abstractmethod
-    def get_data() -> str:
+    def get_data(self) -> str:
         """Get the data of the document."""
         pass
 
     @abstractmethod
-    def get_embeddings() -> List[float]:
+    def get_embeddings(self) -> List[float]:
         """Get the embeddings of the document."""
         pass
 
@@ -406,7 +406,7 @@ class EmbeddingsContainer:
     _document_sources: OrderedDict
     _deleted_sources: OrderedDict
     _document_embeddings: OrderedDict
-    _deleted_documents: List[str]
+    _deleted_documents: OrderedDict
 
     def __getitem__(self, key):
         """Get document by doc_id."""
@@ -1001,7 +1001,7 @@ class EmbeddingsContainer:
                     "model": self.arguments.get("model", ""),
                 }
             ) as activity_logger:
-                embeddings = self._embed_fn(data_to_embed, activity_logger=activity_logger)
+                embeddings = self._embed_fn(texts=data_to_embed, activity_logger=activity_logger)
         except Exception as e:
             logger.error(f"Failed to get embeddings with error: {e}")
             raise
@@ -1093,7 +1093,7 @@ class EmbeddingsContainer:
 
         return FaissClass(self.get_query_embed_fn(), index, docstore, index_to_id)
 
-    def write_as_faiss_mlindex(self, output_path: Path, engine: str = "langchain.vectorstores.FAISS"):
+    def write_as_faiss_mlindex(self, output_path: Union[str, Path], engine: str = "langchain.vectorstores.FAISS"):
         """Writes the embeddings to a FAISS MLIndex file."""
         from azure.ai.generative.index._mlindex import MLIndex
 
@@ -1123,7 +1123,7 @@ class EmbeddingsContainer:
         embeddings_container = None
         # list all folders in embeddings_container and find the latest one
         try:
-            snapshot_files = list(local_embeddings_cache.glob("*/*"))
+            snapshot_files = list(Path(local_embeddings_cache).glob("*/*"))
             last_snapshot = None
             for file in snapshot_files:
                 curr_snapshot = file.parent.name
@@ -1132,7 +1132,7 @@ class EmbeddingsContainer:
                     logger.info(f"Found Snapshot: {curr_snapshot = } - mtime: {os.path.getmtime(file)}")
 
             embeddings_container_dir_name = str(max(
-                [file for file in local_embeddings_cache.glob("*/*") if file.is_file() and file.parent.name != os.environ.get("AZUREML_RUN_ID")],
+                [file for file in Path(local_embeddings_cache).glob("*/*") if file.is_file() and file.parent.name != os.environ.get("AZUREML_RUN_ID")],
                 key=os.path.getmtime
             ).parent.name)
         except Exception as e:
@@ -1158,7 +1158,7 @@ class EmbeddingsContainer:
 
     @staticmethod
     @contextlib.contextmanager
-    def mount_and_load(embeddings_cache_path: str, activity_logger=None) -> "EmbeddingsContainer":
+    def mount_and_load(embeddings_cache_path: Optional[Union[str, Path]], activity_logger=None) -> Iterator["EmbeddingsContainer"]:
         """
         Mounts the embeddings container and loads it.
 

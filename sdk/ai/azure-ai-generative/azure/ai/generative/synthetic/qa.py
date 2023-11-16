@@ -205,7 +205,7 @@ class QADataGenerator:
             results = [results]
         
         for qs_and_as in results:
-            chat_history = []
+            chat_history: List = []
             for question, answer in qs_and_as: 
                 if qa_type == QAType.CONVERSATION:
                     # Chat History columns:
@@ -230,7 +230,7 @@ class QADataGenerator:
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Generate", ActivityType.INTERNALCALL)
-    def generate(self, text: str, qa_type: QAType, num_questions: int = None) -> Dict:
+    def generate(self, text: str, qa_type: QAType, num_questions: Optional[int] = None) -> Dict:
         self._validate(qa_type, num_questions)
         response = _completion_with_retries(
             messages=self._get_messages_for_qa_type(qa_type, text, num_questions),
@@ -258,7 +258,7 @@ class QADataGenerator:
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.GenerateAsync", ActivityType.INTERNALCALL)
-    async def generate_async(self, text: str, qa_type: QAType, num_questions: int = None) -> Dict:
+    async def generate_async(self, text: str, qa_type: QAType, num_questions: Optional[int] = None) -> Dict:
         self._validate(qa_type, num_questions)
         response = await _completion_with_retries_async(
             messages=self._get_messages_for_qa_type(qa_type, text, num_questions),

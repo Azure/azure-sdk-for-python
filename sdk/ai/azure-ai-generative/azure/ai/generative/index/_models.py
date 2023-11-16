@@ -5,7 +5,7 @@
 import copy
 import json
 import os
-from typing import Optional
+from typing import Dict, Optional
 
 from azure.core.credentials import TokenCredential
 from azure.ai.generative.index._utils.connections import (
@@ -58,7 +58,7 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
     return config
 
 
-def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]) -> dict:
+def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]) -> Dict[str, str]:
     """Initialize an OpenAI model from a configuration dictionary."""
     import openai
 
@@ -111,9 +111,9 @@ def init_open_ai_from_config(config: dict, credential: Optional[TokenCredential]
                     credential = get_connection_credential(new_args)
 
             if hasattr(credential, "key"):
-                config["api_key"] = credential.key
+                config["api_key"] = credential.key  # type: ignore[union-attr]
             else:
-                config["api_key"] = credential.get_token("https://cognitiveservices.azure.com/.default").token
+                config["api_key"] = credential.get_token("https://cognitiveservices.azure.com/.default").token  # type: ignore[union-attr]
                 config["api_type"] = "azure_ad"
     except Exception as e:
         if "OPENAI_API_KEY" in os.environ:
@@ -147,7 +147,7 @@ def init_llm(model_config: dict, **kwargs):
     if model_config.get("stop") is not None:
         model_kwargs["stop"] = model_config.get("stop")
     if model_config.get("kind") == "open_ai" and model_config.get("api_type") == "azure":
-        model_config = init_open_ai_from_config(model_config)
+        model_config = init_open_ai_from_config(model_config, credential=None)
         if model_config["model"].startswith("gpt-3.5-turbo") or model_config["model"].startswith("gpt-35-turbo") or model_config["model"].startswith("gpt-4"):
             logger.info(f"Initializing AzureChatOpenAI with model {model_config['model']} with kwargs: {model_kwargs}")
 
@@ -181,7 +181,7 @@ def init_llm(model_config: dict, **kwargs):
                 llm.temperature = model_config.get("temperature")
     elif model_config.get("kind") == "open_ai" and model_config.get("api_type") == "open_ai":
         logger.info(f"Initializing OpenAI with model {model_config['model']} with kwargs: {model_kwargs}")
-        model_config = init_open_ai_from_config(model_config)
+        model_config = init_open_ai_from_config(model_config, credential=None)
         llm = ChatOpenAI(
             model=model_config["model"],
             max_tokens=model_config.get("max_tokens"),

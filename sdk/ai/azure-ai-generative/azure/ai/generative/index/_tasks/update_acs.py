@@ -8,7 +8,7 @@ import os
 import time
 import traceback
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import yaml
 from packaging import version as pkg_version
@@ -221,7 +221,7 @@ def create_index_from_raw_embeddings(
     emb: EmbeddingsContainer,
     acs_config={},
     connection={},
-    output_path: Optional[str] = None,
+    output_path: Optional[Union[Path,str]] = None,
     credential: Optional[TokenCredential] = None,
     verbosity: int = 1,
 ) -> MLIndex:

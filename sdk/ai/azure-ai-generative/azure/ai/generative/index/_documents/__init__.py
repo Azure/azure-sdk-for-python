@@ -28,7 +28,7 @@ class DocumentChunksIterator(Iterator):
             self,
             files_source: Union[str, Path],
             glob: str,
-            base_url: str = "",
+            base_url: str = None,
             document_path_replacement_regex: Optional[str] = None,
             file_filter: Optional[Callable[[Iterable[DocumentSource]], Iterator[DocumentSource]]]=None,
             source_loader: Callable[[Iterable[DocumentSource]], Iterator[ChunkedDocument]]=crack_documents,
@@ -38,7 +38,7 @@ class DocumentChunksIterator(Iterator):
         """Initialize a document chunks iterator."""
         self.files_source = files_source
         self.glob = glob
-        self.base_url = base_url
+        self.base_url = base_url if base_url else ""
         self.document_path_replacement_regex = document_path_replacement_regex
         if file_filter is None:
             file_filter = self._document_statistics

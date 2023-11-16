@@ -7,7 +7,7 @@ import time
 import logging
 import asyncio
 from enum import Enum
-from typing import Optional
+from typing import Optional, Union
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
 
@@ -35,30 +35,33 @@ def build_token_manager(
 
     # Define authorization token manager
     if authorization_type == "key_vault_secret":
-        token_manager_class = KeyVaultAPITokenManager
-        token_scope = None
         if endpoint_type != "openai_api":
             authorization_header = "api-key"
+        return KeyVaultAPITokenManager(
+            secret_identifier=keyvault_secret_identifier,
+            auth_header=authorization_header,
+            logger=logger,
+        )
     elif authorization_type == "managed_identity":
-        token_manager_class = ManagedIdentityAPITokenManager
         if endpoint_type == "azure_endpoint":
             token_scope = TokenScope.AZURE_ENDPOINT
         elif endpoint_type == "azure_openai_api":
             token_scope = TokenScope.AZURE_OPENAI_API
         else:
             raise ValueError(f"Unknown endpoint_type: {endpoint_type}")
+        return ManagedIdentityAPITokenManager(
+            token_scope=token_scope,
+            auth_header=authorization_header,
+            logger=logger,
+        )
     elif authorization_type == "compliant":
-        tokenanager_class = CompliantTokenManager
+        return CompliantTokenManager(
+            keyvault=keyvault,
+            auth_header=authorization_header,
+            logger=logger,
+        )
     else:
         raise ValueError(f"Unknown authorization_type: {authorization_type}")
-
-    return token_manager_class(
-        token_scope=token_scope,
-        keyvault=keyvault,
-        secret_identifier=keyvault_secret_identifier,
-        auth_header=authorization_header,
-        logger=logger,
-    )
 
 
 class APITokenManager(ABC):

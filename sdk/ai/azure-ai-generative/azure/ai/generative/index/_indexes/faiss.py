@@ -149,7 +149,7 @@ class FaissAndDocStore:
 
     def save(self, output_path: str):
         """Write index and docstore to output_path."""
-        output_path = Path(output_path)
+        output_path: Path = Path(output_path)
         output_path.mkdir(exist_ok=True, parents=True)
 
         faiss = import_faiss_or_so_help_me()

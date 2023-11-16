@@ -19,7 +19,7 @@ def parse_args():
 
     return parser.parse_args()
 
-def load_data(file_uri:string) -> pd.DataFrame:
+def load_data(file_uri: str) -> pd.DataFrame:
     ### helping function to load from input file into dataframe
     file_type = file_uri.split('.')[-1].strip()
     if file_type not in ("csv", "jsonl"):

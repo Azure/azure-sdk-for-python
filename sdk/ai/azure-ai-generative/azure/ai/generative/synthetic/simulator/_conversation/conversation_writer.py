@@ -15,7 +15,7 @@ logger = logging.getLogger(__file__)
 class ConversationWriter:
     def __init__(self, file_path: pathlib.Path):
         self._file_path = file_path
-        self._queue = asyncio.Queue()
+        self._queue: asyncio.Queue = asyncio.Queue()
 
     async def queue(self, conversation_id: str, conversation_history: List[ConversationTurn], meta_data=None):
         formatted_conversation = {

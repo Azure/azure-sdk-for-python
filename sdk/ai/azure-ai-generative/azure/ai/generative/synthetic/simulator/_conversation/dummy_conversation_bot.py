@@ -4,7 +4,7 @@
 
 import jinja2
 import logging
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from azure.ai.generative.synthetic.simulator._model_tools import RetryClient
 from .conversation_turn import ConversationTurn
@@ -49,6 +49,7 @@ class DummyConversationBot:
         self.logger = logging.getLogger(repr(self))
 
         if role == ConversationRole.USER:
+            self.conversation_starter: Optional[str] = None
             if "conversation_starter" in self.persona_template_args:
                 self.logger.info(
                     'This simulated bot will use the provided conversation starter '
@@ -58,7 +59,6 @@ class DummyConversationBot:
                 self.conversation_starter = self.persona_template_args["conversation_starter"]
             else:
                 self.logger.info('This simulated bot will generate the first turn as no conversation starter is provided')
-                self.conversation_starter = None
 
         self.userMessages = ["Find the temperature in seattle and add it to the doc", "what is the weight of an airplane", "how may grams are there in a ton", "what is the height of eiffel tower", "where do you come from", "what is the current time"]
 

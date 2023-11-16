@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from pathlib import Path
-from typing import Union
+from typing import Dict, Optional, Union
 
 import yaml
 
@@ -15,24 +15,20 @@ from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 
 def build_index(
     *,
-    ######## required args ##########
     output_index_name: str,
     vector_store: str,
-    ######## embedding model information ##########
-    embeddings_model: str = None,
-    aoai_connection_id: str = None,
-    ######## chunking information ##########
-    data_source_url: str = None,
+    index_input_config: Union[ACSSource, LocalSource],
+    embeddings_model: Optional[str] = None,
+    aoai_connection_id: Optional[str] = None,
+    data_source_url: Optional[str] = None,
     chunk_size: int = 1024,
     chunk_overlap: int = 0,
     input_glob: str = "**/*",
-    max_sample_files: int = None,
-    chunk_prepend_summary: bool = None,
-    document_path_replacement_regex: str = None,
-    embeddings_cache_path: str = None,
-    ######## data source info ########
-    index_input_config: Union[ACSSource, LocalSource] = None,
-    acs_config: ACSOutputConfig = None,  # todo better name?
+    max_sample_files: Optional[int] = None,
+    chunk_prepend_summary: Optional[bool] = None,
+    document_path_replacement_regex: Optional[str] = None,
+    embeddings_cache_path: Optional[str] = None,
+    acs_config: Optional[ACSOutputConfig] = None,  # todo better name?
 ) -> Index:
 
     """Generates embeddings locally and stores Index reference in memory
@@ -53,12 +49,13 @@ def build_index(
     if vector_store == "azure_cognitive_search" and isinstance(index_input_config, ACSSource):
         return _create_mlindex_from_existing_acs(
             output_index_name=output_index_name,
-            embedding_model=embeddings_model,
+            # TODO: Fix Bug 2818331
+            embedding_model=embeddings_model,  # type: ignore[no-redef,arg-type]
             aoai_connection=aoai_connection_id,
             acs_config=index_input_config,
         )
-    embeddings_cache_path = Path(embeddings_cache_path) if embeddings_cache_path else Path.cwd()
-    save_path = embeddings_cache_path/f"{output_index_name}-mlindex"
+    embeddings_cache_path = str(Path(embeddings_cache_path) if embeddings_cache_path else Path.cwd())
+    save_path = str(Path(embeddings_cache_path)/f"{output_index_name}-mlindex")
     splitter_args= {
         'chunk_size': chunk_size,
         'chunk_overlap': chunk_overlap,
@@ -97,10 +94,11 @@ def build_index(
                 "connection": {"key": "OPENAI_API_KEY"},
                 "endpoint": os.getenv("OPENAI_API_BASE"),
             }
-    embedder = EmbeddingsContainer.from_uri(
-        uri=embeddings_model,
+    embedder = EmbeddingsContainer.from_uri(  # type: ignore[arg-type]
+        uri=embeddings_model,  # TODO: Fix Bug 2818331
         **connection_args,
-    )
+    )  # type: ignore[arg-type]
+
     embeddings = embedder.embed(chunked_docs)
 
     if vector_store.lower() == "faiss":
@@ -165,7 +163,7 @@ def build_index(
 def _create_mlindex_from_existing_acs(
     output_index_name: str,
     embedding_model: str,
-    aoai_connection: str,
+    aoai_connection: Optional[str],
     acs_config: ACSSource,
 ) -> Index:
     try:
@@ -209,6 +207,7 @@ def _create_mlindex_from_existing_acs(
     if acs_config.acs_metadata_key:
         mlindex_config["index"]["field_mapping"]["metadata"] = acs_config.acs_metadata_key
 
+    model_connection_args: Dict[str, Optional[Union[str, Dict]]]
     if not aoai_connection:
         import openai
         model_connection_args = {
@@ -220,7 +219,7 @@ def _create_mlindex_from_existing_acs(
             "connection": {"id": aoai_connection}
         }
 
-    embedding = EmbeddingsContainer.from_uri(embedding_model, **model_connection_args)
+    embedding = EmbeddingsContainer.from_uri(embedding_model, credential=None, **model_connection_args)
     mlindex_config["embeddings"] = embedding.get_metadata()
 
     path = Path.cwd() / f"import-acs-{acs_config.acs_index_name}-mlindex"

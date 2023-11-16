@@ -9,7 +9,7 @@ import uuid
 import logging
 from urllib.parse import urlparse
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional, Union
+from typing import Deque, Dict, List, Optional, Union, Sized
 from collections import deque
 
 from aiohttp import TraceConfig
@@ -95,7 +95,7 @@ class LLMBase(ABC):
 
         # Metric tracking
         self.lock = asyncio.Lock()
-        self.response_times = deque(maxlen=MAX_TIME_TAKEN_RECORDS)
+        self.response_times: Deque[Union[int, float]]  = deque(maxlen=MAX_TIME_TAKEN_RECORDS)
         self.step = 0
         self.error_count = 0
 
@@ -172,7 +172,7 @@ class LLMBase(ABC):
     def _log_request(self, request: dict) -> None:
         self.logger.info(f"Request: {request}")
 
-    async def _add_successful_response(self, time_taken: float) -> None:
+    async def _add_successful_response(self, time_taken: Union[int, float]) -> None:
         async with self.lock:
             self.response_times.append(time_taken)
             self.step += 1
@@ -257,17 +257,17 @@ class OpenAICompletionsModel(LLMBase):
         self.n = n
         self.frequency_penalty = frequency_penalty
         self.presence_penalty = presence_penalty
-        self.stop = stop
         self.image_captions = image_captions
 
         # Default stop to end token if not provided
-        if not self.stop:
-            self.stop = []
+        if not stop:
+            stop = []
         # Else if stop sequence is given as a string (Ex: "["\n", "<im_end>"]"), convert
-        elif type(self.stop) is str and self.stop.startswith('[') and self.stop.endswith(']'):
-            self.stop = eval(self.stop)
-        elif type(self.stop) is str:
-            self.stop = [self.stop]
+        elif type(stop) is str and stop.startswith('[') and stop.endswith(']'):
+            stop = eval(stop)
+        elif type(stop) is str:
+            stop = [stop]
+        self.stop: List = stop  # type: ignore[assignment]
 
         # If stop tokens do not include default end tokens, add them
         for token in self.stop_tokens:
@@ -286,7 +286,7 @@ class OpenAICompletionsModel(LLMBase):
         return {param: getattr(self, param) for param in self.model_param_names if getattr(self, param) is not None}
 
 
-    def format_request_data(self, prompt: str, **request_params):
+    def format_request_data(self, prompt: str, **request_params) -> Dict[str, str]:
         '''
         Format the request data for the OpenAI API.
         '''
@@ -322,19 +322,19 @@ class OpenAICompletionsModel(LLMBase):
         prompt = []
         for message in messages:
             prompt.append(f"{self.CHAT_START_TOKEN}{message['role']}\n{message['content']}\n{self.CHAT_END_TOKEN}\n")
-        prompt = "".join(prompt)
-        prompt += f"{self.CHAT_START_TOKEN}{role}\n"
+        prompt_string: str = "".join(prompt)
+        prompt_string += f"{self.CHAT_START_TOKEN}{role}\n"
 
         return await self.get_completion(
-            prompt=prompt,
+            prompt=prompt_string,
             session=session,
             **request_params,
         )
 
 
-    async def get_all_completions(
+    async def get_all_completions(  # type: ignore[override]
         self,
-        prompts: List[str],
+        prompts: List[Dict[str, str]],
         session: RetryClient,
         api_call_max_parallel_count: int = 1,
         api_call_delay_seconds: float = 0.1,
@@ -357,17 +357,17 @@ class OpenAICompletionsModel(LLMBase):
             self.logger.info(f"Using {api_call_max_parallel_count} parallel workers to query the API..")
 
         # Format prompts and tag with index
-        request_datas = []
+        request_datas: List[Dict] = []
         for idx, prompt in enumerate(prompts):
-            prompt = self.format_request_data(prompt, **request_params)
-            prompt[self.prompt_idx_key] = idx
+            prompt: Dict[str, str] = self.format_request_data(prompt, **request_params)  # type: ignore[no-redef,arg-type]
+            prompt[self.prompt_idx_key] = idx  # type: ignore[assignment]
             request_datas.append(prompt)
 
         # Perform inference
         if len(prompts) == 0:
             return []  # queue is empty
 
-        output_collector = []
+        output_collector: List = []
         tasks = [  # create a set of worker-tasks to query inference endpoint in parallel
             asyncio.create_task(self.request_api_parallel(
                 request_datas=request_datas,
@@ -404,7 +404,7 @@ class OpenAICompletionsModel(LLMBase):
         Query the model for all prompts given as a list and append the output to output_collector.
         No return value, output_collector is modified in place.
         """
-        logger_tasks = []  # to await for logging to finish
+        logger_tasks: List = []  # to await for logging to finish
 
         while True:  # process data from queue until it's empty
             try:
@@ -483,7 +483,8 @@ class OpenAICompletionsModel(LLMBase):
             headers["azureml-model-deployment"] = self.azureml_model_deployment
 
         # add all additional headers
-        headers.update(self.additional_headers)
+        if self.additional_headers:
+            headers.update(self.additional_headers)
 
         params = {}
         if self.api_version:
@@ -547,7 +548,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         super().__init__(name=name, *args, **kwargs)
 
 
-    def format_request_data(self, messages: List[dict], **request_params):
+    def format_request_data(self, messages: List[dict], **request_params):  # type: ignore[override]
         # Caption images if available
         if len(self.image_captions.keys()):
             for message in messages:
@@ -617,17 +618,17 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
 
     async def get_all_completions(
         self,
-        prompts: List[str],
+        prompts: List[str],  # type: ignore[override]
         session: RetryClient,
         api_call_max_parallel_count: int = 1,
         api_call_delay_seconds: float = 0.1,
         request_error_rate_threshold: float = 0.5,
         **request_params,
     ) -> List[dict]:
-        prompts = [[{"role": "system", "content": prompt}] for prompt in prompts]
+        prompts_list = [{"role": "system", "content": prompt} for prompt in prompts]
 
         return await super().get_all_completions(
-            prompts=prompts,
+            prompts=prompts_list,
             session=session,
             api_call_max_parallel_count=api_call_max_parallel_count,
             api_call_delay_seconds=api_call_delay_seconds,
@@ -728,7 +729,7 @@ class LLAMACompletionsModel(OpenAICompletionsModel):
         request_data.update(request_params)
         return request_data
 
-    def _parse_response(self, response_data: dict, request_data: dict) -> dict:
+    def _parse_response(self, response_data: dict, request_data: dict) -> dict:  # type: ignore[override]
         prompt = request_data['input_data']['input_string'][0]
 
         # remove prompt text from each response as llama model returns prompt + completion instead of only completion
@@ -769,7 +770,7 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
         # set authentication header to Bearer, as llama apis always uses the bearer auth_header
         self.token_manager.auth_header = "Bearer"
 
-    def format_request_data(self, messages: List[dict], **request_params):
+    def format_request_data(self, messages: List[dict], **request_params):  # type: ignore[override]
         # Caption images if available
         if len(self.image_captions.keys()):
             for message in messages:
@@ -828,7 +829,7 @@ class LLAMAChatCompletionsModel(LLAMACompletionsModel):
             request_data=request_data,
         )
 
-    def _parse_response(self, response_data: dict) -> dict:
+    def _parse_response(self, response_data: dict) -> dict:  # type: ignore[override]
         # https://platform.openai.com/docs/api-reference/chat
         samples = []
         finish_reason = []

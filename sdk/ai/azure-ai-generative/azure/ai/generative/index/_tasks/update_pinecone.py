@@ -14,7 +14,7 @@ from typing import Optional
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument
 from azure.ai.generative.index._mlindex import MLIndex
-from azure.ai.generative.index._utils import get_connection_credential
+from azure.ai.generative.index._utils.connections import get_connection_credential
 from azure.ai.generative.index._utils.logging import (
     _logger_factory,
     get_logger,

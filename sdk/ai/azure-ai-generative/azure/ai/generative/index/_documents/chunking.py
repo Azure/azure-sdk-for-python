@@ -7,7 +7,7 @@ import re
 import time
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Any, Iterable, Iterator, List, Optional
+from typing import Any, Iterable, Iterator, List, Optional, Sequence
 
 from azure.ai.generative.index._documents.document import Document, DocumentSource, StaticDocument
 from azure.ai.generative.index._langchain.vendor.text_splitter import TextSplitter
@@ -22,7 +22,7 @@ logger = get_logger(__name__)
 class ChunkedDocument:
     """Chunked Document."""
 
-    chunks: List[Document]
+    chunks: Sequence[Document]
     source: DocumentSource
     metadata: dict
 
@@ -273,7 +273,7 @@ class MarkdownHeaderSplitter(TextSplitter):
 
     def create_documents(
         self, texts: List[str], metadatas: Optional[List[dict]] = None
-    ) -> List[StaticDocument]:
+    ) -> List[StaticDocument]:  # type: ignore[override]
         """Create documents from a list of texts."""
         _metadatas = metadatas or [{}] * len(texts)
         documents = []

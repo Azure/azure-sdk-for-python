@@ -33,7 +33,7 @@ class CitationRegex(DictMixin):
         *,
         match_pattern: str,
         replacement_pattern: str,
-    ) -> "CitationRegex":
+    ) -> None:
         """Initialize a CitationRegex object."""
         self.match_pattern = match_pattern
         self.replacement_pattern = replacement_pattern
@@ -81,7 +81,7 @@ class IndexSource(DictMixin):
         chunk_overlap: Optional[int] = None,
         citation_url: Optional[str] = None,
         citation_url_replacement_regex: Optional[CitationRegex] = None,
-    ) -> "IndexSource":
+    ) -> None:
         """Initialize a IndexSource object."""
         self.input_data = input_data
         self.input_glob = input_glob
@@ -130,7 +130,7 @@ class Embedding(DictMixin):
         model: str,
         connection: Optional[str] = None,
         cache_path: Optional[str] = None,
-    ) -> "Embedding":
+    ) -> None:
         """Initialize a Embedding object."""
         self.model = model
         self.connection = connection
@@ -174,7 +174,7 @@ class IndexStore(DictMixin):
         name: Optional[str] = None,
         connection: Optional[str] = None,
         config: Optional[Dict] = None,
-    ) -> "IndexStore":
+    ) -> None:
         """Initialize a IndexStore object."""
         self.type = type
         self.name = name
@@ -237,7 +237,7 @@ class DataIndex(Data):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         **kwargs,
-    ) -> "DataIndex":
+    ) -> None:
         """Initialize a DataIndex object."""
         super().__init__(
             name=name,

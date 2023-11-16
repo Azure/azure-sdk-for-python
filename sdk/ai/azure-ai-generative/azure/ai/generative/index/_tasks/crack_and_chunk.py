@@ -10,7 +10,7 @@ import re
 import time
 import traceback
 from pathlib import Path
-from typing import Iterator, List
+from typing import Iterator, List, Union
 
 import pandas as pd
 from azure.ai.generative.index._documents import (
@@ -78,7 +78,7 @@ def str2bool(v):
         return False
 
 
-def custom_loading(python_file_path: str, ext_loaders, ext_splitters):
+def custom_loading(python_file_path: Union[str, bytes, os.PathLike], ext_loaders, ext_splitters):
     """Load custom loader from python file."""
     module_name = os.path.basename(python_file_path).replace(".py", "")
     spec = importlib.util.spec_from_file_location(module_name, python_file_path)
@@ -96,7 +96,7 @@ def custom_loading(python_file_path: str, ext_loaders, ext_splitters):
                 ext_splitters[file_extension] = file_extension_splitters[".txt"]
 
 
-def get_activity_logging_filter(activity_logger, source_glob):
+def get_activity_logging_filter(activity_logger, source_glob) -> Iterator[DocumentSource]:
     """Get a filter function with activity logging."""
     def filter_and_log_extensions(sources: Iterator[DocumentSource], allowed_extensions=SUPPORTED_EXTENSIONS) -> Iterator[DocumentSource]:
         """Filter out sources with extensions not in allowed_extensions."""

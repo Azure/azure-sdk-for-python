@@ -122,7 +122,7 @@ class TextFileIOLoader(BaseDocumentLoader):
 class UnstructuredHTMLFileIOLoader(UnstructuredFileIOLoader, BaseDocumentLoader):
     """Loader that uses unstructured to load HTML files."""
 
-    def __init__(self, file, document_source: DocumentSource, metadata: dict, mode="single", **unstructured_kwargs: Any):
+    def __init__(self, file: IO, document_source: DocumentSource, metadata: dict, mode="single", **unstructured_kwargs: Any):
         """Initialize a text file loader."""
         self.metadata = metadata
         self.document_source = document_source
@@ -171,7 +171,7 @@ class PDFFileLoader(BaseDocumentLoader):
             from pypdf import PdfReader
         except Exception:
             try:
-                from PyPDF2 import PdfReader
+                from PyPDF2 import PdfReader  # type: ignore[no-redef]
             except Exception as e:
                 raise RuntimeError("Unable to import pypdf or PyPDF2.") from e
 
