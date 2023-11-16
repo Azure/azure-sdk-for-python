@@ -168,7 +168,7 @@ def _generate_sas_token(uri: str, policy: str, key: str, expiry: Optional[timede
     token = generate_sas_token(uri, policy, key, abs_expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
 
-def _build_uri(address: str, entity: Optional[str]) -> str:
+def _build_uri(address: str, entity: str) -> str:
     parsed = urlparse(address)
     if parsed.path:
         return address
@@ -368,7 +368,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self,
         retried_times: int,
         last_exception: Exception,
-        timeout_time: Optional[int]=None,
+        timeout_time: Optional[float]=None,
         entity_name: Optional[str]=None
     ) -> None:
         entity_name = entity_name or self._container_id
