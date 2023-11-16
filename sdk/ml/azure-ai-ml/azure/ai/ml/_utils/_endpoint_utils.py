@@ -126,7 +126,7 @@ def validate_response(response: HttpResponse) -> None:
             404: ResourceNotFoundError,
             408: ServiceRequestTimeoutError,
             409: ResourceExistsError,
-            424: ModelError,
+            424: HttpResponseError,
         }
         map_error(status_code=response.status_code, response=response, error_map=error_map)
         raise HttpResponseError(response=response, message=failure_msg, error_format=ARMErrorFormat)
