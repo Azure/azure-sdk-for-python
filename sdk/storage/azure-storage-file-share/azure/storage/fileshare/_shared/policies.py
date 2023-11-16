@@ -467,7 +467,7 @@ class StorageRetryPolicy(HTTPPolicy):
         self, settings: Dict[str, Any],
         request: "PipelineRequest",
         response: Optional["PipelineResponse"] = None,
-        error: Optional[Union[ServiceRequestError, ServiceResponseError]] = None
+        error: Optional[AzureError] = None
     ) -> bool:
         """Increment the retry counters.
 
@@ -476,7 +476,7 @@ class StorageRetryPolicy(HTTPPolicy):
         :param Optional[PipelineResponse] response: A pipeline response object.
         :param error: An error encountered during the request, or
             None if the response was received successfully.
-        :paramtype error: Optional[Union[ServiceRequestError, ServiceResponseError]]
+        :paramtype error: Optional[AzureError]
         :returns: Whether the retry attempts are exhausted.
         :rtype: bool
         """
