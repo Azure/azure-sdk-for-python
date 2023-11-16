@@ -195,7 +195,7 @@ class AioHttpTransport(AsyncHttpTransport):
         request: HttpRequest,
         *,
         stream: bool = False,
-        proxies: Optional[Dict] = None,
+        proxies: Optional[Dict[str, str]] = None,
         proxy: Optional[str] = None,
         **config: Any,
     ) -> AsyncHttpResponse:
@@ -220,7 +220,7 @@ class AioHttpTransport(AsyncHttpTransport):
         request: RestHttpRequest,
         *,
         stream: bool = False,
-        proxies: Optional[Dict] = None,
+        proxies: Optional[Dict[str, str]] = None,
         proxy: Optional[str] = None,
         **config: Any,
     ) -> RestAsyncHttpResponse:
@@ -244,7 +244,7 @@ class AioHttpTransport(AsyncHttpTransport):
         request: Union[HttpRequest, RestHttpRequest],
         *,
         stream: bool = False,
-        proxies: Optional[Dict] = None,
+        proxies: Optional[Dict[str, str]] = None,
         proxy: Optional[str] = None,
         **config,
     ) -> Union[AsyncHttpResponse, RestAsyncHttpResponse]:
