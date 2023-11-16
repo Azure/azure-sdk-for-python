@@ -34,13 +34,13 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     async def create_task_collection(
         self,
         job_id: str,
-        collection: _models.BatchTaskCollection or List[_models.BatchTaskCreateOptions],
+        collection: _models.BatchTaskCollection or List[_models.BatchTaskCreateParameters],
         concurrencies: Optional[int] = 0,
         *,
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.TaskAddCollectionResult:
+    ) -> _models.BatchTaskAddCollectionResult:
         """Adds a collection of Tasks to the specified Job.
 
         Note that each Task must have a unique ID. The Batch service may not return the
@@ -78,8 +78,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
-        :rtype: ~azure.batch.models.TaskAddCollectionResult
+        :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
+        :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
         :raises ~azure.batch.custom.CreateTasksErrorException
         """
 
@@ -117,7 +117,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         else:
             submitted_tasks = _handle_output(results_queue)
-            return _models.TaskAddCollectionResult(value=submitted_tasks)
+            return _models.BatchTaskAddCollectionResult(value=submitted_tasks)
 
     async def get_node_file(
         self,
@@ -428,7 +428,7 @@ class _TaskWorkflowManager(object):
         self,
         original_create_task_collection,
         job_id: str,
-        collection: _models.BatchTaskCollection or List[_models.BatchTaskCreateOptions],
+        collection: _models.BatchTaskCollection or List[_models.BatchTaskCreateParameters],
         **kwargs
     ):
         # List of tasks which failed to add due to a returned client error
@@ -457,7 +457,7 @@ class _TaskWorkflowManager(object):
     async def _bulk_add_tasks(
         self,
         results_queue: collections.deque,
-        chunk_tasks_to_add: List[_models.BatchTaskCreateOptions],
+        chunk_tasks_to_add: List[_models.BatchTaskCreateParameters],
     ):
         """Adds a chunk of tasks to the job
 
@@ -471,7 +471,7 @@ class _TaskWorkflowManager(object):
         """
 
         try:
-            create_task_collection_response: _models.TaskAddCollectionResult = (
+            create_task_collection_response: _models.BatchTaskAddCollectionResult = (
                 await self._original_create_task_collection(
                     job_id=self._job_id,
                     collection=_models.BatchTaskCollection(value=chunk_tasks_to_add),

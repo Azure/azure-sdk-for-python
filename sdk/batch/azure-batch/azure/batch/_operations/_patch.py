@@ -38,7 +38,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         time_out: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.TaskAddCollectionResult:
+    ) -> _models.BatchTaskAddCollectionResult:
         """Adds a collection of Tasks to the specified Job.
 
         Note that each Task must have a unique ID. The Batch service may not return the
@@ -76,8 +76,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
-        :rtype: ~azure.batch.models.TaskAddCollectionResult
+        :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
+        :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
         :raises ~azure.batch.custom.CreateTasksErrorException
         """
 
@@ -122,7 +122,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         else:
             submitted_tasks = _handle_output(results_queue)
-            return _models.TaskAddCollectionResult(value=submitted_tasks)
+            return _models.BatchTaskAddCollectionResult(value=submitted_tasks)
 
     def get_node_file(
         self,
@@ -434,8 +434,8 @@ class _TaskWorkflowManager(object):
         <azure.batch.models.TaskAddParameter>`
     :param task_create_task_collection_options: Additional parameters for the
         operation
-    :type task_create_task_collection_options: :class:`TaskAddCollectionOptions
-        <azure.batch.models.TaskAddCollectionOptions>`
+    :type task_create_task_collection_options: :class:`BatchTaskAddCollectionResult
+        <azure.batch.models.BatchTaskAddCollectionResult>`
     """
 
     def __init__(
@@ -477,7 +477,7 @@ class _TaskWorkflowManager(object):
         """
 
         try:
-            create_task_collection_response: _models.TaskAddCollectionResult = (
+            create_task_collection_response: _models.BatchTaskAddCollectionResult = (
                 self._original_create_task_collection(
                     job_id=self._job_id,
                     collection=_models.BatchTaskCollection(value=chunk_tasks_to_add),
