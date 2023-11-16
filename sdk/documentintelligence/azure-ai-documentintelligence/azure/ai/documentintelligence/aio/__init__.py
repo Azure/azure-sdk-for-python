@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import DocumentAnalysisClient
-from ._client import DocumentModelAdministrationClient
+from ._client import DocumentIntelligenceClient
+from ._client import DocumentIntelligenceAdministrationClient
 
 try:
     from ._patch import __all__ as _patch_all
@@ -17,8 +17,8 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "DocumentAnalysisClient",
-    "DocumentModelAdministrationClient",
+    "DocumentIntelligenceClient",
+    "DocumentIntelligenceAdministrationClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 

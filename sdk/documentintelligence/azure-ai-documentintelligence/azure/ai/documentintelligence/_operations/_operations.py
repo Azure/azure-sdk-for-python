@@ -31,7 +31,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import DocumentAnalysisClientMixinABC, DocumentModelAdministrationClientMixinABC
+from .._vendor import DocumentIntelligenceAdministrationClientMixinABC, DocumentIntelligenceClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -45,7 +45,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_document_analysis_analyze_document_request(  # pylint: disable=name-too-long
+def build_document_intelligence_analyze_document_request(  # pylint: disable=name-too-long
     model_id: str,
     *,
     pages: Optional[str] = None,
@@ -91,7 +91,7 @@ def build_document_analysis_analyze_document_request(  # pylint: disable=name-to
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_analysis_classify_document_request(  # pylint: disable=name-too-long
+def build_document_intelligence_classify_document_request(  # pylint: disable=name-too-long
     classifier_id: str,
     *,
     string_index_type: Optional[Union[str, _models.StringIndexType]] = None,
@@ -125,7 +125,7 @@ def build_document_analysis_classify_document_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_build_document_model_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_build_document_model_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -146,7 +146,7 @@ def build_document_model_administration_build_document_model_request(  # pylint:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_compose_model_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_compose_model_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -167,7 +167,7 @@ def build_document_model_administration_compose_model_request(  # pylint: disabl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_authorize_model_copy_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_authorize_model_copy_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -191,7 +191,7 @@ def build_document_model_administration_authorize_model_copy_request(  # pylint:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_copy_model_to_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_copy_model_to_request(  # pylint: disable=name-too-long
     model_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -217,7 +217,7 @@ def build_document_model_administration_copy_model_to_request(  # pylint: disabl
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_get_model_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_get_model_request(  # pylint: disable=name-too-long
     model_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -243,7 +243,7 @@ def build_document_model_administration_get_model_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_list_models_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_list_models_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -264,7 +264,7 @@ def build_document_model_administration_list_models_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_delete_model_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_delete_model_request(  # pylint: disable=name-too-long
     model_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -284,7 +284,7 @@ def build_document_model_administration_delete_model_request(  # pylint: disable
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_document_model_administration_get_resource_info_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_get_resource_info_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -305,7 +305,7 @@ def build_document_model_administration_get_resource_info_request(  # pylint: di
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_get_operation_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_get_operation_request(  # pylint: disable=name-too-long
     operation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -331,7 +331,7 @@ def build_document_model_administration_get_operation_request(  # pylint: disabl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_list_operations_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_list_operations_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -352,7 +352,7 @@ def build_document_model_administration_list_operations_request(  # pylint: disa
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_build_classifier_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_build_classifier_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -373,7 +373,7 @@ def build_document_model_administration_build_classifier_request(  # pylint: dis
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_get_classifier_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_get_classifier_request(  # pylint: disable=name-too-long
     classifier_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -399,7 +399,7 @@ def build_document_model_administration_get_classifier_request(  # pylint: disab
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_list_classifiers_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_list_classifiers_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -420,7 +420,7 @@ def build_document_model_administration_list_classifiers_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_document_model_administration_delete_classifier_request(  # pylint: disable=name-too-long
+def build_document_intelligence_administration_delete_classifier_request(  # pylint: disable=name-too-long
     classifier_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -440,7 +440,7 @@ def build_document_model_administration_delete_classifier_request(  # pylint: di
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
+class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinABC):  # pylint: disable=name-too-long
     def _analyze_document_initial(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
@@ -478,7 +478,7 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
             else:
                 _content = None
 
-        _request = build_document_analysis_analyze_document_request(
+        _request = build_document_intelligence_analyze_document_request(
             model_id=model_id,
             pages=pages,
             locale=locale,
@@ -831,7 +831,7 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         else:
             _content = json.dumps(classify_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_analysis_classify_document_request(
+        _request = build_document_intelligence_classify_document_request(
             classifier_id=classifier_id,
             string_index_type=string_index_type,
             split=split,
@@ -1079,8 +1079,8 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         )
 
 
-class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
-    DocumentModelAdministrationClientMixinABC
+class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
+    DocumentIntelligenceAdministrationClientMixinABC
 ):
     def _build_document_model_initial(  # pylint: disable=inconsistent-return-statements
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO], **kwargs: Any
@@ -1106,7 +1106,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(build_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_build_document_model_request(
+        _request = build_document_intelligence_administration_build_document_model_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1317,7 +1317,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(compose_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_compose_model_request(
+        _request = build_document_intelligence_administration_compose_model_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1610,7 +1610,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(authorize_copy_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_authorize_model_copy_request(
+        _request = build_document_intelligence_administration_authorize_model_copy_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1670,7 +1670,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(copy_to_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_copy_model_to_request(
+        _request = build_document_intelligence_administration_copy_model_to_request(
             model_id=model_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1896,7 +1896,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[_models.DocumentModelDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_get_model_request(
+        _request = build_document_intelligence_administration_get_model_request(
             model_id=model_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1956,7 +1956,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_document_model_administration_list_models_request(
+                _request = build_document_intelligence_administration_list_models_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2040,7 +2040,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_delete_model_request(
+        _request = build_document_intelligence_administration_delete_model_request(
             model_id=model_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2091,7 +2091,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[_models.ResourceDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_get_resource_info_request(
+        _request = build_document_intelligence_administration_get_resource_info_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2150,7 +2150,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_get_operation_request(
+        _request = build_document_intelligence_administration_get_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2209,7 +2209,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_document_model_administration_list_operations_request(
+                _request = build_document_intelligence_administration_list_operations_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2294,7 +2294,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(build_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_build_classifier_request(
+        _request = build_document_intelligence_administration_build_classifier_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2511,7 +2511,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[_models.DocumentClassifierDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_get_classifier_request(
+        _request = build_document_intelligence_administration_get_classifier_request(
             classifier_id=classifier_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2571,7 +2571,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_document_model_administration_list_classifiers_request(
+                _request = build_document_intelligence_administration_list_classifiers_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2657,7 +2657,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_delete_classifier_request(
+        _request = build_document_intelligence_administration_delete_classifier_request(
             classifier_id=classifier_id,
             api_version=self._config.api_version,
             headers=_headers,

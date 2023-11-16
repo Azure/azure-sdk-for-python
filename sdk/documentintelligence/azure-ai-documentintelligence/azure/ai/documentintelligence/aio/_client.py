@@ -15,18 +15,24 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import DocumentAnalysisClientConfiguration, DocumentModelAdministrationClientConfiguration
-from ._operations import DocumentAnalysisClientOperationsMixin, DocumentModelAdministrationClientOperationsMixin
+from ._configuration import (
+    DocumentIntelligenceAdministrationClientConfiguration,
+    DocumentIntelligenceClientConfiguration,
+)
+from ._operations import (
+    DocumentIntelligenceAdministrationClientOperationsMixin,
+    DocumentIntelligenceClientOperationsMixin,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DocumentAnalysisClient(
-    DocumentAnalysisClientOperationsMixin
+class DocumentIntelligenceClient(
+    DocumentIntelligenceClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
-    """DocumentAnalysisClient.
+    """DocumentIntelligenceClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
@@ -46,7 +52,7 @@ class DocumentAnalysisClient(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}/documentintelligence"
-        self._config = DocumentAnalysisClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = DocumentIntelligenceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -101,7 +107,7 @@ class DocumentAnalysisClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "DocumentAnalysisClient":
+    async def __aenter__(self) -> "DocumentIntelligenceClient":
         await self._client.__aenter__()
         return self
 
@@ -109,10 +115,10 @@ class DocumentAnalysisClient(
         await self._client.__aexit__(*exc_details)
 
 
-class DocumentModelAdministrationClient(
-    DocumentModelAdministrationClientOperationsMixin
+class DocumentIntelligenceAdministrationClient(
+    DocumentIntelligenceAdministrationClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
-    """DocumentModelAdministrationClient.
+    """DocumentIntelligenceAdministrationClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
     :type endpoint: str
@@ -132,7 +138,7 @@ class DocumentModelAdministrationClient(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}/documentintelligence"
-        self._config = DocumentModelAdministrationClientConfiguration(
+        self._config = DocumentIntelligenceAdministrationClientConfiguration(
             endpoint=endpoint, credential=credential, **kwargs
         )
         _policies = kwargs.pop("policies", None)
@@ -189,7 +195,7 @@ class DocumentModelAdministrationClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "DocumentModelAdministrationClient":
+    async def __aenter__(self) -> "DocumentIntelligenceAdministrationClient":
         await self._client.__aenter__()
         return self
 

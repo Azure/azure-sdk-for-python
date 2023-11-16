@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DocumentAnalysisClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
-    """Configuration for DocumentAnalysisClient.
+class DocumentIntelligenceClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for DocumentIntelligenceClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -75,8 +75,8 @@ class DocumentAnalysisClientConfiguration:  # pylint: disable=too-many-instance-
             self.authentication_policy = self._infer_policy(**kwargs)
 
 
-class DocumentModelAdministrationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
-    """Configuration for DocumentModelAdministrationClient.
+class DocumentIntelligenceAdministrationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for DocumentIntelligenceAdministrationClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

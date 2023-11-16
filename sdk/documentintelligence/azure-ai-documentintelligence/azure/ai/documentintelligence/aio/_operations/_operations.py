@@ -32,24 +32,24 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_document_analysis_analyze_document_request,
-    build_document_analysis_classify_document_request,
-    build_document_model_administration_authorize_model_copy_request,
-    build_document_model_administration_build_classifier_request,
-    build_document_model_administration_build_document_model_request,
-    build_document_model_administration_compose_model_request,
-    build_document_model_administration_copy_model_to_request,
-    build_document_model_administration_delete_classifier_request,
-    build_document_model_administration_delete_model_request,
-    build_document_model_administration_get_classifier_request,
-    build_document_model_administration_get_model_request,
-    build_document_model_administration_get_operation_request,
-    build_document_model_administration_get_resource_info_request,
-    build_document_model_administration_list_classifiers_request,
-    build_document_model_administration_list_models_request,
-    build_document_model_administration_list_operations_request,
+    build_document_intelligence_administration_authorize_model_copy_request,
+    build_document_intelligence_administration_build_classifier_request,
+    build_document_intelligence_administration_build_document_model_request,
+    build_document_intelligence_administration_compose_model_request,
+    build_document_intelligence_administration_copy_model_to_request,
+    build_document_intelligence_administration_delete_classifier_request,
+    build_document_intelligence_administration_delete_model_request,
+    build_document_intelligence_administration_get_classifier_request,
+    build_document_intelligence_administration_get_model_request,
+    build_document_intelligence_administration_get_operation_request,
+    build_document_intelligence_administration_get_resource_info_request,
+    build_document_intelligence_administration_list_classifiers_request,
+    build_document_intelligence_administration_list_models_request,
+    build_document_intelligence_administration_list_operations_request,
+    build_document_intelligence_analyze_document_request,
+    build_document_intelligence_classify_document_request,
 )
-from .._vendor import DocumentAnalysisClientMixinABC, DocumentModelAdministrationClientMixinABC
+from .._vendor import DocumentIntelligenceAdministrationClientMixinABC, DocumentIntelligenceClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -60,7 +60,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
+class DocumentIntelligenceClientOperationsMixin(DocumentIntelligenceClientMixinABC):  # pylint: disable=name-too-long
     async def _analyze_document_initial(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
@@ -98,7 +98,7 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
             else:
                 _content = None
 
-        _request = build_document_analysis_analyze_document_request(
+        _request = build_document_intelligence_analyze_document_request(
             model_id=model_id,
             pages=pages,
             locale=locale,
@@ -452,7 +452,7 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         else:
             _content = json.dumps(classify_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_analysis_classify_document_request(
+        _request = build_document_intelligence_classify_document_request(
             classifier_id=classifier_id,
             string_index_type=string_index_type,
             split=split,
@@ -701,8 +701,8 @@ class DocumentAnalysisClientOperationsMixin(DocumentAnalysisClientMixinABC):
         )
 
 
-class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
-    DocumentModelAdministrationClientMixinABC
+class DocumentIntelligenceAdministrationClientOperationsMixin(  # pylint: disable=name-too-long
+    DocumentIntelligenceAdministrationClientMixinABC
 ):
     async def _build_document_model_initial(  # pylint: disable=inconsistent-return-statements
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO], **kwargs: Any
@@ -728,7 +728,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(build_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_build_document_model_request(
+        _request = build_document_intelligence_administration_build_document_model_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -940,7 +940,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(compose_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_compose_model_request(
+        _request = build_document_intelligence_administration_compose_model_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1234,7 +1234,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(authorize_copy_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_authorize_model_copy_request(
+        _request = build_document_intelligence_administration_authorize_model_copy_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1294,7 +1294,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(copy_to_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_copy_model_to_request(
+        _request = build_document_intelligence_administration_copy_model_to_request(
             model_id=model_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1521,7 +1521,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[_models.DocumentModelDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_get_model_request(
+        _request = build_document_intelligence_administration_get_model_request(
             model_id=model_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1581,7 +1581,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_document_model_administration_list_models_request(
+                _request = build_document_intelligence_administration_list_models_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1667,7 +1667,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_delete_model_request(
+        _request = build_document_intelligence_administration_delete_model_request(
             model_id=model_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1718,7 +1718,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[_models.ResourceDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_get_resource_info_request(
+        _request = build_document_intelligence_administration_get_resource_info_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1777,7 +1777,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[_models.OperationDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_get_operation_request(
+        _request = build_document_intelligence_administration_get_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1837,7 +1837,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_document_model_administration_list_operations_request(
+                _request = build_document_intelligence_administration_list_operations_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1922,7 +1922,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         else:
             _content = json.dumps(build_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_model_administration_build_classifier_request(
+        _request = build_document_intelligence_administration_build_classifier_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2140,7 +2140,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[_models.DocumentClassifierDetails] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_get_classifier_request(
+        _request = build_document_intelligence_administration_get_classifier_request(
             classifier_id=classifier_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2200,7 +2200,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_document_model_administration_list_classifiers_request(
+                _request = build_document_intelligence_administration_list_classifiers_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2286,7 +2286,7 @@ class DocumentModelAdministrationClientOperationsMixin(  # pylint: disable=name-
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_document_model_administration_delete_classifier_request(
+        _request = build_document_intelligence_administration_delete_classifier_request(
             classifier_id=classifier_id,
             api_version=self._config.api_version,
             headers=_headers,
