@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import asyncio
 
+
 async def analyze_text_async():
     # [START analyze_text_async]
 
@@ -49,8 +50,10 @@ async def analyze_text_async():
 
     # [END analyze_text_async]
 
+
 async def main():
     await analyze_text_async()
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

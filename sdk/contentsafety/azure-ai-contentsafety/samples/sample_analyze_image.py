@@ -6,9 +6,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+
 def analyze_image():
     # [START analyze_image]
-    
+
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.core.credentials import AzureKeyCredential
