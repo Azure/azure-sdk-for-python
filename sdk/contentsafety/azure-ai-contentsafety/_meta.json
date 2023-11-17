@@ -1,13 +1,6 @@
 {
-<<<<<<< HEAD
-  "commit": "7629012daed5c19b9918bd8e95b3773f41f6bbf2",
-  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/cognitiveservices/ContentSafety",
-  "@azure-tools/typespec-python": "0.15.12"
-=======
   "commit": "d1d9db338f7185489525b386538615283b881a37",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/cognitiveservices/ContentSafety",
   "@azure-tools/typespec-python": "0.15.13"
->>>>>>> upstream/sdkAuto/26353/azure-ai-contentsafety
 }
