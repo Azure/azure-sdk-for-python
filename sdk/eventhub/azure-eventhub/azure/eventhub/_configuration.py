@@ -19,7 +19,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
             *,
             hostname: str,
             amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"],
-            socket_timeout: float,
+            socket_timeout: Optional[float] = None,
             user_agent: Optional[str] = None,
             retry_total: int = 3,
             retry_mode: Union[str, RetryMode] = RetryMode.Exponential,
@@ -56,11 +56,10 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.send_timeout = send_timeout
         self.custom_endpoint_address = custom_endpoint_address
         self.connection_verify = connection_verify
-        self.connection_port = DEFAULT_AMQPS_PORT
         self.custom_endpoint_hostname = None
         self.hostname = hostname
         amqp_transport = amqp_transport
-        self.socket_timeout = socket_timeout or .2
+        
 
         if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:
             self.transport_type = TransportType.AmqpOverWebsocket
@@ -68,6 +67,9 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
             self.socket_timeout = socket_timeout or 1
             if amqp_transport.KIND == "pyamqp":
                 self.hostname += "/$servicebus/websocket"
+        else:
+            self.socket_timeout = socket_timeout or .2
+            self.connection_port = DEFAULT_AMQPS_PORT
 
         # custom end point
         if self.custom_endpoint_address:
