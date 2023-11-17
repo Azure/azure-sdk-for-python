@@ -8,6 +8,7 @@ import tempfile
 import time
 import logging
 from pathlib import Path
+from typing import Callable, Optional, Dict, List
 
 import mlflow
 import pandas as pd
@@ -81,15 +82,15 @@ def _log_metrics(run_id, metrics):
 @distributed_trace
 @monitor_with_activity(LOGGER, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
-        evaluation_name=None,
-        target=None,
-        data=None,
-        task_type=None,
-        sweep_args=None,
-        metrics_list=None,
-        model_config=None,
-        data_mapping=None,
-        output_path=None,
+        *,
+        evaluation_name: str = None,
+        target: Optional[Callable] = None,
+        data: Optional[str] = None,
+        task_type: str = None,
+        metrics_list: Optional[List[str]] = None,
+        model_config: Dict[str, str] = None,
+        data_mapping: Dict[str, str] = None,
+        output_path: Optional[str] = None,
         **kwargs
 ):
     """Evaluates target or data with built-in evaluation metrics
@@ -138,6 +139,7 @@ def evaluate(
     if data_mapping:
         metrics_config.update(data_mapping)
 
+    sweep_args = kwargs.pop("sweep_args", None)
     if sweep_args:
         import itertools
         keys, values = zip(*sweep_args.items())
@@ -333,7 +335,6 @@ def _evaluate(
     return evaluation_result
 
 
-
 def log_input(data, data_is_file):
     try:
         # Mlflow service supports only uri_folder, hence this is need to create a dir to log input data.
@@ -367,6 +368,7 @@ def log_param_and_tag(key, value):
 def log_property_and_tag(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
     mlflow.set_tag(key, value)
+
 
 def log_property(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)

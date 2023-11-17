@@ -313,7 +313,7 @@ def parse_require(req: str) -> Tuple[str, SpecifierSet]:
     return (pkg_name, spec)
 
 
-def parse_requirements_file(file_location: str) -> Dict[str, str]:
+def parse_freeze_output(file_location: str) -> Dict[str, str]:
     """
     Takes a python requirements file and returns a dictionary representing the contents.
     """

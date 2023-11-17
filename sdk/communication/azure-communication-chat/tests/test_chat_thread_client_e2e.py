@@ -5,9 +5,8 @@
 # --------------------------------------------------------------------------
 import pytest
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from devtools_testutils import AzureRecordedTestCase, is_live
-from azure.core.serialization import TZ_UTC
 
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.chat import (
@@ -66,7 +65,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
         # create chat thread, and ChatThreadClient
         topic = "test topic"
         share_history_time = datetime.utcnow()
-        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        share_history_time = share_history_time.replace(tzinfo=timezone.utc)
         participants = [ChatParticipant(
             identifier=self.user,
             display_name='name',
@@ -83,7 +82,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
         # create chat thread, and ChatThreadClient
         topic = "test topic"
         share_history_time = datetime.utcnow()
-        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        share_history_time = share_history_time.replace(tzinfo=timezone.utc)
         participants = [
             ChatParticipant(
                 identifier=self.user,
@@ -171,7 +170,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
 
         # add another participant
         share_history_time = datetime.utcnow()
-        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        share_history_time = share_history_time.replace(tzinfo=timezone.utc)
         new_participant = ChatParticipant(
             identifier=self.new_user,
             display_name='name',
@@ -197,7 +196,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
         self._create_thread()
 
         share_history_time = datetime.utcnow()
-        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        share_history_time = share_history_time.replace(tzinfo=timezone.utc)
         new_participant = ChatParticipant(
                 identifier=self.new_user,
                 display_name='name',
@@ -216,7 +215,7 @@ class TestChatThreadClient(AzureRecordedTestCase):
 
         # add participant first
         share_history_time = datetime.utcnow()
-        share_history_time = share_history_time.replace(tzinfo=TZ_UTC)
+        share_history_time = share_history_time.replace(tzinfo=timezone.utc)
         new_participant = ChatParticipant(
                 identifier=self.new_user,
                 display_name='name',

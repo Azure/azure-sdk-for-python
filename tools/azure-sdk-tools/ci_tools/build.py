@@ -1,4 +1,4 @@
-import argparse, sys, os, logging, pdb
+import argparse, sys, os, logging, glob, shutil
 
 from subprocess import run
 
@@ -124,6 +124,19 @@ def build() -> None:
         str_to_bool(args.apiview_closure),
         build_id,
     )
+
+
+def cleanup_build_artifacts(build_folder):
+    # clean up egginfo
+    results = glob.glob(os.path.join(build_folder, "*.egg-info"))
+
+    if results:
+        shutil.rmtree(results[0])
+
+    # clean up build results
+    build_path = os.path.join(build_folder, "build")
+    if os.path.exists(build_path):
+        shutil.rmtree(build_path)
 
 
 def build_packages(

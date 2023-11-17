@@ -100,7 +100,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 mode_copy = copy.deepcopy(mode)
                 mode_copy.min_concurrent_offers = 2
                 mode_copy.max_concurrent_offers = 2
-                distribution_policy_response.mode = mode
+                distribution_policy_response.mode = mode_copy
 
                 updated_distribution_policy = await router_client.upsert_distribution_policy(
                     dp_identifier, distribution_policy_response
