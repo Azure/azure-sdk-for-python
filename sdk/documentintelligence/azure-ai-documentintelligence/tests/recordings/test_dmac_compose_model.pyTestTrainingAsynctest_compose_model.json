@@ -1,0 +1,1067 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels:build?api-version=2023-10-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "154",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "modelId": "bbf74cfa-ddbe-410a-91ec-64acd5ab5938",
+        "description": "model1",
+        "buildMode": "template",
+        "azureBlobSource": {
+          "containerUrl": "https://blob_sas_url"
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "45b5ed0b-2306-405b-ba05-7378a313ff7a",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Nov 2023 17:29:47 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125812_45b5ed0b-2306-405b-ba05-7378a313ff7a?api-version=2023-10-31-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "1155",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125812_45b5ed0b-2306-405b-ba05-7378a313ff7a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "81394888-47d5-44ae-8581-8d67a244d61e",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:47 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "7",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125812_45b5ed0b-2306-405b-ba05-7378a313ff7a",
+        "kind": "documentModelBuild",
+        "status": "notStarted",
+        "createdDateTime": "2023-11-17T17:29:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:29:47Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/bbf74cfa-ddbe-410a-91ec-64acd5ab5938?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125812_45b5ed0b-2306-405b-ba05-7378a313ff7a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "4a2d585d-2a77-4cb9-8861-032b0cd563e0",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:53 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "7",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125812_45b5ed0b-2306-405b-ba05-7378a313ff7a",
+        "kind": "documentModelBuild",
+        "status": "succeeded",
+        "createdDateTime": "2023-11-17T17:29:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:29:49Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/bbf74cfa-ddbe-410a-91ec-64acd5ab5938?api-version=2023-10-31-preview",
+        "percentCompleted": 100,
+        "result": {
+          "docTypes": {
+            "bbf74cfa-ddbe-410a-91ec-64acd5ab5938": {
+              "fieldSchema": {
+                "Merchant": {
+                  "type": "string"
+                },
+                "PhoneNumber": {
+                  "type": "string"
+                },
+                "Website": {
+                  "type": "string"
+                },
+                "Email": {
+                  "type": "string"
+                },
+                "PurchaseOrderNumber": {
+                  "type": "string"
+                },
+                "DatedAs": {
+                  "type": "string"
+                },
+                "VendorName": {
+                  "type": "string"
+                },
+                "CompanyName": {
+                  "type": "string"
+                },
+                "CompanyAddress": {
+                  "type": "string"
+                },
+                "CompanyPhoneNumber": {
+                  "type": "string"
+                },
+                "Subtotal": {
+                  "type": "string"
+                },
+                "Tax": {
+                  "type": "string"
+                },
+                "Total": {
+                  "type": "string"
+                },
+                "Signature": {
+                  "type": "string"
+                },
+                "Quantity": {
+                  "type": "number"
+                },
+                "FullSignature": {
+                  "type": "signature"
+                }
+              },
+              "buildMode": "template",
+              "fieldConfidence": {
+                "CompanyAddress": 0.8,
+                "CompanyName": 0.995,
+                "CompanyPhoneNumber": 0.995,
+                "DatedAs": 0.995,
+                "Email": 0.8,
+                "FullSignature": 0.6,
+                "Merchant": 0.995,
+                "PhoneNumber": 0.995,
+                "PurchaseOrderNumber": 0.995,
+                "Quantity": 0.995,
+                "Signature": 0.995,
+                "Subtotal": 0.995,
+                "Tax": 0.995,
+                "Total": 0.995,
+                "VendorName": 0.995,
+                "Website": 0.995
+              }
+            }
+          },
+          "modelId": "bbf74cfa-ddbe-410a-91ec-64acd5ab5938",
+          "createdDateTime": "2023-11-17T17:29:49Z",
+          "expirationDateTime": "2025-11-16T17:29:49Z",
+          "apiVersion": "2023-10-31-preview",
+          "description": "model1"
+        },
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/bbf74cfa-ddbe-410a-91ec-64acd5ab5938?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "af72f35d-10d2-4aef-9e41-fc1cb85a277b",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:53 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "22",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "docTypes": {
+          "bbf74cfa-ddbe-410a-91ec-64acd5ab5938": {
+            "fieldSchema": {
+              "Merchant": {
+                "type": "string"
+              },
+              "PhoneNumber": {
+                "type": "string"
+              },
+              "Website": {
+                "type": "string"
+              },
+              "Email": {
+                "type": "string"
+              },
+              "PurchaseOrderNumber": {
+                "type": "string"
+              },
+              "DatedAs": {
+                "type": "string"
+              },
+              "VendorName": {
+                "type": "string"
+              },
+              "CompanyName": {
+                "type": "string"
+              },
+              "CompanyAddress": {
+                "type": "string"
+              },
+              "CompanyPhoneNumber": {
+                "type": "string"
+              },
+              "Subtotal": {
+                "type": "string"
+              },
+              "Tax": {
+                "type": "string"
+              },
+              "Total": {
+                "type": "string"
+              },
+              "Signature": {
+                "type": "string"
+              },
+              "Quantity": {
+                "type": "number"
+              },
+              "FullSignature": {
+                "type": "signature"
+              }
+            },
+            "buildMode": "template",
+            "fieldConfidence": {
+              "CompanyAddress": 0.8,
+              "CompanyName": 0.995,
+              "CompanyPhoneNumber": 0.995,
+              "DatedAs": 0.995,
+              "Email": 0.8,
+              "FullSignature": 0.6,
+              "Merchant": 0.995,
+              "PhoneNumber": 0.995,
+              "PurchaseOrderNumber": 0.995,
+              "Quantity": 0.995,
+              "Signature": 0.995,
+              "Subtotal": 0.995,
+              "Tax": 0.995,
+              "Total": 0.995,
+              "VendorName": 0.995,
+              "Website": 0.995
+            }
+          }
+        },
+        "modelId": "bbf74cfa-ddbe-410a-91ec-64acd5ab5938",
+        "createdDateTime": "2023-11-17T17:29:49Z",
+        "expirationDateTime": "2025-11-16T17:29:49Z",
+        "apiVersion": "2023-10-31-preview",
+        "description": "model1"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels:build?api-version=2023-10-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "154",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "modelId": "83027ec9-8200-4013-989a-ed6dfc2b70d1",
+        "description": "model2",
+        "buildMode": "template",
+        "azureBlobSource": {
+          "containerUrl": "https://blob_sas_url"
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "95aa21ba-951a-4aea-b9f2-eb4de2341428",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Nov 2023 17:29:55 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125806_95aa21ba-951a-4aea-b9f2-eb4de2341428?api-version=2023-10-31-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "1119",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125806_95aa21ba-951a-4aea-b9f2-eb4de2341428?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "78dbc943-b0fc-4cbd-8dae-e1903376834f",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:55 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "6",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125806_95aa21ba-951a-4aea-b9f2-eb4de2341428",
+        "kind": "documentModelBuild",
+        "status": "notStarted",
+        "createdDateTime": "2023-11-17T17:29:53Z",
+        "lastUpdatedDateTime": "2023-11-17T17:29:53Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/83027ec9-8200-4013-989a-ed6dfc2b70d1?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125806_95aa21ba-951a-4aea-b9f2-eb4de2341428?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "1829e53a-8380-407e-bc3b-62d0f0ea1fd4",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:30:00 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "13",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125806_95aa21ba-951a-4aea-b9f2-eb4de2341428",
+        "kind": "documentModelBuild",
+        "status": "succeeded",
+        "createdDateTime": "2023-11-17T17:29:53Z",
+        "lastUpdatedDateTime": "2023-11-17T17:29:56Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/83027ec9-8200-4013-989a-ed6dfc2b70d1?api-version=2023-10-31-preview",
+        "percentCompleted": 100,
+        "result": {
+          "docTypes": {
+            "83027ec9-8200-4013-989a-ed6dfc2b70d1": {
+              "fieldSchema": {
+                "Merchant": {
+                  "type": "string"
+                },
+                "PhoneNumber": {
+                  "type": "string"
+                },
+                "Website": {
+                  "type": "string"
+                },
+                "Email": {
+                  "type": "string"
+                },
+                "PurchaseOrderNumber": {
+                  "type": "string"
+                },
+                "DatedAs": {
+                  "type": "string"
+                },
+                "VendorName": {
+                  "type": "string"
+                },
+                "CompanyName": {
+                  "type": "string"
+                },
+                "CompanyAddress": {
+                  "type": "string"
+                },
+                "CompanyPhoneNumber": {
+                  "type": "string"
+                },
+                "Subtotal": {
+                  "type": "string"
+                },
+                "Tax": {
+                  "type": "string"
+                },
+                "Total": {
+                  "type": "string"
+                },
+                "Signature": {
+                  "type": "string"
+                },
+                "Quantity": {
+                  "type": "number"
+                },
+                "FullSignature": {
+                  "type": "signature"
+                }
+              },
+              "buildMode": "template",
+              "fieldConfidence": {
+                "CompanyAddress": 0.8,
+                "CompanyName": 0.995,
+                "CompanyPhoneNumber": 0.995,
+                "DatedAs": 0.995,
+                "Email": 0.8,
+                "FullSignature": 0.6,
+                "Merchant": 0.995,
+                "PhoneNumber": 0.995,
+                "PurchaseOrderNumber": 0.995,
+                "Quantity": 0.995,
+                "Signature": 0.995,
+                "Subtotal": 0.995,
+                "Tax": 0.995,
+                "Total": 0.995,
+                "VendorName": 0.995,
+                "Website": 0.995
+              }
+            }
+          },
+          "modelId": "83027ec9-8200-4013-989a-ed6dfc2b70d1",
+          "createdDateTime": "2023-11-17T17:29:56Z",
+          "expirationDateTime": "2025-11-16T17:29:56Z",
+          "apiVersion": "2023-10-31-preview",
+          "description": "model2"
+        },
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/83027ec9-8200-4013-989a-ed6dfc2b70d1?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "48c84220-474e-4db8-9253-6cbe02661ea7",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:30:00 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "19",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "docTypes": {
+          "83027ec9-8200-4013-989a-ed6dfc2b70d1": {
+            "fieldSchema": {
+              "Merchant": {
+                "type": "string"
+              },
+              "PhoneNumber": {
+                "type": "string"
+              },
+              "Website": {
+                "type": "string"
+              },
+              "Email": {
+                "type": "string"
+              },
+              "PurchaseOrderNumber": {
+                "type": "string"
+              },
+              "DatedAs": {
+                "type": "string"
+              },
+              "VendorName": {
+                "type": "string"
+              },
+              "CompanyName": {
+                "type": "string"
+              },
+              "CompanyAddress": {
+                "type": "string"
+              },
+              "CompanyPhoneNumber": {
+                "type": "string"
+              },
+              "Subtotal": {
+                "type": "string"
+              },
+              "Tax": {
+                "type": "string"
+              },
+              "Total": {
+                "type": "string"
+              },
+              "Signature": {
+                "type": "string"
+              },
+              "Quantity": {
+                "type": "number"
+              },
+              "FullSignature": {
+                "type": "signature"
+              }
+            },
+            "buildMode": "template",
+            "fieldConfidence": {
+              "CompanyAddress": 0.8,
+              "CompanyName": 0.995,
+              "CompanyPhoneNumber": 0.995,
+              "DatedAs": 0.995,
+              "Email": 0.8,
+              "FullSignature": 0.6,
+              "Merchant": 0.995,
+              "PhoneNumber": 0.995,
+              "PurchaseOrderNumber": 0.995,
+              "Quantity": 0.995,
+              "Signature": 0.995,
+              "Subtotal": 0.995,
+              "Tax": 0.995,
+              "Total": 0.995,
+              "VendorName": 0.995,
+              "Website": 0.995
+            }
+          }
+        },
+        "modelId": "83027ec9-8200-4013-989a-ed6dfc2b70d1",
+        "createdDateTime": "2023-11-17T17:29:56Z",
+        "expirationDateTime": "2025-11-16T17:29:56Z",
+        "apiVersion": "2023-10-31-preview",
+        "description": "model2"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels:compose?api-version=2023-10-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "248",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "modelId": "e502ce5c-62c5-47ac-99ae-e11629431103",
+        "description": "my composed model",
+        "tags": {
+          "testkey": "testvalue"
+        },
+        "componentModels": [
+          {
+            "modelId": "bbf74cfa-ddbe-410a-91ec-64acd5ab5938"
+          },
+          {
+            "modelId": "83027ec9-8200-4013-989a-ed6dfc2b70d1"
+          }
+        ]
+      },
+      "StatusCode": 429,
+      "ResponseHeaders": {
+        "apim-request-id": "f36ed60c-c981-45bc-bc5c-4c30968bb32a",
+        "Content-Length": "301",
+        "Content-Type": "application/json",
+        "Date": "Fri, 17 Nov 2023 17:30:00 GMT",
+        "Retry-After": "3",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "429",
+          "message": "Requests to the Create - Compose model Operation under Azure AI Document Intelligence 2023-10-31-preview have exceeded call rate limit of your current FormRecognizer F0 pricing tier. Please retry after 3 seconds. To increase your rate limit switch to a paid tier."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels:compose?api-version=2023-10-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "248",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "modelId": "e502ce5c-62c5-47ac-99ae-e11629431103",
+        "description": "my composed model",
+        "tags": {
+          "testkey": "testvalue"
+        },
+        "componentModels": [
+          {
+            "modelId": "bbf74cfa-ddbe-410a-91ec-64acd5ab5938"
+          },
+          {
+            "modelId": "83027ec9-8200-4013-989a-ed6dfc2b70d1"
+          }
+        ]
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "4690df5e-5328-4141-a15b-a1a60d682126",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Nov 2023 17:30:03 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125797_4690df5e-5328-4141-a15b-a1a60d682126?api-version=2023-10-31-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "139",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125797_4690df5e-5328-4141-a15b-a1a60d682126?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 429,
+      "ResponseHeaders": {
+        "apim-request-id": "a5c21c06-166c-4b27-8a48-e84f77cd2b23",
+        "Content-Length": "305",
+        "Content-Type": "application/json",
+        "Date": "Fri, 17 Nov 2023 17:30:03 GMT",
+        "Retry-After": "5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "429",
+          "message": "Requests to the Operations - Get operation Operation under Azure AI Document Intelligence 2023-10-31-preview have exceeded call rate limit of your current FormRecognizer F0 pricing tier. Please retry after 5 seconds. To increase your rate limit switch to a paid tier."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125797_4690df5e-5328-4141-a15b-a1a60d682126?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "f9f00360-6fe5-4808-a1b9-644966b784d5",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:30:07 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "11",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125797_4690df5e-5328-4141-a15b-a1a60d682126",
+        "kind": "documentModelCompose",
+        "status": "succeeded",
+        "createdDateTime": "2023-11-17T17:30:03Z",
+        "lastUpdatedDateTime": "2023-11-17T17:30:03Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/e502ce5c-62c5-47ac-99ae-e11629431103?api-version=2023-10-31-preview",
+        "percentCompleted": 100,
+        "result": {
+          "docTypes": {
+            "bbf74cfa-ddbe-410a-91ec-64acd5ab5938": {
+              "fieldSchema": {
+                "Merchant": {
+                  "type": "string"
+                },
+                "PhoneNumber": {
+                  "type": "string"
+                },
+                "Website": {
+                  "type": "string"
+                },
+                "Email": {
+                  "type": "string"
+                },
+                "PurchaseOrderNumber": {
+                  "type": "string"
+                },
+                "DatedAs": {
+                  "type": "string"
+                },
+                "VendorName": {
+                  "type": "string"
+                },
+                "CompanyName": {
+                  "type": "string"
+                },
+                "CompanyAddress": {
+                  "type": "string"
+                },
+                "CompanyPhoneNumber": {
+                  "type": "string"
+                },
+                "Subtotal": {
+                  "type": "string"
+                },
+                "Tax": {
+                  "type": "string"
+                },
+                "Total": {
+                  "type": "string"
+                },
+                "Signature": {
+                  "type": "string"
+                },
+                "Quantity": {
+                  "type": "number"
+                },
+                "FullSignature": {
+                  "type": "signature"
+                }
+              },
+              "buildMode": "template",
+              "fieldConfidence": {
+                "CompanyAddress": 0.8,
+                "CompanyName": 0.995,
+                "CompanyPhoneNumber": 0.995,
+                "DatedAs": 0.995,
+                "Email": 0.8,
+                "FullSignature": 0.6,
+                "Merchant": 0.995,
+                "PhoneNumber": 0.995,
+                "PurchaseOrderNumber": 0.995,
+                "Quantity": 0.995,
+                "Signature": 0.995,
+                "Subtotal": 0.995,
+                "Tax": 0.995,
+                "Total": 0.995,
+                "VendorName": 0.995,
+                "Website": 0.995
+              }
+            },
+            "83027ec9-8200-4013-989a-ed6dfc2b70d1": {
+              "fieldSchema": {
+                "Merchant": {
+                  "type": "string"
+                },
+                "PhoneNumber": {
+                  "type": "string"
+                },
+                "Website": {
+                  "type": "string"
+                },
+                "Email": {
+                  "type": "string"
+                },
+                "PurchaseOrderNumber": {
+                  "type": "string"
+                },
+                "DatedAs": {
+                  "type": "string"
+                },
+                "VendorName": {
+                  "type": "string"
+                },
+                "CompanyName": {
+                  "type": "string"
+                },
+                "CompanyAddress": {
+                  "type": "string"
+                },
+                "CompanyPhoneNumber": {
+                  "type": "string"
+                },
+                "Subtotal": {
+                  "type": "string"
+                },
+                "Tax": {
+                  "type": "string"
+                },
+                "Total": {
+                  "type": "string"
+                },
+                "Signature": {
+                  "type": "string"
+                },
+                "Quantity": {
+                  "type": "number"
+                },
+                "FullSignature": {
+                  "type": "signature"
+                }
+              },
+              "buildMode": "template",
+              "fieldConfidence": {
+                "CompanyAddress": 0.8,
+                "CompanyName": 0.995,
+                "CompanyPhoneNumber": 0.995,
+                "DatedAs": 0.995,
+                "Email": 0.8,
+                "FullSignature": 0.6,
+                "Merchant": 0.995,
+                "PhoneNumber": 0.995,
+                "PurchaseOrderNumber": 0.995,
+                "Quantity": 0.995,
+                "Signature": 0.995,
+                "Subtotal": 0.995,
+                "Tax": 0.995,
+                "Total": 0.995,
+                "VendorName": 0.995,
+                "Website": 0.995
+              }
+            }
+          },
+          "modelId": "e502ce5c-62c5-47ac-99ae-e11629431103",
+          "createdDateTime": "2023-11-17T17:30:03Z",
+          "expirationDateTime": "2025-11-16T17:30:03Z",
+          "apiVersion": "2023-10-31-preview",
+          "description": "my composed model",
+          "tags": {
+            "testkey": "testvalue"
+          }
+        },
+        "tags": {
+          "testkey": "testvalue"
+        },
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/e502ce5c-62c5-47ac-99ae-e11629431103?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 429,
+      "ResponseHeaders": {
+        "apim-request-id": "bb71afd7-5934-402a-9434-ede16ba008fd",
+        "Content-Length": "297",
+        "Content-Type": "application/json",
+        "Date": "Fri, 17 Nov 2023 17:30:07 GMT",
+        "Retry-After": "5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "429",
+          "message": "Requests to the Manage - Get model Operation under Azure AI Document Intelligence 2023-10-31-preview have exceeded call rate limit of your current FormRecognizer F0 pricing tier. Please retry after 5 seconds. To increase your rate limit switch to a paid tier."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/e502ce5c-62c5-47ac-99ae-e11629431103?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b867877e-74c7-4632-b83c-21ec5795c374",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:30:13 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "23",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "docTypes": {
+          "bbf74cfa-ddbe-410a-91ec-64acd5ab5938": {
+            "fieldSchema": {
+              "Merchant": {
+                "type": "string"
+              },
+              "PhoneNumber": {
+                "type": "string"
+              },
+              "Website": {
+                "type": "string"
+              },
+              "Email": {
+                "type": "string"
+              },
+              "PurchaseOrderNumber": {
+                "type": "string"
+              },
+              "DatedAs": {
+                "type": "string"
+              },
+              "VendorName": {
+                "type": "string"
+              },
+              "CompanyName": {
+                "type": "string"
+              },
+              "CompanyAddress": {
+                "type": "string"
+              },
+              "CompanyPhoneNumber": {
+                "type": "string"
+              },
+              "Subtotal": {
+                "type": "string"
+              },
+              "Tax": {
+                "type": "string"
+              },
+              "Total": {
+                "type": "string"
+              },
+              "Signature": {
+                "type": "string"
+              },
+              "Quantity": {
+                "type": "number"
+              },
+              "FullSignature": {
+                "type": "signature"
+              }
+            },
+            "buildMode": "template",
+            "fieldConfidence": {
+              "CompanyAddress": 0.8,
+              "CompanyName": 0.995,
+              "CompanyPhoneNumber": 0.995,
+              "DatedAs": 0.995,
+              "Email": 0.8,
+              "FullSignature": 0.6,
+              "Merchant": 0.995,
+              "PhoneNumber": 0.995,
+              "PurchaseOrderNumber": 0.995,
+              "Quantity": 0.995,
+              "Signature": 0.995,
+              "Subtotal": 0.995,
+              "Tax": 0.995,
+              "Total": 0.995,
+              "VendorName": 0.995,
+              "Website": 0.995
+            }
+          },
+          "83027ec9-8200-4013-989a-ed6dfc2b70d1": {
+            "fieldSchema": {
+              "Merchant": {
+                "type": "string"
+              },
+              "PhoneNumber": {
+                "type": "string"
+              },
+              "Website": {
+                "type": "string"
+              },
+              "Email": {
+                "type": "string"
+              },
+              "PurchaseOrderNumber": {
+                "type": "string"
+              },
+              "DatedAs": {
+                "type": "string"
+              },
+              "VendorName": {
+                "type": "string"
+              },
+              "CompanyName": {
+                "type": "string"
+              },
+              "CompanyAddress": {
+                "type": "string"
+              },
+              "CompanyPhoneNumber": {
+                "type": "string"
+              },
+              "Subtotal": {
+                "type": "string"
+              },
+              "Tax": {
+                "type": "string"
+              },
+              "Total": {
+                "type": "string"
+              },
+              "Signature": {
+                "type": "string"
+              },
+              "Quantity": {
+                "type": "number"
+              },
+              "FullSignature": {
+                "type": "signature"
+              }
+            },
+            "buildMode": "template",
+            "fieldConfidence": {
+              "CompanyAddress": 0.8,
+              "CompanyName": 0.995,
+              "CompanyPhoneNumber": 0.995,
+              "DatedAs": 0.995,
+              "Email": 0.8,
+              "FullSignature": 0.6,
+              "Merchant": 0.995,
+              "PhoneNumber": 0.995,
+              "PurchaseOrderNumber": 0.995,
+              "Quantity": 0.995,
+              "Signature": 0.995,
+              "Subtotal": 0.995,
+              "Tax": 0.995,
+              "Total": 0.995,
+              "VendorName": 0.995,
+              "Website": 0.995
+            }
+          }
+        },
+        "modelId": "e502ce5c-62c5-47ac-99ae-e11629431103",
+        "createdDateTime": "2023-11-17T17:30:03Z",
+        "expirationDateTime": "2025-11-16T17:30:03Z",
+        "apiVersion": "2023-10-31-preview",
+        "description": "my composed model",
+        "tags": {
+          "testkey": "testvalue"
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "composed_id": "e502ce5c-62c5-47ac-99ae-e11629431103",
+    "model_id1": "bbf74cfa-ddbe-410a-91ec-64acd5ab5938",
+    "model_id2": "83027ec9-8200-4013-989a-ed6dfc2b70d1"
+  }
+}

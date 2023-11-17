@@ -1,0 +1,737 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers:build?api-version=2023-10-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "655",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "classifierId": "01133a59-7f68-45c2-9e0b-61edb89aa4c4",
+        "docTypes": {
+          "IRS-1040-A": {
+            "azureBlobFileListSource": {
+              "containerUrl": "https://blob_sas_url",
+              "fileList": "IRS-1040-A.jsonl"
+            }
+          },
+          "IRS-1040-B": {
+            "azureBlobFileListSource": {
+              "containerUrl": "https://blob_sas_url",
+              "fileList": "IRS-1040-B.jsonl"
+            }
+          },
+          "IRS-1040-C": {
+            "azureBlobFileListSource": {
+              "containerUrl": "https://blob_sas_url",
+              "fileList": "IRS-1040-C.jsonl"
+            }
+          },
+          "IRS-1040-D": {
+            "azureBlobFileListSource": {
+              "containerUrl": "https://blob_sas_url",
+              "fileList": "IRS-1040-D.jsonl"
+            }
+          },
+          "IRS-1040-E": {
+            "azureBlobFileListSource": {
+              "containerUrl": "https://blob_sas_url",
+              "fileList": "IRS-1040-E.jsonl"
+            }
+          }
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "apim-request-id": "891383d4-a484-4ca8-8738-4bffe546865a",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Nov 2023 17:28:47 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "59",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 429,
+      "ResponseHeaders": {
+        "apim-request-id": "e9b66c57-91cc-4583-a567-709033064387",
+        "Content-Length": "305",
+        "Content-Type": "application/json",
+        "Date": "Fri, 17 Nov 2023 17:28:47 GMT",
+        "Retry-After": "5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "429",
+          "message": "Requests to the Operations - Get operation Operation under Azure AI Document Intelligence 2023-10-31-preview have exceeded call rate limit of your current FormRecognizer F0 pricing tier. Please retry after 5 seconds. To increase your rate limit switch to a paid tier."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "78a859be-57b3-4346-b9af-a2bf08848266",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:28:52 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "8",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125872_891383d4-a484-4ca8-8738-4bffe546865a",
+        "kind": "documentClassifierBuild",
+        "status": "notStarted",
+        "createdDateTime": "2023-11-17T17:28:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:28:47Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "927ea4a7-8a91-49dc-a163-1f300566591b",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:28:57 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "7",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125872_891383d4-a484-4ca8-8738-4bffe546865a",
+        "kind": "documentClassifierBuild",
+        "status": "running",
+        "createdDateTime": "2023-11-17T17:28:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:28:54Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "2e457c60-0c04-4180-b37b-e9eed0e0c374",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:01 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "8",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125872_891383d4-a484-4ca8-8738-4bffe546865a",
+        "kind": "documentClassifierBuild",
+        "status": "running",
+        "createdDateTime": "2023-11-17T17:28:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:28:54Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "155d2438-dac0-4a6b-ae51-5a678a360333",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:07 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "6",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125872_891383d4-a484-4ca8-8738-4bffe546865a",
+        "kind": "documentClassifierBuild",
+        "status": "running",
+        "createdDateTime": "2023-11-17T17:28:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:28:54Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b05d78b5-f525-4448-ab73-58ba012b2153",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:12 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "14",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125872_891383d4-a484-4ca8-8738-4bffe546865a",
+        "kind": "documentClassifierBuild",
+        "status": "running",
+        "createdDateTime": "2023-11-17T17:28:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:28:54Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "246f958b-d7fd-430c-b198-5f8ac8570dcc",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:17 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "16",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125872_891383d4-a484-4ca8-8738-4bffe546865a",
+        "kind": "documentClassifierBuild",
+        "status": "running",
+        "createdDateTime": "2023-11-17T17:28:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:28:54Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "d72233f6-1a10-4fd7-bb2b-b406c30667b8",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:22 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "9",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125872_891383d4-a484-4ca8-8738-4bffe546865a",
+        "kind": "documentClassifierBuild",
+        "status": "running",
+        "createdDateTime": "2023-11-17T17:28:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:28:54Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "e0a8b52b-e0af-4037-b9c4-eaf8cdacd56e",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:27 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "6",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125872_891383d4-a484-4ca8-8738-4bffe546865a",
+        "kind": "documentClassifierBuild",
+        "status": "running",
+        "createdDateTime": "2023-11-17T17:28:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:28:54Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/operations/31466125872_891383d4-a484-4ca8-8738-4bffe546865a?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b83d4da0-e01e-4fa9-9df9-ba175fe42c08",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:32 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "8",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "operationId": "31466125872_891383d4-a484-4ca8-8738-4bffe546865a",
+        "kind": "documentClassifierBuild",
+        "status": "succeeded",
+        "createdDateTime": "2023-11-17T17:28:47Z",
+        "lastUpdatedDateTime": "2023-11-17T17:29:32Z",
+        "resourceLocation": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+        "percentCompleted": 100,
+        "result": {
+          "classifierId": "01133a59-7f68-45c2-9e0b-61edb89aa4c4",
+          "createdDateTime": "2023-11-17T17:29:32Z",
+          "expirationDateTime": "2025-11-16T17:29:32Z",
+          "apiVersion": "2023-10-31-preview",
+          "docTypes": {
+            "IRS-1040-A": {
+              "kind": "azureBlobFileList",
+              "azureBlobFileListSource": {
+                "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                "fileList": "IRS-1040-A.jsonl"
+              }
+            },
+            "IRS-1040-B": {
+              "kind": "azureBlobFileList",
+              "azureBlobFileListSource": {
+                "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                "fileList": "IRS-1040-B.jsonl"
+              }
+            },
+            "IRS-1040-C": {
+              "kind": "azureBlobFileList",
+              "azureBlobFileListSource": {
+                "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                "fileList": "IRS-1040-C.jsonl"
+              }
+            },
+            "IRS-1040-D": {
+              "kind": "azureBlobFileList",
+              "azureBlobFileListSource": {
+                "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                "fileList": "IRS-1040-D.jsonl"
+              }
+            },
+            "IRS-1040-E": {
+              "kind": "azureBlobFileList",
+              "azureBlobFileListSource": {
+                "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                "fileList": "IRS-1040-E.jsonl"
+              }
+            }
+          }
+        },
+        "apiVersion": "2023-10-31-preview"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "243c2533-4a03-4641-86e9-3d04b5145b5b",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:32 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "26",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "classifierId": "01133a59-7f68-45c2-9e0b-61edb89aa4c4",
+        "createdDateTime": "2023-11-17T17:29:32Z",
+        "expirationDateTime": "2025-11-16T17:29:32Z",
+        "apiVersion": "2023-10-31-preview",
+        "docTypes": {
+          "IRS-1040-A": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-A.jsonl"
+            }
+          },
+          "IRS-1040-B": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-B.jsonl"
+            }
+          },
+          "IRS-1040-C": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-C.jsonl"
+            }
+          },
+          "IRS-1040-D": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-D.jsonl"
+            }
+          },
+          "IRS-1040-E": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-E.jsonl"
+            }
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "54654ec2-7847-4a1c-9f51-54b915647e1d",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:32 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "35",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "classifierId": "01133a59-7f68-45c2-9e0b-61edb89aa4c4",
+        "createdDateTime": "2023-11-17T17:29:32Z",
+        "expirationDateTime": "2025-11-16T17:29:32Z",
+        "apiVersion": "2023-10-31-preview",
+        "docTypes": {
+          "IRS-1040-A": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-A.jsonl"
+            }
+          },
+          "IRS-1040-B": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-B.jsonl"
+            }
+          },
+          "IRS-1040-C": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-C.jsonl"
+            }
+          },
+          "IRS-1040-D": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-D.jsonl"
+            }
+          },
+          "IRS-1040-E": {
+            "kind": "azureBlobFileList",
+            "azureBlobFileListSource": {
+              "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+              "fileList": "IRS-1040-E.jsonl"
+            }
+          }
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 429,
+      "ResponseHeaders": {
+        "apim-request-id": "e4b9e677-828b-4cfc-9ce2-2d8d7c31fac2",
+        "Content-Length": "304",
+        "Content-Type": "application/json",
+        "Date": "Fri, 17 Nov 2023 17:29:32 GMT",
+        "Retry-After": "5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "429",
+          "message": "Requests to the Manage - List classifiers Operation under Azure AI Document Intelligence 2023-10-31-preview have exceeded call rate limit of your current FormRecognizer F0 pricing tier. Please retry after 5 seconds. To increase your rate limit switch to a paid tier."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "3724dda8-1545-415b-99ba-3cc41f21ba05",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 17 Nov 2023 17:29:38 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "11",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "classifierId": "01133a59-7f68-45c2-9e0b-61edb89aa4c4",
+            "createdDateTime": "2023-11-17T17:29:32Z",
+            "expirationDateTime": "2025-11-16T17:29:32Z",
+            "apiVersion": "2023-10-31-preview",
+            "docTypes": {
+              "IRS-1040-A": {
+                "kind": "azureBlobFileList",
+                "azureBlobFileListSource": {
+                  "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                  "fileList": "IRS-1040-A.jsonl"
+                }
+              },
+              "IRS-1040-B": {
+                "kind": "azureBlobFileList",
+                "azureBlobFileListSource": {
+                  "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                  "fileList": "IRS-1040-B.jsonl"
+                }
+              },
+              "IRS-1040-C": {
+                "kind": "azureBlobFileList",
+                "azureBlobFileListSource": {
+                  "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                  "fileList": "IRS-1040-C.jsonl"
+                }
+              },
+              "IRS-1040-D": {
+                "kind": "azureBlobFileList",
+                "azureBlobFileListSource": {
+                  "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                  "fileList": "IRS-1040-D.jsonl"
+                }
+              },
+              "IRS-1040-E": {
+                "kind": "azureBlobFileList",
+                "azureBlobFileListSource": {
+                  "containerUrl": "https://azuresdktrainingdata.blob.core.windows.net/training-data-classifier",
+                  "fileList": "IRS-1040-E.jsonl"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 429,
+      "ResponseHeaders": {
+        "apim-request-id": "a15ffbcb-94f9-49ea-8a91-922f09c4c7ad",
+        "Content-Length": "305",
+        "Content-Type": "application/json",
+        "Date": "Fri, 17 Nov 2023 17:29:38 GMT",
+        "Retry-After": "5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "429",
+          "message": "Requests to the Manage - Delete Classifier Operation under Azure AI Document Intelligence 2023-10-31-preview have exceeded call rate limit of your current FormRecognizer F0 pricing tier. Please retry after 5 seconds. To increase your rate limit switch to a paid tier."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "96eac36c-6380-4010-b133-df76791ab513",
+        "Content-Length": "0",
+        "Date": "Fri, 17 Nov 2023 17:29:43 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "51",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 429,
+      "ResponseHeaders": {
+        "apim-request-id": "17bbe80b-4a23-48c5-a9d8-90dd3cf7db41",
+        "Content-Length": "310",
+        "Content-Type": "application/json",
+        "Date": "Fri, 17 Nov 2023 17:29:43 GMT",
+        "Retry-After": "4",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "429",
+          "message": "Requests to the Manage - Get document classfier Operation under Azure AI Document Intelligence 2023-10-31-preview have exceeded call rate limit of your current FormRecognizer F0 pricing tier. Please retry after 4 seconds. To increase your rate limit switch to a paid tier."
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentClassifiers/01133a59-7f68-45c2-9e0b-61edb89aa4c4?api-version=2023-10-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "apim-request-id": "6046ee84-5112-4fa8-8aae-06fc5ea57aed",
+        "Content-Type": "application/json",
+        "Date": "Fri, 17 Nov 2023 17:29:46 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "12",
+        "x-ms-region": "West US 2"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "NotFound",
+          "message": "Resource not found.",
+          "innererror": {
+            "code": "ModelNotFound",
+            "message": "The requested model was not found."
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {
+    "classifier_id": "01133a59-7f68-45c2-9e0b-61edb89aa4c4"
+  }
+}

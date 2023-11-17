@@ -1,0 +1,34 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/documentintelligence/documentModels/:analyze?api-version=2023-10-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "35",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-documentintelligence/1.0.0b1 Python/3.11.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "urlSource": "https://badurl.jpg"
+      },
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "apim-request-id": "f760707d-343c-4942-af04-d4f49cce02ca",
+        "Content-Length": "56",
+        "Content-Type": "application/json",
+        "Date": "Fri, 17 Nov 2023 17:21:08 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "404",
+          "message": "Resource not found"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
