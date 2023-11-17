@@ -7,7 +7,7 @@ from typing import Any, Optional
 
 import datetime
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
-from ._generated.models import ChatAttachment as ChatAttachmentAutorest
+from ._generated.models import ChatAttachment
 from ._generated.models import ChatMessageType
 from ._communication_identifier_serializer import serialize_identifier, deserialize_identifier
 
@@ -33,7 +33,8 @@ class ChatParticipant:
         identifier: CommunicationIdentifier,
         display_name: Optional[str] = None,
         share_history_time: Optional[datetime.datetime] = None,
-        **kwargs: Any  # pylint: disable=unused-argument
+        # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         """
         :keyword identifier: Identifies a participant in Azure Communication services. A
