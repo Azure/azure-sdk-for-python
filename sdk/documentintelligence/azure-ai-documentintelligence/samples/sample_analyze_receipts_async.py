@@ -7,21 +7,21 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_receipts_from_url.py
+FILE: sample_analyze_receipts_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze and extract common fields from a receipt URL,
+    This sample demonstrates how to analyze and extract common fields from receipts,
     using a pre-trained receipt model.
 
     See fields found on a receipt here:
     https://aka.ms/azsdk/formrecognizer/receiptfieldschema
 
 USAGE:
-    python sample_analyze_receipts_from_url.py
+    python sample_analyze_receipts_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
-	2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
+    2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
 """
 
 import os
@@ -29,11 +29,18 @@ import asyncio
 from utils import format_price
 
 
-async def analyze_receipts_from_url():
-    # [START analyze_receipts_from_url]
+async def analyze_receipts():
+    path_to_sample_documents = os.path.abspath(
+        os.path.join(
+            os.path.abspath(__file__),
+            "..",
+            "./sample_forms/receipt/contoso-allinone.jpg",
+        )
+    )
+
+    # [START analyze_receipts]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -41,11 +48,11 @@ async def analyze_receipts_from_url():
     document_analysis_client = DocumentIntelligenceClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
     async with document_analysis_client:
-        poller = await document_analysis_client.begin_analyze_document(
-            "prebuilt-receipt", AnalyzeDocumentRequest(url_source=url)
-        )
+        with open(path_to_sample_documents, "rb") as f:
+            poller = await document_analysis_client.begin_analyze_document(
+                "prebuilt-receipt", analyze_request=f, locale="en-US", content_type="application/octet-stream"
+            )
         receipts = await poller.result()
 
     for idx, receipt in enumerate(receipts.documents):
@@ -98,11 +105,11 @@ async def analyze_receipts_from_url():
         if total:
             print(f"Total: {format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
         print("--------------------------------------")
-    # [END analyze_receipts_from_url]
+    # [END analyze_receipts]
 
 
 async def main():
-    await analyze_receipts_from_url()
+    await analyze_receipts()
 
 
 if __name__ == "__main__":

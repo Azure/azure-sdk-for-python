@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_highres.py
+FILE: sample_analyze_addon_highres_async.py
 
 DESCRIPTION:
     This sample demonstrates how to recognize documents with improved quality using
@@ -32,7 +32,7 @@ DESCRIPTION:
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_highres.py
+    python sample_analyze_addon_highres_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -48,7 +48,6 @@ async def analyze_with_highres():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
-            "..",
             "..",
             "sample_forms/add_ons/highres.png",
         )

@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_fonts.py
+FILE: sample_analyze_addon_languages_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract font information using the add-on
-    'STYLE_FONT' capability.
+    This sample demonstrates how to detect languages from the document using the
+    add-on 'LANGUAGES' capability.
 
     Add-on capabilities are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.
@@ -32,7 +32,7 @@ DESCRIPTION:
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_fonts.py
+    python sample_analyze_addon_languages_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -41,20 +41,17 @@ USAGE:
 
 import asyncio
 import os
-from collections import defaultdict
-from utils import get_styled_text
 
 
-async def analyze_fonts():
+async def analyze_languages():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "..",
             "sample_forms/add_ons/fonts_and_languages.png",
         )
     )
-    # [START analyze_fonts]
+    # [START analyze_languages]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature
@@ -65,72 +62,28 @@ async def analyze_fonts():
     document_analysis_client = DocumentIntelligenceClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
+
     async with document_analysis_client:
         # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-layout", analyze_request=f, features=[DocumentAnalysisFeature.STYLE_FONT], content_type="application/octet-stream"
+                "prebuilt-layout", analyze_request=f, features=[DocumentAnalysisFeature.LANGUAGES], content_type="application/octet-stream"
             )
         result = await poller.result()
 
-    # DocumentStyle has the following font related attributes:
-    similar_font_families = defaultdict(list)  # e.g., 'Arial, sans-serif
-    font_styles = defaultdict(list)             # e.g, 'italic'
-    font_weights = defaultdict(list)            # e.g., 'bold'
-    font_colors = defaultdict(list)             # in '#rrggbb' hexadecimal format
-    font_background_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
-
-    if any([style.is_handwritten for style in result.styles]):
-        print("Document contains handwritten content")
-    else:
-        print("Document does not contain handwritten content")
-
-    print("\n----Fonts styles detected in the document----")
-
-    # Iterate over the styles and group them by their font attributes.
-    for style in result.styles:
-        if style.similar_font_family:
-            similar_font_families[style.similar_font_family].append(style)
-        if style.font_style:
-            font_styles[style.font_style].append(style)
-        if style.font_weight:
-            font_weights[style.font_weight].append(style)
-        if style.color:
-            font_colors[style.color].append(style)
-        if style.background_color:
-            font_background_colors[style.background_color].append(style)
-
-    print(f"Detected {len(similar_font_families)} font families:")
-    for font_family, styles in similar_font_families.items():
-        print(f"- Font family: '{font_family}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
-
-    print(f"\nDetected {len(font_styles)} font styles:")
-    for font_style, styles in font_styles.items():
-        print(f"- Font style: '{font_style}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
-
-    print(f"\nDetected {len(font_weights)} font weights:")
-    for font_weight, styles in font_weights.items():
-        print(f"- Font weight: '{font_weight}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
-
-    print(f"\nDetected {len(font_colors)} font colors:")
-    for font_color, styles in font_colors.items():
-        print(f"- Font color: '{font_color}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
-
-    print(f"\nDetected {len(font_background_colors)} font background colors:")
-    for font_background_color, styles in font_background_colors.items():
-        print(f"- Font background color: '{font_background_color}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+    print("----Languages detected in the document----")
+    print(f"Detected {len(result.languages)} languages:")
+    for lang_idx, lang in enumerate(result.languages):
+        print(f"- Language #{lang_idx}: locale '{lang.locale}'")
+        print(f"  Confidence: {lang.confidence}")
+        print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
 
     print("----------------------------------------")
-    # [END analyze_fonts]
+    # [END analyze_languages]
 
 
 async def main():
-    await analyze_fonts()
+    await analyze_languages()
 
 
 if __name__ == "__main__":

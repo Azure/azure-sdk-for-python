@@ -7,55 +7,37 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_barcodes.py
+FILE: sample_analyze_identity_documents_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract all identified barcodes using the
-    add-on 'BARCODES' capability.
+    This sample demonstrates how to analyze an identity document.
 
-    Add-on capabilities are available within all models except for the Business card
-    model. This sample uses Layout model to demonstrate.
-
-    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
-    enum class. For more information, see:
-    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
-
-    The following capabilities are free:
-    - BARCODES
-    - LANGUAGES
-
-    The following capabilities will incur additional charges:
-    - FORMULAS
-    - OCR_HIGH_RESOLUTION
-    - STYLE_FONT
-
-    See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
+    See fields found on identity documents here:
+    https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
 
 USAGE:
-    python sample_analyze_addon_barcodes.py
+    python sample_analyze_identity_documents_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
 """
 
-import asyncio
 import os
-        
+import asyncio
 
-async def analyze_barcodes():
+
+async def analyze_identity_documents():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "..",
-            "sample_forms/add_ons/barcodes.jpg",
+            "./sample_forms/id_documents/license.jpg",
         )
     )
-    # [START analyze_barcodes]
+
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -63,31 +45,54 @@ async def analyze_barcodes():
     document_analysis_client = DocumentIntelligenceClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-
     async with document_analysis_client:
-        # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-layout", analyze_request=f, features=[DocumentAnalysisFeature.BARCODES], content_type="application/octet-stream"
+                "prebuilt-idDocument", analyze_request=f, content_type="application/octet-stream"
             )
-        result = await poller.result()
+        id_documents = await poller.result()
 
-    # Iterate over extracted barcodes on each page.
-    for page in result.pages:
-        print(f"----Barcodes detected from page #{page.page_number}----")
-        print(f"Detected {len(page.barcodes)} barcodes:")
-        for barcode_idx, barcode in enumerate(page.barcodes):
-            print(f"- Barcode #{barcode_idx}: {barcode.value}")
-            print(f"  Kind: {barcode.kind}")
-            print(f"  Confidence: {barcode.confidence}")
-            print(f"  Bounding regions: {barcode.polygon}")
-
-    print("----------------------------------------")
-    # [END analyze_barcodes]
+    for idx, id_document in enumerate(id_documents.documents):
+        print(f"--------Analyzing ID document #{idx + 1}--------")
+        first_name = id_document.fields.get("FirstName")
+        if first_name:
+            print(
+                f"First Name: {first_name.get('valueString')} has confidence: {first_name.confidence}"
+            )
+        last_name = id_document.fields.get("LastName")
+        if last_name:
+            print(
+                f"Last Name: {last_name.get('valueString')} has confidence: {last_name.confidence}"
+            )
+        document_number = id_document.fields.get("DocumentNumber")
+        if document_number:
+            print(
+                f"Document Number: {document_number.get('valueString')} has confidence: {document_number.confidence}"
+            )
+        dob = id_document.fields.get("DateOfBirth")
+        if dob:
+            print(f"Date of Birth: {dob.get('valueDate')} has confidence: {dob.confidence}")
+        doe = id_document.fields.get("DateOfExpiration")
+        if doe:
+            print(f"Date of Expiration: {doe.get('valueDate')} has confidence: {doe.confidence}")
+        sex = id_document.fields.get("Sex")
+        if sex:
+            print(f"Sex: {sex.get('valueString')} has confidence: {sex.confidence}")
+        address = id_document.fields.get("Address")
+        if address:
+            print(f"Address: {address.get('valueString')} has confidence: {address.confidence}")
+        country_region = id_document.fields.get("CountryRegion")
+        if country_region:
+            print(
+                f"Country/Region: {country_region.get('valueCountryRegion')} has confidence: {country_region.confidence}"
+            )
+        region = id_document.fields.get("Region")
+        if region:
+            print(f"Region: {region.get('valueString')} has confidence: {region.confidence}")
 
 
 async def main():
-    await analyze_barcodes()
+    await analyze_identity_documents()
 
 
 if __name__ == "__main__":

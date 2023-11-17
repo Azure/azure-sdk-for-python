@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_invoices.py
+FILE: sample_analyze_invoices_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze invoices.
@@ -16,7 +16,7 @@ DESCRIPTION:
     https://aka.ms/azsdk/formrecognizer/invoicefieldschema
 
 USAGE:
-    python sample_analyze_invoices.py
+    python sample_analyze_invoices_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -31,7 +31,6 @@ async def analyze_invoice():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
-            "..",
             "..",
             "./sample_forms/forms/sample_invoice.jpg",
         )

@@ -264,11 +264,11 @@
             "type": "string",
             "value": "[variables('formRecognizerBaseName')]"
         },
-        "DOCUMENTINTELLIGENCE_TEST_API_KEY": {
+        "DOCUMENTINTELLIGENCE_API_KEY": {
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('formRecognizerBaseName')), variables('formRecognizerApiVersion')).key1]"
         },
-        "DOCUMENTINTELLIGENCE_TEST_ENDPOINT": {
+        "DOCUMENTINTELLIGENCE_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureFormRecognizerUrl')]"
         },

@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_identity_documents.py
+FILE: sample_analyze_layout_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze an identity document.
+    This sample demonstrates how to extract text, selection marks, and layout information from a document
+    given through a file.
 
-    See fields found on identity documents here:
-    https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
+    Note that selection marks returned from begin_analyze_document(model_id="prebuilt-layout") do not return the text
+    associated with the checkbox. For the API to return this information, build a custom model to analyze the
+    checkbox and its text. See sample_build_model.py for more information.
 
 USAGE:
-    python sample_analyze_identity_documents.py
+    python sample_analyze_layout_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -25,18 +27,19 @@ USAGE:
 
 import os
 import asyncio
+from utils import get_words
 
 
-async def analyze_identity_documents():
+async def analyze_layout():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "..",
-            "./sample_forms/id_documents/license.jpg",
+            "./sample_forms/forms/form_selection_mark.png",
         )
     )
 
+    # [START extract_layout]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
 
@@ -49,51 +52,63 @@ async def analyze_identity_documents():
     async with document_analysis_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-idDocument", analyze_request=f, content_type="application/octet-stream"
+                "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
             )
-        id_documents = await poller.result()
+        result = await poller.result()
 
-    for idx, id_document in enumerate(id_documents.documents):
-        print(f"--------Analyzing ID document #{idx + 1}--------")
-        first_name = id_document.fields.get("FirstName")
-        if first_name:
+    if any([style.is_handwritten for style in result.styles]):
+        print("Document contains handwritten content")
+    else:
+        print("Document does not contain handwritten content")
+
+    for page in result.pages:
+        print(f"----Analyzing layout from page #{page.page_number}----")
+        print(
+            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
+        )
+
+        for line_idx, line in enumerate(page.lines):
+            words = get_words(page, line)
             print(
-                f"First Name: {first_name.get('valueString')} has confidence: {first_name.confidence}"
+                f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
+                f"within bounding polygon '{line.polygon}'"
             )
-        last_name = id_document.fields.get("LastName")
-        if last_name:
+
+            for word in words:
+                print(
+                    f"......Word '{word.content}' has a confidence of {word.confidence}"
+                )
+
+        for selection_mark in page.selection_marks:
             print(
-                f"Last Name: {last_name.get('valueString')} has confidence: {last_name.confidence}"
+                f"Selection mark is '{selection_mark.state}' within bounding polygon "
+                f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
             )
-        document_number = id_document.fields.get("DocumentNumber")
-        if document_number:
+
+    for table_idx, table in enumerate(result.tables):
+        print(
+            f"Table # {table_idx} has {table.row_count} rows and "
+            f"{table.column_count} columns"
+        )
+        for region in table.bounding_regions:
             print(
-                f"Document Number: {document_number.get('valueString')} has confidence: {document_number.confidence}"
+                f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}"
             )
-        dob = id_document.fields.get("DateOfBirth")
-        if dob:
-            print(f"Date of Birth: {dob.get('valueDate')} has confidence: {dob.confidence}")
-        doe = id_document.fields.get("DateOfExpiration")
-        if doe:
-            print(f"Date of Expiration: {doe.get('valueDate')} has confidence: {doe.confidence}")
-        sex = id_document.fields.get("Sex")
-        if sex:
-            print(f"Sex: {sex.get('valueString')} has confidence: {sex.confidence}")
-        address = id_document.fields.get("Address")
-        if address:
-            print(f"Address: {address.get('valueString')} has confidence: {address.confidence}")
-        country_region = id_document.fields.get("CountryRegion")
-        if country_region:
+        for cell in table.cells:
             print(
-                f"Country/Region: {country_region.get('valueCountryRegion')} has confidence: {country_region.confidence}"
+                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
             )
-        region = id_document.fields.get("Region")
-        if region:
-            print(f"Region: {region.get('valueString')} has confidence: {region.confidence}")
+            for region in cell.bounding_regions:
+                print(
+                    f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'"
+                )
+
+    print("----------------------------------------")
+    # [END extract_layout]
 
 
 async def main():
-    await analyze_identity_documents()
+    await analyze_layout()
 
 
 if __name__ == "__main__":

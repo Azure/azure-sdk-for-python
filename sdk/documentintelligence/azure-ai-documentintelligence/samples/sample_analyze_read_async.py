@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_read.py
+FILE: sample_analyze_read_async.py
 
 DESCRIPTION:
     This sample demonstrates how to extract document information using "prebuilt-read"
     to analyze a given file.
 
 USAGE:
-    python sample_analyze_read.py
+    python sample_analyze_read_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -30,7 +30,6 @@ async def analyze_read():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
-            "..",
             "..",
             "./sample_forms/forms/Form_1.jpg",
         )

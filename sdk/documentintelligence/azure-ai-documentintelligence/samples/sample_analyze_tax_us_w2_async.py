@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_tax_us_w2.py
+FILE: sample_analyze_tax_us_w2_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze US W-2 tax forms.
@@ -16,7 +16,7 @@ DESCRIPTION:
     https://aka.ms/azsdk/formrecognizer/taxusw2fieldschema
 
 USAGE:
-    python sample_analyze_tax_us_w2.py
+    python sample_analyze_tax_us_w2_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -32,7 +32,6 @@ async def analyze_tax_us_w2():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
-            "..",
             "..",
             "./sample_forms/tax/sample_w2.png",
         )

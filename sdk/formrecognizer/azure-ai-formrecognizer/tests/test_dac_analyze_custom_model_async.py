@@ -196,6 +196,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncFormRecognizerTest):
             my_file = fd.read()
 
         async with client:
+            breakpoint()
             build_poller = await client.begin_build_document_model("template", blob_container_url=formrecognizer_storage_container_sas_url)
             model = await build_poller.result()
 
