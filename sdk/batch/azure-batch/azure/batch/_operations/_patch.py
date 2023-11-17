@@ -83,14 +83,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         kwargs.update({"time_out": time_out, "ocp_date": ocp_date})
 
-        results_queue = (
-            collections.deque()
-        )  # deque operations(append/pop) are thread-safe
+        results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
         task_workflow_manager = _TaskWorkflowManager(
-            super().create_task_collection,
-            job_id=job_id,
-            collection=collection,
-            **kwargs
+            super().create_task_collection, job_id=job_id, collection=collection, **kwargs
         )
 
         # multi-threaded behavior
@@ -438,13 +433,7 @@ class _TaskWorkflowManager(object):
         <azure.batch.models.BatchTaskAddCollectionResult>`
     """
 
-    def __init__(
-        self,
-        original_create_task_collection,
-        job_id: str,
-        collection: _models.BatchTaskCollection,
-        **kwargs
-    ):
+    def __init__(self, original_create_task_collection, job_id: str, collection: _models.BatchTaskCollection, **kwargs):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
         self.failure_tasks = collections.deque()
@@ -488,9 +477,7 @@ class _TaskWorkflowManager(object):
             # In case of a chunk exceeding the MaxMessageSize split chunk in half
             # and resubmit smaller chunk requests
             # TODO: Replace string with constant variable once available in SDK
-            if (
-                e.error and e.error.code == "RequestBodyTooLarge"
-            ):  # pylint: disable=no-member
+            if e.error and e.error.code == "RequestBodyTooLarge":  # pylint: disable=no-member
                 # In this case the task is misbehaved and will not be able to be added due to:
                 #   1) The task exceeding the max message size
                 #   2) A single cell of the task exceeds the per-cell limit, or
@@ -499,8 +486,7 @@ class _TaskWorkflowManager(object):
                     failed_task = chunk_tasks_to_add.pop()
                     self.errors.appendleft(e)
                     _LOGGER.error(
-                        "Failed to add task with ID %s due to the body"
-                        " exceeding the maximum request size",
+                        "Failed to add task with ID %s due to the body" " exceeding the maximum request size",
                         failed_task.id,
                     )
                 else:
@@ -545,9 +531,7 @@ class _TaskWorkflowManager(object):
             except AttributeError:
                 pass
 
-            for (
-                task_result
-            ) in create_task_collection_response.value:  # pylint: disable=no-member
+            for task_result in create_task_collection_response.value:  # pylint: disable=no-member
                 if task_result.status == _models.TaskAddStatus.SERVER_ERROR:
                     # Server error will be retried
                     with self._pending_queue_lock:

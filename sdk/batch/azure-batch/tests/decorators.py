@@ -59,9 +59,7 @@ def recorded_by_proxy_async(test_func):
             # this makes the request look like it was made to the original endpoint instead of to the proxy
             # without this, things like LROPollers can get broken by polling the wrong endpoint
             parsed_result = url_parse.urlparse(result.request.url)
-            upstream_uri = url_parse.urlparse(
-                result.request.headers["x-recording-upstream-base-uri"]
-            )
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
             upstream_uri_dict = {
                 "scheme": upstream_uri.scheme,
                 "netloc": upstream_uri.netloc,
@@ -79,9 +77,7 @@ def recorded_by_proxy_async(test_func):
             # this makes the request look like it was made to the original endpoint instead of to the proxy
             # without this, things like LROPollers can get broken by polling the wrong endpoint
             parsed_result = url_parse.urlparse(result.request.url)
-            upstream_uri = url_parse.urlparse(
-                result.request.headers["x-recording-upstream-base-uri"]
-            )
+            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
             upstream_uri_dict = {
                 "scheme": upstream_uri.scheme,
                 "netloc": upstream_uri.netloc,
@@ -102,14 +98,10 @@ def recorded_by_proxy_async(test_func):
         test_run = False
         try:
             try:
-                test_variables = await test_func(
-                    *args, variables=variables, **trimmed_kwargs
-                )
+                test_variables = await test_func(*args, variables=variables, **trimmed_kwargs)
                 test_run = True
             except TypeError as error:
-                if "unexpected keyword argument" in str(error) and "variables" in str(
-                    error
-                ):
+                if "unexpected keyword argument" in str(error) and "variables" in str(error):
                     logger = logging.getLogger()
                     logger.info(
                         "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
@@ -122,13 +114,9 @@ def recorded_by_proxy_async(test_func):
                 test_variables = await test_func(*args, **trimmed_kwargs)
 
         except ResourceNotFoundError as error:
-            error_body = ContentDecodePolicy.deserialize_from_http_generics(
-                error.response
-            )
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
             message = error_body.get("message") or error_body.get("Message")
-            error_with_message = ResourceNotFoundError(
-                message=message, response=error.response
-            )
+            error_with_message = ResourceNotFoundError(message=message, response=error.response)
             raise error_with_message from error
 
         finally:
@@ -141,9 +129,7 @@ def recorded_by_proxy_async(test_func):
     return record_wrap
 
 
-
 def client_setup(test_func):
-
     def _batch_url(batch):
         if batch.account_endpoint.startswith("https://"):
             return batch.account_endpoint

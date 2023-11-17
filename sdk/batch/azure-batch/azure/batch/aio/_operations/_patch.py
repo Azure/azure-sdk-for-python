@@ -85,14 +85,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         kwargs.update({"time_out": time_out, "ocp_date": ocp_date})
 
-        results_queue = (
-            collections.deque()
-        )
+        results_queue = collections.deque()
         task_workflow_manager = _TaskWorkflowManager(
-            super().create_task_collection,
-            job_id=job_id,
-            collection=collection,
-            **kwargs
+            super().create_task_collection, job_id=job_id, collection=collection, **kwargs
         )
 
         if concurrencies:
@@ -101,9 +96,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
             coroutines = []
             for i in range(concurrencies):
-                coroutines.append(
-                    task_workflow_manager.task_collection_handler(results_queue)
-                )
+                coroutines.append(task_workflow_manager.task_collection_handler(results_queue))
             await asyncio.gather(*coroutines)
         else:
             await task_workflow_manager.task_collection_handler(results_queue)
@@ -444,9 +437,7 @@ class _TaskWorkflowManager(object):
         elif isinstance(collection, list):
             self.tasks_to_add = collections.deque(collection)
         else:
-            raise TypeError(
-                "Expected collection to be of type list or BatchTaskCollection"
-            )
+            raise TypeError("Expected collection to be of type list or BatchTaskCollection")
 
         # Variables to be used for task create_task_collection requests
         self._original_create_task_collection = original_create_task_collection
@@ -491,8 +482,7 @@ class _TaskWorkflowManager(object):
                     failed_task = chunk_tasks_to_add.pop()
                     self.errors.appendleft(e)
                     _LOGGER.error(
-                        "Failed to add task with ID %s due to the body"
-                        " exceeding the maximum request size",
+                        "Failed to add task with ID %s due to the body" " exceeding the maximum request size",
                         failed_task.id,
                     )
                 else:
@@ -514,9 +504,7 @@ class _TaskWorkflowManager(object):
                     # Behavior retries as a smaller chunk and
                     # appends extra tasks to queue to be picked up by another coroutines .
                     self.tasks_to_add.extendleft(chunk_tasks_to_add[midpoint:])
-                    await self._bulk_add_tasks(
-                        results_queue, chunk_tasks_to_add[:midpoint]
-                    )
+                    await self._bulk_add_tasks(results_queue, chunk_tasks_to_add[:midpoint])
             # Retry server side errors
             elif 500 <= e.response.status_code <= 599:
                 self.tasks_to_add.extendleft(chunk_tasks_to_add)

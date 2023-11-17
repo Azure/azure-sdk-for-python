@@ -325,7 +325,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         time_out_in_seconds: Optional[int] = None,
         starttime: Optional[datetime.datetime] = None,
         endtime: Optional[datetime.datetime] = None,
-        _filter: Optional[str] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchPoolUsageMetrics"]:
         """Lists the usage metrics, aggregated by Pool across individual time intervals,
@@ -359,11 +359,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          before the current time. If not specified this defaults to the end time of the
          last aggregation interval currently available. Default value is None.
         :paramtype endtime: ~datetime.datetime
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics.
          Default value is None.
-        :paramtype _filter: str
+        :paramtype filter: str
         :return: An iterator like instance of BatchPoolUsageMetrics
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPoolUsageMetrics]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -390,7 +389,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     time_out_in_seconds=time_out_in_seconds,
                     starttime=starttime,
                     endtime=endtime,
-                    _filter=_filter,
+                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -548,9 +547,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
-        _select: Optional[List[str]] = None,
-        _expand: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchPool"]:
         """Lists all of the Pools in the specified Account.
@@ -568,15 +567,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-pools.
          Default value is None.
-        :paramtype _filter: str
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _expand: An OData $expand clause. Default value is None.
-        :paramtype _expand: list[str]
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: list[str]
         :return: An iterator like instance of BatchPool
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPool]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -601,9 +599,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
-                    _select=_select,
-                    _expand=_expand,
+                    filter=filter,
+                    select=select,
+                    expand=expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -896,8 +894,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        _select: Optional[List[str]] = None,
-        _expand: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -924,10 +922,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _expand: An OData $expand clause. Default value is None.
-        :paramtype _expand: list[str]
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: list[str]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -964,8 +962,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            _select=_select,
-            _expand=_expand,
+            select=select,
+            expand=expand,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -1902,7 +1900,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ImageInfo"]:
         """Lists all Virtual Machine Images supported by the Azure Batch service.
@@ -1920,11 +1918,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
          Default value is None.
-        :paramtype _filter: str
+        :paramtype filter: str
         :return: An iterator like instance of ImageInfo
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.ImageInfo]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1949,7 +1946,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
+                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2017,7 +2014,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchPoolNodeCounts"]:
         """Gets the number of Compute Nodes in each state, grouped by Pool. Note that the
@@ -2035,11 +2032,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-support-images.
          Default value is None.
-        :paramtype _filter: str
+        :paramtype filter: str
         :return: An iterator like instance of BatchPoolNodeCounts
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPoolNodeCounts]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2064,7 +2060,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
+                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2246,8 +2242,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        _select: Optional[List[str]] = None,
-        _expand: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -2276,10 +2272,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _expand: An OData $expand clause. Default value is None.
-        :paramtype _expand: list[str]
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: list[str]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2316,8 +2312,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            _select=_select,
-            _expand=_expand,
+            select=select,
+            expand=expand,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -3078,9 +3074,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
-        _select: Optional[List[str]] = None,
-        _expand: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchJob"]:
         """Lists all of the Jobs in the specified Account.
@@ -3098,15 +3094,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs.
          Default value is None.
-        :paramtype _filter: str
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _expand: An OData $expand clause. Default value is None.
-        :paramtype _expand: list[str]
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: list[str]
         :return: An iterator like instance of BatchJob
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJob]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3131,9 +3126,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
-                    _select=_select,
-                    _expand=_expand,
+                    filter=filter,
+                    select=select,
+                    expand=expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3202,9 +3197,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
-        _select: Optional[List[str]] = None,
-        _expand: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchJob"]:
         """Lists the Jobs that have been created under the specified Job Schedule.
@@ -3225,15 +3220,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule.
          Default value is None.
-        :paramtype _filter: str
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _expand: An OData $expand clause. Default value is None.
-        :paramtype _expand: list[str]
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: list[str]
         :return: An iterator like instance of BatchJob
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJob]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3259,9 +3253,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
-                    _select=_select,
-                    _expand=_expand,
+                    filter=filter,
+                    select=select,
+                    expand=expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3330,8 +3324,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
-        _select: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchJobPreparationAndReleaseTaskStatus"]:
         """Lists the execution status of the Job Preparation and Job Release Task for the
@@ -3357,13 +3351,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status.
          Default value is None.
-        :paramtype _filter: str
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
         :return: An iterator like instance of BatchJobPreparationAndReleaseTaskStatus
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJobPreparationAndReleaseTaskStatus]
@@ -3390,8 +3383,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
-                    _select=_select,
+                    filter=filter,
+                    select=select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3633,8 +3626,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
-        _select: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchCertificate"]:
         """Lists all of the Certificates that have been added to the specified Account.
@@ -3652,13 +3645,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates.
          Default value is None.
-        :paramtype _filter: str
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
         :return: An iterator like instance of BatchCertificate
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchCertificate]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3683,8 +3675,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
-                    _select=_select,
+                    filter=filter,
+                    select=select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3934,7 +3926,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        _select: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.BatchCertificate:
         """Gets information about the specified Certificate.
@@ -3952,8 +3944,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchCertificate. The BatchCertificate is compatible with MutableMapping
@@ -3978,7 +3970,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             thumbprint=thumbprint,
             time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            _select=_select,
+            select=select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4245,8 +4237,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        _select: Optional[List[str]] = None,
-        _expand: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -4273,10 +4265,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _expand: An OData $expand clause. Default value is None.
-        :paramtype _expand: list[str]
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: list[str]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -4313,8 +4305,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            _select=_select,
-            _expand=_expand,
+            select=select,
+            expand=expand,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -5025,9 +5017,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
-        _select: Optional[List[str]] = None,
-        _expand: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchJobSchedule"]:
         """Lists all of the Job Schedules in the specified Account.
@@ -5045,15 +5037,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-schedules.
          Default value is None.
-        :paramtype _filter: str
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _expand: An OData $expand clause. Default value is None.
-        :paramtype _expand: list[str]
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: list[str]
         :return: An iterator like instance of BatchJobSchedule
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJobSchedule]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5078,9 +5069,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
-                    _select=_select,
-                    _expand=_expand,
+                    filter=filter,
+                    select=select,
+                    expand=expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5243,9 +5234,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
-        _select: Optional[List[str]] = None,
-        _expand: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchTask"]:
         """Lists all of the Tasks that are associated with the specified Job.
@@ -5267,15 +5258,14 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-tasks.
          Default value is None.
-        :paramtype _filter: str
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _expand: An OData $expand clause. Default value is None.
-        :paramtype _expand: list[str]
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: list[str]
         :return: An iterator like instance of BatchTask
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchTask]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5301,9 +5291,9 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
-                    _select=_select,
-                    _expand=_expand,
+                    filter=filter,
+                    select=select,
+                    expand=expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5597,8 +5587,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        _select: Optional[List[str]] = None,
-        _expand: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
+        expand: Optional[List[str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -5631,10 +5621,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
-        :keyword _expand: An OData $expand clause. Default value is None.
-        :paramtype _expand: list[str]
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: list[str]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5672,8 +5662,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            _select=_select,
-            _expand=_expand,
+            select=select,
+            expand=expand,
             etag=etag,
             match_condition=match_condition,
             api_version=self._config.api_version,
@@ -5847,7 +5837,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        _select: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.BatchTaskListSubtasksResult:
         """Lists all of the subtasks that are associated with the specified multi-instance
@@ -5867,8 +5857,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchTaskListSubtasksResult. The BatchTaskListSubtasksResult is compatible with
@@ -5894,7 +5884,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             task_id=task_id,
             time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            _select=_select,
+            select=select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6490,7 +6480,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
+        filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchNodeFile"]:
@@ -6513,11 +6503,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-task-files.
          Default value is None.
-        :paramtype _filter: str
+        :paramtype filter: str
         :keyword recursive: Whether to list children of the Task directory. This parameter can be used
          in
          combination with the filter parameter to list specific type of files. Default value is None.
@@ -6548,7 +6537,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
+                    filter=filter,
                     recursive=recursive,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -6903,7 +6892,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        _select: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.BatchNode:
         """Gets information about the specified Compute Node.
@@ -6922,8 +6911,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchNode. The BatchNode is compatible with MutableMapping
@@ -6948,7 +6937,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             node_id=node_id,
             time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            _select=_select,
+            select=select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7677,8 +7666,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
-        _select: Optional[List[str]] = None,
+        filter: Optional[str] = None,
+        select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchNode"]:
         """Lists the Compute Nodes in the specified Pool.
@@ -7698,13 +7687,12 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-nodes-in-a-pool.
          Default value is None.
-        :paramtype _filter: str
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
         :return: An iterator like instance of BatchNode
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNode]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7730,8 +7718,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
-                    _select=_select,
+                    filter=filter,
+                    select=select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -7801,7 +7789,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         *,
         time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
-        _select: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.BatchNodeVMExtension:
         """Gets information about the specified Compute Node Extension.
@@ -7823,8 +7811,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BatchNodeVMExtension. The BatchNodeVMExtension is compatible with MutableMapping
@@ -7850,7 +7838,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
             extension_name=extension_name,
             time_out_in_seconds=time_out_in_seconds,
             ocp_date=ocp_date,
-            _select=_select,
+            select=select,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7899,7 +7887,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _select: Optional[List[str]] = None,
+        select: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchNodeVMExtension"]:
         """Lists the Compute Nodes Extensions in the specified Pool.
@@ -7921,8 +7909,8 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _select: An OData $select clause. Default value is None.
-        :paramtype _select: list[str]
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: list[str]
         :return: An iterator like instance of BatchNodeVMExtension
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchNodeVMExtension]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7949,7 +7937,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _select=_select,
+                    select=select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -8335,7 +8323,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
         maxresults: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         time_out_in_seconds: Optional[int] = None,
-        _filter: Optional[str] = None,
+        filter: Optional[str] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchNodeFile"]:
@@ -8358,11 +8346,10 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
          request,
          in seconds. The default is 30 seconds. Default value is None.
         :paramtype time_out_in_seconds: int
-        :keyword _filter: An OData $filter clause. For more information on constructing this filter,
-         see
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files.
          Default value is None.
-        :paramtype _filter: str
+        :paramtype filter: str
         :keyword recursive: Whether to list children of a directory. Default value is None.
         :paramtype recursive: bool
         :return: An iterator like instance of BatchNodeFile
@@ -8391,7 +8378,7 @@ class BatchClientOperationsMixin(BatchClientMixinABC):  # pylint: disable=too-ma
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out_in_seconds=time_out_in_seconds,
-                    _filter=_filter,
+                    filter=filter,
                     recursive=recursive,
                     api_version=self._config.api_version,
                     headers=_headers,
