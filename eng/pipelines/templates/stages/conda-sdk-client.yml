@@ -240,7 +240,7 @@ stages:
                 - "conda-forge"
                 checkout:
                 - package: azure-ai-ml
-                  version: 1.12.0
+                  version: 1.12.1
               - name: azure-ai-formrecognizer
                 common_root: azure
                 service: formrecognizer
