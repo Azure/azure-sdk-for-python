@@ -19,10 +19,12 @@ from asynctestcase import AsyncDocumentIntelligenceTest
 from conftest import skip_flaky_test
 from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
 
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentIntelligenceAdministrationClient)
+DocumentModelAdministrationClientPreparer = functools.partial(
+    _GlobalClientPreparer, DocumentIntelligenceAdministrationClient
+)
+
 
 class TestTrainingAsync(AsyncDocumentIntelligenceTest):
-
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -38,7 +40,7 @@ class TestTrainingAsync(AsyncDocumentIntelligenceTest):
                 model_id=recorded_variables.get("model_id1"),
                 description="model1",
                 build_mode="template",
-                azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url)
+                azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url),
             )
             poller = await client.begin_build_document_model(request)
             model_1 = await poller.result()
@@ -47,7 +49,7 @@ class TestTrainingAsync(AsyncDocumentIntelligenceTest):
                 model_id=recorded_variables.get("model_id2"),
                 description="model2",
                 build_mode="template",
-                azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url)
+                azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url),
             )
             poller = await client.begin_build_document_model(request)
             model_2 = await poller.result()
@@ -59,7 +61,7 @@ class TestTrainingAsync(AsyncDocumentIntelligenceTest):
                 component_models=[
                     ComponentDocumentModelDetails(model_id=model_1.model_id),
                     ComponentDocumentModelDetails(model_id=model_2.model_id),
-                ]
+                ],
             )
             poller = await client.begin_compose_model(request)
             composed_model = await poller.result()

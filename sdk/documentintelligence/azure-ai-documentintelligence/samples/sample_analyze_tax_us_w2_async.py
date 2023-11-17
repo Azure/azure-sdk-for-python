@@ -43,9 +43,7 @@ async def analyze_tax_us_w2():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_analysis_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
@@ -57,10 +55,7 @@ async def analyze_tax_us_w2():
         print(f"--------Analyzing US Tax W-2 Form #{idx + 1}--------")
         form_variant = w2.fields.get("W2FormVariant")
         if form_variant:
-            print(
-                f"Form variant: {form_variant.get('valueString')} has confidence: "
-                f"{form_variant.confidence}"
-            )
+            print(f"Form variant: {form_variant.get('valueString')} has confidence: " f"{form_variant.confidence}")
         tax_year = w2.fields.get("TaxYear")
         if tax_year:
             print(f"Tax year: {tax_year.get('valueString')} has confidence: {tax_year.confidence}")
@@ -70,54 +65,40 @@ async def analyze_tax_us_w2():
         employee = w2.fields.get("Employee")
         if employee:
             print("Employee data:")
-            employee_name = employee.get('valueObject').get("Name")
+            employee_name = employee.get("valueObject").get("Name")
             if employee_name:
-                print(
-                    f"...Name: {employee_name.get('valueString')} has confidence: {employee_name.confidence}"
-                )
-            employee_ssn = employee.get('valueObject').get("SocialSecurityNumber")
+                print(f"...Name: {employee_name.get('valueString')} has confidence: {employee_name.confidence}")
+            employee_ssn = employee.get("valueObject").get("SocialSecurityNumber")
             if employee_ssn:
-                print(
-                    f"...SSN: {employee_ssn.get('valueString')} has confidence: {employee_ssn.confidence}"
-                )
-            employee_address = employee.get('valueObject').get("Address")
+                print(f"...SSN: {employee_ssn.get('valueString')} has confidence: {employee_ssn.confidence}")
+            employee_address = employee.get("valueObject").get("Address")
             if employee_address:
                 print(f"...Address: {format_address_value(employee_address.get('valueAddress'))}")
                 print(f"......has confidence: {employee_address.confidence}")
-            employee_zipcode = employee_address.get('valueAddress').get('postalCode')
+            employee_zipcode = employee_address.get("valueAddress").get("postalCode")
             if employee_zipcode:
-                print(
-                    f"...Zipcode: {employee_zipcode} has confidence: "
-                    f"{employee_address.confidence}"
-                )
+                print(f"...Zipcode: {employee_zipcode} has confidence: " f"{employee_address.confidence}")
         control_number = w2.fields.get("ControlNumber")
         if control_number:
             print(
-                f"Control Number: {control_number.get('valueString')} has confidence: "
-                f"{control_number.confidence}"
+                f"Control Number: {control_number.get('valueString')} has confidence: " f"{control_number.confidence}"
             )
         employer = w2.fields.get("Employer")
         if employer:
             print("Employer data:")
-            employer_name = employer.get('valueObject').get("Name")
+            employer_name = employer.get("valueObject").get("Name")
             if employer_name:
-                print(
-                    f"...Name: {employer_name.get('valueString')} has confidence: {employer_name.confidence}"
-                )
-            employer_id = employer.get('valueObject').get("IdNumber")
+                print(f"...Name: {employer_name.get('valueString')} has confidence: {employer_name.confidence}")
+            employer_id = employer.get("valueObject").get("IdNumber")
             if employer_id:
-                print(
-                    f"...ID Number: {employer_id.get('valueString')} has confidence: {employer_id.confidence}"
-                )
-            employer_address = employer.get('valueObject').get("Address")
+                print(f"...ID Number: {employer_id.get('valueString')} has confidence: {employer_id.confidence}")
+            employer_address = employer.get("valueObject").get("Address")
             if employer_address:
                 print(f"...Address: {format_address_value(employer_address.get('valueAddress'))}")
                 print(f"\n......has confidence: {employer_address.confidence}")
-            employer_zipcode = employer_address.get('valueAddress').get('postalCode')
+            employer_zipcode = employer_address.get("valueAddress").get("postalCode")
             if employer_zipcode:
-                print(
-                    f"...Zipcode: {employer_zipcode} has confidence: {employer_address.confidence}"
-                )
+                print(f"...Zipcode: {employer_zipcode} has confidence: {employer_address.confidence}")
         wages_tips = w2.fields.get("WagesTipsAndOtherCompensation")
         if wages_tips:
             print(
@@ -162,9 +143,7 @@ async def analyze_tax_us_w2():
             )
         allocated_tips = w2.fields.get("AllocatedTips")
         if allocated_tips:
-            print(
-                f"Allocated tips: {allocated_tips.get('valueNumber')} has confidence: {allocated_tips.confidence}"
-            )
+            print(f"Allocated tips: {allocated_tips.get('valueNumber')} has confidence: {allocated_tips.confidence}")
         verification_code = w2.fields.get("VerificationCode")
         if verification_code:
             print(
@@ -183,17 +162,13 @@ async def analyze_tax_us_w2():
         additional_info = w2.fields.get("AdditionalInfo")
         if additional_info:
             print("Additional information:")
-            for item in additional_info.get('valueArray'):
-                letter_code = item.get('valueObject').get("LetterCode")
+            for item in additional_info.get("valueArray"):
+                letter_code = item.get("valueObject").get("LetterCode")
                 if letter_code:
-                    print(
-                        f"...Letter code: {letter_code.get('valueString')} has confidence: {letter_code.confidence}"
-                    )
-                amount = item.get('valueObject').get("Amount")
+                    print(f"...Letter code: {letter_code.get('valueString')} has confidence: {letter_code.confidence}")
+                amount = item.get("valueObject").get("Amount")
                 if amount:
-                    print(
-                        f"...Amount: {amount.get('valueNumber')} has confidence: {amount.confidence}"
-                    )
+                    print(f"...Amount: {amount.get('valueNumber')} has confidence: {amount.confidence}")
         is_statutory_employee = w2.fields.get("IsStatutoryEmployee")
         if is_statutory_employee:
             print(
@@ -211,29 +186,27 @@ async def analyze_tax_us_w2():
             )
         other_info = w2.fields.get("Other")
         if other_info:
-            print(
-                f"Other information: {other_info.get('valueString')} has confidence: {other_info.confidence}"
-            )
+            print(f"Other information: {other_info.get('valueString')} has confidence: {other_info.confidence}")
         state_tax_info = w2.fields.get("StateTaxInfos")
         if state_tax_info:
             print("State Tax info:")
-            for tax in state_tax_info.get('valueArray'):
-                state = tax.get('valueObject').get("State")
+            for tax in state_tax_info.get("valueArray"):
+                state = tax.get("valueObject").get("State")
                 if state:
                     print(f"...State: {state.get('valueString')} has confidence: {state.confidence}")
-                employer_state_id_number = tax.get('valueObject').get("EmployerStateIdNumber")
+                employer_state_id_number = tax.get("valueObject").get("EmployerStateIdNumber")
                 if employer_state_id_number:
                     print(
                         f"...Employer state ID number: {employer_state_id_number.get('valueString')} has "
                         f"confidence: {employer_state_id_number.confidence}"
                     )
-                state_wages_tips = tax.get('valueObject').get("StateWagesTipsEtc")
+                state_wages_tips = tax.get("valueObject").get("StateWagesTipsEtc")
                 if state_wages_tips:
                     print(
                         f"...State wages, tips, etc: {state_wages_tips.get('valueNumber')} has confidence: "
                         f"{state_wages_tips.confidence}"
                     )
-                state_income_tax = tax.get('valueObject').get("StateIncomeTax")
+                state_income_tax = tax.get("valueObject").get("StateIncomeTax")
                 if state_income_tax:
                     print(
                         f"...State income tax: {state_income_tax.get('valueNumber')} has confidence: "
@@ -242,20 +215,20 @@ async def analyze_tax_us_w2():
         local_tax_info = w2.fields.get("LocalTaxInfos")
         if local_tax_info:
             print("Local Tax info:")
-            for tax in local_tax_info.get('valueArray'):
-                local_wages_tips = tax.get('valueObject').get("LocalWagesTipsEtc")
+            for tax in local_tax_info.get("valueArray"):
+                local_wages_tips = tax.get("valueObject").get("LocalWagesTipsEtc")
                 if local_wages_tips:
                     print(
                         f"...Local wages, tips, etc: {local_wages_tips.get('valueNumber')} has confidence: "
                         f"{local_wages_tips.confidence}"
                     )
-                local_income_tax = tax.get('valueObject').get("LocalIncomeTax")
+                local_income_tax = tax.get("valueObject").get("LocalIncomeTax")
                 if local_income_tax:
                     print(
                         f"...Local income tax: {local_income_tax.get('valueNumber')} has confidence: "
                         f"{local_income_tax.confidence}"
                     )
-                locality_name = tax.get('valueObject').get("LocalityName")
+                locality_name = tax.get("valueObject").get("LocalityName")
                 if locality_name:
                     print(
                         f"...Locality name: {locality_name.get('valueString')} has confidence: "

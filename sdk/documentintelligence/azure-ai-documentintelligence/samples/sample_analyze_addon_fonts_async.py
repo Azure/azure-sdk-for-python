@@ -61,22 +61,23 @@ async def analyze_fonts():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_analysis_client:
         # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-layout", analyze_request=f, features=[DocumentAnalysisFeature.STYLE_FONT], content_type="application/octet-stream"
+                "prebuilt-layout",
+                analyze_request=f,
+                features=[DocumentAnalysisFeature.STYLE_FONT],
+                content_type="application/octet-stream",
             )
         result = await poller.result()
 
     # DocumentStyle has the following font related attributes:
     similar_font_families = defaultdict(list)  # e.g., 'Arial, sans-serif
-    font_styles = defaultdict(list)             # e.g, 'italic'
-    font_weights = defaultdict(list)            # e.g., 'bold'
-    font_colors = defaultdict(list)             # in '#rrggbb' hexadecimal format
+    font_styles = defaultdict(list)  # e.g, 'italic'
+    font_weights = defaultdict(list)  # e.g., 'bold'
+    font_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
     font_background_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
 
     if any([style.is_handwritten for style in result.styles]):

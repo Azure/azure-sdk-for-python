@@ -1,4 +1,3 @@
-
 # coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -11,13 +10,13 @@ import functools
 from devtools_testutils import PowerShellPreparer, AzureMgmtPreparer
 from azure.core.credentials import AzureKeyCredential
 
-ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
-REGION = os.getenv('DOCUMENTINTELLIGENCE_LOCATION', None)
+ENABLE_LOGGER = os.getenv("ENABLE_LOGGER", "False")
+REGION = os.getenv("DOCUMENTINTELLIGENCE_LOCATION", None)
 
 
 DocumentIntelligencePreparer = functools.partial(
     PowerShellPreparer,
-    'documentintelligence',
+    "documentintelligence",
     documentintelligence_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
     documentintelligence_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
     documentintelligence_storage_container_sas_url="https://blob_sas_url",
@@ -35,16 +34,13 @@ DocumentIntelligencePreparer = functools.partial(
     documentintelligence_table_fixed_rows_container_sas_url_v2="https://blob_sas_url",
     documentintelligence_training_data_classifier="https://blob_sas_url",
     documentintelligence_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/documentintelligencename",
-    documentintelligence_region="region"
+    documentintelligence_region="region",
 )
 
 
 class GlobalClientPreparer(AzureMgmtPreparer):
     def __init__(self, client_cls, client_kwargs={}, **kwargs):
-        super(GlobalClientPreparer, self).__init__(
-            name_prefix='',
-            random_name_length=42
-        )
+        super(GlobalClientPreparer, self).__init__(name_prefix="", random_name_length=42)
         self.client_kwargs = client_kwargs
         self.client_cls = client_cls
 

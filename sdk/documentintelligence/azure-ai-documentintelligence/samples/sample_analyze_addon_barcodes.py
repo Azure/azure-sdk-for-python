@@ -40,7 +40,7 @@ USAGE:
 """
 
 import os
-        
+
 
 def analyze_barcodes():
     path_to_sample_documents = os.path.abspath(
@@ -58,14 +58,15 @@ def analyze_barcodes():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Specify which add-on capabilities to enable.
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-layout", analyze_request=f, features=[DocumentAnalysisFeature.BARCODES], content_type="application/octet-stream"
+            "prebuilt-layout",
+            analyze_request=f,
+            features=[DocumentAnalysisFeature.BARCODES],
+            content_type="application/octet-stream",
         )
     result = poller.result()
 

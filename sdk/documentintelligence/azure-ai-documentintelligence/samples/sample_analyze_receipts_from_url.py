@@ -37,13 +37,9 @@ def analyze_receipts_from_url():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
-    poller = document_analysis_client.begin_analyze_document(
-        "prebuilt-receipt", AnalyzeDocumentRequest(url_source=url)
-    )
+    poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
     receipts = poller.result()
 
     for idx, receipt in enumerate(receipts.documents):
@@ -51,10 +47,7 @@ def analyze_receipts_from_url():
         print(f"Receipt type: {receipt.doc_type if receipt.doc_type else 'N/A'}")
         merchant_name = receipt.fields.get("MerchantName")
         if merchant_name:
-            print(
-                f"Merchant Name: {merchant_name.get('valueString')} has confidence: "
-                f"{merchant_name.confidence}"
-            )
+            print(f"Merchant Name: {merchant_name.get('valueString')} has confidence: " f"{merchant_name.confidence}")
         transaction_date = receipt.fields.get("TransactionDate")
         if transaction_date:
             print(
@@ -63,21 +56,21 @@ def analyze_receipts_from_url():
             )
         if receipt.fields.get("Items"):
             print("Receipt items:")
-            for idx, item in enumerate(receipt.fields.get("Items").get('valueArray')):
+            for idx, item in enumerate(receipt.fields.get("Items").get("valueArray")):
                 print(f"...Item #{idx + 1}")
-                item_description = item.get('valueObject').get("Description")
+                item_description = item.get("valueObject").get("Description")
                 if item_description:
                     print(
                         f"......Item Description: {item_description.get('valueString')} has confidence: "
                         f"{item_description.confidence}"
                     )
-                item_quantity = item.get('valueObject').get("Quantity")
+                item_quantity = item.get("valueObject").get("Quantity")
                 if item_quantity:
                     print(
                         f"......Item Quantity: {item_quantity.get('valueString')} has confidence: "
                         f"{item_quantity.confidence}"
                     )
-                item_total_price = item.get('valueObject').get("TotalPrice")
+                item_total_price = item.get("valueObject").get("TotalPrice")
                 if item_total_price:
                     print(
                         f"......Total Item Price: {format_price(item_total_price.get('valueCurrency'))} has confidence: "

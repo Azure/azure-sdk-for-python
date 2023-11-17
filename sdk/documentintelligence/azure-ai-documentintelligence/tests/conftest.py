@@ -1,4 +1,3 @@
-
 # coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,13 +17,11 @@ from devtools_testutils import (
     test_proxy,
 )
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_remove_header_sanitizer(headers="Ocp-Apim-Subscription-Key")
-    add_general_regex_sanitizer(
-        value="fakeendpoint",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)"
-    )
+    add_general_regex_sanitizer(value="fakeendpoint", regex="(?<=\\/\\/)[a-z-]+(?=\\.cognitiveservices\\.azure\\.com)")
     add_oauth_response_sanitizer()
     add_body_key_sanitizer(
         json_path="urlSource",
@@ -61,6 +58,7 @@ def add_sanitizers(test_proxy):
         value="redacted",
         regex="([0-9a-f-]{36})",
     )
+
 
 def skip_flaky_test(f):
     @wraps(f)

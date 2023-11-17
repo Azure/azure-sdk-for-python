@@ -41,54 +41,35 @@ def analyze_read():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-read", analyze_request=f, features=[DocumentAnalysisFeature.STYLE_FONT], content_type="application/octet-stream"
+            "prebuilt-read",
+            analyze_request=f,
+            features=[DocumentAnalysisFeature.STYLE_FONT],
+            content_type="application/octet-stream",
         )
     result = poller.result()
 
     print("----Languages detected in the document----")
     if result.languages is not None:
         for language in result.languages:
-            print(
-                f"Language code: '{language.locale}' with confidence {language.confidence}"
-            )
+            print(f"Language code: '{language.locale}' with confidence {language.confidence}")
 
     print("----Styles detected in the document----")
     if result.styles:
         for style in result.styles:
             if style.is_handwritten:
                 print("Found the following handwritten content: ")
-                print(
-                    ",".join(
-                        [
-                            result.content[span.offset : span.offset + span.length]
-                            for span in style.spans
-                        ]
-                    )
-                )
+                print(",".join([result.content[span.offset : span.offset + span.length] for span in style.spans]))
             if style.font_style:
-                print(
-                    f"The document contains '{style.font_style}' font style, applied to the following text: "
-                )
-                print(
-                    ",".join(
-                        [
-                            result.content[span.offset : span.offset + span.length]
-                            for span in style.spans
-                        ]
-                    )
-                )
+                print(f"The document contains '{style.font_style}' font style, applied to the following text: ")
+                print(",".join([result.content[span.offset : span.offset + span.length] for span in style.spans]))
 
     if result.pages:
         for page in result.pages:
             print(f"----Analyzing document from page #{page.page_number}----")
-            print(
-                f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
-            )
+            print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
             for line_idx, line in enumerate(page.lines):
                 words = get_words(page, line)
@@ -97,9 +78,7 @@ def analyze_read():
                 )
 
                 for word in words:
-                    print(
-                        f"......Word '{word.content}' has a confidence of {word.confidence}"
-                    )
+                    print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
             if page.selection_marks:
                 for selection_mark in page.selection_marks:
@@ -111,9 +90,7 @@ def analyze_read():
     if len(result.paragraphs) > 0:
         print(f"----Detected #{len(result.paragraphs)} paragraphs in the document----")
         for paragraph in result.paragraphs:
-            print(
-                f"Found paragraph with role: '{paragraph.role}' within {paragraph.bounding_regions} bounding region"
-            )
+            print(f"Found paragraph with role: '{paragraph.role}' within {paragraph.bounding_regions} bounding region")
             print(f"...with content: '{paragraph.content}'")
 
     print("----------------------------------------")

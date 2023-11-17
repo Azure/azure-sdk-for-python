@@ -18,7 +18,6 @@ DocumentIntelligenceClientPreparer = functools.partial(_GlobalClientPreparer, Do
 
 
 class TestDACAnalyzeLayout(DocumentIntelligenceTest):
-
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @DocumentIntelligenceClientPreparer()

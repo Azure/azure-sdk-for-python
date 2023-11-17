@@ -41,7 +41,7 @@ USAGE:
 
 import asyncio
 import os
-        
+
 
 async def analyze_barcodes():
     path_to_sample_documents = os.path.abspath(
@@ -59,15 +59,16 @@ async def analyze_barcodes():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_analysis_client:
         # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-layout", analyze_request=f, features=[DocumentAnalysisFeature.BARCODES], content_type="application/octet-stream"
+                "prebuilt-layout",
+                analyze_request=f,
+                features=[DocumentAnalysisFeature.BARCODES],
+                content_type="application/octet-stream",
             )
         result = await poller.result()
 

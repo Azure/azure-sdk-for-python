@@ -10,7 +10,7 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.documentintelligence import DocumentIntelligenceClient, DocumentIntelligenceAdministrationClient
-from azure.ai.documentintelligence.models import(
+from azure.ai.documentintelligence.models import (
     BuildDocumentModelRequest,
     AzureBlobContentSource,
     AnalyzeDocumentRequest,
@@ -21,7 +21,6 @@ from conftest import skip_flaky_test
 
 
 class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
-
     @DocumentIntelligencePreparer()
     def test_analyze_document_none_model_id(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
@@ -32,7 +31,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         with pytest.raises(ValueError) as e:
             client.begin_analyze_document(model_id=None, analyze_request=b"xx")
         assert "No value for given attribute" in str(e.value)
-    
+
     @DocumentIntelligencePreparer()
     def test_analyze_document_none_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
@@ -57,7 +56,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         with pytest.raises(ResourceNotFoundError) as e:
             client.begin_analyze_document(model_id="", analyze_request=b"xx")
         assert "Resource not found" in str(e.value)
-    
+
     @DocumentIntelligencePreparer()
     def test_analyze_document_empty_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
@@ -90,7 +89,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         request = BuildDocumentModelRequest(
             model_id=recorded_variables.get("model_id"),
             build_mode="template",
-            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url)
+            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url),
         )
         poller = di_admin_client.begin_build_document_model(request)
         model = poller.result()
@@ -98,9 +97,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
 
         with open(self.form_jpg, "rb") as fd:
             my_file = fd.read()
-        poller = di_client.begin_analyze_document(
-            model.model_id, my_file, content_type="application/octet-stream"
-        )
+        poller = di_client.begin_analyze_document(model.model_id, my_file, content_type="application/octet-stream")
         document = poller.result()
         assert document.model_id == model.model_id
         assert len(document.pages) == 1
@@ -109,5 +106,5 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         assert len(document.styles) == 1
         assert document.string_index_type == "textElements"
         assert document.content_format == "text"
-        
+
         return recorded_variables

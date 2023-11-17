@@ -35,9 +35,7 @@ import os
 
 def analyze_custom_documents(custom_model_id):
     path_to_sample_documents = os.path.abspath(
-        os.path.join(
-            os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"
-        )
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg")
     )
     # [START analyze_custom_documents]
     from azure.core.credentials import AzureKeyCredential
@@ -47,9 +45,7 @@ def analyze_custom_documents(custom_model_id):
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     model_id = os.getenv("CUSTOM_BUILT_MODEL_ID", custom_model_id)
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Make sure your document's type is included in the list of document types the custom model can analyze
     with open(path_to_sample_documents, "rb") as f:
@@ -64,7 +60,7 @@ def analyze_custom_documents(custom_model_id):
         print(f"Document has document type confidence {document.confidence}")
         print(f"Document was analyzed with model with ID {result.model_id}")
         for name, field in document.fields.items():
-            field_value = field.get('valueString') if field.get('valueString') else field.content
+            field_value = field.get("valueString") if field.get("valueString") else field.content
             print(
                 f"......found field of type '{field.type}' with value '{field_value}' and with confidence {field.confidence}"
             )
@@ -88,9 +84,7 @@ def analyze_custom_documents(custom_model_id):
         for region in table.bounding_regions:
             print(f"...{region.page_number}")
         for cell in table.cells:
-            print(
-                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
-            )
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
     print("-----------------------------------")
     # [END analyze_custom_documents]
 
@@ -106,7 +100,7 @@ if __name__ == "__main__":
             import uuid
             from azure.core.credentials import AzureKeyCredential
             from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
-            from azure.ai.documentintelligence.models import(
+            from azure.ai.documentintelligence.models import (
                 DocumentBuildMode,
                 BuildDocumentModelRequest,
                 AzureBlobContentSource,
@@ -116,9 +110,7 @@ if __name__ == "__main__":
             key = os.getenv("DOCUMENTINTELLIGENCE_API_KEY")
 
             if not endpoint or not key:
-                raise ValueError(
-                    "Please provide endpoint and API key to run the samples."
-                )
+                raise ValueError("Please provide endpoint and API key to run the samples.")
 
             document_model_admin_client = DocumentIntelligenceAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
@@ -128,7 +120,7 @@ if __name__ == "__main__":
                 request = BuildDocumentModelRequest(
                     model_id=str(uuid.uuid4()),
                     build_mode=DocumentBuildMode.TEMPLATE,
-                    azure_blob_source=AzureBlobContentSource(container_url=blob_container_sas_url)
+                    azure_blob_source=AzureBlobContentSource(container_url=blob_container_sas_url),
                 )
                 model = document_model_admin_client.begin_build_document_model(request).result()
                 model_id = model.model_id

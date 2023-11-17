@@ -11,7 +11,7 @@ from devtools_testutils import set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient, DocumentIntelligenceAdministrationClient
-from azure.ai.documentintelligence.models import(
+from azure.ai.documentintelligence.models import (
     BuildDocumentModelRequest,
     AzureBlobContentSource,
     AnalyzeDocumentRequest,
@@ -22,7 +22,6 @@ from conftest import skip_flaky_test
 
 
 class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
-
     @DocumentIntelligencePreparer()
     @recorded_by_proxy_async
     async def test_analyze_document_none_model_id(self, **kwargs):
@@ -37,7 +36,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
                     model_id=None, analyze_request=b"xx", content_type="application/octet-stream"
                 )
         assert "No value for given attribute" in str(e.value)
-    
+
     @DocumentIntelligencePreparer()
     @recorded_by_proxy_async
     async def test_analyze_document_none_model_id_from_url(self, **kwargs):
@@ -67,7 +66,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
                     model_id="", analyze_request=b"xx", content_type="application/octet-stream"
                 )
         assert "Resource not found" in str(e.value)
-    
+
     @DocumentIntelligencePreparer()
     @recorded_by_proxy_async
     async def test_analyze_document_empty_model_id_from_url(self, **kwargs):
@@ -102,7 +101,7 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
         request = BuildDocumentModelRequest(
             model_id=recorded_variables.get("model_id"),
             build_mode="template",
-            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url)
+            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url),
         )
         async with di_admin_client:
             build_poller = await di_admin_client.begin_build_document_model(request)
@@ -123,5 +122,5 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
             assert len(document.styles) == 1
             assert document.string_index_type == "textElements"
             assert document.content_format == "text"
-        
+
         return recorded_variables

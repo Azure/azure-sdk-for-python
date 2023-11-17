@@ -90,7 +90,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(GeneratedDIAdminCl
         return AsyncLROPoller[_models.DocumentClassifierDetails](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @distributed_trace_async
     async def begin_build_document_model(
         self, build_request: Union[_models.BuildDocumentModelRequest, JSON, IO], **kwargs: Any
@@ -149,7 +149,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(GeneratedDIAdminCl
         return AsyncLROPoller[_models.DocumentModelDetails](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @distributed_trace_async
     async def begin_compose_model(
         self, compose_request: Union[_models.ComposeDocumentModelRequest, JSON, IO], **kwargs: Any
@@ -208,7 +208,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(GeneratedDIAdminCl
         return AsyncLROPoller[_models.DocumentModelDetails](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @distributed_trace_async
     async def begin_copy_model_to(
         self, model_id: str, copy_to_request: Union[_models.CopyAuthorization, JSON, IO], **kwargs: Any
@@ -268,6 +268,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(GeneratedDIAdminCl
         return AsyncLROPoller[_models.DocumentModelDetails](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
+
 
 __all__: List[str] = [
     "DocumentIntelligenceAdministrationClientOperationsMixin",

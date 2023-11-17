@@ -45,9 +45,7 @@ def analyze_layout():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
             "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
@@ -61,9 +59,7 @@ def analyze_layout():
 
     for page in result.pages:
         print(f"----Analyzing layout from page #{page.page_number}----")
-        print(
-            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
-        )
+        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
         for line_idx, line in enumerate(page.lines):
             words = get_words(page, line)
@@ -73,9 +69,7 @@ def analyze_layout():
             )
 
             for word in words:
-                print(
-                    f"......Word '{word.content}' has a confidence of {word.confidence}"
-                )
+                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         for selection_mark in page.selection_marks:
             print(
@@ -84,22 +78,13 @@ def analyze_layout():
             )
 
     for table_idx, table in enumerate(result.tables):
-        print(
-            f"Table # {table_idx} has {table.row_count} rows and "
-            f"{table.column_count} columns"
-        )
+        print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
         for region in table.bounding_regions:
-            print(
-                f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}"
-            )
+            print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
         for cell in table.cells:
-            print(
-                f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
-            )
+            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
             for region in cell.bounding_regions:
-                print(
-                    f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'"
-                )
+                print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
 
     print("----------------------------------------")
     # [END extract_layout]

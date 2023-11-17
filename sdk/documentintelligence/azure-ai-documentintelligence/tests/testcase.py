@@ -1,4 +1,3 @@
-
 # coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,8 +12,9 @@ from typing import Optional
 from azure.core.credentials import AccessToken
 from devtools_testutils import AzureRecordedTestCase
 
-LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
-ENABLE_LOGGER = os.getenv('ENABLE_LOGGER', "False")
+LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"
+ENABLE_LOGGER = os.getenv("ENABLE_LOGGER", "False")
+
 
 def _get_blob_url(container_sas_url, container, file_name):
     if container_sas_url == "https://blob_sas_url":
@@ -24,6 +24,7 @@ def _get_blob_url(container_sas_url, container, file_name):
     blob_sas_url = url[0] + url[1]
     return blob_sas_url
 
+
 def adjust_value_type(value_type):
     if value_type == "array":
         value_type = "list"
@@ -32,6 +33,7 @@ def adjust_value_type(value_type):
     if value_type == "object":
         value_type = "dictionary"
     return value_type
+
 
 def adjust_confidence(score: Optional[float]) -> float:
     """Adjust confidence when not returned.
@@ -44,6 +46,7 @@ def adjust_confidence(score: Optional[float]) -> float:
         return 1.0
     return score
 
+
 def adjust_text_angle(text_angle: Optional[float]) -> Optional[float]:
     """Adjust to (-180, 180]
 
@@ -55,6 +58,7 @@ def adjust_text_angle(text_angle: Optional[float]) -> Optional[float]:
         if text_angle > 180.0:
             text_angle -= 360.0
     return text_angle
+
 
 def get_element_type(element_pointer):
     word_ref = re.compile(r"/readResults/\d+/lines/\d+/words/\d+")
@@ -70,6 +74,7 @@ def get_element_type(element_pointer):
         return "selectionMark"
 
     return None
+
 
 def get_element(element_pointer, read_result):
     indices = [int(s) for s in re.findall(r"\d+", element_pointer)]
@@ -93,15 +98,18 @@ def get_element(element_pointer, read_result):
 
     return None, None, None
 
+
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
     """
+
     def __init__(self):
         self.token = AccessToken("YOU SHALL NOT PASS", 0)
 
     def get_token(self, *args, **kwargs):
         return self.token
+
 
 class DocumentIntelligenceTest(AzureRecordedTestCase):
 
@@ -112,7 +120,9 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
     receipt_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "contoso-receipt.png")
     business_card_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.jpg")
     business_card_url_png = _get_blob_url(testing_container_sas_url, "testingdata", "businessCard.png")
-    business_card_multipage_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "business-card-multipage.pdf")
+    business_card_multipage_url_pdf = _get_blob_url(
+        testing_container_sas_url, "testingdata", "business-card-multipage.pdf"
+    )
     identity_document_url_jpg = _get_blob_url(testing_container_sas_url, "testingdata", "license.jpg")
     identity_document_url_jpg_passport = _get_blob_url(testing_container_sas_url, "testingdata", "passport_1.jpg")
     invoice_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "Invoice_1.pdf")
@@ -123,36 +133,70 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
     multipage_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_invoice1.pdf")
     multipage_table_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipagelayout.pdf")
     selection_mark_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "selection_mark_form.pdf")
-    label_table_variable_row_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf")
-    label_table_fixed_row_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf")
+    label_table_variable_row_url_pdf = _get_blob_url(
+        testing_container_sas_url, "testingdata", "label_table_variable_rows1.pdf"
+    )
+    label_table_fixed_row_url_pdf = _get_blob_url(
+        testing_container_sas_url, "testingdata", "label_table_fixed_rows1.pdf"
+    )
     multipage_receipt_url_pdf = _get_blob_url(testing_container_sas_url, "testingdata", "multipage_receipt.pdf")
     invoice_no_sub_line_item = _get_blob_url(testing_container_sas_url, "testingdata", "ErrorImage.tiff")
     irs_classifier_document_url = _get_blob_url(testing_container_sas_url, "testingdata", "IRS-1040_2.pdf")
 
     # file stream samples
-    receipt_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg"))
-    receipt_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-receipt.png"))
-    business_card_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg"))
-    business_card_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png"))
-    business_card_multipage_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf"))
-    identity_document_license_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/license.jpg"))
-    identity_document_passport_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/passport_1.jpg"))
+    receipt_jpg = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-allinone.jpg")
+    )
+    receipt_png = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/contoso-receipt.png")
+    )
+    business_card_jpg = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.jpg")
+    )
+    business_card_png = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-english.png")
+    )
+    business_card_multipage_pdf = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/business_cards/business-card-multipage.pdf")
+    )
+    identity_document_license_jpg = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/license.jpg")
+    )
+    identity_document_passport_jpg = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/identity_documents/passport_1.jpg")
+    )
     invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.pdf"))
     invoice_tiff = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Invoice_1.tiff"))
-    invoice_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/sample_invoice.jpg"))
+    invoice_jpg = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/sample_invoice.jpg")
+    )
     form_jpg = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg"))
     blank_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/blank.pdf"))
-    multipage_invoice_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf"))
+    multipage_invoice_pdf = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipage_invoice1.pdf")
+    )
     unsupported_content_py = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./conftest.py"))
-    multipage_table_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf"))
-    multipage_vendor_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf"))
-    selection_form_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf"))
-    multipage_receipt_pdf = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf"))
+    multipage_table_pdf = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multipagelayout.pdf")
+    )
+    multipage_vendor_pdf = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/multi1.pdf")
+    )
+    selection_form_pdf = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/selection_mark_form.pdf")
+    )
+    multipage_receipt_pdf = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/receipt/multipage_receipt.pdf")
+    )
     invoice_docx = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/invoice.docx"))
     w2_png = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/tax/sample_w2.png"))
     html_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/simple_html.html"))
-    spreadsheet = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/spreadsheet_example.xlsx"))
-    irs_classifier_document = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/IRS-1040.pdf"))
+    spreadsheet = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/spreadsheet_example.xlsx")
+    )
+    irs_classifier_document = os.path.abspath(
+        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/IRS-1040.pdf")
+    )
 
     def get_oauth_endpoint(self):
         return os.getenv("DOCUMENTINTELLIGENCE_ENDPOINT")
@@ -160,6 +204,7 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
     def generate_oauth_token(self):
         if self.is_live:
             from azure.identity import ClientSecretCredential
+
             return ClientSecretCredential(
                 os.getenv("DOCUMENTINTELLIGENCE_TENANT_ID"),
                 os.getenv("DOCUMENTINTELLIGENCE_CLIENT_ID"),
@@ -174,7 +219,7 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
         self.enable_logging() if ENABLE_LOGGER == "True" else self.disable_logging()
 
     def enable_logging(self):
-        self.logger = logging.getLogger('azure')
+        self.logger = logging.getLogger("azure")
         handler = logging.StreamHandler()
         handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
         self.logger.handlers = [handler]
@@ -213,7 +258,9 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
             for line, expected_line in zip(page.lines or [], expected_page.lines or []):
                 self.assertFormLineTransformCorrect(line, expected_line)
 
-            for selection_mark, expected_selection_mark in zip(page.selection_marks or [], expected_page.selection_marks or []):
+            for selection_mark, expected_selection_mark in zip(
+                page.selection_marks or [], expected_page.selection_marks or []
+            ):
                 self.assertFormSelectionMarkHasValues(selection_mark, expected_page.page)
 
         if page_result:
@@ -242,13 +289,13 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
         count = 0
         for point in polygon:
             assert point.x == expected[count]
-            assert point.y == expected[count+1]
+            assert point.y == expected[count + 1]
             count = count + 2
 
     def assertFormWordTransformCorrect(self, word, expected):
         assert word.text == expected.text
         assert word.confidence == adjust_confidence(expected.confidence)
-        assert word.kind  == "word"
+        assert word.kind == "word"
         self.assertBoundingBoxTransformCorrect(word.bounding_box, expected.bounding_box)
 
     def assertFormLineTransformCorrect(self, line, expected):
@@ -305,9 +352,7 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
             assert expected.page == form_field.value_data.page_number
             if read_results:
                 self.assertFieldElementsTransFormCorrect(
-                    form_field.value_data.field_elements,
-                    expected.elements,
-                    read_results
+                    form_field.value_data.field_elements, expected.elements, read_results
                 )
 
     def assertFormFieldsTransformCorrect(self, form_fields, generated_fields, read_results=None):
@@ -327,22 +372,22 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
         if generated_fields is None:
             return
         for idx, expected in enumerate(generated_fields):
-            assert adjust_confidence(expected.confidence) == form_fields["field-"+str(idx)].confidence
-            assert expected.key.text == form_fields["field-"+str(idx)].label_data.text
-            self.assertBoundingBoxTransformCorrect(form_fields["field-"+str(idx)].label_data.bounding_box, expected.key.bounding_box)
+            assert adjust_confidence(expected.confidence) == form_fields["field-" + str(idx)].confidence
+            assert expected.key.text == form_fields["field-" + str(idx)].label_data.text
+            self.assertBoundingBoxTransformCorrect(
+                form_fields["field-" + str(idx)].label_data.bounding_box, expected.key.bounding_box
+            )
             if read_results:
                 self.assertFieldElementsTransFormCorrect(
-                    form_fields["field-"+str(idx)].label_data.field_elements,
-                    expected.key.elements,
-                    read_results
+                    form_fields["field-" + str(idx)].label_data.field_elements, expected.key.elements, read_results
                 )
             assert expected.value.text == form_fields["field-" + str(idx)].value_data.text
-            self.assertBoundingBoxTransformCorrect(form_fields["field-" + str(idx)].value_data.bounding_box, expected.value.bounding_box)
+            self.assertBoundingBoxTransformCorrect(
+                form_fields["field-" + str(idx)].value_data.bounding_box, expected.value.bounding_box
+            )
             if read_results:
                 self.assertFieldElementsTransFormCorrect(
-                    form_fields["field-"+str(idx)].value_data.field_elements,
-                    expected.value.elements,
-                    read_results
+                    form_fields["field-" + str(idx)].value_data.field_elements, expected.value.elements, read_results
                 )
 
     def assertTablesTransformCorrect(self, layout, expected_layout, read_results=None, **kwargs):
@@ -393,7 +438,9 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
                 if item.value.get("Quantity", None):
                     self.assertFieldElementsHasValues(item.value.get("Quantity").value_data.field_elements, page_number)
                 if item.value.get("TotalPrice", None):
-                    self.assertFieldElementsHasValues(item.value.get("TotalPrice").value_data.field_elements, page_number)
+                    self.assertFieldElementsHasValues(
+                        item.value.get("TotalPrice").value_data.field_elements, page_number
+                    )
                 if item.value.get("Price", None):
                     self.assertFieldElementsHasValues(item.value.get("Price").value_data.field_elements, page_number)
 
@@ -447,11 +494,17 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
                 if item.value.get("Quantity", None):
                     self.assertFieldElementsHasValues(item.value.get("Quantity").value_data.field_elements, page_number)
                 if item.value.get("Description", None):
-                    self.assertFieldElementsHasValues(item.value.get("Description").value_data.field_elements, page_number)
+                    self.assertFieldElementsHasValues(
+                        item.value.get("Description").value_data.field_elements, page_number
+                    )
                 if item.value.get("UnitPrice", None):
-                    self.assertFieldElementsHasValues(item.value.get("UnitPrice").value_data.field_elements, page_number)
+                    self.assertFieldElementsHasValues(
+                        item.value.get("UnitPrice").value_data.field_elements, page_number
+                    )
                 if item.value.get("ProductCode", None):
-                    self.assertFieldElementsHasValues(item.value.get("ProductCode").value_data.field_elements, page_number)
+                    self.assertFieldElementsHasValues(
+                        item.value.get("ProductCode").value_data.field_elements, page_number
+                    )
                 if item.value.get("Unit", None):
                     self.assertFieldElementsHasValues(item.value.get("Unit").value_data.field_elements, page_number)
                 if item.value.get("Date", None):
@@ -643,7 +696,7 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
             assert style.confidence == expected.confidence
 
             for span, expected_span in zip(style.spans or [], expected.spans or []):
-                    self.assertSpanTransformCorrect(span, expected_span)
+                self.assertSpanTransformCorrect(span, expected_span)
 
     def assertDocumentKeyValueElementTransformCorrect(self, element, expected, *kwargs):
         if not element or not expected:
@@ -651,7 +704,7 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
         assert element.content == expected.content
 
         for span, expected_span in zip(element.spans or [], expected.spans or []):
-                self.assertSpanTransformCorrect(span, expected_span)
+            self.assertSpanTransformCorrect(span, expected_span)
 
         self.assertBoundingRegionsTransformCorrect(element.bounding_regions, expected.bounding_regions)
 
@@ -700,7 +753,7 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
         assert transformed_cell.content == raw_cell.content
 
         for span, expected_span in zip(transformed_cell.spans or [], raw_cell.spans or []):
-                self.assertSpanTransformCorrect(span, expected_span)
+            self.assertSpanTransformCorrect(span, expected_span)
 
         self.assertBoundingRegionsTransformCorrect(transformed_cell.bounding_regions, raw_cell.bounding_regions)
 
@@ -719,7 +772,9 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
             for word, expected_word in zip(page.words or [], expected_page.words or []):
                 self.assertDocumentWordTransformCorrect(word, expected_word)
 
-            for selection_mark, expected_selection_mark in zip(page.selection_marks or [], expected_page.selection_marks or []):
+            for selection_mark, expected_selection_mark in zip(
+                page.selection_marks or [], expected_page.selection_marks or []
+            ):
                 self.assertDocumentSelectionMarkTransformCorrect(selection_mark, expected_selection_mark)
 
             for span, expected_span in zip(page.spans or [], expected_page.spans or []):
@@ -759,13 +814,17 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
             assert expected.confidence == document_fields[label].confidence
             # In the case of content for a signature type field we get '' in expected.content
             # vs. None for document_fields[label].content
-            assert (expected.content == document_fields[label].content) or (expected.content == '' and not document_fields[label].content)
+            assert (expected.content == document_fields[label].content) or (
+                expected.content == "" and not document_fields[label].content
+            )
             self.assertDocumentFieldValueTransformCorrect(document_fields[label], expected)
 
             for span, expected_span in zip(document_fields[label].spans or [], expected.spans or []):
                 self.assertSpanTransformCorrect(span, expected_span)
 
-            self.assertBoundingRegionsTransformCorrect(document_fields[label].bounding_regions, expected.bounding_regions)
+            self.assertBoundingRegionsTransformCorrect(
+                document_fields[label].bounding_regions, expected.bounding_regions
+            )
 
     def assertBoundingRegionsTransformCorrect(self, bounding_regions, expected):
         if bounding_regions == [] and not expected:
@@ -773,7 +832,6 @@ class DocumentIntelligenceTest(AzureRecordedTestCase):
         for region, expected_region in zip(bounding_regions, expected):
             assert region.page_number == expected_region.page_number
             self.assertBoundingPolygonTransformCorrect(region.polygon, expected_region.polygon)
-
 
     def assertDocumentFieldValueTransformCorrect(self, document_field, expected):
         if expected is None:

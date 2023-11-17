@@ -18,10 +18,12 @@ from testcase import DocumentIntelligenceTest
 from conftest import skip_flaky_test
 from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
 
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentIntelligenceAdministrationClient)
+DocumentModelAdministrationClientPreparer = functools.partial(
+    _GlobalClientPreparer, DocumentIntelligenceAdministrationClient
+)
+
 
 class TestTrainingAsync(DocumentIntelligenceTest):
-
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
@@ -32,12 +34,12 @@ class TestTrainingAsync(DocumentIntelligenceTest):
         recorded_variables.setdefault("model_id1", str(uuid.uuid4()))
         recorded_variables.setdefault("model_id2", str(uuid.uuid4()))
         recorded_variables.setdefault("composed_id", str(uuid.uuid4()))
-        
+
         request = BuildDocumentModelRequest(
             model_id=recorded_variables.get("model_id1"),
             description="model1",
             build_mode="template",
-            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url)
+            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url),
         )
         poller = client.begin_build_document_model(request)
         model_1 = poller.result()
@@ -46,7 +48,7 @@ class TestTrainingAsync(DocumentIntelligenceTest):
             model_id=recorded_variables.get("model_id2"),
             description="model2",
             build_mode="template",
-            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url)
+            azure_blob_source=AzureBlobContentSource(container_url=documentintelligence_storage_container_sas_url),
         )
         poller = client.begin_build_document_model(request)
         model_2 = poller.result()
@@ -58,7 +60,7 @@ class TestTrainingAsync(DocumentIntelligenceTest):
             component_models=[
                 ComponentDocumentModelDetails(model_id=model_1.model_id),
                 ComponentDocumentModelDetails(model_id=model_2.model_id),
-            ]
+            ],
         )
         poller = client.begin_compose_model(request)
         composed_model = poller.result()
@@ -74,5 +76,5 @@ class TestTrainingAsync(DocumentIntelligenceTest):
                 assert key
                 assert field["type"]
                 assert doc_details.field_confidence[key] is not None
-        
+
         return recorded_variables

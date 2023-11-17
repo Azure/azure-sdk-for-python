@@ -43,9 +43,7 @@ async def analyze_invoice():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_analysis_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
@@ -57,14 +55,10 @@ async def analyze_invoice():
         print(f"--------Analyzing invoice #{idx + 1}--------")
         vendor_name = invoice.fields.get("VendorName")
         if vendor_name:
-            print(
-                f"Vendor Name: {vendor_name.get('content')} has confidence: {vendor_name.get('confidence')}"
-            )
+            print(f"Vendor Name: {vendor_name.get('content')} has confidence: {vendor_name.get('confidence')}")
         vendor_address = invoice.fields.get("VendorAddress")
         if vendor_address:
-            print(
-                f"Vendor Address: {vendor_address.get('content')} has confidence: {vendor_address.get('confidence')}"
-            )
+            print(f"Vendor Address: {vendor_address.get('content')} has confidence: {vendor_address.get('confidence')}")
         vendor_address_recipient = invoice.fields.get("VendorAddressRecipient")
         if vendor_address_recipient:
             print(
@@ -72,14 +66,10 @@ async def analyze_invoice():
             )
         customer_name = invoice.fields.get("CustomerName")
         if customer_name:
-            print(
-                f"Customer Name: {customer_name.get('content')} has confidence: {customer_name.get('confidence')}"
-            )
+            print(f"Customer Name: {customer_name.get('content')} has confidence: {customer_name.get('confidence')}")
         customer_id = invoice.fields.get("CustomerId")
         if customer_id:
-            print(
-                f"Customer Id: {customer_id.get('content')} has confidence: {customer_id.get('confidence')}"
-            )
+            print(f"Customer Id: {customer_id.get('content')} has confidence: {customer_id.get('confidence')}")
         customer_address = invoice.fields.get("CustomerAddress")
         if customer_address:
             print(
@@ -92,27 +82,19 @@ async def analyze_invoice():
             )
         invoice_id = invoice.fields.get("InvoiceId")
         if invoice_id:
-            print(
-                f"Invoice Id: {invoice_id.get('content')} has confidence: {invoice_id.get('confidence')}"
-            )
+            print(f"Invoice Id: {invoice_id.get('content')} has confidence: {invoice_id.get('confidence')}")
         invoice_date = invoice.fields.get("InvoiceDate")
         if invoice_date:
-            print(
-                f"Invoice Date: {invoice_date.get('content')} has confidence: {invoice_date.get('confidence')}"
-            )
+            print(f"Invoice Date: {invoice_date.get('content')} has confidence: {invoice_date.get('confidence')}")
         invoice_total = invoice.fields.get("InvoiceTotal")
         if invoice_total:
-            print(
-                f"Invoice Total: {invoice_total.get('content')} has confidence: {invoice_total.get('confidence')}"
-            )
+            print(f"Invoice Total: {invoice_total.get('content')} has confidence: {invoice_total.get('confidence')}")
         due_date = invoice.fields.get("DueDate")
         if due_date:
             print(f"Due Date: {due_date.get('content')} has confidence: {due_date.get('confidence')}")
         purchase_order = invoice.fields.get("PurchaseOrder")
         if purchase_order:
-            print(
-                f"Purchase Order: {purchase_order.get('content')} has confidence: {purchase_order.get('confidence')}"
-            )
+            print(f"Purchase Order: {purchase_order.get('content')} has confidence: {purchase_order.get('confidence')}")
         billing_address = invoice.fields.get("BillingAddress")
         if billing_address:
             print(
@@ -134,53 +116,51 @@ async def analyze_invoice():
                 f"Shipping Address Recipient: {shipping_address_recipient.get('content')} has confidence: {shipping_address_recipient.get('confidence')}"
             )
         print("Invoice items:")
-        for idx, item in enumerate(invoice.fields.get("Items").get('valueArray')):
+        for idx, item in enumerate(invoice.fields.get("Items").get("valueArray")):
             print(f"...Item #{idx + 1}")
-            item_description = item.get('valueObject').get("Description")
+            item_description = item.get("valueObject").get("Description")
             if item_description:
                 print(
                     f"......Description: {item_description.get('content')} has confidence: {item_description.get('confidence')}"
                 )
-            item_quantity = item.get('valueObject').get("Quantity")
+            item_quantity = item.get("valueObject").get("Quantity")
             if item_quantity:
                 print(
                     f"......Quantity: {item_quantity.get('content')} has confidence: {item_quantity.get('confidence')}"
                 )
-            unit = item.get('valueObject').get("Unit")
+            unit = item.get("valueObject").get("Unit")
             if unit:
                 print(f"......Unit: {unit.get('content')} has confidence: {unit.get('confidence')}")
-            unit_price = item.get('valueObject').get("UnitPrice")
+            unit_price = item.get("valueObject").get("UnitPrice")
             if unit_price:
-                unit_price_code = unit_price.get('valueCurrency').get('currencyCode') if unit_price.get('valueCurrency').get('currencyCode') else ""
+                unit_price_code = (
+                    unit_price.get("valueCurrency").get("currencyCode")
+                    if unit_price.get("valueCurrency").get("currencyCode")
+                    else ""
+                )
                 print(
                     f"......Unit Price: {unit_price.get('content')}{unit_price_code} has confidence: {unit_price.get('confidence')}"
                 )
-            product_code = item.get('valueObject').get("ProductCode")
+            product_code = item.get("valueObject").get("ProductCode")
             if product_code:
                 print(
                     f"......Product Code: {product_code.get('content')} has confidence: {product_code.get('confidence')}"
                 )
-            item_date = item.get('valueObject').get("Date")
+            item_date = item.get("valueObject").get("Date")
             if item_date:
-                print(
-                    f"......Date: {item_date.get('content')} has confidence: {item_date.get('confidence')}"
-                )
-            tax = item.get('valueObject').get("Tax")
+                print(f"......Date: {item_date.get('content')} has confidence: {item_date.get('confidence')}")
+            tax = item.get("valueObject").get("Tax")
             if tax:
                 print(f"......Tax: {tax.get('content')} has confidence: {tax.get('confidence')}")
-            amount = item.get('valueObject').get("Amount")
+            amount = item.get("valueObject").get("Amount")
             if amount:
-                print(
-                    f"......Amount: {amount.get('content')} has confidence: {amount.get('confidence')}"
-                )
+                print(f"......Amount: {amount.get('content')} has confidence: {amount.get('confidence')}")
         subtotal = invoice.fields.get("SubTotal")
         if subtotal:
             print(f"Subtotal: {subtotal.get('content')} has confidence: {subtotal.get('confidence')}")
         total_tax = invoice.fields.get("TotalTax")
         if total_tax:
-            print(
-                f"Total Tax: {total_tax.get('content')} has confidence: {total_tax.get('confidence')}"
-            )
+            print(f"Total Tax: {total_tax.get('content')} has confidence: {total_tax.get('confidence')}")
         previous_unpaid_balance = invoice.fields.get("PreviousUnpaidBalance")
         if previous_unpaid_balance:
             print(
@@ -188,9 +168,7 @@ async def analyze_invoice():
             )
         amount_due = invoice.fields.get("AmountDue")
         if amount_due:
-            print(
-                f"Amount Due: {amount_due.get('content')} has confidence: {amount_due.get('confidence')}"
-            )
+            print(f"Amount Due: {amount_due.get('content')} has confidence: {amount_due.get('confidence')}")
         service_start_date = invoice.fields.get("ServiceStartDate")
         if service_start_date:
             print(

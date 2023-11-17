@@ -42,9 +42,7 @@ async def analyze_identity_documents():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
-        endpoint=endpoint, credential=AzureKeyCredential(key)
-    )
+    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     async with document_analysis_client:
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
@@ -56,19 +54,13 @@ async def analyze_identity_documents():
         print(f"--------Analyzing ID document #{idx + 1}--------")
         first_name = id_document.fields.get("FirstName")
         if first_name:
-            print(
-                f"First Name: {first_name.get('valueString')} has confidence: {first_name.confidence}"
-            )
+            print(f"First Name: {first_name.get('valueString')} has confidence: {first_name.confidence}")
         last_name = id_document.fields.get("LastName")
         if last_name:
-            print(
-                f"Last Name: {last_name.get('valueString')} has confidence: {last_name.confidence}"
-            )
+            print(f"Last Name: {last_name.get('valueString')} has confidence: {last_name.confidence}")
         document_number = id_document.fields.get("DocumentNumber")
         if document_number:
-            print(
-                f"Document Number: {document_number.get('valueString')} has confidence: {document_number.confidence}"
-            )
+            print(f"Document Number: {document_number.get('valueString')} has confidence: {document_number.confidence}")
         dob = id_document.fields.get("DateOfBirth")
         if dob:
             print(f"Date of Birth: {dob.get('valueDate')} has confidence: {dob.confidence}")

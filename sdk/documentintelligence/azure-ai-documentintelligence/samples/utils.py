@@ -11,7 +11,7 @@ def get_styled_text(styles, content):
     # Iterate over the styles and merge the spans from each style.
     spans = [span for style in styles for span in style.spans]
     spans.sort(key=lambda span: span.offset)
-    return ','.join([content[span.offset : span.offset + span.length] for span in spans])
+    return ",".join([content[span.offset : span.offset + span.length] for span in spans])
 
 
 def get_words(page, line):
@@ -24,9 +24,7 @@ def get_words(page, line):
 
 def _in_span(word, spans):
     for span in spans:
-        if word.span.offset >= span.offset and (
-            word.span.offset + word.span.length
-        ) <= (span.offset + span.length):
+        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
             return True
     return False
 

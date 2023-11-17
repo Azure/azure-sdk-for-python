@@ -10,7 +10,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
-from azure.ai.documentintelligence.models import(
+from azure.ai.documentintelligence.models import (
     AzureBlobContentSource,
     AzureBlobFileListContentSource,
     ClassifierDocumentTypeDetails,
@@ -19,11 +19,12 @@ from azure.ai.documentintelligence.models import(
 from testcase import DocumentIntelligenceTest
 from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
 
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentIntelligenceAdministrationClient)
+DocumentModelAdministrationClientPreparer = functools.partial(
+    _GlobalClientPreparer, DocumentIntelligenceAdministrationClient
+)
 
 
 class TestClassifiersAsync(DocumentIntelligenceTest):
-
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -31,39 +32,34 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
         set_bodiless_matcher()
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("classifier_id", str(uuid.uuid4()))
-        
+
         request = BuildDocumentClassifierRequest(
             classifier_id=recorded_variables.get("classifier_id"),
             description="IRS document classifier",
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        prefix="IRS-1040-A/train"
+                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-A/train"
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        prefix="IRS-1040-B/train"
+                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-B/train"
                     )
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        prefix="IRS-1040-C/train"
+                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-C/train"
                     )
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        prefix="IRS-1040-D/train"
+                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-D/train"
                     )
                 ),
                 "IRS-1040-E": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        prefix="IRS-1040-E/train"
+                        container_url=documentintelligence_training_data_classifier, prefix="IRS-1040-E/train"
                     )
                 ),
             },
@@ -80,7 +76,7 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
             assert doc_type
             assert doc_details.azure_blob_source.container_url.endswith("training-data-classifier")
             assert doc_details.azure_blob_source.prefix.startswith(doc_type)
-        
+
         classifier = client.get_classifier(result.classifier_id)
         assert classifier.api_version == result.api_version
         assert classifier.classifier_id == result.classifier_id
@@ -90,9 +86,12 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
         assert len(classifier.doc_types) == len(result.doc_types)
         for doc_type, doc_details in classifier.doc_types.items():
             assert doc_type in result.doc_types
-            assert doc_details.azure_blob_source.container_url == result.doc_types[doc_type].azure_blob_source.container_url
+            assert (
+                doc_details.azure_blob_source.container_url
+                == result.doc_types[doc_type].azure_blob_source.container_url
+            )
             assert doc_details.azure_blob_source.prefix == result.doc_types[doc_type].azure_blob_source.prefix
-        
+
         classifiers_list = client.list_classifiers()
         for c in classifiers_list:
             assert c.api_version
@@ -101,10 +100,10 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
             assert c.expiration_date_time
             assert c.doc_types
             client.delete_classifier(c.classifier_id)
-        
+
         with pytest.raises(ResourceNotFoundError):
             client.get_classifier(classifier.classifier_id)
-        
+
         return recorded_variables
 
     @DocumentIntelligencePreparer()
@@ -114,38 +113,33 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
         set_bodiless_matcher()
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("classifier_id", str(uuid.uuid4()))
-        
+
         request = BuildDocumentClassifierRequest(
             classifier_id=recorded_variables.get("classifier_id"),
             doc_types={
                 "IRS-1040-A": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        file_list="IRS-1040-A.jsonl"
+                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-A.jsonl"
                     )
                 ),
                 "IRS-1040-B": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        file_list="IRS-1040-B.jsonl"
+                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-B.jsonl"
                     )
                 ),
                 "IRS-1040-C": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        file_list="IRS-1040-C.jsonl"
+                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-C.jsonl"
                     )
                 ),
                 "IRS-1040-D": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        file_list="IRS-1040-D.jsonl"
+                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-D.jsonl"
                     )
                 ),
                 "IRS-1040-E": ClassifierDocumentTypeDetails(
                     azure_blob_file_list_source=AzureBlobFileListContentSource(
-                        container_url=documentintelligence_training_data_classifier,
-                        file_list="IRS-1040-E.jsonl"
+                        container_url=documentintelligence_training_data_classifier, file_list="IRS-1040-E.jsonl"
                     )
                 ),
             },
@@ -163,7 +157,7 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
             assert doc_type
             assert doc_details.azure_blob_file_list_source.container_url.endswith("training-data-classifier")
             assert doc_details.azure_blob_file_list_source.file_list.startswith(doc_type)
-        
+
         classifier = client.get_classifier(result.classifier_id)
         assert classifier.api_version == result.api_version
         assert classifier.classifier_id == result.classifier_id
@@ -173,9 +167,15 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
         assert len(classifier.doc_types) == len(result.doc_types)
         for doc_type, doc_details in classifier.doc_types.items():
             assert doc_type in result.doc_types
-            assert doc_details.azure_blob_file_list_source.container_url == result.doc_types[doc_type].azure_blob_file_list_source.container_url
-            assert doc_details.azure_blob_file_list_source.file_list == result.doc_types[doc_type].azure_blob_file_list_source.file_list
-        
+            assert (
+                doc_details.azure_blob_file_list_source.container_url
+                == result.doc_types[doc_type].azure_blob_file_list_source.container_url
+            )
+            assert (
+                doc_details.azure_blob_file_list_source.file_list
+                == result.doc_types[doc_type].azure_blob_file_list_source.file_list
+            )
+
         classifiers_list = client.list_classifiers()
         for c in classifiers_list:
             assert c.api_version
@@ -184,8 +184,8 @@ class TestClassifiersAsync(DocumentIntelligenceTest):
             assert c.expiration_date_time
             assert c.doc_types
             client.delete_classifier(c.classifier_id)
-        
+
         with pytest.raises(ResourceNotFoundError):
             client.get_classifier(classifier.classifier_id)
-            
+
         return recorded_variables
