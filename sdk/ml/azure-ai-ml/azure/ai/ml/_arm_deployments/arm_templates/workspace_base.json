@@ -656,9 +656,9 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
             ],
-            "location": "[if(equals(parameters('set_up_feature_store'), 'false'), parameters('storageAccountLocation'), parameters('location'))]",
+            "location": "[if(equals(parameters('set_up_feature_store'), 'true'), parameters('location'), parameters('storageAccountLocation'))]",
             "sku": {
-                "name": "[if(equals(parameters('set_up_feature_store'), 'false'), parameters('storageAccountType'), 'Standard_LRS')]"
+                "name": "[if(equals(parameters('set_up_feature_store'), 'true'), 'Standard_LRS', parameters('storageAccountType'))]"
             },
             "kind": "StorageV2",
             "properties": {
@@ -675,7 +675,7 @@
                 },
                 "supportsHttpsTrafficOnly": true,
                 "allowBlobPublicAccess": false,
-                "networkAcls": "[if(and(equals(parameters('storageAccountBehindVNet'), 'true'), equals(parameters('set_up_feature_store'), 'false')), variables('networkRuleSetBehindVNet'), json('null'))]",
+                "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]",
                 "isHnsEnabled": "[equals(parameters('set_up_feature_store'), 'true')]",
                 "minimumTlsVersion": "[if(equals(parameters('set_up_feature_store'), 'true'), 'TLS1_2', 'TLS1_0')]"
             }
