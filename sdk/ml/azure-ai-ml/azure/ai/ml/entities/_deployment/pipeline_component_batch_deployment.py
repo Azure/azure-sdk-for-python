@@ -34,6 +34,8 @@ class PipelineComponentBatchDeployment(Resource):
     :type type: Optional[str]
     :param name: Name of the deployment resource.
     :type name: Optional[str]
+    :param description: Description of the deployment resource.
+    :type description: Optional[str]
     :param component: Component definition.
     :type component: Optional[Union[Component, str]]
     :param settings: Run-time settings for the pipeline job.
@@ -55,10 +57,11 @@ class PipelineComponentBatchDeployment(Resource):
         settings: Optional[Dict[str, str]] = None,
         job_definition: Optional[Dict[str, BaseNode]] = None,
         tags: Optional[Dict] = None,
+        description: Optional[str] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
         self._type = kwargs.pop("type", None)
-        super().__init__(name=name, tags=tags, **kwargs)
+        super().__init__(name=name, tags=tags, description=description, **kwargs)
         self.component = component
         self.endpoint_name = endpoint_name
         self.settings = settings
@@ -82,7 +85,10 @@ class PipelineComponentBatchDeployment(Resource):
         return RestBatchDeployment(
             location=location,
             tags=self.tags,
-            properties=BatchDeploymentProperties(deployment_configuration=batch_pipeline_config),
+            properties=BatchDeploymentProperties(
+                deployment_configuration=batch_pipeline_config,
+                description=self.description,
+            ),
         )
 
     @classmethod
