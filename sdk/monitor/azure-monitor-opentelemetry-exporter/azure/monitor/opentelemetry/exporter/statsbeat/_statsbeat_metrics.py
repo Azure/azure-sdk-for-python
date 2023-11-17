@@ -53,12 +53,18 @@ class _StatsbeatFeature:
     AAD = 2
 
 
+class _AttachTypes:
+    MANUAL = "Manual"
+    INTEGRATED = "IntegratedAuto"
+    STANDALONE = "StandaloneAuto"
+
+
 # pylint: disable=R0902
 class _StatsbeatMetrics:
 
     _COMMON_ATTRIBUTES: Dict[str, Any] = {
         "rp": _RP_NAMES[3],
-        "attach": "sdk", # TODO: attach
+        "attach": _AttachTypes.MANUAL,
         "cikey": None,
         "runtimeVersion": platform.python_version(),
         "os": platform.system(),
@@ -106,6 +112,8 @@ class _StatsbeatMetrics:
         }
         self._long_interval_lock = threading.Lock()
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
+        if _utils._is_attach_enabled():
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["attach"] = _AttachTypes.INTEGRATED
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
         _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
         _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = _utils.get_instrumentations()
