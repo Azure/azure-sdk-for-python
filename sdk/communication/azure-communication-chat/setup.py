@@ -46,6 +46,10 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -64,8 +68,5 @@ setup(
         "isodate<1.0.0,>=0.6.1",
         "azure-core<2.0.0,>=1.29.5",
         "typing-extensions>=4.3.0",
-    ],
-    extras_require={
-        ":python_version<'3.8'": ["typing-extensions"]
-    }
+    ]
 )
