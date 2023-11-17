@@ -65,6 +65,9 @@ _Address = collections.namedtuple("_Address", "hostname path")
 
 def _parse_conn_str(
         conn_str: str,
+        *, 
+        eventhub_name: Optional[str] = None,
+        check_case: bool = False,
         **kwargs: Any
     ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
@@ -73,8 +76,8 @@ def _parse_conn_str(
     entity_path: Optional[str] = None
     shared_access_signature: Optional[str] = None
     shared_access_signature_expiry = None
-    eventhub_name: Optional[str] = kwargs.pop("eventhub_name", None)
-    check_case: bool = kwargs.pop("check_case", False)
+    eventhub_name = eventhub_name
+    check_case = check_case
     conn_settings = core_parse_connection_string(
         conn_str, case_sensitive_keys=check_case
     )
@@ -368,8 +371,8 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self,
         retried_times: int,
         last_exception: Exception,
-        timeout_time: Optional[float]=None,
-        entity_name: Optional[str]=None
+        timeout_time: Optional[float] = None,
+        entity_name: Optional[str] = None
     ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(

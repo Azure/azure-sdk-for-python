@@ -14,37 +14,58 @@ if TYPE_CHECKING:
 
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes
-    def __init__(self, **kwargs):
-        self.user_agent: Optional[str] = kwargs.get("user_agent")
-        self.retry_total: int = kwargs.get("retry_total", 3)
-        self.max_retries: int = self.retry_total
-        self.retry_mode = RetryMode(kwargs.get("retry_mode", "exponential"))
-        self.backoff_factor: float = kwargs.get("retry_backoff_factor", 0.8)
-        self.backoff_max: int = kwargs.get("retry_backoff_max", 120)
-        self.network_tracing: bool = kwargs.get("network_tracing", False)
-        self.http_proxy: Optional[Dict[str, Any]] = kwargs.get("http_proxy")
+    def __init__(
+            self,
+            *,
+            hostname: str,
+            amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"],
+            socket_timeout: float,
+            user_agent: Optional[str] = None,
+            retry_total: int = 3,
+            retry_mode: Union[str, RetryMode] = RetryMode.Exponential,
+            retry_backoff_factor: float = 0.8,
+            retry_backoff_max: int = 120,
+            network_tracing: bool = False,
+            http_proxy: Optional[Dict[str, Any]] = None,
+            transport_type: Union[str, TransportType] = TransportType.Amqp,
+            auth_timeout: int = 60,
+            prefetch: int = 300,
+            max_batch_size: int = 300,
+            receive_timeout: int = 0,
+            send_timeout: int = 60,
+            custom_endpoint_address: Optional[str] = None,
+            connection_verify: Optional[str] = None,
+            **kwargs):
+        self.user_agent = user_agent
+        self.retry_total = retry_total
+        self.max_retries = self.retry_total
+        self.retry_mode = retry_mode
+        self.backoff_factor = retry_backoff_factor
+        self.backoff_max = retry_backoff_max
+        self.network_tracing = network_tracing
+        self.http_proxy = http_proxy
         self.transport_type = (
             TransportType.AmqpOverWebsocket
             if self.http_proxy
-            else kwargs.get("transport_type", TransportType.Amqp)
+            else transport_type
         )
-        self.auth_timeout: int = kwargs.get("auth_timeout", 60)
-        self.prefetch: int = kwargs.get("prefetch", 300)
-        self.max_batch_size: int = kwargs.get("max_batch_size", self.prefetch)
-        self.receive_timeout: int = kwargs.get("receive_timeout", 0)
-        self.send_timeout: int = kwargs.get("send_timeout", 60)
-        self.custom_endpoint_address: Optional[str] = kwargs.get("custom_endpoint_address")
-        self.connection_verify: Optional[str] = kwargs.get("connection_verify")
+        self.auth_timeout = auth_timeout
+        self.prefetch = prefetch
+        self.max_batch_size = max_batch_size
+        self.receive_timeout = receive_timeout
+        self.send_timeout = send_timeout
+        self.custom_endpoint_address = custom_endpoint_address
+        self.connection_verify = connection_verify
         self.connection_port = DEFAULT_AMQPS_PORT
         self.custom_endpoint_hostname = None
-        self.hostname = kwargs.pop("hostname")
-        amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"] = kwargs.pop("amqp_transport")
-        self.socket_timeout = kwargs.get("socket_timeout", .2)
+        self.hostname = hostname
+        amqp_transport = amqp_transport
+        self.socket_timeout = socket_timeout or .2
 
         if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:
             self.transport_type = TransportType.AmqpOverWebsocket
             self.connection_port = DEFAULT_AMQP_WSS_PORT
-            self.socket_timeout = kwargs.get("socket_timeout", 1)
+            self.socket_timeout = socket_timeout or 1
             if amqp_transport.KIND == "pyamqp":
                 self.hostname += "/$servicebus/websocket"
 

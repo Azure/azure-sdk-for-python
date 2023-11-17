@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import threading
+import datetime
 from typing import TYPE_CHECKING, List, Union, Any, Callable, Optional, Dict, Tuple
 
 from ._client_base import ClientBase
@@ -14,7 +15,6 @@ from ._eventprocessor.common import LoadBalancingStrategy
 
 
 if TYPE_CHECKING:
-    import datetime
     from ._eventprocessor.partition_context import PartitionContext
     from ._common import EventData
     from ._client_base import CredentialTypes
@@ -189,7 +189,7 @@ class EventHubConsumerClient(
         self,
         consumer_group: str,
         partition_id: str,
-        event_position: Union[str, int, "datetime.datetime"],
+        event_position: Union[str, int, datetime.datetime],
         on_event_received: Callable[["PartitionContext", "EventData"], None],
         **kwargs: Any
     ) -> EventHubConsumer:
