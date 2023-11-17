@@ -1384,6 +1384,12 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-resources/**",
+      "words": [
+        "etest"
+      ]
+    },
+    {
       "filename": "sdk/core/azure-core/**",
       "words": [
         "odatav",

@@ -67,7 +67,6 @@ class ConnectionOperations:
                 workspace_name=self._ml_client.workspace_name,
             )
             connection.credentials.key = list_secrets_response.properties.credentials.key
-
         return connection
 
     @distributed_trace
