@@ -1,5 +1,23 @@
 # Release History
 
+## 4.0.0b13 (2023-11-17)
+
+### Features Added
+
+  - Added operation group JobPrivateEndpointsOperations
+  - Model FailoverGroupReadOnlyEndpoint has a new parameter target_server
+  - Model FailoverGroupUpdate has a new parameter partner_servers
+  - Model InstancePool has a new parameter dns_zone
+  - Model InstancePool has a new parameter maintenance_configuration_id
+  - Model InstancePoolUpdate has a new parameter dns_zone
+  - Model InstancePoolUpdate has a new parameter license_type
+  - Model InstancePoolUpdate has a new parameter maintenance_configuration_id
+  - Model InstancePoolUpdate has a new parameter sku
+  - Model InstancePoolUpdate has a new parameter subnet_id
+  - Model InstancePoolUpdate has a new parameter v_cores
+  - Model Server has a new parameter is_i_pv6_enabled
+  - Model ServerUpdate has a new parameter is_i_pv6_enabled
+
 ## 4.0.0b12 (2023-08-30)
 
 ### Features Added

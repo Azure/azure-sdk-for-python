@@ -41,7 +41,7 @@ def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool
 
     In order:
      - Checks <CHECK>_OPT_OUT for package name.
-     - Honors override variable if one is present: <PACKAGE-NAME>_<CHECK>.
+     - Honors override variable if one is present: <PACKAGE_NAME>_<CHECK>. (Note the _ in the package name, `-` is not a valid env variable character.)
      - Finally falls back to the pyproject.toml at package root (if one exists) for a tools setting enabling/disabling <check>.
     """
     if package_path.endswith("setup.py"):

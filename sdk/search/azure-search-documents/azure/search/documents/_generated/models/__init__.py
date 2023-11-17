@@ -8,6 +8,7 @@ from ._models_py3 import AutocompleteItem
 from ._models_py3 import AutocompleteOptions
 from ._models_py3 import AutocompleteRequest
 from ._models_py3 import AutocompleteResult
+from ._models_py3 import DocumentDebugInfo
 from ._models_py3 import FacetResult
 from ._models_py3 import IndexAction
 from ._models_py3 import IndexBatch
@@ -15,29 +16,38 @@ from ._models_py3 import IndexDocumentsResult
 from ._models_py3 import IndexingResult
 from ._models_py3 import QueryAnswerResult
 from ._models_py3 import QueryCaptionResult
+from ._models_py3 import QueryResultDocumentRerankerInput
+from ._models_py3 import QueryResultDocumentSemanticField
 from ._models_py3 import RequestOptions
 from ._models_py3 import SearchDocumentsResult
 from ._models_py3 import SearchError
 from ._models_py3 import SearchOptions
 from ._models_py3 import SearchRequest
 from ._models_py3 import SearchResult
+from ._models_py3 import SemanticDebugInfo
 from ._models_py3 import SuggestDocumentsResult
 from ._models_py3 import SuggestOptions
 from ._models_py3 import SuggestRequest
 from ._models_py3 import SuggestResult
 from ._models_py3 import VectorQuery
+from ._models_py3 import VectorizableTextQuery
 from ._models_py3 import VectorizedQuery
 
 from ._search_index_client_enums import AutocompleteMode
 from ._search_index_client_enums import IndexActionType
 from ._search_index_client_enums import QueryAnswerType
 from ._search_index_client_enums import QueryCaptionType
+from ._search_index_client_enums import QueryDebugMode
+from ._search_index_client_enums import QueryLanguage
+from ._search_index_client_enums import QuerySpellerType
 from ._search_index_client_enums import QueryType
 from ._search_index_client_enums import ScoringStatistics
 from ._search_index_client_enums import SearchMode
 from ._search_index_client_enums import SemanticErrorMode
 from ._search_index_client_enums import SemanticErrorReason
+from ._search_index_client_enums import SemanticFieldState
 from ._search_index_client_enums import SemanticSearchResultsType
+from ._search_index_client_enums import Speller
 from ._search_index_client_enums import VectorFilterMode
 from ._search_index_client_enums import VectorQueryKind
 from ._patch import __all__ as _patch_all
@@ -49,6 +59,7 @@ __all__ = [
     "AutocompleteOptions",
     "AutocompleteRequest",
     "AutocompleteResult",
+    "DocumentDebugInfo",
     "FacetResult",
     "IndexAction",
     "IndexBatch",
@@ -56,28 +67,37 @@ __all__ = [
     "IndexingResult",
     "QueryAnswerResult",
     "QueryCaptionResult",
+    "QueryResultDocumentRerankerInput",
+    "QueryResultDocumentSemanticField",
     "RequestOptions",
     "SearchDocumentsResult",
     "SearchError",
     "SearchOptions",
     "SearchRequest",
     "SearchResult",
+    "SemanticDebugInfo",
     "SuggestDocumentsResult",
     "SuggestOptions",
     "SuggestRequest",
     "SuggestResult",
     "VectorQuery",
+    "VectorizableTextQuery",
     "VectorizedQuery",
     "AutocompleteMode",
     "IndexActionType",
     "QueryAnswerType",
     "QueryCaptionType",
+    "QueryDebugMode",
+    "QueryLanguage",
+    "QuerySpellerType",
     "QueryType",
     "ScoringStatistics",
     "SearchMode",
     "SemanticErrorMode",
     "SemanticErrorReason",
+    "SemanticFieldState",
     "SemanticSearchResultsType",
+    "Speller",
     "VectorFilterMode",
     "VectorQueryKind",
 ]
