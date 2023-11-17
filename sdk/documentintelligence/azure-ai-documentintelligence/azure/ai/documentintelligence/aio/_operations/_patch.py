@@ -29,7 +29,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class DocumentIntelligenceAdministrationClientOperationsMixin(GeneratedDIAdminClientOps):
+class DocumentIntelligenceAdministrationClientOperationsMixin(GeneratedDIAdminClientOps):  # pylint: disable=name-too-long
     __doc__ = GeneratedDIAdminClientOps.__doc__
 
     @distributed_trace_async
