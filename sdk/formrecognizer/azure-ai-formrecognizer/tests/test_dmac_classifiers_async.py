@@ -77,7 +77,7 @@ class TestClassifiersAsync(AsyncFormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test1_build_classifier_file_list(self, client, formrecognizer_training_data_classifier, **kwargs):
+    async def test_build_classifier_file_list(self, client, formrecognizer_training_data_classifier, **kwargs):
         set_bodiless_matcher()
         async with client:
             classifier_id = str(uuid.uuid4())
