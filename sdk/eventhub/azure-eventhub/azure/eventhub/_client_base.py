@@ -64,11 +64,11 @@ _Address = collections.namedtuple("_Address", "hostname path")
 
 
 def _parse_conn_str(
-        conn_str: str,
+        conn_str: str,  # pylint:disable=unused-argument
         *,
         eventhub_name: Optional[str] = None,
         check_case: bool = False,
-        **kwargs: Any # pylint:disable=unused-argument
+        **kwargs: Any
     ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
     shared_access_key_name = None

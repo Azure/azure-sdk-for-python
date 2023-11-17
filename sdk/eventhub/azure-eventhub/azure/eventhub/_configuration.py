@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class Configuration(object):  # pylint:disable=too-many-instance-attributes
     def __init__(
-            self,
+            self,  # pylint:disable=unused-argument
             *,
             hostname: str,
             amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"],
@@ -35,7 +35,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
             send_timeout: int = 60,
             custom_endpoint_address: Optional[str] = None,
             connection_verify: Optional[str] = None,
-            **kwargs: Any # pylint:disable=unused-argument
+            **kwargs: Any
         ):
         self.user_agent = user_agent
         self.retry_total = retry_total

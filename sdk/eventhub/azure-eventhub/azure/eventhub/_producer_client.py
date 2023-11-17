@@ -534,13 +534,13 @@ class EventHubProducerClient(
         return cls(**constructor_args)
 
     def send_event(
-        self,
+        self,  # pylint: disable=unused-argument
         event_data: Union[EventData, AmqpAnnotatedMessage],
         *,
         partition_id: Optional[str] = None,
         partition_key: Optional[str] = None,
         timeout: Optional[float] = None,
-        **kwargs: Any # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         """
         Sends an event data.
