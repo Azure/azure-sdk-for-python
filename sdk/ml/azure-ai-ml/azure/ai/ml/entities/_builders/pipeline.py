@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -15,6 +15,10 @@ from ..._schema import PathAwareSchema
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from .._util import convert_ordered_dict_to_dict, copy_output_setting, validate_attribute_type
 from .base_node import BaseNode
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 
 module_logger = logging.getLogger(__name__)
 
