@@ -7,7 +7,7 @@
 import copy
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
@@ -42,6 +42,11 @@ from .job_limits import CommandJobLimits
 from .job_resource_configuration import JobResourceConfiguration
 from .parameterized_command import ParameterizedCommand
 from .queue_settings import QueueSettings
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities import CommandComponent
+    from azure.ai.ml.entities._builders import Command
 
 module_logger = logging.getLogger(__name__)
 

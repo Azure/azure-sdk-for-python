@@ -6,7 +6,7 @@
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._schema.job.data_transfer_job import (
@@ -23,6 +23,11 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 from ..job import Job
 from ..job_io_mixin import JobIOMixin
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._builders import DataTransferCopy, DataTransferExport, DataTransferImport
+    from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent
 
 module_logger = logging.getLogger(__name__)
 

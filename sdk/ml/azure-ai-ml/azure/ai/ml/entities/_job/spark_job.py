@@ -6,7 +6,7 @@
 import copy
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
@@ -41,6 +41,11 @@ from .spark_helpers import _validate_compute_or_resources, _validate_input_outpu
 from .spark_job_entry import SparkJobEntry
 from .spark_job_entry_mixin import SparkJobEntryMixin
 from .spark_resource_configuration import SparkResourceConfiguration
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities import SparkComponent
+    from azure.ai.ml.entities._builders import Spark
 
 module_logger = logging.getLogger(__name__)
 

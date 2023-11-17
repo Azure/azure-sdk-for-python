@@ -332,6 +332,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         return validation_result
 
     def _validate_init_finalize_job(self) -> MutableValidationResult:  # pylint: disable=too-many-statements
+        from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, _GroupAttrDict
+
         validation_result = self._create_empty_validation_result()
         # subgraph (PipelineComponent) should not have on_init/on_finalize set
         for job_name, job in self.jobs.items():
@@ -388,8 +390,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
                 """
                 # handle group input
                 if GroupInput._is_group_attr_dict(_input_output_data):
+                    _new_input_output_data: _GroupAttrDict = cast(_GroupAttrDict, _input_output_data)
                     # flatten to avoid nested cases
-                    flattened_values: List[Input] = list(_input_output_data.flatten(_name).values())
+                    flattened_values: List[Input] = list(_new_input_output_data.flatten(_name).values())
                     # handle invalid empty group
                     if len(flattened_values) == 0:
                         return None

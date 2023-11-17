@@ -7,7 +7,7 @@
 import copy
 import re
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Set, TypeVar, Union, cast, overload
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Set, TypeVar, Union, cast, overload
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -18,6 +18,11 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UserErrorException, ValidationException
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities import PipelineJob
+    from azure.ai.ml.entities._builders import BaseNode
 
 T = TypeVar("T")
 

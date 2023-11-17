@@ -381,7 +381,7 @@ class PipelineExpression(PipelineExpressionMixin):
             _has_prefix = False
             # "output" is the default output name for command component, add component's name as prefix
             if _name == "output":
-                if _component_output._owner is not None:
+                if _component_output._owner is not None and not isinstance(_component_output._owner.component, str):
                     _name = f"{_component_output._owner.component.name}__output"
                 _has_prefix = True
             # following loop is expected to execute at most twice:
@@ -391,7 +391,9 @@ class PipelineExpression(PipelineExpressionMixin):
                 _seen_input = _expression_inputs[_name]
                 if isinstance(_seen_input.value, PipelineInput):
                     if not _has_prefix:
-                        if _component_output._owner is not None:
+                        if _component_output._owner is not None and not isinstance(
+                            _component_output._owner.component, str
+                        ):
                             _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
                         _has_prefix = True
                         continue
@@ -402,7 +404,9 @@ class PipelineExpression(PipelineExpressionMixin):
                         _new_name = f"{_seen_input.value._owner.component.name}__{_seen_input.value._port_name}"
                         _postfix = _update_postfix(_postfix, _name, _new_name)
                         _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
-                        if _component_output._owner is not None:
+                        if _component_output._owner is not None and not isinstance(
+                            _component_output._owner.component, str
+                        ):
                             _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
                         _has_prefix = True
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
