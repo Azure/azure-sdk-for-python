@@ -12,6 +12,7 @@ def create_or_update_text_blocklist():
 
     import os
     from azure.ai.contentsafety import BlocklistClient
+    from azure.ai.contentsafety.models import TextBlocklist
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
 
@@ -26,7 +27,8 @@ def create_or_update_text_blocklist():
 
     try:
         blocklist = client.create_or_update_text_blocklist(
-            blocklist_name=blocklist_name, resource={"description": blocklist_description}
+            blocklist_name=blocklist_name,
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description)
         )
         if blocklist:
             print("\nBlocklist created or updated: ")
@@ -48,9 +50,8 @@ def add_block_items():
 
     import os
     from azure.ai.contentsafety import BlocklistClient
-    from azure.ai.contentsafety.models import AddOrUpdateTextBlocklistItemsResult, TextBlocklistItem
+    from azure.ai.contentsafety.models import AddOrUpdateTextBlocklistItemsOptions, TextBlocklistItem
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.contentsafety.models import TextBlockItemInfo, AddBlockItemsOptions
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
@@ -67,13 +68,13 @@ def add_block_items():
     try:
         result = client.add_or_update_blocklist_items(
             blocklist_name=blocklist_name,
-            body=AddOrUpdateTextBlocklistItemsResult(blocklist_items=block_items),
+            options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=block_items)
         )
         if result and result.blocklist_items:
             print("\nBlock items added: ")
-            for block_item in result.value:
+            for block_item in result.blocklist_items:
                 print(
-                    f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}"
+                    f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, Description: {block_item.description}"
                 )
     except HttpResponseError as e:
         print("\nAdd block items failed: ")
@@ -108,14 +109,14 @@ def analyze_text_with_blocklists():
     try:
         # After you edit your blocklist, it usually takes effect in 5 minutes, please wait some time before analyzing with blocklist after editing.
         analysis_result = client.analyze_text(
-            AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], break_by_blocklists=False)
+            AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], halt_on_blocklist_hit=False)
         )
-        if analysis_result and analysis_result.blocklists_match_results:
+        if analysis_result and analysis_result.blocklists_match:
             print("\nBlocklist match results: ")
             for match_result in analysis_result.blocklists_match:
-                print(f"Block item was hit in text, Offset={match_result.offset}, Length={match_result.length}.")
                 print(
-                    f"BlocklistName: {match_result.blocklist_name}, BlockItemId: {match_result.block_item_id}, BlockItemText: {match_result.block_item_text}"
+                    f"BlocklistName: {match_result.blocklist_name}, BlockItemId: {match_result.blocklist_item_id}, "
+                    f"BlockItemText: {match_result.blocklist_item_text}"
                 )
     except HttpResponseError as e:
         print("\nAnalyze text failed: ")
@@ -216,7 +217,8 @@ def list_block_items():
             print("\nList block items: ")
             for block_item in block_items:
                 print(
-                    f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}"
+                    f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, "
+                    f"Description: {block_item.description}"
                 )
     except HttpResponseError as e:
         print("\nList block items failed: ")
@@ -252,17 +254,17 @@ def get_block_item():
         # Add a blockItem
         add_result = client.add_or_update_blocklist_items(
             blocklist_name=blocklist_name,
-            body=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=[TextBlocklistItem(text=block_item_text_1)]),
+            options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=[TextBlocklistItem(text=block_item_text_1)]),
         )
-        if not add_result or not add_result.value or len(add_result.value) <= 0:
+        if not add_result or not add_result.blocklist_items or len(add_result.blocklist_items) <= 0:
             raise RuntimeError("BlockItem not created.")
-        block_item_id = add_result.value[0].block_item_id
+        block_item_id = add_result.blocklist_items[0].blocklist_item_id
 
         # Get this blockItem by blockItemId
-        block_item = client.get_text_blocklist_item(blocklist_name=blocklist_name, block_item_id=block_item_id)
+        block_item = client.get_text_blocklist_item(blocklist_name=blocklist_name, blocklist_item_id=block_item_id)
         print("\nGet blockitem: ")
         print(
-            f"BlockItemId: {block_item.block_item_id}, Text: {block_item.text}, Description: {block_item.description}"
+            f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, Description: {block_item.description}"
         )
     except HttpResponseError as e:
         print("\nGet block item failed: ")
@@ -282,7 +284,7 @@ def remove_block_items():
     import os
     from azure.ai.contentsafety import BlocklistClient
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.contentsafety.models import TextBlockItemInfo, AddBlockItemsOptions, RemoveBlockItemsOptions
+    from azure.ai.contentsafety.models import TextBlocklistItem, AddOrUpdateTextBlocklistItemsOptions, RemoveTextBlocklistItemsOptions
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
@@ -298,17 +300,17 @@ def remove_block_items():
         # Add a blockItem
         add_result = client.add_or_update_blocklist_items(
             blocklist_name=blocklist_name,
-            body=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=[TextBlocklistItem(text=block_item_text_1)]),
+            options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=[TextBlocklistItem(text=block_item_text_1)]),
         )
-        if not add_result or not add_result.value or len(add_result.value) <= 0:
+        if not add_result or not add_result.blocklist_items or len(add_result.blocklist_items) <= 0:
             raise RuntimeError("BlockItem not created.")
-        block_item_id = add_result.value[0].block_item_id
+        block_item_id = add_result.blocklist_items[0].blocklist_item_id
 
         # Remove this blockItem by blockItemId
-        client.remove_block_items(
-            blocklist_name=blocklist_name, body=RemoveBlockItemsOptions(block_item_ids=[block_item_id])
+        client.remove_blocklist_items(
+            blocklist_name=blocklist_name, options=RemoveTextBlocklistItemsOptions(blocklist_item_ids=[block_item_id])
         )
-        print(f"\nRemoved blockItem: {add_result.value[0].block_item_id}")
+        print(f"\nRemoved blockItem: {add_result.blocklist_items[0].blocklist_item_id}")
     except HttpResponseError as e:
         print("\nRemove block item failed: ")
         if e.error:
