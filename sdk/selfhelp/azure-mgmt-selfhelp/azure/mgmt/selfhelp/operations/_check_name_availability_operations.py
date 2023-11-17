@@ -93,8 +93,9 @@ class CheckNameAvailabilityOperations:
         """This API is used to check the uniqueness of a resource name used for a diagnostic,
         troubleshooter or solutions.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param check_name_availability_request: The required parameters for availability check. Default
          value is None.
@@ -120,8 +121,9 @@ class CheckNameAvailabilityOperations:
         """This API is used to check the uniqueness of a resource name used for a diagnostic,
         troubleshooter or solutions.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param check_name_availability_request: The required parameters for availability check. Default
          value is None.
@@ -145,8 +147,9 @@ class CheckNameAvailabilityOperations:
         """This API is used to check the uniqueness of a resource name used for a diagnostic,
         troubleshooter or solutions.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
         :param check_name_availability_request: The required parameters for availability check. Is
          either a CheckNameAvailabilityRequest type or a IO type. Default value is None.

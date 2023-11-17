@@ -61,6 +61,8 @@ class DiagnosticProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Some Diagnostics are still running or failed."""
     FAILED = "Failed"
     """All Diagnostics failed to run."""
+    RUNNING = "Running"
+    """All Diagnostics are still running."""
     CANCELED = "Canceled"
     """When Diagnostic request gets canceled."""
 
@@ -69,9 +71,13 @@ class ExecutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of Troubleshooter Step execution."""
 
     SUCCESS = "Success"
+    """Step execution succeeded."""
     RUNNING = "Running"
+    """Step execution running"""
     FAILED = "Failed"
+    """Step execution failed"""
     WARNING = "Warning"
+    """Step execution warning"""
 
 
 class ImportanceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -112,7 +118,7 @@ class QuestionContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class QuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Text Input. Will be a single line input."""
+    """Type of Question."""
 
     RADIO_BUTTON = "RadioButton"
     """SingleChoice radio button"""
@@ -135,8 +141,15 @@ class SolutionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of solution provisioning."""
 
     SUCCEEDED = "Succeeded"
+    """All Solutions in the Batch succeeded."""
+    PARTIAL_COMPLETE = "PartialComplete"
+    """Some Solutions are still running or failed."""
     FAILED = "Failed"
+    """All Solutions failed to run."""
+    RUNNING = "Running"
+    """All Solutions are still running."""
     CANCELED = "Canceled"
+    """When Solutions request gets canceled."""
 
 
 class SolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

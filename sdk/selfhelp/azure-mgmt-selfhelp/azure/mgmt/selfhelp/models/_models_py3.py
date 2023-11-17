@@ -326,14 +326,15 @@ class DiagnosticResource(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.selfhelp.models.SystemData
-    :ivar global_parameters: Global parameters that can be passed to all solutionIds.
+    :ivar global_parameters: Global parameters is an optional map which can be used to add key and
+     value to request body to improve the diagnostics results.
     :vartype global_parameters: dict[str, str]
     :ivar insights: SolutionIds that are needed to be invoked.
     :vartype insights: list[~azure.mgmt.selfhelp.models.DiagnosticInvocation]
     :ivar accepted_at: Diagnostic Request Accepted time.
     :vartype accepted_at: str
     :ivar provisioning_state: Status of diagnostic provisioning. Known values are: "Succeeded",
-     "PartialComplete", "Failed", and "Canceled".
+     "PartialComplete", "Failed", "Running", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.selfhelp.models.DiagnosticProvisioningState
     :ivar diagnostics: Array of Diagnostics.
     :vartype diagnostics: list[~azure.mgmt.selfhelp.models.Diagnostic]
@@ -369,7 +370,8 @@ class DiagnosticResource(ProxyResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword global_parameters: Global parameters that can be passed to all solutionIds.
+        :keyword global_parameters: Global parameters is an optional map which can be used to add key
+         and  value to request body to improve the diagnostics results.
         :paramtype global_parameters: dict[str, str]
         :keyword insights: SolutionIds that are needed to be invoked.
         :paramtype insights: list[~azure.mgmt.selfhelp.models.DiagnosticInvocation]
@@ -1199,65 +1201,7 @@ class SolutionMetadataResource(ProxyResource):
 class SolutionPatchRequestBody(_serialization.Model):
     """Solution response.
 
-    :ivar properties: Solution result.
-    :vartype properties: ~azure.mgmt.selfhelp.models.SolutionResourceProperties
-    """
-
-    _attribute_map = {
-        "properties": {"key": "properties", "type": "SolutionResourceProperties"},
-    }
-
-    def __init__(self, *, properties: Optional["_models.SolutionResourceProperties"] = None, **kwargs: Any) -> None:
-        """
-        :keyword properties: Solution result.
-        :paramtype properties: ~azure.mgmt.selfhelp.models.SolutionResourceProperties
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
-
-
-class SolutionResource(_serialization.Model):
-    """Solution response.
-
     Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Full resource uri of the resource.
-    :vartype id: str
-    :ivar type: Type of resource.
-    :vartype type: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar properties: Solution result.
-    :vartype properties: ~azure.mgmt.selfhelp.models.SolutionResourceProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "type": {"readonly": True},
-        "name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "properties": {"key": "properties", "type": "SolutionResourceProperties"},
-    }
-
-    def __init__(self, *, properties: Optional["_models.SolutionResourceProperties"] = None, **kwargs: Any) -> None:
-        """
-        :keyword properties: Solution result.
-        :paramtype properties: ~azure.mgmt.selfhelp.models.SolutionResourceProperties
-        """
-        super().__init__(**kwargs)
-        self.id = None
-        self.type = None
-        self.name = None
-        self.properties = properties
-
-
-class SolutionResourceProperties(_serialization.Model):
-    """Solution result.
 
     :ivar trigger_criteria: Solution request trigger criteria.
     :vartype trigger_criteria: list[~azure.mgmt.selfhelp.models.TriggerCriterion]
@@ -1266,7 +1210,7 @@ class SolutionResourceProperties(_serialization.Model):
     :ivar solution_id: Solution Id to identify single solution.
     :vartype solution_id: str
     :ivar provisioning_state: Status of solution provisioning. Known values are: "Succeeded",
-     "Failed", and "Canceled".
+     "PartialComplete", "Failed", "Running", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.selfhelp.models.SolutionProvisioningState
     :ivar title: The title.
     :vartype title: str
@@ -1278,15 +1222,24 @@ class SolutionResourceProperties(_serialization.Model):
     :vartype sections: list[~azure.mgmt.selfhelp.models.Section]
     """
 
+    _validation = {
+        "solution_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "title": {"readonly": True},
+        "content": {"readonly": True},
+        "replacement_maps": {"readonly": True},
+        "sections": {"readonly": True},
+    }
+
     _attribute_map = {
-        "trigger_criteria": {"key": "triggerCriteria", "type": "[TriggerCriterion]"},
-        "parameters": {"key": "parameters", "type": "{str}"},
-        "solution_id": {"key": "solutionId", "type": "str"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "title": {"key": "title", "type": "str"},
-        "content": {"key": "content", "type": "str"},
-        "replacement_maps": {"key": "replacementMaps", "type": "ReplacementMaps"},
-        "sections": {"key": "sections", "type": "[Section]"},
+        "trigger_criteria": {"key": "properties.triggerCriteria", "type": "[TriggerCriterion]"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "solution_id": {"key": "properties.solutionId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "title": {"key": "properties.title", "type": "str"},
+        "content": {"key": "properties.content", "type": "str"},
+        "replacement_maps": {"key": "properties.replacementMaps", "type": "ReplacementMaps"},
+        "sections": {"key": "properties.sections", "type": "[Section]"},
     }
 
     def __init__(
@@ -1294,12 +1247,6 @@ class SolutionResourceProperties(_serialization.Model):
         *,
         trigger_criteria: Optional[List["_models.TriggerCriterion"]] = None,
         parameters: Optional[Dict[str, str]] = None,
-        solution_id: Optional[str] = None,
-        provisioning_state: Optional[Union[str, "_models.SolutionProvisioningState"]] = None,
-        title: Optional[str] = None,
-        content: Optional[str] = None,
-        replacement_maps: Optional["_models.ReplacementMaps"] = None,
-        sections: Optional[List["_models.Section"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1307,29 +1254,103 @@ class SolutionResourceProperties(_serialization.Model):
         :paramtype trigger_criteria: list[~azure.mgmt.selfhelp.models.TriggerCriterion]
         :keyword parameters: Client input parameters to run Solution.
         :paramtype parameters: dict[str, str]
-        :keyword solution_id: Solution Id to identify single solution.
-        :paramtype solution_id: str
-        :keyword provisioning_state: Status of solution provisioning. Known values are: "Succeeded",
-         "Failed", and "Canceled".
-        :paramtype provisioning_state: str or ~azure.mgmt.selfhelp.models.SolutionProvisioningState
-        :keyword title: The title.
-        :paramtype title: str
-        :keyword content: The HTML content that needs to be rendered and shown to customer.
-        :paramtype content: str
-        :keyword replacement_maps: Solution replacement maps.
-        :paramtype replacement_maps: ~azure.mgmt.selfhelp.models.ReplacementMaps
-        :keyword sections: List of section object.
-        :paramtype sections: list[~azure.mgmt.selfhelp.models.Section]
         """
         super().__init__(**kwargs)
         self.trigger_criteria = trigger_criteria
         self.parameters = parameters
-        self.solution_id = solution_id
-        self.provisioning_state = provisioning_state
-        self.title = title
-        self.content = content
-        self.replacement_maps = replacement_maps
-        self.sections = sections
+        self.solution_id = None
+        self.provisioning_state = None
+        self.title = None
+        self.content = None
+        self.replacement_maps = None
+        self.sections = None
+
+
+class SolutionResource(ProxyResource):  # pylint: disable=too-many-instance-attributes
+    """Solution response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.selfhelp.models.SystemData
+    :ivar trigger_criteria: Solution request trigger criteria.
+    :vartype trigger_criteria: list[~azure.mgmt.selfhelp.models.TriggerCriterion]
+    :ivar parameters: Client input parameters to run Solution.
+    :vartype parameters: dict[str, str]
+    :ivar solution_id: Solution Id to identify single solution.
+    :vartype solution_id: str
+    :ivar provisioning_state: Status of solution provisioning. Known values are: "Succeeded",
+     "PartialComplete", "Failed", "Running", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.selfhelp.models.SolutionProvisioningState
+    :ivar title: The title.
+    :vartype title: str
+    :ivar content: The HTML content that needs to be rendered and shown to customer.
+    :vartype content: str
+    :ivar replacement_maps: Solution replacement maps.
+    :vartype replacement_maps: ~azure.mgmt.selfhelp.models.ReplacementMaps
+    :ivar sections: List of section object.
+    :vartype sections: list[~azure.mgmt.selfhelp.models.Section]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "solution_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "title": {"readonly": True},
+        "content": {"readonly": True},
+        "replacement_maps": {"readonly": True},
+        "sections": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "trigger_criteria": {"key": "properties.triggerCriteria", "type": "[TriggerCriterion]"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "solution_id": {"key": "properties.solutionId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "title": {"key": "properties.title", "type": "str"},
+        "content": {"key": "properties.content", "type": "str"},
+        "replacement_maps": {"key": "properties.replacementMaps", "type": "ReplacementMaps"},
+        "sections": {"key": "properties.sections", "type": "[Section]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        trigger_criteria: Optional[List["_models.TriggerCriterion"]] = None,
+        parameters: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword trigger_criteria: Solution request trigger criteria.
+        :paramtype trigger_criteria: list[~azure.mgmt.selfhelp.models.TriggerCriterion]
+        :keyword parameters: Client input parameters to run Solution.
+        :paramtype parameters: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.trigger_criteria = trigger_criteria
+        self.parameters = parameters
+        self.solution_id = None
+        self.provisioning_state = None
+        self.title = None
+        self.content = None
+        self.replacement_maps = None
+        self.sections = None
 
 
 class SolutionsDiagnostic(_serialization.Model):
@@ -1546,8 +1567,9 @@ class StepInput(_serialization.Model):
 
     :ivar question_id: Use Index as QuestionId.
     :vartype question_id: str
-    :ivar question_type: Text Input. Will be a single line input.
-    :vartype question_type: str
+    :ivar question_type: Type of Question. Known values are: "RadioButton", "Dropdown",
+     "TextInput", and "MultiLineInfoBox".
+    :vartype question_type: str or ~azure.mgmt.selfhelp.models.QuestionType
     :ivar question_content: User question content.
     :vartype question_content: str
     :ivar question_content_type: Default is Text. Known values are: "Text", "Html", and "Markdown".
@@ -1584,7 +1606,7 @@ class StepInput(_serialization.Model):
         self,
         *,
         question_id: Optional[str] = None,
-        question_type: Optional[str] = None,
+        question_type: Optional[Union[str, "_models.QuestionType"]] = None,
         question_content: Optional[str] = None,
         question_content_type: Optional[Union[str, "_models.QuestionContentType"]] = None,
         response_hint: Optional[str] = None,
@@ -1597,8 +1619,9 @@ class StepInput(_serialization.Model):
         """
         :keyword question_id: Use Index as QuestionId.
         :paramtype question_id: str
-        :keyword question_type: Text Input. Will be a single line input.
-        :paramtype question_type: str
+        :keyword question_type: Type of Question. Known values are: "RadioButton", "Dropdown",
+         "TextInput", and "MultiLineInfoBox".
+        :paramtype question_type: str or ~azure.mgmt.selfhelp.models.QuestionType
         :keyword question_content: User question content.
         :paramtype question_content: str
         :keyword question_content_type: Default is Text. Known values are: "Text", "Html", and
@@ -1793,8 +1816,8 @@ class TroubleshooterResponse(_serialization.Model):
 
     :ivar question_id: id of the question.
     :vartype question_id: str
-    :ivar question_type: Text Input. Will be a single line input. Known values are: "RadioButton",
-     "Dropdown", "TextInput", and "MultiLineInfoBox".
+    :ivar question_type: Type of Question. Known values are: "RadioButton", "Dropdown",
+     "TextInput", and "MultiLineInfoBox".
     :vartype question_type: str or ~azure.mgmt.selfhelp.models.QuestionType
     :ivar response: Response key for SingleInput. For Multi-line test/open ended question it is
      free form text.
@@ -1818,8 +1841,8 @@ class TroubleshooterResponse(_serialization.Model):
         """
         :keyword question_id: id of the question.
         :paramtype question_id: str
-        :keyword question_type: Text Input. Will be a single line input. Known values are:
-         "RadioButton", "Dropdown", "TextInput", and "MultiLineInfoBox".
+        :keyword question_type: Type of Question. Known values are: "RadioButton", "Dropdown",
+         "TextInput", and "MultiLineInfoBox".
         :paramtype question_type: str or ~azure.mgmt.selfhelp.models.QuestionType
         :keyword response: Response key for SingleInput. For Multi-line test/open ended question it is
          free form text.

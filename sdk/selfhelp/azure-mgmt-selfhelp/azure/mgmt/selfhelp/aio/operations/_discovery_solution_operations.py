@@ -59,21 +59,21 @@ class DiscoverySolutionOperations:
         """Lists the relevant Azure diagnostics and solutions using `problemClassification API
         <https://learn.microsoft.com/rest/api/support/problem-classifications/list?tabs=HTTP>`_\ ) AND
         resourceUri or resourceType.:code:`<br/>` Discovery Solutions is the initial entry point within
-        Help API, which identifies relevant Azure diagnostics and solutions. We will do our best to
-        return the most effective solutions based on the type of inputs, in the request URL
-        :code:`<br/>`:code:`<br/>` Mandatory input :  problemClassificationId (Use the
-        `problemClassification API
+        Help API, which identifies relevant Azure diagnostics and solutions. :code:`<br/>`:code:`<br/>`
+        Required Input :  problemClassificationId (Use the `problemClassification API
         <https://learn.microsoft.com/rest/api/support/problem-classifications/list?tabs=HTTP>`_\ )
         :code:`<br/>`Optional input: resourceUri OR resource Type :code:`<br/>`:code:`<br/>`
         :code:`<b>Note: </b>`  ‘requiredInputs’ from Discovery solutions response must be passed via
         ‘additionalParameters’ as an input to Diagnostics and Solutions API.
 
-        :param scope: This is an extension resource provider and only resource level extension is
-         supported at the moment. Required.
+        :param scope: scope = resourceUri of affected resource.:code:`<br/>` For example:
+         /subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read.
+         Required.
         :type scope: str
-        :param filter: 'ProblemClassificationId' or 'Id' is a mandatory filter to get solutions ids. It
-         also supports optional 'ResourceType' and 'SolutionType' filters. The filter supports only
-         'and', 'or' and 'eq' operators. Example: $filter=ProblemClassificationId eq
+        :param filter: 'ProblemClassificationId' is a mandatory filter to get solutions ids. It also
+         supports optional 'ResourceType' and 'SolutionType' filters. The `$filter
+         <https://learn.microsoft.com/en-us/odata/webapi/first-odata-api#filter>`_ supports only 'and',
+         'or' and 'eq' operators. Example: $filter=ProblemClassificationId eq
          '1ddda5b4-cf6c-4d4f-91ad-bc38ab0e811e'. Default value is None.
         :type filter: str
         :param skiptoken: Skiptoken is only used if a previous operation returned a partial result.
