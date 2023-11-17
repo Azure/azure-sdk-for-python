@@ -7,7 +7,7 @@
 import logging
 from abc import abstractmethod
 from os import PathLike
-from typing import IO, Any, AnyStr, Dict, Optional, Union
+from typing import IO, TYPE_CHECKING, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import BatchDeploymentData
 from azure.ai.ml._restclient.v2022_05_01.models import OnlineDeploymentData
@@ -24,6 +24,11 @@ from azure.ai.ml.exceptions import (
 )
 
 from .code_configuration import CodeConfiguration
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._assets._artifacts.model import Model
+    from azure.ai.ml.entities._assets.environment import Environment
 
 module_logger = logging.getLogger(__name__)
 
