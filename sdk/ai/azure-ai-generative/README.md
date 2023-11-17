@@ -1,6 +1,6 @@
-# Azure AI Generative package for Python
+# Azure AI Generative Package client library for Python
 
-The Azure AI generative package is part of the Azure AI SDK for Python and contains functionality for building, evaluating and deploying Generative AI applications that leverage Azure AI services. The default installation of the package contains capabilities for cloud-connected scenarios, and by installing extras you can also run operations locally (such as building indexes and calculating metrics).
+The Azure AI Generative package is part of the Azure AI SDK for Python and contains functionality for building, evaluating and deploying Generative AI applications that leverage Azure AI services. The default installation of the package contains capabilities for cloud-connected scenarios, and by installing extras you can also run operations locally (such as building indexes and calculating metrics).
 
 [Source code][source_code]
 | [Package (PyPI)][ai_pypi]
@@ -28,7 +28,7 @@ pip install azure-ai-generative[index,evaluate,promptflow]
 pip install azure-identity
 ```
 
-## Key Concepts
+## Key concepts
 
 The `[index,evaluate,promptflow]` syntax specifies extra packages that you can optionally remove if you don't need the functionality: 
 * `[index]` adds the ability to build indexes on your local development environment

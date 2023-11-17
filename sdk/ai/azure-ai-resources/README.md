@@ -1,6 +1,6 @@
-# Azure AI Resources package for Python
+# Azure AI Resources Package client library for Python
 
-The Azure AI resource package is part of the Azure AI SDK for Python and contains functionality for connecting to and managing your Azure AI resources and projects. Within your Azure AI projects it provides control plane operations for creating and managing data, indexes, models and deployments.
+The Azure AI Resources package is part of the Azure AI SDK for Python and contains functionality for connecting to and managing your Azure AI resources and projects. Within your Azure AI projects it provides control plane operations for creating and managing data, indexes, models and deployments.
 
 
 [Source code][source_code]
@@ -38,7 +38,7 @@ ai_client = AIClient(credential=DefaultAzureCredential(), subscription_id='subsc
                      resource_group_name='resource_group', project_name='project_name')
 ```
 
-## Key Concepts
+## Key concepts
 Use this library within your Azure AI projects to provide control plane operations for creating and managing data, indexes, models and deployments.
 
 ## Examples
@@ -70,7 +70,7 @@ The Azure AI Generative Python SDK includes a telemetry feature that collects us
 
 Telemetry data helps the SDK team understand how the SDK is used so it can be improved and the information about failures helps the team resolve problems and fix bugs. The SDK telemetry feature is enabled by default for Jupyter Notebook usage and cannot be enabled for non-Jupyter scenarios. To opt out of the telemetry feature in a Jupyter scenario, set the environment variable `"AZURE_AI_RESOURCES_ENABLE_LOGGING"` to `"False"`.
 
-## Next Steps
+## Next steps
 
 View our [samples repository][generative_samples] on GitHub for examples demonstrating how to use the Azure AI Generative Python SDK.
 
