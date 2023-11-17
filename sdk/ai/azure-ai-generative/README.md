@@ -28,6 +28,8 @@ pip install azure-ai-generative[index,evaluate,promptflow]
 pip install azure-identity
 ```
 
+## Key Concepts
+
 The `[index,evaluate,promptflow]` syntax specifies extra packages that you can optionally remove if you don't need the functionality: 
 * `[index]` adds the ability to build indexes on your local development environment
 * `[evaluate]` adds the ability to run evaluation and calculate metrics in your local development environment 
@@ -74,7 +76,7 @@ For sample usage of these, refer to this sample
 
 ## Examples
 
-View our [samples repository][generative_samples] on GitHub for examples of how to use this package.
+See our [samples repository][generative_samples] for examples of how to use the Azure AI Generative Python SDK.
 
 ## Troubleshooting
 ### General
@@ -101,7 +103,12 @@ The Azure AI Generative Python SDK includes a telemetry feature that collects us
 
 Telemetry data helps the SDK team understand how the SDK is used so it can be improved and the information about failures helps the team resolve problems and fix bugs. The SDK telemetry feature is enabled by default for Jupyter Notebook usage and cannot be enabled for non-Jupyter scenarios. To opt out of the telemetry feature in a Jupyter scenario, set the environment variable `"AZURE_AI_GENERATIVE_ENABLE_LOGGING"` to `"False"`.
 
-# Contributing
+
+## Next steps
+
+See our [samples repository][generative_samples] for examples of how to use the Azure AI Generative Python SDK.
+
+## Contributing
 
 If you encounter any bugs or have suggestions, please file an issue in the [Issues](<https://github.com/Azure/azure-sdk-for-python/issues>) section of the project.
 
