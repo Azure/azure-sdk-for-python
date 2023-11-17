@@ -65,10 +65,10 @@ _Address = collections.namedtuple("_Address", "hostname path")
 
 def _parse_conn_str(
         conn_str: str,
-        *, 
+        *,
         eventhub_name: Optional[str] = None,
         check_case: bool = False,
-        **kwargs: Any
+        **kwargs: Any # pylint:disable=unused-argument
     ) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
     shared_access_key_name = None
@@ -76,8 +76,6 @@ def _parse_conn_str(
     entity_path: Optional[str] = None
     shared_access_signature: Optional[str] = None
     shared_access_signature_expiry = None
-    eventhub_name = eventhub_name
-    check_case = check_case
     conn_settings = core_parse_connection_string(
         conn_str, case_sensitive_keys=check_case
     )

@@ -540,7 +540,7 @@ class EventHubProducerClient(
         partition_id: Optional[str] = None,
         partition_key: Optional[str] = None,
         timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any # pylint: disable=unused-argument
     ) -> None:
         """
         Sends an event data.
@@ -590,7 +590,6 @@ class EventHubProducerClient(
         """
         input_pid = partition_id
         pid: str = input_pid or ALL_PARTITIONS
-        partition_key = partition_key
         send_timeout = timeout
         try:
             try:
@@ -610,7 +609,11 @@ class EventHubProducerClient(
             else:
                 raise
 
-    def send_batch(self, event_data_batch: Union[List[EventData], List[AmqpAnnotatedMessage], EventDataBatch], **kwargs: Any) -> None:
+    def send_batch(
+        self,
+        event_data_batch: Union[List[EventData], List[AmqpAnnotatedMessage], EventDataBatch],
+        **kwargs: Any
+    ) -> None:
         # pylint: disable=protected-access
         """
         Sends a batch of event data.
