@@ -1,5 +1,12 @@
 # Release History
 
+## 1.2.0 (2024-03-01)
+
+### Features Added
+- Add support for number lookup
+  - Format only can be returned for no cost
+  - Additional number details can be returned for a cost
+
 ## 1.2.0b1 (2023-08-04)
 
 ### Features Added
