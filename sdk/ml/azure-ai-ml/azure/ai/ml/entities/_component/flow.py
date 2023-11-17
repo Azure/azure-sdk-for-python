@@ -6,7 +6,7 @@ import json
 import os
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, Generator, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple, Union, cast
 
 import yaml
 from marshmallow import EXCLUDE, Schema, ValidationError
@@ -29,6 +29,10 @@ from .. import Environment
 from .._inputs_outputs import GroupInput, Input, Output
 from ._additional_includes import AdditionalIncludesMixin
 from .component import Component
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._builders.parallel import Parallel
 
 # pylint: disable=protected-access
 
@@ -403,8 +407,10 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         return rest_obj
 
     def _func(self, **kwargs: Any) -> "Parallel":  # pylint: disable=invalid-overridden-method
+        from azure.ai.ml.entities._builders.parallel import Parallel
+
         with self._inputs._fit_inputs(kwargs):  # pylint: disable=protected-access
-            return super()._func(**kwargs)  # pylint: disable=not-callable
+            return cast(Parallel, super()._func(**kwargs))  # pylint: disable=not-callable
 
     @classmethod
     def _get_flow_definition(
