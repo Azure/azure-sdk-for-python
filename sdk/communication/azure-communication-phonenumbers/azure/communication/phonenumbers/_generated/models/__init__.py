@@ -11,6 +11,7 @@ from ._models import CommunicationErrorResponse
 from ._models import OperatorDetails
 from ._models import OperatorInformation
 from ._models import OperatorInformationRequest
+from ._models import OperatorInformationRequestOptions
 from ._models import OperatorInformationResult
 from ._models import PhoneNumberAdministrativeDivision
 from ._models import PhoneNumberAreaCode
@@ -44,6 +45,7 @@ __all__ = [
     "OperatorDetails",
     "OperatorInformation",
     "OperatorInformationRequest",
+    "OperatorInformationRequestOptions",
     "OperatorInformationResult",
     "PhoneNumberAdministrativeDivision",
     "PhoneNumberAreaCode",

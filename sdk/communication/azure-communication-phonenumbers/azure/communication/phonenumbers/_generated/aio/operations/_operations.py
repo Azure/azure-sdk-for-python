@@ -75,6 +75,7 @@ class PhoneNumbersOperations:
         *,
         phone_number_type: Union[str, _models.PhoneNumberType],
         skip: int = 0,
+        max_page_size: int = 100,
         assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
         locality: Optional[str] = None,
         administrative_division: Optional[str] = None,
@@ -93,6 +94,9 @@ class PhoneNumbersOperations:
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
+        :keyword max_page_size: An optional parameter for how many entries to return, for pagination
+         purposes. The default value is 100. Default value is 100.
+        :paramtype max_page_size: int
         :keyword assignment_type: Filter by assignmentType, e.g. Person, Application. Known values are:
          "person" and "application". Default value is None.
         :paramtype assignment_type: str or
@@ -127,10 +131,11 @@ class PhoneNumbersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_phone_numbers_list_area_codes_request(
+                _request = build_phone_numbers_list_area_codes_request(
                     country_code=country_code,
                     phone_number_type=phone_number_type,
                     skip=skip,
+                    max_page_size=max_page_size,
                     assignment_type=assignment_type,
                     locality=locality,
                     administrative_division=administrative_division,
@@ -144,7 +149,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -156,7 +161,7 @@ class PhoneNumbersOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -164,9 +169,9 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize(
@@ -178,11 +183,11 @@ class PhoneNumbersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -199,7 +204,7 @@ class PhoneNumbersOperations:
 
     @distributed_trace
     def list_available_countries(
-        self, *, skip: int = 0, accept_language: Optional[str] = None, **kwargs: Any
+        self, *, skip: int = 0, max_page_size: int = 100, accept_language: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.PhoneNumberCountry"]:
         """Gets the list of supported countries.
 
@@ -208,6 +213,9 @@ class PhoneNumbersOperations:
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
+        :keyword max_page_size: An optional parameter for how many entries to return, for pagination
+         purposes. The default value is 100. Default value is 100.
+        :paramtype max_page_size: int
         :keyword accept_language: The locale to display in the localized fields in the response. e.g.
          'en-US'. Default value is None.
         :paramtype accept_language: str
@@ -232,8 +240,9 @@ class PhoneNumbersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_phone_numbers_list_available_countries_request(
+                _request = build_phone_numbers_list_available_countries_request(
                     skip=skip,
+                    max_page_size=max_page_size,
                     accept_language=accept_language,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -244,7 +253,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -256,7 +265,7 @@ class PhoneNumbersOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -264,9 +273,9 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize(
@@ -278,11 +287,11 @@ class PhoneNumbersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -303,6 +312,7 @@ class PhoneNumbersOperations:
         country_code: str,
         *,
         skip: int = 0,
+        max_page_size: int = 100,
         administrative_division: Optional[str] = None,
         accept_language: Optional[str] = None,
         **kwargs: Any
@@ -316,6 +326,9 @@ class PhoneNumbersOperations:
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
+        :keyword max_page_size: An optional parameter for how many entries to return, for pagination
+         purposes. The default value is 100. Default value is 100.
+        :paramtype max_page_size: int
         :keyword administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. Default value is None.
         :paramtype administrative_division: str
@@ -345,9 +358,10 @@ class PhoneNumbersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_phone_numbers_list_available_localities_request(
+                _request = build_phone_numbers_list_available_localities_request(
                     country_code=country_code,
                     skip=skip,
+                    max_page_size=max_page_size,
                     administrative_division=administrative_division,
                     accept_language=accept_language,
                     api_version=self._config.api_version,
@@ -359,7 +373,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -371,7 +385,7 @@ class PhoneNumbersOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -379,9 +393,9 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize(
@@ -393,11 +407,11 @@ class PhoneNumbersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -418,6 +432,7 @@ class PhoneNumbersOperations:
         country_code: str,
         *,
         skip: int = 0,
+        max_page_size: int = 100,
         phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
         assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
         accept_language: Optional[str] = None,
@@ -432,6 +447,9 @@ class PhoneNumbersOperations:
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
+        :keyword max_page_size: An optional parameter for how many entries to return, for pagination
+         purposes. The default value is 100. Default value is 100.
+        :paramtype max_page_size: int
         :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
          "geographic" and "tollFree". Default value is None.
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
@@ -463,9 +481,10 @@ class PhoneNumbersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_phone_numbers_list_offerings_request(
+                _request = build_phone_numbers_list_offerings_request(
                     country_code=country_code,
                     skip=skip,
+                    max_page_size=max_page_size,
                     phone_number_type=phone_number_type,
                     assignment_type=assignment_type,
                     accept_language=accept_language,
@@ -478,7 +497,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -490,7 +509,7 @@ class PhoneNumbersOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -498,9 +517,9 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize(
@@ -512,11 +531,11 @@ class PhoneNumbersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -556,7 +575,7 @@ class PhoneNumbersOperations:
         else:
             _json = self._serialize.body(body, "PhoneNumberSearchRequest")
 
-        request = build_phone_numbers_search_available_phone_numbers_request(
+        _request = build_phone_numbers_search_available_phone_numbers_request(
             country_code=country_code,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -568,11 +587,11 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -593,9 +612,9 @@ class PhoneNumbersOperations:
         deserialized = self._deserialize("PhoneNumberSearchResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     async def begin_search_available_phone_numbers(
@@ -718,7 +737,7 @@ class PhoneNumbersOperations:
 
             deserialized = self._deserialize("PhoneNumberSearchResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -740,13 +759,15 @@ class PhoneNumbersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.PhoneNumberSearchResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.PhoneNumberSearchResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_search_result(self, search_id: str, **kwargs: Any) -> _models.PhoneNumberSearchResult:
@@ -773,7 +794,7 @@ class PhoneNumbersOperations:
 
         cls: ClsType[_models.PhoneNumberSearchResult] = kwargs.pop("cls", None)
 
-        request = build_phone_numbers_get_search_result_request(
+        _request = build_phone_numbers_get_search_result_request(
             search_id=search_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -782,11 +803,11 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -801,9 +822,9 @@ class PhoneNumbersOperations:
         deserialized = self._deserialize("PhoneNumberSearchResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     async def _purchase_phone_numbers_initial(  # pylint: disable=inconsistent-return-statements
         self, body: Union[_models.PhoneNumberPurchaseRequest, IO], **kwargs: Any
@@ -830,7 +851,7 @@ class PhoneNumbersOperations:
         else:
             _json = self._serialize.body(body, "PhoneNumberPurchaseRequest")
 
-        request = build_phone_numbers_purchase_phone_numbers_request(
+        _request = build_phone_numbers_purchase_phone_numbers_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -841,11 +862,11 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -863,7 +884,7 @@ class PhoneNumbersOperations:
         response_headers["purchase-id"] = self._deserialize("str", response.headers.get("purchase-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     async def begin_purchase_phone_numbers(
@@ -956,7 +977,7 @@ class PhoneNumbersOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -972,13 +993,13 @@ class PhoneNumbersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_operation(self, operation_id: str, **kwargs: Any) -> _models.PhoneNumberOperation:
@@ -1005,7 +1026,7 @@ class PhoneNumbersOperations:
 
         cls: ClsType[_models.PhoneNumberOperation] = kwargs.pop("cls", None)
 
-        request = build_phone_numbers_get_operation_request(
+        _request = build_phone_numbers_get_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1014,11 +1035,11 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1036,9 +1057,9 @@ class PhoneNumbersOperations:
         deserialized = self._deserialize("PhoneNumberOperation", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def cancel_operation(  # pylint: disable=inconsistent-return-statements
@@ -1067,7 +1088,7 @@ class PhoneNumbersOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_phone_numbers_cancel_operation_request(
+        _request = build_phone_numbers_cancel_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1076,11 +1097,11 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1093,7 +1114,7 @@ class PhoneNumbersOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     async def _update_capabilities_initial(
         self, phone_number: str, body: Optional[Union[_models.PhoneNumberCapabilitiesRequest, IO]] = None, **kwargs: Any
@@ -1123,7 +1144,7 @@ class PhoneNumbersOperations:
             else:
                 _json = None
 
-        request = build_phone_numbers_update_capabilities_request(
+        _request = build_phone_numbers_update_capabilities_request(
             phone_number=phone_number,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1135,11 +1156,11 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1160,9 +1181,9 @@ class PhoneNumbersOperations:
         deserialized = self._deserialize("PurchasedPhoneNumber", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     async def begin_update_capabilities(
@@ -1293,7 +1314,7 @@ class PhoneNumbersOperations:
 
             deserialized = self._deserialize("PurchasedPhoneNumber", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -1315,13 +1336,15 @@ class PhoneNumbersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.PurchasedPhoneNumber].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.PurchasedPhoneNumber](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_by_number(self, phone_number: str, **kwargs: Any) -> _models.PurchasedPhoneNumber:
@@ -1349,7 +1372,7 @@ class PhoneNumbersOperations:
 
         cls: ClsType[_models.PurchasedPhoneNumber] = kwargs.pop("cls", None)
 
-        request = build_phone_numbers_get_by_number_request(
+        _request = build_phone_numbers_get_by_number_request(
             phone_number=phone_number,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1358,11 +1381,11 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1377,9 +1400,9 @@ class PhoneNumbersOperations:
         deserialized = self._deserialize("PurchasedPhoneNumber", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     async def _release_phone_number_initial(  # pylint: disable=inconsistent-return-statements
         self, phone_number: str, **kwargs: Any
@@ -1397,7 +1420,7 @@ class PhoneNumbersOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_phone_numbers_release_phone_number_request(
+        _request = build_phone_numbers_release_phone_number_request(
             phone_number=phone_number,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1406,11 +1429,11 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1428,7 +1451,7 @@ class PhoneNumbersOperations:
         response_headers["release-id"] = self._deserialize("str", response.headers.get("release-id"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def begin_release_phone_number(self, phone_number: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -1464,7 +1487,7 @@ class PhoneNumbersOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1480,13 +1503,13 @@ class PhoneNumbersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_phone_numbers(
@@ -1525,7 +1548,7 @@ class PhoneNumbersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_phone_numbers_list_phone_numbers_request(
+                _request = build_phone_numbers_list_phone_numbers_request(
                     skip=skip,
                     top=top,
                     api_version=self._config.api_version,
@@ -1537,7 +1560,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1549,7 +1572,7 @@ class PhoneNumbersOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -1557,9 +1580,9 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize(
@@ -1571,11 +1594,11 @@ class PhoneNumbersOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1594,11 +1617,12 @@ class PhoneNumbersOperations:
     async def operator_information_search(
         self, body: _models.OperatorInformationRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """Searches for number format and operator information for a given list of phone numbers.
 
-        Searches for operator information for a given list of phone numbers.
+        Searches for number format and operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose operator information should be searched. Required.
+        :param body: The phone number(s) whose number format and operator information should be
+         searched. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1612,11 +1636,12 @@ class PhoneNumbersOperations:
     async def operator_information_search(
         self, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """Searches for number format and operator information for a given list of phone numbers.
 
-        Searches for operator information for a given list of phone numbers.
+        Searches for number format and operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose operator information should be searched. Required.
+        :param body: The phone number(s) whose number format and operator information should be
+         searched. Required.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1630,12 +1655,12 @@ class PhoneNumbersOperations:
     async def operator_information_search(
         self, body: Union[_models.OperatorInformationRequest, IO], **kwargs: Any
     ) -> _models.OperatorInformationResult:
-        """Searches for operator information for a given list of phone numbers.
+        """Searches for number format and operator information for a given list of phone numbers.
 
-        Searches for operator information for a given list of phone numbers.
+        Searches for number format and operator information for a given list of phone numbers.
 
-        :param body: The phone number(s) whose operator information should be searched. Is either a
-         OperatorInformationRequest type or a IO type. Required.
+        :param body: The phone number(s) whose number format and operator information should be
+         searched. Is either a OperatorInformationRequest type or a IO type. Required.
         :type body: ~azure.communication.phonenumbers.models.OperatorInformationRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1666,7 +1691,7 @@ class PhoneNumbersOperations:
         else:
             _json = self._serialize.body(body, "OperatorInformationRequest")
 
-        request = build_phone_numbers_operator_information_search_request(
+        _request = build_phone_numbers_operator_information_search_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1677,11 +1702,11 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1696,6 +1721,6 @@ class PhoneNumbersOperations:
         deserialized = self._deserialize("OperatorInformationResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
