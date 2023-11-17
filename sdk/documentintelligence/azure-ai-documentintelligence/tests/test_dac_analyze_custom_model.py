@@ -58,6 +58,7 @@ class TestDACAnalyzeCustomModel(DocumentIntelligenceTest):
         assert "Resource not found" in str(e.value)
 
     @DocumentIntelligencePreparer()
+    @recorded_by_proxy
     def test_analyze_document_empty_model_id_from_url(self, **kwargs):
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
         documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")

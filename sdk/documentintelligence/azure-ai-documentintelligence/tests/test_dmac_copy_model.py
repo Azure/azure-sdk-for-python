@@ -27,7 +27,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(
 class TestCopyModelAsync(DocumentIntelligenceTest):
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_copy_model_none_model_id(self, **kwargs):
+    def test_copy_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ValueError) as e:
             client.begin_copy_model_to(model_id=None, copy_to_request={})
@@ -35,7 +35,7 @@ class TestCopyModelAsync(DocumentIntelligenceTest):
 
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
-    async def test_copy_model_empty_model_id(self, **kwargs):
+    def test_copy_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ResourceNotFoundError):
             client.begin_copy_model_to(model_id="", copy_to_request={})
