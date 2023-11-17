@@ -39,7 +39,7 @@ async def analyze_receipts_from_url():
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/receipt/contoso-receipt.png"
+    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/receipt/contoso-receipt.png"
     async with document_analysis_client:
         poller = await document_analysis_client.begin_analyze_document(
             "prebuilt-receipt", AnalyzeDocumentRequest(url_source=url)
