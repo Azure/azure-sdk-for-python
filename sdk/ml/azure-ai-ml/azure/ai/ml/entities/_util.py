@@ -6,7 +6,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import Any, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union, cast, overload
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Tuple, Type, TypeVar, Union, cast, overload
 from unittest import mock
 
 import msrest
@@ -48,6 +48,11 @@ from ..constants._component import NodeType
 from ..constants._endpoint import EndpointYamlFields
 from ..entities._mixins import RestTranslatableMixin
 from ..exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._inputs_outputs import Output
+    from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -515,7 +520,7 @@ def resolve_pipeline_parameter(data: Any) -> Union[T, str, "NodeOutput"]:
                 target=ErrorTarget.PIPELINE,
             )
         data = cast(NodeOutput, list(data.values())[0])
-    return data
+    return cast(Union[T, str, "NodeOutput"], data)
 
 
 def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]) -> None:

@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import copy
 from enum import Enum as PyEnum
-from typing import Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
@@ -11,6 +11,10 @@ from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationEx
 from .input import Input
 from .output import Output
 from .utils import is_group
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._job.pipeline._io import _GroupAttrDict
 
 
 class GroupInput(Input):

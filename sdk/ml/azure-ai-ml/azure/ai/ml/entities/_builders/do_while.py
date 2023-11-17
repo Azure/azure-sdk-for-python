@@ -10,6 +10,7 @@ from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema
 from azure.ai.ml.constants._component import DO_WHILE_MAX_ITERATION, ControlFlowType
 from azure.ai.ml.entities._job.job_limits import DoWhileJobLimits
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, NodeInput, NodeOutput
+from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 from .._util import load_from_dict, validate_attribute_type
@@ -247,6 +248,7 @@ class DoWhile(LoopNode):
         if (
             port_obj is not None
             and port_obj._owner is not None  # pylint: disable=protected-access
+            and not isinstance(port_obj._owner, PipelineJob)  # pylint: disable=protected-access
             and port_obj._owner._instance_id != self.body._instance_id  # pylint: disable=protected-access
         ):
             # Check the port owner is dowhile body.

@@ -4,7 +4,7 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use input as argument name
 import re
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 
 from pydash import get
 
@@ -15,6 +15,11 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.entities._job.sweep.search_space import Choice, Randint, SweepDistribution
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
+
+# avoid circular import error
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._builders import BaseNode
+    from azure.ai.ml.entities._component.component import Component
 
 
 class ComponentTranslatableMixin:
@@ -382,7 +387,7 @@ class ComponentTranslatableMixin:
                 translated_component_outputs[output_name] = self._to_output(output_value, pipeline_job_dict)
         return translated_component_outputs
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "Component":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> Union["Component", str]:
         """Translate to Component.
 
         :param context: The context
