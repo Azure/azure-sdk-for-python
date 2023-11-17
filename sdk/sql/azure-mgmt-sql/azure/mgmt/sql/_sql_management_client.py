@@ -63,6 +63,7 @@ from .operations import (
     JobAgentsOperations,
     JobCredentialsOperations,
     JobExecutionsOperations,
+    JobPrivateEndpointsOperations,
     JobStepExecutionsOperations,
     JobStepsOperations,
     JobTargetExecutionsOperations,
@@ -237,14 +238,14 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype encryption_protectors: azure.mgmt.sql.operations.EncryptionProtectorsOperations
     :ivar firewall_rules: FirewallRulesOperations operations
     :vartype firewall_rules: azure.mgmt.sql.operations.FirewallRulesOperations
-    :ivar instance_pools: InstancePoolsOperations operations
-    :vartype instance_pools: azure.mgmt.sql.operations.InstancePoolsOperations
     :ivar job_agents: JobAgentsOperations operations
     :vartype job_agents: azure.mgmt.sql.operations.JobAgentsOperations
     :ivar job_credentials: JobCredentialsOperations operations
     :vartype job_credentials: azure.mgmt.sql.operations.JobCredentialsOperations
     :ivar job_executions: JobExecutionsOperations operations
     :vartype job_executions: azure.mgmt.sql.operations.JobExecutionsOperations
+    :ivar job_private_endpoints: JobPrivateEndpointsOperations operations
+    :vartype job_private_endpoints: azure.mgmt.sql.operations.JobPrivateEndpointsOperations
     :ivar jobs: JobsOperations operations
     :vartype jobs: azure.mgmt.sql.operations.JobsOperations
     :ivar job_step_executions: JobStepExecutionsOperations operations
@@ -522,8 +523,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar server_configuration_options: ServerConfigurationOptionsOperations operations
     :vartype server_configuration_options:
      azure.mgmt.sql.operations.ServerConfigurationOptionsOperations
-    :ivar servers: ServersOperations operations
-    :vartype servers: azure.mgmt.sql.operations.ServersOperations
     :ivar start_stop_managed_instance_schedules: StartStopManagedInstanceSchedulesOperations
      operations
     :vartype start_stop_managed_instance_schedules:
@@ -531,8 +530,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :ivar transparent_data_encryptions: TransparentDataEncryptionsOperations operations
     :vartype transparent_data_encryptions:
      azure.mgmt.sql.operations.TransparentDataEncryptionsOperations
-    :ivar failover_groups: FailoverGroupsOperations operations
-    :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
     :ivar ipv6_firewall_rules: IPv6FirewallRulesOperations operations
     :vartype ipv6_firewall_rules: azure.mgmt.sql.operations.IPv6FirewallRulesOperations
     :ivar sql_vulnerability_assessment_baseline: SqlVulnerabilityAssessmentBaselineOperations
@@ -593,6 +590,12 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      DatabaseSqlVulnerabilityAssessmentsSettingsOperations operations
     :vartype database_sql_vulnerability_assessments_settings:
      azure.mgmt.sql.operations.DatabaseSqlVulnerabilityAssessmentsSettingsOperations
+    :ivar servers: ServersOperations operations
+    :vartype servers: azure.mgmt.sql.operations.ServersOperations
+    :ivar failover_groups: FailoverGroupsOperations operations
+    :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
+    :ivar instance_pools: InstancePoolsOperations operations
+    :vartype instance_pools: azure.mgmt.sql.operations.InstancePoolsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
@@ -682,10 +685,12 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_agents = JobAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_credentials = JobCredentialsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_executions = JobExecutionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.job_private_endpoints = JobPrivateEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.job_step_executions = JobStepExecutionsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -962,14 +967,12 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.server_configuration_options = ServerConfigurationOptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.start_stop_managed_instance_schedules = StartStopManagedInstanceSchedulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.transparent_data_encryptions = TransparentDataEncryptionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.ipv6_firewall_rules = IPv6FirewallRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -1022,6 +1025,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
         self.database_sql_vulnerability_assessments_settings = DatabaseSqlVulnerabilityAssessmentsSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.failover_groups = FailoverGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.instance_pools = InstancePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

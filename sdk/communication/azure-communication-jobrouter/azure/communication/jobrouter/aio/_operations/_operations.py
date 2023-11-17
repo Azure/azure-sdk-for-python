@@ -10,7 +10,7 @@ import datetime
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import MatchConditions
@@ -97,7 +97,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a distribution policy.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.DistributionPolicy
@@ -135,7 +135,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a distribution policy.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -173,7 +173,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a distribution policy.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -210,7 +210,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a distribution policy.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Is one of the following types: DistributionPolicy,
          JSON, IO Required.
@@ -317,7 +317,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Retrieves an existing distribution policy by Id.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -377,7 +377,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_distribution_policies(self, **kwargs: Any) -> AsyncIterable["_models.DistributionPolicy"]:
+    def list_distribution_policies(self, **kwargs: Any) -> AsyncItemPaged["_models.DistributionPolicy"]:
         """Retrieves existing distribution policies.
 
         Retrieves existing distribution policies.
@@ -473,10 +473,8 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Delete a distribution policy by Id.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -537,7 +535,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a classification policy.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.ClassificationPolicy
@@ -575,7 +573,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a classification policy.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -613,7 +611,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a classification policy.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -650,7 +648,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a classification policy.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Is one of the following types: ClassificationPolicy,
          JSON, IO Required.
@@ -759,7 +757,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Retrieves an existing classification policy by Id.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -819,7 +817,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_classification_policies(self, **kwargs: Any) -> AsyncIterable["_models.ClassificationPolicy"]:
+    def list_classification_policies(self, **kwargs: Any) -> AsyncItemPaged["_models.ClassificationPolicy"]:
         """Retrieves existing classification policies.
 
         Retrieves existing classification policies.
@@ -915,10 +913,8 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Delete a classification policy by Id.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -979,7 +975,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a exception policy.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.ExceptionPolicy
@@ -1017,7 +1013,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a exception policy.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -1055,7 +1051,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a exception policy.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -1092,7 +1088,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a exception policy.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Is one of the following types: ExceptionPolicy, JSON,
          IO Required.
@@ -1199,7 +1195,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Retrieves an existing exception policy by Id.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -1259,7 +1255,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_exception_policies(self, **kwargs: Any) -> AsyncIterable["_models.ExceptionPolicy"]:
+    def list_exception_policies(self, **kwargs: Any) -> AsyncItemPaged["_models.ExceptionPolicy"]:
         """Retrieves existing exception policies.
 
         Retrieves existing exception policies.
@@ -1355,10 +1351,8 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Deletes a exception policy by Id.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1419,7 +1413,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a queue.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.RouterQueue
@@ -1457,7 +1451,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a queue.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -1495,7 +1489,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a queue.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -1532,7 +1526,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a queue.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Is one of the following types: RouterQueue, JSON, IO
          Required.
@@ -1639,7 +1633,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Retrieves an existing queue by Id.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -1699,7 +1693,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_queues(self, **kwargs: Any) -> AsyncIterable["_models.RouterQueue"]:
+    def list_queues(self, **kwargs: Any) -> AsyncItemPaged["_models.RouterQueue"]:
         """Retrieves existing queues.
 
         Retrieves existing queues.
@@ -1795,10 +1789,8 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Deletes a queue by Id.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1861,7 +1853,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a router job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.RouterJob
@@ -1899,7 +1891,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a router job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -1937,7 +1929,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a router job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -1974,7 +1966,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a router job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param resource: The resource instance. Is one of the following types: RouterJob, JSON, IO
          Required.
@@ -2081,7 +2073,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Retrieves an existing job by Id.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -2146,10 +2138,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Deletes a job and all of its traces.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2228,7 +2218,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Reclassify a job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param options: Request object for reclassifying a job. Is one of the following types:
          ReclassifyJobOptions, JSON, IO Default value is None.
@@ -2335,7 +2325,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param options: Request model for cancelling job. Is one of the following types:
          CancelJobOptions, JSON, IO Default value is None.
@@ -2459,9 +2449,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Completes an assigned job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: The Id of the job assignment. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request model for completing job. Is one of the following types:
          CompleteJobOptions, JSON, IO Default value is None.
@@ -2586,9 +2576,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Closes a completed job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: The Id of the job assignment. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request model for closing job. Is one of the following types: CloseJobOptions,
          JSON, IO Default value is None.
@@ -2676,7 +2666,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         scheduled_before: Optional[datetime.datetime] = None,
         scheduled_after: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RouterJob"]:
+    ) -> AsyncItemPaged["_models.RouterJob"]:
         """Retrieves list of jobs based on filter parameters.
 
         Retrieves list of jobs based on filter parameters.
@@ -2860,13 +2850,13 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.UnassignJobResult:
-        """Un-assign a job.
+        """Unassign a job.
 
-        Un-assign a job.
+        Unassign a job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: The Id of the job assignment. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Default value is None.
         :type options: ~azure.communication.jobrouter.models.UnassignJobOptions
@@ -2890,13 +2880,13 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.UnassignJobResult:
-        """Un-assign a job.
+        """Unassign a job.
 
-        Un-assign a job.
+        Unassign a job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: The Id of the job assignment. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Default value is None.
         :type options: JSON
@@ -2920,13 +2910,13 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.UnassignJobResult:
-        """Un-assign a job.
+        """Unassign a job.
 
-        Un-assign a job.
+        Unassign a job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: The Id of the job assignment. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Default value is None.
         :type options: IO
@@ -2948,13 +2938,13 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         options: Optional[Union[_models.UnassignJobOptions, JSON, IO]] = None,
         **kwargs: Any
     ) -> _models.UnassignJobResult:
-        """Un-assign a job.
+        """Unassign a job.
 
-        Un-assign a job.
+        Unassign a job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: The Id of the job assignment. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Is one of the following types:
          UnassignJobOptions, JSON, IO Default value is None.
@@ -3037,9 +3027,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
         already.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
-        :param offer_id: The Id of the offer. Required.
+        :param offer_id: Id of an offer. Required.
         :type offer_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -3143,9 +3133,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Declines an offer to work on a job.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
-        :param offer_id: The Id of the offer. Required.
+        :param offer_id: Id of an offer. Required.
         :type offer_id: str
         :param options: Request model for declining offer. Is one of the following types:
          DeclineJobOfferOptions, JSON, IO Default value is None.
@@ -3301,7 +3291,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a worker.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.RouterWorker
@@ -3339,7 +3329,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a worker.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -3377,7 +3367,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a worker.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -3414,7 +3404,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a worker.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Is one of the following types: RouterWorker, JSON, IO
          Required.
@@ -3521,7 +3511,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Retrieves an existing worker by Id.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -3588,10 +3578,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Deletes a worker and all of its traces.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3645,7 +3633,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         queue_id: Optional[str] = None,
         has_capacity: Optional[bool] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RouterWorker"]:
+    ) -> AsyncItemPaged["_models.RouterWorker"]:
         """Retrieves existing workers.
 
         Retrieves existing workers.

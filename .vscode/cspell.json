@@ -127,6 +127,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "spinup",
     "cibuildwheel",
     "aoai",
     "pyprojects",
@@ -1380,6 +1381,12 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-resources/**",
+      "words": [
+        "etest"
       ]
     },
     {

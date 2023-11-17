@@ -10,7 +10,6 @@ from typing import Any, Optional, Union
 
 import yaml
 
-from azure.ai.resources._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient100122
 from azure.ai.resources._utils._ai_client_utils import find_config_file_path, get_config_info
 from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 from azure.ai.resources._utils._str_utils import build_connection_id
@@ -35,11 +34,10 @@ from azure.ai.resources.operations import (
     DataOperations,
     ModelOperations,
 )
-from azure.ai.resources.operations._ingest_data_to_index import ingest_data_to_index
 
 module_logger = logging.getLogger(__name__)
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, get_appinsights_log_handler, OpsLogger
+from azure.ai.resources._telemetry import get_appinsights_log_handler, OpsLogger
 
 ops_logger = OpsLogger(__name__)
 logger = ops_logger.package_logger
@@ -250,6 +248,15 @@ class AIClient:
         :rtype: str
         """
         return self._scope.project_name
+    
+    @property
+    def ai_resource_name(self) -> Optional[str]:
+        """The AI resource in which AI resource dependent operations will be executed in.
+
+        :return: Default AI Resource name.
+        :rtype: str
+        """
+        return self._scope.ai_resource_name
 
     @property
     def tracking_uri(self):
