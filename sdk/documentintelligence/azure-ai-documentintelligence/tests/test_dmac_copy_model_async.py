@@ -37,6 +37,7 @@ class TestCopyModelAsync(AsyncDocumentIntelligenceTest):
 
     @DocumentIntelligencePreparer()
     @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy_async
     async def test_copy_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
         with pytest.raises(ResourceNotFoundError):
