@@ -39,12 +39,13 @@ def build_create_or_update_request(
     x_ms_client_request_id: Optional[str] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
+    skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -58,6 +59,10 @@ def build_create_or_update_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if skip_indexer_reset_requirement_for_cache is not None:
+        _params["ignoreResetRequirements"] = _SERIALIZER.query(
+            "skip_indexer_reset_requirement_for_cache", skip_indexer_reset_requirement_for_cache, "bool"
+        )
 
     # Construct headers
     if x_ms_client_request_id is not None:
@@ -85,7 +90,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -117,7 +122,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -145,7 +150,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -168,7 +173,7 @@ def build_create_request(*, x_ms_client_request_id: Optional[str] = None, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -215,6 +220,7 @@ class DataSourcesOperations:
         data_source: _models.SearchIndexerDataSource,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -223,7 +229,7 @@ class DataSourcesOperations:
         """Creates a new datasource or updates a datasource if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Data-Source
 
         :param data_source_name: The name of the datasource to create or update. Required.
         :type data_source_name: str
@@ -238,6 +244,9 @@ class DataSourcesOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -257,6 +266,7 @@ class DataSourcesOperations:
         data_source: IO,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -265,7 +275,7 @@ class DataSourcesOperations:
         """Creates a new datasource or updates a datasource if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Data-Source
 
         :param data_source_name: The name of the datasource to create or update. Required.
         :type data_source_name: str
@@ -280,6 +290,9 @@ class DataSourcesOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -299,13 +312,14 @@ class DataSourcesOperations:
         data_source: Union[_models.SearchIndexerDataSource, IO],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
     ) -> _models.SearchIndexerDataSource:
         """Creates a new datasource or updates a datasource if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Data-Source
 
         :param data_source_name: The name of the datasource to create or update. Required.
         :type data_source_name: str
@@ -321,6 +335,9 @@ class DataSourcesOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -363,6 +380,7 @@ class DataSourcesOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -411,7 +429,7 @@ class DataSourcesOperations:
         """Deletes a datasource.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Delete-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Delete-Data-Source
 
         :param data_source_name: The name of the datasource to delete. Required.
         :type data_source_name: str
@@ -483,7 +501,7 @@ class DataSourcesOperations:
         """Retrieves a datasource definition.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Get-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Get-Data-Source
 
         :param data_source_name: The name of the datasource to retrieve. Required.
         :type data_source_name: str
@@ -551,10 +569,10 @@ class DataSourcesOperations:
         """Lists all datasources available for a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/List-Data-Sources
+           - https://docs.microsoft.com/rest/api/searchservice/List-Data-Sources
 
         :param select: Selects which top-level properties of the data sources to retrieve. Specified as
-         a comma-separated list of JSON property names, or ``*`` for all properties. The default is all
+         a comma-separated list of JSON property names, or '*' for all properties. The default is all
          properties. Default value is None.
         :type select: str
         :param request_options: Parameter group. Default value is None.
@@ -626,7 +644,7 @@ class DataSourcesOperations:
         """Creates a new datasource.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Data-Source
 
         :param data_source: The definition of the datasource to create. Required.
         :type data_source: ~search_service_client.models.SearchIndexerDataSource
@@ -653,7 +671,7 @@ class DataSourcesOperations:
         """Creates a new datasource.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Data-Source
 
         :param data_source: The definition of the datasource to create. Required.
         :type data_source: IO
@@ -678,7 +696,7 @@ class DataSourcesOperations:
         """Creates a new datasource.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Data-Source
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Data-Source
 
         :param data_source: The definition of the datasource to create. Is either a
          SearchIndexerDataSource type or a IO type. Required.

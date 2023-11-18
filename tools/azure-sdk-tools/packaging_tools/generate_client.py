@@ -23,7 +23,7 @@ def check_post_process(folder: Path) -> bool:
     return False
 
 def run_post_process(folder: Path) -> None:
-    completed_process = run(["autorest", "--postprocess", f"--output-folder={folder}", "--perform-load=false", "--python"], cwd=folder, shell=True)
+    completed_process = run(f"autorest --postprocess --output-folder={folder} --perform-load=false --python", cwd=folder, shell=True)
 
     if completed_process.returncode != 0:
         raise ValueError("Something happened during autorest post processing: " + str(completed_process))
@@ -32,7 +32,7 @@ def run_post_process(folder: Path) -> None:
 def generate_autorest(folder: Path) -> None:
 
     readme_path = folder / "swagger" / "README.md"
-    completed_process = run(["autorest", readme_path, "--python-sdks-folder=../../"], cwd=folder, shell=True)
+    completed_process = run(f"autorest {readme_path} --python-sdks-folder=../../", cwd=folder, shell=True)
 
     if completed_process.returncode != 0:
         raise ValueError("Something happened with autorest: " + str(completed_process))
@@ -50,7 +50,7 @@ def generate_typespec(folder: Path) -> None:
             "https://github.com/Azure/azure-sdk-tools/tree/main/tools/tsp-client/README.md"
         )
 
-    completed_process = run(["tsp-client", "update"], cwd=folder, shell=True, stderr=PIPE)
+    completed_process = run("tsp-client update", cwd=folder, shell=True, stderr=PIPE)
     if completed_process.returncode != 0:
         if "'tsp-client' is not recognized" in completed_process.stderr.decode("utf-8"):
             raise ValueError(
@@ -63,13 +63,13 @@ def generate_typespec(folder: Path) -> None:
 def generate(folder: Path = Path(".")) -> None:
     if (folder / "swagger" / "README.md").exists():
         generate_autorest(folder)
-        if check_post_process(folder):
-            run_post_process(folder)
     elif (folder / "tsp-location.yaml").exists():
         generate_typespec(folder)
     else:
         raise ValueError("Didn't find swagger/README.md nor tsp_location.yaml")
 
+    if check_post_process(folder):
+        run_post_process(folder)
 
 def generate_main() -> None:
     """Main method"""

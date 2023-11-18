@@ -9,6 +9,7 @@ from ._indexers_operations import IndexersOperations
 from ._skillsets_operations import SkillsetsOperations
 from ._synonym_maps_operations import SynonymMapsOperations
 from ._indexes_operations import IndexesOperations
+from ._aliases_operations import AliasesOperations
 from ._search_service_client_operations import SearchServiceClientOperationsMixin
 
 from ._patch import __all__ as _patch_all
@@ -21,6 +22,7 @@ __all__ = [
     "SkillsetsOperations",
     "SynonymMapsOperations",
     "IndexesOperations",
+    "AliasesOperations",
     "SearchServiceClientOperationsMixin",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
