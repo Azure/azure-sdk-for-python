@@ -11,7 +11,7 @@ from typing import (  # pylint: disable=unused-import
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse, quote, unquote
+from urllib.parse import quote
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -20,7 +20,36 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._blob_client import StorageAccountHostsMixin
-from .._blob_client_helpers import _parse_url
+from ._blob_client_helpers import (
+    _parse_url,
+    _encode_source_url,
+    _upload_blob_options,
+    _download_blob_options,
+    _upload_blob_from_url_options,
+    _delete_blob_options,
+    _set_http_headers_options,
+    _set_blob_metadata_options,
+    _create_page_blob_options,
+    _create_append_blob_options,
+    _create_snapshot_options,
+    _start_copy_from_url_options,
+    _abort_copy_options,
+    _stage_block_options,
+    _stage_block_from_url_options,
+    _get_block_list_result,
+    _commit_block_list_options,
+    _set_blob_tags_options,
+    _get_blob_tags_options,
+    _get_page_ranges_options,
+    _set_sequence_number_options,
+    _resize_blob_options,
+    _upload_page_options,
+    _upload_pages_from_url_options,
+    _clear_page_options,
+    _append_block_options,
+    _append_block_from_url_options,
+    _seal_append_blob_options
+)
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
@@ -158,17 +187,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
         return f"{self.scheme}://{hostname}/{quote(container_name)}/{quote(self.blob_name, safe='~/')}{self._query_str}"
-    
-    def _encode_source_url(self, source_url):
-        parsed_source_url = urlparse(source_url)
-        source_scheme = parsed_source_url.scheme
-        source_hostname = parsed_source_url.netloc.rstrip('/')
-        source_path = unquote(parsed_source_url.path)
-        source_query = parsed_source_url.query
-        result = [f"{source_scheme}://{source_hostname}{quote(source_path, safe='~/')}"]
-        if source_query:
-            result.append(source_query)
-        return '?'.join(result)
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
@@ -284,8 +302,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         """
-        options = self._upload_blob_from_url_options(
-            source_url=self._encode_source_url(source_url),
+        options = _upload_blob_from_url_options(
+            scheme=self.scheme,
+            source_url=_encode_source_url(source_url),
             **kwargs)
         try:
             return await self._client.block_blob.put_blob_from_url(**options)
@@ -438,8 +457,16 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 16
                 :caption: Upload a blob to the container.
         """
-        options = self._upload_blob_options(
-            data,
+        options = _upload_blob_options(
+            require_encryption=self.require_encryption,
+            encryption_version=self.encryption_version,
+            key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function,
+            scheme=self.scheme,
+            config=self._config,
+            sdk_moniker=self._sdk_moniker,
+            client=self._client,
+            data=data,
             blob_type=blob_type,
             length=length,
             metadata=metadata,
@@ -564,7 +591,18 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 16
                 :caption: Download a blob.
         """
-        options = self._download_blob_options(
+        options = _download_blob_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            key_resolver_function=self.key_resolver_function,
+            version_id=self.version_id,
+            scheme=self.scheme,
+            sdk_moniker=self._sdk_moniker,
+            encryption_version=self.encryption_version,
+            client=self._client,
+            config=self._config,
+            blob_name=self.blob_name,
+            container_name=self.container_name,
             offset=offset,
             length=length,
             encoding=encoding,
@@ -645,7 +683,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 16
                 :caption: Delete a blob.
         """
-        options = self._delete_blob_options(delete_snapshots=delete_snapshots, **kwargs)
+        options = _delete_blob_options(
+            snapshot=self.snapshot,
+            version_id=self.version_id,
+            delete_snapshots=delete_snapshots,
+            **kwargs)
         try:
             await self._client.blob.delete(**options)
         except HttpResponseError as error:
@@ -860,7 +902,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
+        options = _set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
             return await self._client.blob.set_http_headers(**options) # type: ignore
         except HttpResponseError as error:
@@ -924,7 +966,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified)
         """
-        options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
+        options = _set_blob_metadata_options(scheme=self.scheme, metadata=metadata, **kwargs)
         try:
             return await self._client.blob.set_metadata(**options)  # type: ignore
         except HttpResponseError as error:
@@ -1093,8 +1135,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        options = self._create_page_blob_options(
-            size,
+        options = _create_page_blob_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            scheme=self.scheme,
+            size=size,
             content_settings=content_settings,
             metadata=metadata,
             premium_page_blob_tier=premium_page_blob_tier,
@@ -1182,7 +1227,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        options = self._create_append_blob_options(
+        options = _create_append_blob_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            scheme=self.scheme,
             content_settings=content_settings,
             metadata=metadata,
             **kwargs)
@@ -1265,7 +1313,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 12
                 :caption: Create a snapshot of the blob.
         """
-        options = self._create_snapshot_options(metadata=metadata, **kwargs)
+        options = _create_snapshot_options(scheme=self.scheme, metadata=metadata, **kwargs)
         try:
             return await self._client.blob.create_snapshot(**options) # type: ignore
         except HttpResponseError as error:
@@ -1456,8 +1504,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 16
                 :caption: Copy a blob from a URL.
         """
-        options = self._start_copy_from_url_options(
-            source_url=self._encode_source_url(source_url),
+        options = _start_copy_from_url_options(
+            source_url=_encode_source_url(source_url),
             metadata=metadata,
             incremental_copy=incremental_copy,
             **kwargs)
@@ -1491,7 +1539,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 16
                 :caption: Abort copying a blob from URL.
         """
-        options = self._abort_copy_options(copy_id, **kwargs)
+        options = _abort_copy_options(copy_id, **kwargs)
         try:
             await self._client.blob.abort_copy_from_url(**options)
         except HttpResponseError as error:
@@ -1662,9 +1710,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
-        options = self._stage_block_options(
-            block_id,
-            data,
+        options = _stage_block_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            scheme=self.scheme,
+            block_id=block_id,
+            data=data,
             length=length,
             **kwargs)
         try:
@@ -1724,9 +1775,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             the prefix of the source_authorization string.
         :rtype: None
         """
-        options = self._stage_block_from_url_options(
-            block_id,
-            source_url=self._encode_source_url(source_url),
+        options = _stage_block_from_url_options(
+            scheme=self.scheme,
+            block_id=block_id,
+            source_url=_encode_source_url(source_url),
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
@@ -1777,7 +1829,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return self._get_block_list_result(blocks)
+        return _get_block_list_result(blocks)
 
     @distributed_trace_async
     async def commit_block_list( # type: ignore
@@ -1879,8 +1931,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._commit_block_list_options(
-            block_list,
+        options = _commit_block_list_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            scheme=self.scheme,
+            block_list=block_list,
             content_settings=content_settings,
             metadata=metadata,
             **kwargs)
@@ -1974,7 +2029,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = self._set_blob_tags_options(tags=tags, **kwargs)
+        options = _set_blob_tags_options(version_id=self.version_id, tags=tags, **kwargs)
         try:
             return await self._client.blob.set_tags(**options)
         except HttpResponseError as error:
@@ -2007,7 +2062,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
-        options = self._get_blob_tags_options(**kwargs)
+        options = _get_blob_tags_options(version_id=self.version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = await self._client.blob.get_tags(**options)
             return parse_tags(tags)  # pylint: disable=protected-access
@@ -2086,7 +2141,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             DeprecationWarning
         )
 
-        options = self._get_page_ranges_options(
+        options = _get_page_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_snapshot_diff=previous_snapshot_diff,
@@ -2172,7 +2228,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.PageRange]
         """
         results_per_page = kwargs.pop('results_per_page', None)
-        options = self._get_page_ranges_options(
+        options = _get_page_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_snapshot_diff=previous_snapshot,
@@ -2256,7 +2313,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
-        options = self._get_page_ranges_options(
+        options = _get_page_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             prev_snapshot_url=previous_snapshot_url,
@@ -2319,8 +2377,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._set_sequence_number_options(
-            sequence_number_action, sequence_number=sequence_number, **kwargs)
+        options = _set_sequence_number_options(sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
             return await self._client.page_blob.update_sequence_number(**options) # type: ignore
         except HttpResponseError as error:
@@ -2377,7 +2434,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._resize_blob_options(size, **kwargs)
+        options = _resize_blob_options(scheme=self.scheme, size=size, **kwargs)
         try:
             return await self._client.page_blob.resize(**options) # type: ignore
         except HttpResponseError as error:
@@ -2472,7 +2529,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._upload_page_options(
+        options = _upload_page_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            scheme=self.scheme,
             page=page,
             offset=offset,
             length=length,
@@ -2589,8 +2649,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             the prefix of the source_authorization string.
         """
 
-        options = self._upload_pages_from_url_options(
-            source_url=self._encode_source_url(source_url),
+        options = _upload_pages_from_url_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            scheme=self.scheme,
+            source_url=_encode_source_url(source_url),
             offset=offset,
             length=length,
             source_offset=source_offset,
@@ -2666,7 +2729,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._clear_page_options(offset, length, **kwargs)
+        options = _clear_page_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            scheme=self.scheme,
+            offset=offset,
+            length=length,
+            **kwargs
+        )
         try:
             return await self._client.page_blob.clear_pages(**options)  # type: ignore
         except HttpResponseError as error:
@@ -2755,8 +2825,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
-        options = self._append_block_options(
-            data,
+        options = _append_block_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            scheme=self.scheme,
+            data=data,
             length=length,
             **kwargs
         )
@@ -2863,8 +2936,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         """
-        options = self._append_block_from_url_options(
-            copy_source_url=self._encode_source_url(copy_source_url),
+        options = _append_block_from_url_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            scheme=self.scheme,
+            copy_source_url=_encode_source_url(copy_source_url),
             source_offset=source_offset,
             source_length=source_length,
             **kwargs
@@ -2917,7 +2993,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
-        options = self._seal_append_blob_options(**kwargs)
+        options = _seal_append_blob_options(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            **kwargs
+        )
         try:
             return await self._client.append_blob.seal(**options) # type: ignore
         except HttpResponseError as error:
