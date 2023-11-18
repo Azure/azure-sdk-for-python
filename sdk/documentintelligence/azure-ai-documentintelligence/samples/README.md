@@ -15,20 +15,7 @@ These code samples show common scenario operations with the Azure Document Intel
 
 All of these samples need the endpoint to your Document Intelligence resource ([instructions on how to get endpoint][get-endpoint-instructions]), and your Document Intelligence API key ([instructions on how to get key][get-key-instructions]).
 
-|**File Name**|**Description**|
-|----------------|-------------|
-|[sample_analyze_layout.py][sample_analyze_layout] and [sample_analyze_layout_async.py][sample_analyze_layout_async]|Extract text, selection marks, and table structures in a document|
-|[sample_analyze_read.py][sample_analyze_read] and [sample_analyze_read_async.py][sample_analyze_read_async]|Read document elements, such as pages and detected languages|
-|[sample_analyze_invoices.py][sample_analyze_invoices] and [sample_analyze_invoices_async.py][sample_analyze_invoices_async]|Analyze document text, selection marks, tables, and pre-trained fields and values pertaining to English invoices using a prebuilt model|
-|[sample_analyze_identity_documents.py][sample_analyze_identity_documents] and [sample_analyze_identity_documents_async.py][sample_analyze_identity_documents_async]|Analyze document text and pre-trained fields and values pertaining to US driver licenses and international passports using a prebuilt model|
-|[sample_analyze_receipts.py][sample_analyze_receipts] and [sample_analyze_receipts_async.py][sample_analyze_receipts_async]|Analyze document text and pre-trained fields and values pertaining to English sales receipts using a prebuilt model|
-|[sample_analyze_tax_us_w2.py][sample_analyze_tax_us_w2] and [sample_analyze_tax_us_w2_async.py][sample_analyze_tax_us_w2_async]|Analyze document text and pre-trained fields and values pertaining to US tax W-2 forms using a prebuilt model|
-|[sample_analyze_custom_documents.py][sample_analyze_custom_documents] and [sample_analyze_custom_documents_async.py][sample_analyze_custom_documents_async]|Analyze custom documents with your custom model to extract text, field values, selection marks, and table data from documents|
-|[sample_analyze_addon_barcodes.py][sample_analyze_addon_barcodes] and [sample_analyze_addon_barcodes_async.py][sample_analyze_addon_barcodes_async]|Extract barcodes using the add-on capability.|
-|[sample_analyze_addon_fonts.py][sample_analyze_addon_fonts] and [sample_analyze_addon_fonts_async.py][sample_analyze_addon_fonts_async]|Extract font information using the add-on capability.|
-|[sample_analyze_addon_formulas.py][sample_analyze_addon_formulas] and [sample_analyze_addon_formulas_async.py][sample_analyze_addon_formulas_async]|Extract formulas using the add-on capability.|
-|[sample_analyze_addon_highres.py][sample_analyze_addon_highres] and [sample_analyze_addon_highres_async.py][sample_analyze_addon_highres_async]|Recognize text with improved quality using the add-on capability.|
-|[sample_analyze_addon_languages.py][sample_analyze_addon_languages] and [sample_analyze_addon_languages_async.py][sample_analyze_addon_languages_async]|Detect languages using the add-on capability.|
+You can check all samples from [here][sample_path].
 
 ## Prerequisites
 * Python 3.7 or later is required to use this package
@@ -69,29 +56,5 @@ what you can do with the Azure Document Intelligence client library.
 [get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/README.md#get-the-api-key
 [changelog]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/CHANGELOG.md
 
-<!-- V3.2+ links -->
 
-[sample_analyze_layout]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_layout.py
-[sample_analyze_layout_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_layout_async.py
-[sample_analyze_invoices]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_invoices.py
-[sample_analyze_invoices_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_invoices_async.py
-[sample_analyze_identity_documents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_identity_documents.py
-[sample_analyze_identity_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_identity_documents_async.py
-[sample_analyze_receipts]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_receipts.py
-[sample_analyze_receipts_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_receipts_async.py
-[sample_analyze_custom_documents]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_custom_documents.py
-[sample_analyze_custom_documents_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_custom_documents_async.py
-[sample_analyze_read]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_read.py
-[sample_analyze_read_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_read_async.py
-[sample_analyze_tax_us_w2]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_tax_us_w2.py
-[sample_analyze_tax_us_w2_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_tax_us_w2_async.py
-[sample_analyze_addon_barcodes]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_barcodes.py
-[sample_analyze_addon_barcodes_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_addon_barcodes_async.py
-[sample_analyze_addon_fonts]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_fonts.py
-[sample_analyze_addon_fonts_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_addon_fonts_async.py
-[sample_analyze_addon_formulas]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_formulas.py
-[sample_analyze_addon_formulas_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_addon_formulas_async.py
-[sample_analyze_addon_highres]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_highres.py
-[sample_analyze_addon_highres_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_addon_highres_async.py
-[sample_analyze_addon_languages]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_languages.py
-[sample_analyze_addon_languages_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/async_samples/sample_analyze_addon_languages_async.py
+[sample_path]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
