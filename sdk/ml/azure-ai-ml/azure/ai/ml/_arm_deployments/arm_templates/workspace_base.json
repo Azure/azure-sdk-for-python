@@ -930,6 +930,7 @@
             "type": "Microsoft.MachineLearningServices/workspaces/providers/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[concat(parameters('workspaceName'), '/Microsoft.Authorization/', guid(variables('materialization_identity_resource_id'), parameters('workspaceName'), 'azureml ds role'))]",
+            "scope": "[resourceId(resourceGroup().name, 'Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
             ],
