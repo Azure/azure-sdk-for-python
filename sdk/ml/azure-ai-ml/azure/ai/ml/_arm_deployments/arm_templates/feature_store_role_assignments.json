@@ -102,14 +102,28 @@
     "resources": [
         {
             "condition": "[and(not(empty(parameters('materialization_identity_resource_id'))), equals(parameters('update_workspace_role_assignment'), 'true'))]",
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2022-04-01",
-            "name": "[guid(parameters('materialization_identity_resource_id'), subscription().subscriptionId, parameters('resource_group_name'), parameters('workspace_name'), 'azureml ds role')]",
-            "scope": "[resourceId(parameters('resource_group_name'), 'Microsoft.MachineLearningServices/workspaces', parameters('workspace_name'))]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "workspace-role-assignment",
+            "apiVersion": "2020-06-01",
             "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",
-                "principalId": "[reference(parameters('materialization_identity_resource_id'), '2018-11-30').principalId]",
-                "principalType": "ServicePrincipal"
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2022-04-01",
+                            "name": "[guid(parameters('materialization_identity_resource_id'), subscription().subscriptionId, parameters('resource_group_name'), parameters('workspace_name'), 'azureml ds role')]",
+                            "scope": "[resourceId(parameters('resource_group_name'), 'Microsoft.MachineLearningServices/workspaces', parameters('workspace_name'))]",
+                            "properties": {
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",
+                                "principalId": "[reference(parameters('materialization_identity_resource_id'), '2018-11-30').principalId]",
+                                "principalType": "ServicePrincipal"
+                            }
+                        }
+                    ]
+                }
             }
         },
         {

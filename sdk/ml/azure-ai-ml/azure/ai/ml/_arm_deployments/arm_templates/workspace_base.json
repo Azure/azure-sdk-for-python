@@ -983,6 +983,7 @@
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[guid(variables('materialization_identity_resource_id'), subscription().subscriptionId, resourceGroup().name, parameters('workspaceName'), 'azureml ds role')]",
+            "scope": "[resourceId(resourceGroup().name, 'Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
