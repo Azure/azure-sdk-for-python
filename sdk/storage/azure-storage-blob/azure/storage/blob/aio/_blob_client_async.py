@@ -20,7 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._blob_client import StorageAccountHostsMixin
-from ._blob_client_helpers import (
+from .._blob_client_helpers import (
     _parse_url,
     _encode_source_url,
     _upload_blob_options,
