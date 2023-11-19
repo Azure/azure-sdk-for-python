@@ -78,7 +78,7 @@ class SenderMixin(object):
         self._entity_uri = f"amqps://{self.fully_qualified_namespace}/{self._entity_name}"
         # TODO: What's the retry overlap between servicebus and pyamqp?
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
-        self._name = kwargs.get("client_identifier",f"SBSender-{uuid.uuid4()}")
+        self._name = kwargs.get("client_identifier") or f"SBSender-{uuid.uuid4()}"
         self._max_message_size_on_link = 0
         self.entity_name = self._entity_name
 
