@@ -29,13 +29,12 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.app_service_environments.test_upgrade_available_notification(
+    client.app_service_environments.test_upgrade_available_notification(
         resource_group_name="rg",
         name="SampleHostingEnvironment",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/AppServiceEnvironments_TestUpgradeAvailableNotification.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/AppServiceEnvironments_TestUpgradeAvailableNotification.json
 if __name__ == "__main__":
     main()
