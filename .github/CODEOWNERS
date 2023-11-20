@@ -107,7 +107,7 @@
 /sdk/confidentialledger/azure-confidentialledger/                    @lynshi
 
 # PRLabel: %Content Safety
-/sdk/contentsafety/                                                  @mengaims @jiezhou_microsoft
+/sdk/contentsafety/                                                  @mengaims @JieZhou000
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp
