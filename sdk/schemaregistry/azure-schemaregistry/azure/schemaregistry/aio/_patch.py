@@ -31,7 +31,6 @@ from .._patch import (
     get_case_insensitive_format,
     get_content_type,
     SchemaFormat,
-    DEFAULT_VERSION,
     Schema,
     SchemaProperties,
     prepare_schema_result,
@@ -56,7 +55,7 @@ class SchemaRegistryClient(object):
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-     Default value is "2022-10".
+     Default value is "2023-07-01".
 
     .. admonition:: Example:
 
@@ -79,11 +78,9 @@ class SchemaRegistryClient(object):
         # calling different operations conditionally within one method
         if "https://" not in fully_qualified_namespace:
             fully_qualified_namespace = f"https://{fully_qualified_namespace}"
-        api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._generated_client = GeneratedServiceClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
-            api_version=api_version,
             **kwargs,
         )
 
@@ -118,7 +115,6 @@ class SchemaRegistryClient(object):
         :param str name: Name of schema being registered.
         :param str definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
-         For now Avro is the only supported schema format by the service.
         :type format: Union[str, ~azure.schemaregistry.SchemaFormat]
         :return: The SchemaProperties associated with the registered schema.
         :rtype: ~azure.schemaregistry.SchemaProperties
@@ -139,7 +135,7 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = await self._generated_client.register_schema(   # type: ignore
+        ] = await self._generated_client._register_schema(   # pylint:disable=protected-access
             group_name=group_name,
             name=name,
             content=cast(IO[Any], definition),
@@ -209,7 +205,7 @@ class SchemaRegistryClient(object):
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = await self._generated_client.get_schema_by_id(  # type: ignore
+            http_response, schema_properties = await self._generated_client._get_schema_by_id(  # pylint:disable=protected-access
                 id=schema_id,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
@@ -288,7 +284,7 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = await self._generated_client.get_schema_id_by_content(  # type: ignore
+        ] = await self._generated_client._get_schema_id_by_content(  # pylint:disable=protected-access
             group_name=group_name,
             name=name,
             schema_content=cast(IO[Any], definition),
