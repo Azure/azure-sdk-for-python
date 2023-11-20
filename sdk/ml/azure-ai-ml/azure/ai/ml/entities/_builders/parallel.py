@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple, Type, Union, cast
 
 from marshmallow import Schema
 
+from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 
 from ..._schema import PathAwareSchema
@@ -477,3 +478,10 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             f"Parallel can be called as a function only when referenced component is {type(Component)}, "
             f"currently got {self._component}."
         )
+
+    def _to_dict(self) -> Dict:
+        raise NotImplementedError()
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":
+        raise NotImplementedError()

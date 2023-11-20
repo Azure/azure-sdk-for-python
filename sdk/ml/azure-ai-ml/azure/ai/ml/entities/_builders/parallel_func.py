@@ -248,7 +248,7 @@ def parallel_run_function(
             )
 
     # pylint: disable=abstract-class-instantiated
-    parallel_obj = Parallel(  # type: ignore
+    parallel_obj = Parallel(
         component=component,
         name=name,
         description=description,

@@ -124,7 +124,7 @@ class _PipelineNodeFactory:
         )
         self.register_type(
             _type=NodeType.FLOW_PARALLEL,
-            create_instance_func=lambda: Parallel.__new__(Parallel),  # type: ignore
+            create_instance_func=lambda: Parallel.__new__(Parallel),
             load_from_rest_object_func=None,
             nested_schema=None,
         )
