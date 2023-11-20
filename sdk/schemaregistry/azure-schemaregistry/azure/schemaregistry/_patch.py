@@ -8,7 +8,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from __future__ import annotations
 from functools import partial
-from enum import Enum
 from typing import (
     cast,
     Tuple,
@@ -27,7 +26,6 @@ from typing import (
 )
 from typing_extensions import Protocol, TypedDict
 
-from azure.core import CaseInsensitiveEnumMeta
 from azure.core.tracing.decorator import distributed_trace
 
 from ._client import SchemaRegistryClient as GeneratedServiceClient
@@ -84,7 +82,7 @@ def prepare_schema_result(  # pylint:disable=unused-argument
     response_headers: Mapping[str, Union[str, int]],
 ) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
-    # TODO: content type is not being added to the response headers b/c of
+    # re-generate after multi-content type response fix: https://github.com/Azure/autorest.python/issues/2122
     properties_dict["format"] = _get_format(
         cast(str, response_headers.get("Content-Type"))
     )
@@ -130,7 +128,7 @@ class SchemaRegistryClient(object):
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-     Default value is "2022-10".
+     Default value is "2023-07-01".
 
     .. admonition:: Example:
 
@@ -150,11 +148,9 @@ class SchemaRegistryClient(object):
         # calling different operations conditionally within one method
         if "https://" not in fully_qualified_namespace:
             fully_qualified_namespace = f"https://{fully_qualified_namespace}"
-        api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._generated_client = GeneratedServiceClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
-            api_version=api_version,
             **kwargs,
         )
 
@@ -189,7 +185,6 @@ class SchemaRegistryClient(object):
         :param str name: Name of schema being registered.
         :param str definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
-         For now Avro is the only supported schema format by the service.
         :type format: Union[str, SchemaFormat]
         :return: The SchemaProperties associated with the registered schema.
         :rtype: ~azure.schemaregistry.SchemaProperties
@@ -279,7 +274,7 @@ class SchemaRegistryClient(object):
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = self._generated_client.get_schema_by_id(  # type: ignore
+            http_response, schema_properties = self._generated_client._get_schema_by_id(  # pylint:disable=protected-access
                 id=schema_id,
                 cls=prepare_schema_result,
                 #headers={  # TODO: remove when multiple content types in response are supported
