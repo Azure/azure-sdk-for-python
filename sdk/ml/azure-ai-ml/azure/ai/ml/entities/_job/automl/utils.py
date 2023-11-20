@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import TYPE_CHECKING, Dict, Union
+from typing import TYPE_CHECKING, Dict, Type, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 
 def cast_to_specific_search_space(
     input: Union[Dict, "SearchSpace"],  # pylint: disable=redefined-builtin
-    class_name: Union["ImageClassificationSearchSpace", "ImageObjectDetectionSearchSpace", "NlpSearchSpace"],
+    class_name: Union[
+        Type["ImageClassificationSearchSpace"], Type["ImageObjectDetectionSearchSpace"], Type["NlpSearchSpace"]
+    ],
     task_type: str,
 ) -> Union["ImageClassificationSearchSpace", "ImageObjectDetectionSearchSpace", "NlpSearchSpace"]:
     def validate_searchspace_args(input_dict: dict) -> None:
