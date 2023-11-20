@@ -56,12 +56,13 @@ def _get_format(content_type: str) -> SchemaFormat:
     try:
         format = content_type.split("serialization=")[1]
         try:
-            format = SchemaFormat(format)
+            return SchemaFormat(format)
         except ValueError:
-            format = SchemaFormat(format.capitalize())
+            return SchemaFormat(format.capitalize())
     except IndexError:
-        format = SchemaFormat.CUSTOM
-    return format
+        if 'protobuf' in content_type:
+            return SchemaFormat.PROTOBUF
+        return SchemaFormat.CUSTOM
 
 
 def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
@@ -103,6 +104,8 @@ def get_http_request_kwargs(kwargs):
 def get_content_type(format: str):  # pylint:disable=redefined-builtin
     if format.lower() == SchemaFormat.CUSTOM.value.lower():
         return "text/plain; charset=utf-8"
+    if format.lower() == SchemaFormat.PROTOBUF.value.lower():
+        return "text/vnd.ms.protobuf"
     return f"application/json; serialization={format}"
 
 
@@ -205,7 +208,7 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = self._generated_client._register_schema( # type: ignore
+        ] = self._generated_client._register_schema( # pylint:disable=protected-access
             group_name=group_name,
             name=name,
             content=cast(IO[Any], definition),

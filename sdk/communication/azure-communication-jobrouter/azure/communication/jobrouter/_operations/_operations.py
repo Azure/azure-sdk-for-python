@@ -10,7 +10,7 @@ import datetime
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import MatchConditions
@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._model_base import AzureJSONEncoder, _deserialize
+from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import JobRouterAdministrationClientMixinABC, JobRouterClientMixinABC, prep_if_match, prep_if_none_match
 
@@ -580,6 +580,8 @@ def build_job_router_reclassify_job_request(job_id: str, **kwargs: Any) -> HttpR
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/routing/jobs/{jobId}:reclassify"
     path_format_arguments = {
@@ -592,6 +594,7 @@ def build_job_router_reclassify_job_request(job_id: str, **kwargs: Any) -> HttpR
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -604,6 +607,8 @@ def build_job_router_cancel_job_request(job_id: str, **kwargs: Any) -> HttpReque
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/routing/jobs/{jobId}:cancel"
     path_format_arguments = {
@@ -616,22 +621,26 @@ def build_job_router_cancel_job_request(job_id: str, **kwargs: Any) -> HttpReque
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_job_router_complete_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
+def build_job_router_complete_job_request(job_id: str, assignment_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
-    _url = "/routing/jobs/{jobId}:complete"
+    _url = "/routing/jobs/{jobId}/assignments/{assignmentId}:complete"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "assignmentId": _SERIALIZER.url("assignment_id", assignment_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -640,22 +649,26 @@ def build_job_router_complete_job_request(job_id: str, **kwargs: Any) -> HttpReq
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_job_router_close_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
+def build_job_router_close_job_request(job_id: str, assignment_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
-    _url = "/routing/jobs/{jobId}:close"
+    _url = "/routing/jobs/{jobId}/assignments/{assignmentId}:close"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+        "assignmentId": _SERIALIZER.url("assignment_id", assignment_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -664,6 +677,7 @@ def build_job_router_close_job_request(job_id: str, **kwargs: Any) -> HttpReques
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -804,6 +818,8 @@ def build_job_router_decline_job_offer_request(  # pylint: disable=name-too-long
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/routing/workers/{workerId}/offers/{offerId}:decline"
     path_format_arguments = {
@@ -817,6 +833,7 @@ def build_job_router_decline_job_offer_request(  # pylint: disable=name-too-long
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -989,7 +1006,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a distribution policy.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.DistributionPolicy
@@ -1003,7 +1020,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: DistributionPolicy. The DistributionPolicy is compatible with MutableMapping
@@ -1027,7 +1044,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a distribution policy.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -1041,7 +1058,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: DistributionPolicy. The DistributionPolicy is compatible with MutableMapping
@@ -1065,7 +1082,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a distribution policy.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -1079,7 +1096,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: DistributionPolicy. The DistributionPolicy is compatible with MutableMapping
@@ -1102,7 +1119,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a distribution policy.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :param resource: The resource instance. Is one of the following types: DistributionPolicy,
          JSON, IO Required.
@@ -1114,7 +1131,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -1148,7 +1165,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         if isinstance(resource, (IOBase, bytes)):
             _content = resource
         else:
-            _content = json.dumps(resource, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_job_router_administration_upsert_distribution_policy_request(
             distribution_policy_id=distribution_policy_id,
@@ -1182,7 +1199,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -1191,7 +1208,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -1209,7 +1226,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Retrieves an existing distribution policy by Id.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -1256,7 +1273,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1269,7 +1286,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_distribution_policies(self, **kwargs: Any) -> Iterable["_models.DistributionPolicy"]:
+    def list_distribution_policies(self, **kwargs: Any) -> ItemPaged["_models.DistributionPolicy"]:
         """Retrieves existing distribution policies.
 
         Retrieves existing distribution policies.
@@ -1364,10 +1381,8 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Delete a distribution policy by Id.
 
-        :param distribution_policy_id: The unique identifier of the policy. Required.
+        :param distribution_policy_id: Id of a distribution policy. Required.
         :type distribution_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1396,7 +1411,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -1428,7 +1443,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a classification policy.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.ClassificationPolicy
@@ -1442,7 +1457,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ClassificationPolicy. The ClassificationPolicy is compatible with MutableMapping
@@ -1466,7 +1481,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a classification policy.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -1480,7 +1495,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ClassificationPolicy. The ClassificationPolicy is compatible with MutableMapping
@@ -1504,7 +1519,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a classification policy.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -1518,7 +1533,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ClassificationPolicy. The ClassificationPolicy is compatible with MutableMapping
@@ -1541,7 +1556,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a classification policy.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :param resource: The resource instance. Is one of the following types: ClassificationPolicy,
          JSON, IO Required.
@@ -1553,7 +1568,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -1587,7 +1602,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         if isinstance(resource, (IOBase, bytes)):
             _content = resource
         else:
-            _content = json.dumps(resource, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_job_router_administration_upsert_classification_policy_request(
             classification_policy_id=classification_policy_id,
@@ -1621,7 +1636,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -1630,7 +1645,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -1648,7 +1663,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Retrieves an existing classification policy by Id.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -1695,7 +1710,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1708,7 +1723,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_classification_policies(self, **kwargs: Any) -> Iterable["_models.ClassificationPolicy"]:
+    def list_classification_policies(self, **kwargs: Any) -> ItemPaged["_models.ClassificationPolicy"]:
         """Retrieves existing classification policies.
 
         Retrieves existing classification policies.
@@ -1804,10 +1819,8 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Delete a classification policy by Id.
 
-        :param classification_policy_id: Unique identifier of this policy. Required.
+        :param classification_policy_id: Id of a classification policy. Required.
         :type classification_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1836,7 +1849,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -1868,7 +1881,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a exception policy.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.ExceptionPolicy
@@ -1882,7 +1895,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
@@ -1906,7 +1919,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a exception policy.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -1920,7 +1933,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
@@ -1944,7 +1957,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a exception policy.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -1958,7 +1971,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
@@ -1981,7 +1994,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a exception policy.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :param resource: The resource instance. Is one of the following types: ExceptionPolicy, JSON,
          IO Required.
@@ -1993,7 +2006,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -2027,7 +2040,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         if isinstance(resource, (IOBase, bytes)):
             _content = resource
         else:
-            _content = json.dumps(resource, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_job_router_administration_upsert_exception_policy_request(
             exception_policy_id=exception_policy_id,
@@ -2061,7 +2074,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -2070,7 +2083,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -2088,7 +2101,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Retrieves an existing exception policy by Id.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -2135,7 +2148,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2148,7 +2161,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_exception_policies(self, **kwargs: Any) -> Iterable["_models.ExceptionPolicy"]:
+    def list_exception_policies(self, **kwargs: Any) -> ItemPaged["_models.ExceptionPolicy"]:
         """Retrieves existing exception policies.
 
         Retrieves existing exception policies.
@@ -2243,10 +2256,8 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Deletes a exception policy by Id.
 
-        :param exception_policy_id: The Id of the exception policy. Required.
+        :param exception_policy_id: Id of an exception policy. Required.
         :type exception_policy_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2275,7 +2286,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2307,7 +2318,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a queue.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.RouterQueue
@@ -2321,7 +2332,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterQueue. The RouterQueue is compatible with MutableMapping
@@ -2345,7 +2356,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a queue.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -2359,7 +2370,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterQueue. The RouterQueue is compatible with MutableMapping
@@ -2383,7 +2394,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a queue.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -2397,7 +2408,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterQueue. The RouterQueue is compatible with MutableMapping
@@ -2420,7 +2431,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Creates or updates a queue.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :param resource: The resource instance. Is one of the following types: RouterQueue, JSON, IO
          Required.
@@ -2432,7 +2443,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -2466,7 +2477,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         if isinstance(resource, (IOBase, bytes)):
             _content = resource
         else:
-            _content = json.dumps(resource, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_job_router_administration_upsert_queue_request(
             queue_id=queue_id,
@@ -2500,7 +2511,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -2509,7 +2520,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -2527,7 +2538,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Retrieves an existing queue by Id.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -2574,7 +2585,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -2587,7 +2598,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_queues(self, **kwargs: Any) -> Iterable["_models.RouterQueue"]:
+    def list_queues(self, **kwargs: Any) -> ItemPaged["_models.RouterQueue"]:
         """Retrieves existing queues.
 
         Retrieves existing queues.
@@ -2680,10 +2691,8 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
 
         Deletes a queue by Id.
 
-        :param queue_id: The Id of this queue. Required.
+        :param queue_id: Id of a queue. Required.
         :type queue_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2712,7 +2721,7 @@ class JobRouterAdministrationClientOperationsMixin(  # pylint: disable=name-too-
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2746,7 +2755,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a router job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.RouterJob
@@ -2760,7 +2769,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterJob. The RouterJob is compatible with MutableMapping
@@ -2784,7 +2793,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a router job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -2798,7 +2807,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterJob. The RouterJob is compatible with MutableMapping
@@ -2822,7 +2831,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a router job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -2836,7 +2845,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterJob. The RouterJob is compatible with MutableMapping
@@ -2859,7 +2868,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a router job.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param resource: The resource instance. Is one of the following types: RouterJob, JSON, IO
          Required.
@@ -2871,7 +2880,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -2905,7 +2914,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         if isinstance(resource, (IOBase, bytes)):
             _content = resource
         else:
-            _content = json.dumps(resource, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_job_router_upsert_job_request(
             job_id=job_id,
@@ -2939,7 +2948,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -2948,7 +2957,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -2966,7 +2975,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Retrieves an existing job by Id.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -3013,7 +3022,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -3031,10 +3040,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Deletes a job and all of its traces.
 
-        :param job_id: The id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3063,7 +3070,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3080,40 +3087,40 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    def _reclassify_job(  # pylint: disable=inconsistent-return-statements,protected-access
+    def _reclassify_job(  # pylint: disable=protected-access
         self,
         job_id: str,
         options: Optional[_models._models.ReclassifyJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
+    ) -> _models._models.ReclassifyJobResult:
         ...
 
     @overload
-    def _reclassify_job(  # pylint: disable=inconsistent-return-statements
+    def _reclassify_job(  # pylint: disable=protected-access
         self, job_id: str, options: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    ) -> _models._models.ReclassifyJobResult:
         ...
 
     @overload
-    def _reclassify_job(  # pylint: disable=inconsistent-return-statements
+    def _reclassify_job(  # pylint: disable=protected-access
         self, job_id: str, options: Optional[IO] = None, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    ) -> _models._models.ReclassifyJobResult:
         ...
 
     @distributed_trace
-    def _reclassify_job(  # pylint: disable=inconsistent-return-statements
+    def _reclassify_job(  # pylint: disable=protected-access
         self,
         job_id: str,
         options: Optional[Union[_models._models.ReclassifyJobOptions, JSON, IO]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> _models._models.ReclassifyJobResult:
         """Reclassify a job.
 
         Reclassify a job.
 
-        :param job_id: Id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param options: Request object for reclassifying a job. Is one of the following types:
          ReclassifyJobOptions, JSON, IO Default value is None.
@@ -3123,8 +3130,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: None
-        :rtype: None
+        :return: ReclassifyJobResult. The ReclassifyJobResult is compatible with MutableMapping
+        :rtype: ~azure.communication.jobrouter.models.ReclassifyJobResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -3139,7 +3146,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ReclassifyJobResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         content_type = content_type or "application/json"
         _content = None
@@ -3147,7 +3154,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             _content = options
         else:
             if options is not None:
-                _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+                _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
 
@@ -3177,97 +3184,50 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.ReclassifyJobResult, response.json()  # pylint: disable=protected-access
+            )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
-    def cancel_job(  # pylint: disable=inconsistent-return-statements
+    def _cancel_job(  # pylint: disable=protected-access
         self,
         job_id: str,
         options: Optional[_models.CancelJobOptions] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
-
-        Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
-
-        :param job_id: Id of the job. Required.
-        :type job_id: str
-        :param options: Request model for cancelling job. Default value is None.
-        :type options: ~azure.communication.jobrouter.models.CancelJobOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models._models.CancelJobResult:
+        ...
 
     @overload
-    def cancel_job(  # pylint: disable=inconsistent-return-statements
+    def _cancel_job(  # pylint: disable=protected-access
         self, job_id: str, options: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
-
-        Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
-
-        :param job_id: Id of the job. Required.
-        :type job_id: str
-        :param options: Request model for cancelling job. Default value is None.
-        :type options: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models._models.CancelJobResult:
+        ...
 
     @overload
-    def cancel_job(  # pylint: disable=inconsistent-return-statements
+    def _cancel_job(  # pylint: disable=protected-access
         self, job_id: str, options: Optional[IO] = None, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
-
-        Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
-
-        :param job_id: Id of the job. Required.
-        :type job_id: str
-        :param options: Request model for cancelling job. Default value is None.
-        :type options: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models._models.CancelJobResult:
+        ...
 
     @distributed_trace
-    def cancel_job(  # pylint: disable=inconsistent-return-statements
+    def _cancel_job(  # pylint: disable=protected-access
         self, job_id: str, options: Optional[Union[_models.CancelJobOptions, JSON, IO]] = None, **kwargs: Any
-    ) -> None:
-        """Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+    ) -> _models._models.CancelJobResult:
+        """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
-        Submits request to cancel an existing job by Id while supplying free-form
-        cancellation reason.
+        Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
-        :param job_id: Id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
         :param options: Request model for cancelling job. Is one of the following types:
          CancelJobOptions, JSON, IO Default value is None.
@@ -3277,8 +3237,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: None
-        :rtype: None
+        :return: CancelJobResult. The CancelJobResult is compatible with MutableMapping
+        :rtype: ~azure.communication.jobrouter.models.CancelJobResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -3293,7 +3253,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.CancelJobResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         content_type = content_type or "application/json"
         _content = None
@@ -3301,7 +3261,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             _content = options
         else:
             if options is not None:
-                _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+                _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
 
@@ -3331,95 +3291,80 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.CancelJobResult, response.json()  # pylint: disable=protected-access
+            )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
-    def complete_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, options: _models.CompleteJobOptions, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Completes an assigned job.
-
-        Completes an assigned job.
-
-        :param job_id: Id of the job. Required.
-        :type job_id: str
-        :param options: Request model for completing job. Required.
-        :type options: ~azure.communication.jobrouter.models.CompleteJobOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _complete_job(  # pylint: disable=protected-access
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[_models.CompleteJobOptions] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models._models.CompleteJobResult:
+        ...
 
     @overload
-    def complete_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Completes an assigned job.
-
-        Completes an assigned job.
-
-        :param job_id: Id of the job. Required.
-        :type job_id: str
-        :param options: Request model for completing job. Required.
-        :type options: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _complete_job(  # pylint: disable=protected-access
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[JSON] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models._models.CompleteJobResult:
+        ...
 
     @overload
-    def complete_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Completes an assigned job.
-
-        Completes an assigned job.
-
-        :param job_id: Id of the job. Required.
-        :type job_id: str
-        :param options: Request model for completing job. Required.
-        :type options: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _complete_job(  # pylint: disable=protected-access
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models._models.CompleteJobResult:
+        ...
 
     @distributed_trace
-    def complete_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, options: Union[_models.CompleteJobOptions, JSON, IO], **kwargs: Any
-    ) -> None:
+    def _complete_job(  # pylint: disable=protected-access
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[Union[_models.CompleteJobOptions, JSON, IO]] = None,
+        **kwargs: Any
+    ) -> _models._models.CompleteJobResult:
         """Completes an assigned job.
 
         Completes an assigned job.
 
-        :param job_id: Id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
+        :param assignment_id: Id of a job assignment. Required.
+        :type assignment_id: str
         :param options: Request model for completing job. Is one of the following types:
-         CompleteJobOptions, JSON, IO Required.
+         CompleteJobOptions, JSON, IO Default value is None.
         :type options: ~azure.communication.jobrouter.models.CompleteJobOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: None
-        :rtype: None
+        :return: CompleteJobResult. The CompleteJobResult is compatible with MutableMapping
+        :rtype: ~azure.communication.jobrouter.models.CompleteJobResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -3434,17 +3379,21 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.CompleteJobResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         content_type = content_type or "application/json"
         _content = None
         if isinstance(options, (IOBase, bytes)):
             _content = options
         else:
-            _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            if options is not None:
+                _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_job_router_complete_job_request(
             job_id=job_id,
+            assignment_id=assignment_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3469,95 +3418,80 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.CompleteJobResult, response.json()  # pylint: disable=protected-access
+            )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
-    def close_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, options: _models.CloseJobOptions, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Closes a completed job.
-
-        Closes a completed job.
-
-        :param job_id: Id of the job. Required.
-        :type job_id: str
-        :param options: Request model for closing job. Required.
-        :type options: ~azure.communication.jobrouter.models.CloseJobOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _close_job(  # pylint: disable=protected-access
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[_models.CloseJobOptions] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models._models.CloseJobResult:
+        ...
 
     @overload
-    def close_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Closes a completed job.
-
-        Closes a completed job.
-
-        :param job_id: Id of the job. Required.
-        :type job_id: str
-        :param options: Request model for closing job. Required.
-        :type options: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _close_job(  # pylint: disable=protected-access
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[JSON] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models._models.CloseJobResult:
+        ...
 
     @overload
-    def close_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Closes a completed job.
-
-        Closes a completed job.
-
-        :param job_id: Id of the job. Required.
-        :type job_id: str
-        :param options: Request model for closing job. Required.
-        :type options: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _close_job(  # pylint: disable=protected-access
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models._models.CloseJobResult:
+        ...
 
     @distributed_trace
-    def close_job(  # pylint: disable=inconsistent-return-statements
-        self, job_id: str, options: Union[_models.CloseJobOptions, JSON, IO], **kwargs: Any
-    ) -> None:
+    def _close_job(  # pylint: disable=protected-access
+        self,
+        job_id: str,
+        assignment_id: str,
+        options: Optional[Union[_models.CloseJobOptions, JSON, IO]] = None,
+        **kwargs: Any
+    ) -> _models._models.CloseJobResult:
         """Closes a completed job.
 
         Closes a completed job.
 
-        :param job_id: Id of the job. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
+        :param assignment_id: Id of a job assignment. Required.
+        :type assignment_id: str
         :param options: Request model for closing job. Is one of the following types: CloseJobOptions,
-         JSON, IO Required.
+         JSON, IO Default value is None.
         :type options: ~azure.communication.jobrouter.models.CloseJobOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: None
-        :rtype: None
+        :return: CloseJobResult. The CloseJobResult is compatible with MutableMapping
+        :rtype: ~azure.communication.jobrouter.models.CloseJobResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -3572,17 +3506,21 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.CloseJobResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         content_type = content_type or "application/json"
         _content = None
         if isinstance(options, (IOBase, bytes)):
             _content = options
         else:
-            _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            if options is not None:
+                _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_job_router_close_job_request(
             job_id=job_id,
+            assignment_id=assignment_id,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3601,14 +3539,23 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             if _stream:
                 response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.CloseJobResult, response.json()  # pylint: disable=protected-access
+            )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_jobs(
@@ -3621,7 +3568,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         scheduled_before: Optional[datetime.datetime] = None,
         scheduled_after: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RouterJob"]:
+    ) -> ItemPaged["_models.RouterJob"]:
         """Retrieves list of jobs based on filter parameters.
 
         Retrieves list of jobs based on filter parameters.
@@ -3639,12 +3586,10 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          value is None.
         :paramtype classification_policy_id: str
         :keyword scheduled_before: If specified, filter on jobs that was scheduled before or at given
-         timestamp.
-         Range: (-Inf, scheduledBefore]. Default value is None.
+         timestamp. Range: (-Inf, scheduledBefore]. Default value is None.
         :paramtype scheduled_before: ~datetime.datetime
         :keyword scheduled_after: If specified, filter on jobs that was scheduled at or after given
-         value. Range:
-         [scheduledAfter, +Inf). Default value is None.
+         value. Range: [scheduledAfter, +Inf). Default value is None.
         :paramtype scheduled_after: ~datetime.datetime
         :return: An iterator like instance of RouterJob
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterJob]
@@ -3806,13 +3751,13 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.UnassignJobResult:
-        """Un-assign a job.
+        """Unassign a job.
 
-        Un-assign a job.
+        Unassign a job.
 
-        :param job_id: Id of the job to un-assign. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: Id of the assignment to un-assign. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Default value is None.
         :type options: ~azure.communication.jobrouter.models.UnassignJobOptions
@@ -3836,13 +3781,13 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.UnassignJobResult:
-        """Un-assign a job.
+        """Unassign a job.
 
-        Un-assign a job.
+        Unassign a job.
 
-        :param job_id: Id of the job to un-assign. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: Id of the assignment to un-assign. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Default value is None.
         :type options: JSON
@@ -3866,13 +3811,13 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.UnassignJobResult:
-        """Un-assign a job.
+        """Unassign a job.
 
-        Un-assign a job.
+        Unassign a job.
 
-        :param job_id: Id of the job to un-assign. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: Id of the assignment to un-assign. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Default value is None.
         :type options: IO
@@ -3894,13 +3839,13 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         options: Optional[Union[_models.UnassignJobOptions, JSON, IO]] = None,
         **kwargs: Any
     ) -> _models.UnassignJobResult:
-        """Un-assign a job.
+        """Unassign a job.
 
-        Un-assign a job.
+        Unassign a job.
 
-        :param job_id: Id of the job to un-assign. Required.
+        :param job_id: Id of a job. Required.
         :type job_id: str
-        :param assignment_id: Id of the assignment to un-assign. Required.
+        :param assignment_id: Id of a job assignment. Required.
         :type assignment_id: str
         :param options: Request body for unassign route. Is one of the following types:
          UnassignJobOptions, JSON, IO Default value is None.
@@ -3934,7 +3879,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             _content = options
         else:
             if options is not None:
-                _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+                _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
 
@@ -3977,15 +3922,15 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
     @distributed_trace
     def accept_job_offer(self, worker_id: str, offer_id: str, **kwargs: Any) -> _models.AcceptJobOfferResult:
-        """Accepts an offer to work on a job and returns a 409/Conflict if another agent
-        accepted the job already.
+        """Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
+        already.
 
-        Accepts an offer to work on a job and returns a 409/Conflict if another agent
-        accepted the job already.
+        Accepts an offer to work on a job and returns a 409/Conflict if another agent accepted the job
+        already.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
-        :param offer_id: Id of the offer. Required.
+        :param offer_id: Id of an offer. Required.
         :type offer_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -4042,7 +3987,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def decline_job_offer(  # pylint: disable=inconsistent-return-statements
+    def _decline_job_offer(  # pylint: disable=protected-access
         self,
         worker_id: str,
         offer_id: str,
@@ -4050,29 +3995,11 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Declines an offer to work on a job.
-
-        Declines an offer to work on a job.
-
-        :param worker_id: Id of the worker. Required.
-        :type worker_id: str
-        :param offer_id: Id of the offer. Required.
-        :type offer_id: str
-        :param options: Request model for declining offer. Default value is None.
-        :type options: ~azure.communication.jobrouter.models.DeclineJobOfferOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models._models.DeclineJobOfferResult:
+        ...
 
     @overload
-    def decline_job_offer(  # pylint: disable=inconsistent-return-statements
+    def _decline_job_offer(  # pylint: disable=protected-access
         self,
         worker_id: str,
         offer_id: str,
@@ -4080,29 +4007,11 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Declines an offer to work on a job.
-
-        Declines an offer to work on a job.
-
-        :param worker_id: Id of the worker. Required.
-        :type worker_id: str
-        :param offer_id: Id of the offer. Required.
-        :type offer_id: str
-        :param options: Request model for declining offer. Default value is None.
-        :type options: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models._models.DeclineJobOfferResult:
+        ...
 
     @overload
-    def decline_job_offer(  # pylint: disable=inconsistent-return-statements
+    def _decline_job_offer(  # pylint: disable=protected-access
         self,
         worker_id: str,
         offer_id: str,
@@ -4110,42 +4019,24 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Declines an offer to work on a job.
-
-        Declines an offer to work on a job.
-
-        :param worker_id: Id of the worker. Required.
-        :type worker_id: str
-        :param offer_id: Id of the offer. Required.
-        :type offer_id: str
-        :param options: Request model for declining offer. Default value is None.
-        :type options: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models._models.DeclineJobOfferResult:
+        ...
 
     @distributed_trace
-    def decline_job_offer(  # pylint: disable=inconsistent-return-statements
+    def _decline_job_offer(  # pylint: disable=protected-access
         self,
         worker_id: str,
         offer_id: str,
         options: Optional[Union[_models.DeclineJobOfferOptions, JSON, IO]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> _models._models.DeclineJobOfferResult:
         """Declines an offer to work on a job.
 
         Declines an offer to work on a job.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
-        :param offer_id: Id of the offer. Required.
+        :param offer_id: Id of an offer. Required.
         :type offer_id: str
         :param options: Request model for declining offer. Is one of the following types:
          DeclineJobOfferOptions, JSON, IO Default value is None.
@@ -4155,8 +4046,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
-        :return: None
-        :rtype: None
+        :return: DeclineJobOfferResult. The DeclineJobOfferResult is compatible with MutableMapping
+        :rtype: ~azure.communication.jobrouter.models.DeclineJobOfferResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4171,7 +4062,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.DeclineJobOfferResult] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
 
         content_type = content_type or "application/json"
         _content = None
@@ -4179,7 +4072,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             _content = options
         else:
             if options is not None:
-                _content = json.dumps(options, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+                _content = json.dumps(options, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
             else:
                 _content = None
 
@@ -4210,8 +4103,17 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.DeclineJobOfferResult, response.json()  # pylint: disable=protected-access
+            )
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get_queue_statistics(self, queue_id: str, **kwargs: Any) -> _models.RouterQueueStatistics:
@@ -4290,7 +4192,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a worker.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Required.
         :type resource: ~azure.communication.jobrouter.models.RouterWorker
@@ -4304,7 +4206,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterWorker. The RouterWorker is compatible with MutableMapping
@@ -4328,7 +4230,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a worker.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Required.
         :type resource: JSON
@@ -4342,7 +4244,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterWorker. The RouterWorker is compatible with MutableMapping
@@ -4366,7 +4268,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a worker.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Required.
         :type resource: IO
@@ -4380,7 +4282,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: RouterWorker. The RouterWorker is compatible with MutableMapping
@@ -4403,7 +4305,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Creates or updates a worker.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :param resource: The resource instance. Is one of the following types: RouterWorker, JSON, IO
          Required.
@@ -4415,7 +4317,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          None.
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.coreMatchConditions
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -4449,7 +4351,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         if isinstance(resource, (IOBase, bytes)):
             _content = resource
         else:
-            _content = json.dumps(resource, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_job_router_upsert_worker_request(
             worker_id=worker_id,
@@ -4483,7 +4385,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         response_headers = {}
         if response.status_code == 200:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -4492,7 +4394,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         if response.status_code == 201:
             response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-            response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+            response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
             if _stream:
                 deserialized = response.iter_bytes()
@@ -4510,7 +4412,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Retrieves an existing worker by Id.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -4557,7 +4459,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -4575,10 +4477,8 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
 
         Deletes a worker and all of its traces.
 
-        :param worker_id: Id of the worker. Required.
+        :param worker_id: Id of a worker. Required.
         :type worker_id: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4607,7 +4507,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4632,7 +4532,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
         queue_id: Optional[str] = None,
         has_capacity: Optional[bool] = None,
         **kwargs: Any
-    ) -> Iterable["_models.RouterWorker"]:
+    ) -> ItemPaged["_models.RouterWorker"]:
         """Retrieves existing workers.
 
         Retrieves existing workers.
@@ -4647,10 +4547,9 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
          is None.
         :paramtype queue_id: str
         :keyword has_capacity: If set to true, select only workers who have capacity for the channel
-         specified
-         by ``channelId`` or for any channel if ``channelId`` not specified. If set to
-         false, then will return all workers including workers without any capacity for
-         jobs. Defaults to false. Default value is None.
+         specified by ``channelId`` or for any channel if ``channelId`` not specified. If set to false,
+         then will return all workers including workers without any capacity for jobs. Defaults to
+         false. Default value is None.
         :paramtype has_capacity: bool
         :return: An iterator like instance of RouterWorker
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.models.RouterWorker]

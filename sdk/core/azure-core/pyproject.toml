@@ -8,3 +8,15 @@ strict_sphinx = true
 # pylint is enabled by default, so there is no reason for a pylint = true in every pyproject.toml.
 #
 # For newly added checks that are not enabled by default, packages should opt IN by "<check> = true".
+
+[[tool.azure-sdk-build.optional]]
+name = "no_requests"
+install = []
+uninstall = ["requests"]
+additional_pytest_args = ["--ignore-glob='*_async.py'"]
+
+[[tool.azure-sdk-build.optional]]
+name = "no_aiohttp"
+install = []
+uninstall = ["aiohttp"]
+additional_pytest_args = ["-k", "_async.py"]
