@@ -14,9 +14,6 @@ from zipfile import ZipFile
 import pydash
 import pytest
 import yaml
-from pytest_mock import MockFixture
-from test_utilities.utils import build_temp_folder, mock_artifact_download_to_temp_directory, parse_local_path
-
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
@@ -26,6 +23,7 @@ from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.exceptions import ValidationException
+from test_utilities.utils import build_temp_folder, mock_artifact_download_to_temp_directory, parse_local_path
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
 
@@ -70,8 +68,8 @@ class TestComponent:
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "false"
         yaml_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
         with pytest.raises(
-            ValidationException,
-            match="Internal components is a private feature in v2, " "please set environment variable",
+                ValidationException,
+                match="Internal components is a private feature in v2, " "please set environment variable",
         ):
             load_component(yaml_path, params_override=[{"type": "UnsupportedComponent"}])
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "true"
@@ -211,11 +209,11 @@ class TestComponent:
         PARAMETERS_TO_TEST,
     )
     def test_component_serialization(
-        self,
-        yaml_path: str,
-        inputs: Dict,
-        runsettings_dict: Dict,
-        pipeline_runsettings_dict: Dict,
+            self,
+            yaml_path: str,
+            inputs: Dict,
+            runsettings_dict: Dict,
+            pipeline_runsettings_dict: Dict,
     ) -> None:
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
@@ -310,52 +308,52 @@ class TestComponent:
         "yaml_path,expected_dict",
         [
             (
-                "./tests/test_configs/internal/env-conda-dependencies/component_spec.yaml",
-                {
-                    "conda": {
-                        "conda_dependencies": {
-                            "name": "project_environment",
-                            "channels": ["defaults"],
-                            "dependencies": [
-                                "python=3.7.9",
-                                "pip=20.0",
-                                {"pip": ["azureml-defaults", "azureml-dataprep>=1.6"]},
-                            ],
-                        }
+                    "./tests/test_configs/internal/env-conda-dependencies/component_spec.yaml",
+                    {
+                        "conda": {
+                            "conda_dependencies": {
+                                "name": "project_environment",
+                                "channels": ["defaults"],
+                                "dependencies": [
+                                    "python=3.7.9",
+                                    "pip=20.0",
+                                    {"pip": ["azureml-defaults", "azureml-dataprep>=1.6"]},
+                                ],
+                            }
+                        },
+                        "os": "Linux",
                     },
-                    "os": "Linux",
-                },
             ),
             (
-                "./tests/test_configs/internal/env-pip-dependencies/component_spec.yaml",
-                {
-                    "conda": {
-                        "conda_dependencies": {
-                            "name": "project_environment",
-                            "dependencies": [
-                                "python=3.8.5",
-                                {
-                                    "pip": ["azureml-defaults", "rsa==4.7"],
-                                },
-                            ],
+                    "./tests/test_configs/internal/env-pip-dependencies/component_spec.yaml",
+                    {
+                        "conda": {
+                            "conda_dependencies": {
+                                "name": "project_environment",
+                                "dependencies": [
+                                    "python=3.8.5",
+                                    {
+                                        "pip": ["azureml-defaults", "rsa==4.7"],
+                                    },
+                                ],
+                            },
                         },
+                        "os": "Linux",
                     },
-                    "os": "Linux",
-                },
             ),
             (
-                "./tests/test_configs/internal/env-dockerfile-build/component_spec.yaml",
-                {
-                    "docker": {
-                        "build": {
-                            "dockerfile": "FROM mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:20220815.v1\n",
+                    "./tests/test_configs/internal/env-dockerfile-build/component_spec.yaml",
+                    {
+                        "docker": {
+                            "build": {
+                                "dockerfile": "FROM mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:20220815.v1\n",
+                            },
                         },
+                        "python": {
+                            "user_managed_dependencies": True,
+                        },
+                        "os": "Linux",
                     },
-                    "python": {
-                        "user_managed_dependencies": True,
-                    },
-                    "os": "Linux",
-                },
             ),
         ],
     )
@@ -436,7 +434,8 @@ class TestComponent:
             assert code_path.is_dir()
             assert (code_path / "LICENSE").is_file()
             assert (code_path / "library.zip").is_file()
-            assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
+            assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py",
+                                                                     "library/world.py"]
             assert (code_path / "library1" / "hello.py").is_file()
             assert (code_path / "library1" / "world.py").is_file()
             assert code._ignore_file.is_file_excluded(code_path / "helloworld_additional_includes.additional_includes")
@@ -449,14 +448,14 @@ class TestComponent:
             pytest.param(
                 [
                     (
-                        "component_with_additional_includes/.amlignore",
-                        "test_ignore/*\nlibrary1/ignore.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "component_with_additional_includes/.amlignore",
+                            "test_ignore/*\nlibrary1/ignore.py",
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     (
-                        "component_with_additional_includes/test_ignore/a.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
+                            "component_with_additional_includes/test_ignore/a.py",
+                            None,
+                            AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                     # will be saved to library1/ignore.py, should be ignored
                     ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
@@ -472,36 +471,36 @@ class TestComponent:
                 [
                     # additional_includes for other spec, should be kept
                     (
-                        "component_with_additional_includes/x.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "component_with_additional_includes/x.additional_includes",
+                            None,
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     (
-                        "additional_includes/library1/x.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "additional_includes/library1/x.additional_includes",
+                            None,
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     (
-                        "additional_includes/library1/test/x.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "additional_includes/library1/test/x.additional_includes",
+                            None,
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     # additional_includes in a different level, should be kept
                     (
-                        "component_with_additional_includes/library2/helloworld_additional_includes.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "component_with_additional_includes/library2/helloworld_additional_includes.additional_includes",
+                            None,
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     (
-                        "component_with_additional_includes/library2/library/helloworld_additional_includes.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "component_with_additional_includes/library2/library/helloworld_additional_includes.additional_includes",
+                            None,
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     # additional_includes in a different level in additional includes, should be kept
                     (
-                        "additional_includes/library1/helloworld_additional_includes.additional_includes",
-                        None,
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "additional_includes/library1/helloworld_additional_includes.additional_includes",
+                            None,
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                 ],
                 id="additional_includes",
@@ -510,20 +509,20 @@ class TestComponent:
                 [
                     ("component_with_additional_includes/hello.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
                     (
-                        "component_with_additional_includes/test_code/.amlignore",
-                        "hello.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "component_with_additional_includes/test_code/.amlignore",
+                            "hello.py",
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     (
-                        "component_with_additional_includes/test_code/hello.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NOT_EXISTS,
+                            "component_with_additional_includes/test_code/hello.py",
+                            None,
+                            AdditionalIncludesCheckFunc.NOT_EXISTS,
                     ),
                     # shall we keep the empty folder?
                     (
-                        "component_with_additional_includes/test_code/a/hello.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
+                            "component_with_additional_includes/test_code/a/hello.py",
+                            None,
+                            AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                 ],
                 id="amlignore_subfolder",
@@ -531,9 +530,9 @@ class TestComponent:
             pytest.param(
                 [
                     (
-                        "additional_includes/library1/.amlignore",
-                        "test_ignore\nignore.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "additional_includes/library1/.amlignore",
+                            "test_ignore\nignore.py",
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     # will be saved to library1/ignore.py, should be ignored
                     ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
@@ -548,20 +547,20 @@ class TestComponent:
             pytest.param(
                 [
                     (
-                        "additional_includes/library1/test_ignore/.amlignore",
-                        "ignore.py",
-                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                            "additional_includes/library1/test_ignore/.amlignore",
+                            "ignore.py",
+                            AdditionalIncludesCheckFunc.SELF_IS_FILE,
                     ),
                     # will be saved to library1/ignore.py, should be ignored
                     (
-                        "additional_includes/library1/test_ignore/ignore.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NOT_EXISTS,
+                            "additional_includes/library1/test_ignore/ignore.py",
+                            None,
+                            AdditionalIncludesCheckFunc.NOT_EXISTS,
                     ),
                     (
-                        "additional_includes/library1/test_ignore/ignore.py",
-                        None,
-                        AdditionalIncludesCheckFunc.NOT_EXISTS,
+                            "additional_includes/library1/test_ignore/ignore.py",
+                            None,
+                            AdditionalIncludesCheckFunc.NOT_EXISTS,
                     ),
                 ],
                 id="amlignore_in_additional_includes_subfolder",
@@ -569,20 +568,20 @@ class TestComponent:
             pytest.param(
                 [
                     (
-                        "component_with_additional_includes/__pycache__/a.pyc",
-                        None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
+                            "component_with_additional_includes/__pycache__/a.pyc",
+                            None,
+                            AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                     (
-                        "component_with_additional_includes/test/__pycache__/a.pyc",
-                        None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
+                            "component_with_additional_includes/test/__pycache__/a.pyc",
+                            None,
+                            AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                     ("additional_includes/library1/__pycache__/a.pyc", None, AdditionalIncludesCheckFunc.NO_PARENT),
                     (
-                        "additional_includes/library1/test/__pycache__/a.pyc",
-                        None,
-                        AdditionalIncludesCheckFunc.NO_PARENT,
+                            "additional_includes/library1/test/__pycache__/a.pyc",
+                            None,
+                            AdditionalIncludesCheckFunc.NO_PARENT,
                     ),
                 ],
                 id="pycache",
@@ -591,12 +590,13 @@ class TestComponent:
     )
     def test_additional_includes_advanced(self, test_files) -> None:
         with build_temp_folder(
-            source_base_dir="./tests/test_configs/internal/",
-            relative_dirs_to_copy=["component_with_additional_includes", "additional_includes"],
-            extra_files_to_create={file: content for file, content, _ in test_files},
+                source_base_dir="./tests/test_configs/internal/",
+                relative_dirs_to_copy=["component_with_additional_includes", "additional_includes"],
+                extra_files_to_create={file: content for file, content, _ in test_files},
         ) as test_configs_dir:
             yaml_path = (
-                Path(test_configs_dir) / "component_with_additional_includes" / "helloworld_additional_includes.yml"
+                    Path(
+                        test_configs_dir) / "component_with_additional_includes" / "helloworld_additional_includes.yml"
             )
 
             component: InternalComponent = load_component(source=yaml_path)
@@ -742,10 +742,10 @@ class TestComponent:
             )
             component: InternalComponent = load_component(source=yaml_path)
             with pytest.raises(
-                RuntimeError,
-                match="There are conflict files in additional include"
-                ".*test_additional_include:version_1 in component-sdk-test-feed"
-                ".*test_additional_include:version_3 in component-sdk-test-feed",
+                    RuntimeError,
+                    match="There are conflict files in additional include"
+                          ".*test_additional_include:version_1 in component-sdk-test-feed"
+                          ".*test_additional_include:version_3 in component-sdk-test-feed",
             ):
                 with component._build_code():
                     pass
@@ -897,7 +897,8 @@ class TestComponent:
 
             code.name = expected_snapshot_id
             with pytest.raises(
-                AttributeError, match="InternalCode name are calculated based on its content and cannot be changed.*"
+                    AttributeError,
+                    match="InternalCode name are calculated based on its content and cannot be changed.*"
             ):
                 code.name = expected_snapshot_id + "1"
 
@@ -974,3 +975,33 @@ class TestComponent:
         expected_dict["environment"]["version"] = treat_component.environment.version
         del expected_dict["environment"]["conda_file"]["name"]
         assert treat_component._to_dict() == expected_dict
+
+    def test_load_from_internal_aether_bridge_component(self):
+        yaml_path = "./tests/test_configs/internal/aether_bridge_component/component_spec.yaml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component
+        rest_object = component._to_rest_object()
+        assert rest_object.properties.component_spec == {
+            "name": "aether_bridge_component",
+            "version": "0.0.1",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/AetherBridgeComponent.json",
+            "display_name": "Aether Bridge Component",
+            "inputs": {
+                "mock_param1": {
+                    "type": "AnyFile",
+                    "optional": False
+                },
+                "mock_param2": {
+                    "type": "AnyFile",
+                    "optional": False
+                }
+            },
+            "outputs": {
+                "job_info": {
+                    "type": "AnyFile"
+                }
+            },
+            "type": "AetherBridgeComponent",
+            "command": "mock.exe {inputs.mock_param1} {inputs.mock_param2} {outputs.job_info}",
+            "_source": "YAML.COMPONENT"
+        }
