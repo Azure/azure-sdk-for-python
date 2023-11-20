@@ -29,15 +29,14 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.workflow_runs.cancel(
+    client.workflow_runs.cancel(
         resource_group_name="test-resource-group",
         name="test-name",
         workflow_name="test-workflow",
         run_name="08586676746934337772206998657CU22",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/WorkflowRuns_Cancel.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/WorkflowRuns_Cancel.json
 if __name__ == "__main__":
     main()
