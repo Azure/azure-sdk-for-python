@@ -690,7 +690,7 @@
                 "allowBlobPublicAccess": false,
                 "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]",
                 "isHnsEnabled": "[equals(parameters('set_up_feature_store'), 'true')]",
-                "minimumTlsVersion": "[if(equals(parameters('set_up_feature_store'), 'true'), 'TLS1_2', 'TLS1_0')]"
+                "minimumTlsVersion": "TLS1_2"
             }
         },
         {
