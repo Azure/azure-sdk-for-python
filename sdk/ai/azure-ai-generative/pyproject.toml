@@ -9,3 +9,4 @@ bandit = false
 sphinx = true
 breaking = false
 whl_no_aio = false
+strict_sphinx = true

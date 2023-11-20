@@ -8,3 +8,4 @@ black = false
 bandit = false
 sphinx=true
 breaking = false
+strict_sphinx = true
