@@ -107,7 +107,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
     """
 
     @distributed_trace
-    def get_schema_id_by_content(  # pylint: disable=inconsistent-return-statements
+    def _get_schema_id_by_content(  # pylint: disable=inconsistent-return-statements
         self,
         group_name: str,
         name: str,
@@ -194,7 +194,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
 
 
     @distributed_trace
-    def register_schema(  # pylint: disable=inconsistent-return-statements
+    def _register_schema(  # pylint: disable=inconsistent-return-statements
         self,
         group_name: str,
         name: str,
