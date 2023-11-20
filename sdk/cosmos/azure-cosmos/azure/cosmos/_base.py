@@ -27,7 +27,7 @@ from email.utils import formatdate
 import json
 import uuid
 import binascii
-from typing import Dict, Any, Union
+from typing import Dict, Any, List, Optional, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import urlsplit
@@ -39,7 +39,9 @@ from . import http_constants
 from . import _runtime_constants
 from .offer import ThroughputProperties
 
-# pylint: disable=protected-access
+if TYPE_CHECKING:
+    from ._cosmos_client_connection import CosmosClientConnection
+
 
 _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
@@ -58,9 +60,7 @@ _COMMON_OPTIONS = {
     'priority_level': 'priorityLevel'
 }
 
-
-def _get_match_headers(kwargs):
-    # type: (Dict[str, Any]) -> Tuple(Optional[str], Optional[str])
+def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
     if_match = kwargs.pop('if_match', None)
     if_none_match = kwargs.pop('if_none_match', None)
     match_condition = kwargs.pop('match_condition', None)
@@ -84,13 +84,11 @@ def _get_match_headers(kwargs):
     return if_match, if_none_match
 
 
-def build_options(kwargs):
-    # type: (Dict[str, Any]) -> Dict[str, Any]
+def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
-
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
@@ -100,15 +98,15 @@ def build_options(kwargs):
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
-        cosmos_client_connection,
-        default_headers,
-        verb,
-        path,
-        resource_id,
-        resource_type,
-        options,
-        partition_key_range_id=None,
-):
+        cosmos_client_connection: "CosmosClientConnection",
+        default_headers: Dict[str, Any],
+        verb: str,
+        path: str,
+        resource_id: str,
+        resource_type: str,
+        options: Dict[str, Any],
+        partition_key_range_id: Optional[str] = None,
+) -> Dict[str, Any]:
     """Gets HTTP request headers.
 
     :param _cosmos_client_connection.CosmosClientConnection cosmos_client_connection:
@@ -309,7 +307,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     return headers
 
 
-def GetResourceIdOrFullNameFromLink(resource_link):
+def GetResourceIdOrFullNameFromLink(resource_link: str) -> str:
     """Gets resource id or full name from resource link.
 
     :param str resource_link:
@@ -345,7 +343,7 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     return None
 
 
-def GenerateGuidId():
+def GenerateGuidId() -> str:
     """Gets a random GUID.
 
     Note that here we use python's UUID generation library. Basically UUID
@@ -358,7 +356,7 @@ def GenerateGuidId():
     return str(uuid.uuid4())
 
 
-def GetPathFromLink(resource_link, resource_type=""):
+def GetPathFromLink(resource_link: str, resource_type: str = "") -> str:
     """Gets path from resource link with optional resource type
 
     :param str resource_link:
@@ -381,7 +379,7 @@ def GetPathFromLink(resource_link, resource_type=""):
     return "/" + resource_link + "/"
 
 
-def IsNameBased(link):
+def IsNameBased(link: str) -> bool:
     """Finds whether the link is name based or not
 
     :param str link:
@@ -418,7 +416,7 @@ def IsNameBased(link):
     return not IsValidBase64String(str(databaseID))
 
 
-def IsMasterResource(resourceType):
+def IsMasterResource(resourceType: str) -> bool:
     return resourceType in (
         http_constants.ResourceType.Offer,
         http_constants.ResourceType.Database,
@@ -431,7 +429,7 @@ def IsMasterResource(resourceType):
     )
 
 
-def IsDatabaseLink(link):
+def IsDatabaseLink(link: str) -> bool:
     """Finds whether the link is a database Self Link or a database ID based link
 
     :param str link: Link to analyze
@@ -461,7 +459,7 @@ def IsDatabaseLink(link):
     return True
 
 
-def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
+def IsItemContainerLink(link: str) -> bool:  # pylint: disable=too-many-return-statements
     """Finds whether the link is a document colllection Self Link or a document colllection ID based link
 
     :param str link: Link to analyze
@@ -499,7 +497,7 @@ def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
     return True
 
 
-def GetItemContainerInfo(self_link, alt_content_path, resource_id):
+def GetItemContainerInfo(self_link: str, alt_content_path: str, resource_id: str) -> Tuple[str, str]:
     """Given the self link and alt_content_path from the response header and
     result extract the collection name and collection id.
 
@@ -542,7 +540,7 @@ def GetItemContainerInfo(self_link, alt_content_path, resource_id):
     raise ValueError("Unable to parse document collection link from " + self_link)
 
 
-def GetItemContainerLink(link):
+def GetItemContainerLink(link: str) -> str:
     """Gets the document collection link.
 
     :param str link: Resource link
@@ -558,11 +556,11 @@ def GetItemContainerLink(link):
     raise ValueError("Unable to parse document collection link from " + link)
 
 
-def IndexOfNth(s, value, n):
+def IndexOfNth(s: str, value: str, n: int) -> int:
     """Gets the index of Nth occurrence of a given character in a string.
 
     :param str s: Input string
-    :param char value: Input char to be searched.
+    :param str value: Input char to be searched.
     :param int n: Nth occurrence of char to be searched.
     :return: Index of the Nth occurrence in the string.
     :rtype: int
@@ -576,7 +574,7 @@ def IndexOfNth(s, value, n):
     return -1
 
 
-def IsValidBase64String(string_to_validate):
+def IsValidBase64String(string_to_validate: str) -> str:
     """Verifies if a string is a valid Base64 encoded string, after
     replacing '-' with '/'
 
@@ -597,7 +595,7 @@ def IsValidBase64String(string_to_validate):
     return True
 
 
-def TrimBeginningAndEndingSlashes(path):
+def TrimBeginningAndEndingSlashes(path: str) -> str:
     """Trims beginning and ending slashes
 
     :param str path:
@@ -618,7 +616,7 @@ def TrimBeginningAndEndingSlashes(path):
 
 
 # Parses the paths into a list of token each representing a property
-def ParsePaths(paths):
+def ParsePaths(paths: List[str]) -> List[str]:
     segmentSeparator = "/"
     tokens = []
     for path in paths:
@@ -670,19 +668,19 @@ def ParsePaths(paths):
     return tokens
 
 
-def create_scope_from_url(url):
+def create_scope_from_url(url: str) -> str:
     parsed_url = urlsplit(url)
     return parsed_url.scheme + "://" + parsed_url.hostname + "/.default"
 
 
-def validate_cache_staleness_value(max_integrated_cache_staleness):
+def validate_cache_staleness_value(max_integrated_cache_staleness: Any) -> None:
     int(max_integrated_cache_staleness)  # Will throw error if data type cant be converted to int
     if max_integrated_cache_staleness < 0:
         raise ValueError("Parameter 'max_integrated_cache_staleness_in_ms' can only be an "
                          "integer greater than or equal to zero")
 
 
-def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
+def _stringify_auto_scale(offer: Dict[str, Any]) -> str:
     auto_scale_params = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
@@ -690,11 +688,10 @@ def _stringify_auto_scale(offer: Dict[str, Any]) -> Any:
     if increment_percent is not None:
         auto_scale_params["autoUpgradePolicy"] = {"throughputPolicy": {"incrementPercent": increment_percent}}
     auto_scale_settings = json.dumps(auto_scale_params)
-
     return auto_scale_settings
 
 
-def _set_throughput_options(offer: Union[int, ThroughputProperties], request_options: Dict[str, Any]) -> Any:
+def _set_throughput_options(offer: Union[int, ThroughputProperties], request_options: Dict[str, Any]) -> None:
     if offer is not None:
         try:
             max_throughput = offer.auto_scale_max_throughput
@@ -707,7 +704,6 @@ def _set_throughput_options(offer: Union[int, ThroughputProperties], request_opt
                                  "conjunction with auto_scale_increment_percent")
             if offer.offer_throughput:
                 request_options["offerThroughput"] = offer.offer_throughput
-
         except AttributeError as e:
             if isinstance(offer, int):
                 request_options["offerThroughput"] = offer
@@ -715,26 +711,30 @@ def _set_throughput_options(offer: Union[int, ThroughputProperties], request_opt
                 raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
 
-def _deserialize_throughput(throughput: list) -> Any:
-    throughput_properties = throughput
-    if 'offerAutopilotSettings' in throughput_properties[0]['content'] and 'autoUpgradePolicy' in \
-            throughput_properties[0]['content']['offerAutopilotSettings']:
-        return ThroughputProperties(properties=throughput_properties[0], auto_scale_max_throughput= \
-            throughput_properties[0]['content']['offerAutopilotSettings']['maxThroughput'],
-                                    auto_scale_increment_percent=throughput_properties[0]['content']
-                                    ['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                                        'incrementPercent'])
+def _deserialize_throughput(throughput: List[Dict[str, Dict[str, Any]]]) -> ThroughputProperties:
+    properties = throughput[0]
+    offer_autopilot: Dict[str, Any] = properties['content'].get('offerAutopilotSettings')
+    if offer_autopilot and 'autoUpgradePolicy' in offer_autopilot:
+        return ThroughputProperties(
+            properties=properties,
+            auto_scale_max_throughput=offer_autopilot['maxThroughput'],
+            auto_scale_increment_percent=offer_autopilot['autoUpgradePolicy']['throughputPolicy']['incrementPercent']
+        )
+    if offer_autopilot:
+        return ThroughputProperties(
+            properties=properties,
+            auto_scale_max_throughput=offer_autopilot['maxThroughput']
+        )
+    return ThroughputProperties(
+        offer_throughput=properties["content"]["offerThroughput"],
+        properties=properties
+    )
 
-    if 'offerAutopilotSettings' in throughput_properties[0]['content']:
-        return ThroughputProperties(properties=throughput_properties[0],
-                                    auto_scale_max_throughput=throughput_properties[0]['content'][
-                                        'offerAutopilotSettings']['maxThroughput'])
 
-    return ThroughputProperties(offer_throughput=throughput_properties[0]["content"]["offerThroughput"],
-                                properties=throughput_properties[0])
-
-
-def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throughput_properties: list):
+def _replace_throughput(
+    throughput: Union[int, ThroughputProperties],
+    new_throughput_properties: Dict[str, Any]
+) -> None:
     try:
         max_throughput = throughput.auto_scale_max_throughput
         increment_percent = throughput.auto_scale_increment_percent
@@ -746,7 +746,6 @@ def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throug
                     'incrementPercent'] = increment_percent
             if throughput.offer_throughput:
                 new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
-
     except AttributeError as e:
         if isinstance(throughput, int):
             new_throughput_properties["content"]["offerThroughput"] = throughput
@@ -767,13 +766,15 @@ def _internal_resourcetype(resource_type: str) -> str:
     return resource_type
 
 
-def _populate_batch_headers(current_headers):
+def _populate_batch_headers(current_headers: Dict[str, Any]) -> None:
     current_headers.update({http_constants.HttpHeaders.IsBatchRequest: True})
     current_headers.update({http_constants.HttpHeaders.IsBatchAtomic: True})
     current_headers.update({http_constants.HttpHeaders.ShouldBatchContinueOnError: False})
 
 
-def _format_batch_operations(operations):
+def _format_batch_operations(
+    operations: List[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
+) -> List[Dict[str, Any]]:
     final_operations = []
     for i in range(len(operations)):
         batch_operation = operations[i]
