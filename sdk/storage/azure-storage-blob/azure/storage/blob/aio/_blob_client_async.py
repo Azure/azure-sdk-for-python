@@ -8,7 +8,7 @@
 import warnings
 from functools import partial
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Self, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote
@@ -48,7 +48,8 @@ from .._blob_client_helpers import (
     _clear_page_options,
     _append_block_options,
     _append_block_from_url_options,
-    _seal_append_blob_options
+    _seal_append_blob_options,
+    _from_blob_url
 )
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -161,8 +162,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        parsed_url, sas_token, path_snapshot = _parse_url(account_url=account_url, container_name=container_name, blob_name=blob_name)
-        
+        parsed_url, sas_token, path_snapshot = _parse_url(account_url=account_url, container_name=container_name, blob_name=blob_name)  # pylint: disable=line-too-long
+
         self.container_name = container_name
         self.blob_name = blob_name
         try:
@@ -187,6 +188,48 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
         return f"{self.scheme}://{hostname}/{quote(container_name)}/{quote(self.blob_name, safe='~/')}{self._query_str}"
+    
+    @classmethod
+    def from_blob_url(
+            cls, blob_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            **kwargs: Any
+        ) -> Self:
+        """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
+
+        :param str blob_url:
+            The full endpoint URL to the Blob, including SAS token and snapshot if used. This could be
+            either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        :type blob_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]]  # pylint: disable=line-too-long
+        :param str snapshot:
+            The optional blob snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`. If specified, this will override
+            the snapshot in the url.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :returns: A Blob client.
+        :rtype: ~azure.storage.blob.BlobClient
+        """
+        account_url, container_name, blob_name, path_snapshot = _from_blob_url(blob_url=blob_url, snapshot=snapshot)
+        return cls(
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=path_snapshot, credential=credential, **kwargs
+        )
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore

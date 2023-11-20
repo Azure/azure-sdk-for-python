@@ -31,6 +31,7 @@ from ._shared.response_handlers import (
 from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
 from ._blob_client import BlobClient
+from ._blob_client_helpers import _generic_delete_blob_options
 from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
@@ -1403,7 +1404,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             container_name = self.container_name
 
             try:
-                options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
+                options = _generic_delete_blob_options(  # pylint: disable=protected-access
                     snapshot=blob.get('snapshot'),
                     version_id=blob.get('version_id'),
                     delete_snapshots=delete_snapshots or blob.get('delete_snapshots'),
@@ -1417,7 +1418,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                     timeout=blob.get('timeout'),
                 )
             except AttributeError:
-                options = BlobClient._generic_delete_blob_options(  # pylint: disable=protected-access
+                options = _generic_delete_blob_options(  # pylint: disable=protected-access
                     delete_snapshots=delete_snapshots,
                     if_modified_since=if_modified_since,
                     if_unmodified_since=if_unmodified_since,

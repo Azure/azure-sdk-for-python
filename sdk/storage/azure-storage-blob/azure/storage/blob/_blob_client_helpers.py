@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines
 
 from io import BytesIO
 from typing import (
@@ -1291,3 +1292,59 @@ def _seal_append_blob_options(require_encryption, key_encryption_key, **kwargs):
         'cls': return_response_headers}
     options.update(kwargs)
     return options
+
+def _from_blob_url(blob_url: str, snapshot: Optional[Union[str, Dict[str, Any]]]) -> Tuple[str, str, str, str]:
+    """Creates a blob URL to interact with a specific Blob.
+
+    :param str blob_url:
+        The full endpoint URL to the Blob, including SAS token and snapshot if used. This could be
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+    :param str snapshot:
+        The optional blob snapshot on which to operate. This can be the snapshot ID string
+        or the response returned from :func:`create_snapshot`. If specified, this will override
+        the snapshot in the url.
+    :returns: The parsed out account_url, container_name, blob_name, and path_snapshot
+    :rtype: Tuple[str, str, str, str]
+    """
+    try:
+        if not blob_url.lower().startswith('http'):
+            blob_url = "https://" + blob_url
+    except AttributeError as exc:
+        raise ValueError("Blob URL must be a string.") from exc
+    parsed_url = urlparse(blob_url.rstrip('/'))
+
+    if not parsed_url.netloc:
+        raise ValueError(f"Invalid URL: {blob_url}")
+
+    account_path = ""
+    if ".core." in parsed_url.netloc:
+        # .core. is indicating non-customized url. Blob name with directory info can also be parsed.
+        path_blob = parsed_url.path.lstrip('/').split('/', maxsplit=1)
+    elif "localhost" in parsed_url.netloc or "127.0.0.1" in parsed_url.netloc:
+        path_blob = parsed_url.path.lstrip('/').split('/', maxsplit=2)
+        account_path += '/' + path_blob[0]
+    else:
+        # for customized url. blob name that has directory info cannot be parsed.
+        path_blob = parsed_url.path.lstrip('/').split('/')
+        if len(path_blob) > 2:
+            account_path = "/" + "/".join(path_blob[:-2])
+
+    account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
+
+    msg_invalid_url = "Invalid URL. Provide a blob_url with a valid blob and container name."
+    if len(path_blob) <= 1:
+        raise ValueError(msg_invalid_url)
+    container_name, blob_name = unquote(path_blob[-2]), unquote(path_blob[-1])
+    if not container_name or not blob_name:
+        raise ValueError(msg_invalid_url)
+
+    path_snapshot, _ = parse_query(parsed_url.query)
+    if snapshot:
+        try:
+            path_snapshot = snapshot.snapshot # type: ignore
+        except AttributeError:
+            try:
+                path_snapshot = snapshot['snapshot'] # type: ignore
+            except TypeError:
+                path_snapshot = snapshot
+    return (account_url, container_name, blob_name, path_snapshot)

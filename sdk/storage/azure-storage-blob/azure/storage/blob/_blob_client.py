@@ -48,7 +48,8 @@ from ._blob_client_helpers import (
     _clear_page_options,
     _append_block_options,
     _append_block_from_url_options,
-    _seal_append_blob_options
+    _seal_append_blob_options,
+    _from_blob_url
 )
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
 from ._shared.response_handlers import return_response_headers, process_storage_error
@@ -167,7 +168,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
-        parsed_url, sas_token, path_snapshot = _parse_url(account_url=account_url, container_name=container_name, blob_name=blob_name)
+        parsed_url, sas_token, path_snapshot = _parse_url(account_url=account_url, container_name=container_name, blob_name=blob_name)  # pylint: disable=line-too-long
 
         self.container_name = container_name
         self.blob_name = blob_name
@@ -230,48 +231,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
-        try:
-            if not blob_url.lower().startswith('http'):
-                blob_url = "https://" + blob_url
-        except AttributeError as exc:
-            raise ValueError("Blob URL must be a string.") from exc
-        parsed_url = urlparse(blob_url.rstrip('/'))
-
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {blob_url}")
-
-        account_path = ""
-        if ".core." in parsed_url.netloc:
-            # .core. is indicating non-customized url. Blob name with directory info can also be parsed.
-            path_blob = parsed_url.path.lstrip('/').split('/', maxsplit=1)
-        elif "localhost" in parsed_url.netloc or "127.0.0.1" in parsed_url.netloc:
-            path_blob = parsed_url.path.lstrip('/').split('/', maxsplit=2)
-            account_path += '/' + path_blob[0]
-        else:
-            # for customized url. blob name that has directory info cannot be parsed.
-            path_blob = parsed_url.path.lstrip('/').split('/')
-            if len(path_blob) > 2:
-                account_path = "/" + "/".join(path_blob[:-2])
-
-        account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
-
-        msg_invalid_url = "Invalid URL. Provide a blob_url with a valid blob and container name."
-        if len(path_blob) <= 1:
-            raise ValueError(msg_invalid_url)
-        container_name, blob_name = unquote(path_blob[-2]), unquote(path_blob[-1])
-        if not container_name or not blob_name:
-            raise ValueError(msg_invalid_url)
-
-        path_snapshot, _ = parse_query(parsed_url.query)
-        if snapshot:
-            try:
-                path_snapshot = snapshot.snapshot # type: ignore
-            except AttributeError:
-                try:
-                    path_snapshot = snapshot['snapshot'] # type: ignore
-                except TypeError:
-                    path_snapshot = snapshot
-
+        account_url, container_name, blob_name, path_snapshot = _from_blob_url(blob_url=blob_url, snapshot=snapshot)
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
             snapshot=path_snapshot, credential=credential, **kwargs
@@ -2029,8 +1989,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             return self._client.block_blob.stage_block_from_url(**options)
         except HttpResponseError as error:
             process_storage_error(error)
-
-    
 
     @distributed_trace
     def get_block_list(self, block_list_type="committed", **kwargs):
