@@ -1,5 +1,5 @@
 {
-  "commit": "c320f58d8643a309c126dd4ec5fdc6737fccd981",
+  "commit": "bf204aab860f2eb58a9d346b00d44760f2a9b0a2",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
@@ -24,7 +24,9 @@
   "package-2019-05-preview-only": "2020-11-18 18:08:48 -0800 1ac125f6d76df2e1328938ab6201cf178b7c25b0 Microsoft.ContainerRegistry/preview/2019-05-01-preview/containerregistry_scopemap.json",
   "package-2019-04-only": "2021-04-21 00:30:00 -0700 c318f87abae92d38a223b3d168a75dd5d239d28b Microsoft.ContainerRegistry/stable/2019-04-01/containerregistry_build.json",
   "package-2018-09-only": "2019-05-20 13:19:22 -0400 4637caf2022035c4d51eca3314589a25060d20af Microsoft.ContainerRegistry/stable/2018-09-01/containerregistry_build.json",
-  "package-2018-02-preview-only": "2019-05-20 13:19:22 -0400 4637caf2022035c4d51eca3314589a25060d20af Microsoft.ContainerRegistry/preview/2018-02-01-preview/containerregistry_build.json",
+  "package-2018-02-preview-only": "2023-09-18 13:32:39 -0700 1fc7fb032a93adb080dcbf425061fcf304f16370 Microsoft.ContainerRegistry/preview/2018-02-01-preview/containerregistry_build.json",
   "package-2017-10": "2021-02-01 18:15:02 -0800 7b3e3d4e09b727489a3181f1d68586cd304b6437 Microsoft.ContainerRegistry/stable/2017-10-01/containerregistry.json",
-  "package-2017-03": "2019-05-20 13:19:22 -0400 4637caf2022035c4d51eca3314589a25060d20af Microsoft.ContainerRegistry/stable/2017-03-01/containerregistry.json"
+  "package-2017-03": "2019-05-20 13:19:22 -0400 4637caf2022035c4d51eca3314589a25060d20af Microsoft.ContainerRegistry/stable/2017-03-01/containerregistry.json",
+  "package-2023-11-preview-only": "2023-10-30 15:23:40 -0700 c3723400ddc91cb4dc9e8412fd31cd8c4258e17d Microsoft.ContainerRegistry/preview/2023-11-01-preview/containerregistry.json",
+  "package-2023-06-preview-only": "2023-07-28 10:23:20 -0700 9025f6894e0df9ebbfcd19a04c967c1c6737bfe6 Microsoft.ContainerRegistry/preview/2023-06-01-preview/containerregistry.json"
 }
