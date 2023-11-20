@@ -14,7 +14,7 @@ from azure.mgmt.dashboard import DashboardManagementClient
     pip install azure-identity
     pip install azure-mgmt-dashboard
 # USAGE
-    python grafana_list_by_resource_group.py
+    python enterprise_details_post.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.grafana.list_by_resource_group(
+    response = client.grafana.check_enterprise_details(
         resource_group_name="myResourceGroup",
+        workspace_name="myWorkspace",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/dashboard/resource-manager/Microsoft.Dashboard/stable/2023-09-01/examples/Grafana_ListByResourceGroup.json
+# x-ms-original-file: specification/dashboard/resource-manager/Microsoft.Dashboard/stable/2023-09-01/examples/EnterpriseDetails_Post.json
 if __name__ == "__main__":
     main()

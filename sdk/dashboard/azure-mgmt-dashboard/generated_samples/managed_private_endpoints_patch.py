@@ -14,7 +14,7 @@ from azure.mgmt.dashboard import DashboardManagementClient
     pip install azure-identity
     pip install azure-mgmt-dashboard
 # USAGE
-    python grafana_list_by_resource_group.py
+    python managed_private_endpoints_patch.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,15 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.grafana.list_by_resource_group(
+    response = client.managed_private_endpoints.begin_update(
         resource_group_name="myResourceGroup",
-    )
-    for item in response:
-        print(item)
+        workspace_name="myWorkspace",
+        managed_private_endpoint_name="myMPEName",
+        request_body_parameters={"tags": {"Environment": "Dev 2"}},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/dashboard/resource-manager/Microsoft.Dashboard/stable/2023-09-01/examples/Grafana_ListByResourceGroup.json
+# x-ms-original-file: specification/dashboard/resource-manager/Microsoft.Dashboard/stable/2023-09-01/examples/ManagedPrivateEndpoints_Patch.json
 if __name__ == "__main__":
     main()
