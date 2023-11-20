@@ -32,10 +32,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     def create_task_collection(
         self,
         job_id: str,
-        collection: _models.BatchTaskCollection,
+        task_collection: _models.BatchTaskCollection,
         concurrencies: Optional[int] = 0,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchTaskAddCollectionResult:
@@ -58,15 +58,15 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
-        :param collection: The Tasks to be added. Required.
-        :type collection: ~azure.batch.models.BatchTaskCollection
+        :param task_collection: The Tasks to be added. Required.
+        :type task_collection: ~azure.batch.models.BatchTaskCollection
         :param concurrencies: number of threads to use in parallel when adding tasks. If specified
         and greater than 0, will start additional threads to submit requests and wait for them to finish.
         Otherwise will submit create_task_collection requests sequentially on main thread
         :type concurrencies: int
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -81,11 +81,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.batch.custom.CreateTasksErrorException
         """
 
-        kwargs.update({"time_out": time_out, "ocp_date": ocp_date})
+        kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocp_date": ocp_date})
 
         results_queue = collections.deque()  # deque operations(append/pop) are thread-safe
         task_workflow_manager = _TaskWorkflowManager(
-            super().create_task_collection, job_id=job_id, collection=collection, **kwargs
+            super().create_task_collection, job_id=job_id, task_collection=task_collection, **kwargs
         )
 
         # multi-threaded behavior
@@ -125,7 +125,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         node_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -140,9 +140,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -170,7 +170,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id, file_path]
         kwargs.update(
             {
-                "time_out": time_out,
+                "time_out_in_seconds": time_out_in_seconds,
                 "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -186,7 +186,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         node_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -200,9 +200,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -227,7 +227,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id, file_path]
         kwargs.update(
             {
-                "time_out": time_out,
+                "time_out_in_seconds": time_out_in_seconds,
                 "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -249,7 +249,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         task_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -263,9 +263,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -290,7 +290,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [job_id, task_id, file_path]
         kwargs.update(
             {
-                "time_out": time_out,
+                "time_out_in_seconds": time_out_in_seconds,
                 "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -311,7 +311,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         pool_id: str,
         node_id: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> bytes:
@@ -327,9 +327,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
          Protocol file. Required.
         :type node_id: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -342,7 +342,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         """
 
         args = [pool_id, node_id]
-        kwargs.update({"time_out": time_out, "ocp_date": ocp_date})
+        kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocp_date": ocp_date})
         kwargs["stream"] = True
         return super().get_node_remote_desktop_file(*args, **kwargs)
 
@@ -352,7 +352,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         task_id: str,
         file_path: str,
         *,
-        time_out: Optional[int] = None,
+        time_out_in_seconds: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -367,9 +367,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+        :keyword time_out_in_seconds: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype time_out: int
+        :paramtype time_out_in_seconds: int
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -398,7 +398,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [job_id, task_id, file_path]
         kwargs.update(
             {
-                "time_out": time_out,
+                "time_out_in_seconds": time_out_in_seconds,
                 "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -433,7 +433,7 @@ class _TaskWorkflowManager(object):
         <azure.batch.models.BatchTaskAddCollectionResult>`
     """
 
-    def __init__(self, original_create_task_collection, job_id: str, collection: _models.BatchTaskCollection, **kwargs):
+    def __init__(self, original_create_task_collection, job_id: str, task_collection: _models.BatchTaskCollection, **kwargs):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
         self.failure_tasks = collections.deque()
@@ -442,7 +442,7 @@ class _TaskWorkflowManager(object):
 
         # synchronized through lock variables
         self._max_tasks_per_request = MAX_TASKS_PER_REQUEST
-        self.tasks_to_add = collections.deque(collection)
+        self.tasks_to_add = collections.deque(task_collection)
         self._error_lock = threading.Lock()
         self._max_tasks_lock = threading.Lock()
         self._pending_queue_lock = threading.Lock()
@@ -469,7 +469,7 @@ class _TaskWorkflowManager(object):
             create_task_collection_response: _models.BatchTaskAddCollectionResult = (
                 self._original_create_task_collection(
                     job_id=self._job_id,
-                    collection=_models.BatchTaskCollection(value=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskCollection(value=chunk_tasks_to_add),
                     **self._kwargs
                 )
             )
@@ -532,14 +532,14 @@ class _TaskWorkflowManager(object):
                 pass
 
             for task_result in create_task_collection_response.value:  # pylint: disable=no-member
-                if task_result.status == _models.TaskAddStatus.SERVER_ERROR:
+                if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
                     # Server error will be retried
                     with self._pending_queue_lock:
                         for task in chunk_tasks_to_add:
                             if task.id == task_result.task_id:
                                 self.tasks_to_add.appendleft(task)
                 elif (
-                    task_result.status == _models.TaskAddStatus.CLIENT_ERROR
+                    task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR
                     and not task_result.error.code == "TaskExists"
                 ):
                     # Client error will be recorded unless Task already exists

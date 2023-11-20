@@ -358,8 +358,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             await async_wrapper(
                 client.list_pools(
                     filter="startswith(id,'batch_app_')",
-                    select="id,state",
-                    expand="stats",
+                    select=["id,state"],
+                    expand=["stats"],
                 )
             ),
         )
@@ -461,7 +461,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.target_node_communication_mode == models.BatchNodeCommunicationMode.classic
 
         # Test Get Pool with OData Clauses
-        pool = await async_wrapper(client.get_pool(pool_id=test_paas_pool.id, select="id,state", expand="stats"))
+        pool = await async_wrapper(client.get_pool(pool_id=test_paas_pool.id, select=["id,state"], expand=["stats"]))
         assert isinstance(pool, models.BatchPool)
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.active
@@ -878,7 +878,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(client.create_task(batch_job.id, task_param))
         assert response is None
         task = await async_wrapper(client.get_task(batch_job.id, task_id))
-        while self.is_live and task.state != models.TaskState.completed:
+        while self.is_live and task.state != models.BatchTaskState.completed:
             time.sleep(5)
             task = await async_wrapper(client.get_task(batch_job.id, task_id))
 
@@ -896,9 +896,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
         file_length = 0
         with io.BytesIO() as file_handle:
             response = await async_wrapper(client.get_node_file(batch_pool.name, node, only_files[0].name))
-            # lenght = len(response)
+            # file_length = len(response)
             for data in response:
-                file_length += len(data)
+                # assert data == "potato"
+                file_length += int(data)
         assert file_length == int(props.headers["Content-Length"])
 
         # Test Delete File from Batch Node
@@ -924,6 +925,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             for data in response:
                 file_length += len(data)
         assert file_length == int(props.headers["Content-Length"])
+        print(int(props.headers["Content-Length"]))
         assert "hello world" in str(data)
 
         # Test Delete File from Task
@@ -1070,10 +1072,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
                     command_line='cmd /c "echo hello world"',
                 )
             )
-        result = await async_wrapper(client.create_task_collection(batch_job.id, collection=tasks))
+        result = await async_wrapper(client.create_task_collection(batch_job.id, task_collection=tasks))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 3
-        assert result.value[0].status == models.TaskAddStatus.success
+        assert result.value[0].status == models.BatchTaskAddStatus.success
 
         # Test List Tasks
         tasks = list(await async_wrapper(client.list_tasks(batch_job.id)))
@@ -1081,7 +1083,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Count Tasks
         task_results = await async_wrapper(client.get_job_task_counts(batch_job.id))
-        assert isinstance(task_results, models.TaskCountsResult)
+        assert isinstance(task_results, models.BatchTaskCountsResult)
         assert task_results.task_counts.completed == 0
         assert task_results.task_counts.succeeded == 0
 
@@ -1089,20 +1091,20 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(client.terminate_task(batch_job.id, task_param.id))
         assert response is None
         task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
-        assert task.state == models.TaskState.completed
+        assert task.state == models.BatchTaskState.completed
 
         # Test Reactivate Task
         response = await async_wrapper(client.reactivate_task(batch_job.id, task_param.id))
         assert response is None
         task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
-        assert task.state == models.TaskState.active
+        assert task.state == models.BatchTaskState.active
 
         # Test Update Task
         response = await async_wrapper(
             client.replace_task(
                 job_id=batch_job.id,
                 task_id=task_param.id,
-                body=models.BatchTask(constraints=models.TaskConstraints(max_task_retry_count=1)),
+                task=models.BatchTask(constraints=models.BatchTaskConstraints(max_task_retry_count=1)),
             )
         )
         assert response is None
@@ -1163,8 +1165,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         result = await async_wrapper(client.create_task_collection(batch_job.id, tasks_to_add))
         assert isinstance(result, models.BatchTaskAddCollectionResult)
         assert len(result.value) == 733
-        assert result.value[0].status == models.TaskAddStatus.success
-        assert all(t.status == models.TaskAddStatus.success for t in result.value)
+        assert result.value[0].status == models.BatchTaskAddStatus.success
+        assert all(t.status == models.BatchTaskAddStatus.success for t in result.value)
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -1243,7 +1245,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(
             client.disable_job(
                 job_id=job_param.id,
-                body=models.BatchJobDisableParameters(disable_tasks="requeue"),
+                parameters=models.BatchJobDisableParameters(disable_tasks="requeue"),
             )
         )
         assert response is None
