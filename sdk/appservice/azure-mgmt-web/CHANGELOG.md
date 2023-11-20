@@ -1,5 +1,19 @@
 # Release History
 
+## 7.2.0 (2023-11-20)
+
+### Features Added
+
+  - Added operation WebSiteManagementClientOperationsMixin.list_ase_regions
+  - Added operation group GetUsagesInLocationOperations
+  - Model ResourceNameAvailabilityRequest has a new parameter environment_id
+  - Model Site has a new parameter dapr_config
+  - Model Site has a new parameter resource_config
+  - Model Site has a new parameter workload_profile_name
+  - Model SiteConfig has a new parameter min_tls_cipher_suite
+  - Model SiteConfigResource has a new parameter min_tls_cipher_suite
+  - Operation WebSiteManagementClientOperationsMixin.check_name_availability has a new optional parameter environment_id
+
 ## 7.1.0 (2023-04-20)
 
 ### Features Added

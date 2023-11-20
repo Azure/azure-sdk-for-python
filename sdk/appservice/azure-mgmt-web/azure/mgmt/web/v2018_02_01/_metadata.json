@@ -121,8 +121,8 @@
         "resource_health_metadata": "ResourceHealthMetadataOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\", \"Union\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"Any\", \"IO\", \"Optional\", \"Union\"], \"sys\": [null]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}, \"by_version\": {\"typing\": [[\"MutableMapping\", null, [[[3, 9], \"collections.abc\", null]]]]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Union\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"Any\", \"IO\", \"Optional\", \"Union\"], \"sys\": [null]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}, \"by_version\": {\"typing\": [[\"MutableMapping\", null, [[[3, 9], \"collections.abc\", null]]]]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\", \"Union\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"Any\", \"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"], \"sys\": [null]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}, \"by_version\": {\"typing\": [[\"MutableMapping\", null, [[[3, 9], \"collections.abc\", null]]]]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Union\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"Any\", \"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"], \"sys\": [null]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}, \"by_version\": {\"typing\": [[\"MutableMapping\", null, [[[3, 9], \"collections.abc\", null]]]]}}}",
         "sync_mixin_typing_definitions": "\nJSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object",
         "async_mixin_typing_definitions": "\nJSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object",
         "operations": {

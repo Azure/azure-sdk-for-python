@@ -146,9 +146,8 @@ stages:
               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
               Cloud: ${{ cloud.key }}
 
-- ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
-  - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
-    parameters:
-      BuildTargetingString: ${{ parameters.BuildTargetingString }}
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      JobName: ${{ parameters.JobName }}
+- template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
+  parameters:
+    BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    ServiceDirectory: ${{ parameters.ServiceDirectory }}
+    JobName: ${{ parameters.JobName }}
