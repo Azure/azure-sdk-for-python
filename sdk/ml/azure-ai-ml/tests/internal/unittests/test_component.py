@@ -987,21 +987,11 @@ class TestComponent:
             "$schema": "https://componentsdk.azureedge.net/jsonschema/AetherBridgeComponent.json",
             "display_name": "Aether Bridge Component",
             "inputs": {
-                "mock_param1": {
-                    "type": "AnyFile",
-                    "optional": False
-                },
-                "mock_param2": {
-                    "type": "AnyFile",
-                    "optional": False
-                }
+                "mock_param1": {"type": "AnyFile", "optional": False},
+                "mock_param2": {"type": "AnyFile", "optional": False},
             },
-            "outputs": {
-                "job_info": {
-                    "type": "AnyFile"
-                }
-            },
+            "outputs": {"job_info": {"type": "AnyFile"}},
             "type": "AetherBridgeComponent",
             "command": "mock.exe {inputs.mock_param1} {inputs.mock_param2} {outputs.job_info}",
-            "_source": "YAML.COMPONENT"
+            "_source": "YAML.COMPONENT",
         }
