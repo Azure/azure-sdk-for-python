@@ -42,11 +42,9 @@ For more information on DefaultAzureCredential, see
 import os
 import json
 
-from azure.schemaregistry import SchemaRegistryClient, Schema
+from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import DefaultAzureCredential
 
-print(repr(Schema(definition="test", properties=None)))
-exit()
 
 def create_client():
     # [START create_sr_client_sync]

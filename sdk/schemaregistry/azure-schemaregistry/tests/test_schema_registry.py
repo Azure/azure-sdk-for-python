@@ -22,7 +22,7 @@ import functools
 import pytest
 import json
 
-from azure.schemaregistry import SchemaRegistryClient, ApiVersion
+from azure.schemaregistry import SchemaRegistryClient
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
@@ -351,7 +351,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop("schemaregistry_group")
 
-        apiversion_2021_10 = ApiVersion.V2021_10
+        apiversion_2021_10 = "2021-10"
         client_2021_10 = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, api_version=apiversion_2021_10)
         name = self.get_resource_name(f"test-schema-apiversion-{format.lower()}")
 
@@ -360,7 +360,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert schema_properties.id is not None
         assert schema_properties.format == format
 
-        apiversion_2022_10 = ApiVersion.V2022_10
+        apiversion_2022_10 = "2022-10"
         client_2022_10 = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, api_version=apiversion_2022_10)
         schema_properties = client_2022_10.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
