@@ -1,11 +1,27 @@
 {
-  "commit": "969fd0c2634fbcc1975d7abe3749330a5145a97c",
+  "commit": "00c060f44fcd93a6839a5aa7caa4af9a34d643d1",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.2",
+  "autorest": "3.9.7",
   "use": [
-    "@autorest/python@6.4.3",
-    "@autorest/modelerfour@4.24.3"
+    "@autorest/python@6.7.1",
+    "@autorest/modelerfour@4.26.2"
   ],
-  "autorest_command": "autorest specification/web/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.4.3 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
-  "readme": "specification/web/resource-manager/readme.md"
+  "autorest_command": "autorest specification/web/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "readme": "specification/web/resource-manager/readme.md",
+  "package-2023-01": "fatal: invalid object name 'from'. from: WebApps.json",
+  "package-2022-09": "fatal: invalid object name 'from'. from: WebApps.json",
+  "package-2021-03-only": "fatal: invalid object name 'from'. from: WebApps.json",
+  "package-2021-01-15-only": "fatal: invalid object name 'from'. from: WebApps.json",
+  "package-2021-01-only": "fatal: invalid object name 'from'. from: WebApps.json",
+  "package-2020-12-only": "fatal: invalid object name 'from'. from: WebApps.json",
+  "package-2020-09-only": "fatal: invalid object name 'from'. from: AppServiceCertificateOrders.json",
+  "package-2020-06-only": "fatal: invalid object name 'from'. from: AppServiceCertificateOrders.json",
+  "package-2019-08-only": "fatal: invalid object name 'from'. from: AppServiceCertificateOrders.json",
+  "package-2018-11-only": "fatal: invalid object name 'from'. from: AppServiceCertificateOrders.json",
+  "package-2018-02-only": "fatal: invalid object name 'from'. from: AppServiceCertificateOrders.json",
+  "package-2016-09-only": "fatal: invalid object name 'from'. from: AppServiceCertificateOrders.json",
+  "package-2016-08-only": "fatal: invalid object name 'from'. from: AppServiceCertificateOrders.json",
+  "package-2016-03-only": "2022-12-08 21:38:55 -0800 65106a17de1db38e076ea6f14c0b60305bd27ace Microsoft.Web/stable/2016-03-01/CommonDefinitions.json",
+  "package-2015-08-only": "fatal: invalid object name 'from'. from: AppServiceCertificateOrders.json",
+  "package-2015-04-only": "2021-03-07 21:09:45 -0500 19aa203acad715399745b9e2f125889b14934e84 Microsoft.DomainRegistration/stable/2015-04-01/Domains.json"
 }
