@@ -29,5 +29,5 @@ V1_COMPONENT_TO_NODE = {
     V1NodeType.STARLITE: Starlite,
     V1NodeType.HEMERA: Hemera,
     V1NodeType.AE365EXEPOOL: Ae365exepool,
-    V1NodeType.AETHERGRIDEGE: AetherBridge,
+    V1NodeType.AETHER_BRIDGE: AetherBridge,
 }

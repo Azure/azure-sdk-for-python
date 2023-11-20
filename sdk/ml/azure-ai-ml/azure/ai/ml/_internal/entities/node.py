@@ -334,4 +334,4 @@ class Sweep(InternalBaseNode):
 class AetherBridge(InternalBaseNode):
     def __init__(self, **kwargs):
         kwargs.pop("type", None)
-        super(AetherBridge, self).__init__(type=NodeType.AETHERGRIDEGE, **kwargs)
+        super(AetherBridge, self).__init__(type=NodeType.AETHER_BRIDGE, **kwargs)
