@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -18,7 +18,8 @@ if TYPE_CHECKING:
 
 
 class ApplicationDeltaHealthPolicy(_serialization.Model):
-    """Defines a delta health policy used to evaluate the health of an application or one of its child entities when upgrading the cluster.
+    """Defines a delta health policy used to evaluate the health of an application or one of its child
+    entities when upgrading the cluster.
 
     :ivar default_service_type_delta_health_policy: The delta health policy used by default to
      evaluate the health of a service type when upgrading the cluster.
@@ -46,8 +47,8 @@ class ApplicationDeltaHealthPolicy(_serialization.Model):
         *,
         default_service_type_delta_health_policy: Optional["_models.ServiceTypeDeltaHealthPolicy"] = None,
         service_type_delta_health_policies: Optional[Dict[str, "_models.ServiceTypeDeltaHealthPolicy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_service_type_delta_health_policy: The delta health policy used by default to
          evaluate the health of a service type when upgrading the cluster.
@@ -64,7 +65,8 @@ class ApplicationDeltaHealthPolicy(_serialization.Model):
 
 
 class ApplicationHealthPolicy(_serialization.Model):
-    """Defines a health policy used to evaluate the health of an application or one of its children entities.
+    """Defines a health policy used to evaluate the health of an application or one of its children
+    entities.
 
     :ivar default_service_type_health_policy: The health policy used by default to evaluate the
      health of a service type.
@@ -89,8 +91,8 @@ class ApplicationHealthPolicy(_serialization.Model):
         *,
         default_service_type_health_policy: Optional["_models.ServiceTypeHealthPolicy"] = None,
         service_type_health_policies: Optional[Dict[str, "_models.ServiceTypeHealthPolicy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_service_type_health_policy: The health policy used by default to evaluate the
          health of a service type.
@@ -107,7 +109,8 @@ class ApplicationHealthPolicy(_serialization.Model):
 
 
 class ApplicationMetricDescription(_serialization.Model):
-    """Describes capacity information for a custom resource balancing metric. This can be used to limit the total consumption of this metric by the services of this application.
+    """Describes capacity information for a custom resource balancing metric. This can be used to
+    limit the total consumption of this metric by the services of this application.
 
     :ivar name: The name of the metric.
     :vartype name: str
@@ -152,8 +155,8 @@ class ApplicationMetricDescription(_serialization.Model):
         maximum_capacity: Optional[int] = None,
         reservation_capacity: Optional[int] = None,
         total_application_capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the metric.
         :paramtype name: str
@@ -230,7 +233,7 @@ class ProxyResource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: It will be deprecated in New API, resource location depends on the parent
          resource.
@@ -349,8 +352,8 @@ class ApplicationResource(ProxyResource):  # pylint: disable=too-many-instance-a
         metrics: Optional[List["_models.ApplicationMetricDescription"]] = None,
         managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
         type_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: It will be deprecated in New API, resource location depends on the parent
          resource.
@@ -422,7 +425,7 @@ class ApplicationResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ApplicationResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ApplicationResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabric.models.ApplicationResource]
@@ -489,8 +492,8 @@ class ApplicationResourceUpdateProperties(_serialization.Model):
         remove_application_capacity: Optional[bool] = None,
         metrics: Optional[List["_models.ApplicationMetricDescription"]] = None,
         managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_version: The version of the application type as defined in the application
          manifest.
@@ -598,8 +601,8 @@ class ApplicationResourceProperties(ApplicationResourceUpdateProperties):
         metrics: Optional[List["_models.ApplicationMetricDescription"]] = None,
         managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
         type_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type_version: The version of the application type as defined in the application
          manifest.
@@ -733,8 +736,8 @@ class ApplicationResourceUpdate(ProxyResource):  # pylint: disable=too-many-inst
         remove_application_capacity: Optional[bool] = None,
         metrics: Optional[List["_models.ApplicationMetricDescription"]] = None,
         managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: It will be deprecated in New API, resource location depends on the parent
          resource.
@@ -824,7 +827,7 @@ class ApplicationTypeResource(ProxyResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: It will be deprecated in New API, resource location depends on the parent
          resource.
@@ -856,7 +859,7 @@ class ApplicationTypeResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ApplicationTypeResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ApplicationTypeResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabric.models.ApplicationTypeResource]
@@ -925,8 +928,8 @@ class ApplicationTypeVersionResource(ProxyResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         app_package_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: It will be deprecated in New API, resource location depends on the parent
          resource.
@@ -943,7 +946,8 @@ class ApplicationTypeVersionResource(ProxyResource):
 
 
 class ApplicationTypeVersionResourceList(_serialization.Model):
-    """The list of application type version resources for the specified application type name resource.
+    """The list of application type version resources for the specified application type name
+    resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -963,7 +967,9 @@ class ApplicationTypeVersionResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ApplicationTypeVersionResource"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.ApplicationTypeVersionResource"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource]
@@ -991,7 +997,7 @@ class ApplicationTypeVersionsCleanupPolicy(_serialization.Model):
         "max_unused_versions_to_keep": {"key": "maxUnusedVersionsToKeep", "type": "int"},
     }
 
-    def __init__(self, *, max_unused_versions_to_keep: int, **kwargs):
+    def __init__(self, *, max_unused_versions_to_keep: int, **kwargs: Any) -> None:
         """
         :keyword max_unused_versions_to_keep: Number of unused versions per application type to keep.
          Required.
@@ -1051,8 +1057,8 @@ class ApplicationUpgradePolicy(_serialization.Model):
         application_health_policy: Optional["_models.ArmApplicationHealthPolicy"] = None,
         upgrade_mode: Union[str, "_models.RollingUpgradeMode"] = "Monitored",
         recreate_application: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword upgrade_replica_set_check_timeout: The maximum amount of time to block processing of
          an upgrade domain and prevent loss of availability when there are unexpected issues. When this
@@ -1110,7 +1116,7 @@ class ApplicationUserAssignedIdentity(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, *, name: str, principal_id: str, **kwargs):
+    def __init__(self, *, name: str, principal_id: str, **kwargs: Any) -> None:
         """
         :keyword name: The friendly name of user assigned identity. Required.
         :paramtype name: str
@@ -1123,7 +1129,8 @@ class ApplicationUserAssignedIdentity(_serialization.Model):
 
 
 class ArmApplicationHealthPolicy(_serialization.Model):
-    """Defines a health policy used to evaluate the health of an application or one of its children entities.
+    """Defines a health policy used to evaluate the health of an application or one of its children
+    entities.
 
     :ivar consider_warning_as_error: Indicates whether warnings are treated with the same severity
      as errors.
@@ -1167,8 +1174,8 @@ class ArmApplicationHealthPolicy(_serialization.Model):
         max_percent_unhealthy_deployed_applications: int = 0,
         default_service_type_health_policy: Optional["_models.ArmServiceTypeHealthPolicy"] = None,
         service_type_health_policy_map: Optional[Dict[str, "_models.ArmServiceTypeHealthPolicy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword consider_warning_as_error: Indicates whether warnings are treated with the same
          severity as errors.
@@ -1249,8 +1256,8 @@ class ArmRollingUpgradeMonitoringPolicy(_serialization.Model):
         health_check_retry_timeout: str = "PT0H10M0S",
         upgrade_timeout: str = "P10675199DT02H48M05.4775807S",
         upgrade_domain_timeout: str = "P10675199DT02H48M05.4775807S",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failure_action: The activation Mode of the service package. Known values are:
          "Rollback" and "Manual".
@@ -1291,7 +1298,8 @@ class ArmRollingUpgradeMonitoringPolicy(_serialization.Model):
 
 
 class ArmServiceTypeHealthPolicy(_serialization.Model):
-    """Represents the health policy used to evaluate the health of services belonging to a service type.
+    """Represents the health policy used to evaluate the health of services belonging to a service
+    type.
 
     :ivar max_percent_unhealthy_services: The maximum percentage of services allowed to be
      unhealthy before your application is considered in error.
@@ -1328,8 +1336,8 @@ class ArmServiceTypeHealthPolicy(_serialization.Model):
         max_percent_unhealthy_services: int = 0,
         max_percent_unhealthy_partitions_per_service: int = 0,
         max_percent_unhealthy_replicas_per_partition: int = 0,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword max_percent_unhealthy_services: The maximum percentage of services allowed to be
          unhealthy before your application is considered in error.
@@ -1374,8 +1382,8 @@ class AvailableOperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The name of the provider.
         :paramtype provider: str
@@ -1416,8 +1424,8 @@ class AzureActiveDirectory(_serialization.Model):
         tenant_id: Optional[str] = None,
         cluster_application: Optional[str] = None,
         client_application: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tenant_id: Azure active directory tenant id.
         :paramtype tenant_id: str
@@ -1463,8 +1471,8 @@ class CertificateDescription(_serialization.Model):
         thumbprint: str,
         thumbprint_secondary: Optional[str] = None,
         x509_store_name: Optional[Union[str, "_models.StoreName"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword thumbprint: Thumbprint of the primary certificate. Required.
         :paramtype thumbprint: str
@@ -1507,7 +1515,9 @@ class ClientCertificateCommonName(_serialization.Model):
         "certificate_issuer_thumbprint": {"key": "certificateIssuerThumbprint", "type": "str"},
     }
 
-    def __init__(self, *, is_admin: bool, certificate_common_name: str, certificate_issuer_thumbprint: str, **kwargs):
+    def __init__(
+        self, *, is_admin: bool, certificate_common_name: str, certificate_issuer_thumbprint: str, **kwargs: Any
+    ) -> None:
         """
         :keyword is_admin: Indicates if the client certificate has admin access to the cluster. Non
          admin clients can perform only read only operations on the cluster. Required.
@@ -1546,7 +1556,7 @@ class ClientCertificateThumbprint(_serialization.Model):
         "certificate_thumbprint": {"key": "certificateThumbprint", "type": "str"},
     }
 
-    def __init__(self, *, is_admin: bool, certificate_thumbprint: str, **kwargs):
+    def __init__(self, *, is_admin: bool, certificate_thumbprint: str, **kwargs: Any) -> None:
         """
         :keyword is_admin: Indicates if the client certificate has admin access to the cluster. Non
          admin clients can perform only read only operations on the cluster. Required.
@@ -1601,7 +1611,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Azure resource location. Required.
         :paramtype location: str
@@ -1665,8 +1675,9 @@ class Cluster(Resource):  # pylint: disable=too-many-instance-attributes
      list[~azure.mgmt.servicefabric.models.ClientCertificateThumbprint]
     :ivar cluster_code_version: The Service Fabric runtime version of the cluster. This property
      can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
-     Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
-     get the list of available version for existing clusters use **availableClusterVersions**.
+     Service Fabric versions for new clusters use `ClusterVersion API
+     <https://learn.microsoft.com/rest/api/servicefabric/cluster-versions/list>`_. To get the list
+     of available version for existing clusters use **availableClusterVersions**.
     :vartype cluster_code_version: str
     :ivar cluster_endpoint: The Azure Resource Provider endpoint. A system service in the cluster
      connects to this  endpoint.
@@ -1878,8 +1889,8 @@ class Cluster(Resource):  # pylint: disable=too-many-instance-attributes
         upgrade_pause_end_timestamp_utc: Optional[datetime.datetime] = None,
         wave_upgrade_paused: Optional[bool] = None,
         notifications: Optional[List["_models.Notification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Azure resource location. Required.
         :paramtype location: str
@@ -1907,8 +1918,9 @@ class Cluster(Resource):  # pylint: disable=too-many-instance-attributes
          list[~azure.mgmt.servicefabric.models.ClientCertificateThumbprint]
         :keyword cluster_code_version: The Service Fabric runtime version of the cluster. This property
          can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
-         Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
-         get the list of available version for existing clusters use **availableClusterVersions**.
+         Service Fabric versions for new clusters use `ClusterVersion API
+         <https://learn.microsoft.com/rest/api/servicefabric/cluster-versions/list>`_. To get the list
+         of available version for existing clusters use **availableClusterVersions**.
         :paramtype cluster_code_version: str
         :keyword diagnostics_storage_account_config: The storage account information for storing
          Service Fabric diagnostic logs.
@@ -2036,8 +2048,8 @@ class ClusterCodeVersionsListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ClusterCodeVersionsResult"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabric.models.ClusterCodeVersionsResult]
@@ -2085,8 +2097,8 @@ class ClusterCodeVersionsResult(_serialization.Model):
         code_version: Optional[str] = None,
         support_expiry_utc: Optional[str] = None,
         environment: Optional[Union[str, "_models.ClusterEnvironment"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The identification of the result.
         :paramtype id: str
@@ -2166,8 +2178,8 @@ class ClusterHealthPolicy(_serialization.Model):
         max_percent_unhealthy_nodes: int = 0,
         max_percent_unhealthy_applications: int = 0,
         application_health_policies: Optional[Dict[str, "_models.ApplicationHealthPolicy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword max_percent_unhealthy_nodes: The maximum allowed percentage of unhealthy nodes before
          reporting an error. For example, to allow 10% of nodes to be unhealthy, this value would be 10.
@@ -2223,7 +2235,9 @@ class ClusterListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Cluster"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabric.models.Cluster]
@@ -2260,8 +2274,9 @@ class ClusterUpdateParameters(_serialization.Model):  # pylint: disable=too-many
      list[~azure.mgmt.servicefabric.models.ClientCertificateThumbprint]
     :ivar cluster_code_version: The Service Fabric runtime version of the cluster. This property
      can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
-     Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
-     get the list of available version for existing clusters use **availableClusterVersions**.
+     Service Fabric versions for new clusters use `ClusterVersion API
+     <https://learn.microsoft.com/rest/api/servicefabric/cluster-versions/list>`_. To get the list
+     of available version for existing clusters use **availableClusterVersions**.
     :vartype cluster_code_version: str
     :ivar event_store_service_enabled: Indicates if the event store service is enabled.
     :vartype event_store_service_enabled: bool
@@ -2384,8 +2399,8 @@ class ClusterUpdateParameters(_serialization.Model):  # pylint: disable=too-many
         upgrade_pause_end_timestamp_utc: Optional[datetime.datetime] = None,
         wave_upgrade_paused: Optional[bool] = None,
         notifications: Optional[List["_models.Notification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Cluster update parameters.
         :paramtype tags: dict[str, str]
@@ -2409,8 +2424,9 @@ class ClusterUpdateParameters(_serialization.Model):  # pylint: disable=too-many
          list[~azure.mgmt.servicefabric.models.ClientCertificateThumbprint]
         :keyword cluster_code_version: The Service Fabric runtime version of the cluster. This property
          can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
-         Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
-         get the list of available version for existing clusters use **availableClusterVersions**.
+         Service Fabric versions for new clusters use `ClusterVersion API
+         <https://learn.microsoft.com/rest/api/servicefabric/cluster-versions/list>`_. To get the list
+         of available version for existing clusters use **availableClusterVersions**.
         :paramtype cluster_code_version: str
         :keyword event_store_service_enabled: Indicates if the event store service is enabled.
         :paramtype event_store_service_enabled: bool
@@ -2558,8 +2574,8 @@ class ClusterUpgradeDeltaHealthPolicy(_serialization.Model):
         max_percent_upgrade_domain_delta_unhealthy_nodes: int,
         max_percent_delta_unhealthy_applications: int,
         application_delta_health_policies: Optional[Dict[str, "_models.ApplicationDeltaHealthPolicy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword max_percent_delta_unhealthy_nodes: The maximum allowed percentage of nodes health
          degradation allowed during cluster upgrades.
@@ -2668,8 +2684,8 @@ class ClusterUpgradePolicy(_serialization.Model):
         health_policy: "_models.ClusterHealthPolicy",
         force_restart: Optional[bool] = None,
         delta_health_policy: Optional["_models.ClusterUpgradeDeltaHealthPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword force_restart: If true, then processes are forcefully restarted during upgrade even
          when the code version has not changed (the upgrade only changes configuration or data).
@@ -2741,8 +2757,8 @@ class ClusterVersionDetails(_serialization.Model):
         code_version: Optional[str] = None,
         support_expiry_utc: Optional[str] = None,
         environment: Optional[Union[str, "_models.ClusterEnvironment"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code_version: The Service Fabric runtime version of the cluster.
         :paramtype code_version: str
@@ -2804,8 +2820,8 @@ class DiagnosticsStorageAccountConfig(_serialization.Model):
         queue_endpoint: str,
         table_endpoint: str,
         protected_account_key_name2: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_name: The Azure storage account name. Required.
         :paramtype storage_account_name: str
@@ -2851,7 +2867,7 @@ class EndpointRangeDescription(_serialization.Model):
         "end_port": {"key": "endPort", "type": "int"},
     }
 
-    def __init__(self, *, start_port: int, end_port: int, **kwargs):
+    def __init__(self, *, start_port: int, end_port: int, **kwargs: Any) -> None:
         """
         :keyword start_port: Starting port of a range of ports. Required.
         :paramtype start_port: int
@@ -2874,7 +2890,7 @@ class ErrorModel(_serialization.Model):
         "error": {"key": "error", "type": "ErrorModelError"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorModelError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorModelError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details.
         :paramtype error: ~azure.mgmt.servicefabric.models.ErrorModelError
@@ -2897,7 +2913,7 @@ class ErrorModelError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -2947,8 +2963,8 @@ class ManagedIdentity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of managed identity for the resource. Known values are:
          "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and "None".
@@ -2996,10 +3012,10 @@ class PartitionSchemeDescription(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.partition_scheme = None  # type: Optional[str]
+        self.partition_scheme: Optional[str] = None
 
 
 class NamedPartitionSchemeDescription(PartitionSchemeDescription):
@@ -3029,7 +3045,7 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
         "names": {"key": "names", "type": "[str]"},
     }
 
-    def __init__(self, *, count: int, names: List[str], **kwargs):
+    def __init__(self, *, count: int, names: List[str], **kwargs: Any) -> None:
         """
         :keyword count: The number of partitions. Required.
         :paramtype count: int
@@ -3038,13 +3054,14 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
         :paramtype names: list[str]
         """
         super().__init__(**kwargs)
-        self.partition_scheme = "Named"  # type: str
+        self.partition_scheme: str = "Named"
         self.count = count
         self.names = names
 
 
 class NodeTypeDescription(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """Describes a node type in the cluster, each node type represents sub set of nodes in the cluster.
+    """Describes a node type in the cluster, each node type represents sub set of nodes in the
+    cluster.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3135,8 +3152,8 @@ class NodeTypeDescription(_serialization.Model):  # pylint: disable=too-many-ins
         reverse_proxy_endpoint_port: Optional[int] = None,
         is_stateless: Optional[bool] = None,
         multiple_availability_zones: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the node type. Required.
         :paramtype name: str
@@ -3237,8 +3254,8 @@ class Notification(_serialization.Model):
         notification_category: Union[str, "_models.NotificationCategory"],
         notification_level: Union[str, "_models.NotificationLevel"],
         notification_targets: List["_models.NotificationTarget"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Indicates if the notification is enabled. Required.
         :paramtype is_enabled: bool
@@ -3281,8 +3298,8 @@ class NotificationTarget(_serialization.Model):
     }
 
     def __init__(
-        self, *, notification_channel: Union[str, "_models.NotificationChannel"], receivers: List[str], **kwargs
-    ):
+        self, *, notification_channel: Union[str, "_models.NotificationChannel"], receivers: List[str], **kwargs: Any
+    ) -> None:
         """
         :keyword notification_channel: The notification channel indicates the type of receivers
          subscribed to the notification, either user or subscription. Required. Known values are:
@@ -3316,7 +3333,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.OperationResult"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.OperationResult"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of operations supported by the Service Fabric resource provider.
         :paramtype value: list[~azure.mgmt.servicefabric.models.OperationResult]
@@ -3357,8 +3374,8 @@ class OperationResult(_serialization.Model):
         display: Optional["_models.AvailableOperationDisplay"] = None,
         origin: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the operation.
         :paramtype name: str
@@ -3400,7 +3417,7 @@ class ServerCertificateCommonName(_serialization.Model):
         "certificate_issuer_thumbprint": {"key": "certificateIssuerThumbprint", "type": "str"},
     }
 
-    def __init__(self, *, certificate_common_name: str, certificate_issuer_thumbprint: str, **kwargs):
+    def __init__(self, *, certificate_common_name: str, certificate_issuer_thumbprint: str, **kwargs: Any) -> None:
         """
         :keyword certificate_common_name: The common name of the server certificate. Required.
         :paramtype certificate_common_name: str
@@ -3414,7 +3431,8 @@ class ServerCertificateCommonName(_serialization.Model):
 
 
 class ServerCertificateCommonNames(_serialization.Model):
-    """Describes a list of server certificates referenced by common name that are used to secure the cluster.
+    """Describes a list of server certificates referenced by common name that are used to secure the
+    cluster.
 
     :ivar common_names: The list of server certificates referenced by common name that are used to
      secure the cluster.
@@ -3435,8 +3453,8 @@ class ServerCertificateCommonNames(_serialization.Model):
         *,
         common_names: Optional[List["_models.ServerCertificateCommonName"]] = None,
         x509_store_name: Optional[Union[str, "_models.StoreName"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword common_names: The list of server certificates referenced by common name that are used
          to secure the cluster.
@@ -3475,7 +3493,9 @@ class ServiceCorrelationDescription(_serialization.Model):
         "service_name": {"key": "serviceName", "type": "str"},
     }
 
-    def __init__(self, *, scheme: Union[str, "_models.ServiceCorrelationScheme"], service_name: str, **kwargs):
+    def __init__(
+        self, *, scheme: Union[str, "_models.ServiceCorrelationScheme"], service_name: str, **kwargs: Any
+    ) -> None:
         """
         :keyword scheme: The ServiceCorrelationScheme which describes the relationship between this
          service and the service specified via ServiceName. Required. Known values are: "Invalid",
@@ -3533,8 +3553,8 @@ class ServiceLoadMetricDescription(_serialization.Model):
         primary_default_load: Optional[int] = None,
         secondary_default_load: Optional[int] = None,
         default_load: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the metric. If the service chooses to report load during runtime,
          the load metric name should match the name that is specified in Name exactly. Note that metric
@@ -3580,10 +3600,10 @@ class ServicePlacementPolicyDescription(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class ServiceResource(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -3692,8 +3712,8 @@ class ServiceResource(ProxyResource):  # pylint: disable=too-many-instance-attri
         partition_description: Optional["_models.PartitionSchemeDescription"] = None,
         service_package_activation_mode: Optional[Union[str, "_models.ArmServicePackageActivationMode"]] = None,
         service_dns_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: It will be deprecated in New API, resource location depends on the parent
          resource.
@@ -3739,7 +3759,7 @@ class ServiceResource(ProxyResource):  # pylint: disable=too-many-instance-attri
         self.service_placement_policies = service_placement_policies
         self.default_move_cost = default_move_cost
         self.provisioning_state = None
-        self.service_kind = None  # type: Optional[str]
+        self.service_kind: Optional[str] = None
         self.service_type_name = service_type_name
         self.partition_description = partition_description
         self.service_package_activation_mode = service_package_activation_mode
@@ -3766,7 +3786,7 @@ class ServiceResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ServiceResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ServiceResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.servicefabric.models.ServiceResource]
@@ -3820,8 +3840,8 @@ class ServiceResourcePropertiesBase(_serialization.Model):
         service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
         service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -3939,8 +3959,8 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
         partition_description: Optional["_models.PartitionSchemeDescription"] = None,
         service_package_activation_mode: Optional[Union[str, "_models.ArmServicePackageActivationMode"]] = None,
         service_dns_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -3983,7 +4003,7 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disab
             **kwargs
         )
         self.provisioning_state = None
-        self.service_kind = None  # type: Optional[str]
+        self.service_kind: Optional[str] = None
         self.service_type_name = service_type_name
         self.partition_description = partition_description
         self.service_package_activation_mode = service_package_activation_mode
@@ -4072,8 +4092,8 @@ class ServiceResourceUpdate(ProxyResource):  # pylint: disable=too-many-instance
         service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
         service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: It will be deprecated in New API, resource location depends on the parent
          resource.
@@ -4107,7 +4127,7 @@ class ServiceResourceUpdate(ProxyResource):  # pylint: disable=too-many-instance
         self.service_load_metrics = service_load_metrics
         self.service_placement_policies = service_placement_policies
         self.default_move_cost = default_move_cost
-        self.service_kind = None  # type: Optional[str]
+        self.service_kind: Optional[str] = None
 
 
 class ServiceResourceUpdateProperties(ServiceResourcePropertiesBase):
@@ -4171,8 +4191,8 @@ class ServiceResourceUpdateProperties(ServiceResourcePropertiesBase):
         service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
         service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -4203,11 +4223,12 @@ class ServiceResourceUpdateProperties(ServiceResourcePropertiesBase):
             default_move_cost=default_move_cost,
             **kwargs
         )
-        self.service_kind = None  # type: Optional[str]
+        self.service_kind: Optional[str] = None
 
 
 class ServiceTypeDeltaHealthPolicy(_serialization.Model):
-    """Represents the delta health policy used to evaluate the health of services belonging to a service type when upgrading the cluster.
+    """Represents the delta health policy used to evaluate the health of services belonging to a
+    service type when upgrading the cluster.
 
     :ivar max_percent_delta_unhealthy_services: The maximum allowed percentage of services health
      degradation allowed during cluster upgrades.
@@ -4226,7 +4247,7 @@ class ServiceTypeDeltaHealthPolicy(_serialization.Model):
         "max_percent_delta_unhealthy_services": {"key": "maxPercentDeltaUnhealthyServices", "type": "int"},
     }
 
-    def __init__(self, *, max_percent_delta_unhealthy_services: int = 0, **kwargs):
+    def __init__(self, *, max_percent_delta_unhealthy_services: int = 0, **kwargs: Any) -> None:
         """
         :keyword max_percent_delta_unhealthy_services: The maximum allowed percentage of services
          health degradation allowed during cluster upgrades.
@@ -4241,7 +4262,8 @@ class ServiceTypeDeltaHealthPolicy(_serialization.Model):
 
 
 class ServiceTypeHealthPolicy(_serialization.Model):
-    """Represents the health policy used to evaluate the health of services belonging to a service type.
+    """Represents the health policy used to evaluate the health of services belonging to a service
+    type.
 
     :ivar max_percent_unhealthy_services: The maximum percentage of services allowed to be
      unhealthy before your application is considered in error.
@@ -4256,7 +4278,7 @@ class ServiceTypeHealthPolicy(_serialization.Model):
         "max_percent_unhealthy_services": {"key": "maxPercentUnhealthyServices", "type": "int"},
     }
 
-    def __init__(self, *, max_percent_unhealthy_services: int = 0, **kwargs):
+    def __init__(self, *, max_percent_unhealthy_services: int = 0, **kwargs: Any) -> None:
         """
         :keyword max_percent_unhealthy_services: The maximum percentage of services allowed to be
          unhealthy before your application is considered in error.
@@ -4287,7 +4309,7 @@ class SettingsParameterDescription(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: str, **kwargs):
+    def __init__(self, *, name: str, value: str, **kwargs: Any) -> None:
         """
         :keyword name: The parameter name of fabric setting. Required.
         :paramtype name: str
@@ -4320,7 +4342,7 @@ class SettingsSectionDescription(_serialization.Model):
         "parameters": {"key": "parameters", "type": "[SettingsParameterDescription]"},
     }
 
-    def __init__(self, *, name: str, parameters: List["_models.SettingsParameterDescription"], **kwargs):
+    def __init__(self, *, name: str, parameters: List["_models.SettingsParameterDescription"], **kwargs: Any) -> None:
         """
         :keyword name: The section name of the fabric settings. Required.
         :paramtype name: str
@@ -4350,10 +4372,10 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
         "partition_scheme": {"key": "partitionScheme", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.partition_scheme = "Singleton"  # type: str
+        self.partition_scheme: str = "Singleton"
 
 
 class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=too-many-instance-attributes
@@ -4466,8 +4488,8 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
         replica_restart_wait_duration: Optional[datetime.datetime] = None,
         quorum_loss_wait_duration: Optional[datetime.datetime] = None,
         stand_by_replica_keep_duration: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -4530,7 +4552,7 @@ class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=t
             service_dns_name=service_dns_name,
             **kwargs
         )
-        self.service_kind = "Stateful"  # type: str
+        self.service_kind: str = "Stateful"
         self.has_persisted_state = has_persisted_state
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
@@ -4618,8 +4640,8 @@ class StatefulServiceUpdateProperties(ServiceResourceUpdateProperties):  # pylin
         replica_restart_wait_duration: Optional[datetime.datetime] = None,
         quorum_loss_wait_duration: Optional[datetime.datetime] = None,
         stand_by_replica_keep_duration: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -4663,7 +4685,7 @@ class StatefulServiceUpdateProperties(ServiceResourceUpdateProperties):  # pylin
             default_move_cost=default_move_cost,
             **kwargs
         )
-        self.service_kind = "Stateful"  # type: str
+        self.service_kind: str = "Stateful"
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
         self.replica_restart_wait_duration = replica_restart_wait_duration
@@ -4765,8 +4787,8 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
         service_dns_name: Optional[str] = None,
         instance_count: Optional[int] = None,
         instance_close_delay_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -4821,7 +4843,7 @@ class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=
             service_dns_name=service_dns_name,
             **kwargs
         )
-        self.service_kind = "Stateless"  # type: str
+        self.service_kind: str = "Stateless"
         self.instance_count = instance_count
         self.instance_close_delay_duration = instance_close_delay_duration
 
@@ -4895,8 +4917,8 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
         default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         instance_count: Optional[int] = None,
         instance_close_delay_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword placement_constraints: The placement constraints as a string. Placement constraints
          are boolean expressions on node properties and allow for restricting a service to particular
@@ -4937,7 +4959,7 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
             default_move_cost=default_move_cost,
             **kwargs
         )
-        self.service_kind = "Stateless"  # type: str
+        self.service_kind: str = "Stateless"
         self.instance_count = instance_count
         self.instance_close_delay_duration = instance_close_delay_duration
 
@@ -4977,8 +4999,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[str] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -5003,7 +5025,8 @@ class SystemData(_serialization.Model):
 
 
 class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
-    """Describes a partitioning scheme where an integer range is allocated evenly across a number of partitions.
+    """Describes a partitioning scheme where an integer range is allocated evenly across a number of
+    partitions.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5034,7 +5057,7 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
         "high_key": {"key": "highKey", "type": "str"},
     }
 
-    def __init__(self, *, count: int, low_key: str, high_key: str, **kwargs):
+    def __init__(self, *, count: int, low_key: str, high_key: str, **kwargs: Any) -> None:
         """
         :keyword count: The number of partitions. Required.
         :paramtype count: int
@@ -5046,14 +5069,15 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
         :paramtype high_key: str
         """
         super().__init__(**kwargs)
-        self.partition_scheme = "UniformInt64Range"  # type: str
+        self.partition_scheme: str = "UniformInt64Range"
         self.count = count
         self.low_key = low_key
         self.high_key = high_key
 
 
 class UpgradableVersionPathResult(_serialization.Model):
-    """The list of intermediate cluster code versions for an upgrade or downgrade. Or minimum and maximum upgradable version if no target was given.
+    """The list of intermediate cluster code versions for an upgrade or downgrade. Or minimum and
+    maximum upgradable version if no target was given.
 
     :ivar supported_path:
     :vartype supported_path: list[str]
@@ -5063,7 +5087,7 @@ class UpgradableVersionPathResult(_serialization.Model):
         "supported_path": {"key": "supportedPath", "type": "[str]"},
     }
 
-    def __init__(self, *, supported_path: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, supported_path: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword supported_path:
         :paramtype supported_path: list[str]
@@ -5089,7 +5113,7 @@ class UpgradableVersionsDescription(_serialization.Model):
         "target_version": {"key": "targetVersion", "type": "str"},
     }
 
-    def __init__(self, *, target_version: str, **kwargs):
+    def __init__(self, *, target_version: str, **kwargs: Any) -> None:
         """
         :keyword target_version: The target code version. Required.
         :paramtype target_version: str
@@ -5119,7 +5143,7 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
