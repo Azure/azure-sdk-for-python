@@ -58,13 +58,13 @@ class _PipelineNodeFactory:
         )
         self.register_type(
             _type=NodeType.PARALLEL,
-            create_instance_func=lambda: Parallel.__new__(Parallel),  # type: ignore
+            create_instance_func=lambda: Parallel.__new__(Parallel),
             load_from_rest_object_func=Parallel._from_rest_object,
             nested_schema=None,
         )
         self.register_type(
             _type=NodeType.PIPELINE,
-            create_instance_func=lambda: Pipeline.__new__(Pipeline),  # type: ignore
+            create_instance_func=lambda: Pipeline.__new__(Pipeline),
             load_from_rest_object_func=Pipeline._from_rest_object,
             nested_schema=None,
         )
@@ -124,7 +124,7 @@ class _PipelineNodeFactory:
         )
         self.register_type(
             _type=NodeType.FLOW_PARALLEL,
-            create_instance_func=lambda: Parallel.__new__(Parallel),  # type: ignore
+            create_instance_func=lambda: Parallel.__new__(Parallel),
             load_from_rest_object_func=None,
             nested_schema=None,
         )

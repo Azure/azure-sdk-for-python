@@ -184,7 +184,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         component = self._to_component(context, **kwargs)
 
         # pylint: disable=abstract-class-instantiated
-        return Parallel(  # type: ignore
+        return Parallel(
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.
