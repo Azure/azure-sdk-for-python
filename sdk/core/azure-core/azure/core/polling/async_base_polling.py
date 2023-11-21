@@ -23,7 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, cast, Union
+from typing import TypeVar, cast, Union, Dict, Any
+import urllib.parse
 from ..exceptions import HttpResponseError
 from .base_polling import (
     _failed,
@@ -43,6 +44,7 @@ from ..pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
 from ..rest import HttpRequest, AsyncHttpResponse
+from ..utils import case_insensitive_dict
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
 AsyncHttpResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
@@ -152,12 +154,26 @@ class AsyncLROBasePolling(
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
+        request_params: Dict[str, Any] = {}
+        if self._lro_options and "api_version" in self._lro_options:
+            parsed_status_link = urllib.parse.urlparse(status_link)
+            request_params = cast(
+                Dict[str, Any],
+                case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(parsed_status_link.query).items()
+                    }
+                ),
+            )
+            request_params["api-version"] = self._lro_options["api_version"]
+            status_link = urllib.parse.urljoin(status_link, parsed_status_link.path)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
 
         if is_rest(self._initial_response.http_response):
-            rest_request = cast(HttpRequestTypeVar, HttpRequest("GET", status_link))
+            rest_request = cast(HttpRequestTypeVar, HttpRequest("GET", status_link, params=request_params))
             # Need a cast, as "_return_pipeline_response" mutate the return type, and that return type is not
             # declared in the typing of "send_request"
             return cast(
@@ -168,7 +184,7 @@ class AsyncLROBasePolling(
         # Legacy HttpRequest and AsyncHttpResponse from azure.core.pipeline.transport
         # casting things here, as we don't want the typing system to know
         # about the legacy APIs.
-        request = cast(HttpRequestTypeVar, self._client.get(status_link))
+        request = cast(HttpRequestTypeVar, self._client.get(status_link, params=request_params))
         return cast(
             PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar],
             await self._client._pipeline.run(  # pylint: disable=protected-access
