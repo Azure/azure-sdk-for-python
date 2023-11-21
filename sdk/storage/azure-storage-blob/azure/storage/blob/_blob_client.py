@@ -51,7 +51,7 @@ from ._blob_client_helpers import (
     _seal_append_blob_options,
     _from_blob_url
 )
-from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, TransportWrapper
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated import AzureBlobStorage
 from ._generated.models import CpkInfo
@@ -697,7 +697,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function,
-            version_id=self.version_id,
+            version_id=get_version_id(self.version_id, kwargs),
             scheme=self.scheme,
             sdk_moniker=self._sdk_moniker,
             encryption_version=self.encryption_version,
@@ -883,7 +883,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         options = _delete_blob_options(
             snapshot=self.snapshot,
-            version_id=self.version_id,
+            version_id=get_version_id(self.version_id, kwargs),
             delete_snapshots=delete_snapshots,
             **kwargs)
         try:
@@ -2229,7 +2229,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = _set_blob_tags_options(version_id=self.version_id, tags=tags, **kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
+        options = _set_blob_tags_options(version_id=version_id, tags=tags, **kwargs)
         try:
             return self._client.blob.set_tags(**options)
         except HttpResponseError as error:
@@ -2262,7 +2263,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
-        options = _get_blob_tags_options(version_id=self.version_id, snapshot=self.snapshot, **kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
+        options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = self._client.blob.get_tags(**options)
             return parse_tags(tags) # pylint: disable=protected-access

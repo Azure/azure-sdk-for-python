@@ -276,7 +276,6 @@ def _download_blob_options(
     validate_content = kwargs.pop('validate_content', False)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
-    version_id = get_version_id(version_id, kwargs)
 
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
@@ -409,7 +408,6 @@ def _delete_blob_options(
     # type: (str, **Any) -> Dict[str, Any]
     if snapshot and delete_snapshots:
         raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
-    version_id = get_version_id(version_id, kwargs)
     options = _generic_delete_blob_options(delete_snapshots, **kwargs)
     options['snapshot'] = snapshot
     options['version_id'] = version_id
@@ -888,7 +886,6 @@ def _set_blob_tags_options(version_id, tags=None, **kwargs):
     tags = serialize_blob_tags(tags)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
-    version_id = get_version_id(version_id, kwargs)
 
     options = {
         'tags': tags,
@@ -903,7 +900,6 @@ def _get_blob_tags_options(version_id, snapshot, **kwargs):
     # type: (**Any) -> Dict[str, str]
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
-    version_id = get_version_id(version_id, kwargs)
 
     options = {
         'version_id': version_id,

@@ -51,6 +51,7 @@ from .._blob_client_helpers import (
     _seal_append_blob_options,
     _from_blob_url
 )
+from .._shared.base_client import parse_connection_str
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
@@ -229,6 +230,61 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
             snapshot=path_snapshot, credential=credential, **kwargs
+        )
+    
+    @classmethod
+    def from_connection_string(
+            cls, conn_str: str,
+            container_name: str,
+            blob_name: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
+        """Create BlobClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param container_name: The container name for the blob.
+        :type container_name: str
+        :param blob_name: The name of the blob with which to interact.
+        :type blob_name: str
+        :param str snapshot:
+            The optional blob snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]]  # pylint: disable=line-too-long
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :returns: A Blob client.
+        :rtype: ~azure.storage.blob.BlobClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_authentication.py
+                :start-after: [START auth_from_connection_string_blob]
+                :end-before: [END auth_from_connection_string_blob]
+                :language: python
+                :dedent: 8
+                :caption: Creating the BlobClient from a connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=snapshot, credential=credential, **kwargs
         )
 
     @distributed_trace_async
@@ -638,7 +694,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             key_resolver_function=self.key_resolver_function,
-            version_id=self.version_id,
+            version_id=get_version_id(self.version_id, kwargs),
             scheme=self.scheme,
             sdk_moniker=self._sdk_moniker,
             encryption_version=self.encryption_version,
@@ -728,7 +784,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         """
         options = _delete_blob_options(
             snapshot=self.snapshot,
-            version_id=self.version_id,
+            version_id=get_version_id(self.version_id, kwargs),
             delete_snapshots=delete_snapshots,
             **kwargs)
         try:
@@ -2072,7 +2128,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = _set_blob_tags_options(version_id=self.version_id, tags=tags, **kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
+        options = _set_blob_tags_options(version_id=version_id, tags=tags, **kwargs)
         try:
             return await self._client.blob.set_tags(**options)
         except HttpResponseError as error:
@@ -2105,7 +2162,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
-        options = _get_blob_tags_options(version_id=self.version_id, snapshot=self.snapshot, **kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
+        options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = await self._client.blob.get_tags(**options)
             return parse_tags(tags)  # pylint: disable=protected-access
