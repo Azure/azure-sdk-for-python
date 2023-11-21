@@ -29,25 +29,28 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._credential_operations_operations import (
+from ...operations._change_data_capture_operations import (
     build_create_or_update_request,
     build_delete_request,
     build_get_request,
     build_list_by_factory_request,
+    build_start_request,
+    build_status_request,
+    build_stop_request,
 )
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class CredentialOperationsOperations:
+class ChangeDataCaptureOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.datafactory.aio.DataFactoryManagementClient`'s
-        :attr:`credential_operations` attribute.
+        :attr:`change_data_capture` attribute.
     """
 
     models = _models
@@ -62,25 +65,25 @@ class CredentialOperationsOperations:
     @distributed_trace
     def list_by_factory(
         self, resource_group_name: str, factory_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ManagedIdentityCredentialResource"]:
-        """List credentials.
+    ) -> AsyncIterable["_models.ChangeDataCaptureResource"]:
+        """Lists all resources of type change data capture.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ManagedIdentityCredentialResource or the result of
+        :return: An iterator like instance of either ChangeDataCaptureResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.datafactory.models.ChangeDataCaptureResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.CredentialListResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ChangeDataCaptureListResponse] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -124,7 +127,7 @@ class CredentialOperationsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("CredentialListResponse", pipeline_response)
+            deserialized = self._deserialize("ChangeDataCaptureListResponse", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -148,7 +151,7 @@ class CredentialOperationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     list_by_factory.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/credentials"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs"
     }
 
     @overload
@@ -156,32 +159,33 @@ class CredentialOperationsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        credential_name: str,
-        credential: _models.ManagedIdentityCredentialResource,
+        change_data_capture_name: str,
+        change_data_capture: _models.ChangeDataCaptureResource,
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ManagedIdentityCredentialResource:
-        """Creates or updates a credential.
+    ) -> _models.ChangeDataCaptureResource:
+        """Creates or updates a change data capture resource.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param credential_name: Credential name. Required.
-        :type credential_name: str
-        :param credential: Credential resource definition. Required.
-        :type credential: ~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource
-        :param if_match: ETag of the credential entity. Should only be specified for update, for which
-         it should match existing entity or can be * for unconditional update. Default value is None.
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :param change_data_capture: Change data capture resource definition. Required.
+        :type change_data_capture: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
+        :param if_match: ETag of the change data capture entity. Should only be specified for update,
+         for which it should match existing entity or can be * for unconditional update. Default value
+         is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagedIdentityCredentialResource or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource
+        :return: ChangeDataCaptureResource or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -190,32 +194,33 @@ class CredentialOperationsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        credential_name: str,
-        credential: IO,
+        change_data_capture_name: str,
+        change_data_capture: IO,
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ManagedIdentityCredentialResource:
-        """Creates or updates a credential.
+    ) -> _models.ChangeDataCaptureResource:
+        """Creates or updates a change data capture resource.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param credential_name: Credential name. Required.
-        :type credential_name: str
-        :param credential: Credential resource definition. Required.
-        :type credential: IO
-        :param if_match: ETag of the credential entity. Should only be specified for update, for which
-         it should match existing entity or can be * for unconditional update. Default value is None.
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :param change_data_capture: Change data capture resource definition. Required.
+        :type change_data_capture: IO
+        :param if_match: ETag of the change data capture entity. Should only be specified for update,
+         for which it should match existing entity or can be * for unconditional update. Default value
+         is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagedIdentityCredentialResource or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource
+        :return: ChangeDataCaptureResource or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -224,31 +229,32 @@ class CredentialOperationsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        credential_name: str,
-        credential: Union[_models.ManagedIdentityCredentialResource, IO],
+        change_data_capture_name: str,
+        change_data_capture: Union[_models.ChangeDataCaptureResource, IO],
         if_match: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ManagedIdentityCredentialResource:
-        """Creates or updates a credential.
+    ) -> _models.ChangeDataCaptureResource:
+        """Creates or updates a change data capture resource.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param credential_name: Credential name. Required.
-        :type credential_name: str
-        :param credential: Credential resource definition. Is either a
-         ManagedIdentityCredentialResource type or a IO type. Required.
-        :type credential: ~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource or IO
-        :param if_match: ETag of the credential entity. Should only be specified for update, for which
-         it should match existing entity or can be * for unconditional update. Default value is None.
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :param change_data_capture: Change data capture resource definition. Is either a
+         ChangeDataCaptureResource type or a IO type. Required.
+        :type change_data_capture: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource or IO
+        :param if_match: ETag of the change data capture entity. Should only be specified for update,
+         for which it should match existing entity or can be * for unconditional update. Default value
+         is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagedIdentityCredentialResource or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource
+        :return: ChangeDataCaptureResource or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -264,20 +270,20 @@ class CredentialOperationsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ManagedIdentityCredentialResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ChangeDataCaptureResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(credential, (IOBase, bytes)):
-            _content = credential
+        if isinstance(change_data_capture, (IOBase, bytes)):
+            _content = change_data_capture
         else:
-            _json = self._serialize.body(credential, "ManagedIdentityCredentialResource")
+            _json = self._serialize.body(change_data_capture, "ChangeDataCaptureResource")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
-            credential_name=credential_name,
+            change_data_capture_name=change_data_capture_name,
             subscription_id=self._config.subscription_id,
             if_match=if_match,
             api_version=api_version,
@@ -302,7 +308,7 @@ class CredentialOperationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ManagedIdentityCredentialResource", pipeline_response)
+        deserialized = self._deserialize("ChangeDataCaptureResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -310,7 +316,7 @@ class CredentialOperationsOperations:
         return deserialized
 
     create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/credentials/{credentialName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}"
     }
 
     @distributed_trace_async
@@ -318,25 +324,25 @@ class CredentialOperationsOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        credential_name: str,
+        change_data_capture_name: str,
         if_none_match: Optional[str] = None,
         **kwargs: Any
-    ) -> Optional[_models.ManagedIdentityCredentialResource]:
-        """Gets a credential.
+    ) -> _models.ChangeDataCaptureResource:
+        """Gets a change data capture.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param credential_name: Credential name. Required.
-        :type credential_name: str
-        :param if_none_match: ETag of the credential entity. Should only be specified for get. If the
-         ETag matches the existing entity tag, or if * was provided, then no content will be returned.
-         Default value is None.
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :param if_none_match: ETag of the change data capture entity. Should only be specified for get.
+         If the ETag matches the existing entity tag, or if * was provided, then no content will be
+         returned. Default value is None.
         :type if_none_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ManagedIdentityCredentialResource or None or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource or None
+        :return: ChangeDataCaptureResource or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -351,12 +357,12 @@ class CredentialOperationsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[Optional[_models.ManagedIdentityCredentialResource]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ChangeDataCaptureResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
-            credential_name=credential_name,
+            change_data_capture_name=change_data_capture_name,
             subscription_id=self._config.subscription_id,
             if_none_match=if_none_match,
             api_version=api_version,
@@ -374,13 +380,11 @@ class CredentialOperationsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("ManagedIdentityCredentialResource", pipeline_response)
+        deserialized = self._deserialize("ChangeDataCaptureResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -388,21 +392,21 @@ class CredentialOperationsOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/credentials/{credentialName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}"
     }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, factory_name: str, credential_name: str, **kwargs: Any
+        self, resource_group_name: str, factory_name: str, change_data_capture_name: str, **kwargs: Any
     ) -> None:
-        """Deletes a credential.
+        """Deletes a change data capture.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param credential_name: Credential name. Required.
-        :type credential_name: str
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -425,7 +429,7 @@ class CredentialOperationsOperations:
         request = build_delete_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
-            credential_name=credential_name,
+            change_data_capture_name=change_data_capture_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata["url"],
@@ -450,5 +454,195 @@ class CredentialOperationsOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/credentials/{credentialName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}"
+    }
+
+    @distributed_trace_async
+    async def start(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, factory_name: str, change_data_capture_name: str, **kwargs: Any
+    ) -> None:
+        """Starts a change data capture.
+
+        :param resource_group_name: The resource group name. Required.
+        :type resource_group_name: str
+        :param factory_name: The factory name. Required.
+        :type factory_name: str
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_start_request(
+            resource_group_name=resource_group_name,
+            factory_name=factory_name,
+            change_data_capture_name=change_data_capture_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.start.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    start.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}/start"
+    }
+
+    @distributed_trace_async
+    async def stop(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, factory_name: str, change_data_capture_name: str, **kwargs: Any
+    ) -> None:
+        """Stops a change data capture.
+
+        :param resource_group_name: The resource group name. Required.
+        :type resource_group_name: str
+        :param factory_name: The factory name. Required.
+        :type factory_name: str
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_stop_request(
+            resource_group_name=resource_group_name,
+            factory_name=factory_name,
+            change_data_capture_name=change_data_capture_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.stop.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    stop.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}/stop"
+    }
+
+    @distributed_trace_async
+    async def status(
+        self, resource_group_name: str, factory_name: str, change_data_capture_name: str, **kwargs: Any
+    ) -> str:
+        """Gets the current status for the change data capture resource.
+
+        :param resource_group_name: The resource group name. Required.
+        :type resource_group_name: str
+        :param factory_name: The factory name. Required.
+        :type factory_name: str
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: str or the result of cls(response)
+        :rtype: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[str] = kwargs.pop("cls", None)
+
+        request = build_status_request(
+            resource_group_name=resource_group_name,
+            factory_name=factory_name,
+            change_data_capture_name=change_data_capture_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.status.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("str", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    status.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}/status"
     }
