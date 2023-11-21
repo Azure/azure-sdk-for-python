@@ -105,7 +105,7 @@ class TestStatsbeatExporter(unittest.TestCase):
                 ],
             )
             result = self._exporter._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         self.assertTrue(_STATSBEAT_STATE["INITIAL_SUCCESS"])
 
     def test_transmit_reach_ingestion_code(self):

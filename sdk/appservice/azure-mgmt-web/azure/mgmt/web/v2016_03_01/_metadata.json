@@ -114,8 +114,8 @@
         "billing_meters": "BillingMetersOperations"
     },
     "operation_mixins": {
-        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\", \"Union\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
-        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Union\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\", \"Union\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\", \"Union\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"], \"io\": [\"IOBase\"]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
         "sync_mixin_typing_definitions": "",
         "async_mixin_typing_definitions": "",
         "operations": {

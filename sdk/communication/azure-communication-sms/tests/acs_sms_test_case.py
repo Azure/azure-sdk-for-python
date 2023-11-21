@@ -22,7 +22,7 @@ class ACSSMSTestCase(AzureRecordedTestCase):
     def _get_connection_str(self):
         if self.is_playback():
             return "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
-        return os.getenv('COMMUNICATION_SMS_LIVETEST_DYNAMIC_CONNECTION_STRING')
+        return os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
 
     def verify_successful_sms_response(self, sms_response):
         if self.is_live:

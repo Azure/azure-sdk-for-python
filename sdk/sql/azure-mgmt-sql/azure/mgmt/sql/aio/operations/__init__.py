@@ -33,10 +33,10 @@ from ._deleted_servers_operations import DeletedServersOperations
 from ._elastic_pool_operations_operations import ElasticPoolOperationsOperations
 from ._encryption_protectors_operations import EncryptionProtectorsOperations
 from ._firewall_rules_operations import FirewallRulesOperations
-from ._instance_pools_operations import InstancePoolsOperations
 from ._job_agents_operations import JobAgentsOperations
 from ._job_credentials_operations import JobCredentialsOperations
 from ._job_executions_operations import JobExecutionsOperations
+from ._job_private_endpoints_operations import JobPrivateEndpointsOperations
 from ._jobs_operations import JobsOperations
 from ._job_step_executions_operations import JobStepExecutionsOperations
 from ._job_steps_operations import JobStepsOperations
@@ -155,10 +155,8 @@ from ._managed_ledger_digest_uploads_operations import ManagedLedgerDigestUpload
 from ._recoverable_databases_operations import RecoverableDatabasesOperations
 from ._restorable_dropped_databases_operations import RestorableDroppedDatabasesOperations
 from ._server_configuration_options_operations import ServerConfigurationOptionsOperations
-from ._servers_operations import ServersOperations
 from ._start_stop_managed_instance_schedules_operations import StartStopManagedInstanceSchedulesOperations
 from ._transparent_data_encryptions_operations import TransparentDataEncryptionsOperations
-from ._failover_groups_operations import FailoverGroupsOperations
 from ._ipv6_firewall_rules_operations import IPv6FirewallRulesOperations
 from ._sql_vulnerability_assessment_baseline_operations import SqlVulnerabilityAssessmentBaselineOperations
 from ._sql_vulnerability_assessment_baselines_operations import SqlVulnerabilityAssessmentBaselinesOperations
@@ -185,6 +183,9 @@ from ._database_sql_vulnerability_assessment_scans_operations import DatabaseSql
 from ._database_sql_vulnerability_assessments_settings_operations import (
     DatabaseSqlVulnerabilityAssessmentsSettingsOperations,
 )
+from ._servers_operations import ServersOperations
+from ._failover_groups_operations import FailoverGroupsOperations
+from ._instance_pools_operations import InstancePoolsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -216,10 +217,10 @@ __all__ = [
     "ElasticPoolOperationsOperations",
     "EncryptionProtectorsOperations",
     "FirewallRulesOperations",
-    "InstancePoolsOperations",
     "JobAgentsOperations",
     "JobCredentialsOperations",
     "JobExecutionsOperations",
+    "JobPrivateEndpointsOperations",
     "JobsOperations",
     "JobStepExecutionsOperations",
     "JobStepsOperations",
@@ -320,10 +321,8 @@ __all__ = [
     "RecoverableDatabasesOperations",
     "RestorableDroppedDatabasesOperations",
     "ServerConfigurationOptionsOperations",
-    "ServersOperations",
     "StartStopManagedInstanceSchedulesOperations",
     "TransparentDataEncryptionsOperations",
-    "FailoverGroupsOperations",
     "IPv6FirewallRulesOperations",
     "SqlVulnerabilityAssessmentBaselineOperations",
     "SqlVulnerabilityAssessmentBaselinesOperations",
@@ -340,6 +339,9 @@ __all__ = [
     "DatabaseSqlVulnerabilityAssessmentScanResultOperations",
     "DatabaseSqlVulnerabilityAssessmentScansOperations",
     "DatabaseSqlVulnerabilityAssessmentsSettingsOperations",
+    "ServersOperations",
+    "FailoverGroupsOperations",
+    "InstancePoolsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

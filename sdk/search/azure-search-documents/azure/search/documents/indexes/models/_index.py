@@ -200,6 +200,7 @@ class SearchField(_serialization.Model):
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.search_analyzer_name = kwargs.get("search_analyzer_name", None)
         self.index_analyzer_name = kwargs.get("index_analyzer_name", None)
+        self.normalizer_name = kwargs.get("normalizer_name", None)
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
@@ -220,6 +221,7 @@ class SearchField(_serialization.Model):
             analyzer=self.analyzer_name,
             search_analyzer=self.search_analyzer_name,
             index_analyzer=self.index_analyzer_name,
+            normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
             vector_search_dimensions=self.vector_search_dimensions,
@@ -233,6 +235,10 @@ class SearchField(_serialization.Model):
         # pylint:disable=protected-access
         fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
+        try:
+            normalizer = search_field.normalizer_name
+        except AttributeError:
+            normalizer = None
         return cls(
             name=search_field.name,
             type=search_field.type,
@@ -245,6 +251,7 @@ class SearchField(_serialization.Model):
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
+            normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
             vector_search_dimensions=search_field.vector_search_dimensions,
@@ -555,6 +562,7 @@ class SearchIndex(_serialization.Model):
         self.tokenizers = kwargs.get("tokenizers", None)
         self.token_filters = kwargs.get("token_filters", None)
         self.char_filters = kwargs.get("char_filters", None)
+        self.normalizers = kwargs.get("normalizers", None)
         self.encryption_key = kwargs.get("encryption_key", None)
         self.similarity = kwargs.get("similarity", None)
         self.semantic_search = kwargs.get("semantic_search", None)
@@ -588,6 +596,7 @@ class SearchIndex(_serialization.Model):
             tokenizers=tokenizers,
             token_filters=self.token_filters,
             char_filters=self.char_filters,
+            normalizers=self.normalizers,
             # pylint:disable=protected-access
             encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
@@ -615,6 +624,10 @@ class SearchIndex(_serialization.Model):
             fields = [SearchField._from_generated(x) for x in search_index.fields]  # pylint:disable=protected-access
         else:
             fields = None
+        try:
+            normalizers = search_index.normalizers
+        except AttributeError:
+            normalizers = None
         return cls(
             name=search_index.name,
             fields=fields,
@@ -626,6 +639,7 @@ class SearchIndex(_serialization.Model):
             tokenizers=tokenizers,
             token_filters=search_index.token_filters,
             char_filters=search_index.char_filters,
+            normalizers=normalizers,
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
@@ -650,6 +664,7 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
         analyzer_name = search_field.get("analyzer_name")
         search_analyzer_name = search_field.get("search_analyzer_name")
         index_analyzer_name = search_field.get("index_analyzer_name")
+        normalizer = search_field.get("normalizer")
         synonym_map_names = search_field.get("synonym_map_names")
         fields = search_field.get("fields")
         fields = [pack_search_field(x) for x in fields] if fields else None
@@ -667,6 +682,7 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
             analyzer=analyzer_name,
             search_analyzer=search_analyzer_name,
             index_analyzer=index_analyzer_name,
+            normalizer=normalizer,
             synonym_maps=synonym_map_names,
             fields=fields,
             vector_search_dimensions=vector_search_dimensions,
