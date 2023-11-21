@@ -39,7 +39,7 @@ from typing import (
     cast,
     Union,
 )
-
+import urllib.parse
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
@@ -54,7 +54,6 @@ from ..pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
 from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
-import urllib.parse
 from ..utils import case_insensitive_dict
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
@@ -821,14 +820,17 @@ class LROBasePolling(
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
-        request_params = {}
-        if "api_version" in self._lro_options:
+        request_params: Dict[str, Any] = {}
+        if self._lro_options and "api_version" in self._lro_options:
             parsed_status_link = urllib.parse.urlparse(status_link)
-            request_params = case_insensitive_dict(
-                {
-                    key: [urllib.parse.quote(v) for v in value]
-                    for key, value in urllib.parse.parse_qs(parsed_status_link.query).items()
-                }
+            request_params = cast(
+                Dict[str, Any],
+                case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(parsed_status_link.query).items()
+                    }
+                ),
             )
             request_params["api-version"] = self._lro_options["api_version"]
             status_link = urllib.parse.urljoin(status_link, parsed_status_link.path)

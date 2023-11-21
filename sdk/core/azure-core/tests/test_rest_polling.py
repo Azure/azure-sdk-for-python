@@ -132,10 +132,16 @@ def test_continuation_token(client, lro_poller, deserialization_callback):
     result = new_poller.result()
     assert result == {"location_result": True}
 
+
 def test_put_location_api_version_add(lro_poller):
-    result = lro_poller(HttpRequest("PUT", "/polling/location/api-version/add"), lro_options={"api_version": "2023-11-15"}).result()
+    result = lro_poller(
+        HttpRequest("PUT", "/polling/location/api-version/add"), lro_options={"api_version": "2023-11-15"}
+    ).result()
     assert result["location_result"]
 
+
 def test_put_location_api_version_replace(lro_poller):
-    result = lro_poller(HttpRequest("PUT", "/polling/location/api-version/replace"), lro_options={"api_version": "2023-11-15"}).result()
+    result = lro_poller(
+        HttpRequest("PUT", "/polling/location/api-version/replace"), lro_options={"api_version": "2023-11-15"}
+    ).result()
     assert result["location_result"]
