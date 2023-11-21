@@ -10,7 +10,7 @@ from typing import (
     Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse, quote, unquote
+from urllib.parse import quote
 import warnings
 
 from typing_extensions import Self

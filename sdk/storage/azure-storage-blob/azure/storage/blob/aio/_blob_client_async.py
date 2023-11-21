@@ -8,9 +8,10 @@
 import warnings
 from functools import partial
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Self, Tuple, Union,
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 from urllib.parse import quote
 
 from azure.core.async_paging import AsyncItemPaged
@@ -189,7 +190,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if isinstance(container_name, str):
             container_name = container_name.encode('UTF-8')
         return f"{self.scheme}://{hostname}/{quote(container_name)}/{quote(self.blob_name, safe='~/')}{self._query_str}"
-    
+
     @classmethod
     def from_blob_url(
             cls, blob_url: str,
@@ -231,7 +232,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             account_url, container_name=container_name, blob_name=blob_name,
             snapshot=path_snapshot, credential=credential, **kwargs
         )
-    
+
     @classmethod
     def from_connection_string(
             cls, conn_str: str,

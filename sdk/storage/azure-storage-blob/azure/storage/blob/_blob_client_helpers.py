@@ -34,7 +34,6 @@ from ._serialize import (
     get_modify_conditions,
     get_source_conditions,
     get_cpk_scope_info,
-    get_version_id,
     serialize_blob_tags_header,
     serialize_blob_tags,
     serialize_query_format, get_access_conditions
