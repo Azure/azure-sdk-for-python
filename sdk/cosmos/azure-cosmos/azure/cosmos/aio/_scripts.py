@@ -61,7 +61,7 @@ class ScriptsProxy(object):
 
     def _get_resource_link(self, script_or_id: Union[Dict[str, Any], str], typ: str) -> str:
         if isinstance(script_or_id, str):
-            return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
+            return "{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
     @distributed_trace

@@ -24,11 +24,9 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-import json
-# https://github.com/PyCQA/pylint/issues/3112
-# Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
-from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
+from typing import Dict, Any, Optional, TypeVar
 from urllib.parse import urlparse
+
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
 from azure.core import AsyncPipelineClient
@@ -151,7 +149,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Keeps the latest response headers from the server.
         self.last_response_headers = None
 
-        self._useMultipleWriteLocations = False
+        self.UseMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager_async._GlobalEndpointManager(self)
 
         retry_policy = None
@@ -372,7 +370,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 Constants.EnableMultipleWritableLocations
             ]
 
-        self._useMultipleWriteLocations = (
+        self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
         return database_account

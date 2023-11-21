@@ -24,8 +24,8 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-from token import OP
-from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union, cast
+import re
+from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast
 import urllib.parse
 
 from urllib3.util.retry import Retry
@@ -62,8 +62,12 @@ from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._range_partition_resolver import RangePartitionResolver
 
-ClassType = TypeVar("ClassType")
 
+# Cosmos table validation regex breakdown:
+# ^ Match start of string.
+# [^/\#?]{0,254} Match any character that is not /\#? for between 0-254 characters.
+# $ End of string
+_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,254}$")
 
 # pylint: disable=protected-access
 
@@ -144,7 +148,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Keeps the latest response headers from the server.
         self.last_response_headers: Dict[str, Any] = {}
 
-        self._useMultipleWriteLocations = False
+        self.UseMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
 
         retry_policy = None
@@ -159,7 +163,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
                 retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
                 retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
-                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.backoff_max,  # type: ignore[attr-defined]
+                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.backoff_max,  # type: ignore[attr-defined] # pylint:disable=line-too-long
                 retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
@@ -359,7 +363,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self.Read(path, "dbs", database_id, None, options, **kwargs)
 
     def ReadDatabases(
-        self, 
+        self,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -789,7 +793,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
         return self.Upsert(permission, path, "permissions", user_id, None, options, **kwargs)
 
-    def _GetUserIdWithPathForPermission(self, permission: Mapping[str, Any], user_link: str) -> Tuple[str, Optional[str]]:
+    def _GetUserIdWithPathForPermission(
+        self,
+        permission: Mapping[str, Any],
+        user_link: str
+    ) -> Tuple[str, Optional[str]]:
         CosmosClientConnection.__ValidateResource(permission)
         path = base.GetPathFromLink(user_link, "permissions")
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
@@ -2051,7 +2059,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return result
 
     def Batch(
-        self, 
+        self,
         collection_link: str,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
         options: Optional[Mapping[str, Any]] = None,
@@ -2076,7 +2084,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         formatted_operations = base._format_batch_operations(batch_operations)
 
-        result, self.last_response_headers = self._Batch(
+        results, self.last_response_headers = self._Batch(
             formatted_operations,
             path,
             collection_id,
@@ -2087,9 +2095,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         is_error = False
         error_status = 0
         error_index = 0
-        for i in range(len(result)):
-            final_responses.append(result[i])
-            status_code = int(result[i]["statusCode"])
+        for i, result in enumerate(results):
+            final_responses.append(result)
+            status_code = int(result["statusCode"])
             if status_code >= 400:
                 is_error = True
                 if status_code != 424:  # Find the operation that had the error
@@ -2576,7 +2584,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 Constants.EnableMultipleWritableLocations
             ]
 
-        self._useMultipleWriteLocations = (
+        self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
         return database_account
@@ -2946,7 +2954,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.last_response_headers,
         )
 
-    def __QueryFeed(
+    def __QueryFeed(  # pylint: disable=too-many-locals, too-many-statements
             self,
             path: str,
             resource_type: str,
@@ -3056,7 +3064,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )  # cspell:disable-line
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(resource_id, [feedrangeEPK])
             # It is possible to get more than one over lapping range. We need to get the query results for each one
-            results = None
+            results: Dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
             # lapping physical partition. The EPK sub range will be one of four:
             # 1) Will have a range min equal to the feed range EPK min, and a range max equal to the over lapping
@@ -3085,14 +3093,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     req_headers[http_constants.HttpHeaders.StartEpkString] = EPK_sub_range.min
                     req_headers[http_constants.HttpHeaders.EndEpkString] = EPK_sub_range.max
                 req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
-                r, self.last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
+                partial_result, self.last_response_headers = self.__Post(
+                    path, request_params, query, req_headers, **kwargs
+                )
                 if results:
                     # add up all the query results from all over lapping ranges
-                    results["Documents"].extend(r["Documents"])
+                    results["Documents"].extend(partial_result["Documents"])
                 else:
-                    results = r
+                    results = partial_result
                 if response_hook:
-                    response_hook(self.last_response_headers, r)
+                    response_hook(self.last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
             if results:
                 return __GetBodiesFromQueryResult(results)
@@ -3176,12 +3186,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         id_: Optional[str] = resource.get("id")
         if id_:
             try:
-                if id_.find("/") != -1 or id_.find("\\") != -1 or id_.find("?") != -1 or id_.find("#") != -1 \
-                        or id_.find("\t") != -1 or id_.find("\r") != -1 or id_.find("\n") != -1:
+                if _VALID_COSMOS_RESOURCE.match(id_) is None:
                     raise ValueError("Id contains illegal chars.")
                 if id_[-1] == " ":
                     raise ValueError("Id ends with a space.")
-            except AttributeError as e:
+            except TypeError as e:
                 raise TypeError("Id type must be a string.") from e
 
     # Adds the partition key to options

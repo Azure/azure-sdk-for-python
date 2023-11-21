@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import time
 
-from typing import Any, Dict, Mapping, MutableMapping, Optional
+from typing import Any, MutableMapping, Optional
 from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy

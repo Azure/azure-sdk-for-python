@@ -22,6 +22,7 @@
 """
 from io import BytesIO
 import binascii
+import struct
 from typing import Any, List, Union, overload
 from typing_extensions import Literal
 
@@ -176,7 +177,7 @@ class PartitionKey(dict):
         return Range(min_epk, max_epk, True, False)
 
     def _get_effective_partition_key_for_hash_partitioning(self) -> str:
-        """We shouldn't be supporting V1"""
+        # We shouldn't be supporting V1
         return ""
 
     def _get_effective_partition_key_string(self, pk_value: List[Any]) -> Union[int, str]:
@@ -191,7 +192,7 @@ class PartitionKey(dict):
             version = self.version or 2
             if version == 1:
                 return self._get_effective_partition_key_for_hash_partitioning()
-            elif version == 2:
+            if version == 2:
                 return self._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
         elif kind == 'MultiHash':
             return self._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
@@ -204,9 +205,13 @@ class PartitionKey(dict):
             writer.write(bytes([PartitionKeyComponentType.PFalse]))
         elif value is None or value == {} or isinstance(value, NonePartitionKeyValue):
             writer.write(bytes([PartitionKeyComponentType.Null]))
-        elif isinstance(value, (int, float)):
+        elif isinstance(value, int):
             writer.write(bytes([PartitionKeyComponentType.Number]))
             writer.write(value.to_bytes(8, 'little'))  # assuming value is a 64-bit integer
+        elif isinstance(value, float):
+            # Encoding as 4-byte le float. TODO: check correct encoding.
+            writer.write(bytes([PartitionKeyComponentType.Float]))
+            writer.write(struct.pack('<f', value))
         elif isinstance(value, str):
             writer.write(bytes([PartitionKeyComponentType.String]))
             writer.write(value.encode('utf-8'))
@@ -232,12 +237,12 @@ class PartitionKey(dict):
 
     def _get_effective_partition_key_for_multi_hash_partitioning_v2(self, pk_value: List[Any]) -> str:
         sb = []
-        for i in range(len(pk_value)):
+        for value in pk_value:
             ms = BytesIO()
             binary_writer = ms  # In Python, you can write bytes directly to a BytesIO object
 
             # Assuming paths[i] is the correct object to call write_for_hashing_v2 on
-            self._write_for_hashing_v2(pk_value[i], binary_writer)
+            self._write_for_hashing_v2(value, binary_writer)
 
             ms_bytes = ms.getvalue()
             hash128 = murmurhash3_128(bytearray(ms_bytes), UInt128(0, 0))
@@ -247,7 +252,6 @@ class PartitionKey(dict):
             # Reset 2 most significant bits, as max exclusive value is 'FF'.
             # Plus one more just in case.
             hash_v[0] &= 0x3F
-
             sb.append(_to_hex(bytearray(hash_v), 0, len(hash_v)))
 
         return ''.join(sb).upper()

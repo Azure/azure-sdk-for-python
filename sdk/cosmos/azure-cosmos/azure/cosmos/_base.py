@@ -32,12 +32,13 @@ from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, T
 from urllib.parse import quote as urllib_quote
 from urllib.parse import urlsplit
 from azure.core import MatchConditions
-from . import auth
+
 from . import documents
-from . import partition_key
 from . import http_constants
 from . import _runtime_constants
+from .auth import _get_authorization_header
 from .offer import ThroughputProperties
+from .partition_key import _Empty, _Undefined
 
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
@@ -123,7 +124,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     headers = dict(default_headers)
     options = options or {}
 
-    if cosmos_client_connection._useMultipleWriteLocations:
+    if cosmos_client_connection.UseMultipleWriteLocations:
         headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"
 
     pre_trigger_include = options.get("preTriggerInclude")
@@ -208,10 +209,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if "partitionKey" in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
-        if isinstance(options["partitionKey"], partition_key._Undefined):
+        if isinstance(options["partitionKey"], _Undefined):
             headers[http_constants.HttpHeaders.PartitionKey] = [{}]
         # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
-        elif isinstance(options["partitionKey"], partition_key._Empty):
+        elif isinstance(options["partitionKey"], _Empty):
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
@@ -244,7 +245,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
         resource_type = _internal_resourcetype(resource_type)
-        authorization = auth._get_authorization_header(
+        authorization = _get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
         # urllib.quote throws when the input parameter is None
@@ -672,7 +673,7 @@ def ParsePaths(paths: List[str]) -> List[str]:
 def create_scope_from_url(url: str) -> str:
     parsed_url = urlsplit(url)
     if not parsed_url.scheme or not parsed_url.hostname:
-        raise ValueError("Invalid URL scheme or hostname: %r", parsed_url)
+        raise ValueError(f"Invalid URL scheme or hostname: {parsed_url!r}")
     return parsed_url.scheme + "://" + parsed_url.hostname + "/.default"
 
 
@@ -747,8 +748,7 @@ def _replace_throughput(
                 new_throughput_properties['content']['offerAutopilotSettings'][
                     'maxThroughput'] = max_throughput
                 if increment_percent:
-                    new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                        'incrementPercent'] = increment_percent
+                    new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
                 if throughput.offer_throughput:
                     new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
         except AttributeError as e:
@@ -778,13 +778,12 @@ def _format_batch_operations(
     operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
 ) -> List[Dict[str, Any]]:
     final_operations = []
-    for i in range(len(operations)):
-        batch_operation = operations[i]
+    for index, batch_operation in enumerate(operations):
         try:
             operation_type = batch_operation[0]
             args = batch_operation[1]
-        except IndexError:
-            raise IndexError("Operation {} in batch is missing a field.".format(str(i)))
+        except IndexError as e:
+            raise IndexError(f"Operation {index} in batch is missing a field.") from e
         try:
             kwargs = batch_operation[2]  # type: ignore[misc]
         except IndexError:
@@ -816,8 +815,9 @@ def _format_batch_operations(
                 if filter_predicate is not None:
                     operation["resourceBody"]["condition"] = filter_predicate
         else:
-            raise AttributeError("Operation type or args passed in not recognized for operation with" +
-                                 " index {}.".format(str(i)))
+            raise AttributeError(
+                f"Operation type or args passed in not recognized for operation with index {index}."
+            )
 
         if_match_etag = kwargs.pop("if_match_etag", None)
         if_none_match_etag = kwargs.pop("if_none_match_etag", None)
