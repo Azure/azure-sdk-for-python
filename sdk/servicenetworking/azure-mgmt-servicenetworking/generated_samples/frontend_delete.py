@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.frontends_interface.begin_delete(
+    client.frontends_interface.begin_delete(
         resource_group_name="rg1",
         traffic_controller_name="tc1",
         frontend_name="fe1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/servicenetworking/resource-manager/Microsoft.ServiceNetworking/cadl/examples/FrontendDelete.json
+# x-ms-original-file: specification/servicenetworking/resource-manager/Microsoft.ServiceNetworking/stable/2023-11-01/examples/FrontendDelete.json
 if __name__ == "__main__":
     main()
