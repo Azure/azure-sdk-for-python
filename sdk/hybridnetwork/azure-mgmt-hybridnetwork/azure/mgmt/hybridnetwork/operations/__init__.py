@@ -6,32 +6,42 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._devices_operations import DevicesOperations
+from ._configuration_group_schemas_operations import ConfigurationGroupSchemasOperations
+from ._configuration_group_values_operations import ConfigurationGroupValuesOperations
 from ._network_functions_operations import NetworkFunctionsOperations
-from ._network_function_vendors_operations import NetworkFunctionVendorsOperations
-from ._network_function_vendor_skus_operations import NetworkFunctionVendorSkusOperations
+from ._components_operations import ComponentsOperations
+from ._network_function_definition_groups_operations import NetworkFunctionDefinitionGroupsOperations
+from ._network_function_definition_versions_operations import NetworkFunctionDefinitionVersionsOperations
+from ._network_service_design_groups_operations import NetworkServiceDesignGroupsOperations
+from ._network_service_design_versions_operations import NetworkServiceDesignVersionsOperations
 from ._operations import Operations
-from ._vendors_operations import VendorsOperations
-from ._vendor_skus_operations import VendorSkusOperations
-from ._vendor_sku_preview_operations import VendorSkuPreviewOperations
-from ._vendor_network_functions_operations import VendorNetworkFunctionsOperations
-from ._role_instances_operations import RoleInstancesOperations
+from ._publishers_operations import PublishersOperations
+from ._artifact_stores_operations import ArtifactStoresOperations
+from ._artifact_manifests_operations import ArtifactManifestsOperations
+from ._proxy_artifact_operations import ProxyArtifactOperations
+from ._sites_operations import SitesOperations
+from ._site_network_services_operations import SiteNetworkServicesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "DevicesOperations",
+    "ConfigurationGroupSchemasOperations",
+    "ConfigurationGroupValuesOperations",
     "NetworkFunctionsOperations",
-    "NetworkFunctionVendorsOperations",
-    "NetworkFunctionVendorSkusOperations",
+    "ComponentsOperations",
+    "NetworkFunctionDefinitionGroupsOperations",
+    "NetworkFunctionDefinitionVersionsOperations",
+    "NetworkServiceDesignGroupsOperations",
+    "NetworkServiceDesignVersionsOperations",
     "Operations",
-    "VendorsOperations",
-    "VendorSkusOperations",
-    "VendorSkuPreviewOperations",
-    "VendorNetworkFunctionsOperations",
-    "RoleInstancesOperations",
+    "PublishersOperations",
+    "ArtifactStoresOperations",
+    "ArtifactManifestsOperations",
+    "ProxyArtifactOperations",
+    "SitesOperations",
+    "SiteNetworkServicesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

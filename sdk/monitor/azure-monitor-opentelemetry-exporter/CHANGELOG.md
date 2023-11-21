@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.0b19 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0b19 (2023-11-20)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fix deserialization of `TelemetryItem` from local storage
+    ([#33163](https://github.com/Azure/azure-sdk-for-python/pull/33163))
 
 ## 1.0.0b18 (2023-11-06)
 

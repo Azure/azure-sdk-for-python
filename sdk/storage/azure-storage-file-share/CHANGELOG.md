@@ -2,7 +2,9 @@
 
 ## 12.16.0b1 (Unreleased)
 
-### Features Added
+### Bugs Fixed
+- Fixed an issue where the `ShareDirectoryClient` returned by `get_subdirectory_client` with a `ShareDirectoryClient`
+pointing to the root of the file share would raise an `InvalidResourceName` on any operations.
 
 
 ## 12.15.0 (2023-11-07)
