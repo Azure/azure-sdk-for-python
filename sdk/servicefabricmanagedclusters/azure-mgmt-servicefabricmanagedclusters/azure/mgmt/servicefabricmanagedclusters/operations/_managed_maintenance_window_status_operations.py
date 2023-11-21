@@ -34,7 +34,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_request(location: str, operation_id: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_get_request(resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -44,12 +44,12 @@ def build_get_request(location: str, operation_id: str, subscription_id: str, **
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/managedClusterOperations/{operationId}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/getMaintenanceWindowStatus",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "location": _SERIALIZER.url("location", location, "str"),
-        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -60,17 +60,17 @@ def build_get_request(location: str, operation_id: str, subscription_id: str, **
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class OperationStatusOperations:
+class ManagedMaintenanceWindowStatusOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.servicefabricmanagedclusters.ServiceFabricManagedClustersManagementClient`'s
-        :attr:`operation_status` attribute.
+        :attr:`managed_maintenance_window_status` attribute.
     """
 
     models = _models
@@ -83,19 +83,18 @@ class OperationStatusOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.LongRunningOperationResult:
-        """Get long running operation status.
+    def get(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> _models.ManagedMaintenanceWindowStatus:
+        """Action to get Maintenance Window Status of the Service Fabric Managed Clusters.
 
-        Get long running operation status.
+        Action to get Maintenance Window Status of the Service Fabric Managed Clusters.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
-        :type location: str
-        :param operation_id: operation identifier. Required.
-        :type operation_id: str
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LongRunningOperationResult or the result of cls(response)
-        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.LongRunningOperationResult
+        :return: ManagedMaintenanceWindowStatus or the result of cls(response)
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.ManagedMaintenanceWindowStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -110,11 +109,11 @@ class OperationStatusOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.LongRunningOperationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedMaintenanceWindowStatus] = kwargs.pop("cls", None)
 
         request = build_get_request(
-            location=location,
-            operation_id=operation_id,
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata["url"],
@@ -136,7 +135,7 @@ class OperationStatusOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorModel, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("LongRunningOperationResult", pipeline_response)
+        deserialized = self._deserialize("ManagedMaintenanceWindowStatus", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -144,5 +143,5 @@ class OperationStatusOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/managedClusterOperations/{operationId}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/getMaintenanceWindowStatus"
     }

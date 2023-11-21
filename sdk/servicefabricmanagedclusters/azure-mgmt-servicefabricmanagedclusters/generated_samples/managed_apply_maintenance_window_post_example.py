@@ -14,7 +14,7 @@ from azure.mgmt.servicefabricmanagedclusters import ServiceFabricManagedClusters
     pip install azure-identity
     pip install azure-mgmt-servicefabricmanagedclusters
 # USAGE
-    python managed_unsupported_vm_sizes_list_example.py
+    python managed_apply_maintenance_window_post_example.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.managed_unsupported_vm_sizes.list(
-        location="eastus",
+    client.managed_apply_maintenance_window.post(
+        resource_group_name="resourceGroup1",
+        cluster_name="mycluster1",
     )
-    for item in response:
-        print(item)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-11-01-preview/examples/managedUnsupportedVMSizesList_example.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-11-01-preview/examples/ManagedApplyMaintenanceWindowPost_example.json
 if __name__ == "__main__":
     main()

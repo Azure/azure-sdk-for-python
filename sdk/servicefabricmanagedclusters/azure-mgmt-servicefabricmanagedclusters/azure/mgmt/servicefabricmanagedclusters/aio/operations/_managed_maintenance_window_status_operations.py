@@ -17,85 +17,54 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models as _models
-from .._serialization import Serializer
-from .._vendor import _convert_request
+from ... import models as _models
+from ..._vendor import _convert_request
+from ...operations._managed_maintenance_window_status_operations import build_get_request
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-def build_get_request(location: str, operation_id: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/managedClusterOperations/{operationId}",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "location": _SERIALIZER.url("location", location, "str"),
-        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class OperationStatusOperations:
+class ManagedMaintenanceWindowStatusOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.servicefabricmanagedclusters.ServiceFabricManagedClustersManagementClient`'s
-        :attr:`operation_status` attribute.
+        :class:`~azure.mgmt.servicefabricmanagedclusters.aio.ServiceFabricManagedClustersManagementClient`'s
+        :attr:`managed_maintenance_window_status` attribute.
     """
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.LongRunningOperationResult:
-        """Get long running operation status.
+    @distributed_trace_async
+    async def get(
+        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+    ) -> _models.ManagedMaintenanceWindowStatus:
+        """Action to get Maintenance Window Status of the Service Fabric Managed Clusters.
 
-        Get long running operation status.
+        Action to get Maintenance Window Status of the Service Fabric Managed Clusters.
 
-        :param location: The location for the cluster code versions. This is different from cluster
-         location. Required.
-        :type location: str
-        :param operation_id: operation identifier. Required.
-        :type operation_id: str
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LongRunningOperationResult or the result of cls(response)
-        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.LongRunningOperationResult
+        :return: ManagedMaintenanceWindowStatus or the result of cls(response)
+        :rtype: ~azure.mgmt.servicefabricmanagedclusters.models.ManagedMaintenanceWindowStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -110,11 +79,11 @@ class OperationStatusOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.LongRunningOperationResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedMaintenanceWindowStatus] = kwargs.pop("cls", None)
 
         request = build_get_request(
-            location=location,
-            operation_id=operation_id,
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata["url"],
@@ -125,7 +94,7 @@ class OperationStatusOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -136,7 +105,7 @@ class OperationStatusOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorModel, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("LongRunningOperationResult", pipeline_response)
+        deserialized = self._deserialize("ManagedMaintenanceWindowStatus", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -144,5 +113,5 @@ class OperationStatusOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceFabric/locations/{location}/managedClusterOperations/{operationId}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/managedClusters/{clusterName}/getMaintenanceWindowStatus"
     }
