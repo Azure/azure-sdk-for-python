@@ -479,9 +479,6 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             f"currently got {self._component}."
         )
 
-    def _to_dict(self) -> Dict:
-        raise NotImplementedError()
-
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":
         raise NotImplementedError()
