@@ -29,6 +29,10 @@ from ._utils import _write_properties_to_run_history
 
 LOGGER = logging.getLogger(__name__)
 
+activity_logger = ActivityLogger(__name__)
+activity_logger.update_info()
+package_logger, module_logger = activity_logger.package_logger, activity_logger.module_logger
+
 
 def _get_handler_class(
         asset,
@@ -80,7 +84,7 @@ def _log_metrics(run_id, metrics):
 
 
 @distributed_trace
-@monitor_with_activity(LOGGER, "Evaluate", ActivityType.PUBLICAPI)
+@monitor_with_activity(package_logger, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
         *,
         evaluation_name: str = None,
@@ -335,6 +339,8 @@ def _evaluate(
     return evaluation_result
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogInput", ActivityType.PUBLICAPI)
 def log_input(data, data_is_file):
     try:
         # Mlflow service supports only uri_folder, hence this is need to create a dir to log input data.
@@ -360,16 +366,22 @@ def log_input(data, data_is_file):
         LOGGER.exception(ex, stack_info=True)
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogParamAndTag", ActivityType.PUBLICAPI)
 def log_param_and_tag(key, value):
     mlflow.log_param(key, value)
     mlflow.set_tag(key, value)
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogPropertyAndTag", ActivityType.PUBLICAPI)
 def log_property_and_tag(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
     mlflow.set_tag(key, value)
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogProperty", ActivityType.PUBLICAPI)
 def log_property(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
 
