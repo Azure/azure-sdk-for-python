@@ -27,7 +27,7 @@ from email.utils import formatdate
 import json
 import uuid
 import binascii
-from typing import Dict, Any, List, Optional, Union, Tuple, TYPE_CHECKING
+from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import urlsplit
@@ -99,12 +99,12 @@ def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         cosmos_client_connection: "CosmosClientConnection",
-        default_headers: Dict[str, Any],
+        default_headers: Mapping[str, Any],
         verb: str,
         path: str,
-        resource_id: str,
+        resource_id: Optional[str],
         resource_type: str,
-        options: Dict[str, Any],
+        options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Gets HTTP request headers.
@@ -175,7 +175,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         else:
             # check if the client's default consistency is session (and request consistency level is same),
             # then update from session container
-            if default_client_consistency_level == documents.ConsistencyLevel.Session:
+            if default_client_consistency_level == documents.ConsistencyLevel.Session and \
+                    cosmos_client_connection.session:
                 # populate session token from the client's session container
                 headers[http_constants.HttpHeaders.SessionToken] = cosmos_client_connection.session.get_session_token(
                     path
@@ -207,10 +208,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if "partitionKey" in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
-        if options.get("partitionKey") is partition_key._Undefined:
+        if isinstance(options["partitionKey"], partition_key._Undefined):
             headers[http_constants.HttpHeaders.PartitionKey] = [{}]
         # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
-        elif options.get("partitionKey") is partition_key._Empty:
+        elif isinstance(options["partitionKey"], partition_key._Empty):
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
@@ -307,7 +308,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     return headers
 
 
-def GetResourceIdOrFullNameFromLink(resource_link: str) -> str:
+def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
     """Gets resource id or full name from resource link.
 
     :param str resource_link:
@@ -379,7 +380,7 @@ def GetPathFromLink(resource_link: str, resource_type: str = "") -> str:
     return "/" + resource_link + "/"
 
 
-def IsNameBased(link: str) -> bool:
+def IsNameBased(link: Optional[str]) -> bool:
     """Finds whether the link is name based or not
 
     :param str link:
@@ -574,7 +575,7 @@ def IndexOfNth(s: str, value: str, n: int) -> int:
     return -1
 
 
-def IsValidBase64String(string_to_validate: str) -> str:
+def IsValidBase64String(string_to_validate: str) -> bool:
     """Verifies if a string is a valid Base64 encoded string, after
     replacing '-' with '/'
 
@@ -624,7 +625,7 @@ def ParsePaths(paths: List[str]) -> List[str]:
 
         while currentIndex < len(path):
             if path[currentIndex] != segmentSeparator:
-                raise ValueError("Invalid path character at index " + currentIndex)
+                raise ValueError(f"Invalid path character at index {currentIndex}")
 
             currentIndex += 1
             if currentIndex == len(path):
@@ -639,7 +640,7 @@ def ParsePaths(paths: List[str]) -> List[str]:
                 while True:
                     newIndex = path.find(quote, newIndex)
                     if newIndex == -1:
-                        raise ValueError("Invalid path character at index " + currentIndex)
+                        raise ValueError(f"Invalid path character at index {currentIndex}")
 
                     # check if the quote itself is escaped by a preceding \ in which case it's part of the token
                     if path[newIndex - 1] != "\\":
@@ -670,6 +671,8 @@ def ParsePaths(paths: List[str]) -> List[str]:
 
 def create_scope_from_url(url: str) -> str:
     parsed_url = urlsplit(url)
+    if not parsed_url.scheme or not parsed_url.hostname:
+        raise ValueError("Invalid URL scheme or hostname: %r", parsed_url)
     return parsed_url.scheme + "://" + parsed_url.hostname + "/.default"
 
 
@@ -680,7 +683,7 @@ def validate_cache_staleness_value(max_integrated_cache_staleness: Any) -> None:
                          "integer greater than or equal to zero")
 
 
-def _stringify_auto_scale(offer: Dict[str, Any]) -> str:
+def _stringify_auto_scale(offer: ThroughputProperties) -> str:
     auto_scale_params = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
@@ -691,8 +694,10 @@ def _stringify_auto_scale(offer: Dict[str, Any]) -> str:
     return auto_scale_settings
 
 
-def _set_throughput_options(offer: Union[int, ThroughputProperties], request_options: Dict[str, Any]) -> None:
-    if offer is not None:
+def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: Dict[str, Any]) -> None:
+    if isinstance(offer, int):
+        request_options["offerThroughput"] = offer
+    elif offer is not None:
         try:
             max_throughput = offer.auto_scale_max_throughput
             increment_percent = offer.auto_scale_increment_percent
@@ -705,15 +710,12 @@ def _set_throughput_options(offer: Union[int, ThroughputProperties], request_opt
             if offer.offer_throughput:
                 request_options["offerThroughput"] = offer.offer_throughput
         except AttributeError as e:
-            if isinstance(offer, int):
-                request_options["offerThroughput"] = offer
-            else:
-                raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
+            raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
 
 def _deserialize_throughput(throughput: List[Dict[str, Dict[str, Any]]]) -> ThroughputProperties:
     properties = throughput[0]
-    offer_autopilot: Dict[str, Any] = properties['content'].get('offerAutopilotSettings')
+    offer_autopilot: Optional[Dict[str, Any]] = properties['content'].get('offerAutopilotSettings')
     if offer_autopilot and 'autoUpgradePolicy' in offer_autopilot:
         return ThroughputProperties(
             properties=properties,
@@ -735,21 +737,21 @@ def _replace_throughput(
     throughput: Union[int, ThroughputProperties],
     new_throughput_properties: Dict[str, Any]
 ) -> None:
-    try:
-        max_throughput = throughput.auto_scale_max_throughput
-        increment_percent = throughput.auto_scale_increment_percent
-        if max_throughput is not None:
-            new_throughput_properties['content']['offerAutopilotSettings'][
-                'maxThroughput'] = max_throughput
-            if increment_percent:
-                new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
-                    'incrementPercent'] = increment_percent
-            if throughput.offer_throughput:
-                new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
-    except AttributeError as e:
-        if isinstance(throughput, int):
-            new_throughput_properties["content"]["offerThroughput"] = throughput
-        else:
+    if isinstance(throughput, int):
+        new_throughput_properties["content"]["offerThroughput"] = throughput
+    else:
+        try:
+            max_throughput = throughput.auto_scale_max_throughput
+            increment_percent = throughput.auto_scale_increment_percent
+            if max_throughput is not None:
+                new_throughput_properties['content']['offerAutopilotSettings'][
+                    'maxThroughput'] = max_throughput
+                if increment_percent:
+                    new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy'][
+                        'incrementPercent'] = increment_percent
+                if throughput.offer_throughput:
+                    new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
+        except AttributeError as e:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
 
@@ -773,7 +775,7 @@ def _populate_batch_headers(current_headers: Dict[str, Any]) -> None:
 
 
 def _format_batch_operations(
-    operations: List[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
+    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
 ) -> List[Dict[str, Any]]:
     final_operations = []
     for i in range(len(operations)):
@@ -784,7 +786,7 @@ def _format_batch_operations(
         except IndexError:
             raise IndexError("Operation {} in batch is missing a field.".format(str(i)))
         try:
-            kwargs = batch_operation[2]
+            kwargs = batch_operation[2]  # type: ignore[misc]
         except IndexError:
             kwargs = {}
 

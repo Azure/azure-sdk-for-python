@@ -5,15 +5,15 @@
 # -------------------------------------------------------------------------
 import time
 
-from typing import Any, Dict, Optional
-from azure.core.credentials import AccessToken
+from typing import Any, Dict, Mapping, MutableMapping, Optional
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.cosmos import http_constants
 
 
 # pylint:disable=too-few-public-methods
-class _CosmosBearerTokenCredentialPolicyBase(object):
+class _CosmosBearerTokenCredentialPolicyBase:
     """Base class for a Bearer Token Credential Policy.
 
     :param credential: The credential.
@@ -21,17 +21,13 @@ class _CosmosBearerTokenCredentialPolicyBase(object):
     :param str scopes: Lets you specify the type of access needed.
     """
 
-    def __init__(self, credential, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (TokenCredential, *str, **Any) -> None
-        super(_CosmosBearerTokenCredentialPolicyBase, self).__init__()
+    def __init__(self, credential: TokenCredential, *scopes: str) -> None:  # pylint:disable=unused-argument
         self._scopes = scopes
         self._credential = credential
-        self._token = None  # type: Optional[AccessToken]
+        self._token: Optional[AccessToken] = None
 
     @staticmethod
-    def _enforce_https(request):
-        # type: (PipelineRequest) -> None
-
+    def _enforce_https(request: PipelineRequest) -> None:
         # move 'enforce_https' from options to context so it persists
         # across retries but isn't passed to a transport implementation
         option = request.context.options.pop("enforce_https", None)
@@ -47,8 +43,7 @@ class _CosmosBearerTokenCredentialPolicyBase(object):
             )
 
     @staticmethod
-    def _update_headers(headers, token):
-        # type: (Dict[str, str], str) -> None
+    def _update_headers(headers: MutableMapping[str, Any], token: str) -> None:
         """Updates the Authorization header with the bearer token.
         This is the main method that differentiates this policy from core's BearerTokenCredentialPolicy and works
         to properly sign the authorization header for Cosmos' REST API. For more information:
@@ -60,8 +55,7 @@ class _CosmosBearerTokenCredentialPolicyBase(object):
         headers[http_constants.HttpHeaders.Authorization] = "type=aad&ver=1.0&sig={}".format(token)
 
     @property
-    def _need_new_token(self):
-        # type: () -> bool
+    def _need_new_token(self) -> bool:
         return not self._token or self._token.expires_on - time.time() < 300
 
 
@@ -74,8 +68,7 @@ class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, 
     :raises ValueError: If https_enforce does not match with endpoint being used.
     """
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         """Called before the policy sends a request.
 
         The base implementation authorizes the request with a bearer token.
@@ -88,8 +81,7 @@ class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, 
             self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def authorize_request(self, request, *scopes, **kwargs):
-        # type: (PipelineRequest, *str, **Any) -> None
+    def authorize_request(self, request: PipelineRequest, *scopes: str, **kwargs: Any):
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -101,8 +93,7 @@ class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, 
         self._token = self._credential.get_token(*scopes, **kwargs)
         self._update_headers(request.http_request.headers, self._token.token)
 
-    def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    def send(self, request: PipelineRequest) -> PipelineResponse:
         """Authorize request with a bearer token and send it to the next policy
 
         :param request: The pipeline request object.
@@ -132,8 +123,7 @@ class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, 
 
         return response
 
-    def on_challenge(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> bool
+    def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
@@ -146,8 +136,7 @@ class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, 
         # pylint:disable=unused-argument
         return False
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -156,8 +145,7 @@ class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, 
         :type response: ~azure.core.pipeline.PipelineResponse
         """
 
-    def on_exception(self, request):
-        # type: (PipelineRequest) -> None
+    def on_exception(self, request: PipelineRequest) -> None:
         """Executed when an exception is raised while executing the next policy.
 
         This method is executed inside the exception handler.

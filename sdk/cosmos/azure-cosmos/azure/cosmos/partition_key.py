@@ -21,15 +21,14 @@
 """Create partition keys in the Azure Cosmos DB SQL API service.
 """
 from io import BytesIO
+import binascii
+from typing import Any, List, Union, overload
+from typing_extensions import Literal
+
 from ._cosmos_integers import UInt64, UInt128
 from ._cosmos_murmurhash3 import murmurhash3_128
-import binascii
 from ._routing.routing_range import Range
-from typing import overload
-try:
-    from typing import Literal
-except ImportError:
-    from typing_extensions import Literal
+
 
 _MaximumExclusiveEffectivePartitionKey = 0xFF
 _MinimumInclusiveEffectivePartitionKey = 0x00
@@ -153,15 +152,17 @@ class PartitionKey(dict):
     def version(self, value):
         self["version"] = value
 
-    def _get_epk_range_for_prefix_partition_key(self, pk_value: list) -> Range:
+    def _get_epk_range_for_prefix_partition_key(self, pk_value: List[Any]) -> Range:
         if self.kind != "MultiHash":
             raise ValueError(
                 "Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys.")  # pylint: disable=line-too-long
-
-        if len(pk_value) >= len(self["paths"]):
+        len_pk_value = len(pk_value)
+        len_paths = len(self["paths"])
+        if len_pk_value >= len_paths:
             raise ValueError(
-                "{} partition key components provided. Expected less than {} components (number of container" +
-                " partition key definition components).".format(len(pk_value), len(self["paths"])))
+                f"{len_pk_value} partition key components provided. Expected less than {len_paths} " +
+                "components (number of container partition key definition components)."
+            )
         # Prefix Partitions always have exclusive max
         min_epk = self._get_effective_partition_key_string(pk_value)
         if min_epk == _MinimumInclusiveEffectivePartitionKey:
@@ -171,14 +172,14 @@ class PartitionKey(dict):
         if min_epk == _MaximumExclusiveEffectivePartitionKey:
             return Range("FF", "FF", True, False)
 
-        max_epk = min_epk + "FF"
+        max_epk = str(min_epk) + "FF"
         return Range(min_epk, max_epk, True, False)
 
     def _get_effective_partition_key_for_hash_partitioning(self) -> str:
         """We shouldn't be supporting V1"""
-        pass
+        return ""
 
-    def _get_effective_partition_key_string(self, pk_value: list):
+    def _get_effective_partition_key_string(self, pk_value: List[Any]) -> Union[int, str]:
         if not pk_value:
             return _MinimumInclusiveEffectivePartitionKey
 
@@ -194,10 +195,9 @@ class PartitionKey(dict):
                 return self._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
         elif kind == 'MultiHash':
             return self._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
-        else:
-            return _to_hex_encoded_binary_string(pk_value)
+        return _to_hex_encoded_binary_string(pk_value)
 
-    def _write_for_hashing_v2(self, value, writer):
+    def _write_for_hashing_v2(self, value: Any, writer: BytesIO) -> None:
         if value is True:
             writer.write(bytes([PartitionKeyComponentType.PTrue]))
         elif value is False:
@@ -214,7 +214,7 @@ class PartitionKey(dict):
         elif isinstance(value, _Undefined):
             writer.write(bytes([PartitionKeyComponentType.Undefined]))
 
-    def _get_effective_partition_key_for_hash_partitioning_v2(self, pk_value: list):
+    def _get_effective_partition_key_for_hash_partitioning_v2(self, pk_value: List[Any]) -> str:
         with BytesIO() as ms:
             for component in pk_value:
                 self._write_for_hashing_v2(component, ms)
@@ -230,7 +230,7 @@ class PartitionKey(dict):
 
         return ''.join('{:02X}'.format(x) for x in hash_bytes)
 
-    def _get_effective_partition_key_for_multi_hash_partitioning_v2(self, pk_value: list):
+    def _get_effective_partition_key_for_multi_hash_partitioning_v2(self, pk_value: List[Any]) -> str:
         sb = []
         for i in range(len(pk_value)):
             ms = BytesIO()

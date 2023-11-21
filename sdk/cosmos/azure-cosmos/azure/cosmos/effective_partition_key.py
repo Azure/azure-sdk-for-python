@@ -22,7 +22,7 @@ def ToHexEncodedBinaryString(path: Union[str, list]) -> str:
     pass
 
 def GetEffectivePartitionKeyString(partitionKeyDefinition : PartitionKey, strict: bool) -> str:
-    if type(partitionKeyDefinition) == _Empty:
+    if isinstance(partitionKeyDefinition, _Empty):
         return MinimumInclusiveEffectivePartitionKey
     if partitionKeyDefinition.kind == "Hash":
         if partitionKeyDefinition.version == 1:
