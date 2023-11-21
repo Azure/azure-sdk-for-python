@@ -10,13 +10,6 @@
     - `VOIP_JOIN` (Access to Calling APIs but without the authorization to start new calls)
 - Added a new API version `ApiVersion.V2023_10_01` that is now the default API version.
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-- The `MicrosoftBotIdentifier` and `MicrosoftBotProperties` have been deprecated.
-
 ## 1.4.0b1 (2023-04-05)
 
 ### Features Added
