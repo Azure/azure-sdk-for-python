@@ -14,7 +14,7 @@ from azure.mgmt.confluent import ConfluentManagementClient
     pip install azure-identity
     pip install azure-mgmt-confluent
 # USAGE
-    python organization_get.py
+    python access_role_binding_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.organization.get(
+    response = client.access.list_role_bindings(
         resource_group_name="myResourceGroup",
         organization_name="myOrganization",
+        body={"searchFilters": {"pageSize": "10", "pageToken": "asc4fts4ft"}},
     )
     print(response)
 
 
-# x-ms-original-file: specification/confluent/resource-manager/Microsoft.Confluent/stable/2023-08-22/examples/Organization_Get.json
+# x-ms-original-file: specification/confluent/resource-manager/Microsoft.Confluent/stable/2023-08-22/examples/Access_RoleBindingList.json
 if __name__ == "__main__":
     main()
