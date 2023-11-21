@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Union
 
 from .. import _model_base
 from .._model_base import rest_field
+from ..models._enums import SchemaFormat
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -71,7 +72,7 @@ class SchemaProperties(_model_base.Model):
 
     id: str = rest_field()
     """References a specific schema in the registry namespace. Required."""
-    format: Union[str, "_models.SchemaFormat"] = rest_field()
+    format: Union[str, "SchemaFormat"] = rest_field(type=SchemaFormat)
     """Format for the schema being stored. Required. Known values are: \"Avro\", \"Json\", \"Custom\",
      and \"Protobuf\"."""
     group_name: str = rest_field(name="groupName")
