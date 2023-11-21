@@ -176,9 +176,6 @@
     "enable_data_isolation": {
         "value": "false"
     },
-    "byo_open_ai_resource_id": {
-        "value": ""
-    },
     "serverless_compute_settings": {
         "value": {}
     },

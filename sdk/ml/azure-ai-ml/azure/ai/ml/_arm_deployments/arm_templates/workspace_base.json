@@ -536,13 +536,6 @@
                 "description": "Resource Id of Hub used for lean workspace."
             }
         },
-        "byo_open_ai_resource_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Resource Id of BYO open ai resource."
-            }
-        },
         "serverless_compute_settings": {
             "type": "object",
             "defaultValue": {},
