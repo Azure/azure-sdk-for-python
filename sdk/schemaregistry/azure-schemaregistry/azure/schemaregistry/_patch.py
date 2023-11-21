@@ -282,7 +282,7 @@ class SchemaRegistryClient(object):
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8"""
+                        serialization=json, text/plain; charset=utf-8, text/vnd.ms.protobuf"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -306,7 +306,7 @@ class SchemaRegistryClient(object):
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8"""
+                        serialization=json, text/plain; charset=utf-8, text/vnd.ms.protobuf"""
                 },
                 stream=True,
                 **http_request_kwargs,
