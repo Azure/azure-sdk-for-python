@@ -251,11 +251,11 @@ def _normalize_headers(headers):
     return normalized
 
 
-def _return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def _return_headers_and_deserialized(_, deserialized, response_headers):
     return _normalize_headers(response_headers), deserialized
 
 
-def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def _return_context_and_deserialized(response, deserialized, response_headers):
     return response.context["location_mode"], deserialized, response_headers
 
 

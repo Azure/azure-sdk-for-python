@@ -7,6 +7,32 @@
 
 Typically, you will not need to install `corehttp`, as it will be installed when you install one of the client libraries using it.
 
+### Transports
+
+To use `corehttp`, you will need to choose a transport implementation. `corehttp` provides the following transports:
+
+Synchronous transports:
+- `RequestsTransport` - A synchronous transport based on the [Requests](https://requests.readthedocs.io/en/master/) library.
+- `HttpXTransport` - An synchronous transport based on the [HTTPX](https://www.python-httpx.org/) library.
+
+Asynchronous transports:
+- `AioHttpTransport` - An asynchronous transport based on the [aiohttp](https://docs.aiohttp.org/en/stable/) library.
+- `AsyncHttpXTransport` -  An asynchronous transport based on the [HTTPX](https://www.python-httpx.org/) library.
+
+Each transport has its own dependencies, which you can install using the `corehttp` extras:
+
+```bash
+# Install individually.
+pip install corehttp[requests]
+pip install corehttp[aiohttp]
+pip install corehttp[httpx]
+
+# Install multiple.
+pip install corehttp[requests,httpx]
+```
+
+If no transports are specified, `corehttp` will default to using `RequestsTransport` for synchronous pipeline requests and `AioHttpTransport` for asynchronous pipeline requests.
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require

@@ -17,6 +17,7 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import DataFactoryManagementClientConfiguration
 from .operations import (
     ActivityRunsOperations,
+    ChangeDataCaptureOperations,
     CredentialOperationsOperations,
     DataFlowDebugSessionOperations,
     DataFlowsOperations,
@@ -104,6 +105,8 @@ class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version
      azure.mgmt.datafactory.aio.operations.PrivateLinkResourcesOperations
     :ivar global_parameters: GlobalParametersOperations operations
     :vartype global_parameters: azure.mgmt.datafactory.aio.operations.GlobalParametersOperations
+    :ivar change_data_capture: ChangeDataCaptureOperations operations
+    :vartype change_data_capture: azure.mgmt.datafactory.aio.operations.ChangeDataCaptureOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription identifier. Required.
@@ -127,7 +130,7 @@ class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version
         self._config = DataFactoryManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -177,6 +180,9 @@ class DataFactoryManagementClient:  # pylint: disable=client-accepts-api-version
             self._client, self._config, self._serialize, self._deserialize
         )
         self.global_parameters = GlobalParametersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.change_data_capture = ChangeDataCaptureOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

@@ -79,15 +79,25 @@ class WebSiteManagementClient(
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.deleted_web_apps = DeletedWebAppsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.diagnostics = DiagnosticsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.provider = ProviderOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recommendations = RecommendationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_health_metadata = ResourceHealthMetadataOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.certificates = CertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-01"
         )
-        self.billing_meters = BillingMetersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deleted_web_apps = DeletedWebAppsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-01"
+        )
+        self.diagnostics = DiagnosticsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-01"
+        )
+        self.provider = ProviderOperations(self._client, self._config, self._serialize, self._deserialize, "2016-03-01")
+        self.recommendations = RecommendationsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-01"
+        )
+        self.resource_health_metadata = ResourceHealthMetadataOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-01"
+        )
+        self.billing_meters = BillingMetersOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-01"
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

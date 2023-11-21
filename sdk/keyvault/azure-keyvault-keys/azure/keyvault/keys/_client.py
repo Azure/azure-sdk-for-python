@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
     from ._enums import KeyType
-    from ._generated_models import KeyAttributes
+    from ._generated.models import KeyAttributes
     from ._models import JsonWebKey
 
 

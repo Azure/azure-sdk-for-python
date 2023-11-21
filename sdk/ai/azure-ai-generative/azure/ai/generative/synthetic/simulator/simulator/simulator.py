@@ -38,6 +38,8 @@ class Simulator:
         self.simulate_callback = simulate_callback
 
     def _to_openai_chat_completion_model(self, config: "AzureOpenAIModelConfiguration"):
+        if config == None:
+            return None
         token_manager = PlainTokenManager(
             openapi_key=config.api_key,
             auth_header="api-key",

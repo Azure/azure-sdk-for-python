@@ -54,7 +54,7 @@ def collect_statsbeat_metrics(exporter) -> None:
             _STATSBEAT_METER_PROVIDER = MeterProvider(metric_readers=[reader])
             # long_interval_threshold represents how many collects for short interval
             # should have passed before a long interval collect
-            long_interval_threshold = _get_stats_long_export_interval() / _get_stats_short_export_interval()
+            long_interval_threshold = _get_stats_long_export_interval() // _get_stats_short_export_interval()
             metrics = _StatsbeatMetrics(
                 _STATSBEAT_METER_PROVIDER,
                 exporter._instrumentation_key,
@@ -97,16 +97,22 @@ def _get_stats_connection_string(endpoint: str) -> str:
 
 
 # seconds
-def _get_stats_short_export_interval() -> float:
+def _get_stats_short_export_interval() -> int:
     ei_env = os.environ.get("APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL")
     if ei_env:
-        return int(ei_env)
+        try:
+            return int(ei_env)
+        except ValueError:
+            return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
     return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
 
 
 # seconds
-def _get_stats_long_export_interval() -> float:
+def _get_stats_long_export_interval() -> int:
     ei_env = os.environ.get("APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL")
     if ei_env:
-        return int(ei_env)
+        try:
+            return int(ei_env)
+        except ValueError:
+            return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
     return _DEFAULT_STATS_LONG_EXPORT_INTERVAL

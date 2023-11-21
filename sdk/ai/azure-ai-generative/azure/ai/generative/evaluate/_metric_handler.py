@@ -84,5 +84,6 @@ class MetricHandler(object):
         return compute_metrics(
             metrics=metrics,
             task_type=self.task_type,
+            use_chat_completion_api=True,
             **metrics_calculation_data,
         )

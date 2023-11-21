@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/ListResourceHealthMetadataByResourceGroup.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/ListResourceHealthMetadataByResourceGroup.json
 if __name__ == "__main__":
     main()
