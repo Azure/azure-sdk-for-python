@@ -69,24 +69,24 @@ class PartitionKeyComponentType:
     Infinity = 0xFF
 
 
-class NonePartitionKeyValue(object):
+class NonePartitionKeyValue:
     """Represents None value for partitionKey when it's missing in a container.
     """
 
 
-class _Empty(object):
+class _Empty:
     """Represents empty value for partitionKey when it's missing in an item belonging
     to a migrated container.
     """
 
 
-class _Undefined(object):
+class _Undefined:
     """Represents undefined value for partitionKey when it's missing in an item belonging
     to a multi-partition container.
     """
 
 
-class _Infinity(object):
+class _Infinity:
     """Represents infinity value for partitionKey."""
 
 
