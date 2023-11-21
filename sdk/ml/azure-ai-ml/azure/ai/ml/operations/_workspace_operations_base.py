@@ -661,8 +661,6 @@ class WorkspaceOperationsBase(ABC):
             offline_store_target = kwargs.get("offline_store_target", None)
             online_store_target = kwargs.get("online_store_target", None)
 
-            _set_val(param["set_up_feature_store"], "true")
-
             from azure.ai.ml._utils._arm_id_utils import AzureResourceId
 
             if offline_store_target is not None:
