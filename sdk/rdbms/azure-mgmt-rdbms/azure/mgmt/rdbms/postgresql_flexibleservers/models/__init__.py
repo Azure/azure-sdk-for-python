@@ -25,6 +25,8 @@ from ._models_py3 import ConfigurationListResult
 from ._models_py3 import DataEncryption
 from ._models_py3 import Database
 from ._models_py3 import DatabaseListResult
+from ._models_py3 import DbLevelValidationStatus
+from ._models_py3 import DbMigrationStatus
 from ._models_py3 import DbServerMetadata
 from ._models_py3 import DelegatedSubnetUsage
 from ._models_py3 import ErrorAdditionalInfo
@@ -53,11 +55,21 @@ from ._models_py3 import MigrationSecretParameters
 from ._models_py3 import MigrationStatus
 from ._models_py3 import MigrationSubStateDetails
 from ._models_py3 import NameAvailability
+from ._models_py3 import NameProperty
 from ._models_py3 import Network
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateLinkResource
+from ._models_py3 import PrivateLinkResourceListResult
+from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
+from ._models_py3 import QuotaUsage
+from ._models_py3 import QuotaUsagesListResult
+from ._models_py3 import Replica
 from ._models_py3 import Resource
 from ._models_py3 import RestartParameter
 from ._models_py3 import Server
@@ -67,6 +79,8 @@ from ._models_py3 import ServerForUpdate
 from ._models_py3 import ServerListResult
 from ._models_py3 import ServerSku
 from ._models_py3 import ServerSkuCapability
+from ._models_py3 import ServerThreatProtectionListResult
+from ._models_py3 import ServerThreatProtectionSettingsModel
 from ._models_py3 import ServerVersionCapability
 from ._models_py3 import Sku
 from ._models_py3 import Storage
@@ -77,6 +91,12 @@ from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import UserIdentity
+from ._models_py3 import ValidationDetails
+from ._models_py3 import ValidationMessage
+from ._models_py3 import ValidationSummaryItem
+from ._models_py3 import VirtualEndpointResource
+from ._models_py3 import VirtualEndpointResourceForPatch
+from ._models_py3 import VirtualEndpointsListResult
 from ._models_py3 import VirtualNetworkSubnetUsageParameter
 from ._models_py3 import VirtualNetworkSubnetUsageResult
 
@@ -100,10 +120,12 @@ from ._postgre_sql_management_client_enums import HighAvailabilityMode
 from ._postgre_sql_management_client_enums import IdentityType
 from ._postgre_sql_management_client_enums import KeyStatusEnum
 from ._postgre_sql_management_client_enums import LogicalReplicationOnSourceDbEnum
+from ._postgre_sql_management_client_enums import MigrationDbState
 from ._postgre_sql_management_client_enums import MigrationDetailsLevel
 from ._postgre_sql_management_client_enums import MigrationListFilter
 from ._postgre_sql_management_client_enums import MigrationMode
 from ._postgre_sql_management_client_enums import MigrationNameAvailabilityReason
+from ._postgre_sql_management_client_enums import MigrationOption
 from ._postgre_sql_management_client_enums import MigrationState
 from ._postgre_sql_management_client_enums import MigrationSubState
 from ._postgre_sql_management_client_enums import OnlineResizeSupportedEnum
@@ -112,17 +134,29 @@ from ._postgre_sql_management_client_enums import Origin
 from ._postgre_sql_management_client_enums import OverwriteDbsInTargetEnum
 from ._postgre_sql_management_client_enums import PasswordAuthEnum
 from ._postgre_sql_management_client_enums import PrincipalType
+from ._postgre_sql_management_client_enums import PrivateEndpointConnectionProvisioningState
+from ._postgre_sql_management_client_enums import PrivateEndpointServiceConnectionStatus
+from ._postgre_sql_management_client_enums import ReadReplicaPromoteMode
+from ._postgre_sql_management_client_enums import ReplicationPromoteOption
 from ._postgre_sql_management_client_enums import ReplicationRole
+from ._postgre_sql_management_client_enums import ReplicationState
 from ._postgre_sql_management_client_enums import RestrictedEnum
 from ._postgre_sql_management_client_enums import ServerHAState
 from ._postgre_sql_management_client_enums import ServerPublicNetworkAccessState
 from ._postgre_sql_management_client_enums import ServerState
 from ._postgre_sql_management_client_enums import ServerVersion
 from ._postgre_sql_management_client_enums import SkuTier
+from ._postgre_sql_management_client_enums import SourceType
+from ._postgre_sql_management_client_enums import SslMode
 from ._postgre_sql_management_client_enums import StartDataMigrationEnum
 from ._postgre_sql_management_client_enums import StorageAutoGrow
 from ._postgre_sql_management_client_enums import StorageAutoGrowthSupportedEnum
+from ._postgre_sql_management_client_enums import StorageType
+from ._postgre_sql_management_client_enums import ThreatProtectionName
+from ._postgre_sql_management_client_enums import ThreatProtectionState
 from ._postgre_sql_management_client_enums import TriggerCutoverEnum
+from ._postgre_sql_management_client_enums import ValidationState
+from ._postgre_sql_management_client_enums import VirtualEndpointType
 from ._postgre_sql_management_client_enums import ZoneRedundantHaAndGeoBackupSupportedEnum
 from ._postgre_sql_management_client_enums import ZoneRedundantHaSupportedEnum
 from ._patch import __all__ as _patch_all
@@ -149,6 +183,8 @@ __all__ = [
     "DataEncryption",
     "Database",
     "DatabaseListResult",
+    "DbLevelValidationStatus",
+    "DbMigrationStatus",
     "DbServerMetadata",
     "DelegatedSubnetUsage",
     "ErrorAdditionalInfo",
@@ -177,11 +213,21 @@ __all__ = [
     "MigrationStatus",
     "MigrationSubStateDetails",
     "NameAvailability",
+    "NameProperty",
     "Network",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionListResult",
+    "PrivateLinkResource",
+    "PrivateLinkResourceListResult",
+    "PrivateLinkServiceConnectionState",
     "ProxyResource",
+    "QuotaUsage",
+    "QuotaUsagesListResult",
+    "Replica",
     "Resource",
     "RestartParameter",
     "Server",
@@ -191,6 +237,8 @@ __all__ = [
     "ServerListResult",
     "ServerSku",
     "ServerSkuCapability",
+    "ServerThreatProtectionListResult",
+    "ServerThreatProtectionSettingsModel",
     "ServerVersionCapability",
     "Sku",
     "Storage",
@@ -201,6 +249,12 @@ __all__ = [
     "TrackedResource",
     "UserAssignedIdentity",
     "UserIdentity",
+    "ValidationDetails",
+    "ValidationMessage",
+    "ValidationSummaryItem",
+    "VirtualEndpointResource",
+    "VirtualEndpointResourceForPatch",
+    "VirtualEndpointsListResult",
     "VirtualNetworkSubnetUsageParameter",
     "VirtualNetworkSubnetUsageResult",
     "ActiveDirectoryAuthEnum",
@@ -223,10 +277,12 @@ __all__ = [
     "IdentityType",
     "KeyStatusEnum",
     "LogicalReplicationOnSourceDbEnum",
+    "MigrationDbState",
     "MigrationDetailsLevel",
     "MigrationListFilter",
     "MigrationMode",
     "MigrationNameAvailabilityReason",
+    "MigrationOption",
     "MigrationState",
     "MigrationSubState",
     "OnlineResizeSupportedEnum",
@@ -235,17 +291,29 @@ __all__ = [
     "OverwriteDbsInTargetEnum",
     "PasswordAuthEnum",
     "PrincipalType",
+    "PrivateEndpointConnectionProvisioningState",
+    "PrivateEndpointServiceConnectionStatus",
+    "ReadReplicaPromoteMode",
+    "ReplicationPromoteOption",
     "ReplicationRole",
+    "ReplicationState",
     "RestrictedEnum",
     "ServerHAState",
     "ServerPublicNetworkAccessState",
     "ServerState",
     "ServerVersion",
     "SkuTier",
+    "SourceType",
+    "SslMode",
     "StartDataMigrationEnum",
     "StorageAutoGrow",
     "StorageAutoGrowthSupportedEnum",
+    "StorageType",
+    "ThreatProtectionName",
+    "ThreatProtectionState",
     "TriggerCutoverEnum",
+    "ValidationState",
+    "VirtualEndpointType",
     "ZoneRedundantHaAndGeoBackupSupportedEnum",
     "ZoneRedundantHaSupportedEnum",
 ]
