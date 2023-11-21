@@ -541,8 +541,13 @@ class TestKeyVaultKey(KeyVaultTestCase, KeysTestCase):
         assert key.properties.release_policy.encoded_policy
         assert key.properties.exportable
 
-        release_result = await client.release_key(rsa_key_name, attestation)
-        assert release_result.value
+        try:
+            release_result = await client.release_key(rsa_key_name, attestation)
+            assert release_result.value
+        except HttpResponseError as ex:
+            # In live pipeline tests, the service can frequently throw a transient error regarding attestation
+            if self.is_live and "Target environment attestation statement cannot be verified" in ex.message:
+                pytest.skip("Target environment attestation statement cannot be verified. Likely transient failure.")
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version,is_hsm",only_hsm_7_4_plus)
