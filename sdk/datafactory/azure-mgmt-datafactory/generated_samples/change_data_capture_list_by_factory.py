@@ -14,7 +14,7 @@ from azure.mgmt.datafactory import DataFactoryManagementClient
     pip install azure-identity
     pip install azure-mgmt-datafactory
 # USAGE
-    python triggers_start.py
+    python change_data_capture_list_by_factory.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,14 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    client.triggers.begin_start(
+    response = client.change_data_capture.list_by_factory(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
-        trigger_name="exampleTrigger",
-    ).result()
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/Triggers_Start.json
+# x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/ChangeDataCapture_ListByFactory.json
 if __name__ == "__main__":
     main()

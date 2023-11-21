@@ -49,7 +49,7 @@ def build_list_by_factory_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -80,7 +80,7 @@ def build_list_by_factory_request(
 def build_create_or_update_request(
     resource_group_name: str,
     factory_name: str,
-    linked_service_name: str,
+    change_data_capture_name: str,
     subscription_id: str,
     *,
     if_match: Optional[str] = None,
@@ -96,7 +96,7 @@ def build_create_or_update_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices/{linkedServiceName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -111,9 +111,9 @@ def build_create_or_update_request(
             min_length=3,
             pattern=r"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$",
         ),
-        "linkedServiceName": _SERIALIZER.url(
-            "linked_service_name",
-            linked_service_name,
+        "changeDataCaptureName": _SERIALIZER.url(
+            "change_data_capture_name",
+            change_data_capture_name,
             "str",
             max_length=260,
             min_length=1,
@@ -139,7 +139,7 @@ def build_create_or_update_request(
 def build_get_request(
     resource_group_name: str,
     factory_name: str,
-    linked_service_name: str,
+    change_data_capture_name: str,
     subscription_id: str,
     *,
     if_none_match: Optional[str] = None,
@@ -154,7 +154,7 @@ def build_get_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices/{linkedServiceName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -169,9 +169,9 @@ def build_get_request(
             min_length=3,
             pattern=r"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$",
         ),
-        "linkedServiceName": _SERIALIZER.url(
-            "linked_service_name",
-            linked_service_name,
+        "changeDataCaptureName": _SERIALIZER.url(
+            "change_data_capture_name",
+            change_data_capture_name,
             "str",
             max_length=260,
             min_length=1,
@@ -193,7 +193,7 @@ def build_get_request(
 
 
 def build_delete_request(
-    resource_group_name: str, factory_name: str, linked_service_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str, factory_name: str, change_data_capture_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -204,7 +204,7 @@ def build_delete_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices/{linkedServiceName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
@@ -219,9 +219,9 @@ def build_delete_request(
             min_length=3,
             pattern=r"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$",
         ),
-        "linkedServiceName": _SERIALIZER.url(
-            "linked_service_name",
-            linked_service_name,
+        "changeDataCaptureName": _SERIALIZER.url(
+            "change_data_capture_name",
+            change_data_capture_name,
             "str",
             max_length=260,
             min_length=1,
@@ -240,14 +240,158 @@ def build_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class LinkedServicesOperations:
+def build_start_request(
+    resource_group_name: str, factory_name: str, change_data_capture_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}/start",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+        ),
+        "factoryName": _SERIALIZER.url(
+            "factory_name",
+            factory_name,
+            "str",
+            max_length=63,
+            min_length=3,
+            pattern=r"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$",
+        ),
+        "changeDataCaptureName": _SERIALIZER.url(
+            "change_data_capture_name",
+            change_data_capture_name,
+            "str",
+            max_length=260,
+            min_length=1,
+            pattern=r"^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$",
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_stop_request(
+    resource_group_name: str, factory_name: str, change_data_capture_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}/stop",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+        ),
+        "factoryName": _SERIALIZER.url(
+            "factory_name",
+            factory_name,
+            "str",
+            max_length=63,
+            min_length=3,
+            pattern=r"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$",
+        ),
+        "changeDataCaptureName": _SERIALIZER.url(
+            "change_data_capture_name",
+            change_data_capture_name,
+            "str",
+            max_length=260,
+            min_length=1,
+            pattern=r"^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$",
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_status_request(
+    resource_group_name: str, factory_name: str, change_data_capture_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-06-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}/status",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
+        ),
+        "factoryName": _SERIALIZER.url(
+            "factory_name",
+            factory_name,
+            "str",
+            max_length=63,
+            min_length=3,
+            pattern=r"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$",
+        ),
+        "changeDataCaptureName": _SERIALIZER.url(
+            "change_data_capture_name",
+            change_data_capture_name,
+            "str",
+            max_length=260,
+            min_length=1,
+            pattern=r"^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$",
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class ChangeDataCaptureOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.datafactory.DataFactoryManagementClient`'s
-        :attr:`linked_services` attribute.
+        :attr:`change_data_capture` attribute.
     """
 
     models = _models
@@ -262,24 +406,24 @@ class LinkedServicesOperations:
     @distributed_trace
     def list_by_factory(
         self, resource_group_name: str, factory_name: str, **kwargs: Any
-    ) -> Iterable["_models.LinkedServiceResource"]:
-        """Lists linked services.
+    ) -> Iterable["_models.ChangeDataCaptureResource"]:
+        """Lists all resources of type change data capture.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either LinkedServiceResource or the result of
+        :return: An iterator like instance of either ChangeDataCaptureResource or the result of
          cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.LinkedServiceResource]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datafactory.models.ChangeDataCaptureResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.LinkedServiceListResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ChangeDataCaptureListResponse] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -323,7 +467,7 @@ class LinkedServicesOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("LinkedServiceListResponse", pipeline_response)
+            deserialized = self._deserialize("ChangeDataCaptureListResponse", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -347,7 +491,7 @@ class LinkedServicesOperations:
         return ItemPaged(get_next, extract_data)
 
     list_by_factory.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs"
     }
 
     @overload
@@ -355,33 +499,33 @@ class LinkedServicesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        linked_service_name: str,
-        linked_service: _models.LinkedServiceResource,
+        change_data_capture_name: str,
+        change_data_capture: _models.ChangeDataCaptureResource,
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.LinkedServiceResource:
-        """Creates or updates a linked service.
+    ) -> _models.ChangeDataCaptureResource:
+        """Creates or updates a change data capture resource.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param linked_service_name: The linked service name. Required.
-        :type linked_service_name: str
-        :param linked_service: Linked service resource definition. Required.
-        :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceResource
-        :param if_match: ETag of the linkedService entity.  Should only be specified for update, for
-         which it should match existing entity or can be * for unconditional update. Default value is
-         None.
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :param change_data_capture: Change data capture resource definition. Required.
+        :type change_data_capture: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
+        :param if_match: ETag of the change data capture entity. Should only be specified for update,
+         for which it should match existing entity or can be * for unconditional update. Default value
+         is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LinkedServiceResource or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource
+        :return: ChangeDataCaptureResource or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -390,33 +534,33 @@ class LinkedServicesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        linked_service_name: str,
-        linked_service: IO,
+        change_data_capture_name: str,
+        change_data_capture: IO,
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.LinkedServiceResource:
-        """Creates or updates a linked service.
+    ) -> _models.ChangeDataCaptureResource:
+        """Creates or updates a change data capture resource.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param linked_service_name: The linked service name. Required.
-        :type linked_service_name: str
-        :param linked_service: Linked service resource definition. Required.
-        :type linked_service: IO
-        :param if_match: ETag of the linkedService entity.  Should only be specified for update, for
-         which it should match existing entity or can be * for unconditional update. Default value is
-         None.
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :param change_data_capture: Change data capture resource definition. Required.
+        :type change_data_capture: IO
+        :param if_match: ETag of the change data capture entity. Should only be specified for update,
+         for which it should match existing entity or can be * for unconditional update. Default value
+         is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LinkedServiceResource or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource
+        :return: ChangeDataCaptureResource or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -425,32 +569,32 @@ class LinkedServicesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        linked_service_name: str,
-        linked_service: Union[_models.LinkedServiceResource, IO],
+        change_data_capture_name: str,
+        change_data_capture: Union[_models.ChangeDataCaptureResource, IO],
         if_match: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.LinkedServiceResource:
-        """Creates or updates a linked service.
+    ) -> _models.ChangeDataCaptureResource:
+        """Creates or updates a change data capture resource.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param linked_service_name: The linked service name. Required.
-        :type linked_service_name: str
-        :param linked_service: Linked service resource definition. Is either a LinkedServiceResource
-         type or a IO type. Required.
-        :type linked_service: ~azure.mgmt.datafactory.models.LinkedServiceResource or IO
-        :param if_match: ETag of the linkedService entity.  Should only be specified for update, for
-         which it should match existing entity or can be * for unconditional update. Default value is
-         None.
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :param change_data_capture: Change data capture resource definition. Is either a
+         ChangeDataCaptureResource type or a IO type. Required.
+        :type change_data_capture: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource or IO
+        :param if_match: ETag of the change data capture entity. Should only be specified for update,
+         for which it should match existing entity or can be * for unconditional update. Default value
+         is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LinkedServiceResource or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource
+        :return: ChangeDataCaptureResource or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -466,20 +610,20 @@ class LinkedServicesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.LinkedServiceResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ChangeDataCaptureResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(linked_service, (IOBase, bytes)):
-            _content = linked_service
+        if isinstance(change_data_capture, (IOBase, bytes)):
+            _content = change_data_capture
         else:
-            _json = self._serialize.body(linked_service, "LinkedServiceResource")
+            _json = self._serialize.body(change_data_capture, "ChangeDataCaptureResource")
 
         request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
-            linked_service_name=linked_service_name,
+            change_data_capture_name=change_data_capture_name,
             subscription_id=self._config.subscription_id,
             if_match=if_match,
             api_version=api_version,
@@ -504,7 +648,7 @@ class LinkedServicesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("LinkedServiceResource", pipeline_response)
+        deserialized = self._deserialize("ChangeDataCaptureResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -512,7 +656,7 @@ class LinkedServicesOperations:
         return deserialized
 
     create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices/{linkedServiceName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}"
     }
 
     @distributed_trace
@@ -520,25 +664,25 @@ class LinkedServicesOperations:
         self,
         resource_group_name: str,
         factory_name: str,
-        linked_service_name: str,
+        change_data_capture_name: str,
         if_none_match: Optional[str] = None,
         **kwargs: Any
-    ) -> Optional[_models.LinkedServiceResource]:
-        """Gets a linked service.
+    ) -> _models.ChangeDataCaptureResource:
+        """Gets a change data capture.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param linked_service_name: The linked service name. Required.
-        :type linked_service_name: str
-        :param if_none_match: ETag of the linked service entity. Should only be specified for get. If
-         the ETag matches the existing entity tag, or if * was provided, then no content will be
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :param if_none_match: ETag of the change data capture entity. Should only be specified for get.
+         If the ETag matches the existing entity tag, or if * was provided, then no content will be
          returned. Default value is None.
         :type if_none_match: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LinkedServiceResource or None or the result of cls(response)
-        :rtype: ~azure.mgmt.datafactory.models.LinkedServiceResource or None
+        :return: ChangeDataCaptureResource or the result of cls(response)
+        :rtype: ~azure.mgmt.datafactory.models.ChangeDataCaptureResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -553,12 +697,12 @@ class LinkedServicesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[Optional[_models.LinkedServiceResource]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ChangeDataCaptureResource] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
-            linked_service_name=linked_service_name,
+            change_data_capture_name=change_data_capture_name,
             subscription_id=self._config.subscription_id,
             if_none_match=if_none_match,
             api_version=api_version,
@@ -576,13 +720,11 @@ class LinkedServicesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("LinkedServiceResource", pipeline_response)
+        deserialized = self._deserialize("ChangeDataCaptureResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -590,21 +732,21 @@ class LinkedServicesOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices/{linkedServiceName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}"
     }
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, factory_name: str, linked_service_name: str, **kwargs: Any
+        self, resource_group_name: str, factory_name: str, change_data_capture_name: str, **kwargs: Any
     ) -> None:
-        """Deletes a linked service.
+        """Deletes a change data capture.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param factory_name: The factory name. Required.
         :type factory_name: str
-        :param linked_service_name: The linked service name. Required.
-        :type linked_service_name: str
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -627,7 +769,7 @@ class LinkedServicesOperations:
         request = build_delete_request(
             resource_group_name=resource_group_name,
             factory_name=factory_name,
-            linked_service_name=linked_service_name,
+            change_data_capture_name=change_data_capture_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata["url"],
@@ -652,5 +794,193 @@ class LinkedServicesOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/linkedservices/{linkedServiceName}"
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}"
+    }
+
+    @distributed_trace
+    def start(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, factory_name: str, change_data_capture_name: str, **kwargs: Any
+    ) -> None:
+        """Starts a change data capture.
+
+        :param resource_group_name: The resource group name. Required.
+        :type resource_group_name: str
+        :param factory_name: The factory name. Required.
+        :type factory_name: str
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_start_request(
+            resource_group_name=resource_group_name,
+            factory_name=factory_name,
+            change_data_capture_name=change_data_capture_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.start.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    start.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}/start"
+    }
+
+    @distributed_trace
+    def stop(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, factory_name: str, change_data_capture_name: str, **kwargs: Any
+    ) -> None:
+        """Stops a change data capture.
+
+        :param resource_group_name: The resource group name. Required.
+        :type resource_group_name: str
+        :param factory_name: The factory name. Required.
+        :type factory_name: str
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_stop_request(
+            resource_group_name=resource_group_name,
+            factory_name=factory_name,
+            change_data_capture_name=change_data_capture_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.stop.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    stop.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}/stop"
+    }
+
+    @distributed_trace
+    def status(self, resource_group_name: str, factory_name: str, change_data_capture_name: str, **kwargs: Any) -> str:
+        """Gets the current status for the change data capture resource.
+
+        :param resource_group_name: The resource group name. Required.
+        :type resource_group_name: str
+        :param factory_name: The factory name. Required.
+        :type factory_name: str
+        :param change_data_capture_name: The change data capture name. Required.
+        :type change_data_capture_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: str or the result of cls(response)
+        :rtype: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[str] = kwargs.pop("cls", None)
+
+        request = build_status_request(
+            resource_group_name=resource_group_name,
+            factory_name=factory_name,
+            change_data_capture_name=change_data_capture_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.status.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("str", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    status.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/adfcdcs/{changeDataCaptureName}/status"
     }
