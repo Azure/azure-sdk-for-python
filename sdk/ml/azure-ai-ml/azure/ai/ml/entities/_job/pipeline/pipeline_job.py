@@ -487,7 +487,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         component = self._to_component(context, **kwargs)
 
         # pylint: disable=abstract-class-instantiated
-        return Pipeline(  # type: ignore
+        return Pipeline(
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.
