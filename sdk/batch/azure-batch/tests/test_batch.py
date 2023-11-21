@@ -847,10 +847,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
         file_length = 0
         with io.BytesIO() as file_handle:
             remote_desktop = await async_wrapper(client.get_node_remote_desktop_file(batch_pool.name, nodes[0].id))
+            some_file = b"".join(remote_desktop)
             assert remote_desktop is not None
             for data in remote_desktop:
-                file_length += len(data)
-        assert "full address" in str(data)
+                file_length += 1
+        assert "full address" in str(some_file, "utf-8")
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix="batch4", location=AZURE_LOCATION)
@@ -923,10 +924,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         with io.BytesIO() as file_handle:
             response = await async_wrapper(client.get_task_file(batch_job.id, task_id, only_files[0].name))
             for data in response:
-                file_length += len(data)
+                file_length += 1
         assert file_length == int(props.headers["Content-Length"])
-        print(int(props.headers["Content-Length"]))
-        assert "hello world" in str(data)
+        assert "hello world" in str(response)
 
         # Test Delete File from Task
         response = await async_wrapper(client.delete_task_file(batch_job.id, task_id, only_files[0].name))
