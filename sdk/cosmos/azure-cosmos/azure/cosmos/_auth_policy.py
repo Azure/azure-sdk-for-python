@@ -21,7 +21,7 @@ class _CosmosBearerTokenCredentialPolicyBase:
     :param str scopes: Lets you specify the type of access needed.
     """
 
-    def __init__(self, credential: TokenCredential, *scopes: str) -> None:  # pylint:disable=unused-argument
+    def __init__(self, credential: TokenCredential, *scopes: str) -> None:
         self._scopes = scopes
         self._credential = credential
         self._token: Optional[AccessToken] = None

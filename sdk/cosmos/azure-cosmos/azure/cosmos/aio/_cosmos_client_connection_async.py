@@ -183,8 +183,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         credentials_policy = None
         if self.aad_credentials:
-            scopes = base.create_scope_from_url(self.url_connection)
-            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scopes)
+            scope = base.create_scope_from_url(self.url_connection)
+            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scope)
 
         policies = [
             HeadersPolicy(**kwargs),

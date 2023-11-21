@@ -55,7 +55,7 @@ from . import _synchronized_request as synchronized_request
 from . import _global_endpoint_manager as global_endpoint_manager
 from ._routing import routing_map_provider, routing_range
 from ._retry_utility import ConnectionRetryPolicy
-from ._session import Session
+from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty, PartitionKey
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
@@ -163,6 +163,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
                 retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
                 retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
+                # Mypy doesn't seem torecognize the backoff_max attribute of the Retry object....
                 retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.backoff_max,  # type: ignore[attr-defined] # pylint:disable=line-too-long
                 retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
@@ -182,8 +183,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         credentials_policy = None
         if self.aad_credentials:
-            scopes = base.create_scope_from_url(self.url_connection)
-            credentials_policy = CosmosBearerTokenCredentialPolicy(self.aad_credentials, scopes)
+            scope = base.create_scope_from_url(self.url_connection)
+            credentials_policy = CosmosBearerTokenCredentialPolicy(self.aad_credentials, scope)
 
         policies = [
             HeadersPolicy(**kwargs),
@@ -216,7 +217,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._global_endpoint_manager.force_refresh(database_account)
 
         # Use database_account if no consistency passed in to verify consistency level to be used
-        self.session: Optional[Session] = None
+        self.session: Optional[_session.Session] = None
         self._set_client_consistency_level(database_account, consistency_level)
 
     def _set_client_consistency_level(
@@ -245,12 +246,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # on the client is set to session, or if the user explicitly sets it as a property
             # via setter
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-            self.session = Session(self.url_connection)
+            self.session = _session.Session(self.url_connection)
         else:
             self.session = None
 
     @property
-    def Session(self) -> Optional[Session]:
+    def Session(self) -> Optional[_session.Session]:
         """Gets the session object from the client.
          :returns: the session for the client
          :rtype: _session.Session
@@ -258,7 +259,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self.session
 
     @Session.setter
-    def Session(self, session: Optional[Session]) -> None:
+    def Session(self, session: Optional[_session.Session]) -> None:
         """Sets a session object on the document client.
         This will override the existing session
         :param _session.Session session: the session to set
