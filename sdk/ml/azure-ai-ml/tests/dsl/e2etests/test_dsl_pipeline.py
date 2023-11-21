@@ -1945,6 +1945,106 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    def test_pipeline_node_identity_with_parallel_component(self, client: MLClient):
+        components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
+        batch_inference1 = load_component(source=str(components_dir / "score.yml"))
+        batch_inference2 = load_component(source=str(components_dir / "score.yml"))
+        convert_data = load_component(source=str(components_dir / "convert_data.yml"))
+
+        # Construct pipeline
+        @dsl.pipeline(default_compute="cpu-cluster")
+        def parallel_in_pipeline(job_data_path):
+            batch_inference_node1 = batch_inference1(job_data_path=job_data_path)
+            batch_inference_node1.identity = ManagedIdentityConfiguration()
+            convert_data_node = convert_data(input_data=batch_inference_node1.outputs.job_output_path)
+            convert_data_node.outputs.file_output_data.type = AssetTypes.MLTABLE
+            batch_inference_node2 = batch_inference2(job_data_path=convert_data_node.outputs.file_output_data)
+            batch_inference_node2.identity = UserIdentityConfiguration()
+            batch_inference_node2.inputs.job_data_path.mode = InputOutputModes.EVAL_MOUNT
+
+            return {"job_out_data": batch_inference_node2.outputs.job_output_path}
+
+        pipeline = parallel_in_pipeline(
+            job_data_path=Input(
+                type=AssetTypes.MLTABLE,
+                path="./tests/test_configs/dataset/mnist-data/",
+                mode=InputOutputModes.EVAL_MOUNT,
+            ),
+        )
+        pipeline.outputs.job_out_data.mode = "upload"
+
+        # submit pipeline job
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
+
+        omit_fields = [
+            "jobs.*.task.code",
+            "jobs.*.task.environment",
+        ] + common_omit_fields
+        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *omit_fields)
+        expected_job = {
+            "tags": {},
+            "is_archived": False,
+            "job_type": "Pipeline",
+            "inputs": {"job_data_path": {"mode": "EvalMount", "job_input_type": "mltable"}},
+            "jobs": {
+                "batch_inference_node1": {
+                    "identity": {"type": "managed_identity"},
+                    "type": "parallel",
+                    "name": "batch_inference_node1",
+                    "inputs": {
+                        "job_data_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_data_path}}"}
+                    },
+                    "mini_batch_size": 1,
+                    "task": {
+                        "type": "run_function",
+                        "entry_script": "score.py",
+                        "program_arguments": "--job_output_path ${{outputs.job_output_path}}",
+                    },
+                    "input_data": "${{inputs.job_data_path}}",
+                    "resources": {"instance_count": 2},
+                    "max_concurrency_per_instance": 1,
+                    "mini_batch_error_threshold": 1,
+                },
+                "convert_data_node": {
+                    "name": "convert_data_node",
+                    "inputs": {
+                        "input_data": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.jobs.batch_inference_node1.outputs.job_output_path}}",
+                        }
+                    },
+                    "outputs": {"file_output_data": {"job_output_type": "mltable"}},
+                    "type": "command",
+                },
+                "batch_inference_node2": {
+                    "type": "parallel",
+                    "name": "batch_inference_node2",
+                    "identity": {"type": "user_identity"},
+                    "inputs": {
+                        "job_data_path": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.jobs.convert_data_node.outputs.file_output_data}}",
+                            "mode": "EvalMount",
+                        }
+                    },
+                    "outputs": {"job_output_path": {"value": "${{parent.outputs.job_out_data}}", "type": "literal"}},
+                    "mini_batch_size": 1,
+                    "task": {
+                        "type": "run_function",
+                        "entry_script": "score.py",
+                        "program_arguments": "--job_output_path ${{outputs.job_output_path}}",
+                    },
+                    "input_data": "${{inputs.job_data_path}}",
+                    "resources": {"instance_count": 2},
+                    "max_concurrency_per_instance": 1,
+                    "mini_batch_error_threshold": 1,
+                },
+            },
+            "outputs": {"job_out_data": {"mode": "Upload", "job_output_type": "uri_folder"}},
+            "settings": {"default_compute": "cpu-cluster"},
+        }
+        assert expected_job == actual_job
+
     def test_multi_parallel_components_with_file_input_pipeline_output(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:

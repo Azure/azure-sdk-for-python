@@ -4,7 +4,6 @@
 import os
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
