@@ -11,9 +11,9 @@ from azure.ai.resources._project_scope import OperationScope
 
 from azure.ai.ml import MLClient
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
+ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
