@@ -52,6 +52,7 @@ class NodeType:
     # internal spake component got a type value conflict with spark component
     # this enum is used to identify its create_function in factories
     SPARK = "DummySpark"
+    AETHER_BRIDGE = "AetherBridgeComponent"
 
     @classmethod
     def all_values(cls):
