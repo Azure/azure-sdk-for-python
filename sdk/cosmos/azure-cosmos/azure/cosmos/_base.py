@@ -769,9 +769,9 @@ def _internal_resourcetype(resource_type: str) -> str:
 
 
 def _populate_batch_headers(current_headers: Dict[str, Any]) -> None:
-    current_headers.update({http_constants.HttpHeaders.IsBatchRequest: True})
-    current_headers.update({http_constants.HttpHeaders.IsBatchAtomic: True})
-    current_headers.update({http_constants.HttpHeaders.ShouldBatchContinueOnError: False})
+    current_headers[http_constants.HttpHeaders.IsBatchRequest] = True
+    current_headers[http_constants.HttpHeaders.IsBatchAtomic] = True
+    current_headers[http_constants.HttpHeaders.ShouldBatchContinueOnError] = False
 
 
 def _format_batch_operations(
