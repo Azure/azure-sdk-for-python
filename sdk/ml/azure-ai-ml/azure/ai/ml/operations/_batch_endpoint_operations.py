@@ -381,7 +381,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if deployment_name:
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
-        while True:
+        retry_attempts = 0
+        while retry_attempts < 5:
             try:
                 response = self._requests_pipeline.post(
                     endpoint.properties.scoring_uri,
@@ -389,6 +390,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     headers=headers,
                 )
             except ServiceResponseError:
+                retry_attempts += 1
                 continue
             break
         validate_response(response)
