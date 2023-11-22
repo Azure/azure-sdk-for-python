@@ -39,9 +39,9 @@ from azure.ai.ml.entities import Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities._workspace_hub._constants import (
+    ENDPOINT_AI_SERVICE_KIND,
     PROJECT_WORKSPACE_KIND,
     WORKSPACE_HUB_KIND,
-    ENDPOINT_AI_SERVICE_KIND,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -671,8 +671,6 @@ class WorkspaceOperationsBase(ABC):
             materialization_identity = kwargs.get("materialization_identity", None)
             offline_store_target = kwargs.get("offline_store_target", None)
             online_store_target = kwargs.get("online_store_target", None)
-
-            _set_val(param["set_up_feature_store"], "true")
 
             from azure.ai.ml._utils._arm_id_utils import AzureResourceId
 
