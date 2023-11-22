@@ -7,6 +7,7 @@ from unittest.mock import patch
 import pydash
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import set_custom_default_matcher
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
@@ -1946,6 +1947,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert expected_job == actual_job
 
     def test_pipeline_node_identity_with_parallel_component(self, client: MLClient):
+        set_custom_default_matcher(ignore_query_ordering=True)
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
