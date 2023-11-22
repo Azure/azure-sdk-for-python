@@ -19,8 +19,10 @@ from ._models_py3 import NginxConfigurationProperties
 from ._models_py3 import NginxDeployment
 from ._models_py3 import NginxDeploymentListResponse
 from ._models_py3 import NginxDeploymentProperties
+from ._models_py3 import NginxDeploymentScalingProperties
 from ._models_py3 import NginxDeploymentUpdateParameters
 from ._models_py3 import NginxDeploymentUpdateProperties
+from ._models_py3 import NginxDeploymentUserProfile
 from ._models_py3 import NginxFrontendIPConfiguration
 from ._models_py3 import NginxLogging
 from ._models_py3 import NginxNetworkInterfaceConfiguration
@@ -58,8 +60,10 @@ __all__ = [
     "NginxDeployment",
     "NginxDeploymentListResponse",
     "NginxDeploymentProperties",
+    "NginxDeploymentScalingProperties",
     "NginxDeploymentUpdateParameters",
     "NginxDeploymentUpdateProperties",
+    "NginxDeploymentUserProfile",
     "NginxFrontendIPConfiguration",
     "NginxLogging",
     "NginxNetworkInterfaceConfiguration",

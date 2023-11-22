@@ -104,6 +104,7 @@ def _create_aiohttp_response(http_response, body_bytes, headers=None):
             self._body = body_bytes
             self._headers = headers
             self._cache = {}
+            self._loop = None
             self.status = 200
             self.reason = "OK"
 

@@ -29,13 +29,12 @@ def main():
         subscription_id="3dddfa4f-cedf-4dc0-ba29-b6d1a69ab545",
     )
 
-    response = client.domains.renew(
+    client.domains.renew(
         resource_group_name="RG",
         domain_name="example.com",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.DomainRegistration/stable/2022-09-01/examples/RenewDomain.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.DomainRegistration/stable/2023-01-01/examples/RenewDomain.json
 if __name__ == "__main__":
     main()

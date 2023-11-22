@@ -16,16 +16,21 @@ from . import models as _models
 from ._configuration import HybridNetworkManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
-    DevicesOperations,
-    NetworkFunctionVendorSkusOperations,
-    NetworkFunctionVendorsOperations,
+    ArtifactManifestsOperations,
+    ArtifactStoresOperations,
+    ComponentsOperations,
+    ConfigurationGroupSchemasOperations,
+    ConfigurationGroupValuesOperations,
+    NetworkFunctionDefinitionGroupsOperations,
+    NetworkFunctionDefinitionVersionsOperations,
     NetworkFunctionsOperations,
+    NetworkServiceDesignGroupsOperations,
+    NetworkServiceDesignVersionsOperations,
     Operations,
-    RoleInstancesOperations,
-    VendorNetworkFunctionsOperations,
-    VendorSkuPreviewOperations,
-    VendorSkusOperations,
-    VendorsOperations,
+    ProxyArtifactOperations,
+    PublishersOperations,
+    SiteNetworkServicesOperations,
+    SitesOperations,
 )
 
 if TYPE_CHECKING:
@@ -37,37 +42,52 @@ class HybridNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
     """The definitions in this swagger specification will be used to manage the Hybrid Network
     resources.
 
-    :ivar devices: DevicesOperations operations
-    :vartype devices: azure.mgmt.hybridnetwork.operations.DevicesOperations
+    :ivar configuration_group_schemas: ConfigurationGroupSchemasOperations operations
+    :vartype configuration_group_schemas:
+     azure.mgmt.hybridnetwork.operations.ConfigurationGroupSchemasOperations
+    :ivar configuration_group_values: ConfigurationGroupValuesOperations operations
+    :vartype configuration_group_values:
+     azure.mgmt.hybridnetwork.operations.ConfigurationGroupValuesOperations
     :ivar network_functions: NetworkFunctionsOperations operations
     :vartype network_functions: azure.mgmt.hybridnetwork.operations.NetworkFunctionsOperations
-    :ivar network_function_vendors: NetworkFunctionVendorsOperations operations
-    :vartype network_function_vendors:
-     azure.mgmt.hybridnetwork.operations.NetworkFunctionVendorsOperations
-    :ivar network_function_vendor_skus: NetworkFunctionVendorSkusOperations operations
-    :vartype network_function_vendor_skus:
-     azure.mgmt.hybridnetwork.operations.NetworkFunctionVendorSkusOperations
+    :ivar components: ComponentsOperations operations
+    :vartype components: azure.mgmt.hybridnetwork.operations.ComponentsOperations
+    :ivar network_function_definition_groups: NetworkFunctionDefinitionGroupsOperations operations
+    :vartype network_function_definition_groups:
+     azure.mgmt.hybridnetwork.operations.NetworkFunctionDefinitionGroupsOperations
+    :ivar network_function_definition_versions: NetworkFunctionDefinitionVersionsOperations
+     operations
+    :vartype network_function_definition_versions:
+     azure.mgmt.hybridnetwork.operations.NetworkFunctionDefinitionVersionsOperations
+    :ivar network_service_design_groups: NetworkServiceDesignGroupsOperations operations
+    :vartype network_service_design_groups:
+     azure.mgmt.hybridnetwork.operations.NetworkServiceDesignGroupsOperations
+    :ivar network_service_design_versions: NetworkServiceDesignVersionsOperations operations
+    :vartype network_service_design_versions:
+     azure.mgmt.hybridnetwork.operations.NetworkServiceDesignVersionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.hybridnetwork.operations.Operations
-    :ivar vendors: VendorsOperations operations
-    :vartype vendors: azure.mgmt.hybridnetwork.operations.VendorsOperations
-    :ivar vendor_skus: VendorSkusOperations operations
-    :vartype vendor_skus: azure.mgmt.hybridnetwork.operations.VendorSkusOperations
-    :ivar vendor_sku_preview: VendorSkuPreviewOperations operations
-    :vartype vendor_sku_preview: azure.mgmt.hybridnetwork.operations.VendorSkuPreviewOperations
-    :ivar vendor_network_functions: VendorNetworkFunctionsOperations operations
-    :vartype vendor_network_functions:
-     azure.mgmt.hybridnetwork.operations.VendorNetworkFunctionsOperations
-    :ivar role_instances: RoleInstancesOperations operations
-    :vartype role_instances: azure.mgmt.hybridnetwork.operations.RoleInstancesOperations
+    :ivar publishers: PublishersOperations operations
+    :vartype publishers: azure.mgmt.hybridnetwork.operations.PublishersOperations
+    :ivar artifact_stores: ArtifactStoresOperations operations
+    :vartype artifact_stores: azure.mgmt.hybridnetwork.operations.ArtifactStoresOperations
+    :ivar artifact_manifests: ArtifactManifestsOperations operations
+    :vartype artifact_manifests: azure.mgmt.hybridnetwork.operations.ArtifactManifestsOperations
+    :ivar proxy_artifact: ProxyArtifactOperations operations
+    :vartype proxy_artifact: azure.mgmt.hybridnetwork.operations.ProxyArtifactOperations
+    :ivar sites: SitesOperations operations
+    :vartype sites: azure.mgmt.hybridnetwork.operations.SitesOperations
+    :ivar site_network_services: SiteNetworkServicesOperations operations
+    :vartype site_network_services:
+     azure.mgmt.hybridnetwork.operations.SiteNetworkServicesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-01-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-09-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -83,32 +103,45 @@ class HybridNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self._config = HybridNetworkManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.devices = DevicesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.configuration_group_schemas = ConfigurationGroupSchemasOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.configuration_group_values = ConfigurationGroupValuesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.network_functions = NetworkFunctionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.network_function_vendors = NetworkFunctionVendorsOperations(
+        self.components = ComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.network_function_definition_groups = NetworkFunctionDefinitionGroupsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.network_function_vendor_skus = NetworkFunctionVendorSkusOperations(
+        self.network_function_definition_versions = NetworkFunctionDefinitionVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_service_design_groups = NetworkServiceDesignGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_service_design_versions = NetworkServiceDesignVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.vendors = VendorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vendor_skus = VendorSkusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vendor_sku_preview = VendorSkuPreviewOperations(
+        self.publishers = PublishersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.artifact_stores = ArtifactStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.artifact_manifests = ArtifactManifestsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.vendor_network_functions = VendorNetworkFunctionsOperations(
+        self.proxy_artifact = ProxyArtifactOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sites = SitesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.site_network_services = SiteNetworkServicesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.role_instances = RoleInstancesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -139,5 +172,5 @@ class HybridNetworkManagementClient:  # pylint: disable=client-accepts-api-versi
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
