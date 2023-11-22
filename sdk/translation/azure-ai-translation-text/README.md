@@ -63,8 +63,14 @@ With the value of the `endpoint`, `credential` and a `region`, you can create th
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_credential -->
 
 ```python
+from azure.ai.translation.text import TextTranslationClient, TranslatorCredential
+
+endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
+apikey = os.environ["AZURE_TEXT_TRANSLATION_APIKEY"]
+region = os.environ["AZURE_TEXT_TRANSLATION_REGION"]
+
 credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential, endpoint)
+text_translator = TextTranslationClient(endpoint=endpoint, credential=credential)
 ```
 
 <!-- END SNIPPET -->
@@ -347,6 +353,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-dt-product-docs]: https://learn.microsoft.com/azure/cognitive-services/translator/
 [python-dt-ref-docs]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-reference
 [python-dt-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples
+[python-dt-readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/README.md
+
 
 [pip]: https://pypi.org/project/pip/
 [azure_cli]: https://docs.microsoft.com/cli/azure

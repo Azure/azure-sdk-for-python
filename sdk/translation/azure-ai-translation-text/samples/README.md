@@ -29,27 +29,63 @@ See the [README][README] of the Text Translator client library for more informat
 
 # Create Client
 
-For some of these operations you can create a new `TextTranslationClient` without any authentication. You will only need your endpoint:
+To get a list of languages you can create a new `TextTranslationClient` without any authentication. You will only need your endpoint:
 
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_endpoint -->
 
 ```python
-text_translator = TextTranslationClient(endpoint)
+from azure.ai.translation.text import TextTranslationClient
+
+endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
+
+text_translator = TextTranslationClient(endpoint=endpoint, credential=None)
 ```
 
 <!-- END SNIPPET -->
 
+## Endpoint
 The values of the `endpoint` variable can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
 
-For other samples an overloaded constructor is provided that uses a TextTranslationCredential.  In addition to `endpoint`, this function requires configuring an `apikey` and `region` to create the credential.  The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
-
-The appropriate constructor is invoked in each sample to create a `TextTranslationClient` instance.
+## API Key Authentication
+A constructor is provided that uses a TextTranslationCredential.  In addition to `endpoint`, this function requires configuring an `apikey` and `region` to create the credential.  The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.  Samples are presented using environment variables.
 
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_credential -->
 
 ```python
+from azure.ai.translation.text import TextTranslationClient, TranslatorCredential
+
+endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
+apikey = os.environ["AZURE_TEXT_TRANSLATION_APIKEY"]
+region = os.environ["AZURE_TEXT_TRANSLATION_REGION"]
+
 credential = TranslatorCredential(apikey, region)
-text_translator = TextTranslationClient(credential, endpoint)
+text_translator = TextTranslationClient(endpoint=endpoint, credential=credential)
+```
+
+<!-- END SNIPPET -->
+
+## Entra Authentication
+Credentials can also be provided using Azure.Identity to authenticate against Entra (AAD) applications.  To install the Azure.Identity library use the following command:
+
+```powershell
+pip install azure-identity
+```
+
+In addition to `endpoint`, this function requires configuring the `AZURE_TENANT_ID`, `AZURE_CLIENT_ID` and `AZURE_CLIENT_SECRET` environment variables acquired from the Auzre Portal.  Other configuration methods are not supported.  The environment variables are used to construct an Azure.Identity `DefaultAzureCredential` credential that will generate a token authorization header to authenticate against an Entra application.
+
+<!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_aad_credential -->
+
+```python
+"""DefaultAzureCredential will use the values from these environment
+variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+"""
+from azure.identity import DefaultAzureCredential
+from azure.ai.translation.text import TextTranslationClient
+
+endpoint = os.environ["AZURE_TEXT_TRANSLATION_ENDPOINT"]
+credential = DefaultAzureCredential()
+
+text_translator = TextTranslationClient(endpoint=endpoint, credential=credential)
 ```
 
 <!-- END SNIPPET -->
