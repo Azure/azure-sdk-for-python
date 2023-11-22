@@ -9,6 +9,7 @@ from marshmallow import Schema
 
 from azure.ai.ml.entities._component.component import Component, NodeType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ..._schema import PathAwareSchema
@@ -218,3 +219,7 @@ class Pipeline(BaseNode):
         for key, val in self.component.outputs.items():
             node_output = self.outputs.get(key)
             copy_output_setting(source=val, target=node_output)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Job":
+        raise NotImplementedError()
