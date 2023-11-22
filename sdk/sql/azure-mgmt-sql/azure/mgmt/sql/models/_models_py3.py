@@ -544,6 +544,43 @@ class BenchmarkReference(_serialization.Model):
         self.reference = None
 
 
+class ChangeLongTermRetentionBackupAccessTierParameters(_serialization.Model):
+    """Contains the information necessary to change long term retention backup access tier and related
+    operation mode.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar backup_storage_access_tier: The long term retention backup storage access tier. Required.
+    :vartype backup_storage_access_tier: str
+    :ivar operation_mode: The operation mode when updating ltr backup storage access tier.
+     Required.
+    :vartype operation_mode: str
+    """
+
+    _validation = {
+        "backup_storage_access_tier": {"required": True},
+        "operation_mode": {"required": True},
+    }
+
+    _attribute_map = {
+        "backup_storage_access_tier": {"key": "backupStorageAccessTier", "type": "str"},
+        "operation_mode": {"key": "operationMode", "type": "str"},
+    }
+
+    def __init__(self, *, backup_storage_access_tier: str, operation_mode: str, **kwargs: Any) -> None:
+        """
+        :keyword backup_storage_access_tier: The long term retention backup storage access tier.
+         Required.
+        :paramtype backup_storage_access_tier: str
+        :keyword operation_mode: The operation mode when updating ltr backup storage access tier.
+         Required.
+        :paramtype operation_mode: str
+        """
+        super().__init__(**kwargs)
+        self.backup_storage_access_tier = backup_storage_access_tier
+        self.operation_mode = operation_mode
+
+
 class CheckNameAvailabilityRequest(_serialization.Model):
     """A request to check whether the specified name for a resource is available.
 
@@ -5479,6 +5516,98 @@ class EndpointDetail(_serialization.Model):
         self.port = None
 
 
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.sql.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.sql.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.sql.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.sql.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
 class ExportDatabaseDefinition(_serialization.Model):
     """Contains the information necessary to perform export database operation.
 
@@ -9165,6 +9294,11 @@ class LongTermRetentionBackup(ProxyResource):  # pylint: disable=too-many-instan
      values are: "Geo", "Local", "Zone", and "GeoZone".
     :vartype requested_backup_storage_redundancy: str or
      ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar is_backup_immutable: The setting whether the LTR backup is immutable.
+    :vartype is_backup_immutable: bool
+    :ivar backup_storage_access_tier: The BackupStorageAccessTier for the LTR backup. Known values
+     are: "Hot" and "Archive".
+    :vartype backup_storage_access_tier: str or ~azure.mgmt.sql.models.BackupStorageAccessTier
     """
 
     _validation = {
@@ -9178,6 +9312,7 @@ class LongTermRetentionBackup(ProxyResource):  # pylint: disable=too-many-instan
         "backup_time": {"readonly": True},
         "backup_expiration_time": {"readonly": True},
         "backup_storage_redundancy": {"readonly": True},
+        "backup_storage_access_tier": {"readonly": True},
     }
 
     _attribute_map = {
@@ -9192,12 +9327,15 @@ class LongTermRetentionBackup(ProxyResource):  # pylint: disable=too-many-instan
         "backup_expiration_time": {"key": "properties.backupExpirationTime", "type": "iso-8601"},
         "backup_storage_redundancy": {"key": "properties.backupStorageRedundancy", "type": "str"},
         "requested_backup_storage_redundancy": {"key": "properties.requestedBackupStorageRedundancy", "type": "str"},
+        "is_backup_immutable": {"key": "properties.isBackupImmutable", "type": "bool"},
+        "backup_storage_access_tier": {"key": "properties.backupStorageAccessTier", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
+        is_backup_immutable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9205,6 +9343,8 @@ class LongTermRetentionBackup(ProxyResource):  # pylint: disable=too-many-instan
          values are: "Geo", "Local", "Zone", and "GeoZone".
         :paramtype requested_backup_storage_redundancy: str or
          ~azure.mgmt.sql.models.BackupStorageRedundancy
+        :keyword is_backup_immutable: The setting whether the LTR backup is immutable.
+        :paramtype is_backup_immutable: bool
         """
         super().__init__(**kwargs)
         self.server_name = None
@@ -9215,6 +9355,8 @@ class LongTermRetentionBackup(ProxyResource):  # pylint: disable=too-many-instan
         self.backup_expiration_time = None
         self.backup_storage_redundancy = None
         self.requested_backup_storage_redundancy = requested_backup_storage_redundancy
+        self.is_backup_immutable = is_backup_immutable
+        self.backup_storage_access_tier = None
 
 
 class LongTermRetentionBackupListResult(_serialization.Model):

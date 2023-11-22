@@ -157,8 +157,15 @@ class AvailabilityZoneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     THREE = "3"
 
 
+class BackupStorageAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The BackupStorageAccessTier for the LTR backup."""
+
+    HOT = "Hot"
+    ARCHIVE = "Archive"
+
+
 class BackupStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The storage redundancy type of the copied backup."""
+    """The storage redundancy type of the backup."""
 
     GEO = "Geo"
     LOCAL = "Local"

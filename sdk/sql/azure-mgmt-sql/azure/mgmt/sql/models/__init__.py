@@ -17,6 +17,7 @@ from ._models_py3 import BackupShortTermRetentionPolicyListResult
 from ._models_py3 import Baseline
 from ._models_py3 import BaselineAdjustedResult
 from ._models_py3 import BenchmarkReference
+from ._models_py3 import ChangeLongTermRetentionBackupAccessTierParameters
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
 from ._models_py3 import CompleteDatabaseRestoreDefinition
@@ -87,6 +88,9 @@ from ._models_py3 import EndpointCertificate
 from ._models_py3 import EndpointCertificateListResult
 from ._models_py3 import EndpointDependency
 from ._models_py3 import EndpointDetail
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ExportDatabaseDefinition
 from ._models_py3 import ExtendedDatabaseBlobAuditingPolicy
 from ._models_py3 import ExtendedDatabaseBlobAuditingPolicyListResult
@@ -431,6 +435,7 @@ from ._sql_management_client_enums import AutomaticTuningOptionModeDesired
 from ._sql_management_client_enums import AutomaticTuningServerMode
 from ._sql_management_client_enums import AutomaticTuningServerReason
 from ._sql_management_client_enums import AvailabilityZoneType
+from ._sql_management_client_enums import BackupStorageAccessTier
 from ._sql_management_client_enums import BackupStorageRedundancy
 from ._sql_management_client_enums import BaselineName
 from ._sql_management_client_enums import BlobAuditingPolicyState
@@ -585,6 +590,7 @@ __all__ = [
     "Baseline",
     "BaselineAdjustedResult",
     "BenchmarkReference",
+    "ChangeLongTermRetentionBackupAccessTierParameters",
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResponse",
     "CompleteDatabaseRestoreDefinition",
@@ -655,6 +661,9 @@ __all__ = [
     "EndpointCertificateListResult",
     "EndpointDependency",
     "EndpointDetail",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ExportDatabaseDefinition",
     "ExtendedDatabaseBlobAuditingPolicy",
     "ExtendedDatabaseBlobAuditingPolicyListResult",
@@ -998,6 +1007,7 @@ __all__ = [
     "AutomaticTuningServerMode",
     "AutomaticTuningServerReason",
     "AvailabilityZoneType",
+    "BackupStorageAccessTier",
     "BackupStorageRedundancy",
     "BaselineName",
     "BlobAuditingPolicyState",
