@@ -4,11 +4,10 @@
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
 # pylint:disable=too-many-lines
-import functools
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Type, Dict, Any, Union, Optional, List, Tuple
+from typing import Type, Dict, Any, Union, Optional, List, Tuple, TYPE_CHECKING
 from ._generated._serialization import Model
 
 from ._generated.models import (
@@ -25,15 +24,19 @@ from ._generated.models import (
     FalseFilter as InternalFalseFilter,
     KeyValue,
     AuthorizationRule as InternalAuthorizationRule,
-    MessagingSku,
-    NamespaceType,
-    EntityAvailabilityStatus,
-    EntityStatus,
 )
-
 from ._model_workaround import adjust_attribute_map, avoid_timedelta_overflow
 from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 from ._utils import _normalize_entity_path_to_full_path_if_needed
+
+if TYPE_CHECKING:
+    from ._generated.models import (
+        MessagingSku,
+        NamespaceType,
+        EntityAvailabilityStatus,
+        EntityStatus,
+        AccessRights
+    )
 
 adjust_attribute_map()
 
@@ -150,10 +153,10 @@ class NamespaceProperties(DictMixin):
         *,
         alias: str,
         created_at_utc: datetime,
-        messaging_sku: Union[str, MessagingSku],
+        messaging_sku: Union[str, "MessagingSku"],
         messaging_units: int,
         modified_at_utc: datetime,
-        namespace_type: Union[str, NamespaceType],
+        namespace_type: Union[str, "NamespaceType"],
     ) -> None:
         self.name = name
         self.alias = alias
@@ -327,14 +330,14 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
 
     def __init__(
         self,
-        name,
+        name: str,
         *,
         authorization_rules: List[InternalAuthorizationRule],
         auto_delete_on_idle: timedelta,
         dead_lettering_on_message_expiration: bool,
         default_message_time_to_live: timedelta,
         duplicate_detection_history_time_window: timedelta,
-        availability_status: Union[str, EntityAvailabilityStatus],
+        availability_status: Union[str, "EntityAvailabilityStatus"],
         enable_batched_operations: bool,
         enable_express: bool,
         enable_partitioning: bool,
@@ -343,7 +346,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         max_size_in_megabytes: int,
         requires_duplicate_detection: bool,
         requires_session: bool,
-        status: Union[str, EntityStatus],
+        status: Union[str, "EntityStatus"],
         forward_to: str,
         user_metadata: str,
         forward_dead_lettered_messages_to: str,
@@ -517,7 +520,7 @@ class QueueRuntimeProperties(object):
         return qr
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Name of the queue.
 
         :rtype: str
@@ -525,7 +528,7 @@ class QueueRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at_utc(self):
+    def accessed_at_utc(self) -> datetime:
         """Last time a message was sent, or the last time there was a receive request to this queue.
 
         :rtype:  ~datetime.datetime
@@ -533,7 +536,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.accessed_at
 
     @property
-    def created_at_utc(self):
+    def created_at_utc(self) -> datetime:
         """The exact time the queue was created.
 
         :rtype: ~datetime.datetime
@@ -541,7 +544,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.created_at
 
     @property
-    def updated_at_utc(self):
+    def updated_at_utc(self) -> datetime:
         """The exact the entity was updated.
 
         :rtype: ~datetime.datetime
@@ -549,7 +552,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.updated_at
 
     @property
-    def size_in_bytes(self):
+    def size_in_bytes(self) -> int:
         """The size of the queue, in bytes.
 
         :rtype: int
@@ -557,7 +560,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.size_in_bytes
 
     @property
-    def total_message_count(self):
+    def total_message_count(self) -> int:
         """Total number of messages.
 
         :rtype: int
@@ -565,7 +568,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.message_count
 
     @property
-    def active_message_count(self):
+    def active_message_count(self) -> int:
         """Number of active messages in the queue, topic, or subscription.
 
         :rtype: int
@@ -573,7 +576,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.message_count_details.active_message_count
 
     @property
-    def dead_letter_message_count(self):
+    def dead_letter_message_count(self) -> int:
         """Number of messages that are dead lettered.
 
         :rtype: int
@@ -581,7 +584,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.message_count_details.dead_letter_message_count
 
     @property
-    def scheduled_message_count(self):
+    def scheduled_message_count(self) -> int:
         """Number of scheduled messages.
 
         :rtype: int
@@ -589,7 +592,7 @@ class QueueRuntimeProperties(object):
         return self._internal_qr.message_count_details.scheduled_message_count
 
     @property
-    def transfer_dead_letter_message_count(self):
+    def transfer_dead_letter_message_count(self) -> int:
         """Number of messages transferred into dead letters.
 
         :rtype: int
@@ -599,7 +602,7 @@ class QueueRuntimeProperties(object):
         )
 
     @property
-    def transfer_message_count(self):
+    def transfer_message_count(self) -> int:
         """Number of messages transferred to another queue, topic, or subscription.
 
         :rtype: int
@@ -676,11 +679,11 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
         size_in_bytes: int,
         filtering_messages_before_publishing: bool,
         authorization_rules: List[InternalAuthorizationRule],
-        status: Union[str, EntityStatus],
+        status: Union[str, "EntityStatus"],
         support_ordering: bool,
         auto_delete_on_idle: timedelta,
         enable_partitioning: bool,
-        availability_status: Union[str, EntityAvailabilityStatus],
+        availability_status: Union[str, "EntityAvailabilityStatus"],
         enable_express: bool,
         user_metadata: str,
         max_message_size_in_kilobytes: int,
@@ -818,7 +821,7 @@ class TopicRuntimeProperties(object):
         return qd
 
     @property
-    def name(self):
+    def name(self) -> str:
         """The name of the topic.
 
         :rtype: str
@@ -826,7 +829,7 @@ class TopicRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at_utc(self):
+    def accessed_at_utc(self) -> datetime:
         """Last time a message was sent, or the last time there was a receive request
 
         :rtype: ~datetime.datetime
@@ -834,7 +837,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.accessed_at
 
     @property
-    def created_at_utc(self):
+    def created_at_utc(self) -> datetime:
         """The exact time the queue was created.
 
         :rtype: ~datetime.datetime
@@ -842,7 +845,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.created_at
 
     @property
-    def updated_at_utc(self):
+    def updated_at_utc(self) -> datetime:
         """The exact time the entity was updated.
 
         :rtype: ~datetime.datetime
@@ -850,7 +853,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.updated_at
 
     @property
-    def size_in_bytes(self):
+    def size_in_bytes(self) -> int:
         """The current size of the entity in bytes.
 
         :rtype: int
@@ -858,7 +861,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.size_in_bytes
 
     @property
-    def subscription_count(self):
+    def subscription_count(self) -> int:
         """The number of subscriptions in the topic.
 
         :rtype: int
@@ -866,7 +869,7 @@ class TopicRuntimeProperties(object):
         return self._internal_td.subscription_count
 
     @property
-    def scheduled_message_count(self):
+    def scheduled_message_count(self) -> int:
         """Number of scheduled messages.
 
         :rtype: int
@@ -982,12 +985,12 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         dead_lettering_on_filter_evaluation_exceptions: bool,
         max_delivery_count: int,
         enable_batched_operations: bool,
-        status: Union[str, EntityStatus],
+        status: Union[str, "EntityStatus"],
         forward_to: str,
         user_metadata: str,
         forward_dead_lettered_messages_to: str,
         auto_delete_on_idle: timedelta,
-        availability_status: Union[str, EntityAvailabilityStatus],
+        availability_status: Union[str, "EntityAvailabilityStatus"],
     ) -> None:
         self.name = name
         self._internal_sd: Optional[InternalSubscriptionDescription] = None
@@ -1115,7 +1118,7 @@ class SubscriptionRuntimeProperties(object):
         return subscription
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Name of subscription
 
         :rtype: str
@@ -1123,7 +1126,7 @@ class SubscriptionRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at_utc(self):
+    def accessed_at_utc(self) -> datetime:
         """Last time a message was sent, or the last time there was a receive request
 
         :rtype: ~datetime.datetime
@@ -1131,7 +1134,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.accessed_at
 
     @property
-    def created_at_utc(self):
+    def created_at_utc(self) -> datetime:
         """The exact time the subscription was created.
 
         :rtype: ~datetime.datetime
@@ -1139,7 +1142,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.created_at
 
     @property
-    def updated_at_utc(self):
+    def updated_at_utc(self) -> datetime:
         """The exact time the entity is updated.
 
         :rtype: ~datetime.datetime
@@ -1147,7 +1150,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.updated_at
 
     @property
-    def total_message_count(self):
+    def total_message_count(self) -> int:
         """The number of messages in the subscription.
 
         :rtype: int
@@ -1155,7 +1158,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.message_count
 
     @property
-    def active_message_count(self):
+    def active_message_count(self) -> int:
         """Number of active messages in the subscription.
 
         :rtype: int
@@ -1163,7 +1166,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.message_count_details.active_message_count
 
     @property
-    def dead_letter_message_count(self):
+    def dead_letter_message_count(self) -> int:
         """Number of messages that are dead lettered.
 
         :rtype: int
@@ -1171,7 +1174,7 @@ class SubscriptionRuntimeProperties(object):
         return self._internal_sd.message_count_details.dead_letter_message_count
 
     @property
-    def transfer_dead_letter_message_count(self):
+    def transfer_dead_letter_message_count(self) -> int:
         """Number of messages transferred into dead letters.
 
         :rtype: int
@@ -1181,7 +1184,7 @@ class SubscriptionRuntimeProperties(object):
         )
 
     @property
-    def transfer_message_count(self):
+    def transfer_message_count(self) -> int:
         """Number of messages transferred to another queue, topic, or subscription.
 
         :rtype: int
@@ -1285,41 +1288,54 @@ class RuleProperties(DictMixin):
 class CorrelationRuleFilter(object):
     """Represents the correlation filter expression.
 
-    :param correlation_id: Identifier of the correlation.
-    :type correlation_id: str
-    :param message_id: Identifier of the message.
-    :type message_id: str
-    :param to: Address to send to.
-    :type to: str
-    :param reply_to: Address of the queue to reply to.
-    :type reply_to: str
-    :param label: Application specific label.
-    :type label: str
-    :param session_id: Session identifier.
-    :type session_id: str
-    :param reply_to_session_id: Session identifier to reply to.
-    :type reply_to_session_id: str
-    :param content_type: Content type of the message.
-    :type content_type: str
-    :param properties: dictionary object for custom filters
-    :type properties: dict[str, Union[str, int, float, bool, datetime, timedelta]]
+    :keyword correlation_id: Identifier of the correlation.
+    :paramtype correlation_id: str
+    :keyword message_id: Identifier of the message.
+    :paramtype message_id: str
+    :keyword to: Address to send to.
+    :paramtype to: str
+    :keyword reply_to: Address of the queue to reply to.
+    :paramtype reply_to: str
+    :keyword label: Application specific label.
+    :paramtype label: str
+    :keyword session_id: Session identifier.
+    :paramtype session_id: str
+    :keyword reply_to_session_id: Session identifier to reply to.
+    :paramtype reply_to_session_id: str
+    :keyword content_type: Content type of the message.
+    :paramtype content_type: str
+    :keyword properties: dictionary object for custom filters
+    :paramtype properties: dict[str, Union[str, int, float, bool, datetime, timedelta]]
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.correlation_id = kwargs.get("correlation_id", None)
-        self.message_id = kwargs.get("message_id", None)
-        self.to = kwargs.get("to", None)
-        self.reply_to = kwargs.get("reply_to", None)
-        self.label = kwargs.get("label", None)
-        self.session_id = kwargs.get("session_id", None)
-        self.reply_to_session_id = kwargs.get("reply_to_session_id", None)
-        self.content_type = kwargs.get("content_type", None)
-        self.properties = kwargs.get("properties", None)
+    def __init__(
+        self,
+        *,
+        correlation_id: Optional[str] = None,
+        message_id: Optional[str] = None,
+        to: Optional[str] = None,
+        reply_to: Optional[str] = None,
+        label: Optional[str] = None,
+        session_id: Optional[str] = None,
+        reply_to_session_id: Optional[str] = None,
+        content_type: Optional[str] = None,
+        properties: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None,
+    ) -> None:
+        self.correlation_id = correlation_id
+        self.message_id = message_id
+        self.to = to
+        self.reply_to = reply_to
+        self.label = label
+        self.session_id = session_id
+        self.reply_to_session_id = reply_to_session_id
+        self.content_type = content_type
+        self.properties = properties
 
     @classmethod
-    def _from_internal_entity(cls, internal_correlation_filter):
-        # type: (InternalCorrelationFilter) -> CorrelationRuleFilter
+    def _from_internal_entity(
+        cls,
+        internal_correlation_filter: InternalCorrelationFilter
+    ) -> "CorrelationRuleFilter":
         correlation_filter = cls()
         correlation_filter.correlation_id = internal_correlation_filter.correlation_id
         correlation_filter.message_id = internal_correlation_filter.message_id
@@ -1341,8 +1357,9 @@ class CorrelationRuleFilter(object):
 
         return correlation_filter
 
-    def _to_internal_entity(self):
-        # type: () -> InternalCorrelationFilter
+    def _to_internal_entity(
+        self
+    ) -> InternalCorrelationFilter:
         internal_entity = InternalCorrelationFilter()
         internal_entity.correlation_id = self.correlation_id
 
@@ -1386,8 +1403,11 @@ class SqlRuleFilter(object):
     :type parameters: Dict[str, Union[str, int, float, bool, datetime, timedelta]]
     """
 
-    def __init__(self, sql_expression=None, parameters=None):
-        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
+    def __init__(
+        self,
+        sql_expression: Optional[str] = None,
+        parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None
+    ) -> None:
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = True
@@ -1408,8 +1428,7 @@ class SqlRuleFilter(object):
         )
         return sql_rule_filter
 
-    def _to_internal_entity(self):
-        # type: () -> InternalSqlFilter
+    def _to_internal_entity(self) -> InternalSqlFilter:
         internal_entity = InternalSqlFilter(sql_expression=self.sql_expression)
         internal_entity.parameters = (
             [
@@ -1426,8 +1445,7 @@ class SqlRuleFilter(object):
 class TrueRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True"""
 
-    def __init__(self):
-        # type: () -> None
+    def __init__(self) -> None:
         super(TrueRuleFilter, self).__init__("1=1", None)
 
     def _to_internal_entity(self):
@@ -1442,8 +1460,7 @@ class TrueRuleFilter(SqlRuleFilter):
 class FalseRuleFilter(SqlRuleFilter):
     """A sql filter with a sql expression that is always True"""
 
-    def __init__(self):
-        # type: () -> None
+    def __init__(self) -> None:
         super(FalseRuleFilter, self).__init__("1>1", None)
 
     def _to_internal_entity(self):
@@ -1462,11 +1479,14 @@ class SqlRuleAction(object):
     :type sql_expression: str
     :param parameters: Sets the value of the sql expression parameters if any.
     :type parameters: Dict[str, Union[str, int, float, bool, datetime, timedelta]]
-    :type requires_preprocessing: bool
     """
 
-    def __init__(self, sql_expression=None, parameters=None):
-        # type: (Optional[str], Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]]) -> None
+    def __init__(
+        self,
+        sql_expression: Optional[str] = None,
+        parameters: Optional[Dict[str, Union[str, int, float, bool, datetime, timedelta]]] = None,
+
+    ) -> None:
         self.sql_expression = sql_expression
         self.parameters = parameters
         self.requires_preprocessing = True
@@ -1499,14 +1519,14 @@ class SqlRuleAction(object):
         return internal_entity
 
 
-RULE_CLASS_MAPPING = {
+RULE_CLASS_MAPPING: Dict[Type[Model], Type] = {
     InternalSqlRuleAction: SqlRuleAction,
     # InternalEmptyRuleAction: None,
     InternalCorrelationFilter: CorrelationRuleFilter,
     InternalSqlFilter: SqlRuleFilter,
     InternalTrueFilter: TrueRuleFilter,
     InternalFalseFilter: FalseRuleFilter,
-}  # type: Dict[Type[Model], Type]
+}
 EMPTY_RULE_ACTION = InternalEmptyRuleAction()
 TRUE_FILTER = TrueRuleFilter()
 
@@ -1514,37 +1534,48 @@ TRUE_FILTER = TrueRuleFilter()
 class AuthorizationRule(object):
     """Authorization rule of an entity.
 
-    :param type: The authorization type.
-    :type type: str
-    :param claim_type: The claim type.
-    :type claim_type: str
-    :param claim_value: The claim value.
-    :type claim_value: str
-    :param rights: Access rights of the entity. Values are 'Send', 'Listen', or 'Manage'.
-    :type rights: list[AccessRights]
-    :param created_at_utc: The date and time when the authorization rule was created.
-    :type created_at_utc: ~datetime.datetime
-    :param modified_at_utc: The date and time when the authorization rule was modified.
-    :type modified_at_utc: ~datetime.datetime
-    :param key_name: The authorization rule key name.
-    :type key_name: str
-    :param primary_key: The primary key of the authorization rule.
-    :type primary_key: str
-    :param secondary_key: The primary key of the authorization rule.
-    :type secondary_key: str
+    :keyword type: The authorization type.
+    :paramtype type: str
+    :keyword claim_type: The claim type.
+    :paramtype claim_type: str
+    :keyword claim_value: The claim value.
+    :paramtype claim_value: str
+    :keyword rights: Access rights of the entity. Values are 'Send', 'Listen', or 'Manage'.
+    :paramtype rights: list[AccessRights]
+    :keyword created_at_utc: The date and time when the authorization rule was created.
+    :paramtype created_at_utc: ~datetime.datetime
+    :keyword modified_at_utc: The date and time when the authorization rule was modified.
+    :paramtype modified_at_utc: ~datetime.datetime
+    :keyword key_name: The authorization rule key name.
+    :paramtype key_name: str
+    :keyword primary_key: The primary key of the authorization rule.
+    :paramtype primary_key: str
+    :keyword secondary_key: The primary key of the authorization rule.
+    :paramtype secondary_key: str
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
-        self.type = kwargs.get("type", None)
-        self.claim_type = kwargs.get("claim_type", None)
-        self.claim_value = kwargs.get("claim_value", None)
-        self.rights = kwargs.get("rights", None)
-        self.created_at_utc = kwargs.get("created_at_utc", None)
-        self.modified_at_utc = kwargs.get("modified_at_utc", None)
-        self.key_name = kwargs.get("key_name", None)
-        self.primary_key = kwargs.get("primary_key", None)
-        self.secondary_key = kwargs.get("secondary_key", None)
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        claim_type: Optional[str] = None,
+        claim_value: Optional[str] = None,
+        rights: Optional[List["AccessRights"]] = None,
+        created_at_utc: Optional[datetime] = None,
+        modified_at_utc: Optional[datetime] = None,
+        key_name: Optional[str] = None,
+        primary_key: Optional[str] = None,
+        secondary_key: Optional[str] = None,
+    ) -> None:
+        self.type = type
+        self.claim_type = claim_type
+        self.claim_value = claim_value
+        self.rights = rights
+        self.created_at_utc = created_at_utc
+        self.modified_at_utc = modified_at_utc
+        self.key_name = key_name
+        self.primary_key = primary_key
+        self.secondary_key = secondary_key
 
     @classmethod
     def _from_internal_entity(cls, internal_authorization_rule):
@@ -1560,8 +1591,7 @@ class AuthorizationRule(object):
 
         return authorization_rule
 
-    def _to_internal_entity(self):
-        # type: () -> InternalAuthorizationRule
+    def _to_internal_entity(self) -> InternalAuthorizationRule:
         internal_entity = InternalAuthorizationRule()
         internal_entity.claim_type = self.claim_type
         internal_entity.claim_value = self.claim_value
