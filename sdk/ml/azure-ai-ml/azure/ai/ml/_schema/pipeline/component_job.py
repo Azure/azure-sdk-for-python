@@ -290,6 +290,7 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
     def make(self, data, **kwargs) -> "Parallel":
         from azure.ai.ml.entities._builders import parse_inputs_outputs
         from azure.ai.ml.entities._builders.parallel_func import parallel_run_function
+
         data = parse_inputs_outputs(data)
         parallel_node = parallel_run_function(**data)
         return parallel_node

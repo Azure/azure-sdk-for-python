@@ -17,7 +17,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
-    UserIdentityConfiguration
+    UserIdentityConfiguration,
 )
 from ..job import Job
 from ..job_io_mixin import JobIOMixin
