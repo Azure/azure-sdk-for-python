@@ -101,7 +101,7 @@ from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
-from ._models import UpdateTranscriptionDataRequest
+from ._models import UpdateTranscriptionRequest
 from ._models import UserConsent
 
 from ._enums import CallConnectionState
@@ -227,7 +227,7 @@ __all__ = [
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",
-    "UpdateTranscriptionDataRequest",
+    "UpdateTranscriptionRequest",
     "UserConsent",
     "CallConnectionState",
     "CallLocatorKind",
