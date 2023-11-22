@@ -77,7 +77,7 @@ setup(
         "azureml-telemetry~=1.0,>=1.51.0",
         "mlflow-skinny<3",
         "opencensus-ext-azure~=1.0",
-        "opencensus-ext-logging",
+        "opencensus-ext-logging<=0.1.1",
     ],
     extras_require={
         "evaluate": [

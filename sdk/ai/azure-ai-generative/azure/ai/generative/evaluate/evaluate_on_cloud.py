@@ -82,17 +82,22 @@ class environment_parameter_parser:
     def get_target_metrics(self):
         """
         Valid metrics for QA and RAG_evaluation:
-        QA_SET = {
-            "bertscore", "exact_match", "f1_score",
-            "ada_cosine_similarity",
-            "gpt_similarity",
-            "gpt_coherence",
-            "gpt_relevance",
-            "gpt_fluency",
-            "gpt_groundedness",
-        }
 
-        RAG_EVALUATION = {"grounding_score", "retrieval_score", "generation_score"}
+        QA_SET:
+        - "bertscore": Description for bertscore
+        - "exact_match": Description for exact_match
+        - "f1_score": Description for f1_score
+        - "ada_cosine_similarity": Description for ada_cosine_similarity
+        - "gpt_similarity": Description for gpt_similarity
+        - "gpt_coherence": Description for gpt_coherence
+        - "gpt_relevance": Description for gpt_relevance
+        - "gpt_fluency": Description for gpt_fluency
+        - "gpt_groundedness": Description for gpt_groundedness
+
+        RAG_EVALUATION:
+        - "grounding_score": Description for grounding_score
+        - "retrieval_score": Description for retrieval_score
+        - "generation_score": Description for generation_score
         """
         try:
             metrics_str = os.getenv("METRICS").lower()

@@ -23,7 +23,7 @@ For a more complete set of Azure libraries, see https://aka.ms/azsdk/python/all.
 ### Install the package
 Install the Azure AI generative package for Python with pip:
 
-```dotnetcli
+```
 pip install azure-ai-generative[index,evaluate,promptflow]
 pip install azure-identity
 ```
@@ -131,7 +131,6 @@ If you encounter any bugs or have suggestions, please file an issue in the [Issu
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
-[python_logging]: https://docs.python.org/3/library/logging.html
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
