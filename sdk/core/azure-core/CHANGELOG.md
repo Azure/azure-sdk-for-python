@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Removed dependency on `anyio`.  #33282
+
 ## 1.29.6 (2023-12-14)
 
 ### Bugs Fixed

@@ -6,7 +6,6 @@
 import time
 from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
 
-from anyio import Lock
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -15,6 +14,7 @@ from azure.core.pipeline.policies._authentication import (
 )
 from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.utils._utils import get_running_async_module
 
 from .._tools_async import await_result
 
@@ -38,7 +38,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any) -> None:
         super().__init__()
         self._credential = credential
-        self._lock = Lock()
+        self._lock = get_running_async_module().Lock()
+
         self._scopes = scopes
         self._token: Optional["AccessToken"] = None
         self._enable_cae: bool = kwargs.get("enable_cae", False)
