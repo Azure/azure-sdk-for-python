@@ -850,6 +850,11 @@ test:
     - azure.mgmt.servicelinker.aio.operations
     - azure.mgmt.servicelinker.models
     - azure.mgmt.servicelinker.operations
+    - azure.mgmt.servicenetworking
+    - azure.mgmt.servicenetworking.aio
+    - azure.mgmt.servicenetworking.aio.operations
+    - azure.mgmt.servicenetworking.models
+    - azure.mgmt.servicenetworking.operations
     - azure.mgmt.signalr
     - azure.mgmt.signalr.aio
     - azure.mgmt.signalr.aio.operations

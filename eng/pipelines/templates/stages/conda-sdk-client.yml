@@ -302,6 +302,8 @@ stages:
                   version: 1.0.1
                 - package: azure-communication-rooms
                   version: 1.0.0
+                - package: azure-communication-jobrouter
+                  version: 1.0.0
               - name: azure-confidentialledger
                 service: confidentialledger
                 in_batch: ${{ parameters.release_azure_confidentialledger }}
@@ -477,7 +479,7 @@ stages:
                 - package: azure-mgmt-confidentialledger
                   version: 1.0.0
                 - package: azure-mgmt-confluent
-                  version: 1.0.0                
+                  version: 2.0.0                
                 - package: azure-mgmt-connectedvmware
                   version: 1.0.0
                 - package: azure-mgmt-consumption
@@ -485,9 +487,9 @@ stages:
                 - package: azure-mgmt-containerinstance
                   version: 10.1.0
                 - package: azure-mgmt-containerregistry
-                  version: 10.2.0
+                  version: 10.3.0
                 - package: azure-mgmt-containerservice
-                  version: 27.0.0
+                  version: 28.0.0
                 - package: azure-mgmt-containerservicefleet
                   version: 1.0.0
                 - package: azure-mgmt-cosmosdb
@@ -497,7 +499,7 @@ stages:
                 - package: azure-mgmt-customproviders
                   version: 1.0.0
                 - package: azure-mgmt-dashboard
-                  version: 1.0.0
+                  version: 1.1.0
                 - package: azure-mgmt-databox
                   version: 2.0.0
                 - package: azure-mgmt-databoxedge
@@ -507,7 +509,7 @@ stages:
                 - package: azure-mgmt-datadog
                   version: 2.1.0
                 - package: azure-mgmt-datafactory
-                  version: 3.1.0
+                  version: 4.0.0
                 - package: azure-mgmt-datalake-store
                   version: 1.0.0
                 - package: azure-mgmt-datamigration
@@ -563,7 +565,7 @@ stages:
                 - package: azure-mgmt-hybridkubernetes
                   version: 1.1.0
                 - package: azure-mgmt-hybridnetwork
-                  version: 1.0.0
+                  version: 2.0.0
                 - package: azure-mgmt-imagebuilder
                   version: 1.2.0
                 - package: azure-mgmt-iothub
@@ -607,7 +609,7 @@ stages:
                 - package: azure-mgmt-mixedreality
                   version: 1.0.0
                 - package: azure-mgmt-mobilenetwork
-                  version: 3.0.0
+                  version: 3.1.0
                 - package: azure-mgmt-monitor
                   version: 6.0.2
                 - package: azure-mgmt-msi
@@ -621,7 +623,7 @@ stages:
                 - package: azure-mgmt-newrelicobservability
                   version: 1.0.0
                 - package: azure-mgmt-nginx
-                  version: 2.1.0
+                  version: 3.0.0
                 - package: azure-mgmt-notificationhubs
                   version: 8.0.0
                 - package: azure-mgmt-operationsmanagement
@@ -645,7 +647,7 @@ stages:
                 - package: azure-mgmt-qumulo
                   version: 1.0.0
                 - package: azure-mgmt-quota
-                  version: 1.0.0
+                  version: 1.1.0
                 - package: azure-mgmt-rdbms
                   version: 10.1.0
                 - package: azure-mgmt-recoveryservices
@@ -686,6 +688,8 @@ stages:
                   version: 2.0.0
                 - package: azure-mgmt-servicelinker
                   version: 1.1.0
+                - package: azure-mgmt-servicenetworking
+                  version: 1.0.0
                 - package: azure-mgmt-signalr
                   version: 1.2.0
                 - package: azure-mgmt-sql
@@ -715,7 +719,7 @@ stages:
                 - package: azure-mgmt-voiceservices
                   version: 1.0.0
                 - package: azure-mgmt-web
-                  version: 7.1.0
+                  version: 7.2.0
                 - package: azure-mgmt-webpubsub
                   version: 1.1.0
                 - package: azure-mgmt-workloads
