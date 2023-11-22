@@ -548,6 +548,13 @@
       ]
     },
     {
+      "filename": "sdk/identity/test-resources*",
+      "words": [
+        "kubelet",
+        "otsv"
+      ]
+    },
+    {
       "filename": "sdk/identity/azure-identity/TROUBLESHOOTING.md",
       "words": [
         "wammsa"
