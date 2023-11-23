@@ -304,6 +304,8 @@ stages:
                   version: 1.0.0
                 - package: azure-communication-jobrouter
                   version: 1.0.0
+                - package: azure-communication-callautomation
+                  version: 1.1.0
               - name: azure-confidentialledger
                 service: confidentialledger
                 in_batch: ${{ parameters.release_azure_confidentialledger }}
