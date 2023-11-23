@@ -14,6 +14,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingSettings as RestForecastingSettings
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ShortSeriesHandlingConfiguration
+from azure.ai.ml._schema.automl.forecasting_settings import ForecastingSettingsSchema
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 
 
@@ -44,7 +45,9 @@ class TestForecastingSettings:
     def test_forecast_settings_to_rest_object(self, settings: Tuple[ForecastingSettings, List[str]]):
         input_settings, expected = settings
         actual = input_settings._to_rest_object()
+        dump_result = ForecastingSettingsSchema().dump(input_settings)
         assert actual.time_series_id_column_names == expected
+        assert dump_result["time_series_id_column_names"] == expected
 
     @pytest.mark.parametrize(
         "settings",

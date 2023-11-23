@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-argument
 
-from marshmallow import fields, post_load
+from marshmallow import fields, post_dump, post_load
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureLags as FeatureLagsMode
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -64,3 +64,15 @@ class ForecastingSettingsSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 
         return ForecastingSettings(**data)
+
+    @post_dump(pass_original=True)
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+    def resolve_time_series_id_column_names(self, data, original_data, **kwargs):  # pylint: disable= unused-argument
+        """
+        Convert time_series_id_column_names to list type
+        """
+        time_series_id_column_names = original_data.time_series_id_column_names
+        if isinstance(original_data.time_series_id_column_names, str):
+            time_series_id_column_names = [time_series_id_column_names]
+        data["time_series_id_column_names"] = time_series_id_column_names
+        return data
