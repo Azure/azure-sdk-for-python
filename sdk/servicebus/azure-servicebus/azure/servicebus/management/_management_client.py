@@ -139,11 +139,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             **kwargs
         )
 
-    def __enter__(self):
+    def __enter__(self) -> "ServiceBusAdministrationClient":
         self._impl.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
+    def __exit__(self, *exc_details: Any) -> None:
         self._impl.__exit__(*exc_details)
 
     def _build_pipeline(self, **kwargs):
