@@ -28,7 +28,7 @@ def create_or_update_text_blocklist():
     try:
         blocklist = client.create_or_update_text_blocklist(
             blocklist_name=blocklist_name,
-            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description)
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
         )
         if blocklist:
             print("\nBlocklist created or updated: ")
@@ -67,8 +67,7 @@ def add_block_items():
     block_items = [TextBlocklistItem(text=block_item_text_1), TextBlocklistItem(text=block_item_text_2)]
     try:
         result = client.add_or_update_blocklist_items(
-            blocklist_name=blocklist_name,
-            options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=block_items)
+            blocklist_name=blocklist_name, options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=block_items)
         )
         if result and result.blocklist_items:
             print("\nBlock items added: ")
@@ -284,7 +283,11 @@ def remove_block_items():
     import os
     from azure.ai.contentsafety import BlocklistClient
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.contentsafety.models import TextBlocklistItem, AddOrUpdateTextBlocklistItemsOptions, RemoveTextBlocklistItemsOptions
+    from azure.ai.contentsafety.models import (
+        TextBlocklistItem,
+        AddOrUpdateTextBlocklistItemsOptions,
+        RemoveTextBlocklistItemsOptions,
+    )
     from azure.core.exceptions import HttpResponseError
 
     key = os.environ["CONTENT_SAFETY_KEY"]
