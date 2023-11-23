@@ -35,12 +35,7 @@ from azure.ai.resources.operations import (
     ModelOperations,
 )
 
-module_logger = logging.getLogger(__name__)
-
-from azure.ai.resources._telemetry import get_appinsights_log_handler, OpsLogger
-
-ops_logger = OpsLogger(__name__)
-logger = ops_logger.package_logger
+from azure.ai.resources._telemetry import get_appinsights_log_handler
 
 @experimental
 class AIClient:
@@ -64,14 +59,16 @@ class AIClient:
             properties.update({"ai_resource_name": ai_resource_name})
         if project_name:
             properties.update({"project_name": project_name})
+            
+        team_name = kwargs.get("team_name")
+        if team_name:
+            properties.update({"team_name": team_name})
 
         user_agent = USER_AGENT
-        enable_telemetry = kwargs.pop("enable_telemetry", True)
 
         app_insights_handler = get_appinsights_log_handler(
             user_agent,
             **{"properties": properties},
-            enable_telemetry=enable_telemetry,
         )
         app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
