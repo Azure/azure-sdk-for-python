@@ -14,7 +14,7 @@ from azure.mgmt.hybridcontainerservice import HybridContainerServiceMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hybridcontainerservice
 # USAGE
-    python list_provisioned_cluster_by_resource_group.py
+    python delete_provisioned_cluster_instance.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,14 @@ from azure.mgmt.hybridcontainerservice import HybridContainerServiceMgmtClient
 def main():
     client = HybridContainerServiceMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="a3e42606-29b1-4d7d-b1d9-9ff6b9d3c71b",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.provisioned_clusters.list_by_resource_group(
-        resource_group_name="test-arcappliance-resgrp",
-    )
-    for item in response:
-        print(item)
+    client.provisioned_cluster_instances.begin_delete(
+        connected_cluster_resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.Kubernetes/connectedClusters/test-hybridakscluster",
+    ).result()
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2022-09-01-preview/examples/ListProvisionedClusterByResourceGroup.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2023-11-15-preview/examples/DeleteProvisionedClusterInstance.json
 if __name__ == "__main__":
     main()
