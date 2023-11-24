@@ -131,6 +131,9 @@
     "spark_runtime_version" : {
         "value": ""
     },
+    "featureStoreStorageAccountName": {
+        "value": ""
+    },
     "offline_store_connection_name" : {
         "value": ""
     },

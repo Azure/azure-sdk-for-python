@@ -674,6 +674,11 @@ class WorkspaceOperationsBase(ABC):
 
             from azure.ai.ml._utils._arm_id_utils import AzureResourceId
 
+            if workspace.storage_account and not offline_store_target:
+                _set_val(
+                    param["featureStoreStorageAccountName"], _generate_storage(workspace.name, resources_being_deployed)
+                )
+
             if offline_store_target is not None:
                 arm_id = AzureResourceId(offline_store_target)
                 _set_val(param["offline_store_target"], offline_store_target)

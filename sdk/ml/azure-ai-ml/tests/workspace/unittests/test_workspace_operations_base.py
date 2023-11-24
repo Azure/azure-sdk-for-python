@@ -365,6 +365,17 @@ class TestWorkspaceOperation:
         assert param["grant_materialization_permissions"] == {"value": "false"}
         assert param["materialization_identity_resource_id"] == {"value": "resource_id"}
 
+        feature_store = FeatureStore(
+            name="name",
+            resource_group="rg",
+            storage_account="/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/existing",
+        )
+        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
+            workspace=feature_store,
+        )
+
+        assert param["featureStoreStorageAccountName"]["value"]
+
     def test_populate_feature_store_role_assignments_paramaters(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
