@@ -65,9 +65,9 @@ from ._range_partition_resolver import RangePartitionResolver
 
 # Cosmos table validation regex breakdown:
 # ^ Match start of string.
-# [^/\#?]{0,254} Match any character that is not /\#? for between 0-254 characters.
+# [^/\#?]{0,255} Match any character that is not /\#? for between 0-255 characters.
 # $ End of string
-_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,254}$")
+_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,255}$")
 
 # pylint: disable=protected-access
 
@@ -3183,8 +3183,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             try:
                 if _VALID_COSMOS_RESOURCE.match(id_) is None:
                     raise ValueError("Id contains illegal chars.")
-                if id_[-1] == " ":
-                    raise ValueError("Id ends with a space.")
+                if id_[-1] in [" ", "\n"]:
+                    raise ValueError("Id ends with a space or newline.")
             except TypeError as e:
                 raise TypeError("Id type must be a string.") from e
 
