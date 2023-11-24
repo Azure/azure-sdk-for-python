@@ -861,6 +861,8 @@ class SequenceId:
 
         :param sequence_id: The sequence id. Required.
         :type sequence_id: int
+        :return: Whether sequence id is updated.
+        :rtype: bool
         """
         self.is_update = True
         if sequence_id > self.sequence_id:
@@ -869,7 +871,10 @@ class SequenceId:
         return False
 
     def try_get_sequence_id(self) -> Tuple[bool, Union[int, None]]:
-        """Try to get sequence id"""
+        """Try to get sequence id
+        :return: Whether sequence id is updated and sequence id.
+        :rtype: Tuple[bool, Union[int, None]]
+        """
         if self.is_update:
             self.is_update = False
             return (True, self.sequence_id)
@@ -899,11 +904,13 @@ class AckMap:
         with self.lock:
             self.ack_map[ack_id] = options
 
-    def pop(self, ack_id: int) -> None:
+    def pop(self, ack_id: int) -> Optional[SendMessageErrorOptions]:
         """Pop ack id from ack map
 
         :param ack_id: The ack id. Required.
         :type ack_id: int
+        :return: The options.
+        :rtype: SendMessageErrorOptions or None
         """
         with self.lock:
             self.ack_map.pop(ack_id, None)
@@ -913,6 +920,8 @@ class AckMap:
 
         :param ack_id: The ack id. Required.
         :type ack_id: int
+        :return: The options.
+        :rtype: SendMessageErrorOptions or None
         """
         with self.lock:
             return self.ack_map.get(ack_id)

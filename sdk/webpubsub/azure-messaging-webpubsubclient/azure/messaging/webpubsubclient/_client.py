@@ -74,7 +74,10 @@ class WebPubSubClientCredential:
             self._client_access_url_provider = client_access_url_provider
 
     def get_client_access_url(self) -> str:
-        """Get client access url."""
+        """Get client access url.
+        :return: Client access url.
+        :rtype: str
+        """
         return self._client_access_url_provider()
 
 
@@ -489,7 +492,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         return None
 
     def _is_connected(self) -> bool:
-        """check whether the client is still connected to server after start"""
+        """check whether the client is still connected to server after start
+
+        :return: True if the client is connected to server, otherwise False
+        :rtype: bool
+        """
         return bool(
             self._state == WebPubSubClientState.CONNECTED
             and self._thread
