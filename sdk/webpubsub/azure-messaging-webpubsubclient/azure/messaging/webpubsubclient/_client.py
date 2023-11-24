@@ -74,6 +74,7 @@ class WebPubSubClientCredential:
             self._client_access_url_provider = client_access_url_provider
 
     def get_client_access_url(self) -> str:
+        """Get client access url. """
         return self._client_access_url_provider()
 
 

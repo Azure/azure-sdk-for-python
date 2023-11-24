@@ -30,6 +30,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class JoinGroupMessage:
+    """ Message to join a group
+    
+    :ivar group: The group name to join. Required.
+    :vartype group: str
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    """
     def __init__(self, group: str, ack_id: Optional[int] = None) -> None:
         self.kind: Literal["joinGroup"] = "joinGroup"
         self.group = group
@@ -37,6 +44,13 @@ class JoinGroupMessage:
 
 
 class LeaveGroupMessage:
+    """ Message to leave a group
+    
+    :ivar group: The group name to leave. Required.
+    :vartype group: str
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    """
     def __init__(self, group: str, ack_id: Optional[int] = None) -> None:
         self.kind: Literal["leaveGroup"] = "leaveGroup"
         self.group = group
@@ -44,12 +58,28 @@ class LeaveGroupMessage:
 
 
 class AckMessageError:
+    """ Error details of an ack message
+    :ivar name: The error name. Required.
+    :vartype name: str
+    :ivar message: The error message. Required.
+    :vartype message: str
+    """
     def __init__(self, *, name: str, message: str):
         self.name = name
         self.message = message
 
 
 class AckMessage:
+    """ Ack message
+
+    :ivar ack_id: The ack id of the message. Required.
+    :vartype ack_id: int
+    :ivar success: Whether the message is successfully processed. Required.
+    :vartype success: bool
+    :ivar error: The error details of the message.
+    :vartype error: AckMessageError
+    """
+
     def __init__(
         self,
         ack_id: int,
@@ -63,6 +93,17 @@ class AckMessage:
 
 
 class SendEventMessage:
+    """ Message to send an event
+
+    :ivar data_type: The data type of the message. Required.
+    :vartype data_type: WebPubSubDataType or str
+    :ivar data: The data of the message. Required.
+    :vartype data: Any
+    :ivar event: The event name. Required.
+    :vartype event: str
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    """
     def __init__(
         self,
         data_type: Union[WebPubSubDataType, str],
@@ -78,6 +119,16 @@ class SendEventMessage:
 
 
 class JoinGroupData(_model_base.Model):
+    """ Data to join a group
+    
+    :ivar type: The type of the message. Required. Default value is "joinGroup".
+    :vartype type: str
+    :ivar group: The group name to join. Required.
+    :vartype group: str
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    """
+
     type: Literal["joinGroup"] = rest_field(default="joinGroup")
     group: str = rest_field()
     ack_id: Optional[int] = rest_field(name="ackId")
@@ -101,6 +152,16 @@ class JoinGroupData(_model_base.Model):
 
 
 class LeaveGroupData(_model_base.Model):
+    """ Data to leave a group
+    
+    :ivar type: The type of the message. Required. Default value is "leaveGroup".
+    :vartype type: str
+    :ivar group: The group name to join. Required.
+    :vartype group: str
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    """
+
     type: Literal["leaveGroup"] = rest_field(default="leaveGroup")
     group: str = rest_field()
     ack_id: Optional[int] = rest_field(name="ackId")
@@ -124,6 +185,19 @@ class LeaveGroupData(_model_base.Model):
 
 
 class SendEventData(_model_base.Model):
+    """ Data to send an event
+
+    :ivar type: The type of the message. Required. Default value is "event".
+    :vartype type: str
+    :ivar data_type: The data type of the message. Required.
+    :vartype data_type: WebPubSubDataType or str
+    :ivar data: The data of the message. Required.
+    :vartype data: Any
+    :ivar event: The event name. Required.
+    :vartype event: str
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    """
     type: Literal["event"] = rest_field(default="event")
     data_type: Union[WebPubSubDataType, str] = rest_field(name="dataType")
     data: Any = rest_field()
@@ -151,6 +225,21 @@ class SendEventData(_model_base.Model):
 
 
 class SendToGroupData(_model_base.Model):
+    """ Data for send to group
+
+    :ivar type: The type of the message. Required. Default value is "sendToGroup".
+    :vartype type: str
+    :ivar group: The group name to send. Required.
+    :vartype group: str
+    :ivar data_type: The data type of the message. Required.
+    :vartype data_type: WebPubSubDataType or str
+    :ivar data: The data of the message. Required.
+    :vartype data: Any
+    :ivar no_echo: Whether to send message to the sender. Required.
+    :vartype no_echo: bool
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    """
     type: Literal["sendToGroup"] = rest_field(default="sendToGroup")
     group: str = rest_field()
     data_type: Union[WebPubSubDataType, str] = rest_field(name="dataType")
@@ -182,6 +271,13 @@ class SendToGroupData(_model_base.Model):
 
 
 class SequenceAckData(_model_base.Model):
+    """ Data for sequence ack
+    
+    :ivar type: The type of the message. Required. Default value is "sequenceAck".
+    :vartype type: str
+    :ivar sequence_id: The sequence id. Required.
+    :vartype sequence_id: int
+    """
     type: Literal["sequenceAck"] = rest_field(default="sequenceAck")
     sequence_id: int = rest_field(name="sequenceId")
 
@@ -205,6 +301,11 @@ class SequenceAckData(_model_base.Model):
 
 
 class SequenceAckMessage:
+    """ Message for sequence ack
+    
+    :ivar sequence_id: The sequence id. Required.
+    :vartype sequence_id: int
+    """
     def __init__(
         self,
         sequence_id: int,
@@ -214,6 +315,16 @@ class SequenceAckMessage:
 
 
 class ConnectedMessage:
+    """ Message for connected event
+    
+    :ivar connection_id: The connection id. Required.
+    :vartype connection_id: str
+    :ivar user_id: The user id.
+    :vartype user_id: str
+    :ivar reconnection_token: The reconnection token.
+    :vartype reconnection_token: str
+    """
+
     def __init__(
         self,
         connection_id: str,
@@ -227,12 +338,31 @@ class ConnectedMessage:
 
 
 class DisconnectedMessage:
+    """ Message for disconnected event
+    
+    :ivar message: The message. Optional.
+    :vartype message: str
+    """
+
     def __init__(self, message: Optional[str] = None) -> None:
         self.kind: Literal["disconnected"] = "disconnected"
         self.message = message
 
 
 class GroupDataMessage:
+    """ Message for group data
+    
+    :ivar data_type: The data type of the message. Required.
+    :vartype data_type: WebPubSubDataType or str
+    :ivar data: The data of the message. Required.
+    :vartype data: Any
+    :ivar group: The group name. Required.
+    :vartype group: str
+    :ivar from_user_id: The user id of the sender.
+    :vartype from_user_id: str
+    :ivar sequence_id: The sequence id.
+    :vartype sequence_id: int
+    """
     def __init__(
         self,
         *,
@@ -251,6 +381,16 @@ class GroupDataMessage:
 
 
 class ServerDataMessage:
+    """ Message for server data
+
+    :ivar data_type: The data type of the message. Required.
+    :vartype data_type: WebPubSubDataType or str
+    :ivar data: The data of the message. Required.
+    :vartype data: Any
+    :ivar sequence_id: The sequence id.
+    :vartype sequence_id: int
+    """
+
     def __init__(
         self,
         data_type: Union[WebPubSubDataType, str],
@@ -264,6 +404,19 @@ class ServerDataMessage:
 
 
 class SendToGroupMessage:
+    """ Message for send to group
+    
+    :ivar data_type: The data type of the message. Required.
+    :vartype data_type: WebPubSubDataType or str
+    :ivar data: The data of the message. Required.
+    :vartype data: Any
+    :ivar group: The group name. Required.
+    :vartype group: str
+    :ivar no_echo: Whether to send message to the sender. Required.
+    :vartype no_echo: bool
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    """
     def __init__(
         self,
         data_type: Union[WebPubSubDataType, str],
@@ -296,6 +449,17 @@ WebPubSubMessage = TypeVar(
 
 
 def get_pay_load(data: Any, data_type: Union[WebPubSubDataType, str]) -> Any:
+    """ Get payload from data with data_type
+    
+    :param data: The data of pay load. Required.
+    :type data: Any
+    :param data_type: The data type of the data. Required.
+    :type data_type: WebPubSubDataType or str
+    :return: The payload.
+    :rtype: Any
+    :raises TypeError: If data_type is not supported.
+    """
+
     if data_type == WebPubSubDataType.TEXT:
         if not isinstance(data, str):
             raise TypeError("Message must be a string.")
@@ -305,11 +469,22 @@ def get_pay_load(data: Any, data_type: Union[WebPubSubDataType, str]) -> Any:
     if data_type in (WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF):
         if isinstance(data, memoryview):
             return base64.b64encode(bytes(data)).decode()
-        raise Exception("data must be memoryview when dataType is binary or protobuf")
+        raise TypeError("data must be memoryview when dataType is binary or protobuf")
     raise TypeError(f"Unsupported dataType: {data_type}")
 
 
 def parse_payload(data: Any, data_type: Union[WebPubSubDataType, str]) -> Any:
+    """ Parse payload from data with data_type 
+    
+    :param data: The data of pay load. Required.
+    :type data: Any
+    :param data_type: The data type of the data. Required.
+    :type data_type: WebPubSubDataType or str
+    :return: The payload.
+    :rtype: Any
+    """
+
+
     if data_type == WebPubSubDataType.TEXT:
         if not isinstance(data, str):
             raise TypeError("Message must be a string when dataType is text")
@@ -326,6 +501,7 @@ def parse_payload(data: Any, data_type: Union[WebPubSubDataType, str]) -> Any:
 
 
 class WebPubSubClientProtocol:
+    """ WebPubSub client protocol """
     def __init__(self) -> None:
         self.is_reliable_sub_protocol = False
         self.name = ""
@@ -342,10 +518,18 @@ class WebPubSubClientProtocol:
         AckMessage,
         None,
     ]:
+        """ Parse messages from raw message
+        
+        :param raw_message: The raw message. Required.
+        :type raw_message: str
+        :return: The parsed message.
+        :rtype: Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage, None]
+        :raises ValueError: If raw_message is None or raw_message type is not string.
+        """
         if raw_message is None:
-            raise Exception("No input")
+            raise ValueError("No input")
         if not isinstance(raw_message, str):
-            raise Exception("Invalid input for JSON hub protocol. Expected a string.")
+            raise ValueError("Invalid input for JSON hub protocol. Expected a string.")
 
         message = json.loads(raw_message)
         if message["type"] == "system":
@@ -392,6 +576,14 @@ class WebPubSubClientProtocol:
 
     @staticmethod
     def write_message(message: WebPubSubMessage) -> str:
+        """ Convert write message to string
+        
+        :param message: The message to write. Required.
+        :type message: WebPubSubMessage
+        :return: The converted message.
+        :rtype: str
+        :raises TypeError: If message is None.
+        """
         if message.kind == UpstreamMessageType.JOIN_GROUP:
             data = JoinGroupData(group=message.group, ack_id=message.ack_id)
         elif message.kind == UpstreamMessageType.LEAVE_GROUP:
@@ -414,7 +606,7 @@ class WebPubSubClientProtocol:
         elif message.kind == UpstreamMessageType.SEQUENCE_ACK:
             data = SequenceAckData(sequence_id=message.sequence_id)
         else:
-            raise Exception(f"Unsupported type: {message.kind}")
+            raise TypeError(f"Unsupported type: {message.kind}")
 
         for k in list(data.keys()):
             if data[k] is None:
@@ -424,6 +616,8 @@ class WebPubSubClientProtocol:
 
 
 class WebPubSubJsonProtocol(WebPubSubClientProtocol):
+    """ WebPubSub json protocol"""
+
     def __init__(self) -> None:
         super().__init__()
         self.is_reliable_sub_protocol = False
@@ -431,6 +625,7 @@ class WebPubSubJsonProtocol(WebPubSubClientProtocol):
 
 
 class WebPubSubJsonReliableProtocol(WebPubSubClientProtocol):
+    """ WebPubSub json reliable protocol"""
     def __init__(self) -> None:
         super().__init__()
         self.is_reliable_sub_protocol = True
@@ -438,6 +633,12 @@ class WebPubSubJsonReliableProtocol(WebPubSubClientProtocol):
 
 
 class SendMessageErrorOptions:
+    """ Options for send message error
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    :ivar error_detail: The error details of the message.
+    :vartype error_detail: AckMessageError
+    """
     def __init__(
         self,
         ack_id: Optional[int] = None,
@@ -449,6 +650,15 @@ class SendMessageErrorOptions:
 
 
 class SendMessageError(AzureError):
+    """Exception raised when fail to send message
+    
+    :ivar message: The error message. Required.
+    :vartype message: str
+    :ivar ack_id: The ack id of the message.
+    :vartype ack_id: int
+    :ivar error_detail: The error details of the message.
+    :vartype error_detail: AckMessageError
+    """
     def __init__(
         self,
         message: str,
@@ -462,6 +672,19 @@ class SendMessageError(AzureError):
 
 
 class OnGroupDataMessageArgs:
+    """ Arguments for group data message
+    
+    :ivar data_type: The data type of the message. Required.
+    :vartype data_type: WebPubSubDataType or str
+    :ivar data: The data of the message. Required.
+    :vartype data: Any
+    :ivar group: The group name. Required.
+    :vartype group: str
+    :ivar from_user_id: The user id of the sender.
+    :vartype from_user_id: str
+    :ivar sequence_id: The sequence id.
+    :vartype sequence_id: int
+    """
     def __init__(
         self,
         *,
@@ -479,6 +702,15 @@ class OnGroupDataMessageArgs:
 
 
 class OnServerDataMessageArgs:
+    """ Arguments for server data message
+    
+    :ivar data_type: The data type of the message. Required.
+    :vartype data_type: WebPubSubDataType or str
+    :ivar data: The data of the message. Required.
+    :vartype data: Any
+    :ivar sequence_id: The sequence id.
+    :vartype sequence_id: int
+    """
     def __init__(
         self,
         data_type: Union[WebPubSubDataType, str],
@@ -491,6 +723,13 @@ class OnServerDataMessageArgs:
 
 
 class OnDisconnectedArgs:
+    """ Arguments for disconnected message 
+    
+    :ivar connection_id: The connection id.
+    :vartype connection_id: str
+    :ivar message: The message.
+    :vartype message: str
+    """
     def __init__(
         self, connection_id: Optional[str] = None, message: Optional[str] = None
     ) -> None:
@@ -499,18 +738,39 @@ class OnDisconnectedArgs:
 
 
 class OnRejoinGroupFailedArgs:
+    """ Arguments for rejoin group failed message
+    :ivar group: The group name.
+    :vartype group: str
+    :ivar error: The error.
+    :vartype error: Exception
+    """
+
     def __init__(self, group: str, error: Exception) -> None:
         self.group = group
         self.error = error
 
 
 class OnConnectedArgs:
+    """ Arguments for connected message
+    
+    :ivar connection_id: The connection id.
+    :vartype connection_id: str
+    :ivar user_id: The user id.
+    :vartype user_id: str
+    """
     def __init__(self, connection_id: str, user_id: Optional[str] = None) -> None:
         self.connection_id = connection_id
         self.user_id = user_id
 
 
 class CloseEvent:
+    """ Close event 
+    
+    :ivar close_status_code: The close status code.
+    :vartype close_status_code: int
+    :ivar close_reason: The close reason.
+    :vartype close_reason: str
+    """
     def __init__(
         self,
         close_status_code: Optional[int] = None,
@@ -521,6 +781,17 @@ class CloseEvent:
 
 
 class RetryPolicy:
+    """ Retry policy 
+    
+    :ivar retry_total: The total number of retries. Required.
+    :vartype retry_total: int
+    :ivar retry_backoff_factor: The backoff factor. Required.
+    :vartype retry_backoff_factor: float
+    :ivar retry_backoff_max: The max backoff. Required.
+    :vartype retry_backoff_max: float
+    :ivar mode: The retry mode. Required.
+    :vartype mode: RetryMode
+    """
     def __init__(
         self,
         retry_total: int,
@@ -537,6 +808,12 @@ class RetryPolicy:
         )
 
     def next_retry_delay(self, retry_attempt: int) -> Union[float, None]:
+        """ Get next retry delay
+        :param retry_attempt: The number that client has already retried. Required.
+        :type retry_attempt: int
+        :return: The next retry delay.
+        :rtype: float or None
+        """
         if retry_attempt > self.retry_total:
             return None
         if self.mode == RetryMode.Fixed:
@@ -544,23 +821,39 @@ class RetryPolicy:
         return self.calculate_exponential_delay(retry_attempt)
 
     def calculate_exponential_delay(self, attempt: int) -> float:
+        """ Calculate exponential delay 
+        :param attempt: The number to retry. Required.
+        :type attempt: int
+        :return: The exponential delay.
+        :rtype: float
+        """
         if attempt >= self.max_retries_to_get_max_delay:
             return self.retry_backoff_max
         return (1 << (attempt - 1)) * self.retry_backoff_factor
 
 
 class WebPubSubGroup:
+    """ WebPubSub group
+    :ivar name: The group name. Required.
+    :vartype name: str
+    """
     def __init__(self, name: str) -> None:
         self.name = name
         self.is_joined = False
 
 
 class SequenceId:
+    """ Sequence id """
     def __init__(self) -> None:
         self.sequence_id = 0
         self.is_update = False
 
     def try_update(self, sequence_id: int) -> bool:
+        """ Try to update sequence id
+        
+        :param sequence_id: The sequence id. Required.
+        :type sequence_id: int
+        """
         self.is_update = True
         if sequence_id > self.sequence_id:
             self.sequence_id = sequence_id
@@ -568,34 +861,55 @@ class SequenceId:
         return False
 
     def try_get_sequence_id(self) -> Tuple[bool, Union[int, None]]:
+        """ Try to get sequence id """
         if self.is_update:
             self.is_update = False
             return (True, self.sequence_id)
         return (False, None)
 
     def reset(self):
+        """ Reset sequence id """
         self.sequence_id = 0
         self.is_update = False
 
 
 class AckMap:
+    """ Ack map """
     def __init__(self) -> None:
         self.ack_map: Dict[int, SendMessageErrorOptions] = {}
         self.lock = threading.Lock()
 
     def add(self, ack_id: int, options: SendMessageErrorOptions) -> None:
+        """ Add ack id to ack map
+        
+        :param ack_id: The ack id. Required.
+        :type ack_id: int
+        :param options: The options. Required.
+        :type options: SendMessageErrorOptions
+        """
         with self.lock:
             self.ack_map[ack_id] = options
 
     def pop(self, ack_id: int) -> None:
+        """ Pop ack id from ack map 
+        
+        :param ack_id: The ack id. Required.
+        :type ack_id: int
+        """
         with self.lock:
             self.ack_map.pop(ack_id, None)
 
     def get(self, ack_id: int) -> Optional[SendMessageErrorOptions]:
+        """ Get ack id from ack map 
+        
+        :param ack_id: The ack id. Required.
+        :type ack_id: int
+        """
         with self.lock:
             return self.ack_map.get(ack_id)
 
     def clear(self) -> None:
+        """ Clear ack map """
         with self.lock:
             for key in list(self.ack_map.keys()):
                 _LOGGER.debug("clear ack map with ack id: %s", key)

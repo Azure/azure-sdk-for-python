@@ -9,4 +9,8 @@ from ._version import VERSION
 
 
 def format_user_agent(user_agent: Optional[str] = None):
+    """Format user agent string.
+    :param user_agent: User agent string.
+    :type user_agent: str
+    """
     return UserAgentPolicy(user_agent=user_agent, sdk_moniker=f"webpubsub-client/{VERSION}").user_agent
