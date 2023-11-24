@@ -25,7 +25,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
 
         with client:
             client.join_group(group_name)
-            client.on("group-message", on_group_message)
+            client.subscribe("group-message", on_group_message)
             client.send_to_group(group_name, "hello test_call_back_deadlock1", "text")
             client.send_to_group(group_name, "hello test_call_back_deadlock2", "text")
             client.send_to_group(group_name, "hello test_call_back_deadlock3", "text")
@@ -54,14 +54,14 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
 
         with client:
             # start client again after stop
-            client.on("stopped", on_stop)
+            client.subscribe("stopped", on_stop)
             assert client._is_connected()
             client._stop()
             time.sleep(1.0)
             assert client._is_connected()
 
             # remove stopped event and stop again
-            client.off("stopped", on_stop)
+            client.unsubscribe("stopped", on_stop)
             client._stop()
             time.sleep(1.0)
             assert not client._is_connected()
@@ -99,7 +99,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
                 connection_string=webpubsubclient_connection_string, auto_rejoin_groups=enable_auto_rejoin
             )
             group_name = test_group_name
-            client.on("group-message", on_group_message)
+            client.subscribe("group-message", on_group_message)
             with client:
                 client.join_group(group_name)
 

@@ -42,9 +42,9 @@ def main():
     )
 
     with client:
-        client.on("connected", on_connected)
-        client.on("disconnected", on_disconnected)
-        client.on("group-message", on_group_message)
+        client.subscribe("connected", on_connected)
+        client.subscribe("disconnected", on_disconnected)
+        client.subscribe("group-message", on_group_message)
         group_name = "test"
         client.join_group(group_name)
         client.send_to_group(group_name, "hello text", "text", no_echo=False, ack=False)

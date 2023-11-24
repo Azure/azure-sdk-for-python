@@ -25,7 +25,7 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
         name = "test_disable_recovery_and_autoconnect"
         with client:
             group_name = name
-            client.on("group-message", on_group_message)
+            client.subscribe("group-message", on_group_message)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close connection
             with pytest.raises(DisconnectedError):
