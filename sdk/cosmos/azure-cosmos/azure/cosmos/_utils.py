@@ -25,6 +25,8 @@
 import platform
 import re
 from ._version import VERSION
+import base64
+import json
 
 
 def get_user_agent():
@@ -49,3 +51,20 @@ def safe_user_agent_header(s):
     if not s:
         s = "unknown"
     return s
+
+
+def get_index_metrics_info(delimited_string):
+    if delimited_string is None:
+        return {}
+
+    try:
+        # Decode the base64 string to bytes
+        bytes_string = base64.b64decode(delimited_string)
+        # Decode the bytes to a string using UTF-8 encoding
+        decoded_string = bytes_string.decode('utf-8')
+
+        # Python's json.loads method is used for deserialization
+        result = json.loads(decoded_string) or {}
+        return result
+    except (json.JSONDecodeError, ValueError):
+        return {}

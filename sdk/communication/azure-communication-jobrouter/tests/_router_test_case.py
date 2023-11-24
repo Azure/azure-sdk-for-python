@@ -57,8 +57,8 @@ class RouterRecordedTestCase(AzureRecordedTestCase):
                 worker_assignments = router_job.assignments
 
                 for assignment_id, job_assignment in worker_assignments.items():
-                    router_client.complete_job(job_id, CompleteJobOptions(assignment_id=assignment_id))
-                    router_client.close_job(job_id, CloseJobOptions(assignment_id=assignment_id))
+                    router_client.complete_job(job_id, assignment_id)
+                    router_client.close_job(job_id, assignment_id)
 
                 router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.COMPLETED:
@@ -66,7 +66,7 @@ class RouterRecordedTestCase(AzureRecordedTestCase):
                 worker_assignments = router_job.assignments
 
                 for assignment_id, job_assignment in worker_assignments.items():
-                    router_client.close_job(job_id, CloseJobOptions(assignment_id=assignment_id))
+                    router_client.close_job(job_id, assignment_id)
 
                 router_client.delete_job(job_id=job_id)
             elif router_job.status == RouterJobStatus.CLOSED:

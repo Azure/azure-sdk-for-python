@@ -640,3 +640,48 @@ function Get-python-EmitterName() {
 function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
   return "--option @azure-tools/typespec-python.emitter-output-dir=$projectDirectory/"
 }
+
+function Get-python-DirectoriesForGeneration () {
+  return Get-ChildItem "$RepoRoot/sdk" -Directory
+  | Get-ChildItem -Directory
+  | Where-Object { $_ -notmatch "-mgmt-" }
+  | Where-Object { (Test-Path "$_/tsp-location.yaml") }
+  # TODO: Reenable swagger generation when tox generate supports arbitrary generator versions
+  # -or (Test-Path "$_/swagger/README.md")
+}
+
+function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
+  $packageDirectories = Get-Content $PackageDirectoriesFile | ConvertFrom-Json
+  
+  $directoriesWithErrors = @()
+
+  foreach ($directory in $packageDirectories) {
+    Push-Location $RepoRoot/sdk/$directory
+    try {
+      Write-Host "`n`n======================================================================"
+      Write-Host "Generating project under directory 'sdk/$directory'" -ForegroundColor Yellow
+      Write-Host "======================================================================`n"
+
+      $toxConfigPath = Resolve-Path "$RepoRoot/eng/tox/tox.ini"
+      Invoke-LoggedCommand "tox run -e generate -c `"$toxConfigPath`" --root ."
+    }
+    catch {
+      Write-Host "##[error]Error generating project under directory $directory"
+      Write-Host $_.Exception.Message
+      $directoriesWithErrors += $directory
+    }
+    finally {
+      Pop-Location
+    }
+  }
+
+  if($directoriesWithErrors.Count -gt 0) {
+    Write-Host "##[error]Generation errors found in $($directoriesWithErrors.Count) directories:"
+
+    foreach ($directory in $directoriesWithErrors) {
+      Write-Host "  $directory"
+    }
+
+    exit 1
+  }
+}

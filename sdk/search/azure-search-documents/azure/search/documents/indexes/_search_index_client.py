@@ -352,8 +352,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :param name: The name of the Synonym Map to get
         :type name: str
         :return: The retrieved Synonym Map
-        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         .. admonition:: Example:
 

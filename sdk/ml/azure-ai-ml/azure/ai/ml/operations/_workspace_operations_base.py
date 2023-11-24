@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -123,8 +124,12 @@ class WorkspaceOperationsBase(ABC):
                 workspace.tags.pop("createdByToolkit")
             existing_workspace.tags.update(workspace.tags)
             workspace.tags = existing_workspace.tags
-            workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
-            workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
+            # TODO do we want projects to do this?
+            if workspace._kind != PROJECT_WORKSPACE_KIND:
+                workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
+                workspace.application_insights = (
+                    workspace.application_insights or existing_workspace.application_insights
+                )
             workspace.identity = workspace.identity or existing_workspace.identity
             workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
@@ -667,8 +672,6 @@ class WorkspaceOperationsBase(ABC):
             offline_store_target = kwargs.get("offline_store_target", None)
             online_store_target = kwargs.get("online_store_target", None)
 
-            _set_val(param["set_up_feature_store"], "true")
-
             from azure.ai.ml._utils._arm_id_utils import AzureResourceId
 
             if offline_store_target is not None:
@@ -710,6 +713,13 @@ class WorkspaceOperationsBase(ABC):
             elif endpoint_resource_id != "":
                 _set_val(param["endpoint_resource_id"], endpoint_resource_id)
                 _set_val(param["endpoint_kind"], endpoint_kind)
+
+            # Hubs must have an azure container registry on-provision. If none was provided, create one.
+            if not workspace.container_registry:
+                _set_val(param["containerRegistryOption"], "new")
+                container_registry = _generate_container_registry(workspace.name, resources_being_deployed)
+                _set_val(param["containerRegistryName"], container_registry)
+                _set_val(param["containerRegistryResourceGroupName"], self._resource_group_name)
 
         # Lean related param
         if workspace._kind and workspace._kind.lower() == PROJECT_WORKSPACE_KIND:
@@ -899,6 +909,27 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
         None,
     )
     return app_insights
+
+
+def _generate_container_registry(name: str, resources_being_deployed: dict) -> str:
+    """Generates a name for a container registry resource to be created with workspace based on workspace name,
+    sets name and type in resources_being_deployed.
+
+    :param name: The name for the related workspace.
+    :type name: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of container registry.
+    :rtype: str
+    """
+    # Application name only allows alphanumeric characters, periods, underscores,
+    # hyphens and parenthesis and cannot end in a period
+    con_reg = get_name_for_dependent_resource(name, "containerRegistry")
+    resources_being_deployed[con_reg] = (
+        ArmConstants.CONTAINER_REGISTRY,
+        None,
+    )
+    return con_reg
 
 
 class CustomArmTemplateDeploymentPollingMethod(PollingMethod):

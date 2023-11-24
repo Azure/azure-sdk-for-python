@@ -8,16 +8,19 @@ import tempfile
 import time
 import logging
 from pathlib import Path
+from typing import Callable, Optional, Dict, List
 
 import mlflow
 import pandas as pd
+from azure.core.tracing.decorator import distributed_trace
+from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
 from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
-from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path
+from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
 from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
@@ -25,6 +28,10 @@ from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 from ._utils import _write_properties_to_run_history
 
 LOGGER = logging.getLogger(__name__)
+
+activity_logger = ActivityLogger(__name__)
+activity_logger.update_info()
+package_logger, module_logger = activity_logger.package_logger, activity_logger.module_logger
 
 
 def _get_handler_class(
@@ -76,18 +83,55 @@ def _log_metrics(run_id, metrics):
     )
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "Evaluate", ActivityType.PUBLICAPI)
 def evaluate(
-        evaluation_name=None,
-        target=None,
-        data=None,
-        task_type=None,
-        sweep_args=None,
-        metrics_list=None,
-        model_config=None,
-        data_mapping=None,
-        output_path=None,
+        *,
+        evaluation_name: str = None,
+        target: Optional[Callable] = None,
+        data: Optional[str] = None,
+        task_type: str = None,
+        metrics_list: Optional[List[str]] = None,
+        model_config: Dict[str, str] = None,
+        data_mapping: Dict[str, str] = None,
+        output_path: Optional[str] = None,
         **kwargs
 ):
+    """Evaluates target or data with built-in evaluation metrics
+
+    :keyword evaluation_name: Display name of the evaluation.
+    :paramtype evaluation_name: Optional[str]
+    :keyword target: Target to be evaluated. `target` and `data` both cannot be None
+    :paramtype target: Optional[Callable]
+    :keyword data: Path to the data to be evaluated or passed to target if target is set.
+        Only .jsonl format files are supported.  `target` and `data` both cannot be None
+    :paramtype data: Optional[str]
+    :keyword task_type: Task type for evaluation. This helps to pick a set of pre-defined metrics.
+        Supported values are `qa` and `chat`
+    :paramtype task_type: str
+    :keyword metrics_list: List of metrics to calculate. A default list is picked based on task_type if not set.
+    :paramtype metrics_list: Optional[List[str]]
+    :keyword model_config: GPT configuration details needed for AI-assisted metrics.
+    :paramtype model_config: Dict[str, str]
+    :keyword data_mapping: GPT configuration details needed for AI-assisted metrics.
+    :paramtype data_mapping: Dict[str, str]
+    :keyword output_path: The local folder path to save evaluation artifacts to if set
+    :paramtype output_path: Optional[str]
+    :keyword tracking_uri: Tracking uri to log evaluation results to AI Studio
+    :paramtype tracking_uri: Optional[str]
+    :return: A EvaluationResult object.
+    :rtype: ~azure.ai.generative.evaluate.EvaluationResult
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ai_samples_evaluate.py
+            :start-after: [START evaluate_task_type_qa]
+            :end-before: [END evaluate_task_type_qa]
+            :language: python
+            :dedent: 8
+            :caption: Evaluates target or data with built-in evaluation metrics.
+    """
+
     results_list = []
     metrics_config = {}
     if "tracking_uri" in kwargs:
@@ -99,6 +143,7 @@ def evaluate(
     if data_mapping:
         metrics_config.update(data_mapping)
 
+    sweep_args = kwargs.pop("sweep_args", None)
     if sweep_args:
         import itertools
         keys, values = zip(*sweep_args.items())
@@ -275,7 +320,12 @@ def _evaluate(
             log_property_and_tag("_azureml.evaluate_artifacts",
                                  json.dumps([{"path": "eval_results.jsonl", "type": "table"}]))
             mlflow.log_param("task_type", task_type)
-            log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
+            if task_type == CHAT:
+                log_property("_azureml.chat_history_column", data_mapping.get("y_pred"))
+            # log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
+
+            if output_path:
+                _copy_artifact(tmp_path, output_path)
 
     evaluation_result = EvaluationResult(
         metrics_summary=metrics.get("metrics"),
@@ -283,15 +333,14 @@ def _evaluate(
             "eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"
         },
         tracking_uri=kwargs.get("tracking_uri"),
-        evaluation_id=run.info.run_id
+        evaluation_id=run.info.run_id,
     )
-    if output_path:
-        evaluation_result.download_evaluation_artifacts(path=output_path)
 
     return evaluation_result
 
 
-
+@distributed_trace
+@monitor_with_activity(package_logger, "LogInput", ActivityType.PUBLICAPI)
 def log_input(data, data_is_file):
     try:
         # Mlflow service supports only uri_folder, hence this is need to create a dir to log input data.
@@ -317,14 +366,24 @@ def log_input(data, data_is_file):
         LOGGER.exception(ex, stack_info=True)
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogParamAndTag", ActivityType.PUBLICAPI)
 def log_param_and_tag(key, value):
     mlflow.log_param(key, value)
     mlflow.set_tag(key, value)
 
 
+@distributed_trace
+@monitor_with_activity(package_logger, "LogPropertyAndTag", ActivityType.PUBLICAPI)
 def log_property_and_tag(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
     mlflow.set_tag(key, value)
+
+
+@distributed_trace
+@monitor_with_activity(package_logger, "LogProperty", ActivityType.PUBLICAPI)
+def log_property(key, value, logger=LOGGER):
+    _write_properties_to_run_history({key: value}, logger)
 
 
 def _get_chat_instance_table(metrics):

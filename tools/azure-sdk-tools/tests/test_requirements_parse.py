@@ -4,7 +4,7 @@ import os, tempfile, shutil
 import pytest
 
 from typing import List
-from ci_tools.functions import replace_dev_reqs
+from ci_tools.generation import replace_dev_reqs
 
 integration_folder = os.path.join(os.path.dirname(__file__), "integration")
 sample_dev_reqs_folder = os.path.join(integration_folder, "scenarios", "dev_requirement_samples")

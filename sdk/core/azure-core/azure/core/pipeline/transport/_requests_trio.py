@@ -110,7 +110,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                     self.iter_content_func,
                 )
             except AttributeError:  # trio < 0.12.1
-                chunk = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
+                chunk = await trio.run_sync_in_worker_thread(  # type: ignore # pylint: disable=no-member
                     _iterate_response_content,
                     self.iter_content_func,
                 )
@@ -247,7 +247,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
                     limiter=trio_limiter,
                 )
             except AttributeError:  # trio < 0.12.1
-                response = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
+                response = await trio.run_sync_in_worker_thread(  # type: ignore # pylint: disable=no-member
                     functools.partial(
                         self.session.request,
                         request.method,

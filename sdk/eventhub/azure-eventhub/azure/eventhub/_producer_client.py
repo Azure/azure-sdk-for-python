@@ -832,8 +832,9 @@ class EventHubProducerClient(
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
          immediately. Default is True.
-        :keyword float or None timeout: Buffered mode only. Timeout to close the producer.
+        :keyword timeout: Buffered mode only. Timeout to close the producer.
          Default is None which means no timeout.
+        :paramtype timeout: float or None
         :rtype: None
         :raises EventHubError: If an error occurred when flushing the buffer if `flush` is set to True or closing the
          underlying AMQP connections in buffered mode.

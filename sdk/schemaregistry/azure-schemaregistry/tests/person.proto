@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package person.example;
+
+message Person {
+    string name = 1;
+    int64 favorite_number = 2;
+    string favorite_color = 3;
+}
