@@ -39,11 +39,8 @@ from .models._models import (
     LeaveGroupMessage,
     AckMessageError,
     AckMap,
-    StartStoppingClientError,
     StartClientError,
-    OpenWebSocketError,
-    StartNotStoppedClientError,
-    DisconnectedError,
+    WebPubSubConnectionError,
 )
 from .models._enums import (
     WebPubSubDataType,
@@ -213,7 +210,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def _send_message(self, message: WebPubSubMessage, **kwargs: Any) -> None:
         pay_load = self._protocol.write_message(message)
         if not self._ws or not self._ws.sock:
-            raise DisconnectedError("The connection is not connected.")
+            raise SendMessageError("The websocket connection is not connected.")
 
         self._ws.send(pay_load)
         if kwargs.pop("logging_enable", False) or self._logging_enable:
@@ -537,9 +534,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     if self._ws:
                         self._ws.close()
                 finally:
-                    raise StartStoppingClientError(
-                        "Can't start a client during stopping"
-                    )
+                    raise StartClientError("Can't start a client during stopping")
 
             _LOGGER.debug("WebSocket connection has opened")
             self._state = WebPubSubClientState.CONNECTED
@@ -703,10 +698,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 self._handle_connection_close_and_no_recovery()
             else:
                 _LOGGER.debug("WebSocket closed before open")
-                raise OpenWebSocketError(f"Fail to open Websocket: {close_status_code}")
+                raise WebPubSubConnectionError(
+                    f"Fail to open Websocket: {close_status_code}"
+                )
 
         if self._is_stopping:
-            raise StartStoppingClientError("Can't start a client during stopping")
+            raise StartClientError("Can't start a client during stopping")
 
         self._ws = websocket.WebSocketApp(
             url=url,
@@ -767,11 +764,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """start the client and connect to service"""
 
         if self._is_stopping:
-            raise StartStoppingClientError("Can't start a client during stopping")
+            raise StartClientError("Can't start a client during stopping")
         if self._state != WebPubSubClientState.STOPPED:
-            raise StartNotStoppedClientError(
-                "Client can be only started when it's Stopped"
-            )
+            raise StartClientError("Client can be only started when it's Stopped")
 
         try:
             self._start_core()

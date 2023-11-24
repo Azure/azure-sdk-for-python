@@ -9,7 +9,7 @@ import time
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, on_group_message, TEST_RESULT
-from azure.messaging.webpubsubclient.models import OnGroupDataMessageArgs, StartNotStoppedClientError
+from azure.messaging.webpubsubclient.models import OnGroupDataMessageArgs, StartClientError
 
 
 @pytest.mark.live_test_only
@@ -50,19 +50,19 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
 
         def on_stop():
-            client._start()
+            client.start()
 
         with client:
             # start client again after stop
             client.subscribe("stopped", on_stop)
             assert client._is_connected()
-            client._stop()
+            client.stop()
             time.sleep(1.0)
             assert client._is_connected()
 
             # remove stopped event and stop again
             client.unsubscribe("stopped", on_stop)
-            client._stop()
+            client.stop()
             time.sleep(1.0)
             assert not client._is_connected()
 
@@ -70,9 +70,9 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @recorded_by_proxy
     def test_duplicated_start(self, webpubsubclient_connection_string):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
-        with pytest.raises(StartNotStoppedClientError):
+        with pytest.raises(StartClientError):
             with client:
-                client._start()
+                client.start()
         assert not client._is_connected()
 
     @WebpubsubClientPowerShellPreparer()
@@ -80,7 +80,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     def test_duplicated_stop(self, webpubsubclient_connection_string):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
         with client:
-            client._stop()
+            client.stop()
         assert not client._is_connected()
 
     @WebpubsubClientPowerShellPreparer()

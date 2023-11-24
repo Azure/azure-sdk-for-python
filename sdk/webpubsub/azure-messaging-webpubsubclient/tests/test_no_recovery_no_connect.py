@@ -8,7 +8,7 @@ import pytest
 import time
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer, TEST_RESULT, on_group_message, SafeThread
-from azure.messaging.webpubsubclient.models import WebPubSubProtocolType, DisconnectedError
+from azure.messaging.webpubsubclient.models import WebPubSubProtocolType, SendMessageError
 
 
 @pytest.mark.live_test_only
@@ -28,7 +28,7 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
             client.subscribe("group-message", on_group_message)
             client.join_group(group_name)
             client._ws.sock.close(1001)  # close connection
-            with pytest.raises(DisconnectedError):
+            with pytest.raises(SendMessageError):
                 client.send_to_group(group_name, name, "text")
             time.sleep(1)  # wait for on_group_message to be called
 

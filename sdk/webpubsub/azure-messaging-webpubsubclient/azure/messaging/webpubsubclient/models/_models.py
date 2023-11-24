@@ -11,6 +11,7 @@ import math
 import threading
 import base64
 from azure.core.pipeline.policies import RetryMode
+from azure.core.exceptions import AzureError
 from .. import _model_base
 from .._model_base import rest_field, AzureJSONEncoder
 from ._enums import WebPubSubDataType, UpstreamMessageType
@@ -161,7 +162,9 @@ class SendToGroupData(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Literal["sendToGroup"] = "sendToGroup",  # pylint: disable=redefined-builtin
+        type: Literal[
+            "sendToGroup"
+        ] = "sendToGroup",  # pylint: disable=redefined-builtin
         group: str,
         data_type: Union[WebPubSubDataType, str],
         data: Any,
@@ -186,7 +189,9 @@ class SequenceAckData(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Literal["sequenceAck"] = "sequenceAck",  # pylint: disable=redefined-builtin
+        type: Literal[
+            "sequenceAck"
+        ] = "sequenceAck",  # pylint: disable=redefined-builtin
         sequence_id: int,
     ) -> None:
         ...
@@ -210,7 +215,10 @@ class SequenceAckMessage:
 
 class ConnectedMessage:
     def __init__(
-        self, connection_id: str, user_id: Optional[str] = None, reconnection_token: Optional[str] = None
+        self,
+        connection_id: str,
+        user_id: Optional[str] = None,
+        reconnection_token: Optional[str] = None,
     ) -> None:
         self.kind: Literal["connected"] = "connected"
         self.connection_id = connection_id
@@ -243,7 +251,12 @@ class GroupDataMessage:
 
 
 class ServerDataMessage:
-    def __init__(self, data_type: Union[WebPubSubDataType, str], data: Any, sequence_id: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        data_type: Union[WebPubSubDataType, str],
+        data: Any,
+        sequence_id: Optional[int] = None,
+    ) -> None:
         self.kind: Literal["serverData"] = "serverData"
         self.data_type = data_type
         self.data = data
@@ -321,7 +334,14 @@ class WebPubSubClientProtocol:
     @staticmethod
     def parse_messages(
         raw_message: str,
-    ) -> Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage, None]:
+    ) -> Union[
+        ConnectedMessage,
+        DisconnectedMessage,
+        GroupDataMessage,
+        ServerDataMessage,
+        AckMessage,
+        None,
+    ]:
         if raw_message is None:
             raise Exception("No input")
         if not isinstance(raw_message, str):
@@ -352,7 +372,9 @@ class WebPubSubClientProtocol:
             if message["from"] == "server":
                 data = parse_payload(message["data"], message["dataType"])
                 return ServerDataMessage(
-                    data=data, data_type=message["dataType"], sequence_id=message.get("sequenceId")
+                    data=data,
+                    data_type=message["dataType"],
+                    sequence_id=message.get("sequenceId"),
                 )
             _LOGGER.error("wrong message from type: %s", message["from"])
             return None
@@ -416,15 +438,22 @@ class WebPubSubJsonReliableProtocol(WebPubSubClientProtocol):
 
 
 class SendMessageErrorOptions:
-    def __init__(self, ack_id: Optional[int] = None, error_detail: Optional[AckMessageError] = None) -> None:
+    def __init__(
+        self,
+        ack_id: Optional[int] = None,
+        error_detail: Optional[AckMessageError] = None,
+    ) -> None:
         self.ack_id = ack_id
         self.error_detail = error_detail
         self.cv = threading.Condition()
 
 
-class SendMessageError(Exception):
+class SendMessageError(AzureError):
     def __init__(
-        self, message: str, ack_id: Optional[int] = None, error_detail: Optional[AckMessageError] = None
+        self,
+        message: str,
+        ack_id: Optional[int] = None,
+        error_detail: Optional[AckMessageError] = None,
     ) -> None:
         super().__init__(message)
         self.name = "SendMessageError"
@@ -450,14 +479,21 @@ class OnGroupDataMessageArgs:
 
 
 class OnServerDataMessageArgs:
-    def __init__(self, data_type: Union[WebPubSubDataType, str], data: Any, sequence_id: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        data_type: Union[WebPubSubDataType, str],
+        data: Any,
+        sequence_id: Optional[int] = None,
+    ) -> None:
         self.data_type = data_type
         self.data = data
         self.sequence_id = sequence_id
 
 
 class OnDisconnectedArgs:
-    def __init__(self, connection_id: Optional[str] = None, message: Optional[str] = None) -> None:
+    def __init__(
+        self, connection_id: Optional[str] = None, message: Optional[str] = None
+    ) -> None:
         self.connection_id = connection_id
         self.message = message
 
@@ -475,7 +511,11 @@ class OnConnectedArgs:
 
 
 class CloseEvent:
-    def __init__(self, close_status_code: Optional[int] = None, close_reason: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        close_status_code: Optional[int] = None,
+        close_reason: Optional[str] = None,
+    ) -> None:
         self.close_status_code = close_status_code
         self.close_reason = close_reason
 
@@ -564,21 +604,9 @@ class AckMap:
             self.ack_map.clear()
 
 
-class StartStoppingClientError(Exception):
-    """Exception raised when the client is stopping but users want to start it again"""
-
-
-class StartNotStoppedClientError(Exception):
-    """Exception raised when the client is not stopped completely"""
-
-
-class StartClientError(Exception):
+class StartClientError(AzureError):
     """Exception raised when fail to start the client"""
 
 
-class OpenWebSocketError(Exception):
+class WebPubSubConnectionError(AzureError):
     """Exception raised when fail to open the websocket"""
-
-
-class DisconnectedError(Exception):
-    """Exception raised when the client is not connected to the service."""
