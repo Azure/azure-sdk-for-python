@@ -74,7 +74,7 @@ class WebPubSubClientCredential:
             self._client_access_url_provider = client_access_url_provider
 
     def get_client_access_url(self) -> str:
-        """Get client access url. """
+        """Get client access url."""
         return self._client_access_url_provider()
 
 
@@ -146,9 +146,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         elif isinstance(credential, str):
             self._credential = WebPubSubClientCredential(credential)
         else:
-            raise TypeError(
-                "type of credential must be str or WebPubSubClientCredential"
-            )
+            raise TypeError("type of credential must be str or WebPubSubClientCredential")
         self._auto_reconnect = reconnect_retry_total > 0
         self._auto_rejoin_groups = auto_rejoin_groups
         protocol_map = {
@@ -215,9 +213,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         self._ws.send(pay_load)
         if kwargs.pop("logging_enable", False) or self._logging_enable:
-            _LOGGER.debug(
-                "\nconnection_id: %s\npay_load: %s", self._connection_id, pay_load
-            )
+            _LOGGER.debug("\nconnection_id: %s\npay_load: %s", self._connection_id, pay_load)
 
     def _send_message_with_ack_id(
         self,
@@ -234,9 +230,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._ack_map.add(
                 ack_id,
                 SendMessageErrorOptions(
-                    error_detail=AckMessageError(
-                        name="", message="Timeout while waiting for ack message."
-                    )
+                    error_detail=AckMessageError(name="", message="Timeout while waiting for ack message.")
                 ),
             )
         try:
@@ -306,9 +300,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             group = self._get_or_add_group(group_name)
             ack_id = kwargs.pop("ack_id", None)
             self._send_message_with_ack_id(
-                message_provider=lambda id: LeaveGroupMessage(
-                    group=group_name, ack_id=id
-                ),
+                message_provider=lambda id: LeaveGroupMessage(group=group_name, ack_id=id),
                 ack_id=ack_id,
                 **kwargs,
             )
@@ -351,9 +343,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 )
             else:
                 self._send_message(
-                    message=SendEventMessage(
-                        data_type=data_type, data=content, event=event_name
-                    ),
+                    message=SendEventMessage(data_type=data_type, data=content, event=event_name),
                     **kwargs,
                 )
 
@@ -413,9 +403,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 return
             except Exception as e:  # pylint: disable=broad-except
                 retry_attempt = retry_attempt + 1
-                delay_seconds = self._message_retry_policy.next_retry_delay(
-                    retry_attempt
-                )
+                delay_seconds = self._message_retry_policy.next_retry_delay(retry_attempt)
                 if delay_seconds is None:
                     raise e
                 _LOGGER.debug(
@@ -457,9 +445,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 delay_seconds = self._reconnect_retry_policy.next_retry_delay(attempt)
                 if not delay_seconds:
                     break
-                _LOGGER.debug(
-                    "Delay time for reconnect attempt %d: %ds", attempt, delay_seconds
-                )
+                _LOGGER.debug("Delay time for reconnect attempt %d: %ds", attempt, delay_seconds)
                 time.sleep(delay_seconds)
         if not success:
             self._handle_connection_stopped()
@@ -479,9 +465,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             CallbackType.DISCONNECTED,
             OnDisconnectedArgs(
                 connection_id=self._connection_id,
-                message=self._last_disconnected_message.message
-                if self._last_disconnected_message
-                else None,
+                message=self._last_disconnected_message.message if self._last_disconnected_message else None,
             ),
         )
         if self._auto_reconnect:
@@ -546,24 +530,17 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             def handle_ack_message(message: AckMessage):
                 ack_option = self._ack_map.get(message.ack_id)
                 if ack_option:
-                    if not (
-                        message.success
-                        or (message.error and message.error.name == "Duplicate")
-                    ):
+                    if not (message.success or (message.error and message.error.name == "Duplicate")):
                         ack_option.error_detail = message.error
                     else:
                         ack_option.error_detail = None
                     ack_option.ack_id = message.ack_id
-                    _LOGGER.debug(
-                        "Ack message received. Ack id is : %d", message.ack_id
-                    )
+                    _LOGGER.debug("Ack message received. Ack id is : %d", message.ack_id)
                     with ack_option.cv:
                         ack_option.cv.notify()
 
             def handle_connected_message(message: ConnectedMessage):
-                _LOGGER.debug(
-                    "WebSocket is connected with id: %s", message.connection_id
-                )
+                _LOGGER.debug("WebSocket is connected with id: %s", message.connection_id)
                 self._connection_id = message.connection_id
                 self._reconnection_token = message.reconnection_token
 
@@ -577,9 +554,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
                     self._call_back(
                         CallbackType.CONNECTED,
-                        OnConnectedArgs(
-                            connection_id=message.connection_id, user_id=message.user_id
-                        ),
+                        OnConnectedArgs(connection_id=message.connection_id, user_id=message.user_id),
                     )
 
             def handle_disconnected_message(message: DisconnectedMessage):
@@ -642,9 +617,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     close_msg,
                 )
 
-                self._last_close_event = CloseEvent(
-                    close_status_code=close_status_code, close_reason=close_msg
-                )
+                self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
                 # clean ack cache
                 self._ack_map.clear()
 
@@ -653,55 +626,38 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     self._handle_connection_close_and_no_recovery()
                     return
 
-                if (
-                    self._last_close_event
-                    and self._last_close_event.close_status_code == 1008
-                ):
-                    _LOGGER.warning(
-                        "The websocket close with status code 1008. Stop recovery."
-                    )
+                if self._last_close_event and self._last_close_event.close_status_code == 1008:
+                    _LOGGER.warning("The websocket close with status code 1008. Stop recovery.")
                     self._handle_connection_close_and_no_recovery()
                     return
 
                 if not self._protocol.is_reliable_sub_protocol:
-                    _LOGGER.warning(
-                        "The protocol is not reliable, recovery is not applicable"
-                    )
+                    _LOGGER.warning("The protocol is not reliable, recovery is not applicable")
                     self._handle_connection_close_and_no_recovery()
                     return
 
                 recovery_url = self._build_recovery_url()
                 if not recovery_url:
-                    _LOGGER.warning(
-                        "Connection id or reconnection token is not available"
-                    )
+                    _LOGGER.warning("Connection id or reconnection token is not available")
                     self._handle_connection_close_and_no_recovery()
                     return
 
                 self._state = WebPubSubClientState.RECOVERING
                 recovery_start = time.time()
-                while (
-                    time.time() - recovery_start < _RECOVERY_TIMEOUT
-                ) and not self._is_stopping:
+                while (time.time() - recovery_start < _RECOVERY_TIMEOUT) and not self._is_stopping:
                     try:
                         self._connect(recovery_url)
                         _LOGGER.debug("Recovery succeeded")
                         return
                     except:  # pylint: disable=bare-except
-                        _LOGGER.debug(
-                            "Try to recover after %d seconds", _RECOVERY_RETRY_INTERVAL
-                        )
+                        _LOGGER.debug("Try to recover after %d seconds", _RECOVERY_RETRY_INTERVAL)
                         time.sleep(_RECOVERY_RETRY_INTERVAL)
 
-                _LOGGER.warning(
-                    "Recovery attempts failed after 30 seconds or the client is stopping"
-                )
+                _LOGGER.warning("Recovery attempts failed after 30 seconds or the client is stopping")
                 self._handle_connection_close_and_no_recovery()
             else:
                 _LOGGER.debug("WebSocket closed before open")
-                raise WebPubSubConnectionError(
-                    f"Fail to open Websocket: {close_status_code}"
-                )
+                raise WebPubSubConnectionError(f"Fail to open Websocket: {close_status_code}")
 
         if self._is_stopping:
             raise StartClientError("Can't start a client during stopping")
@@ -725,8 +681,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         # set thread to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol and (
-            (self._thread_seq_ack and not self._thread_seq_ack.is_alive())
-            or (self._thread_seq_ack is None)
+            (self._thread_seq_ack and not self._thread_seq_ack.is_alive()) or (self._thread_seq_ack is None)
         ):
 
             def sequence_id_ack_periodically():
@@ -738,9 +693,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     finally:
                         time.sleep(1.0)
 
-            self._thread_seq_ack = threading.Thread(
-                target=sequence_id_ack_periodically, daemon=True
-            )
+            self._thread_seq_ack = threading.Thread(target=sequence_id_ack_periodically, daemon=True)
             self._thread_seq_ack.start()
 
         _LOGGER.info("connected successfully")
@@ -828,9 +781,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def subscribe(
-        self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]
-    ) -> None:
+    def subscribe(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]) -> None:
         """Add handler for stopped event.
         :param event: The event name. Required.
         :type event: str
@@ -915,9 +866,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def unsubscribe(
-        self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]
-    ) -> None:
+    def unsubscribe(self, event: Literal[CallbackType.STOPPED], listener: Callable[[], None]) -> None:
         """Remove handler for stopped event.
         :param event: The event name. Required.
         :type event: str
