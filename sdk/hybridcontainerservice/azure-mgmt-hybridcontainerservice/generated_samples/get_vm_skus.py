@@ -14,7 +14,7 @@ from azure.mgmt.hybridcontainerservice import HybridContainerServiceMgmtClient
     pip install azure-identity
     pip install azure-mgmt-hybridcontainerservice
 # USAGE
-    python provisioned_clusters_upgrade_node_image_version_for_entire_cluster.py
+    python get_vm_skus.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,15 @@ from azure.mgmt.hybridcontainerservice import HybridContainerServiceMgmtClient
 def main():
     client = HybridContainerServiceMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="a3e42606-29b1-4d7d-b1d9-9ff6b9d3c71b",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.provisioned_clusters.begin_upgrade_node_image_version_for_entire_cluster(
-        resource_group_name="test-arcappliance-resgrp",
-        resource_name="test-hybridakscluster",
-    ).result()
+    response = client.get_vm_skus(
+        custom_location_resource_uri="subscriptions/a3e42606-29b1-4d7d-b1d9-9ff6b9d3c71b/resourceGroups/test-arcappliance-resgrp/providers/Microsoft.ExtendedLocation/customLocations/testcustomlocation",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2022-09-01-preview/examples/ProvisionedClustersUpgradeNodeImageVersionForEntireCluster.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2023-11-15-preview/examples/GetVmSkus.json
 if __name__ == "__main__":
     main()

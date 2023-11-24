@@ -27,21 +27,21 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._operations import build_list_request
+from ...operations._kubernetes_versions_operations import build_list_request
 from .._vendor import HybridContainerServiceMgmtClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class Operations:
+class KubernetesVersionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.hybridcontainerservice.aio.HybridContainerServiceMgmtClient`'s
-        :attr:`operations` attribute.
+        :attr:`kubernetes_versions` attribute.
     """
 
     models = _models
@@ -54,20 +54,28 @@ class Operations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
-        """list.
+    def list(
+        self, custom_location_resource_uri: str, **kwargs: Any
+    ) -> AsyncIterable["_models.KubernetesVersionProfile"]:
+        """Lists the supported kubernetes versions.
 
+        Lists the supported kubernetes versions from the underlying custom location.
+
+        :param custom_location_resource_uri: The fully qualified Azure Resource manager identifier of
+         the custom location resource. Required.
+        :type custom_location_resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Operation or the result of cls(response)
+        :return: An iterator like instance of either KubernetesVersionProfile or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hybridcontainerservice.models.Operation]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hybridcontainerservice.models.KubernetesVersionProfile]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.KubernetesVersionProfileList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -81,6 +89,7 @@ class Operations:
             if not next_link:
 
                 request = build_list_request(
+                    custom_location_resource_uri=custom_location_resource_uri,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
@@ -108,7 +117,7 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationListResult", pipeline_response)
+            deserialized = self._deserialize("KubernetesVersionProfileList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -132,4 +141,6 @@ class Operations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.HybridContainerService/operations"}
+    list.metadata = {
+        "url": "/{customLocationResourceUri}/providers/Microsoft.HybridContainerService/kubernetesVersions"
+    }
