@@ -163,8 +163,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
                 retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
                 retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
-                # Mypy doesn't seem torecognize the backoff_max attribute of the Retry object....
-                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.backoff_max,  # type: ignore[attr-defined] # pylint:disable=line-too-long
+                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.DEFAULT_BACKOFF_MAX,
                 retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
@@ -2785,7 +2784,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Azure Cosmos 'GET' http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
         :rtype: tuple of (dict, dict)
@@ -2813,7 +2812,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Azure Cosmos 'POST' http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Union[str, unicode, Dict[Any, Any]] body: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
@@ -2842,7 +2841,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Azure Cosmos 'PUT' http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Union[str, unicode, Dict[Any, Any]] body: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
@@ -2871,7 +2870,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """Azure Cosmos 'PATCH' http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Union[str, unicode, Dict[Any, Any]] request_data: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).

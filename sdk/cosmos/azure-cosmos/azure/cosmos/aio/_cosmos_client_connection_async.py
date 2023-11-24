@@ -24,7 +24,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-from typing import Dict, Any, Optional, TypeVar
+from typing import Dict, Any, Optional, TypeVar, Union
 from urllib.parse import urlparse
 
 from urllib3.util.retry import Retry
@@ -164,7 +164,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
                 retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
                 retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
-                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.BACKOFF_MAX,
+                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.DEFAULT_BACKOFF_MAX,
                 retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
@@ -728,7 +728,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'POST' async http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Union[str, unicode, Dict[Any, Any]] body: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
@@ -962,7 +962,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'GET' async http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
         :rtype: tuple of (dict, dict)
@@ -1248,7 +1248,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'PUT' async http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Union[str, unicode, Dict[Any, Any]] body: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
@@ -1270,7 +1270,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'PATCH' http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Union[str, unicode, Dict[Any, Any]] request_data: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
@@ -1502,7 +1502,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'DELETE' async http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
         :rtype: tuple of (dict, dict)
@@ -2556,7 +2556,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
-                if val is _Undefined:
+                if isinstance(val, _Undefined):
                     break
                 ret.append(val)
             return ret
@@ -2629,10 +2629,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                                       **kwargs)
 
     @staticmethod
-    def _return_undefined_or_empty_partition_key(is_system_key):
+    def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empty, _Undefined]:
         if is_system_key:
-            return _Empty
-        return _Undefined
+            return _Empty()
+        return _Undefined()
 
     @staticmethod
     def __ValidateResource(resource):
