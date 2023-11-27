@@ -3,21 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import aiohttp
+from tornado import httpclient
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 
-class AioHttpGetTest(PerfStressTest):
+class TornadoGetTest(PerfStressTest):
     async def global_setup(self):
-        type(self).session = aiohttp.ClientSession()
-
-    async def global_cleanup(self):
-        await type(self).session.close()
+        httpclient.AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
+        type(self).client = httpclient.AsyncHTTPClient()
 
     async def run_async(self):
-        async with type(self).session.get(self.args.url) as response:
-            await response.text()
+        await type(self).client.fetch(self.args.url)
 
     @staticmethod
     def add_arguments(parser):
