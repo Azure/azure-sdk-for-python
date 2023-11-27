@@ -7,7 +7,7 @@ import os
 import time
 import asyncio
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 # Used for logging every step and property of the perf test
 class LogTest(PerfStressTest):

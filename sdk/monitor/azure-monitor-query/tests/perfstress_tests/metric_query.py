@@ -6,7 +6,7 @@
 
 import asyncio
 from datetime import datetime, timezone
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.monitor.query import MetricsQueryClient as SyncMetricsQueryClient, MetricAggregationType
 from azure.monitor.query.aio import MetricsQueryClient as AsyncMetricsQueryClient

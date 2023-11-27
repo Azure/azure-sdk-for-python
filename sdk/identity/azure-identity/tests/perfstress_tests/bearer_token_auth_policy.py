@@ -7,7 +7,7 @@ import asyncio
 import time
 from unittest.mock import Mock
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline, Pipeline

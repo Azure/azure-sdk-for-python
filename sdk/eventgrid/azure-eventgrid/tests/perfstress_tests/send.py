@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 import asyncio
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.eventgrid import EventGridPublisherClient as SyncPublisherClient, EventGridEvent
 from azure.eventgrid.aio import EventGridPublisherClient as AsyncPublisherClient

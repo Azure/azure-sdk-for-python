@@ -9,7 +9,7 @@ import pytest
 import functools
 from io import BytesIO
 from datetime import date, time
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType
 from azure.ai.formrecognizer.aio import FormRecognizerClient as AsyncFormRecognizerClient, FormTrainingClient as AsyncFormTrainingClient

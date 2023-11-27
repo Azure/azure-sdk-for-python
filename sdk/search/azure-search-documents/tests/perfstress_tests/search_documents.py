@@ -5,7 +5,7 @@
 
 import os
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient as SyncClient

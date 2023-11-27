@@ -3,18 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from tornado import httpclient
+import requests
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 
-class TornadoGetTest(PerfStressTest):
+class RequestsGetTest(PerfStressTest):
     async def global_setup(self):
-        httpclient.AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
-        type(self).client = httpclient.AsyncHTTPClient()
+        type(self).session = requests.Session()
 
-    async def run_async(self):
-        await type(self).client.fetch(self.args.url)
+    def run_sync(self):
+        type(self).session.get(self.args.url).text
 
     @staticmethod
     def add_arguments(parser):

@@ -4,7 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 

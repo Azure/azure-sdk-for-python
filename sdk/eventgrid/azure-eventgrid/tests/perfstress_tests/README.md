@@ -1,6 +1,6 @@
 # EventGrid Performance Tests
 
-In order to run the performance tests, the `azure-devtools` package must be installed. This is done as part of the `dev_requirements`.
+In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the `dev_requirements`.
 Start by creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
 
 ### Setup for test resources

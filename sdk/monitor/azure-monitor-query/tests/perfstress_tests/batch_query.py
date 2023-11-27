@@ -6,7 +6,7 @@
 
 import asyncio
 from datetime import date, datetime, timezone
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.monitor.query import LogsQueryClient as SyncLogsQueryClient, LogsBatchQuery
 from azure.monitor.query.aio import LogsQueryClient as AsyncLogsQueryClient

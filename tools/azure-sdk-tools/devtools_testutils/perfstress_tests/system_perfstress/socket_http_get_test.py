@@ -6,7 +6,7 @@
 import asyncio
 from urllib.parse import urlparse
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 
 class SocketHttpGetTest(PerfStressTest):

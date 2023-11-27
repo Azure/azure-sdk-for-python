@@ -3,17 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import requests
+import httpx
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 
-class RequestsGetTest(PerfStressTest):
+class HttpxGetTest(PerfStressTest):
     async def global_setup(self):
-        type(self).session = requests.Session()
+        type(self).client = httpx.AsyncClient()
 
-    def run_sync(self):
-        type(self).session.get(self.args.url).text
+    async def global_cleanup(self):
+        await type(self).client.aclose()
+
+    async def run_async(self):
+        response = await type(self).client.get(self.args.url)
+        _ = response.text
 
     @staticmethod
     def add_arguments(parser):
