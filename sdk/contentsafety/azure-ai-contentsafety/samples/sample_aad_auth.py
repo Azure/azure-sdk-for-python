@@ -16,22 +16,16 @@ def analyze_text_with_aad_auth():
     from azure.ai.contentsafety.models import TextCategory
     from azure.core.exceptions import HttpResponseError
     from azure.ai.contentsafety.models import AnalyzeTextOptions
-    from azure.identity import ClientSecretCredential
+    from azure.identity import DefaultAzureCredential
 
-    tenant_id = os.environ["CONTENT_SAFETY_TENANT_ID"]
-    client_id = os.environ["CONTENT_SAFETY_CLIENT_ID"]
-    client_secret = os.environ["CONTENT_SAFETY_CLIENT_SECRET"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
+    """DefaultAzureCredential will use the values from these environment
+    variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+    """
+    credential = DefaultAzureCredential()
     # Create a Content Safety client
-    client = ContentSafetyClient(
-        endpoint,
-        ClientSecretCredential(
-            tenant_id=tenant_id,
-            client_id=client_id,
-            client_secret=client_secret,
-        ),
-    )
+    client = ContentSafetyClient(endpoint, credential)
 
     # Construct a request
     request = AnalyzeTextOptions(text="You are an idiot")

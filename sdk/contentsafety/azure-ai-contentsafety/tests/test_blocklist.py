@@ -5,7 +5,7 @@
 # ------------------------------------
 
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import recorded_by_proxy
 
 from azure.ai.contentsafety.models import (
     TextBlocklist,
@@ -13,13 +13,15 @@ from azure.ai.contentsafety.models import (
     AddOrUpdateTextBlocklistItemsOptions,
     RemoveTextBlocklistItemsOptions,
 )
-from testcase import ClientPreparer
+from test_case import ContentSafetyTest, ContentSafetyPreparer
 
 
-class TestBlocklistCase(AzureRecordedTestCase):
-    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
+class TestBlocklistCase(ContentSafetyTest):
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_create_blocklist(self, client):
+    def test_create_blocklist(self, content_safety_endpoint, content_safety_key):
+        client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
+
         name = "TestBlocklist"
         description = "Test blocklist management."
         response = client.create_or_update_text_blocklist(
@@ -30,9 +32,11 @@ class TestBlocklistCase(AzureRecordedTestCase):
         assert response.blocklist_name == name
         assert response.description == description
 
-    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_list_text_blocklists(self, client):
+    def test_list_text_blocklists(self, content_safety_endpoint, content_safety_key):
+        client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
+
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
@@ -50,9 +54,11 @@ class TestBlocklistCase(AzureRecordedTestCase):
         assert any(blocklist_name in item["blocklistName"] for item in blocklists) is True
         assert any(blocklist_description in item["description"] for item in blocklists) is True
 
-    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_get_text_blocklist(self, client):
+    def test_get_text_blocklist(self, content_safety_endpoint, content_safety_key):
+        client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
+
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
@@ -69,9 +75,11 @@ class TestBlocklistCase(AzureRecordedTestCase):
         assert blocklist.blocklist_name == blocklist_name
         assert blocklist.description == blocklist_description
 
-    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_delete_blocklist(self, client):
+    def test_delete_blocklist(self, content_safety_endpoint, content_safety_key):
+        client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
+
         # Create blocklist
         blocklist_name = "TestDeleteBlocklist"
         blocklist_description = "Test blocklist management."
@@ -88,9 +96,11 @@ class TestBlocklistCase(AzureRecordedTestCase):
         except HttpResponseError:
             raise
 
-    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_add_blocklist_items(self, client):
+    def test_add_blocklist_items(self, content_safety_endpoint, content_safety_key):
+        client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
+
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
@@ -113,9 +123,11 @@ class TestBlocklistCase(AzureRecordedTestCase):
         assert any(block_item_text_1 in item["text"] for item in response.blocklist_items) is True
         assert any(block_item_text_2 in item["text"] for item in response.blocklist_items) is True
 
-    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_list_blocklist_items(self, client):
+    def test_list_blocklist_items(self, content_safety_endpoint, content_safety_key):
+        client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
+
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
@@ -166,9 +178,11 @@ class TestBlocklistCase(AzureRecordedTestCase):
         assert response is not None
         assert len(response) <= items_count - 2
 
-    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_get_blocklist_item(self, client):
+    def test_get_blocklist_item(self, content_safety_endpoint, content_safety_key):
+        client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
+
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
@@ -195,9 +209,11 @@ class TestBlocklistCase(AzureRecordedTestCase):
         assert blocklist_item is not None
         assert blocklist_item.text == block_item_text_1
 
-    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_remove_blocklist_items(self, client):
+    def test_remove_blocklist_items(self, content_safety_endpoint, content_safety_key):
+        client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
+
         # Create blocklist
         blocklist_name = "TestRemoveBlocklistItem"
         blocklist_description = "Test blocklist management."

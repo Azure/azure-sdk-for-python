@@ -6,7 +6,7 @@
 
 import os
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import recorded_by_proxy
 
 from azure.ai.contentsafety.models import (
     AnalyzeTextOptions,
@@ -17,13 +17,15 @@ from azure.ai.contentsafety.models import (
     TextBlocklistItem,
     AddOrUpdateTextBlocklistItemsOptions,
 )
-from testcase import ClientPreparer
+from test_case import ContentSafetyTest, ContentSafetyPreparer
 
 
-class TestContentSafetyCase(AzureRecordedTestCase):
-    @ClientPreparer()
+class TestContentSafetyCase(ContentSafetyTest):
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_analyze_text(self, client):
+    def test_analyze_text(self, content_safety_endpoint, content_safety_key):
+        client = self.create_content_safety_client_from_key(content_safety_endpoint, content_safety_key)
+
         text_path = os.path.abspath(
             os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/text.txt")
         )
@@ -37,13 +39,16 @@ class TestContentSafetyCase(AzureRecordedTestCase):
         assert next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE) is not None
         assert next(item for item in response.categories_analysis if item.category == TextCategory.SEXUAL) is not None
         assert (
-            next(item for item in response.categories_analysis if item.category == TextCategory.SELF_HARM) is not None
+                next(item for item in response.categories_analysis if
+                     item.category == TextCategory.SELF_HARM) is not None
         )
         assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE).severity > 0
 
-    @ClientPreparer()
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_analyze_image(self, client):
+    def test_analyze_image(self, content_safety_endpoint, content_safety_key):
+        client = self.create_content_safety_client_from_key(content_safety_endpoint, content_safety_key)
+
         image_path = os.path.abspath(
             os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/image.jpg")
         )
@@ -54,12 +59,16 @@ class TestContentSafetyCase(AzureRecordedTestCase):
         assert response is not None
         assert response.categories_analysis is not None
         assert (
-            next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE).severity > 0
+                next(item for item in response.categories_analysis if
+                     item.category == TextCategory.VIOLENCE).severity > 0
         )
 
-    @ClientPreparer(create_blocklist_client=True)
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_analyze_text_with_blocklists(self, content_safety_client, blocklist_client):
+    def test_analyze_text_with_blocklists(self, content_safety_endpoint, content_safety_key):
+        content_safety_client = self.create_content_safety_client_from_key(content_safety_endpoint, content_safety_key)
+        blocklist_client = self.create_blocklist_client_from_key(content_safety_endpoint, content_safety_key)
+
         # Create blocklist
         blocklist_name = "TestAnalyzeTextWithBlocklist"
         blocklist_description = "Test blocklist management."
@@ -89,9 +98,11 @@ class TestContentSafetyCase(AzureRecordedTestCase):
         assert any(block_item_text_1 in item.blocklist_item_text for item in analysis_result.blocklists_match) is True
         assert any(block_item_text_2 in item.blocklist_item_text for item in analysis_result.blocklists_match) is True
 
-    @ClientPreparer(use_key_credential=False)
+    @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_analyze_text_with_secret_credential(self, client):
+    def test_analyze_text_with_aad_credential(self, content_safety_endpoint):
+        client = self.create_content_safety_client_from_aad(content_safety_endpoint)
+
         text_path = os.path.abspath(
             os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/text.txt")
         )
@@ -105,6 +116,7 @@ class TestContentSafetyCase(AzureRecordedTestCase):
         assert next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE) is not None
         assert next(item for item in response.categories_analysis if item.category == TextCategory.SEXUAL) is not None
         assert (
-            next(item for item in response.categories_analysis if item.category == TextCategory.SELF_HARM) is not None
+                next(item for item in response.categories_analysis if
+                     item.category == TextCategory.SELF_HARM) is not None
         )
         assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE).severity > 0

@@ -48,31 +48,24 @@ The API key can be found in the [Azure Portal][azure_portal] or by running the f
     client = ContentSafetyClient(endpoint, credential)
     ```
 
-#### Create a ContentSafetyClient with Service Principal
+#### Create a ContentSafetyClient with Azure Active Directory credential
 
-To use a service principal as the `credential` parameter:
+ - Step 1: Enable AAD for your resource
+    Please refer to this Cognitive Services authentication document [Authenticate with Microsoft Entra ID.](https://learn.microsoft.com/en-us/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id) for the steps to enable AAD for your resource.
 
- - Step 1: Create and register a Microsoft Entra application, see [Create a Microsoft Entra app registration.](https://learn.microsoft.com/en-us/azure/data-explorer/provision-entra-id-app#create-microsoft-entra-application-registration) 
-And you may need to record the `tenant_id`, `client_id` and `client_secret` of this application.
+    The main steps are:
+   - Create resource with a custom subdomain. 
+   - Create Service Principal and assign Cognitive Services User role to it.
 
- - Step 2: Assign roles.
-   - In the Azure portal, find your Azure AI Content Safety resource.
-   - Select **Access Control(IAM)**
-   - Select **+ Add**, and then select **Add role assignment** from the menu.
-   - Set the role to **Cognitive Service User** and select the service principal you just created as member. Then select Save.
-
- - Step 3: Pass the `tenant_id`, `client_id` and `client_secret` as a string into an instance of `ClientSecretCredential`.
-    ```python
-    from azure.identity import ClientSecretCredential
+ - Step 2: Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
+   DefaultAzureCredential will use the values from these environment variables.
+   ```python
+    from azure.identity import DefaultAzureCredential
     from azure.ai.contentsafety import ContentSafetyClient
     
     endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-    credential = ClientSecretCredential(
-        tenant_id="<tenant_id>",
-        client_id="<client_id>",
-        client_secret="<client_secret>",
-    )
-    client = ContentSafetyClient(endpoint, credential) 
+    credential = DefaultAzureCredential()
+    client = ContentSafetyClient(endpoint, credential)
     ```
 
 ## Key concepts
