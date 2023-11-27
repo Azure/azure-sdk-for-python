@@ -42,7 +42,10 @@ class TokenCredential(Protocol):
         ...
 
 
-AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])
+class AzureNamedKey(NamedTuple):
+    """Represents a name and key pair."""
+    name: str
+    key: str
 
 
 __all__ = [
