@@ -44,7 +44,13 @@ class ImportSource(ABC):
 
     @classmethod
     def _from_job_inputs(cls, job_inputs: Dict[str, str]) -> "ImportSource":
-        """Translate job inputs to import source."""
+        """Translate job inputs to import source.
+
+        :param job_inputs: The job inputs
+        :type job_inputs: Dict[str, str]
+        :return: The import source
+        :rtype: ImportSource
+        """
         type = job_inputs.get("type")  # pylint: disable=redefined-builtin
         connection = job_inputs.get("connection")
         query = job_inputs.get("query")
@@ -73,8 +79,12 @@ class DatabaseImportSource(ImportSource):
         )
         self.query = query
 
-    def _to_job_inputs(self) -> Dict[str, str]:
-        """Translate source to command Inputs."""
+    def _to_job_inputs(self) -> Dict[str, Optional[str]]:
+        """Translate source to command Inputs.
+
+        :return: The job inputs dict
+        :rtype: Dict[str, str]
+        """
         inputs = {
             "type": self.type,
             "connection": self.connection,
@@ -99,7 +109,11 @@ class FileImportSource(ImportSource):
         self.path = path
 
     def _to_job_inputs(self) -> Dict[str, Optional[str]]:
-        """Translate source to command Inputs."""
+        """Translate source to command Inputs.
+
+        :return: The job inputs dict
+        :rtype: Dict[str, str]
+        """
         inputs = {
             "type": self.type,
             "connection": self.connection,
@@ -210,12 +224,14 @@ class ImportJob(Job, JobIOMixin):
         )
         return import_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "ImportComponent":
         """Translate a import job to component.
 
         :param context: Context of import job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict
+        :keyword kwargs: Extra arguments.
         :return: Translated import component.
+        :rtype: ImportComponent
         """
         from azure.ai.ml.entities._component.import_component import ImportComponent
 
@@ -234,12 +250,14 @@ class ImportJob(Job, JobIOMixin):
             output=self._to_outputs(outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict)["output"],
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Import":
         """Translate a import job to a pipeline node.
 
         :param context: Context of import job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict
+        :keyword kwargs: Extra arguments.
         :return: Translated import node.
+        :rtype: Import
         """
         from azure.ai.ml.entities._builders import Import
 

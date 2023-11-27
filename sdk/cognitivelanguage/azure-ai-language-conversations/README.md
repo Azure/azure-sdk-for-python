@@ -12,8 +12,7 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 | [API reference documentation][api_reference_documentation]
 | [Samples][conversationallanguage_samples]
 | [Product documentation][conversationallanguage_docs]
-| [Analysis REST API documentation][conversationanalysis_restdocs]
-| [Authoring REST API documentation][conversationanalysis_restdocs_authoring]
+| [REST API documentation][conversationallanguage_restdocs]
 
 ## Getting started
 
@@ -21,7 +20,7 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 
 * Python 3.7 or later is required to use this package.
 * An [Azure subscription][azure_subscription]
-* An existing Azure Language Service Resource
+* A [Language service resource][language_resource]
 
 
 ### Install the package
@@ -272,18 +271,21 @@ with client:
                                 "text": "Hello, how can I help you?",
                                 "modality": "text",
                                 "id": "1",
+                                "role": "Agent",
                                 "participantId": "Agent"
                             },
                             {
                                 "text": "How to upgrade Office? I am getting error messages the whole day.",
                                 "modality": "text",
                                 "id": "2",
+                                "role": "Customer",
                                 "participantId": "Customer"
                             },
                             {
                                 "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                 "modality": "text",
                                 "id": "3",
+                                "role": "Agent",
                                 "participantId": "Agent"
                             }
                         ],
@@ -385,6 +387,7 @@ poller = client.begin_import_project(
             "language": "en-us",
         },
         "projectFileVersion": "2022-05-01",
+        "stringIndexType": "Utf16CodeUnit",
     },
 )
 response = poller.result()
@@ -463,6 +466,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_cli]: https://docs.microsoft.com/cli/azure/
 [azure_portal]: https://portal.azure.com/
 [azure_subscription]: https://azure.microsoft.com/free/
+[language_resource]: https://portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
 [cla]: https://cla.microsoft.com
 [coc_contact]: mailto:opencode@microsoft.com
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
@@ -492,7 +496,5 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[conversationanalysis_restdocs]: https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime
-[conversationanalysis_restdocs_authoring]: https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)

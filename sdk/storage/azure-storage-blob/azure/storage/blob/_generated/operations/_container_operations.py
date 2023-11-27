@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import sys
 from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -14,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -24,8 +26,12 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -38,7 +44,7 @@ def build_create_request(
     *,
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
-    access: Optional[Union[str, "_models.PublicAccessType"]] = None,
+    access: Optional[Union[str, _models.PublicAccessType]] = None,
     request_id_parameter: Optional[str] = None,
     default_encryption_scope: Optional[str] = None,
     prevent_encryption_scope_override: Optional[bool] = None,
@@ -47,17 +53,17 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -96,17 +102,17 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -137,17 +143,17 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -182,18 +188,18 @@ def build_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "metadata"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -227,18 +233,18 @@ def build_get_access_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -262,7 +268,7 @@ def build_set_access_policy_request(
     *,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
-    access: Optional[Union[str, "_models.PublicAccessType"]] = None,
+    access: Optional[Union[str, _models.PublicAccessType]] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     request_id_parameter: Optional[str] = None,
@@ -272,19 +278,19 @@ def build_set_access_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -323,18 +329,18 @@ def build_restore_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "undelete"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -371,18 +377,18 @@ def build_rename_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "rename"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -414,21 +420,19 @@ def build_submit_batch_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "batch"))  # type: str
-    multipart_content_type = kwargs.pop(
-        "multipart_content_type", _headers.pop("Content-Type", None)
-    )  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["batch"] = kwargs.pop("comp", _params.pop("comp", "batch"))
+    multipart_content_type: Optional[str] = kwargs.pop("multipart_content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -456,24 +460,24 @@ def build_filter_blobs_request(
     where: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
-    include: Optional[List[Union[str, "_models.FilterBlobsIncludeItem"]]] = None,
+    include: Optional[List[Union[str, _models.FilterBlobsIncludeItem]]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "blobs"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["blobs"] = kwargs.pop("comp", _params.pop("comp", "blobs"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -512,19 +516,19 @@ def build_acquire_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -563,19 +567,19 @@ def build_release_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -611,19 +615,19 @@ def build_renew_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -659,19 +663,19 @@ def build_break_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -709,19 +713,19 @@ def build_change_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -751,7 +755,7 @@ def build_list_blob_flat_segment_request(
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
-    include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
+    include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -759,18 +763,18 @@ def build_list_blob_flat_segment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -802,7 +806,7 @@ def build_list_blob_hierarchy_segment_request(
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
-    include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
+    include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -810,18 +814,18 @@ def build_list_blob_hierarchy_segment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -851,18 +855,18 @@ def build_get_account_info_request(url: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "account"))  # type: str
-    comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
+    comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -899,7 +903,7 @@ class ContainerOperations:
         self,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
-        access: Optional[Union[str, "_models.PublicAccessType"]] = None,
+        access: Optional[Union[str, _models.PublicAccessType]] = None,
         request_id_parameter: Optional[str] = None,
         container_cpk_scope_info: Optional[_models.ContainerCpkScopeInfo] = None,
         **kwargs: Any
@@ -937,14 +941,19 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _default_encryption_scope = None
         _prevent_encryption_scope_override = None
@@ -967,10 +976,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -993,7 +1003,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    create.metadata = {"url": "{url}"}
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -1025,14 +1035,19 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -1050,10 +1065,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1096,7 +1112,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    get_properties.metadata = {"url": "{url}"}
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -1131,14 +1147,19 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_modified_since = None
@@ -1163,10 +1184,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1187,7 +1209,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    delete.metadata = {"url": "{url}"}
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -1233,15 +1255,20 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "metadata"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_modified_since = None
@@ -1265,10 +1292,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1291,7 +1319,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    set_metadata.metadata = {"url": "{url}"}
 
     @distributed_trace
     def get_access_policy(
@@ -1326,15 +1354,20 @@ class ContainerOperations:
         :rtype: list[~azure.storage.blob.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[List[_models.SignedIdentifier]]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
+        cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -1353,10 +1386,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1386,13 +1420,13 @@ class ContainerOperations:
 
         return deserialized
 
-    get_access_policy.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    get_access_policy.metadata = {"url": "{url}"}
 
     @distributed_trace
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        access: Optional[Union[str, "_models.PublicAccessType"]] = None,
+        access: Optional[Union[str, _models.PublicAccessType]] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
@@ -1431,16 +1465,21 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_modified_since = None
@@ -1476,10 +1515,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1502,7 +1542,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_access_policy.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    set_access_policy.metadata = {"url": "{url}"}
 
     @distributed_trace
     def restore(  # pylint: disable=inconsistent-return-statements
@@ -1541,15 +1581,20 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "undelete"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_restore_request(
             url=self._config.url,
@@ -1565,10 +1610,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1589,7 +1635,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    restore.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    restore.metadata = {"url": "{url}"}
 
     @distributed_trace
     def rename(  # pylint: disable=inconsistent-return-statements
@@ -1628,15 +1674,20 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "rename"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_rename_request(
             url=self._config.url,
@@ -1652,10 +1703,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1676,7 +1728,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    rename.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    rename.metadata = {"url": "{url}"}
 
     @distributed_trace
     def submit_batch(
@@ -1713,18 +1765,23 @@ class ContainerOperations:
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "batch"))  # type: str
-        multipart_content_type = kwargs.pop(
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["batch"] = kwargs.pop("comp", _params.pop("comp", "batch"))
+        multipart_content_type: str = kwargs.pop(
             "multipart_content_type", _headers.pop("Content-Type", "application/xml")
-        )  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[Iterator[bytes]]
+        )
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _content = body
 
@@ -1743,10 +1800,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=True, **kwargs
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1764,11 +1822,11 @@ class ContainerOperations:
         deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    submit_batch.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    submit_batch.metadata = {"url": "{url}"}
 
     @distributed_trace
     def filter_blobs(
@@ -1778,7 +1836,7 @@ class ContainerOperations:
         where: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, "_models.FilterBlobsIncludeItem"]]] = None,
+        include: Optional[List[Union[str, _models.FilterBlobsIncludeItem]]] = None,
         **kwargs: Any
     ) -> _models.FilterBlobSegment:
         """The Filter Blobs operation enables callers to list blobs in a container whose tags match a
@@ -1824,15 +1882,20 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.FilterBlobSegment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "blobs"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.FilterBlobSegment]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["blobs"] = kwargs.pop("comp", _params.pop("comp", "blobs"))
+        cls: ClsType[_models.FilterBlobSegment] = kwargs.pop("cls", None)
 
         request = build_filter_blobs_request(
             url=self._config.url,
@@ -1850,10 +1913,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1878,7 +1942,7 @@ class ContainerOperations:
 
         return deserialized
 
-    filter_blobs.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    filter_blobs.metadata = {"url": "{url}"}
 
     @distributed_trace
     def acquire_lease(  # pylint: disable=inconsistent-return-statements
@@ -1926,16 +1990,21 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -1960,10 +2029,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1987,7 +2057,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    acquire_lease.metadata = {"url": "{url}"}
 
     @distributed_trace
     def release_lease(  # pylint: disable=inconsistent-return-statements
@@ -2028,16 +2098,21 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -2061,10 +2136,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2087,7 +2163,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    release_lease.metadata = {"url": "{url}"}
 
     @distributed_trace
     def renew_lease(  # pylint: disable=inconsistent-return-statements
@@ -2128,16 +2204,21 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -2161,10 +2242,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2188,7 +2270,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    renew_lease.metadata = {"url": "{url}"}
 
     @distributed_trace
     def break_lease(  # pylint: disable=inconsistent-return-statements
@@ -2235,16 +2317,21 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -2268,10 +2355,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2295,7 +2383,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    break_lease.metadata = {"url": "{url}"}
 
     @distributed_trace
     def change_lease(  # pylint: disable=inconsistent-return-statements
@@ -2341,16 +2429,21 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -2375,10 +2468,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2402,7 +2496,7 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    change_lease.metadata = {"url": "{url}"}
 
     @distributed_trace
     def list_blob_flat_segment(
@@ -2410,7 +2504,7 @@ class ContainerOperations:
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
+        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -2457,15 +2551,20 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.ListBlobsFlatSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListBlobsFlatSegmentResponse]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+        cls: ClsType[_models.ListBlobsFlatSegmentResponse] = kwargs.pop("cls", None)
 
         request = build_list_blob_flat_segment_request(
             url=self._config.url,
@@ -2483,10 +2582,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2512,7 +2612,7 @@ class ContainerOperations:
 
         return deserialized
 
-    list_blob_flat_segment.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    list_blob_flat_segment.metadata = {"url": "{url}"}
 
     @distributed_trace
     def list_blob_hierarchy_segment(
@@ -2521,7 +2621,7 @@ class ContainerOperations:
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, "_models.ListBlobsIncludeItem"]]] = None,
+        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -2573,15 +2673,20 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.ListBlobsHierarchySegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "container"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "list"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ListBlobsHierarchySegmentResponse]
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+        cls: ClsType[_models.ListBlobsHierarchySegmentResponse] = kwargs.pop("cls", None)
 
         request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
@@ -2600,10 +2705,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2629,7 +2735,7 @@ class ContainerOperations:
 
         return deserialized
 
-    list_blob_hierarchy_segment.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    list_blob_hierarchy_segment.metadata = {"url": "{url}"}
 
     @distributed_trace
     def get_account_info(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -2646,15 +2752,20 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "account"))  # type: str
-        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_get_account_info_request(
             url=self._config.url,
@@ -2666,10 +2777,11 @@ class ContainerOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2692,4 +2804,4 @@ class ContainerOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_account_info.metadata = {"url": "{url}/{containerName}"}  # type: ignore
+    get_account_info.metadata = {"url": "{url}"}

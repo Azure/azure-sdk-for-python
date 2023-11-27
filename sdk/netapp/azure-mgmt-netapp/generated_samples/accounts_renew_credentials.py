@@ -29,13 +29,12 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.accounts.begin_renew_credentials(
+    client.accounts.begin_renew_credentials(
         resource_group_name="myRG",
         account_name="account1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/Accounts_RenewCredentials.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2023-05-01/examples/Accounts_RenewCredentials.json
 if __name__ == "__main__":
     main()

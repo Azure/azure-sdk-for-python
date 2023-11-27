@@ -55,8 +55,9 @@ setup(
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/appconfiguration/azure-appconfiguration-provider",
+    keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -72,7 +73,7 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "msrest>=0.6.21",
-        "azure-core<2.0.0,>=1.24.0",
+        "azure-core<2.0.0,>=1.25.0",
         "azure-appconfiguration<2.0.0,>=1.4.0",
         "azure-keyvault-secrets<5.0.0,>=4.3.0",
     ],

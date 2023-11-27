@@ -4,14 +4,11 @@
 # ------------------------------------
 from typing import TypeVar, Optional, Any
 
-import msal
-
 from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._credentials.certificate import get_client_credential
 from ..._internal import AadClientCertificate, validate_tenant_id
-from ..._persistent_cache import _load_persistent_cache
 
 T = TypeVar("T", bound="CertificateCredential")
 
@@ -20,7 +17,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates as a service principal using a certificate.
 
     The certificate must have an RSA private key, because this credential signs assertions using RS256. See
-    `Azure Active Directory documentation
+    `Microsoft Entra ID documentation
     <https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-microsoft-identity-platform>`_
     for more information on configuring certificate authentication.
 
@@ -29,7 +26,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
     :param str certificate_path: Path to a PEM-encoded certificate file including the private key. If not provided,
           `certificate_data` is required.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword bytes certificate_data: The bytes of a certificate in PEM format, including the private key
@@ -53,13 +50,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
             :caption: Create a CertificateCredential.
     """
 
-    def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            certificate_path: Optional[str] = None,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, tenant_id: str, client_id: str, certificate_path: Optional[str] = None, **kwargs: Any) -> None:
         validate_tenant_id(tenant_id)
 
         client_credential = get_client_credential(certificate_path, **kwargs)
@@ -68,13 +59,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
             client_credential["private_key"], password=client_credential.get("passphrase")
         )
 
-        cache_options = kwargs.pop("cache_persistence_options", None)
-        if cache_options:
-            cache = _load_persistent_cache(cache_options)
-        else:
-            cache = msal.TokenCache()
-
-        self._client = AadClient(tenant_id, client_id, cache=cache, **kwargs)
+        self._client = AadClient(tenant_id, client_id, **kwargs)
         self._client_id = client_id
         super().__init__()
 
@@ -87,9 +72,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
 
         await self._client.__aexit__()
 
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:

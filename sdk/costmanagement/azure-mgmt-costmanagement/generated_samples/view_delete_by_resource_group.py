@@ -28,11 +28,10 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.views.delete_by_scope(
+    client.views.delete_by_scope(
         scope="subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MYDEVTESTRG",
         view_name="TestView",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/cost-management/resource-manager/Microsoft.CostManagement/stable/2022-10-01/examples/ViewDeleteByResourceGroup.json

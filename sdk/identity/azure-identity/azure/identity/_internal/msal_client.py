@@ -4,11 +4,13 @@
 # ------------------------------------
 import threading
 from typing import Any, Dict, Optional, Union
-import six
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import (  # pylint:disable=unknown-option-value,no-legacy-azure-core-http-response-import
+    HttpRequest,
+    HttpResponse,
+)
 from azure.core.pipeline import PipelineResponse
 from .pipeline import build_pipeline
 
@@ -17,7 +19,11 @@ _POST = ["POST"]
 
 
 class MsalResponse:
-    """Wraps HttpResponse according to msal.oauth2cli.http"""
+    """Wraps HttpResponse according to msal.oauth2cli.http.
+
+    :param response: The response to wrap.
+    :type response: ~azure.core.pipeline.transport.HttpResponse
+    """
 
     def __init__(self, response: PipelineResponse) -> None:
         self._response = response
@@ -37,16 +43,16 @@ class MsalResponse:
         if ContentDecodePolicy.CONTEXT_NAME in self._response.context:
             content = self._response.context[ContentDecodePolicy.CONTEXT_NAME]
             if not content:
-                message = "Unexpected response from Azure Active Directory"
+                message = "Unexpected response from Microsoft Entra ID"
             elif "error" in content or "error_description" in content:
                 message = "Authentication failed: {}".format(content.get("error_description") or content.get("error"))
             else:
                 for secret in ("access_token", "refresh_token"):
                     if secret in content:
                         content[secret] = "***"
-                message = 'Unexpected response from Azure Active Directory: "{}"'.format(content)
+                message = 'Unexpected response from Microsoft Entra ID: "{}"'.format(content)
         else:
-            message = "Unexpected response from Azure Active Directory"
+            message = "Unexpected response from Microsoft Entra ID"
 
         raise ClientAuthenticationError(message=message, response=self._response.http_response)
 
@@ -69,12 +75,12 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         self.__exit__()
 
     def post(
-            self,
-            url: str,
-            params: Optional[Dict[str, str]] = None,
-            data: Optional[RequestData] = None,
-            headers: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self,
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        data: Optional[RequestData] = None,
+        headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> MsalResponse:
         # pylint:disable=unused-argument
         request = HttpRequest("POST", url, headers=headers)
@@ -84,8 +90,8 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
             if isinstance(data, dict):
                 request.headers["Content-Type"] = "application/x-www-form-urlencoded"
                 request.set_formdata_body(data)
-            elif isinstance(data, six.text_type):
-                body_bytes = six.ensure_binary(data)
+            elif isinstance(data, str):
+                body_bytes = data.encode("utf-8")
                 request.set_bytes_body(body_bytes)
             else:
                 raise ValueError('expected "data" to be text or a dict')
@@ -95,11 +101,7 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         return MsalResponse(response)
 
     def get(
-            self,
-            url: str,
-            params: Optional[Dict[str, str]] = None,
-            headers: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> MsalResponse:
         # pylint:disable=unused-argument
         request = HttpRequest("GET", url, headers=headers)
@@ -110,7 +112,13 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         return MsalResponse(response)
 
     def get_error_response(self, msal_result: Dict) -> Optional[HttpResponse]:
-        """Get the HTTP response associated with an MSAL error"""
+        """Get the HTTP response associated with an MSAL error.
+
+        :param msal_result: The result of an MSAL request.
+        :type msal_result: dict
+        :return: The HTTP response associated with the error, if any.
+        :rtype: ~azure.core.pipeline.transport.HttpResponse or None
+        """
         error_code, response = getattr(self._local, "error", (None, None))
         if response and error_code == msal_result.get("error"):
             return response

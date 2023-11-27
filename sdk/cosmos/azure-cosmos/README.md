@@ -147,15 +147,16 @@ client = CosmosClient(URL, credential=KEY, consistency_level='Session')
 
 ## Limitations
 
-Currently the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
+Currently, the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
 
 ### Data Plane Limitations:
 
 * Group By queries
 * Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
-* Bulk/Transactional batch processing
+* Transactional batch processing
 * Direct TCP Mode access
-* Continuation token for cross partitions queries
+* Continuation token support for aggregate cross-partition queries like sorting, counting, and distinct.
+Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 * Change Feed: Processor
 * Change Feed: Read multiple partitions key values
 * Change Feed: Read specific time
@@ -172,10 +173,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Get the minimum RU/s of a container
 
 ## Workarounds
-
-### Bulk processing Limitation Workaround
-
-If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
 
 ### Control Plane Limitations Workaround
 
@@ -587,6 +584,46 @@ def integrated_cache_snippet():
 ```
 For more information on Integrated Cache, see [Azure Cosmos DB integrated cache - Overview][cosmos_integrated_cache].
 
+### Using Transactional Batch
+Transactional batch requests allow you to send several operations to be executed at once within the same partition key.
+If all operations succeed in the order they're described within the transactional batch operation, the transaction will be committed.
+However, if any operation fails, the entire transaction is rolled back.
+
+Transactional batches have a limit of 100 operations per batch, and a total size limit of 1.2Mb for the
+batch operations being passed in.
+
+Transactional Batch operations look very similar to the singular operations apis, and are tuples containing
+(`operation_type_string`, `args_tuple`, `batch_operation_kwargs_dictionary`), with the kwargs dictionary being optional:
+```python
+batch_operations = [
+        ("create", (item_body,), kwargs),
+        ("replace", (item_id, item_body), kwargs),
+        ("read", (item_id,), kwargs),
+        ("upsert", (item_body,), kwargs),
+        ("patch", (item_id, operations), kwargs),
+        ("delete", (item_id,), kwargs),
+    ]
+batch_results = container.execute_item_batch(batch_operations=batch_operations, partition_key=partition_key)
+```
+The batch operation kwargs dictionary is limited, and only takes a total of three different key values.
+In the case of wanting to use conditional patching within the batch, the use of `filter_predicate` key is available for the
+patch operation, or in case of wanting to use etags with any of the operations, the use of the `if_match_etag`/`if_none_match_etag`
+keys is available as well.
+```python
+batch_operations = [
+        ("replace", (item_id, item_body), {"if_match_etag": etag}),
+        ("patch", (item_id, operations), {"filter_predicate": filter_predicate, "if_none_match_etag": etag}),
+    ]
+```
+
+We also have some samples showing these transactional batch operations in action with both the [sync][sample_document_mgmt]
+and [async][sample_document_mgmt_async] clients.
+
+If there is a failure for an operation within the batch, the SDK will raise a `CosmosBatchOperationError` letting you know which operation failed,
+as well as containing the list of failed responses for the failed request.
+
+For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
+
 ## Troubleshooting
 
 ### General
@@ -606,10 +643,10 @@ HTTP status code 409: The ID (name) provided for the container is already in use
 The container name must be unique within the database.""")
 
 ```
-### Logging
+### Logging Diagnostics
 
 This library uses the standard
-[logging](https://docs.python.org/3.5/library/logging.html) library for logging.
+[logging](https://docs.python.org/3.5/library/logging.html) library for logging diagnostics.
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
 level.
 
@@ -693,6 +730,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_pypi]: https://pypi.org/project/azure-cosmos/
 [cosmos_http_status_codes]: https://docs.microsoft.com/rest/api/cosmos-db/http-status-codes-for-cosmosdb
 [cosmos_item]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-items
+[cosmos_models]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/azure/cosmos/_models.py
 [cosmos_request_units]: https://docs.microsoft.com/azure/cosmos-db/request-units
 [cosmos_resources]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
@@ -711,11 +749,14 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [ref_httpfailure]: https://aka.ms/azsdk-python-cosmos-ref-http-failure
 [sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/database_management.py
 [sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management.py
+[sample_document_mgmt_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management_async.py
 [sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
 [telemetry_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/tracing_open_telemetry.py
+[timeouts_document]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/docs/TimeoutAndRetriesConfig.md
+[cosmos_transactional_batch]: https://learn.microsoft.com/azure/cosmos-db/nosql/transactional-batch
 
 ## Contributing
 

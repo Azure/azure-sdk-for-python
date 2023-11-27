@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional, TypeVar
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials_async import AsyncTokenCredential
@@ -13,6 +13,8 @@ from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from ._async_anonymous_exchange_client import AsyncAnonymousAccessCredential
 from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT
+
+ClientType = TypeVar("ClientType", bound="ContainerRegistryBaseClient")
 
 
 class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -29,13 +31,12 @@ class ContainerRegistryBaseClient(object):
     :param credential: Token credential for authenticating requests with Azure, or None in anonymous access
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
     :keyword credential_scopes: URL for credential authentication if different from the default
-    :paramtype credential_scopes: List[str]
-    :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
-        default value may result in unsupported behavior.
+    :paramtype credential_scopes: list[str]
+    :keyword api_version: Api Version. Default value is "2021-07-01".
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs: Any) -> None:
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential or AsyncAnonymousAccessCredential(),
@@ -45,12 +46,12 @@ class ContainerRegistryBaseClient(object):
             **kwargs
         )
 
-    async def __aenter__(self):
+    async def __aenter__(self: ClientType) -> ClientType:
         await self._auth_policy.__aenter__()
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self._auth_policy.__aexit__(*args)
         await self._client.__aexit__(*args)
 
@@ -60,7 +61,7 @@ class ContainerRegistryBaseClient(object):
         """
         await self._client.close()
 
-    def _is_tag(self, tag_or_digest: str) -> bool:  # pylint: disable=no-self-use
+    def _is_tag(self, tag_or_digest: str) -> bool:
         tag = tag_or_digest.split(":")
         return not (len(tag) == 2 and tag[0].startswith("sha"))
 

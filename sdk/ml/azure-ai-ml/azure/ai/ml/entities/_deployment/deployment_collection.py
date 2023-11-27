@@ -15,11 +15,11 @@ class DeploymentCollection:
     """Collection entity
 
     :param enabled: Is logging for this collection enabled.
-    :type enabled: str, optional
+    :type enabled: str
     :param data: Data asset id associated with collection logging.
-    :type data: str, optional
+    :type data: str
     :param client_id: Client ID associated with collection logging.
-    :type client_id: str, optional
+    :type client_id: str
 
     """
 

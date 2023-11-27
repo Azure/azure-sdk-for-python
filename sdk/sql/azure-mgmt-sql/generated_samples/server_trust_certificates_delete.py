@@ -29,12 +29,11 @@ def main():
         subscription_id="38e0dc56-907f-45ba-a97c-74233baad471",
     )
 
-    response = client.server_trust_certificates.begin_delete(
+    client.server_trust_certificates.begin_delete(
         resource_group_name="testrg",
         managed_instance_name="testcl",
         certificate_name="customerCertificateName",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-11-01-preview/examples/ServerTrustCertificatesDelete.json

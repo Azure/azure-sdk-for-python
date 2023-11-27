@@ -53,7 +53,7 @@ from ..constants import (
     TLS_HEADER_FRAME,
     WEBSOCKET_PORT,
     AMQP_WS_SUBPROTOCOL,
-    TIMEOUT_INTERVAL,
+    CONNECT_TIMEOUT,
 )
 from .._transport import (
     AMQP_FRAME,
@@ -185,39 +185,48 @@ class AsyncTransportMixin:
                 return self._build_ssl_context(**sslopts.pop("context"))
             ssl_version = sslopts.get("ssl_version")
             if ssl_version is None:
-                ssl_version = ssl.PROTOCOL_TLS
+                ssl_version = ssl.PROTOCOL_TLS_CLIENT
 
-            # Set SNI headers if supported
-            server_hostname = sslopts.get("server_hostname")
-            if (
-                (server_hostname is not None)
-                and (hasattr(ssl, "HAS_SNI") and ssl.HAS_SNI)
-                and (hasattr(ssl, "SSLContext"))
-            ):
-                context = ssl.SSLContext(ssl_version)
-                cert_reqs = sslopts.get("cert_reqs", ssl.CERT_REQUIRED)
-                certfile = sslopts.get("certfile")
-                keyfile = sslopts.get("keyfile")
-                context.verify_mode = cert_reqs
-                if cert_reqs != ssl.CERT_NONE:
-                    context.check_hostname = True
-                if (certfile is not None) and (keyfile is not None):
-                    context.load_cert_chain(certfile, keyfile)
-                return context
+            context = ssl.SSLContext(ssl_version)
+
+            purpose = ssl.Purpose.SERVER_AUTH
+
             ca_certs = sslopts.get("ca_certs")
-            if ca_certs:
-                context = ssl.SSLContext(ssl_version)
-                context.load_verify_locations(ca_certs)
-                return context
-            return True
+
+            if ca_certs is not None:
+                try:
+                    context.load_verify_locations(ca_certs)
+                except FileNotFoundError as exc:
+                    # FileNotFoundError does not have missing filename info, so adding it below.
+                    # since this is the only file path that users can pass in
+                    # (`connection_verify` in the EH/SB clients) through opts above.
+                    exc.filename = {"ca_certs": ca_certs}
+                    raise exc from None
+            elif context.verify_mode != ssl.CERT_NONE:
+                # load the default system root CA certs.
+                context.load_default_certs(purpose=purpose)
+
+            certfile = sslopts.get("certfile")
+            keyfile = sslopts.get("keyfile")
+            if certfile is not None:
+                context.load_cert_chain(certfile, keyfile)
+
+
+            server_hostname = sslopts.get("server_hostname")
+            cert_reqs = sslopts.get("cert_reqs", ssl.CERT_REQUIRED)
+            if cert_reqs == ssl.CERT_NONE and server_hostname is None:
+                context.check_hostname = False
+                context.verify_mode = cert_reqs
+
+            return context
         except TypeError:
             raise TypeError(
                 "SSL configuration must be a dictionary, or the value True."
-            )
+            ) from None
 
     def _build_ssl_context(
         self, check_hostname=None, **ctx_options
-    ):  # pylint: disable=no-self-use
+    ):
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
         ctx.load_verify_locations(cafile=certifi.where())
@@ -235,7 +244,6 @@ class AsyncTransport(
         host,
         *,
         port=AMQP_PORT,
-        connect_timeout=None,
         ssl_opts=False,
         socket_settings=None,
         raise_on_initial_eintr=True,
@@ -248,8 +256,6 @@ class AsyncTransport(
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
-
-        self.connect_timeout = connect_timeout
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
@@ -295,7 +301,7 @@ class AsyncTransport(
                 self.connected = False
             raise
 
-    def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
+    def _get_tcp_socket_defaults(self, sock):
         tcp_opts = {}
         for opt in KNOWN_TCP_OPTS:
             enum = None
@@ -347,7 +353,7 @@ class AsyncTransport(
                 except AttributeError:
                     # This means that close() was called concurrently
                     # self.reader has been set to None.
-                    raise IOError("Connection has already been closed")
+                    raise IOError("Connection has already been closed") from None
                 except asyncio.IncompleteReadError as exc:
                     pbytes = len(exc.partial)
                     view[nbytes : nbytes + pbytes] = exc.partial
@@ -363,7 +369,7 @@ class AsyncTransport(
                     # This behavior is linux specific and only on async. sync Linux & async/sync Windows & Mac raised
                     # ConnectionAborted or ConnectionReset errors which properly end up in a retry loop.
                     if exc.errno in [110]:
-                        raise ConnectionAbortedError('The connection was closed abruptly.')
+                        raise ConnectionAbortedError('The connection was closed abruptly.') from exc
                     # ssl.sock.read may cause ENOENT if the
                     # operation couldn't be performed (Issue celery#1414).
                     if exc.errno in _errnos:
@@ -382,12 +388,14 @@ class AsyncTransport(
         return view
 
     async def _write(self, s):
-        """Write a string out to the SSL socket fully."""
+        """Write a string out to the SSL socket fully.
+        :param str s: The string to write.
+        """
         try:
             self.writer.write(s)
             await self.writer.drain()
         except AttributeError:
-            raise IOError("Connection has already been closed")
+            raise IOError("Connection has already been closed") from None
 
     async def close(self):
         async with self.socket_lock:
@@ -426,17 +434,17 @@ class WebSocketTransportAsync(
         host,
         *,
         port=WEBSOCKET_PORT,
-        connect_timeout=None,
+        socket_timeout=CONNECT_TIMEOUT,
         ssl_opts=None,
         **kwargs
     ):
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
-        self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
+        self.socket_timeout = socket_timeout
         self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host, self.port = to_host_port(host, port)
-        self.ws = None
+        self.sock = None
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
@@ -457,15 +465,14 @@ class WebSocketTransportAsync(
             password = self._http_proxy.get("password", None)
 
         try:
-            from aiohttp import ClientSession, ClientConnectorError
+            from aiohttp import ClientSession, ClientConnectorError # pylint: disable=networking-import-outside-azure-core-transport
             from urllib.parse import urlsplit
         except ImportError:
             raise ImportError(
                 "Please install aiohttp library to use async websocket transport."
-            )
-
+            ) from None
         if username or password:
-            from aiohttp import BasicAuth
+            from aiohttp import BasicAuth # pylint: disable=networking-import-outside-azure-core-transport
 
             http_proxy_auth = BasicAuth(login=username, password=password)
 
@@ -486,9 +493,9 @@ class WebSocketTransportAsync(
             # https://github.com/aio-libs/aiohttp/pull/5860
             # https://github.com/aio-libs/aiohttp/issues/2309
 
-            self.ws = await self.session.ws_connect(
+            self.sock = await self.session.ws_connect(
                 url=url,
-                timeout=self._connect_timeout,
+                timeout=self.socket_timeout,    # timeout for connect
                 protocols=[AMQP_WS_SUBPROTOCOL],
                 autoclose=False,
                 proxy=http_proxy_host,
@@ -503,12 +510,18 @@ class WebSocketTransportAsync(
                     ErrorCondition.ClientError,
                     description="Failed to authenticate the connection due to exception: " + str(exc),
                     error=exc,
-                )
-            raise ConnectionError("Failed to establish websocket connection: " + str(exc))
+                ) from exc
+            raise ConnectionError("Failed to establish websocket connection: " + str(exc)) from exc
         self.connected = True
 
     async def _read(self, toread, buffer=None, **kwargs):  # pylint: disable=unused-argument
-        """Read exactly n bytes from the peer."""
+        """Read exactly n bytes from the peer.
+
+        :param int toread: The number of bytes to read.
+        :param bytearray or None buffer: The buffer to read into. If not specified, a new buffer is allocated.
+        :return: The buffer of bytes read.
+        :rtype: bytearray
+        """
         length = 0
         view = buffer or memoryview(bytearray(toread))
         nbytes = self._read_buffer.readinto(view)
@@ -516,7 +529,7 @@ class WebSocketTransportAsync(
         toread -= nbytes
         try:
             while toread:
-                data = await self.ws.receive_bytes()
+                data = await self.sock.receive_bytes()
                 read_length = len(data)
                 if read_length <= toread:
                     view[length : length + read_length] = data
@@ -534,7 +547,7 @@ class WebSocketTransportAsync(
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
         async with self.socket_lock:
-            await self.ws.close()
+            await self.sock.close()
             await self.session.close()
             self.connected = False
 
@@ -543,5 +556,7 @@ class WebSocketTransportAsync(
         ABNF, OPCODE_BINARY = 0x2
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
+
+        :param str s: The string to write.
         """
-        await self.ws.send_bytes(s)
+        await self.sock.send_bytes(s)

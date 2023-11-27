@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -78,7 +78,7 @@ def build_create_or_update_trigger_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -113,7 +113,7 @@ def build_get_trigger_request(trigger_name: str, *, if_none_match: Optional[str]
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -146,7 +146,7 @@ def build_delete_trigger_request(trigger_name: str, **kwargs: Any) -> HttpReques
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -179,7 +179,7 @@ def build_subscribe_trigger_to_events_request(  # pylint: disable=name-too-long
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -212,7 +212,7 @@ def build_get_event_subscription_status_request(  # pylint: disable=name-too-lon
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -245,7 +245,7 @@ def build_unsubscribe_trigger_from_events_request(  # pylint: disable=name-too-l
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -276,7 +276,7 @@ def build_start_trigger_request(trigger_name: str, **kwargs: Any) -> HttpRequest
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -307,7 +307,7 @@ def build_stop_trigger_request(trigger_name: str, **kwargs: Any) -> HttpRequest:
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -363,31 +363,30 @@ class TriggerOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_triggers_by_workspace_request(
+                _request = build_get_triggers_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_triggers_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("TriggerListResponse", pipeline_response)
@@ -397,11 +396,11 @@ class TriggerOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -412,8 +411,6 @@ class TriggerOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    get_triggers_by_workspace.metadata = {"url": "/triggers"}
 
     def _create_or_update_trigger_initial(
         self, trigger_name: str, properties: _models.Trigger, if_match: Optional[str] = None, **kwargs: Any
@@ -436,25 +433,24 @@ class TriggerOperations:
         _trigger = _models.TriggerResource(properties=properties)
         _json = self._serialize.body(_trigger, "TriggerResource")
 
-        request = build_create_or_update_trigger_request(
+        _request = build_create_or_update_trigger_request(
             trigger_name=trigger_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -468,11 +464,9 @@ class TriggerOperations:
             deserialized = self._deserialize("TriggerResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_trigger_initial.metadata = {"url": "/triggers/{triggerName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_create_or_update_trigger(
@@ -526,7 +520,7 @@ class TriggerOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("TriggerResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -549,8 +543,6 @@ class TriggerOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_trigger.metadata = {"url": "/triggers/{triggerName}"}
 
     @distributed_trace
     def get_trigger(
@@ -583,23 +575,22 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.TriggerResource]] = kwargs.pop("cls", None)
 
-        request = build_get_trigger_request(
+        _request = build_get_trigger_request(
             trigger_name=trigger_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_trigger.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -613,11 +604,9 @@ class TriggerOperations:
             deserialized = self._deserialize("TriggerResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_trigger.metadata = {"url": "/triggers/{triggerName}"}
+        return deserialized  # type: ignore
 
     def _delete_trigger_initial(  # pylint: disable=inconsistent-return-statements
         self, trigger_name: str, **kwargs: Any
@@ -636,22 +625,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_trigger_request(
+        _request = build_delete_trigger_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._delete_trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -661,9 +649,7 @@ class TriggerOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_trigger_initial.metadata = {"url": "/triggers/{triggerName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete_trigger(self, trigger_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -704,7 +690,7 @@ class TriggerOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -727,8 +713,6 @@ class TriggerOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_trigger.metadata = {"url": "/triggers/{triggerName}"}
-
     def _subscribe_trigger_to_events_initial(
         self, trigger_name: str, **kwargs: Any
     ) -> Optional[_models.TriggerSubscriptionOperationStatus]:
@@ -746,22 +730,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.TriggerSubscriptionOperationStatus]] = kwargs.pop("cls", None)
 
-        request = build_subscribe_trigger_to_events_request(
+        _request = build_subscribe_trigger_to_events_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._subscribe_trigger_to_events_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -775,11 +758,9 @@ class TriggerOperations:
             deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _subscribe_trigger_to_events_initial.metadata = {"url": "/triggers/{triggerName}/subscribeToEvents"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_subscribe_trigger_to_events(
@@ -825,7 +806,7 @@ class TriggerOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -848,8 +829,6 @@ class TriggerOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_subscribe_trigger_to_events.metadata = {"url": "/triggers/{triggerName}/subscribeToEvents"}
 
     @distributed_trace
     def get_event_subscription_status(
@@ -878,22 +857,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.TriggerSubscriptionOperationStatus] = kwargs.pop("cls", None)
 
-        request = build_get_event_subscription_status_request(
+        _request = build_get_event_subscription_status_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self.get_event_subscription_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -905,11 +883,9 @@ class TriggerOperations:
         deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_event_subscription_status.metadata = {"url": "/triggers/{triggerName}/getEventSubscriptionStatus"}
+        return deserialized  # type: ignore
 
     def _unsubscribe_trigger_from_events_initial(
         self, trigger_name: str, **kwargs: Any
@@ -928,22 +904,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.TriggerSubscriptionOperationStatus]] = kwargs.pop("cls", None)
 
-        request = build_unsubscribe_trigger_from_events_request(
+        _request = build_unsubscribe_trigger_from_events_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._unsubscribe_trigger_from_events_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -957,11 +932,9 @@ class TriggerOperations:
             deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _unsubscribe_trigger_from_events_initial.metadata = {"url": "/triggers/{triggerName}/unsubscribeFromEvents"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_unsubscribe_trigger_from_events(
@@ -1007,7 +980,7 @@ class TriggerOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("TriggerSubscriptionOperationStatus", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -1031,8 +1004,6 @@ class TriggerOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_unsubscribe_trigger_from_events.metadata = {"url": "/triggers/{triggerName}/unsubscribeFromEvents"}
-
     def _start_trigger_initial(  # pylint: disable=inconsistent-return-statements
         self, trigger_name: str, **kwargs: Any
     ) -> None:
@@ -1050,22 +1021,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_start_trigger_request(
+        _request = build_start_trigger_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._start_trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1075,9 +1045,7 @@ class TriggerOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _start_trigger_initial.metadata = {"url": "/triggers/{triggerName}/start"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_start_trigger(self, trigger_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1118,7 +1086,7 @@ class TriggerOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1141,8 +1109,6 @@ class TriggerOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_start_trigger.metadata = {"url": "/triggers/{triggerName}/start"}
-
     def _stop_trigger_initial(  # pylint: disable=inconsistent-return-statements
         self, trigger_name: str, **kwargs: Any
     ) -> None:
@@ -1160,22 +1126,21 @@ class TriggerOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_stop_trigger_request(
+        _request = build_stop_trigger_request(
             trigger_name=trigger_name,
             api_version=api_version,
-            template_url=self._stop_trigger_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1185,9 +1150,7 @@ class TriggerOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _stop_trigger_initial.metadata = {"url": "/triggers/{triggerName}/stop"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_stop_trigger(self, trigger_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -1228,7 +1191,7 @@ class TriggerOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -1250,5 +1213,3 @@ class TriggerOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop_trigger.metadata = {"url": "/triggers/{triggerName}/stop"}

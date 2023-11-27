@@ -91,6 +91,9 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
     """
     def __init__(
             self, account_url: str,
@@ -107,13 +110,13 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not share_name:
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
@@ -132,7 +135,8 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(ShareDirectoryClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
+        super(ShareDirectoryClient, self).__init__(
+            parsed_url, service='file-share', credential=credential, **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
@@ -157,25 +161,29 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             An optional share snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`ShareClient.create_snapshot`.
         :param credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
-        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
-        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
-        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
-        should be the storage account key.
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
         try:
             if not directory_url.lower().startswith('http'):
                 directory_url = "https://" + directory_url
-        except AttributeError:
-            raise ValueError("Directory URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Directory URL must be a string.") from exc
         parsed_url = urlparse(directory_url.rstrip('/'))
         if not parsed_url.path and not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(directory_url))
+            raise ValueError(f"Invalid URL: {directory_url}")
         account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
         path_snapshot, _ = parse_query(parsed_url.query)
 
@@ -190,21 +198,13 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             credential=credential, **kwargs)
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
         share_name = self.share_name
         if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
         directory_path = ""
         if self.directory_path:
             directory_path = "/" + quote(self.directory_path, safe='~')
-        return "{}://{}/{}{}{}".format(
-            self.scheme,
-            hostname,
-            quote(share_name),
-            directory_path,
-            self._query_str)
+        return f"{self.scheme}://{hostname}/{quote(share_name)}{directory_path}{self._query_str}"
 
     @classmethod
     def from_connection_string(
@@ -231,6 +231,10 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
         :returns: A directory client.
         :rtype: ~azure.storage.fileshare.ShareDirectoryClient
         """
@@ -246,8 +250,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
         The file need not already exist.
 
-        :param file_name:
-            The name of the file.
+        :param str file_name: The name of the file.
         :returns: A File Client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
@@ -286,7 +289,9 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Gets the subdirectory client.
         """
-        directory_path = self.directory_path.rstrip('/') + "/" + directory_name
+        directory_path = directory_name
+        if self.directory_path:
+            directory_path = self.directory_path.rstrip('/') + "/" + directory_name
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -482,7 +487,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             new_dir_sas = self._query_str.strip('?')
 
         new_directory_client = ShareDirectoryClient(
-            '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_dir_path,
+            f'{self.scheme}://{self.primary_hostname}', self.share_name, new_dir_path,
             credential=new_dir_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,

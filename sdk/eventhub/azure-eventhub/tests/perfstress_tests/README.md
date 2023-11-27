@@ -1,29 +1,27 @@
-# EventHub Performance Tests
+#  Event Hubs Python client performance tests
 
-In order to run the performance tests, the `azure-devtools` package must be installed. This is done as part of the `dev_requirements`.
-Start by creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
-Note that tests for T1 and T2 SDKs cannot be run from the same environment, and will need to be setup separately.
+In order to run the performance tests, the `azure-devtools` package must be installed. This is done as part of the `dev_requirements.txt`. installation. Start by creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
 
 ### Setup for test resources
 
-These tests will run against a pre-configured EventHub. The following environment variable will need to be set for the tests to access the live resources:
+These tests will run against a pre-configured EventHub. The following environment variables will need to be set for the tests to access the live resources:
+
 ```
 AZURE_EVENTHUB_CONNECTION_STRING=<the connection string of an Event Hub.>
 AZURE_EVENTHUB_NAME=<the path of the specific Event Hub to connect to>
 ```
 
-### Setup for T2 perf test runs
+If using Azure Blob Storage for checkpointing, the following environment variable will need to be set:
+
+```
+AZURE_STORAGE_CONNECTION_STRING=<the connection string of an Azure Storage account>
+```
+
+### Setup for perf test runs
 
 ```cmd
 (env) ~/azure-eventhub> pip install -r dev_requirements.txt
 (env) ~/azure-eventhub> pip install .
-```
-
-### Setup for T1 perf test runs
-
-```cmd
-(env) ~/azure-servicebus> pip install -r dev_requirements.txt
-(env) ~/azure-servicebus> pip install tests/perfstress_tests/T1_legacy_tests/t1_test_requirements.txt
 ```
 
 ## Test commands
@@ -31,42 +29,62 @@ AZURE_EVENTHUB_NAME=<the path of the specific Event Hub to connect to>
 When `azure-devtools` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
 
 ```cmd
-(env) ~/azure-eventhub> cd tests
-(env) ~/azure-eventhub/tests> perfstress
+(env) ~/azure-eventhub> perfstress
 ```
+
 Using the `perfstress` command alone will list the available perf tests found.
 
+### Tests
+
+The tests currently available:
+
+- `ProcessEventsTest` - Receive and process events using the `receive` method from `EventHubConsumerClient`
+- `ProcessEventsBatchTest` - Receive and process events using the `receive_batch` method from `EventHubConsumerClient`
+- `SendEventsTest` - Send events using the `send_event` method from `EventHubProducerClient` if `batch-size` is 1, otherwise  send a list of events using the `send_batch` method.
+- `SendEventBatchTest` - Send batches of events (`EventDataBatch`) using the `send_batch` method from `EventHubProducerClient`.
+- `UamqpReceiveEventTest` - Receive and process events using `ReceiveClient` from `uamqp`.
+
+A complete list of options for each test can be found by using `--help` on the test name. For example:
+
+```cmd
+(env) ~/azure-eventhub> perfstress ProcessEventsTest --help
+```
+
 ### Common perf command line options
-These options are available for all perf tests:
-- `--duration=10` Number of seconds to run as many operations (the "run" function) as possible. Default is 10.
-- `--iterations=1` Number of test iterations to run. Default is 1.
-- `--parallel=1` Number of tests to run in parallel. Default is 1.
-- `--warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
-- `--sync` Whether to run the tests in sync or async. Default is False (async).
 
-### Common Event Hub command line options
-The options are available for all SB perf tests:
-- `--event-size=100` Number of bytes each event contains. Default is 100.
-- `--num-events` Number of events to send/receive as part of a single run.
+The `perfstress` framework has a series of common command line options built in. View them [here](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/perfstress_tests.md#default-command-options).
 
-#### Receive command line options
-The receiving tests have these additional command line options:
-- `--max-wait-time=0` The max time to wait for the specified number of events to be received. Default is 0 (indefinitely).
-- `--preload=10000` The number of events to preload into the event hub before the receiving tests start. Default is 10000 events.
+### Event Hubs perf test command line options
 
-### T2 Tests
-The tests currently written for the T2 SDK:
-- `SendEventBatchTest` Sends `num-events` in a batch per run.
-- `ReceiveEventTest` Receives `num-events` using the `receive` method. Receive command options apply. 
-- `ReceiveEventBatchTest` Receives `num-events` using the `receive_batch` method. Receive command options apply.
+The options that are available for `SendEventsTest`/`SendEventBatchTest`:
 
-### T1 Tests
-The tests currently written for the T1 SDK:
-- `LegacySendEventTest` Sends a single event per run.
-- `LegacySendEventBatchTest` Sends `num-events` in a batch per run.
-- `LegacyReceiveEventBatchTest` Receives `num-events` using the `receive` method. Receive command options apply.
+- `--event-size=100` - Size of event body (in bytes). Defaults to 100.
+- `--batch-size=100` - The number of events that should be included in each batch. Defaults to 100.
+- `--uamqp-transport` - Use the `uamqp` library as the underlying transport instead of the Python-based AMQP library. Defaults to False.
+- `--transport-type` - Whether to use AMQP (0) or Websocket (1) transport protocol when communicating with the Event Hubs service. Defaults to 0 (AMQP).
+- `--event-extra` - Add properties to the events to increase payload and serialization. Defaults to False.
+
+The options that are available for `ProcessEventsTest`/`ProcessEventsBatchTest`:
+
+- `--event-size=100` - Size of event body (in bytes). Defaults to 100.
+- `--prefetch-count=300` - Number of events to receive locally per request. Defaults to 300.
+- `--load-balancing-strategy` - Event processor load balancing strategy (`greedy` or `balanced`). Defaults to `greedy`.
+- `--checkpoint-interval` - Interval between checkpoints (in number of events). Defaults to None (no checkpoints).
+- `--max-wait-time=0` - Maximum time to wait (in seconds) for an event to be received. Defaults to 0 (indefinitely).
+- `--processing-delay` - Delay (in ms) when processing each event. Defaults to None (no delay).
+- `--processing-delay-strategy` - Whether to 'sleep' or 'spin' during processing delay. Defaults to 'sleep'.
+- `--preload` - Ensure the specified number of events are available across all partitions. Defaults to 0.
+- `--use-storage-checkpoint` - Use Blob storage for checkpointing. Defaults to False (in-memory checkpointing).
+- `--uamqp-transport` - Use the `uamqp` library as the underlying transport instead of the Python-based AMQP library. Defaults to False.
+- `--transport-type` - Whether to use AMQP (0) or Websocket (1) transport protocol when communicating with the Event Hubs service. Defaults to 0 (AMQP).
+- `--event-extra` - Add properties to the preloaded events (if applicable) to increase payload and serialization. Defaults to False.
+
+The following option is also available for `ProcessEventsBatchTest`
+
+- `--max-batch-size=100` - Maximum number of events to process in a single batch. Defaults to 100.
 
 ## Example command
+
 ```cmd
-(env) ~/azure-eventhub/tests> perfstress ReceiveEventBatchTest --parallel=2 --event-size=1024 --num-events=100 --duration=100
+(env) ~/azure-eventhub> perfstress SendEventBatchTest --parallel=2 --duration=30 --event-size 2048 --batch-size 200 --transport-type 1 --uamqp-transport
 ```

@@ -9,9 +9,11 @@
 from ._accounts_operations import AccountsOperations
 from ._deleted_accounts_operations import DeletedAccountsOperations
 from ._resource_skus_operations import ResourceSkusOperations
+from ._usages_operations import UsagesOperations
 from ._operations import Operations
 from ._cognitive_services_management_client_operations import CognitiveServicesManagementClientOperationsMixin
 from ._commitment_tiers_operations import CommitmentTiersOperations
+from ._models_operations import ModelsOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._deployments_operations import DeploymentsOperations
@@ -25,9 +27,11 @@ __all__ = [
     "AccountsOperations",
     "DeletedAccountsOperations",
     "ResourceSkusOperations",
+    "UsagesOperations",
     "Operations",
     "CognitiveServicesManagementClientOperationsMixin",
     "CommitmentTiersOperations",
+    "ModelsOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
     "DeploymentsOperations",

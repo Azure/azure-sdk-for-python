@@ -48,8 +48,17 @@ from .._version import VERSION
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
+    from cloudevents.http.event import CloudEvent as CNCFCloudEvent
+
 SendType = Union[
-    CloudEvent, EventGridEvent, Dict, List[CloudEvent], List[EventGridEvent], List[Dict]
+    CloudEvent,
+    EventGridEvent,
+    Dict,
+    "CNCFCloudEvent",
+    List[CloudEvent],
+    List[EventGridEvent],
+    List[Dict],
+    List["CNCFCloudEvent"],
 ]
 
 ListEventType = Union[List[CloudEvent], List[EventGridEvent], List[Dict]]

@@ -9,9 +9,19 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 
 def validate_endpoint_or_deployment_name(name: str, is_deployment: bool = False) -> None:
-    """Validates that the name of an endpoint or deployment is:
-    1. Between 3 and 32 characters long (inclusive of both ends of the range)
-    2. Follows the following regex pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$
+    """Validates the name of an endpoint or a deployment
+
+    A valid name of an endpoint or deployment:
+
+    1. Is between 3 and 32 characters long (inclusive of both ends of the range)
+    2. Starts with a letter
+    3. Is followed by 0 or more alphanumeric characters (`a-zA-Z0-9`) or hyphens (`-`)
+    3. Ends with an alphanumeric character (`a-zA-Z0-9`)
+
+    :param name: Either an endpoint or deployment name
+    :type name: str
+    :param is_deployment: Whether the name is a deployment name. Defaults to False
+    :type is_deployment: bool
     """
     type_str = "a deployment" if is_deployment else "an endpoint"
     target = ErrorTarget.DEPLOYMENT if is_deployment else ErrorTarget.ENDPOINT

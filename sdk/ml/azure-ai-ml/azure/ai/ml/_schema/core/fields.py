@@ -2,39 +2,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=unused-argument,protected-access,too-many-lines
 
 import copy
 import logging
 import os
 import re
+import traceback
 import typing
 from abc import abstractmethod
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from marshmallow import RAISE, fields
 from marshmallow.exceptions import ValidationError
 from marshmallow.fields import _T, Field, Nested
-from marshmallow.utils import (
-    FieldInstanceResolutionError,
-    from_iso_datetime,
-    resolve_field_instance,
-)
+from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
 
-from ..._utils._arm_id_utils import (
-    AMLVersionedArmId,
-    is_ARM_id_for_resource,
-    parse_name_label,
-    parse_name_version,
-)
+from ..._utils._arm_id_utils import AMLVersionedArmId, is_ARM_id_for_resource, parse_name_label, parse_name_version
 from ..._utils._experimental import _is_warning_cached
-from ..._utils.utils import (
-    is_data_binding_expression,
-    is_valid_node_name,
-    load_file,
-    load_yaml,
-)
+from ..._utils.utils import is_data_binding_expression, is_valid_node_name, load_file, load_yaml
 from ...constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
@@ -50,10 +37,9 @@ from ...constants._common import (
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
     AzureMLResourceType,
+    DefaultOpenEncoding,
 )
-from ...entities._job.pipeline._attr_dict import (
-    try_get_non_arbitrary_attr_for_potential_attr_dict,
-)
+from ...entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr
 from ...exceptions import ValidationException
 from ..core.schema import PathAwareSchema
 
@@ -81,7 +67,7 @@ class StringTransformedEnum(Field):
 
     def _serialize(self, value, attr, obj, **kwargs):
         if not value:
-            return
+            return None
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
             return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
@@ -126,10 +112,14 @@ class LocalPathField(fields.Str):
             schema["pattern"] = self._pattern
         return schema
 
-    def _resolve_path(self, value) -> Path:
+    # pylint: disable-next=docstring-missing-param
+    def _resolve_path(self, value: Union[str, os.PathLike]) -> Path:
         """Resolve path to absolute path based on base_path in context.
 
         Will resolve the path if it's already an absolute path.
+
+        :return: The resolved path
+        :rtype: Path
         """
         try:
             result = Path(value)
@@ -142,8 +132,8 @@ class LocalPathField(fields.Str):
             result = result.resolve()
             if (self._allow_dir and result.is_dir()) or (self._allow_file and result.is_file()):
                 return result
-        except OSError:
-            raise self.make_error("invalid_path")
+        except OSError as e:
+            raise self.make_error("invalid_path") from e
         raise self.make_error("path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type)
 
     @property
@@ -240,6 +230,8 @@ class NodeBindingStr(DataBindingStr):
 
 
 class DateTimeStr(fields.Str):
+    """A string represents a datetime in ISO8601 format."""
+
     def _jsonschema_type_mapping(self):
         schema = {"type": "string"}
         if self.name is not None:
@@ -257,11 +249,13 @@ class DateTimeStr(fields.Str):
     def _validate(self, value):
         try:
             from_iso_datetime(value)
-        except Exception:
-            raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}")
+        except Exception as e:
+            raise ValidationError(f"Not a valid ISO8601-formatted datetime string: {value}") from e
 
 
 class ArmStr(Field):
+    """A string represents an ARM ID for some AzureML resource."""
+
     def __init__(self, **kwargs):
         self.azureml_type = kwargs.pop("azureml_type", None)
         self.pattern = kwargs.pop("pattern", r"^azureml:.+")
@@ -314,6 +308,8 @@ class ArmStr(Field):
 
 
 class ArmVersionedStr(ArmStr):
+    """A string represents an ARM ID for some AzureML resource with version."""
+
     def __init__(self, **kwargs):
         self.allow_default_version = kwargs.pop("allow_default_version", False)
         super().__init__(**kwargs)
@@ -335,7 +331,7 @@ class ArmVersionedStr(ArmStr):
         except ValidationException as e:
             # Schema will try to deserialize the value with all possible Schema & catch ValidationError
             # So raise ValidationError instead of ValidationException
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
 
         version = None
         if not label:
@@ -352,6 +348,8 @@ class ArmVersionedStr(ArmStr):
 
 
 class FileRefField(Field):
+    """A string represents a file reference in pipeline job, e.g.: file:./my_file.txt, file:../my_file.txt,"""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -430,6 +428,8 @@ class NestedField(Nested):
 # inputs = UnionField([fields.List(NestedField(DataSchema)), NestedField(DataSchema)])
 # inputs = UnionField([NestedField(DataSchema), fields.List(NestedField(DataSchema))])
 class UnionField(fields.Field):
+    """A field that can be one of multiple types."""
+
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
         super().__init__(**kwargs)
         try:
@@ -440,7 +440,7 @@ class UnionField(fields.Field):
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                'Elements of "union_fields" must be subclasses or ' "instances of marshmallow.base.FieldABC."
+                'Elements of "union_fields" must be subclasses or instances of marshmallow.base.FieldABC.'
             ) from error
 
     @property
@@ -484,8 +484,18 @@ class UnionField(fields.Field):
                 return schema.deserialize(value, attr, data, **kwargs)
             except ValidationError as e:
                 errors.append(e.normalized_messages())
-            except (ValidationException, FileNotFoundError, TypeError) as e:
+            except ValidationException as e:
+                # ValidationException is explicitly raised in project code so usually easy to locate with error message
                 errors.append([str(e)])
+            except (FileNotFoundError, TypeError) as e:
+                # FileNotFoundError and TypeError can be raised in system code, so we need to add more information
+                # TODO: consider if it's possible to handle those errors in their directly relative
+                #  code instead of in UnionField
+                trace = traceback.format_exc().splitlines()
+                if len(trace) >= 3:
+                    errors.append([f"{trace[-1]} from {trace[-3]} {trace[-2]}"])
+                else:
+                    errors.append([f"{e.__class__.__name__}: {e}"])
             finally:
                 # Revert base path to original path when job schema fail to deserialize job. For example, when load
                 # parallel job with component file reference starting with FILE prefix, maybe first CommandSchema will
@@ -560,6 +570,7 @@ class TypeSensitiveUnionField(UnionField):
     def allowed_types(self) -> List[str]:
         return list(self._type_sensitive_fields_dict.keys())
 
+    # pylint: disable-next=docstring-missing-param
     def insert_type_sensitive_field(self, type_name, field):
         """Insert a new type sensitive field for a specific type."""
         if type_name not in self._type_sensitive_fields_dict:
@@ -567,22 +578,27 @@ class TypeSensitiveUnionField(UnionField):
         self._type_sensitive_fields_dict[type_name].insert(0, field)
         self.insert_union_field(field)
 
-    def _raise_simplified_error_base_on_type(self, e, value, attr):
-        """If value doesn't have type, raise original error; If value has type.
+    # pylint: disable-next=docstring-missing-param
+    def _simplified_error_base_on_type(self, e, value, attr) -> Exception:
+        """Returns a simplified error based on value type
 
-        & its type doesn't match any allowed types, raise "Value {} not in set {}"; If value has type & its type matches
-        at least 1 field, return the first matched error message;
+        :return: Returns
+         * e if value doesn't havetype
+         * ValidationError("Value {} not in set {}") if value type not in allowed types
+         * First Matched Error message if value has type and type matches atleast one field
+        :rtype: Exception
         """
-        value_type = try_get_non_arbitrary_attr_for_potential_attr_dict(value, self.type_field_name)
+        value_type = try_get_non_arbitrary_attr(value, self.type_field_name)
         if value_type is None:
             # if value has no type field, raise original error
-            raise e
+            return e
         if value_type not in self.allowed_types:
             # if value has type field but its value doesn't match any allowed value, raise ValidationError directly
-            raise ValidationError(
+            return ValidationError(
                 message={self.type_field_name: f"Value {value_type!r} passed is not in set {self.allowed_types}"},
                 field_name=attr,
             )
+        filtered_messages = []
         # if value has type field and its value match at least 1 allowed value, raise first matched
         for error in e.messages:
             # for non-nested schema, their error message will be {"_schema": ["xxx"]}
@@ -590,14 +606,19 @@ class TypeSensitiveUnionField(UnionField):
                 continue
             # for nested schema, type field won't be within error only if type field value is matched
             # then return first matched error message
-            if self.type_field_name not in error:
-                raise ValidationError(message=error, field_name=attr)
-        # shouldn't reach here
-        raise e
+            if self.type_field_name in error:
+                continue
+            filtered_messages.append(error)
+
+        if len(filtered_messages) == 0:
+            # shouldn't happen
+            return e
+        # TODO: consider if we should keep all filtered messages
+        return ValidationError(message=filtered_messages[0], field_name=attr)
 
     def _serialize(self, value, attr, obj, **kwargs):
         union_fields = self._union_fields[:]
-        value_type = try_get_non_arbitrary_attr_for_potential_attr_dict(value, self.type_field_name)
+        value_type = try_get_non_arbitrary_attr(value, self.type_field_name)
         if value_type is not None and value_type in self.allowed_types:
             target_fields = self._type_sensitive_fields_dict[value_type]
             if len(target_fields) == 1:
@@ -607,7 +628,7 @@ class TypeSensitiveUnionField(UnionField):
         try:
             return super(TypeSensitiveUnionField, self)._serialize(value, attr, obj, **kwargs)
         except ValidationError as e:
-            self._raise_simplified_error_base_on_type(e, value, attr)
+            raise self._simplified_error_base_on_type(e, value, attr)
         finally:
             self._union_fields = union_fields
 
@@ -625,7 +646,7 @@ class TypeSensitiveUnionField(UnionField):
                 target_path.resolve()
             if target_path.is_file():
                 self.context[BASE_PATH_CONTEXT_KEY] = target_path.parent
-                with target_path.open() as f:
+                with target_path.open(encoding=DefaultOpenEncoding.READ) as f:
                     return yaml.safe_load(f)
         except Exception:  # pylint: disable=broad-except
             pass
@@ -637,13 +658,15 @@ class TypeSensitiveUnionField(UnionField):
         except ValidationError as e:
             if isinstance(value, str) and self._allow_load_from_yaml:
                 value = self._try_load_from_yaml(value)
-            self._raise_simplified_error_base_on_type(e, value, attr)
+            raise self._simplified_error_base_on_type(e, value, attr)
 
 
-def ComputeField(**kwargs):
+def ComputeField(**kwargs) -> Field:
     """
-    :param required : if set to True, it is not possible to pass None
-    :type required: bool
+    :keyword required: if set to True, it is not possible to pass None
+    :paramtype required: bool
+    :return: The compute field
+    :rtype: Field
     """
     return UnionField(
         [
@@ -657,10 +680,12 @@ def ComputeField(**kwargs):
     )
 
 
-def CodeField(**kwargs):
+def CodeField(**kwargs) -> Field:
     """
-    :param required : if set to True, it is not possible to pass None
-    :type required: bool
+    :keyword required: if set to True, it is not possible to pass None
+    :paramtype required: bool
+    :return: The code field
+    :rtype: Field
     """
     return UnionField(
         [
@@ -677,12 +702,40 @@ def CodeField(**kwargs):
     )
 
 
+def EnvironmentField(*, extra_fields: List[Field] = None, **kwargs):
+    """Function to return a union field for environment.
+
+    :param extra_fields: extra fields to be added to the union field
+    :paramtype extra_fields: List[Field]
+    :return: The environment field
+    :rtype: Field
+    """
+    extra_fields = extra_fields or []
+    # local import to avoid circular dependency
+    from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
+
+    return UnionField(
+        [
+            NestedField(AnonymousEnvironmentSchema),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ]
+        + extra_fields,
+        **kwargs,
+    )
+
+
 def DistributionField(**kwargs):
+    """Function to return a union field for distribution.
+
+    :return: The distribution field
+    :rtype: Field
+    """
     from azure.ai.ml._schema.job.distribution import (
         MPIDistributionSchema,
         PyTorchDistributionSchema,
-        TensorFlowDistributionSchema,
         RayDistributionSchema,
+        TensorFlowDistributionSchema,
     )
 
     return UnionField(
@@ -696,6 +749,11 @@ def DistributionField(**kwargs):
 
 
 def PrimitiveValueField(**kwargs):
+    """Function to return a union field for primitive value.
+
+    :return: The primitive value field
+    :rtype: Field
+    """
     return UnionField(
         [
             # Note: order matters here - to make sure value parsed correctly.
@@ -718,6 +776,10 @@ def PrimitiveValueField(**kwargs):
 
 
 class VersionField(Field):
+    """A string represents a version, e.g.: 1, 1.0, 1.0.0.
+    Will always convert to string to ensure that "1.0" won't be converted to 1.
+    """
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
@@ -737,7 +799,40 @@ class VersionField(Field):
         raise Exception(f"Type {type(value)} is not supported for version.")
 
 
+class NumberVersionField(VersionField):
+    """A string represents a version, e.g.: 1, 1.0, 1.0.0.
+    Will always convert to string to ensure that "1.0" won't be converted to 1.
+    """
+
+    default_error_messages = {
+        "max_version": "Version {input} is greater than or equal to upper bound {bound}.",
+        "min_version": "Version {input} is smaller than lower bound {bound}.",
+        "invalid": "Number version must be integers concatenated by '.', like 1.0.1.",
+    }
+
+    def __init__(self, *args, upper_bound: Optional[str] = None, lower_bound: Optional[str] = None, **kwargs) -> None:
+        self._upper = None if upper_bound is None else self._version_to_tuple(upper_bound)
+        self._lower = None if lower_bound is None else self._version_to_tuple(lower_bound)
+        super().__init__(*args, **kwargs)
+
+    def _version_to_tuple(self, value: str):
+        try:
+            return tuple(int(v) for v in str(value).split("."))
+        except ValueError as e:
+            raise self.make_error("invalid") from e
+
+    def _validate(self, value):
+        super()._validate(value)
+        value_tuple = self._version_to_tuple(value)
+        if self._upper is not None and value_tuple >= self._upper:
+            raise self.make_error("max_version", input=value, bound=self._upper)
+        if self._lower is not None and value_tuple < self._lower:
+            raise self.make_error("min_version", input=value, bound=self._lower)
+
+
 class DumpableIntegerField(fields.Integer):
+    """A int field that cannot serialize other type of values to int if self.strict."""
+
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
         if self.strict and not isinstance(value, int):
             # this implementation can serialize bool to bool
@@ -746,6 +841,8 @@ class DumpableIntegerField(fields.Integer):
 
 
 class DumpableFloatField(fields.Float):
+    """A float field that cannot serialize other type of values to float if self.strict."""
+
     def __init__(
         self,
         *,
@@ -767,6 +864,8 @@ class DumpableFloatField(fields.Float):
 
 
 class DumpableStringField(fields.String):
+    """A string field that cannot serialize other type of values to string if self.strict."""
+
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
         if not isinstance(value, str):
             raise ValidationError("Given value is not a string")
@@ -781,7 +880,7 @@ class ExperimentalField(fields.Field):
             self.required = experimental_field.required
         except FieldInstanceResolutionError as error:
             raise ValueError(
-                '"experimental_field" must be subclasses or ' "instances of marshmallow.base.FieldABC."
+                '"experimental_field" must be subclasses or instances of marshmallow.base.FieldABC.'
             ) from error
 
     @property
@@ -808,6 +907,8 @@ class ExperimentalField(fields.Field):
 
 
 class RegistryStr(Field):
+    """A string represents a registry ID for some AzureML resource."""
+
     def __init__(self, **kwargs):
         self.azureml_type = kwargs.pop("azureml_type", None)
         super().__init__(**kwargs)
@@ -841,6 +942,8 @@ class RegistryStr(Field):
 
 
 class InternalRegistryStr(RegistryStr):
+    """A string represents a registry ID for some internal AzureML resource."""
+
     def _jsonschema_type_mapping(self):
         schema = super()._jsonschema_type_mapping()
         schema["pattern"] = "^azureml://feeds/.*"
@@ -853,12 +956,19 @@ class InternalRegistryStr(RegistryStr):
 
 
 class PythonFuncNameStr(fields.Str):
+    """A string represents a python function name."""
+
     @abstractmethod
     def _get_field_name(self) -> str:
         """Returns field name, used for error message."""
 
-    def _deserialize(self, value, attr, data, **kwargs) -> typing.Any:
-        """Validate component name."""
+    # pylint: disable-next=docstring-missing-param
+    def _deserialize(self, value, attr, data, **kwargs) -> str:
+        """Validate component name.
+
+        :return: The component name
+        :rtype: str
+        """
         name = super()._deserialize(value, attr, data, **kwargs)
         pattern = r"^[a-z][a-z\d_]*$"
         if not re.match(pattern, name):
@@ -871,12 +981,19 @@ class PythonFuncNameStr(fields.Str):
 
 
 class PipelineNodeNameStr(fields.Str):
+    """A string represents a pipeline node name."""
+
     @abstractmethod
     def _get_field_name(self) -> str:
         """Returns field name, used for error message."""
 
-    def _deserialize(self, value, attr, data, **kwargs) -> typing.Any:
-        """Validate component name."""
+    # pylint: disable-next=docstring-missing-param
+    def _deserialize(self, value, attr, data, **kwargs) -> str:
+        """Validate component name.
+
+        :return: The component name
+        :rtype: str
+        """
         name = super()._deserialize(value, attr, data, **kwargs)
         if not is_valid_node_name(name):
             raise ValidationError(
@@ -888,6 +1005,8 @@ class PipelineNodeNameStr(fields.Str):
 
 
 class GitStr(fields.Str):
+    """A string represents a git path."""
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 

@@ -7,30 +7,45 @@ from os.path import isdir
 import platform
 import threading
 import time
-
-try:
-    from importlib.metadata import version
-except ImportError:
-    # fallback for python 3.7
-    from importlib_metadata import version
+import warnings
+from typing import Callable, Dict, Any
 
 from opentelemetry.semconv.resource import ResourceAttributes
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util import ns_to_iso_str
+from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATIONS_BIT_MAP
 
 
+opentelemetry_version = ""
+
 # Workaround for missing version file
-opentelemetry_version = version("opentelemetry-sdk")
+try:
+    from importlib.metadata import version
+    opentelemetry_version = version("opentelemetry-sdk")
+except ImportError:
+    # Temporary workaround for <Py3.8
+    # importlib-metadata causing issues in CI
+    import pkg_resources # type: ignore
+    opentelemetry_version = pkg_resources.get_distribution(
+        "opentelemetry-sdk"
+    ).version
+
+
+def _is_on_app_service():
+    return "WEBSITE_SITE_NAME" in environ
+
+
+def _is_attach_enabled():
+    return isdir("/agents/python/")
 
 
 def _get_sdk_version_prefix():
-    is_on_app_service = "WEBSITE_SITE_NAME" in environ
-    is_attach_enabled = isdir("/agents/python/")
     sdk_version_prefix = ''
-    if is_on_app_service and is_attach_enabled:
+    if _is_on_app_service() and _is_attach_enabled():
         os = 'u'
         system = platform.system()
         if system == "Linux":
@@ -41,9 +56,23 @@ def _get_sdk_version_prefix():
     return sdk_version_prefix
 
 
+def _getlocale():
+    try:
+        with warnings.catch_warnings():
+            # temporary work-around for https://github.com/python/cpython/issues/82986
+            # by continuing to use getdefaultlocale() even though it has been deprecated.
+            # we ignore the deprecation warnings to reduce noise
+            warnings.simplefilter('ignore', category=DeprecationWarning)
+            return locale.getdefaultlocale()[0]
+    except AttributeError:
+        # locale.getlocal() has issues on Windows: https://github.com/python/cpython/issues/82986
+        # Use this as a fallback if locale.getdefaultlocale() doesn't exist (>Py3.13)
+        return locale.getlocale()[0]
+
+
 azure_monitor_context = {
     "ai.device.id": platform.node(),
-    "ai.device.locale": locale.getdefaultlocale()[0],
+    "ai.device.locale": _getlocale(),
     "ai.device.osVersion": platform.version(),
     "ai.device.type": "Other",
     "ai.internal.sdkVersion": "{}py{}:otel{}:ext{}".format(
@@ -52,7 +81,7 @@ azure_monitor_context = {
 }
 
 
-def ns_to_duration(nanoseconds):
+def ns_to_duration(nanoseconds: int):
     value = (nanoseconds + 500000) // 1000000  # duration in milliseconds
     value, microseconds = divmod(value, 1000)
     value, seconds = divmod(value, 60)
@@ -69,14 +98,14 @@ def get_instrumentations():
     return _INSTRUMENTATIONS_BIT_MASK
 
 
-def add_instrumentation(instrumentation_name):
+def add_instrumentation(instrumentation_name: str):
     with _INSTRUMENTATIONS_BIT_MASK_LOCK:
         global _INSTRUMENTATIONS_BIT_MASK  # pylint: disable=global-statement
         instrumentation_bits = _INSTRUMENTATIONS_BIT_MAP.get(instrumentation_name, 0)
         _INSTRUMENTATIONS_BIT_MASK |= instrumentation_bits
 
 
-def remove_instrumentation(instrumentation_name):
+def remove_instrumentation(instrumentation_name: str):
     with _INSTRUMENTATIONS_BIT_MASK_LOCK:
         global _INSTRUMENTATIONS_BIT_MASK  # pylint: disable=global-statement
         instrumentation_bits = _INSTRUMENTATIONS_BIT_MAP.get(instrumentation_name, 0)
@@ -99,11 +128,11 @@ class PeriodicTask(threading.Thread):
     :param args: The kwargs passed in while calling `function`.
     """
 
-    def __init__(self, interval, function, *args, **kwargs):
+    def __init__(self, interval: int, function: Callable, *args: Any, **kwargs: Any):
         super().__init__(name=kwargs.pop('name', None))
         self.interval = interval
         self.function = function
-        self.args = args or []
+        self.args = args or [] # type: ignore
         self.kwargs = kwargs or {}
         self.finished = threading.Event()
 
@@ -118,15 +147,15 @@ class PeriodicTask(threading.Thread):
     def cancel(self):
         self.finished.set()
 
-def _create_telemetry_item(timestamp):
+def _create_telemetry_item(timestamp: int) -> TelemetryItem:
     return TelemetryItem(
         name="",
         instrumentation_key="",
         tags=dict(azure_monitor_context),
-        time=ns_to_iso_str(timestamp),
+        time=ns_to_iso_str(timestamp), # type: ignore
     )
 
-def _populate_part_a_fields(resource):
+def _populate_part_a_fields(resource: Resource):
     tags = {}
     if resource and resource.attributes:
         service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
@@ -134,20 +163,22 @@ def _populate_part_a_fields(resource):
         service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
         if service_name:
             if service_namespace:
-                tags["ai.cloud.role"] = service_namespace + \
-                    "." + service_name
+                tags["ai.cloud.role"] = str(service_namespace) + \
+                    "." + str(service_name)
             else:
-                tags["ai.cloud.role"] = service_name
+                tags["ai.cloud.role"] = service_name # type: ignore
         if service_instance_id:
-            tags["ai.cloud.roleInstance"] = service_instance_id
+            tags["ai.cloud.roleInstance"] = service_instance_id # type: ignore
         else:
             tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
         tags["ai.internal.nodeName"] = tags["ai.cloud.roleInstance"]
     return tags
 
 # pylint: disable=W0622
-def _filter_custom_properties(properties, filter=None):
-    truncated_properties = {}
+def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
+    truncated_properties: Dict[str, str] = {}
+    if not properties:
+        return truncated_properties
     for key, val in properties.items():
         # Apply filter function
         if filter is not None:

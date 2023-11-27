@@ -87,6 +87,13 @@ class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTOMATIC = "Automatic"
 
 
+class ServiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the service."""
+
+    WEB_PUB_SUB = "WebPubSub"
+    SOCKET_IO = "SocketIO"
+
+
 class SharedPrivateLinkResourceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the shared private link resource."""
 

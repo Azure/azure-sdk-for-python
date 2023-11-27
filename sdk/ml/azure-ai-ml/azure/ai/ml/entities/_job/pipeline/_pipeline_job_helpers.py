@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple, Type, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
@@ -29,9 +29,11 @@ def process_sdk_component_job_io(
 
     :param io: Input or output dictionary of an SDK ComponentJob
     :type io:  Dict[str, Union[str, float, bool, Input]]
-    :return: A tuple of dictionaries: \
-            One mapping inputs to REST formatted ComponentJobInput/ComponentJobOutput for data binding io.
-            The other dictionary contains any IO that is not a databinding that is yet to be turned into REST form
+    :param io_binding_regex_list: A list of regexes for io bindings
+    :type io_binding_regex_list: List[str]
+    :return: A tuple of dictionaries:
+      * One mapping inputs to REST formatted ComponentJobInput/ComponentJobOutput for data binding io.
+      * The other dictionary contains any IO that is not a databinding that is yet to be turned into REST form
     :rtype: Tuple[Dict[str, str], Dict[str, Union[str, float, bool, Input]]]
     """
     io_bindings = {}
@@ -46,7 +48,7 @@ def process_sdk_component_job_io(
             path = io_value.path
             name = io_value.name if hasattr(io_value, "name") else None
             version = io_value.version if hasattr(io_value, "version") else None
-            if any([re.match(item, path) for item in io_binding_regex_list]):
+            if any(re.match(item, path) for item in io_binding_regex_list):
                 # Yaml syntax requires using ${{}} to enclose inputs and outputs bindings
                 # io_bindings[io_name] = io_value
                 io_bindings.update({io_name: {"value": path}})
@@ -66,7 +68,7 @@ def process_sdk_component_job_io(
                     # when the output should be registered,
                     # we add io_value to dataset_literal_io for further to_rest_data_outputs
                     dataset_literal_io[io_name] = io_value
-            elif any([re.match(item, path) for item in legacy_io_binding_regex_list]):
+            elif any(re.match(item, path) for item in legacy_io_binding_regex_list):
                 new_format = path.replace("{{", "{{parent.")
                 msg = "{} has changed to {}, please change to use new format."
                 raise ValidationException(
@@ -85,14 +87,19 @@ def process_sdk_component_job_io(
 
 def from_dict_to_rest_io(
     io: Dict[str, Union[str, dict]],
-    rest_object_class,
+    rest_object_class: Union[Type[RestJobInput], Type[RestJobOutput]],
     io_binding_regex_list: List[str],
 ) -> Tuple[Dict[str, str], Dict[str, Union[RestJobInput, RestJobOutput]]]:
     """Translate rest JObject dictionary to rest inputs/outputs and bindings.
 
     :param io: Input or output dictionary.
+    :type io: Dict[str, Union[str, dict]]
     :param rest_object_class: RestJobInput or RestJobOutput
+    :type rest_object_class: Union[Type[RestJobInput], Type[RestJobOutput]]
+    :param io_binding_regex_list: A list of regexes for io bindings
+    :type io_binding_regex_list: List[str]
     :return: Map from IO name to IO bindings and Map from IO name to IO objects.
+    :rtype: Tuple[Dict[str, str], Dict[str, Union[RestJobInput, RestJobOutput]]]
     """
     io_bindings = {}
     rest_io_objects = {}
@@ -112,7 +119,7 @@ def from_dict_to_rest_io(
             io_mode = val.get("mode", None)
             io_name = val.get("name", None)
             io_version = val.get("version", None)
-            if any([re.match(item, io_value) for item in io_binding_regex_list]):
+            if any(re.match(item, io_value) for item in io_binding_regex_list):
                 io_bindings.update({key: {"path": io_value}})
                 # add mode to literal value for binding input
                 if io_mode:

@@ -16,14 +16,14 @@ module_logger = logging.getLogger(__name__)
 class OversizeDataConfigSchema(metaclass=PatchedSchemaMeta):
     path = fields.Str()
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     @validates("path")
     def validate_path(self, value, **kwargs):
         datastore_path = AzureMLDatastorePathUri(value)
         if datastore_path.uri_type != "Datastore":
             raise ValidationError(f"Path '{value}' is not a properly formatted datastore path.")
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities._deployment.oversize_data_config import OversizeDataConfig

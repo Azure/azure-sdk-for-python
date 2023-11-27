@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.virtual_machines.begin_restart_hosts(
+    client.virtual_machines.begin_restart_hosts(
         resource_group_name="rg1",
         cluster_name="cluster1",
         hosts=["gateway1", "gateway3"],
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/RestartVirtualMachinesOperation.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2023-04-15-preview/examples/RestartVirtualMachinesOperation.json
 if __name__ == "__main__":
     main()

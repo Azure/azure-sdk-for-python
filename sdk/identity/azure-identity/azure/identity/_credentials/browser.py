@@ -2,29 +2,32 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import platform
 import socket
 from typing import Dict, Any
+import subprocess
+import webbrowser
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import InteractiveCredential, wrap_exceptions
+from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions, within_dac
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
     """Opens a browser to interactively authenticate a user.
 
-    :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
+    :func:`~get_token` opens a browser to a login URL provided by Microsoft Entra ID and authenticates a user
     there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the "organizations" tenant, which can
+    :keyword str tenant_id: a Microsoft Entra tenant ID. Defaults to the "organizations" tenant, which can
         authenticate work or school accounts.
-    :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
+    :keyword str client_id: Client ID of the Microsoft Entra application users will sign in to. If
         unspecified, users will authenticate to an Azure development application.
     :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
         may still log in with a different username.
@@ -46,6 +49,9 @@ class InteractiveBrowserCredential(InteractiveCredential):
         https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
         authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
         trustworthy.
+    :keyword bool enable_support_logging: Enables additional support logging in the underlying MSAL library.
+        This logging potentially contains personally identifiable information and is intended to be used only for
+        troubleshooting purposes.
     :raises ValueError: invalid **redirect_uri**
 
     .. admonition:: Example:
@@ -69,31 +75,81 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
+        self._server_class = kwargs.pop("_server_class", AuthCodeRedirectServer)
         client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
+    def _request_token(self, *scopes: str, **kwargs) -> Dict:
+
+        # start an HTTP server to receive the redirect
+        server = None
+        redirect_uri: str = ""
+        if self._parsed_url:
+            try:
+                redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
+                server = self._server_class(self._parsed_url.hostname, self._parsed_url.port, timeout=self._timeout)
+            except socket.error as ex:
+                raise CredentialUnavailableError(message="Couldn't start an HTTP server on " + redirect_uri) from ex
+        else:
+            for port in range(8400, 9000):
+                try:
+                    server = self._server_class("localhost", port, timeout=self._timeout)
+                    redirect_uri = "http://localhost:{}".format(port)
+                    break
+                except socket.error:
+                    continue  # keep looking for an open port
+
+        if not server:
+            raise CredentialUnavailableError(message="Couldn't start an HTTP server on localhost")
+
+        # get the url the user must visit to authenticate
         scopes = list(scopes)  # type: ignore
         claims = kwargs.get("claims")
         app = self._get_app(**kwargs)
-        port = self._parsed_url.port if self._parsed_url else None
+        flow = app.initiate_auth_code_flow(
+            scopes,
+            redirect_uri=redirect_uri,
+            prompt="select_account",
+            claims_challenge=claims,
+            login_hint=self._login_hint,
+        )
+        if "auth_uri" not in flow:
+            raise CredentialUnavailableError("Failed to begin authentication flow")
 
-        try:
-            result = app.acquire_token_interactive(
-                scopes=scopes,
-                login_hint=self._login_hint,
-                claims_challenge=claims,
-                timeout=self._timeout,
-                prompt="select_account",
-                port=port
+        if not _open_browser(flow["auth_uri"]):
+            raise CredentialUnavailableError(message="Failed to open a browser")
+
+        # block until the server times out or receives the post-authentication redirect
+        response = server.wait_for_redirect()
+        if not response:
+            if within_dac.get():
+                raise CredentialUnavailableError(
+                    message="Timed out after waiting {} seconds for the user to authenticate".format(self._timeout)
+                )
+            raise ClientAuthenticationError(
+                message="Timed out after waiting {} seconds for the user to authenticate".format(self._timeout)
             )
-        except socket.error:
-            raise CredentialUnavailableError(message="Couldn't start an HTTP server.")
-        if "access_token" not in result and "error_description" in result:
-            raise ClientAuthenticationError(message=result.get("error_description"))
-        if "access_token" not in result:
-            raise ClientAuthenticationError(message="Failed to authenticate user")
 
-        # base class will raise for other errors
-        return result
+        # redeem the authorization code for a token
+        return app.acquire_token_by_auth_code_flow(flow, response, scopes=scopes, claims_challenge=claims)
+
+
+def _open_browser(url):
+    opened = webbrowser.open(url)
+    if not opened:
+        uname = platform.uname()
+        system = uname[0].lower()
+        release = uname[2].lower()
+        if "microsoft" in release and system == "linux":
+            kwargs = {"timeout": 5}
+
+            try:
+                exit_code = subprocess.call(
+                    ["powershell.exe", "-NoProfile", "-Command", 'Start-Process "{}"'.format(url)], **kwargs
+                )
+                opened = exit_code == 0
+            except Exception:  # pylint:disable=broad-except
+                # powershell.exe isn't available, or the subprocess timed out
+                pass
+    return opened

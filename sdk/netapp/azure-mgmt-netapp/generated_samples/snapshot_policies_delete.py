@@ -29,14 +29,13 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.snapshot_policies.begin_delete(
+    client.snapshot_policies.begin_delete(
         resource_group_name="resourceGroup",
         account_name="accountName",
         snapshot_policy_name="snapshotPolicyName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/SnapshotPolicies_Delete.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2023-05-01/examples/SnapshotPolicies_Delete.json
 if __name__ == "__main__":
     main()

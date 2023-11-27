@@ -10,12 +10,9 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
-try:
-    from typing import TypeAlias    # type: ignore
-except ImportError:
-    from typing_extensions import TypeAlias
 from datetime import timedelta
 from urllib.parse import urlparse
+from typing_extensions import TypeAlias
 
 from azure.core.credentials import (
     AccessToken,
@@ -47,6 +44,12 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    CredentialTypes: TypeAlias = Union[
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+        "EventHubSharedKeyCredential",
+        TokenCredential,
+    ]
     try:
         from uamqp import Message as uamqp_Message
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
@@ -148,8 +151,13 @@ def _parse_conn_str(conn_str, **kwargs):
 def _generate_sas_token(uri, policy, key, expiry=None):
     # type: (str, str, str, Optional[timedelta]) -> AccessToken
     """Create a shared access signature token as a string literal.
-    :returns: SAS token as string literal.
-    :rtype: str
+
+    :param str uri: The resource URI.
+    :param str policy: The name of the shared access policy.
+    :param str key: The shared access key.
+    :param datetime.timedelta or None expiry: The time period that the signature is valid for. Default is 1 hour.
+    :return: An AccessToken.
+    :rtype: ~azure.core.credentials.AccessToken
     """
     if not expiry:
         expiry = timedelta(hours=1)  # Default to 1 hour.
@@ -239,6 +247,10 @@ class EventHubSASTokenCredential(object):
         # type: (str, Any) -> AccessToken
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The list of scopes for which the token has access.
+        :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         return AccessToken(self.token, self.expiry)
 
@@ -266,21 +278,13 @@ class EventhubAzureSasTokenCredential(object):
         # type: (str, Any) -> AccessToken
         """
         This method is automatically called when token is about to expire.
+
+        :param str scopes: The scopes for the token request.
+        :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
-
-
-# separate TYPE_CHECKING block here for EventHubSharedKeyCredential, o/w mypy raised error even with forward referencing
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
-    CredentialTypes: TypeAlias = Union[
-        AzureSasCredential,
-        AzureNamedKeyCredential,
-        EventHubSharedKeyCredential,
-        TokenCredential,
-    ]
 
 
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
@@ -288,7 +292,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: CredentialTypes,
+        credential: "CredentialTypes",
         **kwargs: Any,
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)
@@ -312,7 +316,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._auto_reconnect = kwargs.get("auto_reconnect", True)
         self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
         self._config = Configuration(
-            uamqp_transport=uamqp_transport,
+            amqp_transport=self._amqp_transport,
             hostname=self._address.hostname,
             **kwargs,
         )
@@ -341,6 +345,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
+
+        :return: The auth for the session.
+        :rtype: JWTTokenAuth or uamqp_JWTTokenAuth
         """
         try:
             # ignore mypy's warning because token_type is Optional
@@ -451,7 +458,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     _LOGGER.info(
                         "%r returns an exception %r", self._container_id, last_exception
                     )
-                    raise last_exception
+                    raise last_exception from None
             finally:
                 mgmt_client.close()
 
@@ -598,7 +605,7 @@ class ConsumerProducerMixin(object):
                         self._name,
                         last_exception,
                     )
-                    raise last_exception
+                    raise last_exception from None
 
     def close(self):
         # type:() -> None

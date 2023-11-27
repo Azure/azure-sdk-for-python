@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.availability_group_listeners.begin_delete(
+    client.availability_group_listeners.begin_delete(
         resource_group_name="testrg",
         sql_virtual_machine_group_name="testvmgroup",
         availability_group_listener_name="agl-test",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sqlvirtualmachine/resource-manager/Microsoft.SqlVirtualMachine/preview/2022-08-01-preview/examples/DeleteAvailabilityGroupListener.json

@@ -29,7 +29,7 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.volumes.begin_revert(
+    client.volumes.begin_revert(
         resource_group_name="myRG",
         account_name="account1",
         pool_name="pool1",
@@ -38,9 +38,8 @@ def main():
             "snapshotId": "/subscriptions/D633CC2E-722B-4AE1-B636-BBD9E4C60ED9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1/volumes/volume1/snapshots/snapshot1"
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/Volumes_Revert.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2023-05-01/examples/Volumes_Revert.json
 if __name__ == "__main__":
     main()

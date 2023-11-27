@@ -36,7 +36,7 @@ from azure.communication.callautomation import (CallAutomationClient)
 
 # Your unique Azure Communication service endpoint
 endpoint_url = '<ENDPOINT>'
-client = new CallAutomationClient.from_connection_string(endpoint_url)
+client = CallAutomationClient.from_connection_string(endpoint_url)
 ```
 
 ### Create Call

@@ -157,7 +157,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             _pipeline=_pipeline, _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
             allow_source_trailing_dot=self.allow_source_trailing_dot, token_intent=self.file_request_intent)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def acquire_lease(self, **kwargs):
         # type: (**Any) -> ShareLeaseClient
         """Requests a new lease.
@@ -459,6 +459,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         except HttpResponseError as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def set_share_properties(self, **kwargs):
         # type: (Any) ->  Dict[str, Any]
         """Sets the share properties.
@@ -730,6 +731,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
+        :rtype: Iterable[Dict[str,str]]
 
         .. admonition:: Example:
 

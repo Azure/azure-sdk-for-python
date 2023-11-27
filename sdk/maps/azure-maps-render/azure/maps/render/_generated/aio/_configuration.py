@@ -38,7 +38,7 @@ class MapsRenderClientConfiguration(Configuration):  # pylint: disable=too-many-
 
     def __init__(self, credential: "AsyncTokenCredential", client_id: Optional[str] = None, **kwargs: Any) -> None:
         super(MapsRenderClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-08-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2022-08-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

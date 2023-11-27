@@ -1,4 +1,3 @@
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -22,19 +21,17 @@ import asyncio
 
 
 class RouterClientAuthenticationSamplesAsync(object):
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
-    if not endpoint:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
+    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
 
     async def create_router_client(self):
         connection_string = self.endpoint
 
         # [START auth_from_connection_string_async]
-        from azure.communication.jobrouter.aio import RouterClient
+        from azure.communication.jobrouter.aio import JobRouterClient
 
         # set `connection_string` to an existing ACS endpoint
-        router_client = RouterClient.from_connection_string(conn_str = connection_string)
-        print("RouterClient created successfully!")
+        router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
+        print("JobRouterClient created successfully!")
 
         # [END auth_from_connection_string_async]
 
@@ -42,11 +39,11 @@ class RouterClientAuthenticationSamplesAsync(object):
         connection_string = self.endpoint
 
         # [START admin_auth_from_connection_string_async]
-        from azure.communication.jobrouter.aio import RouterAdministrationClient
+        from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
         # set `connection_string` to an existing ACS endpoint
-        router_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        router_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
+        print("JobRouterAdministrationClient created successfully!")
 
         # [END admin_auth_from_connection_string_async]
 
@@ -56,6 +53,7 @@ async def main():
     await sample.create_router_client()
     await sample.create_router_admin_client()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())

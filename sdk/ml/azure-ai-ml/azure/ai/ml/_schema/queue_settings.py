@@ -17,7 +17,7 @@ class QueueSettingsSchema(metaclass=PatchedSchemaMeta):
     )
 
     @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument, disable=no-self-use
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         from azure.ai.ml.entities import QueueSettings
 
         return QueueSettings(**data)

@@ -5,11 +5,11 @@
 from typing import Callable
 
 import pytest
-from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
+from azure.core.polling import LROPoller
 
 
 @pytest.mark.e2etest

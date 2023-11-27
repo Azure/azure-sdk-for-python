@@ -11,11 +11,11 @@ class PayloadResponse:
     """Response deployment entity
 
     :param enabled: Is response logging enabled.
-    :type enabled: str, optional
+    :type enabled: str
 
     """
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     def __init__(self, enabled: str = None, **kwargs):
         self.enabled = enabled
 

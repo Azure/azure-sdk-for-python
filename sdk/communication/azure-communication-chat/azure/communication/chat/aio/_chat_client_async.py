@@ -10,7 +10,6 @@ from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
 from datetime import datetime
 from uuid import uuid4
 
-import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -63,8 +62,6 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         credential: CommunicationTokenCredential,
         **kwargs: Any
     ) -> None:
-        # type: (...) -> None
-
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -72,7 +69,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -82,7 +79,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            self._endpoint,
+            endpoint=self._endpoint,
             authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
@@ -92,8 +89,6 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
             self, thread_id: str,
             **kwargs: Any
     ) -> ChatThreadClient:
-
-        # type: (...) -> ChatThreadClient
         """
         Get ChatThreadClient by providing a thread_id.
 
@@ -127,9 +122,6 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         self, topic: str,
         **kwargs
     ) -> CreateChatThreadResult:
-
-        # type: (...) -> CreateChatThreadResult
-
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
@@ -177,10 +169,9 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
             **kwargs)
 
         errors = None
-        if hasattr(create_chat_thread_result, 'errors') and \
-                create_chat_thread_result.errors is not None:
-            errors = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
-                participants=[thread_participants],
+        if hasattr(create_chat_thread_result, 'invalid_participants'):
+            errors = CommunicationErrorResponseConverter.convert(
+                participants=thread_participants or [],
                 chat_errors=create_chat_thread_result.invalid_participants
             )
 
@@ -199,7 +190,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
     def list_chat_threads(
         self,
         **kwargs: Any
-    ): # type: (...) -> AsyncItemPaged[ChatThreadItem]
+    ) -> AsyncItemPaged[ChatThreadItem]:
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.

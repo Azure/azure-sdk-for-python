@@ -18,19 +18,19 @@ class UsernamePasswordCredential(InteractiveCredential):
     a directory admin.
 
     This credential can only authenticate work and school accounts; Microsoft accounts are not supported.
-    See `Azure Active Directory documentation
-    <https://docs.microsoft.com/azure/active-directory/fundamentals/sign-up-organization>`_ for more information about
+    See `Microsoft Entra ID documentation
+    <https://learn.microsoft.com/azure/active-directory/fundamentals/sign-up-organization>`_ for more information about
     account types.
 
     :param str client_id: The application's client ID
     :param str username: The user's username (usually an email address)
     :param str password: The user's password
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str tenant_id: Tenant ID or a domain associated with a tenant. If not provided, defaults to the
-        "organizations" tenant, which supports only Azure Active Directory work or school accounts.
+        "organizations" tenant, which supports only Microsoft Entra work or school accounts.
     :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
@@ -44,6 +44,9 @@ class UsernamePasswordCredential(InteractiveCredential):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+    :keyword bool enable_support_logging: Enables additional support logging in the underlying MSAL library.
+        This logging potentially contains personally identifiable information and is intended to be used only for
+        troubleshooting purposes.
 
     .. admonition:: Example:
 
@@ -55,13 +58,7 @@ class UsernamePasswordCredential(InteractiveCredential):
             :caption: Create a UsernamePasswordCredential.
     """
 
-    def __init__(
-            self,
-            client_id: str,
-            username: str,
-            password: str,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, client_id: str, username: str, password: str, **kwargs: Any) -> None:
         # The base class will accept an AuthenticationRecord, allowing this credential to authenticate silently the
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we

@@ -171,7 +171,10 @@ class TestCommandFunction:
             }
         }
         actual_component = pydash.omit(
-            test_command._component._to_rest_object().as_dict(), "name", "properties.component_spec.name"
+            test_command._component._to_rest_object().as_dict(),
+            "name",
+            "properties.component_spec.name",
+            "properties.properties.client_component_hash",
         )
         assert actual_component == expected_component
 
@@ -212,6 +215,7 @@ class TestCommandFunction:
             test_no_deterministic_command._component._to_rest_object().as_dict(),
             "name",
             "properties.component_spec.name",
+            "properties.properties.client_component_hash",
         )
         assert actual_component == expected_component
 
@@ -364,7 +368,10 @@ class TestCommandFunction:
 
         # node1's component stores proper inputs & outputs
         actual_component = pydash.omit(
-            node1._component._to_rest_object().as_dict(), "name", "properties.component_spec.name"
+            node1._component._to_rest_object().as_dict(),
+            "name",
+            "properties.component_spec.name",
+            "properties.properties.client_component_hash",
         )
         expected_component = {
             "properties": {
@@ -538,7 +545,10 @@ class TestCommandFunction:
         node1 = command(**test_command_params)
 
         actual_component = pydash.omit(
-            node1._component._to_rest_object().as_dict(), "name", "properties.component_spec.name"
+            node1._component._to_rest_object().as_dict(),
+            "name",
+            "properties.component_spec.name",
+            "properties.properties.client_component_hash",
         )
         expected_component = {
             "properties": {

@@ -28,6 +28,7 @@ from azure.identity._credentials.azure_powershell import (
 import pytest
 
 from credscan_ignore import POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR
+from helpers import INVALID_CHARACTERS
 
 
 POPEN = AzurePowerShellCredential.__module__ + ".subprocess.Popen"
@@ -69,6 +70,25 @@ def test_cannot_execute_shell():
             AzurePowerShellCredential().get_token("scope")
 
 
+def test_invalid_tenant_id():
+    """Invalid tenant IDs should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            AzurePowerShellCredential(tenant_id="tenant" + c)
+
+        with pytest.raises(ValueError):
+            AzurePowerShellCredential().get_token("scope", tenant_id="tenant" + c)
+
+
+def test_invalid_scopes():
+    """Scopes with invalid characters should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            AzurePowerShellCredential().get_token("scope" + c)
+
+
 @pytest.mark.parametrize("stderr", ("", PREPARING_MODULES))
 def test_get_token(stderr):
     """The credential should parse Azure PowerShell's output to an AccessToken"""
@@ -88,7 +108,7 @@ def test_get_token(stderr):
     assert Popen.call_count == 1
     args, kwargs = Popen.call_args
     command = args[0][-1]
-    assert command.startswith("pwsh -NonInteractive -EncodedCommand ")
+    assert command.startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
 
     encoded_script = command.split()[-1]
     decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
@@ -110,7 +130,7 @@ def test_get_token_tenant_id(stderr):
 
     Popen = get_mock_Popen(stdout=stdout, stderr=stderr)
     with patch(POPEN, Popen):
-        token = AzurePowerShellCredential().get_token(scope, tenant_id="tenant_id")
+        token = AzurePowerShellCredential().get_token(scope, tenant_id="tenant-id")
 
     assert token.token == expected_access_token
     assert token.expires_on == expected_expires_on
@@ -267,7 +287,7 @@ def test_multitenant_authentication():
     second_token = first_token * 2
 
     def fake_Popen(command, **_):
-        assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
+        assert command[-1].startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
         encoded_script = command[-1].split()[-1]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
@@ -292,11 +312,12 @@ def test_multitenant_authentication():
         token = credential.get_token("scope")
         assert token.token == first_token
 
+
 def test_multitenant_authentication_not_allowed():
     expected_token = "***"
 
     def fake_Popen(command, **_):
-        assert command[-1].startswith("pwsh -NonInteractive -EncodedCommand ")
+        assert command[-1].startswith("pwsh -NoProfile -NonInteractive -EncodedCommand ")
         encoded_script = command[-1].split()[-1]
         decoded_script = base64.b64decode(encoded_script).decode("utf-16-le")
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
@@ -314,5 +335,5 @@ def test_multitenant_authentication_not_allowed():
         assert token.token == expected_token
 
         with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
-            token = credential.get_token("scope", tenant_id="some tenant")
+            token = credential.get_token("scope", tenant_id="some-tenant")
             assert token.token == expected_token

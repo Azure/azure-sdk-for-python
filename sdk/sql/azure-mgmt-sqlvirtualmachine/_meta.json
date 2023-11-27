@@ -1,11 +1,11 @@
 {
-  "commit": "020f48c422ec455cdee9f6516f2d0172d13e77a3",
+  "commit": "e5d8bf380ef60a6a283ba81fd0ce4bc0e49e6680",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.2",
   "use": [
-    "@autorest/python@6.2.7",
+    "@autorest/python@6.6.0",
     "@autorest/modelerfour@4.24.3"
   ],
-  "autorest_command": "autorest specification/sqlvirtualmachine/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.2.7 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/sqlvirtualmachine/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --tag=package-preview-2022-08 --use=@autorest/python@6.6.0 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
   "readme": "specification/sqlvirtualmachine/resource-manager/readme.md"
 }

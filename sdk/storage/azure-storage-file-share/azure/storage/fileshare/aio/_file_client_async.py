@@ -146,6 +146,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
     """
     def __init__(
             self, account_url: str,
@@ -440,7 +443,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         elif hasattr(data, '__aiter__'):
             stream = AsyncIterStreamer(data, encoding=encoding)
         else:
-            raise TypeError("Unsupported data type: {}".format(type(data)))
+            raise TypeError(f"Unsupported data type: {type(data)}")
         return await _upload_file_helper(
             self,
             stream,
@@ -834,7 +837,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             new_file_sas = self._query_str.strip('?')
 
         new_file_client = ShareFileClient(
-            '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
+            f'{self.scheme}://{self.primary_hostname}', self.share_name, new_file_path,
             credential=new_file_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
@@ -1106,7 +1109,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         if isinstance(data, str):
             data = data.encode(encoding)
         end_range = offset + length - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range)
+        content_range = f'bytes={offset}-{end_range}'
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
             return await self._client.file.upload_range(  # type: ignore
@@ -1337,7 +1340,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 bytes file size")
         end_range = length + offset - 1  # Reformat to an inclusive range index
-        content_range = "bytes={0}-{1}".format(offset, end_range)
+        content_range = f"bytes={offset}-{end_range}"
         try:
             return await self._client.file.upload_range(  # type: ignore
                 timeout=timeout,

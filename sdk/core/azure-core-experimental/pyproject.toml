@@ -2,4 +2,4 @@
 type_check_samples = false
 verifytypes = false
 pyright = false
-mypy = false
+mypy = true

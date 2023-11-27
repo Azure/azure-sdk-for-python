@@ -8,17 +8,22 @@
 
 """
 FILE: hello_world_advanced_sample.py
+
 DESCRIPTION:
     This sample demos more advanced scenarios including add/set with label/list operations for app configuration
-USAGE: python hello_world_advanced_sample.py
-"""
 
+USAGE: python hello_world_advanced_sample.py
+
+    Set the environment variables with your own values before running the sample:
+    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+"""
+import os
 from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSetting
-from util import print_configuration_setting, get_connection_string
+from util import print_configuration_setting
 
 
 def main():
-    CONNECTION_STRING = get_connection_string()
+    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
 
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
@@ -38,9 +43,17 @@ def main():
     # [START set_config_setting]
     added_config_setting.value = "new value"
     added_config_setting.content_type = "new content type"
-    updated_config_setting = client.set_configuration_setting(config_setting)
+    updated_config_setting = client.set_configuration_setting(added_config_setting)
     # [END set_config_setting]
     print_configuration_setting(updated_config_setting)
+    print("")
+
+    print("Get configuration setting")
+    # [START get_config_setting]
+    fetched_config_setting = client.get_configuration_setting(key="MyKey", label="MyLabel")
+    # [END get_config_setting]
+    print("Fetched configuration setting:")
+    print_configuration_setting(fetched_config_setting)
     print("")
 
     print("List configuration settings")

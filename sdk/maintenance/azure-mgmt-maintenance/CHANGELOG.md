@@ -1,5 +1,23 @@
 # Release History
 
+## 2.2.0b1 (2023-10-22)
+
+### Features Added
+
+  - Added operation ApplyUpdatesOperations.create_or_update_or_cancel
+
+## 2.1.0 (2023-08-18)
+
+### Features Added
+
+  - Added operation ConfigurationAssignmentsOperations.get
+  - Added operation ConfigurationAssignmentsOperations.get_parent
+  - Added operation group ConfigurationAssignmentsForResourceGroupOperations
+  - Added operation group ConfigurationAssignmentsForSubscriptionsOperations
+  - Added operation group ConfigurationAssignmentsWithinSubscriptionOperations
+  - Model ConfigurationAssignment has a new parameter filter
+  - Model MaintenanceConfiguration has a new parameter install_patches
+
 ## 2.1.0b2 (2022-11-11)
 
 ### Other Changes

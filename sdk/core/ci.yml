@@ -35,6 +35,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: core
+    BuildTargetingString: '*'
     ValidateFormatting: true
     Artifacts:
     - name: azure-core
@@ -47,13 +48,8 @@ extends:
       safeName: azurecorecoretracingtelemetry
     - name: azure-common
       safeName: azurecommon
+      skipPublishDocMs: true
     - name: azure-core-experimental
       safeName: azurecoreexperimental
-    CondaArtifacts:
-    - name: azure-core
-      meta_source: conda-recipe/meta.yaml
-      common_root: azure
-      checkout:
-        - package: azure-core
-          checkout_path: sdk/core
-          version: 1.24.1
+    - name: corehttp
+      safeName: corehttp

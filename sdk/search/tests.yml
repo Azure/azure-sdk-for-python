@@ -7,6 +7,7 @@ stages:
       # TODO: change/remove location back to default westus2 after search RP fixes deletion metadata issue
       # https://github.com/Azure/azure-sdk-tools/issues/2216
       SupportedClouds: 'Public,UsGov,China'
+      TestTimeoutInMinutes: 240
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
@@ -15,6 +16,7 @@ stages:
           SubscriptionConfiguration: $(sub-config-gov-test-resources)
         China:
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
+          Location: chinanorth3
       ServiceDirectory: search
       EnvVars:
         AZURE_CLIENT_ID: $(SEARCH_CLIENT_ID)

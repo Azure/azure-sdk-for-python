@@ -16,9 +16,6 @@ from unittest.mock import Mock, patch
 
 import pytest
 from _pytest.fixtures import FixtureRequest
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline.transport import HttpTransport
-from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 from devtools_testutils import (
     add_body_key_sanitizer,
     add_general_regex_sanitizer,
@@ -52,6 +49,9 @@ from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._workspace_operations_base import get_deployment_name, get_name_for_dependent_resource
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.transport import HttpTransport
+from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()

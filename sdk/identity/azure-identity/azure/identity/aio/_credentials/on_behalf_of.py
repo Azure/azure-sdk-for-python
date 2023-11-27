@@ -20,8 +20,8 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
 
     This flow is typically used by middle-tier services that authorize requests to other services with a delegated
     user identity. Because this is not an interactive authentication flow, an application using it must have admin
-    consent for any delegated permissions before requesting tokens for them. See `Azure Active Directory documentation
-    <https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow>`_ for a more detailed
+    consent for any delegated permissions before requesting tokens for them. See `Microsoft Entra ID documentation
+    <https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow>`_ for a more detailed
     description of the on-behalf-of flow.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
@@ -34,7 +34,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     :keyword str user_assertion: Required. The access token the credential will use as the user assertion when
         requesting on-behalf-of tokens
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword password: A certificate password. Used only when **client_certificate** is provided. If this value
@@ -76,9 +76,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
             try:
                 cert = get_client_credential(None, kwargs.pop("password", None), client_certificate)
             except ValueError as ex:
-                message = (
-                    '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
-                )
+                message = '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 raise ValueError(message) from ex
             self._client_credential: Union[str, AadClientCertificate] = AadClientCertificate(
                 cert["private_key"], password=cert.get("passphrase")
@@ -98,9 +96,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
@@ -112,7 +108,8 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
             try:
                 refresh_token = refresh_tokens[0]["secret"]
                 return await self._client.obtain_token_by_refresh_token_on_behalf_of(
-                    scopes, self._client_credential, refresh_token, **kwargs)
+                    scopes, self._client_credential, refresh_token, **kwargs
+                )
             except ClientAuthenticationError as ex:
                 _LOGGER.debug("silent authentication failed: %s", ex, exc_info=True)
             except (IndexError, KeyError, TypeError) as ex:

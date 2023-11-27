@@ -3,11 +3,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Union
+from typing import Any, Optional, Union, cast
+
 from azure.core.credentials import TokenCredential, AccessToken
+
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
 from ._generated.models import TokenGrantType
+from ._generated.operations._patch import AuthenticationOperations
 from ._helpers import _parse_challenge
 from ._user_agent import USER_AGENT
 
@@ -24,12 +27,13 @@ class AnonymousACRExchangeClient(object):
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
-    :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
-        may result in unsupported behavior.
+    :keyword api_version: API Version. The default value is "2021-07-01".
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs) -> None: # pylint: disable=missing-client-constructor-parameter-credential
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, endpoint: str, **kwargs: Any
+    ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -41,7 +45,9 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]:
+    def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator
+        self, challenge: str, **kwargs
+    ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         return self.exchange_refresh_token_for_access_token(
             "",
@@ -51,10 +57,11 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    def exchange_refresh_token_for_access_token(
+    def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs
     ) -> Optional[str]:
-        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token( # type: ignore
+        auth_operation = cast(AuthenticationOperations, self._client.authentication)
+        access_token = auth_operation.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )
         return access_token.access_token

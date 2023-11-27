@@ -86,7 +86,6 @@ stages:
                       - script: |
                           set -e
                           python -m pip install -r eng/release_requirements.txt
-                          python -m pip install tools/azure-sdk-tools
                         displayName: Install Release Dependencies
 
                       - task: PythonScript@0
@@ -106,7 +105,7 @@ stages:
                           New-Item -ItemType Directory -Force -Path $esrpDirectory
 
                           Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
-                            | Where-Object { ($_.Name -like "*.zip" -or $_.Name -like "*.whl") } `
+                            | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
                             | Copy-Item -Destination $esrpDirectory
 
                           Get-ChildItem $esrpDirectory
@@ -129,7 +128,7 @@ stages:
                           set -e
                           twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.whl
                           echo "Uploaded whl to devops feed"
-                          twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.zip
+                          twine upload --repository ${{parameters.DevFeedName}} --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*.tar.gz
                           echo "Uploaded sdist to devops feed"
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
@@ -275,7 +274,7 @@ stages:
 
               twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
               echo "Uploaded whl to devops feed $(DevFeedName)"
-              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.zip
+              twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
               echo "Uploaded sdist to devops feed $(DevFeedName)"
             displayName: 'Publish ${{artifact.name}} alpha package'
 
@@ -312,3 +311,5 @@ stages:
               - metadata/
             PackageSourceOverride: ${{parameters.PackageSourceOverride}}
             DocValidationImageId: ${{parameters.DocValidationImageId}}
+
+        - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml

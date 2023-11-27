@@ -23,11 +23,23 @@ from .operations import (
     ConfigurationsOperations,
     DatabasesOperations,
     FirewallRulesOperations,
+    FlexibleServerOperations,
     GetPrivateDnsZoneSuffixOperations,
     LocationBasedCapabilitiesOperations,
+    LogFilesOperations,
+    LtrBackupOperationsOperations,
+    MigrationsOperations,
     Operations,
+    PostgreSQLManagementClientOperationsMixin,
+    PrivateEndpointConnectionOperations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    QuotaUsagesOperations,
     ReplicasOperations,
+    ServerCapabilitiesOperations,
+    ServerThreatProtectionSettingsOperations,
     ServersOperations,
+    VirtualEndpointsOperations,
     VirtualNetworkSubnetUsageOperations,
 )
 
@@ -36,7 +48,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class PostgreSQLManagementClient(
+    PostgreSQLManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The Microsoft Azure management API provides create, read, update, and delete functionality for
     Azure PostgreSQL resources including servers, databases, firewall rules, VNET rules, security
     alert policies, log files and configurations with new business model.
@@ -49,6 +63,9 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
     :vartype location_based_capabilities:
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.LocationBasedCapabilitiesOperations
+    :ivar server_capabilities: ServerCapabilitiesOperations operations
+    :vartype server_capabilities:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.ServerCapabilitiesOperations
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
     :vartype check_name_availability:
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.CheckNameAvailabilityOperations
@@ -67,25 +84,55 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.FirewallRulesOperations
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.ServersOperations
+    :ivar flexible_server: FlexibleServerOperations operations
+    :vartype flexible_server:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.FlexibleServerOperations
+    :ivar ltr_backup_operations: LtrBackupOperationsOperations operations
+    :vartype ltr_backup_operations:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.LtrBackupOperationsOperations
+    :ivar migrations: MigrationsOperations operations
+    :vartype migrations:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.MigrationsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.Operations
     :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
     :vartype get_private_dns_zone_suffix:
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar private_endpoint_connection: PrivateEndpointConnectionOperations operations
+    :vartype private_endpoint_connection:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.PrivateEndpointConnectionOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.PrivateLinkResourcesOperations
+    :ivar quota_usages: QuotaUsagesOperations operations
+    :vartype quota_usages:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.QuotaUsagesOperations
     :ivar replicas: ReplicasOperations operations
     :vartype replicas:
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.ReplicasOperations
+    :ivar log_files: LogFilesOperations operations
+    :vartype log_files:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.LogFilesOperations
+    :ivar server_threat_protection_settings: ServerThreatProtectionSettingsOperations operations
+    :vartype server_threat_protection_settings:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.ServerThreatProtectionSettingsOperations
+    :ivar virtual_endpoints: VirtualEndpointsOperations operations
+    :vartype virtual_endpoints:
+     azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.VirtualEndpointsOperations
     :ivar virtual_network_subnet_usage: VirtualNetworkSubnetUsageOperations operations
     :vartype virtual_network_subnet_usage:
      azure.mgmt.rdbms.postgresql_flexibleservers.aio.operations.VirtualNetworkSubnetUsageOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-12-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -112,6 +159,9 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
         self.location_based_capabilities = LocationBasedCapabilitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.server_capabilities = ServerCapabilitiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -122,11 +172,33 @@ class PostgreSQLManagementClient:  # pylint: disable=client-accepts-api-version-
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.flexible_server = FlexibleServerOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ltr_backup_operations = LtrBackupOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.migrations = MigrationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connection = PrivateEndpointConnectionOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.quota_usages = QuotaUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.server_threat_protection_settings = ServerThreatProtectionSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_endpoints = VirtualEndpointsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.virtual_network_subnet_usage = VirtualNetworkSubnetUsageOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

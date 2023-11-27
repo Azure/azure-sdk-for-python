@@ -29,12 +29,11 @@ def main():
         subscription_id="f2669dff-5f08-45dd-b857-b2a60b72cdc9",
     )
 
-    response = client.distributed_availability_groups.begin_delete(
+    client.distributed_availability_groups.begin_delete(
         resource_group_name="testrg",
         managed_instance_name="testcl",
         distributed_availability_group_name="dag",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-11-01-preview/examples/DistributedAvailabilityGroupsDelete.json

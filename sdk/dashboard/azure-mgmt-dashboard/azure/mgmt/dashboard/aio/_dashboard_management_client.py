@@ -17,6 +17,7 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import DashboardManagementClientConfiguration
 from .operations import (
     GrafanaOperations,
+    ManagedPrivateEndpointsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
@@ -40,13 +41,16 @@ class DashboardManagementClient:  # pylint: disable=client-accepts-api-version-k
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.dashboard.aio.operations.PrivateLinkResourcesOperations
+    :ivar managed_private_endpoints: ManagedPrivateEndpointsOperations operations
+    :vartype managed_private_endpoints:
+     azure.mgmt.dashboard.aio.operations.ManagedPrivateEndpointsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-08-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-09-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -63,7 +67,7 @@ class DashboardManagementClient:  # pylint: disable=client-accepts-api-version-k
         self._config = DashboardManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -75,6 +79,9 @@ class DashboardManagementClient:  # pylint: disable=client-accepts-api-version-k
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_private_endpoints = ManagedPrivateEndpointsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
@@ -107,5 +114,5 @@ class DashboardManagementClient:  # pylint: disable=client-accepts-api-version-k
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

@@ -7,7 +7,7 @@ import time
 import uuid
 import datetime
 import warnings
-from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
+from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast, Iterable
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
@@ -58,7 +58,9 @@ if TYPE_CHECKING:
         Mapping[str, Any],
         ServiceBusMessage,
         AmqpAnnotatedMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
+        Iterable[Mapping[str, Any]],
+        Iterable[ServiceBusMessage],
+        Iterable[AmqpAnnotatedMessage],
     ]
     MessageObjTypes = Union[
         ServiceBusMessage,
@@ -155,6 +157,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
     :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
      Service Bus will associate it with some error messages for easier correlation of errors.
      If not specified, a unique id will be generated.
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+     a larger than default value may need to be passed in.
     """
 
     def __init__(
@@ -293,7 +299,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :type schedule_time_utc: ~datetime.datetime
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: List[int]
+        :returns: A list of the sequence numbers of the enqueued messages.
+        :rtype: list[int]
 
         .. admonition:: Example:
 
@@ -496,6 +503,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :param Optional[int] max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can
          hold. By default, the value is determined by your Service Bus tier.
+        :return: A ServiceBusMessageBatch object
         :rtype: ~azure.servicebus.ServiceBusMessageBatch
 
         .. admonition:: Example:

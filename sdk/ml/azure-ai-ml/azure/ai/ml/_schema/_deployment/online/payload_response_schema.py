@@ -16,7 +16,7 @@ module_logger = logging.getLogger(__name__)
 class PayloadResponseSchema(metaclass=PatchedSchemaMeta):
     enabled = StringTransformedEnum(required=True, allowed_values=[Boolean.TRUE, Boolean.FALSE])
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities._deployment.payload_response import PayloadResponse

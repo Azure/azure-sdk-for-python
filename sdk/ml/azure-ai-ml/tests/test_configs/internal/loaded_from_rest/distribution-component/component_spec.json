@@ -7,8 +7,8 @@
     "input_path": {
       "type": "path",
       "description": "The directory contains input data.",
-      "datastore_mode": "Mount",
-      "optional": false
+      "optional": false,
+      "datastore_mode": "Mount"
     },
     "string_parameter": {
       "type": "string",
@@ -26,10 +26,11 @@
   "type": "DistributedComponent",
   "environment": {
     "os": "Linux",
-    "name": "AzureML-Minimal"
+    "name": "azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu"
   },
   "launcher": {
     "type": "mpi",
     "additional_arguments": "python train.py --input-path {inputs.input_path} [--string-parameter {inputs.string_parameter}] --output-path {outputs.output_path}"
-  }
+  },
+  "_source": "REMOTE.WORKSPACE.COMPONENT"
 }

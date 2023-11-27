@@ -16,7 +16,7 @@ from ..job.job_limits import DoWhileLimitsSchema
 from .component_job import _resolve_outputs
 from .pipeline_job_io import OutputBindingStr
 
-# pylint: disable=no-self-use,protected-access
+# pylint: disable=protected-access
 
 
 class ControlFlowSchema(PathAwareSchema):
@@ -28,7 +28,7 @@ class BaseLoopSchema(ControlFlowSchema):
     body = DataBindingStr()
 
     @pre_dump
-    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
+    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable= unused-argument
         result = copy.copy(data)
         # Update body object to data_binding_str
         result._body = data._get_body_binding_str()
@@ -57,7 +57,7 @@ class DoWhileSchema(BaseLoopSchema):
     limits = NestedField(DoWhileLimitsSchema, required=True)
 
     @pre_dump
-    def resolve_inputs_outputs(self, data, **kwargs):  # pylint: disable=no-self-use
+    def resolve_inputs_outputs(self, data, **kwargs):
         # Try resolve object's mapping and condition and return a resolved new object
         result = copy.copy(data)
         mapping = {}
@@ -74,7 +74,7 @@ class DoWhileSchema(BaseLoopSchema):
         return result
 
     @pre_dump
-    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
+    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable= unused-argument
         return super(DoWhileSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
 
 
@@ -97,7 +97,7 @@ class ParallelForSchema(BaseLoopSchema):
     )
 
     @pre_load
-    def load_items(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
+    def load_items(self, data, **kwargs):  # pylint: disable= unused-argument
         # load items from json to convert the assets in it to rest
         try:
             items = data["items"]
@@ -109,7 +109,7 @@ class ParallelForSchema(BaseLoopSchema):
         return data
 
     @pre_dump
-    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
+    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable= unused-argument
         return super(ParallelForSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
 
     @pre_dump
@@ -119,7 +119,7 @@ class ParallelForSchema(BaseLoopSchema):
         return result
 
     @pre_dump
-    def serialize_items(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
+    def serialize_items(self, data, **kwargs):  # pylint: disable= unused-argument
         # serialize items to json string to avoid being removed by _dump_for_validation
         from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
 

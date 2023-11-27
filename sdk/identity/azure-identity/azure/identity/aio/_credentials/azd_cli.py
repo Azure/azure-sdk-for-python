@@ -23,7 +23,7 @@ from ..._credentials.azd_cli import (
     parse_token,
     sanitize_output,
 )
-from ..._internal import resolve_tenant
+from ..._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
 
 
 class AzureDeveloperCliCredential(AsyncContextManager):
@@ -32,11 +32,11 @@ class AzureDeveloperCliCredential(AsyncContextManager):
     Azure Developer CLI is a command-line interface tool that allows developers to create, manage, and deploy
     resources in Azure. It's built on top of the Azure CLI and provides additional functionality specific
     to Azure developers. It allows users to authenticate as a user and/or a service principal against
-    `Azure Active Directory (Azure AD) <"https://learn.microsoft.com/azure/active-directory/fundamentals/">`__.
+    `Microsoft Entra ID <"https://learn.microsoft.com/azure/active-directory/fundamentals/">`__.
     The AzureDeveloperCliCredential authenticates in a development environment and acquires a token on behalf of
     the logged-in user or service principal in Azure Developer CLI. It acts as the Azure Developer CLI logged-in user
     or service principal and executes an Azure CLI command underneath to authenticate the application against
-    Azure Active Directory.
+    Microsoft Entra ID.
 
     To use this credential, the developer needs to authenticate locally in Azure Developer CLI using one of the
     commands below:
@@ -71,15 +71,22 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         *,
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
-        process_timeout: int = 10
+        process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -88,23 +95,34 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure Developer CLI.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure Developer CLI
           but didn't receive an access token.
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncAzureDeveloperCliCredential().get_token(*scopes, **kwargs)
+            return _SyncAzureDeveloperCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
 
         if not scopes:
             raise ValueError("Missing scope in request. \n")
 
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
+
         commandString = " --scope ".join(scopes)
         command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
-            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
+            default_tenant=self.tenant_id,
+            tenant_id=tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs,
         )
 
         if tenant:
@@ -114,11 +132,14 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
-            raise ClientAuthenticationError(
-                message="Unexpected output from Azure CLI: '{}'. \n"
-                        "To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                        "https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot.".format(sanitized_output)
+            message = (
+                f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
+                f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
+            if within_dac.get():
+                raise CredentialUnavailableError(message=message)
+            raise ClientAuthenticationError(message=message)
 
         return token
 
@@ -143,8 +164,9 @@ async def _run_command(command: str, timeout: int) -> str:
             *args,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            stdin=asyncio.subprocess.DEVNULL,
             cwd=working_directory,
-            env=dict(os.environ, NO_COLOR="true")
+            env=dict(os.environ, NO_COLOR="true"),
         )
         stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), timeout)
         output = stdout_b.decode()
@@ -164,8 +186,10 @@ async def _run_command(command: str, timeout: int) -> str:
     if proc.returncode == 127 or stderr.startswith("'azd' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 
-    if "not logged in, run `azd auth login` to login" in stderr:
+    if "not logged in, run `azd auth login` to login" in stderr and "AADSTS" not in stderr:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure Developer CLI"
+    if within_dac.get():
+        raise CredentialUnavailableError(message=message)
     raise ClientAuthenticationError(message=message)

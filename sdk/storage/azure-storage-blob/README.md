@@ -229,7 +229,7 @@ container_client = ContainerClient.from_connection_string(conn_str="<connection_
 container_client.create_container()
 ```
 
-Use the async client to upload a blob
+Use the async client to create a container
 
 ```python
 from azure.storage.blob.aio import ContainerClient

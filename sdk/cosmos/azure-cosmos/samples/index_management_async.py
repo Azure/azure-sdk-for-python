@@ -119,7 +119,7 @@ async def fetch_all_databases(client):
 
 async def query_documents_with_custom_query(container, query_with_optional_parameters, message = "Document(s) found by query: "):
     try:
-        results = container.query_items(query_with_optional_parameters, enable_cross_partition_query=True)
+        results = container.query_items(query_with_optional_parameters)
         print(message)
         async for doc in results:
             print(doc)
@@ -377,8 +377,7 @@ async def range_scan_on_hash_index(db):
         # using the enableScanInQuery directive
         results = created_Container.query_items(
             query,
-            enable_scan_in_query=True,
-            enable_cross_partition_query=True
+            enable_scan_in_query=True
         )
         print("Printing documents queried by range by providing enableScanInQuery = True")
         async for doc in results: print(doc["id"])

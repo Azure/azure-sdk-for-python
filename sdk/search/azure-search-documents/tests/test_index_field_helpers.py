@@ -3,7 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.search.documents.indexes.models import ComplexField, SearchableField, SimpleField, SearchFieldDataType
+from azure.search.documents.indexes.models import (
+    ComplexField,
+    SearchableField,
+    SimpleField,
+    SearchFieldDataType,
+)
+
 
 def test_edm_contents():
     assert SearchFieldDataType.String == "Edm.String"
@@ -15,6 +21,7 @@ def test_edm_contents():
     assert SearchFieldDataType.GeographyPoint == "Edm.GeographyPoint"
     assert SearchFieldDataType.ComplexType == "Edm.ComplexType"
     assert SearchFieldDataType.Collection("foo") == "Collection(foo)"
+
 
 class TestComplexField:
     def test_single(self):
@@ -45,6 +52,7 @@ class TestComplexField:
         assert fld.index_analyzer_name is None
         assert fld.synonym_map_names is None
 
+
 class TestSimplexField:
     def test_defaults(self):
         fld = SimpleField(name="foo", type=SearchFieldDataType.Double)
@@ -60,6 +68,7 @@ class TestSimplexField:
         assert fld.search_analyzer_name is None
         assert fld.index_analyzer_name is None
         assert fld.synonym_map_names is None
+
 
 class TestSearchableField:
     def test_defaults(self):

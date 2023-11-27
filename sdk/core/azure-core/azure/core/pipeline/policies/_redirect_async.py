@@ -23,12 +23,20 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from typing import TypeVar
 from azure.core.exceptions import TooManyRedirectsError
+from azure.core.pipeline import PipelineResponse, PipelineRequest
+from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from . import AsyncHTTPPolicy
-from ._redirect import RedirectPolicyBase
+from ._redirect import RedirectPolicyBase, domain_changed
+from ._utils import get_domain
+
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
+class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """An async redirect policy.
 
     An async redirect policy in the pipeline can be configured directly or per operation.
@@ -46,7 +54,9 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
             :caption: Configuring an async redirect policy.
     """
 
-    async def send(self, request):  # pylint:disable=invalid-overridden-method
+    async def send(
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Sends the PipelineRequest object to the next policy.
         Uses redirect settings to send the request to redirect endpoint if necessary.
 
@@ -58,12 +68,19 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
         """
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)
+        original_domain = get_domain(request.http_request.url) if redirect_settings["allow"] else None
         while redirects_remaining:
             response = await self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings["allow"]:
                 redirects_remaining = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
+                if domain_changed(original_domain, request.http_request.url):
+                    # "insecure_domain_change" is used to indicate that a redirect
+                    # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
+                    # to clean up sensitive headers. We need to remove it before sending the request
+                    # to the transport layer.
+                    request.context.options["insecure_domain_change"] = True
                 continue
             return response
 

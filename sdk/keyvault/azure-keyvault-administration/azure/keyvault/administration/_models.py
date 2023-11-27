@@ -7,7 +7,7 @@ from typing import Dict, Optional, Union
 from azure.core.rest import HttpResponse
 
 from ._enums import KeyVaultSettingType
-from ._generated_models import (
+from ._generated.models import (
     FullBackupOperation,
     Permission,
     RoleAssignment,
@@ -160,7 +160,7 @@ class KeyVaultBackupResult(object):
     # pylint:disable=unused-argument
 
     def __init__(self, **kwargs) -> None:
-        self.folder_url = kwargs.get("folder_url")
+        self.folder_url: Optional[str] = kwargs.get("folder_url")
 
     @classmethod
     def _from_generated(
@@ -172,10 +172,10 @@ class KeyVaultBackupResult(object):
 class KeyVaultSetting(object):
     """A Key Vault setting.
 
-    :ivar str name: The name of the account setting.
-    :ivar str value: The value of the account setting.
-    :ivar setting_type: The type specifier of the value.
-    :vartype setting_type: str or KeyVaultSettingType or None
+    :param str name: The name of the account setting.
+    :param str value: The value of the account setting.
+    :param setting_type: The type specifier of the value.
+    :type setting_type: str or KeyVaultSettingType or None
     """
 
     def __init__(

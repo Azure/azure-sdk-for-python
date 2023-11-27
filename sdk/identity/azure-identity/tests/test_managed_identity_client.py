@@ -100,7 +100,7 @@ def test_retry():
         transport.send.reset_mock()
 
 
-@pytest.mark.parametrize("content_type", ("text/html","application/json"))
+@pytest.mark.parametrize("content_type", ("text/html", "application/json"))
 def test_unexpected_content(content_type):
     content = "<html><body>not JSON</body></html>"
 

@@ -26,6 +26,7 @@
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
+
 class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Represents the format of the schema to be stored by the Schema Registry service.
@@ -40,6 +41,10 @@ class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
     """Represents a custom schema format."""
 
+    PROTOBUF = "Protobuf"
+    """Represents a protobuf schema format."""
+
+
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Represents the Schema Registry API version to use for requests.
@@ -47,7 +52,8 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     V2021_10 = "2021-10"
     V2022_10 = "2022-10"
+    V2023_07_01 = "2023-07-01"
     """This is the default version."""
 
 
-DEFAULT_VERSION = ApiVersion.V2022_10
+DEFAULT_VERSION = ApiVersion.V2023_07_01

@@ -28,7 +28,6 @@ stages:
         MaxParallel: 2
         ServiceDirectory: communication
         TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
-
         ${{ if contains(service, 'phonenumbers') }}:
           CloudConfig:
             Public:

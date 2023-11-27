@@ -10,8 +10,18 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class Enum6(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum6."""
+class CompositionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The composition type describes how the key-values within the snapshot are composed. The 'key'
+    composition type ensures there are no two key-values containing the same key. The 'key_label'
+    composition type ensures there are no two key-values containing the same key and label.
+    """
+
+    KEY = "key"
+    KEY_LABEL = "key_label"
+
+
+class KeyValueFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KeyValueFields."""
 
     KEY = "key"
     LABEL = "label"
@@ -23,78 +33,42 @@ class Enum6(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ETAG = "etag"
 
 
-class Enum7(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum7."""
-
-    KEY = "key"
-    LABEL = "label"
-    CONTENT_TYPE = "content_type"
-    VALUE = "value"
-    LAST_MODIFIED = "last_modified"
-    TAGS = "tags"
-    LOCKED = "locked"
-    ETAG = "etag"
-
-
-class Get5ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Get5ItemsItem."""
+class LabelFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """LabelFields."""
 
     NAME = "name"
 
 
-class Get6ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Get6ItemsItem."""
-
-    KEY = "key"
-    LABEL = "label"
-    CONTENT_TYPE = "content_type"
-    VALUE = "value"
-    LAST_MODIFIED = "last_modified"
-    TAGS = "tags"
-    LOCKED = "locked"
-    ETAG = "etag"
-
-
-class Get7ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Get7ItemsItem."""
-
-    KEY = "key"
-    LABEL = "label"
-    CONTENT_TYPE = "content_type"
-    VALUE = "value"
-    LAST_MODIFIED = "last_modified"
-    TAGS = "tags"
-    LOCKED = "locked"
-    ETAG = "etag"
-
-
-class Head5ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Head5ItemsItem."""
+class SnapshotFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SnapshotFields."""
 
     NAME = "name"
-
-
-class Head6ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Head6ItemsItem."""
-
-    KEY = "key"
-    LABEL = "label"
-    CONTENT_TYPE = "content_type"
-    VALUE = "value"
-    LAST_MODIFIED = "last_modified"
+    STATUS = "status"
+    FILTERS = "filters"
+    COMPOSITION_TYPE = "composition_type"
+    CREATED = "created"
+    EXPIRES = "expires"
+    RETENTION_PERIOD = "retention_period"
+    SIZE = "size"
+    ITEMS_COUNT = "items_count"
     TAGS = "tags"
-    LOCKED = "locked"
     ETAG = "etag"
 
 
-class Head7ItemsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Head7ItemsItem."""
+class SnapshotStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the snapshot."""
 
-    KEY = "key"
-    LABEL = "label"
-    CONTENT_TYPE = "content_type"
-    VALUE = "value"
-    LAST_MODIFIED = "last_modified"
-    TAGS = "tags"
-    LOCKED = "locked"
-    ETAG = "etag"
+    PROVISIONING = "provisioning"
+    READY = "ready"
+    ARCHIVED = "archived"
+    FAILED = "failed"
+
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the operation."""
+
+    NOT_STARTED = "NotStarted"
+    RUNNING = "Running"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"

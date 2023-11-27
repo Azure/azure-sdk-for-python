@@ -4,14 +4,13 @@ from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set
 from azure.mgmt.netapp.models import Volume, VolumePatch, ReplicationObject, VolumePropertiesDataProtection, AuthorizeRequest, PoolChangeRequest
 from test_pool import create_pool, delete_pool
 from test_account import delete_account
-from setup import *
+import setup
 import azure.mgmt.netapp.models
 
 GIGABYTE = 1024 * 1024 * 1024
 SUBSID = '69a75bda-882e-44d5-8431-63421204132a'
-LIVE = False
 
-def create_volume_body(volume_name, location, rg=TEST_RG, vnet=PERMA_VNET, enable_subvolumes=None):
+def create_volume_body(volume_name, location, rg=setup.TEST_RG, vnet=setup.PERMA_VNET, enable_subvolumes=None):
     default_protocol_type = ["NFSv3"]    
     volume_body = Volume(
         location=location,
@@ -19,17 +18,17 @@ def create_volume_body(volume_name, location, rg=TEST_RG, vnet=PERMA_VNET, enabl
         protocol_types=default_protocol_type,
         creation_token=volume_name,
         enable_subvolumes=enable_subvolumes,
-        service_level=SERVICE_LEVEL,
+        service_level=setup.SERVICE_LEVEL,
         subnet_id="/subscriptions/" + SUBSID + "/resourceGroups/" + rg + "/providers/Microsoft.Network/virtualNetworks/"
-                  + vnet + "/subnets/" + PERMA_SUBNET,
+                  + vnet + "/subnets/" + setup.PERMA_SUBNET,
         network_features="Standard"
     )
 
     return volume_body
 
 
-def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1,
-                  location=LOCATION, vnet=PERMA_VNET, volume_only=False, enable_subvolumes=None):    
+def create_volume(client, rg=setup.TEST_RG, account_name=setup.TEST_ACC_1, pool_name=setup.TEST_POOL_1, volume_name=setup.TEST_VOL_1,
+                  location=setup.LOCATION, vnet=setup.PERMA_VNET, volume_only=False, enable_subvolumes=None):    
     if not volume_only:
         create_pool(
             client,
@@ -49,12 +48,12 @@ def create_volume(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_PO
         volume_body
     ).result()
     volume = wait_for_volume(client, rg, account_name, pool_name, volume_name)
-    print("\tdone")
+    print("\tDone creating volume {0} in NetApp Account {1}".format(volume_name, account_name))
     return volume
 
 
-def create_dp_volume(client, source_volume, rg=TEST_REPL_REMOTE_RG, account_name=TEST_ACC_2, pool_name=TEST_POOL_2,
-                     volume_name=TEST_VOL_2, location=REMOTE_LOCATION, vnet=PERMA_REMOTE_VNET, volume_only=False):    
+def create_dp_volume(client, source_volume, rg=setup.TEST_REPL_REMOTE_RG, account_name=setup.TEST_ACC_2, pool_name=setup.TEST_POOL_2,
+                     volume_name=setup.TEST_VOL_2, location=setup.REMOTE_LOCATION, vnet=setup.PERMA_REMOTE_VNET, volume_only=False):    
     if not volume_only:
         create_pool(
             client,
@@ -63,7 +62,7 @@ def create_dp_volume(client, source_volume, rg=TEST_REPL_REMOTE_RG, account_name
             pool_name,
             location,
             False)
-    print("Creating DP volume in NetApp Account {0}".format(account_name))
+    print("Creating DP volume {0} in NetApp Account {1}".format(volume_name, account_name))
     # data protection and replication object
     replication = ReplicationObject(
         endpoint_type="dst",
@@ -83,7 +82,7 @@ def create_dp_volume(client, source_volume, rg=TEST_REPL_REMOTE_RG, account_name
         protocol_types=default_protocol_type,
         creation_token=volume_name,
         subnet_id="/subscriptions/" + SUBSID + "/resourceGroups/" + rg + "/providers/Microsoft.Network/virtualNetworks/"
-                  + PERMA_REMOTE_VNET + "/subnets/" + PERMA_REMOTE_SUBNET,
+                  + vnet + "/subnets/" + setup.PERMA_REMOTE_SUBNET,
         volume_type="DataProtection",
         data_protection=data_protection
     )
@@ -96,7 +95,7 @@ def create_dp_volume(client, source_volume, rg=TEST_REPL_REMOTE_RG, account_name
         volume_body
     ).result()
     wait_for_volume(client, rg, account_name, pool_name, volume_name)
-    print("\tdone")
+    print("\tDone creating DP volume in NetApp Account {0}".format(account_name))
     return destination_volume
 
 
@@ -107,8 +106,8 @@ def get_volume(client, rg, account_name, pool_name, volume_name):
 
 def wait_for_no_volume(client, rg, account_name, pool_name, volume_name):
     # a workaround for the async nature of certain ARM processes
-    co = 0
-    while co < 100:
+    retry = 0
+    while retry < 100:
         try:
             vol = get_volume(client, rg, account_name, pool_name, volume_name)
             print("\tgot volume. Still waiting. state = " + vol.provisioning_state)
@@ -116,25 +115,28 @@ def wait_for_no_volume(client, rg, account_name, pool_name, volume_name):
             # not found is an exception case (status code 200 expected)
             # but is what we are waiting for
             break
-        if LIVE:
+        if setup.LIVE:
             time.sleep(3)
-        co += 1
-    print("Retried {0} times".format(co))
+        retry += 1
+    if retry == 100:
+            raise Exception("Timeout when waiting for no volume")
+    print("Retried {0} times".format(retry))
 
 def wait_for_volume(client, rg, account_name, pool_name, volume_name):
     # a work around for the async nature of certain ARM processes
-    co = 0
-    while co < 100:
+    retry = 0
+    while retry < 100:
         volume = get_volume(client, rg, account_name, pool_name, volume_name)
         if volume.provisioning_state == "Succeeded":
             break
         if volume.provisioning_state == "Failed":
             print("\t Wait for volume. Volume is in a failed state.")
             break
-        if LIVE:
+        if setup.LIVE:
             time.sleep(3)
-        co += 1
-    print("Retried {0} times".format(co))
+        retry += 1
+    if retry == 100:
+            raise Exception("Timeout when waiting for volume")
     return volume
 
 def delete_volume(client, rg, account_name, pool_name, volume_name):
@@ -148,33 +150,40 @@ def delete_volume(client, rg, account_name, pool_name, volume_name):
             print("failed to delete volume. Retry number: {0}".format(retry))
             print(e)
             retry += 1
-            if LIVE:
+            if setup.LIVE:
                 time.sleep(10)
+    if retry == 3:
+            raise Exception("Timeout when trying to delete volume")
     wait_for_no_volume(client, rg, account_name, pool_name, volume_name)
-    print("\tdone")
+    print("\tDone deleting volume {0}".format(volume_name))
 
-def wait_for_replication_status(client, target_state, dp_rg=TEST_REPL_REMOTE_RG, dp_account_name=TEST_ACC_2, dp_pool_name=TEST_POOL_2, dp_volume_name=TEST_VOL_2):
-    # python isn't good at do-while loops but loop until we get the target state
+def wait_for_replication_status(client, target_state, dp_rg=setup.TEST_REPL_REMOTE_RG, dp_account_name=setup.TEST_ACC_2, dp_pool_name=setup.TEST_POOL_2, dp_volume_name=setup.TEST_VOL_2):
     print("Waiting for replication status")
-    while True:
+    retry = 0
+    while retry < 11:
         replication_status = client.volumes.replication_status(dp_rg, dp_account_name, dp_pool_name, dp_volume_name)
         if replication_status.mirror_state == target_state:
             break
-        if LIVE:
-            time.sleep(3)
-    print("\tdone")
+        if setup.LIVE:
+            time.sleep(60)
+        retry += 1
+    if retry == 11:
+            raise Exception("Timeout when waiting for replication status")
+    print("\tDone waiting for replication status")
 
-def wait_for_succeeded(client, rg=TEST_RG, account_name=TEST_ACC_1, pool_name=TEST_POOL_1, volume_name=TEST_VOL_1, dp_rg=TEST_REPL_REMOTE_RG, dp_account_name=TEST_ACC_2, dp_pool_name=TEST_POOL_2, dp_volume_name=TEST_VOL_2,live=False):
-    # python isn't good at do-while loops but loop until we get volumes in succeeded state
+def wait_for_succeeded(client, rg=setup.TEST_RG, account_name=setup.TEST_ACC_1, pool_name=setup.TEST_POOL_1, volume_name=setup.TEST_VOL_1, dp_rg=setup.TEST_REPL_REMOTE_RG, dp_account_name=setup.TEST_ACC_2, dp_pool_name=setup.TEST_POOL_2, dp_volume_name=setup.TEST_VOL_2,live=False):
     print("Waiting for success status on source and dest volume")
-    while True:
+    retry = 0
+    while retry < 20:
         source_volume = client.volumes.get(rg, account_name, pool_name, volume_name)
         dp_volume = client.volumes.get(dp_rg, dp_account_name, dp_pool_name, dp_volume_name)
         if (source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded"):
             break
-        if LIVE:
-            time.sleep(5)
-    print("\tdone")
+        if setup.LIVE:
+            time.sleep(10)
+    if retry == 20:
+            raise Exception("Timeout when waiting for success status on source and dest volume")
+    print("\tDone waiting for success status on source and dest volume")
 
 def create_virtual_network(network_client, group_name, location, network_name, subnet_name):
     print("Create vnet {0}".format(network_name))    
@@ -213,68 +222,68 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(azure.mgmt.netapp.NetAppManagementClient)
         if self.is_live:
-            global LIVE
-            LIVE = True
+            setup.LIVE = True
             from azure.mgmt.network import NetworkManagementClient
-            self.network_client = self.create_mgmt_client(NetworkManagementClient)             
+            self.network_client = self.create_mgmt_client(NetworkManagementClient)
 
-    # Before tests are run live a resource group needs to be created along with vnet and subnet
     # Note that when tests are run in live mode it is best to run one test at a time.
     @recorded_by_proxy
     def test_create_delete_list_volume(self):
-        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
+        ACCOUNT1 = self.get_resource_name(setup.TEST_ACC_1+"-")
         print("Starting test_create_delete_list_volume")
-        set_bodiless_matcher()
-        volume = create_volume(
-            self.client,
-            TEST_RG,
-            ACCOUNT1,
-            TEST_POOL_1,
-            TEST_VOL_1,
-            vnet=PERMA_VNET
-        )
-        assert volume.name == ACCOUNT1 + '/' + TEST_POOL_1 + '/' + TEST_VOL_1
-        # check default export policy and protocol
-        assert volume.export_policy.rules[0].nfsv3
-        assert not volume.export_policy.rules[0].nfsv41
-        assert "0.0.0.0/0" == volume.export_policy.rules[0].allowed_clients
-        assert volume.protocol_types[0] == "NFSv3"
+        try:
+            set_bodiless_matcher()
+            volume = create_volume(
+                self.client,
+                setup.TEST_RG,
+                ACCOUNT1,
+                setup.TEST_POOL_1,
+                setup.TEST_VOL_1,
+                vnet=setup.PERMA_VNET
+            )
+            assert volume.name == ACCOUNT1 + '/' + setup.TEST_POOL_1 + '/' + setup.TEST_VOL_1
+            # check default export policy and protocol
+            assert volume.export_policy.rules[0].nfsv3
+            assert not volume.export_policy.rules[0].nfsv41
+            assert "0.0.0.0/0" == volume.export_policy.rules[0].allowed_clients
+            assert volume.protocol_types[0] == "NFSv3"
 
-        volume_list = self.client.volumes.list(TEST_RG, ACCOUNT1, TEST_POOL_1)
-        assert len(list(volume_list)) == 1
+            volume_list = self.client.volumes.list(setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1)
+            assert len(list(volume_list)) == 1
 
-        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, TEST_VOL_1)
-        volume_list = self.client.volumes.list(TEST_RG, ACCOUNT1, TEST_POOL_1)
-        assert len(list(volume_list)) == 0
-
-        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1)
-        delete_account(self.client, TEST_RG, ACCOUNT1)
+            delete_volume(self.client, setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, setup.TEST_VOL_1)
+            volume_list = self.client.volumes.list(setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1)
+            assert len(list(volume_list)) == 0
+        finally:
+            delete_pool(self.client, setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1)
+            delete_account(self.client, setup.TEST_RG, ACCOUNT1)
 
         print("Finished with test_create_delete_list_volume")
 
     @recorded_by_proxy
     def test_list_volumes(self):
         print("Starting test_list_volumes")
-        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-")
-        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
-        volumeName2 = self.get_resource_name(TEST_VOL_2+"-")
-        
-        set_bodiless_matcher()
-        create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, LOCATION, vnet=PERMA_VNET)
-        create_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName2, LOCATION, vnet=PERMA_VNET, volume_only=True)
-        volumes = [volumeName1, volumeName2]
+        try:
+            ACCOUNT1 = self.get_resource_name(setup.TEST_ACC_1+"-")
+            volumeName1 = self.get_resource_name(setup.TEST_VOL_1+"-")
+            volumeName2 = self.get_resource_name(setup.TEST_VOL_2+"-")
+            
+            set_bodiless_matcher()
+            create_volume(self.client, setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName1, setup.LOCATION, vnet=setup.PERMA_VNET)
+            create_volume(self.client, setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName2, setup.LOCATION, vnet=setup.PERMA_VNET, volume_only=True)
+            volumes = [volumeName1, volumeName2]
 
-        volume_list = self.client.volumes.list(TEST_RG, ACCOUNT1, TEST_POOL_1)
-        assert len(list(volume_list)) == 2
-        idx = 0
-        for volume in volume_list:
-            assert volume.name == volumes[idx]
-            idx += 1
-
-        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
-        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName2)
-        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1)
-        delete_account(self.client, TEST_RG, ACCOUNT1)
+            volume_list = self.client.volumes.list(setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1)
+            assert len(list(volume_list)) == 2
+            idx = 0
+            for volume in volume_list:
+                assert volume.name == volumes[idx]
+                idx += 1
+        finally:
+            delete_volume(self.client, setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName1)
+            delete_volume(self.client, setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName2)
+            delete_pool(self.client, setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1)
+            delete_account(self.client, setup.TEST_RG, ACCOUNT1)
         
         print("Finished with test_list_volumes")
 
@@ -282,101 +291,115 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
     def test_volume_replication(self):
         set_bodiless_matcher()
         print("Starting test_volume_replication")
-        ACCOUNT1 = self.get_resource_name(TEST_ACC_1+"-b2-")
-        ACCOUNT2 = self.get_resource_name(TEST_ACC_2+"-b2-")
-        volumeName1 = self.get_resource_name(TEST_VOL_1+"-b2-")        
-        dbVolumeName = self.get_resource_name(TEST_VOL_2+"-b2-")
+        ACCOUNT1 = self.get_resource_name(setup.TEST_ACC_1+"-b2-")
+        ACCOUNT2 = self.get_resource_name(setup.TEST_ACC_2+"-b2-")
+        volumeName1 = self.get_resource_name(setup.TEST_VOL_1+"-b2-")        
+        dbVolumeName = self.get_resource_name(setup.TEST_VOL_2+"-b2-")
         
-        source_volume = create_volume(
-            self.client,
-            TEST_RG,
-            ACCOUNT1,
-            TEST_POOL_1,
-            volumeName1,
-            vnet=PERMA_VNET)
-        dp_volume = create_dp_volume(
-            self.client,
-            source_volume,
-            TEST_REPL_REMOTE_RG,
-            ACCOUNT2,
-            TEST_POOL_2,
-            dbVolumeName,
-            vnet=PERMA_REMOTE_VNET)
+        try:
+            source_volume = create_volume(
+                self.client,
+                setup.TEST_RG,
+                ACCOUNT1,
+                setup.TEST_POOL_1,
+                volumeName1,
+                vnet=setup.PERMA_VNET)
+            dp_volume = create_dp_volume(
+                self.client,
+                source_volume,
+                setup.TEST_REPL_REMOTE_RG,
+                ACCOUNT2,
+                setup.TEST_POOL_2,
+                dbVolumeName,
+                vnet=setup.PERMA_REMOTE_VNET)
 
-        # sync replication
-        print("Syncing replication")
-        body = AuthorizeRequest(remote_volume_resource_id=dp_volume.id)
-        self.client.volumes.begin_authorize_replication(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1, body)
-        wait_for_succeeded(self.client, TEST_RG, account_name=ACCOUNT1, pool_name=TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName)
-        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName)
+            # sync replication
+            print("Syncing replication")
+            body = AuthorizeRequest(remote_volume_resource_id=dp_volume.id)
+            self.client.volumes.begin_authorize_replication(setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName1, body)
+            wait_for_succeeded(self.client, setup.TEST_RG, account_name=ACCOUNT1, pool_name=setup.TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=setup.TEST_POOL_2, dp_volume_name=dbVolumeName)
+            wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=setup.TEST_POOL_2, dp_volume_name=dbVolumeName)
 
-        # list replications
-        replications = self.client.volumes.list_replications(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
-        assert len(list(replications)) == 1
+            # list replications
+            replications = self.client.volumes.list_replications(setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName1)
+            assert len(list(replications)) == 1
 
-        # break replication
-        print("Breaking replication")
-        self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
-        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName)
-        wait_for_succeeded(self.client, TEST_RG, account_name=ACCOUNT1, pool_name=TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName)
+            # break replication
+            print("Breaking replication")
+            self.client.volumes.begin_break_replication(setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
+            wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=setup.TEST_POOL_2, dp_volume_name=dbVolumeName)
+            wait_for_succeeded(self.client, setup.TEST_RG, account_name=ACCOUNT1, pool_name=setup.TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=setup.TEST_POOL_2, dp_volume_name=dbVolumeName)
 
-        # resync
-        print("Resyncing replication")
-        self.client.volumes.begin_resync_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
-        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName)
-        wait_for_succeeded(self.client, TEST_RG, account_name=ACCOUNT1, pool_name=TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName)
+            # resync
+            print("Resyncing replication")
+            self.client.volumes.begin_resync_replication(setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
+            wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=setup.TEST_POOL_2, dp_volume_name=dbVolumeName)
+            wait_for_succeeded(self.client, setup.TEST_RG, account_name=ACCOUNT1, pool_name=setup.TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=setup.TEST_POOL_2, dp_volume_name=dbVolumeName)
 
-        # break again
-        print("Breaking replication again")
-        self.client.volumes.begin_break_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
-        wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName)
-        wait_for_succeeded(self.client, TEST_RG, account_name=ACCOUNT1, pool_name=TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=TEST_POOL_2, dp_volume_name=dbVolumeName)
+            # break again
+            print("Breaking replication again")
+            self.client.volumes.begin_break_replication(setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
+            wait_for_replication_status(self.client, "Mirrored", dp_account_name=ACCOUNT2,dp_pool_name=setup.TEST_POOL_2, dp_volume_name=dbVolumeName)
+            wait_for_succeeded(self.client, setup.TEST_RG, account_name=ACCOUNT1, pool_name=setup.TEST_POOL_1, volume_name=volumeName1, dp_account_name=ACCOUNT2,dp_pool_name=setup.TEST_POOL_2, dp_volume_name=dbVolumeName)
 
-        # delete the data protection object
-        #  - initiate delete replication on destination, this then releases on source, both resulting in object deletion
-        print("Deleting replication")
-        self.client.volumes.begin_delete_replication(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
+            # delete the data protection object
+            #  - initiate delete replication on destination, this then releases on source, both resulting in object deletion
+            print("Deleting replication")
+            self.client.volumes.begin_delete_replication(setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
 
-        print("Making sure no replication is found replication")
-        replication_found = True  # because it was previously present
-        while replication_found:
-            try:
-                self.client.volumes.replication_status(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
-            except:
-                # an exception means the replication was not found
-                # i.e. it has been deleted
-                # ok without checking it could have been for another reason
-                # but then the delete below will fail
-                replication_found = False
+            print("Making sure no replication is found replication")
+            retry = 0
+            while retry < 10:
+                try:
+                    self.client.volumes.replication_status(setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
+                except:
+                    # an exception means the replication was not found
+                    # i.e. it has been deleted
+                    # ok without checking it could have been for another reason
+                    # but then the delete below will fail
+                    break
 
-            if LIVE:
-                time.sleep(3)
+                if setup.LIVE:
+                    time.sleep(10)
+                retry += 1
+            if retry == 10:
+                raise Exception("Timeout when making sure no replication is found replication")
 
-        # seems the volumes are not always in a terminal state here so check again
-        # and ensure the replication objects are removed
-        # python isn't good at do-while loops but loop until we get volumes in succeeded state
-        print("Checking if volumes are in succeeded state and have no replication")
-        while True:
-            source_volume = self.client.volumes.get(TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
-            dp_volume = self.client.volumes.get(TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
-            if (source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded") and \
-                    (source_volume.data_protection.replication is None) and \
-                    (dp_volume.data_protection.replication is None):
-                break
-            if LIVE:
-                time.sleep(1)
+            # seems the volumes are not always in a terminal state here so check again
+            # and ensure the replication objects are removed
+            # python isn't good at do-while loops but loop until we get volumes in succeeded state
+            print("Checking if volumes are in succeeded state and have no replication")
+            retry = 0
+            while retry < 10:
+                source_volume = self.client.volumes.get(setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName1)
+                dp_volume = self.client.volumes.get(setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
+                if (source_volume.provisioning_state == "Succeeded") and (dp_volume.provisioning_state == "Succeeded") and \
+                        (source_volume.data_protection.replication is None) and \
+                        (dp_volume.data_protection.replication is None):
+                    break
+                if setup.LIVE:
+                    time.sleep(10)
+            if retry == 10:
+                raise Exception("Timeout when checking if volumes are in succeeded state and have no replication")
 
-        # now proceed with the delete of the volumes and tidy up resources
+            # now proceed with the delete of the volumes and tidy up resources
+        except:
+            if setup.LIVE:
+                    time.sleep(10)
+            self.client.volumes.begin_break_replication(setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
+            if setup.LIVE:
+                    time.sleep(10)
+            self.client.volumes.begin_delete_replication(setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
+        finally:
+            # delete destination volume
+            delete_volume(self.client, setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName)
+            delete_pool(self.client, setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2)
+            delete_account(self.client, setup.TEST_REPL_REMOTE_RG, ACCOUNT2)
 
-        # delete destination volume
-        delete_volume(self.client, TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2, dbVolumeName)
-        delete_pool(self.client, TEST_REPL_REMOTE_RG, ACCOUNT2, TEST_POOL_2)
-        delete_account(self.client, TEST_REPL_REMOTE_RG, ACCOUNT2)
-
-        # delete source volume
-        delete_volume(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1, volumeName1)
-        delete_pool(self.client, TEST_RG, ACCOUNT1, TEST_POOL_1)
-        delete_account(self.client, TEST_RG, ACCOUNT1)
+            # delete source volume
+            delete_volume(self.client, setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1, volumeName1)
+            delete_pool(self.client, setup.TEST_RG, ACCOUNT1, setup.TEST_POOL_1)
+            delete_account(self.client, setup.TEST_RG, ACCOUNT1)
 
         print("Finished with test_volume_replication")
 
@@ -384,14 +407,15 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
     def test_get_volume_by_name(self):
         set_bodiless_matcher()
         print("Starting test_get_volume_by_name")
-        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        try:
+            volumeName1 = self.get_resource_name(setup.TEST_VOL_1+"-")
 
-        create_volume(self.client, TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1, LOCATION, vnet=PERMA_VNET, volume_only=True)
+            create_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, setup.LOCATION, vnet=setup.PERMA_VNET, volume_only=True)
 
-        volume = self.client.volumes.get(TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1)
-        assert volume.name == PERMA_ACCOUNT + '/' + PERMA_POOL + '/' + volumeName1
-
-        delete_volume(self.client, TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1)
+            volume = self.client.volumes.get(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
+            assert volume.name == setup.PERMA_ACCOUNT + '/' + setup.PERMA_POOL + '/' + volumeName1
+        finally:
+            delete_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
         
         print("Finished with test_get_volume_by_name")
 
@@ -399,33 +423,34 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
     def test_update_volume(self):
         set_bodiless_matcher()
         print("Starting test_update_volume")
-        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
-                      
-        volume = create_volume(self.client, TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1, LOCATION, vnet=PERMA_VNET, volume_only=True)
-        assert "Premium" == volume.service_level
-        assert 100 * GIGABYTE == volume.usage_threshold
+        try:
+            volumeName1 = self.get_resource_name(setup.TEST_VOL_1+"-")
+                        
+            volume = create_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, setup.LOCATION, vnet=setup.PERMA_VNET, volume_only=True)
+            assert "Premium" == volume.service_level
+            assert 100 * GIGABYTE == volume.usage_threshold
 
-        volume_body = Volume(
-            usage_threshold=200 * GIGABYTE,
-            creation_token=volumeName1,
-            service_level="Premium",  # cannot differ from pool
-            location=LOCATION,
-            subnet_id="/subscriptions/" + SUBSID + "/resourceGroups/" + TEST_RG +
-                      "/providers/Microsoft.Network/virtualNetworks/" + PERMA_VNET + "/subnets/" + PERMA_SUBNET,
-            network_features="Standard"
-        )
+            volume_body = Volume(
+                usage_threshold=200 * GIGABYTE,
+                creation_token=volumeName1,
+                SERVICE_LEVEL="Premium",  # cannot differ from pool
+                location=setup.LOCATION,
+                subnet_id="/subscriptions/" + SUBSID + "/resourceGroups/" + setup.TEST_RG +
+                        "/providers/Microsoft.Network/virtualNetworks/" + setup.PERMA_VNET + "/subnets/" + setup.PERMA_SUBNET,
+                network_features="Standard"
+            )
 
-        volume = self.client.volumes.begin_create_or_update(
-            TEST_RG,
-            PERMA_ACCOUNT,
-            PERMA_POOL,
-            volumeName1,
-            volume_body
-        ).result()
-        assert "Premium" == volume.service_level  # unchanged
-        assert 200 * GIGABYTE == volume.usage_threshold
-
-        delete_volume(self.client, TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1)
+            volume = self.client.volumes.begin_create_or_update(
+                setup.TEST_RG,
+                setup.PERMA_ACCOUNT,
+                setup.PERMA_POOL,
+                volumeName1,
+                volume_body
+            ).result()
+            assert "Premium" == volume.service_level  # unchanged
+            assert 200 * GIGABYTE == volume.usage_threshold
+        finally:
+            delete_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
         
         print("Finished with test_update_volume")
 
@@ -433,38 +458,50 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
     def test_patch_volume(self):
         set_bodiless_matcher()
         print("Starting test_patch_volume")
-        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
+        volumeName1 = self.get_resource_name(setup.TEST_VOL_1+"-")
+        try:
+            volume = create_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, setup.LOCATION, vnet=setup.PERMA_VNET)
+            assert "Premium" == volume.service_level
+            assert 100 * GIGABYTE == volume.usage_threshold
 
-        volume = create_volume(self.client, TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1, LOCATION, vnet=PERMA_VNET)
-        assert "Premium" == volume.service_level
-        assert 100 * GIGABYTE == volume.usage_threshold
-
-        volume_patch = VolumePatch(usage_threshold=200 * GIGABYTE)
-        volume = self.client.volumes.begin_update(TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1, volume_patch).result()
-        assert "Premium" == volume.service_level
-        assert 200 * GIGABYTE == volume.usage_threshold
-
-        delete_volume(self.client, TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1)
+            volume_patch = VolumePatch(usage_threshold=200 * GIGABYTE)
+            volume = self.client.volumes.begin_update(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, volume_patch).result()
+            assert "Premium" == volume.service_level
+            assert 200 * GIGABYTE == volume.usage_threshold
+        finally:
+            delete_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1)
         print("Finished with test_patch_volume")
 
     @recorded_by_proxy
     def test_pool_change(self):
         set_bodiless_matcher()
         print("Starting test_pool_change")
-        volumeName1 = self.get_resource_name(TEST_VOL_1+"-")
-                    
-        volume = create_volume(self.client, TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1, LOCATION, vnet=PERMA_VNET, volume_only=True)
-        pool2 = create_pool(self.client, TEST_RG, PERMA_ACCOUNT, TEST_POOL_2, LOCATION, pool_only=True)
+        try:
+            volumeName1 = self.get_resource_name(setup.TEST_VOL_1+"-")
+                        
+            volume = create_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, setup.LOCATION, vnet=setup.PERMA_VNET, volume_only=True)
+            pool2 = create_pool(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2, setup.LOCATION, pool_only=True)
 
-        body = PoolChangeRequest(new_pool_resource_id=pool2.id)
-        self.client.volumes.begin_pool_change(TEST_RG, PERMA_ACCOUNT, PERMA_POOL, volumeName1, body).wait()
-        wait_for_volume(self.client, TEST_RG, PERMA_ACCOUNT, TEST_POOL_2, volumeName1)
-        volume = self.client.volumes.get(TEST_RG, PERMA_ACCOUNT, TEST_POOL_2, volumeName1)
-        assert volume.name == PERMA_ACCOUNT + "/" + TEST_POOL_2 + "/" + volumeName1
+            body = PoolChangeRequest(new_pool_resource_id=pool2.id)
+            self.client.volumes.begin_pool_change(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, volumeName1, body).wait()
+            wait_for_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2, volumeName1)
+            volume = self.client.volumes.get(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2, volumeName1)
+            assert volume.name == setup.PERMA_ACCOUNT + "/" + setup.TEST_POOL_2 + "/" + volumeName1
 
-        volume_list = self.client.volumes.list(TEST_RG, PERMA_ACCOUNT, PERMA_POOL)
-        assert len(list(volume_list)) == 1
-
-        delete_volume(self.client, TEST_RG, PERMA_ACCOUNT, TEST_POOL_2, volumeName1)
-        delete_pool(self.client, TEST_RG, PERMA_ACCOUNT, TEST_POOL_2)
+            volume_list = self.client.volumes.list(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2)
+            assert len(list(volume_list)) == 1
+        finally:
+            delete_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2, volumeName1)
+            delete_pool(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2)
         print("Finished with test_pool_change")
+        
+    @recorded_by_proxy
+    def test_begin_populate_availability_zone(self):
+        set_bodiless_matcher()
+        print("Starting begin_populate_availability_zone")
+        try:
+            self.client.volumes.begin_populate_availability_zone(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, setup.PERMA_VOLUME)
+        except Exception as e:
+            #AFEC still in 2023.5. Fix this in 2023.7 
+            assert str(e).startswith("(")
+        print("Finished with begin_populate_availability_zone")

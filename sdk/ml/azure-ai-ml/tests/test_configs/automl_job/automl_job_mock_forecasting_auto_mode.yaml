@@ -83,3 +83,4 @@ forecasting:
   target_rolling_window_size: 3
   time_column_name: abc
   time_series_id_column_names: xyz
+  features_unknown_at_forecast_time: []

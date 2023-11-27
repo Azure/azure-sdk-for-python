@@ -58,7 +58,8 @@ def _add_data_binding_to_field(field, attrs_to_skip, schema_stack):
     return field
 
 
-def support_data_binding_expression_for_fields(
+# pylint: disable-next=docstring-missing-param
+def support_data_binding_expression_for_fields(  # pylint: disable=name-too-long
     schema: Union[PathAwareSchema, Schema], attrs_to_skip=None, schema_stack=None
 ):
     """Update fields inside schema to support data binding string.

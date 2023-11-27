@@ -12,6 +12,23 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
+    """Compute resource configuration for Spark component or job.
+
+    :keyword instance_type: The type of VM to be used by the compute target.
+    :paramtype instance_type: Optional[str]
+    :keyword runtime_version: The Spark runtime version.
+    :paramtype runtime_version: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_resource_configuration]
+            :end-before: [END spark_resource_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Configuring a SparkJob with SparkResourceConfiguration.
+    """
+
     instance_type_list = [
         "standard_e4s_v3",
         "standard_e8s_v3",
@@ -20,7 +37,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         "standard_e64s_v3",
     ]
 
-    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None):
+    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None) -> None:
         self.instance_type = instance_type
         self.runtime_version = runtime_version
 
@@ -38,6 +55,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         return SparkResourceConfiguration(instance_type=obj.instance_type, runtime_version=obj.runtime_version)
 
     def _validate(self):
+        # TODO: below logic is duplicated to SparkResourceConfigurationSchema, maybe make SparkJob schema validatable
         if self.instance_type is None or self.instance_type == "":
             msg = "Instance type must be specified for SparkResourceConfiguration"
             raise ValidationException(
@@ -70,8 +88,8 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
             try:
                 for runtime in runtime_arr:
                     int(runtime)
-            except ValueError:
-                raise ValueError("runtime_version should only contain numbers")
+            except ValueError as e:
+                raise ValueError("runtime_version should only contain numbers") from e
             if len(runtime_arr) <= 1:
                 msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(

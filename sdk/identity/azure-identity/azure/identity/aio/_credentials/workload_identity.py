@@ -10,7 +10,7 @@ from ..._constants import EnvironmentVariables
 
 
 class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
-    """Authenticates using an Azure Active Directory workload identity.
+    """Authenticates using Microsoft Entra Workload ID.
 
     Workload identity authentication is a feature in Azure that allows applications running on virtual machines (VMs)
     to access other Azure resources without the need for a service principal or managed identity. With workload
@@ -26,8 +26,8 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     to `this workload identity overview <https://learn.microsoft.com/azure/aks/workload-identity-overview>`__
     for more information.
 
-    :keyword str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
-    :keyword str client_id: The client ID of an Azure AD app registration.
+    :keyword str tenant_id: ID of the application's Microsoft Entra tenant. Also called its "directory" ID.
+    :keyword str client_id: The client ID of a Microsoft Entra app registration.
     :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
         the identity.
 
@@ -42,12 +42,12 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     """
 
     def __init__(
-            self,
-            *,
-            tenant_id: Optional[str] = None,
-            client_id: Optional[str] = None,
-            token_file_path: Optional[str] = None,
-            **kwargs: Any
+        self,
+        *,
+        tenant_id: Optional[str] = None,
+        client_id: Optional[str] = None,
+        token_file_path: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         tenant_id = tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         client_id = client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
@@ -72,5 +72,5 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
             client_id=client_id,
             func=self._get_service_account_token,
             token_file_path=token_file_path,
-            **kwargs
+            **kwargs,
         )

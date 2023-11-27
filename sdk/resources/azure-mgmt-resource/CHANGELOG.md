@@ -1,5 +1,12 @@
 # Release History
 
+## 23.1.0b2 (2023-06-16)
+
+### Breaking Changes
+
+  - Parameter mode of model DenySettings is now required
+  - Removed `PolicyExemption` from default api version folder since it is only defined in preview api version folder. Users can import it by `PolicyClient(...).models(api_version="2022-07-01-preview").PolicyExemption`
+
 ## 23.1.0b1 (2023-05-19)
 
 ### Features Added

@@ -63,11 +63,13 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2019-11-01")
         self.managed_clusters = ManagedClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2019-11-01"
         )
-        self.agent_pools = AgentPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agent_pools = AgentPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-11-01"
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

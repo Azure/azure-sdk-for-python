@@ -1,5 +1,22 @@
 # Release History
 
+## 13.5.0 (2023-07-21)
+
+### Features Added
+
+  - Added operation group ModelsOperations
+  - Added operation group UsagesOperations
+  - Model AccountModel has a new parameter is_default_version
+  - Model AccountModel has a new parameter skus
+  - Model AccountModel has a new parameter source
+  - Model AccountProperties has a new parameter abuse_penalty
+  - Model CommitmentPlanProperties has a new parameter provisioning_issues
+  - Model Deployment has a new parameter sku
+  - Model DeploymentModel has a new parameter source
+  - Model DeploymentProperties has a new parameter rate_limits
+  - Model DeploymentProperties has a new parameter version_upgrade_option
+  - Model UsageListResult has a new parameter next_link
+
 ## 13.4.0 (2023-02-15)
 
 ### Features Added

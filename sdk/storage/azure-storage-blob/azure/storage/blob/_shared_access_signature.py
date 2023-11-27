@@ -66,6 +66,11 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str snapshot:
             The snapshot parameter is an opaque DateTime value that,
             when present, specifies the blob snapshot to grant permission.
+        :param str version_id:
+            An optional blob version ID. This parameter is only applicable for versioning-enabled
+            Storage accounts. Note that the 'versionid' query parameter is not included in the output
+            SAS. Therefore, please provide the 'version_id' parameter to any APIs when using the output
+            SAS to operate on a specific version.
         :param permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
@@ -117,6 +122,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :return: A Shared Access Signature (sas) token.
+        :rtype: str
         '''
         resource_path = container_name + '/' + blob_name
 
@@ -202,6 +209,8 @@ class BlobSharedAccessSignature(SharedAccessSignature):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :return: A Shared Access Signature (sas) token.
+        :rtype: str
         '''
         sas = _BlobSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
@@ -293,7 +302,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         # a conscious decision was made to exclude the timestamp in the generated token
         # this is to avoid having two snapshot ids in the query parameters when the user appends the snapshot timestamp
         exclude = [BlobQueryStringConstants.SIGNED_TIMESTAMP]
-        return '&'.join(['{0}={1}'.format(n, url_quote(v))
+        return '&'.join([f'{n}={url_quote(v)}'
                          for n, v in self.query_dict.items() if v is not None and n not in exclude])
 
 
@@ -302,7 +311,7 @@ def generate_account_sas(
         account_key,  # type: str
         resource_types,  # type: Union[ResourceTypes, str]
         permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
+        expiry,  # type: Union[datetime, str]
         start=None,  # type: Optional[Union[datetime, str]]
         ip=None,  # type: Optional[str]
         **kwargs # type: Any
@@ -322,17 +331,11 @@ def generate_account_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has been
-        specified in an associated stored access policy.
     :type permission: str or ~azure.storage.blob.AccountSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC.
+        Azure will always convert values to UTC. If a date is passed in
+        without timezone info, it is assumed to be UTC.
     :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
@@ -472,6 +475,11 @@ def generate_container_sas(
             :dedent: 12
             :caption: Generating a sas token.
     """
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
     if isinstance(account_key, UserDelegationKey):
@@ -593,6 +601,11 @@ def generate_blob_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
     if isinstance(account_key, UserDelegationKey):

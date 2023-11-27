@@ -9,7 +9,6 @@ from urllib.parse import urlparse
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 from datetime import datetime
 
-import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -75,7 +74,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
             credential: CommunicationTokenCredential,
             thread_id: str,
             **kwargs: Any
-    ): # type: (...) -> None
+    ) -> None:
         if not thread_id:
             raise ValueError("thread_id can not be None or empty")
 
@@ -86,7 +85,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -97,14 +96,13 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            endpoint,
+            endpoint=self._endpoint,
             authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
 
     @property
-    def thread_id(self):
-        # type: () -> str
+    def thread_id(self) -> str:
         """
         Gets the thread id from the client.
 
@@ -116,7 +114,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
     async def get_properties(
         self,
         **kwargs
-    ): # type: (...) -> ChatThreadProperties
+    ) -> ChatThreadProperties:
 
         """Gets the properties of the chat thread.
 
@@ -205,7 +203,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
     def list_read_receipts(
         self,
         **kwargs: Any
-    ): # type: (...) -> AsyncItemPaged[ChatMessageReadReceipt]
+    ) -> AsyncItemPaged[ChatMessageReadReceipt]:
         """Gets read receipts for a thread.
 
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
@@ -306,7 +304,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
             try:
                 chat_message_type = ChatMessageType.__getattr__(chat_message_type)  # pylint:disable=protected-access
             except Exception:
-                raise ValueError(
+                raise ValueError( # pylint:disable=raise-missing-from
                     "chat_message_type: {message_type} is not acceptable".format(message_type=chat_message_type))
 
         if chat_message_type not in [ChatMessageType.TEXT, ChatMessageType.HTML]:
@@ -361,7 +359,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
     def list_messages(
         self,
         **kwargs: Any
-    ): # type: (...) -> AsyncItemPaged[ChatMessage]
+    ) -> AsyncItemPaged[ChatMessage]:
         """Gets a list of messages from a thread.
 
         :keyword int results_per_page: The maximum number of messages to be returned per page.
@@ -402,7 +400,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
 
         :param message_id: Required. The message id.
         :type message_id: str
-        :keyword content: Chat message content
+        :param str content: Chat message content
         :keyword dict[str, str] metadata: Message metadata.
         :return: None
         :rtype: None
@@ -463,7 +461,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
     def list_participants(
         self,
         **kwargs: Any
-    ): # type: (...) -> AsyncItemPaged[ChatParticipant]
+    ) -> AsyncItemPaged[ChatParticipant]:
         """Gets the participants of a thread.
 
         :keyword int results_per_page: The maximum number of participants to be returned per page.
@@ -499,8 +497,6 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
         thread_participants: List[ChatParticipant],
         **kwargs
     ) -> List[Tuple[ChatParticipant, ChatError]]:
-
-        # type: (...) -> List[Tuple[ChatParticipant, ChatError]]
         """Adds thread participants to a thread. If participants already exist, no change occurs.
 
         If all participants are added successfully, then an empty list is returned;
@@ -532,14 +528,11 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
                 add_chat_participants_request=add_thread_participants_request,
                 **kwargs)
 
-
-            if hasattr(add_chat_participants_result, 'invalid_participants') and \
-                    add_chat_participants_result.invalid_participants is not None:
-                response = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
+            if hasattr(add_chat_participants_result, 'invalid_participants'):
+                response = CommunicationErrorResponseConverter.convert(
                     participants=thread_participants,
                     chat_errors=add_chat_participants_result.invalid_participants
                 )
-
         return response
 
     @distributed_trace_async
@@ -580,6 +573,5 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
-        # type: (*Any) -> None
+    async def __aexit__(self, *args) -> None:
         await self._client.__aexit__(*args)

@@ -29,13 +29,12 @@ def main():
         subscription_id="subscriptionId",
     )
 
-    response = client.open_shift_clusters.begin_delete(
+    client.open_shift_clusters.begin_delete(
         resource_group_name="resourceGroup",
         resource_name="resourceName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/stable/2022-09-04/examples/OpenShiftClusters_Delete.json
+# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/stable/2023-09-04/examples/OpenShiftClusters_Delete.json
 if __name__ == "__main__":
     main()

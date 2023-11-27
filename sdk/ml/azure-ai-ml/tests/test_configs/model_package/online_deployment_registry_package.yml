@@ -1,0 +1,12 @@
+name: blue
+endpoint_name: banti
+description: description for online deployment
+model: azureml://registries/bani-euap/models/demo_ml/versions/1
+code_configuration:
+  code: ../model-1/onlinescoring/
+  scoring_script: score.py
+environment: azureml://registries/bani-euap/environments/testv1/versions/20
+instance_count: 1
+instance_type: Standard_DS2_V2
+scale_settings:
+  type: default

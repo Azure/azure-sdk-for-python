@@ -8,7 +8,6 @@ from azure.containerregistry.aio import ContainerRegistryClient as AsyncContaine
 
 
 class ListRepositoriesTest(PerfStressTest):
-
     def __init__(self, arguments):
         super().__init__(arguments)
 

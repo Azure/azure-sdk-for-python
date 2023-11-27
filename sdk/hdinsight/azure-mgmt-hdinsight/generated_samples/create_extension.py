@@ -29,15 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.extensions.begin_create(
+    client.extensions.begin_create(
         resource_group_name="rg1",
         cluster_name="cluster1",
         extension_name="clustermonitoring",
         parameters={"primaryKey": "**********", "workspaceId": "a2090ead-8c9f-4fba-b70e-533e3e003163"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/CreateExtension.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2023-04-15-preview/examples/CreateExtension.json
 if __name__ == "__main__":
     main()

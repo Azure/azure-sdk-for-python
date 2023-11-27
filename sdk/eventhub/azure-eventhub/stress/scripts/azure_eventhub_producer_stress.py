@@ -177,7 +177,7 @@ class StressTestRunner(object):
 
     def create_client(self, client_class, is_async=False):
 
-        self.debug_level = getattr(logging, self.args.debug_level.upper(), None)
+        self.debug_level = getattr(logging, self.args.debug_level.upper(), logging.ERROR)
         transport_type = TransportType.Amqp if self.args.transport_type == 0 else TransportType.AmqpOverWebsocket
         http_proxy = None
         retry_options = {
@@ -288,6 +288,8 @@ class StressTestRunner(object):
             self.run_sync()
 
     def run_sync(self):
+        self.debug_level = getattr(logging, self.args.debug_level.upper(), logging.ERROR)
+
         with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_sync", print_console=self.args.print_console) as process_monitor:
             class EventHubProducerClientTest(EventHubProducerClient):
                 def get_partition_ids(self_inner):
@@ -389,6 +391,7 @@ class StressTestRunner(object):
             thread.join(timeout=self.args.duration)
 
     async def run_async(self):
+        self.debug_level = getattr(logging, self.args.debug_level.upper(), logging.ERROR)
         with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_async", print_console=self.args.print_console) as process_monitor:
             class EventHubProducerClientTestAsync(EventHubProducerClientAsync):
                 async def get_partition_ids(self_inner):

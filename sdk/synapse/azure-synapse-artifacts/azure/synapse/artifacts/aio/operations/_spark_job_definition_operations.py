@@ -91,31 +91,30 @@ class SparkJobDefinitionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_spark_job_definitions_by_workspace_request(
+                _request = build_get_spark_job_definitions_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_spark_job_definitions_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("SparkJobDefinitionsListResponse", pipeline_response)
@@ -125,11 +124,11 @@ class SparkJobDefinitionOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -140,8 +139,6 @@ class SparkJobDefinitionOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_spark_job_definitions_by_workspace.metadata = {"url": "/sparkJobDefinitions"}
 
     async def _create_or_update_spark_job_definition_initial(  # pylint: disable=name-too-long
         self,
@@ -168,25 +165,24 @@ class SparkJobDefinitionOperations:
         _spark_job_definition = _models.SparkJobDefinitionResource(properties=properties)
         _json = self._serialize.body(_spark_job_definition, "SparkJobDefinitionResource")
 
-        request = build_create_or_update_spark_job_definition_request(
+        _request = build_create_or_update_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -200,11 +196,9 @@ class SparkJobDefinitionOperations:
             deserialized = self._deserialize("SparkJobDefinitionResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_create_or_update_spark_job_definition(  # pylint: disable=name-too-long
@@ -264,7 +258,7 @@ class SparkJobDefinitionOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("SparkJobDefinitionResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -288,8 +282,6 @@ class SparkJobDefinitionOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}
 
     @distributed_trace_async
     async def get_spark_job_definition(
@@ -322,23 +314,22 @@ class SparkJobDefinitionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.SparkJobDefinitionResource]] = kwargs.pop("cls", None)
 
-        request = build_get_spark_job_definition_request(
+        _request = build_get_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_spark_job_definition.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -352,11 +343,9 @@ class SparkJobDefinitionOperations:
             deserialized = self._deserialize("SparkJobDefinitionResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}
+        return deserialized  # type: ignore
 
     async def _delete_spark_job_definition_initial(  # pylint: disable=inconsistent-return-statements
         self, spark_job_definition_name: str, **kwargs: Any
@@ -375,22 +364,21 @@ class SparkJobDefinitionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_spark_job_definition_request(
+        _request = build_delete_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
             api_version=api_version,
-            template_url=self._delete_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -400,9 +388,7 @@ class SparkJobDefinitionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_spark_job_definition(
@@ -445,7 +431,7 @@ class SparkJobDefinitionOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -469,8 +455,6 @@ class SparkJobDefinitionOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}
-
     async def _execute_spark_job_definition_initial(
         self, spark_job_definition_name: str, **kwargs: Any
     ) -> _models.SparkBatchJob:
@@ -488,22 +472,21 @@ class SparkJobDefinitionOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.SparkBatchJob] = kwargs.pop("cls", None)
 
-        request = build_execute_spark_job_definition_request(
+        _request = build_execute_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
             api_version=api_version,
-            template_url=self._execute_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -522,8 +505,6 @@ class SparkJobDefinitionOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _execute_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}/execute"}
 
     @distributed_trace_async
     async def begin_execute_spark_job_definition(
@@ -568,7 +549,7 @@ class SparkJobDefinitionOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("SparkBatchJob", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -598,8 +579,6 @@ class SparkJobDefinitionOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_execute_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}/execute"}
-
     async def _rename_spark_job_definition_initial(  # pylint: disable=inconsistent-return-statements
         self, spark_job_definition_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> None:
@@ -621,24 +600,23 @@ class SparkJobDefinitionOperations:
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_spark_job_definition_request(
+        _request = build_rename_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -648,9 +626,7 @@ class SparkJobDefinitionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _rename_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}/rename"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_rename_spark_job_definition(
@@ -698,7 +674,7 @@ class SparkJobDefinitionOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -722,8 +698,6 @@ class SparkJobDefinitionOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_rename_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}/rename"}
-
     async def _debug_spark_job_definition_initial(
         self, properties: _models.SparkJobDefinition, **kwargs: Any
     ) -> _models.SparkBatchJob:
@@ -745,23 +719,22 @@ class SparkJobDefinitionOperations:
         _spark_job_definition_azure_resource = _models.SparkJobDefinitionResource(properties=properties)
         _json = self._serialize.body(_spark_job_definition_azure_resource, "SparkJobDefinitionResource")
 
-        request = build_debug_spark_job_definition_request(
+        _request = build_debug_spark_job_definition_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._debug_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -780,8 +753,6 @@ class SparkJobDefinitionOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    _debug_spark_job_definition_initial.metadata = {"url": "/debugSparkJobDefinition"}
 
     @distributed_trace_async
     async def begin_debug_spark_job_definition(
@@ -828,7 +799,7 @@ class SparkJobDefinitionOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("SparkBatchJob", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -857,5 +828,3 @@ class SparkJobDefinitionOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_debug_spark_job_definition.metadata = {"url": "/debugSparkJobDefinition"}

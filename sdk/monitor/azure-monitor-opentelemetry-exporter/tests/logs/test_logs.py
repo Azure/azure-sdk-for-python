@@ -5,6 +5,7 @@ import platform
 import shutil
 import unittest
 from unittest import mock
+from functools import partial
 
 # pylint: disable=import-error
 from opentelemetry.semconv.trace import SpanAttributes
@@ -16,6 +17,7 @@ from opentelemetry._logs.severity import SeverityNumber
 
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     AzureMonitorLogExporter,
     _get_log_export_result,
     _get_severity_level,
@@ -37,6 +39,7 @@ def throw(exc_type, *args, **kwargs):
 # pylint: disable=protected-access
 # pylint: disable=too-many-lines
 class TestAzureLogExporter(unittest.TestCase):
+    _exporter_class = AzureMonitorLogExporter
     @classmethod
     def setUpClass(cls):
         os.environ.clear()
@@ -44,7 +47,7 @@ class TestAzureLogExporter(unittest.TestCase):
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
-        cls._exporter = AzureMonitorLogExporter()
+        cls._exporter = cls._exporter_class()
         cls._log_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp = 1646865018558419456,
@@ -59,6 +62,59 @@ class TestAzureLogExporter(unittest.TestCase):
                 ),
                 attributes={
                     "test": "attribute"
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_empty = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "WARNING",
+                trace_flags = None,
+                severity_number = SeverityNumber.WARN,
+                body = "",
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute"
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_none = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "WARNING",
+                trace_flags = None,
+                severity_number = SeverityNumber.WARN,
+                body = None,
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute"
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_event = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "INFO",
+                trace_flags = None,
+                severity_number = SeverityNumber.INFO,
+                body = "Test Event",
+                resource = Resource.create(attributes={"asd":"test_resource"}),
+                attributes={
+                    "event_key": "event_attribute",
+                    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE: True,
                 },
             ),
             InstrumentationScope("test_name"),
@@ -84,6 +140,27 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
+        cls._exc_data_blank = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "EXCEPTION",
+                trace_flags = None,
+                severity_number = SeverityNumber.FATAL,
+                body = "Test message",
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute",
+                    SpanAttributes.EXCEPTION_TYPE: "",
+                    SpanAttributes.EXCEPTION_MESSAGE: "",
+                    SpanAttributes.EXCEPTION_STACKTRACE: ""
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -98,6 +175,7 @@ class TestAzureLogExporter(unittest.TestCase):
             exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
+        self.assertIsNotNone(exporter.storage)
 
     def test_from_connection_string(self):
         exporter = AzureMonitorLogExporter.from_connection_string(
@@ -209,6 +287,20 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.severity_level, 2)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
 
+    def test_log_to_envelope_log_none(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_none)
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
+        self.assertEqual(envelope.data.base_type, 'MessageData')
+        self.assertEqual(envelope.data.base_data.message, "n/a")
+
+    def test_log_to_envelope_log_empty(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_empty)
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
+        self.assertEqual(envelope.data.base_type, 'MessageData')
+        self.assertEqual(envelope.data.base_data.message, "n/a")
+
     def test_log_to_envelope_exception(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data)
@@ -224,6 +316,92 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n')
 
+    def test_log_to_envelope_exception_blank(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._exc_data_blank)
+        record = self._log_data.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, 'ExceptionData')
+        self.assertEqual(envelope.data.base_data.severity_level, 4)
+        self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
+        self.assertEqual(len(envelope.data.base_data.exceptions), 1)
+        self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "Exception")
+        self.assertEqual(envelope.data.base_data.exceptions[0].message, "Exception")
+        self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
+        self.assertEqual(envelope.data.base_data.exceptions[0].stack, "")
+
+    def test_log_to_envelope_event(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_event)
+        record = self._log_data_event.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Event')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, 'EventData')
+        self.assertEqual(envelope.data.base_data.name, record.body)
+        self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
+
+    def test_log_to_envelope_timestamp(self):
+        exporter = self._exporter
+        old_record = self._log_data.log_record
+        self._log_data.log_record.timestamp = None
+        self._log_data.log_record.observed_timestamp = 1646865018558419457
+        envelope = exporter._log_to_envelope(self._log_data)
+        record = self._log_data.log_record
+        self.assertEqual(envelope.time, ns_to_iso_str(record.observed_timestamp))
+        self._log_data.log_record = old_record
+        
+
+class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
+    _exporter_class = partial(AzureMonitorLogExporter, disable_offline_storage=True)
+    
+    @classmethod
+    def tearDownClass(cls):
+        pass
+    
+    def test_constructor(self):
+        """Test the constructor."""
+        exporter = AzureMonitorLogExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+        )
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(exporter.storage, None)
+    
+    def test_shutdown(self):
+        exporter = self._exporter
+        exporter.shutdown()
+        self.assertEqual(exporter.storage, None)
+        
+    def test_export_failure(self):
+        exporter = self._exporter
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.FAILED_NOT_RETRYABLE
+            transmit_from_storage_mock = mock.Mock()
+            exporter._handle_transmit_from_storage = transmit_from_storage_mock
+            result = exporter.export([self._log_data])
+            self.assertEqual(result, LogExportResult.FAILURE)
+            self.assertEqual(exporter.storage, None)
+            self.assertEqual(transmit_from_storage_mock.call_count, 1)
+
+    def test_export_success(self):
+        exporter = self._exporter
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.SUCCESS
+            storage_mock = mock.Mock()
+            exporter._transmit_from_storage = storage_mock
+            result = exporter.export([self._log_data])
+            self.assertEqual(result, LogExportResult.SUCCESS)
+            self.assertEqual(storage_mock.call_count, 0)
+
+
 class TestAzureLogExporterUtils(unittest.TestCase):
     def test_get_log_export_result(self):
         self.assertEqual(
@@ -238,7 +416,10 @@ class TestAzureLogExporterUtils(unittest.TestCase):
             _get_log_export_result(ExportResult.FAILED_RETRYABLE),
             LogExportResult.FAILURE,
         )
-        self.assertEqual(_get_log_export_result(None), None)
+        self.assertEqual(
+            _get_log_export_result(None),
+            LogExportResult.FAILURE
+        )
 
     def test_get_severity_level(self):
         for sev_num in SeverityNumber:

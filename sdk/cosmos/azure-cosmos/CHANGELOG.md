@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.4.0b3 (Unreleased)
+### 4.5.2b4 (Unreleased)
 
 #### Features Added
 
@@ -9,6 +9,62 @@
 #### Bugs Fixed
 
 #### Other Changes
+
+### 4.5.2b3 (2023-11-10)
+
+#### Features Added
+* Added support for capturing Index Metrics in query operations. See [PR 33034](https://github.com/Azure/azure-sdk-for-python/pull/33034)
+
+### 4.5.2b2 (2023-10-31)
+
+#### Features Added
+* Added support for Transactional Batch. See [PR 32508](https://github.com/Azure/azure-sdk-for-python/pull/32508).
+* Added **preview** support for Priority Based Throttling/Priority Based Execution (Must be enabled at the account level before it can be used). See [PR 32441](https://github.com/Azure/azure-sdk-for-python/pull/32441/).
+
+### 4.5.2b1 (2023-10-17)
+
+#### Features Added
+* Added support for Hierarchical Partitioning, also known as Subpartitioning. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121).
+
+#### Bugs Fixed
+* Small fix to the `offer_throughput` option in the async client's `create_database_if_not_exists` method, which was previously misspelled as `offerThroughput`.
+See [PR 32076](https://github.com/Azure/azure-sdk-for-python/pull/32076).
+
+#### Other Changes
+* Marked the outdated `diagnostics.py` file for deprecation since we now recommend the use of our `CosmosHttpLoggingPolicy` for diagnostics.
+For more on the `CosmosHttpLoggingPolicy` see our [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#logging-diagnostics).
+
+### 4.5.1 (2023-09-12)
+
+#### Bugs Fixed
+* Fixed bug when query with DISTINCT + OFFSET/LIMIT operators returns unexpected result. See [PR 31925](https://github.com/Azure/azure-sdk-for-python/pull/31925).
+
+#### Other Changes
+* Added additional checks for resource creation using specific characters that cause issues. See [PR 31861](https://github.com/Azure/azure-sdk-for-python/pull/31861).
+
+### 4.5.0 (2023-08-09)
+
+#### Features Added
+* Added support for continuation tokens for streamable cross partition queries. See [PR 31189](https://github.com/Azure/azure-sdk-for-python/pull/31189).
+
+#### Bugs Fixed
+* Fixed bug with async `create_database_if_not_exists` method not working when passing `offer_throughput` as an option. See [PR 31478](https://github.com/Azure/azure-sdk-for-python/pull/31478).
+
+#### Other Changes
+* Renamed `response_continuation_token_limit_in_kb` to `continuation_token_limit` for GA. See [PR 31532](https://github.com/Azure/azure-sdk-for-python/pull/31532).
+
+### 4.4.1b1 (2023-07-25)
+
+#### Features Added
+* Added ability to limit continuation token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
+
+#### Bugs Fixed
+* Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
+
+### 4.4.0 (2023-06-09)
+
+#### Features Added
+- GA release of Patch API and Delete All Items By Partition Key
 
 ### 4.4.0b2 (2023-05-22)
 
@@ -24,7 +80,7 @@
 ### 4.4.0b1 (2023-04-11)
 
 #### Features Added
- - Added **preview** delete all items by partition key functionality. See [PR 29186](https://github.com/Azure/azure-sdk-for-python/pull/29186).
+ - Added **preview** delete all items by partition key functionality. See [PR 29186](https://github.com/Azure/azure-sdk-for-python/pull/29186). For more information on Partition Key Delete, please see [Azure Cosmos DB Partition Key Delete](https://learn.microsoft.com/azure/cosmos-db/nosql/how-to-delete-by-partition-key?tabs=python-example).
  - Added **preview** partial document update (Patch API) functionality and container methods for patching items with operations. See [PR 29497](https://github.com/Azure/azure-sdk-for-python/pull/29497). For more information on Patch, please see [Azure Cosmos DB Partial Document Update](https://learn.microsoft.com/azure/cosmos-db/partial-document-update).
 
 #### Bugs Fixed

@@ -24,7 +24,7 @@ class DeploymentCollectionSchema(metaclass=PatchedSchemaMeta):
     )
     client_id = fields.Str()
 
-    # pylint: disable=unused-argument,no-self-use
+    # pylint: disable=unused-argument
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
         from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection

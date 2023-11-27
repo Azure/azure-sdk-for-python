@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import asyncio
-
 from ._test_base import _QueueReceiveTest
 
 

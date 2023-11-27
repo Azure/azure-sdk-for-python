@@ -1,11 +1,18 @@
+function GetOnboardingFileForMoniker($docRepoLocation, $moniker) { 
+  $packageOnboardingFile = 'ci-configs/packages-latest.json'
+  if ($moniker -eq 'preview') {
+    $packageOnboardingFile = 'ci-configs/packages-preview.json'
+  } elseif ($moniker -eq 'legacy') {
+    $packageOnboardingFile = 'ci-configs/packages-legacy.json'
+  }
+
+  return (Join-Path $docRepoLocation $packageOnboardingFile)
+}
+
 function Get-python-OnboardedDocsMsPackagesForMoniker($DocRepoLocation, $moniker) {
-  $packageOnboardingFile = ""
-  if ("latest" -eq $moniker) {
-    $packageOnboardingFile = "$DocRepoLocation/ci-configs/packages-latest.json"
-  }
-  if ("preview" -eq $moniker) {
-    $packageOnboardingFile = "$DocRepoLocation/ci-configs/packages-preview.json"
-  }
+  $packageOnboardingFile = GetOnboardingFileForMoniker `
+    -docRepoLocation $DocRepoLocation `
+    -moniker $moniker
 
   $onboardedPackages = @{}
   $onboardingSpec = ConvertFrom-Json (Get-Content $packageOnboardingFile -Raw)
@@ -85,23 +92,6 @@ function Get-python-DocsMsTocChildrenForManagementPackages($packageMetadata, $do
   return @($packageMetadata.Package)
 }
 
-function addManagementPackage($serviceEntry, $packageName) {
-  for ($i = 0; $i -lt $serviceEntry.items.Count; $i++) {
-    if ($serviceEntry.items[$i].name -eq "Management") {
-      $serviceEntry.items[$i].children += @($packageName)
-      return $serviceEntry
-    }
-  }
-
-  $serviceEntry.items += [PSCustomObject]@{
-    name  = "Management";
-    landingPageType = 'Service';
-    children = @($packageName)
-  }
-
-  return $serviceEntry
-}
-
 function Get-python-RepositoryLink($packageInfo) {
   return "$PackageRepositoryUri/$($packageInfo.Package)"
 }
@@ -117,12 +107,6 @@ function Get-python-UpdatedDocsMsToc($toc) {
         name  = "adal";
         children = @("adal")
       }
-    }
-
-    # azure-mgmt-mixedreality is not onboarded in an obvious manner, it is
-    # onboarded using a URL to a specific dist.
-    if ($services[$i].name -eq 'Mixed Reality') {
-      $services[$i] = addManagementPackage $services[$i] 'azure-mgmt-mixedreality'
     }
   }
 

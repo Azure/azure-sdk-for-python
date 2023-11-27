@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=unused-argument,protected-access
 
 from marshmallow import fields, post_dump, post_load, pre_load
 
@@ -26,23 +26,23 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
 
 
-def get_choice_schema_of_type(cls, **kwargs):
+def choice_schema_of_type(cls, **kwargs):
     class CustomChoiceSchema(ChoiceSchema):
         values = fields.List(cls(**kwargs))
 
     return CustomChoiceSchema()
 
 
-def get_choice_and_single_value_schema_of_type(cls, **kwargs):
-    return UnionField([cls(**kwargs), NestedField(get_choice_schema_of_type(cls, **kwargs))])
+def choice_and_single_value_schema_of_type(cls, **kwargs):
+    return UnionField([cls(**kwargs), NestedField(choice_schema_of_type(cls, **kwargs))])
 
 
 FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
     [
         fields.Float(),
         DumpableIntegerField(strict=True),
-        NestedField(get_choice_schema_of_type(DumpableIntegerField, strict=True)),
-        NestedField(get_choice_schema_of_type(fields.Float)),
+        NestedField(choice_schema_of_type(DumpableIntegerField, strict=True)),
+        NestedField(choice_schema_of_type(fields.Float)),
         NestedField(UniformSchema()),
         NestedField(QUniformSchema()),
         NestedField(NormalSchema()),
@@ -54,19 +54,19 @@ FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
 INT_SEARCH_SPACE_DISTRIBUTION_FIELD = UnionField(
     [
         DumpableIntegerField(strict=True),
-        NestedField(get_choice_schema_of_type(DumpableIntegerField, strict=True)),
+        NestedField(choice_schema_of_type(DumpableIntegerField, strict=True)),
         NestedField(RandintSchema()),
     ]
 )
 
-STRING_SEARCH_SPACE_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(DumpableStringField)
-BOOL_SEARCH_SPACE_DISTRIBUTION_FIELD = get_choice_and_single_value_schema_of_type(fields.Bool)
+STRING_SEARCH_SPACE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(DumpableStringField)
+BOOL_SEARCH_SPACE_DISTRIBUTION_FIELD = choice_and_single_value_schema_of_type(fields.Bool)
 
 
 class NlpParameterSubspaceSchema(metaclass=PatchedSchemaMeta):
     gradient_accumulation_steps = INT_SEARCH_SPACE_DISTRIBUTION_FIELD
     learning_rate = FLOAT_SEARCH_SPACE_DISTRIBUTION_FIELD
-    learning_rate_scheduler = get_choice_and_single_value_schema_of_type(
+    learning_rate_scheduler = choice_and_single_value_schema_of_type(
         StringTransformedEnum,
         allowed_values=[obj.value for obj in NlpLearningRateScheduler],
         casing_transform=camel_to_snake,

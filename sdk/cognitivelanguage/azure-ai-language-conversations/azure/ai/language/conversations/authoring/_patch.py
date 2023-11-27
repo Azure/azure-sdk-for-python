@@ -33,9 +33,6 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient):
     that can be used to analyze structured conversations (textual or spoken). Further documentation
     can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.
 
-    See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring for more information about
-    requests and responses you can pass to this client.
-
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.
     :type endpoint: str
@@ -53,8 +50,8 @@ class ConversationAuthoringClient(GeneratedConversationAuthoringClient):
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         try:
             endpoint = endpoint.rstrip("/")
-        except AttributeError:
-            raise ValueError("Parameter 'endpoint' must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Parameter 'endpoint' must be a string.") from exc
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore

@@ -23,41 +23,68 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from ._schema import SchemaProperties, Schema
+from typing import (
+    cast,
+    Tuple,
+    Mapping,
+    Dict,
+    TYPE_CHECKING,
+    Iterator,
+    AsyncIterator,
+    Union,
+)
 from ._constants import SchemaFormat
 
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
+    from azure.core.rest import HttpResponse, AsyncHttpResponse
 
-def _parse_schema_properties_dict(response):
+
+def _parse_schema_properties_dict(
+    response_headers: Mapping[str, Union[str, int]]
+) -> Dict[str, Union[str, int]]:
     return {
-        "id": response.headers.get("schema-id"),
-        "group_name": response.headers.get("schema-group-name"),
-        "name": response.headers.get("schema-name"),
-        "version": int(response.headers.get("schema-version"))
+        "id": response_headers["Schema-Id"],
+        "group_name": response_headers["Schema-Group-Name"],
+        "name": response_headers["Schema-Name"],
+        "version": int(response_headers["Schema-Version"]),
     }
 
-
-def _parse_response_schema_properties(response, format):
-    # pylint:disable=redefined-builtin
-    properties_dict = _parse_schema_properties_dict(response)
-    properties_dict["format"] = SchemaFormat(format)
-    return SchemaProperties(**properties_dict)
 
 def _get_format(content_type: str) -> SchemaFormat:
     # pylint:disable=redefined-builtin
     try:
         format = content_type.split("serialization=")[1]
         try:
-            format = SchemaFormat(format)
+            return SchemaFormat(format)
         except ValueError:
-            format = SchemaFormat(format.capitalize())
+            return SchemaFormat(format.capitalize())
     except IndexError:
-        format = SchemaFormat.CUSTOM
-    return format
+        if 'protobuf' in content_type:
+            return SchemaFormat.PROTOBUF
+        return SchemaFormat.CUSTOM
 
-def _parse_response_schema(response):
-    schema_props_dict = _parse_schema_properties_dict(response)
-    schema_props_dict["format"] = _get_format(response.headers.get("content-type"))
 
-    return Schema(
-        definition=response.text(), properties=SchemaProperties(**schema_props_dict)
+def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
+    format: str,
+    pipeline_response: "PipelineResponse",
+    deserialized: Union[Iterator[bytes], AsyncIterator[bytes]],
+    response_headers: Mapping[str, Union[str, int]],
+) -> Dict[str, Union[str, int]]:
+    properties_dict = _parse_schema_properties_dict(response_headers)
+    properties_dict["format"] = SchemaFormat(format)
+    pipeline_response.http_response.raise_for_status()
+    return properties_dict
+
+
+def prepare_schema_result(  # pylint:disable=unused-argument
+    pipeline_response: "PipelineResponse",
+    deserialized: Union[Iterator[bytes], AsyncIterator[bytes]],
+    response_headers: Mapping[str, Union[str, int]],
+) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
+    properties_dict = _parse_schema_properties_dict(response_headers)
+    properties_dict["format"] = _get_format(
+        cast(str, response_headers.get("Content-Type"))
     )
+    pipeline_response.http_response.raise_for_status()
+    return pipeline_response.http_response, properties_dict

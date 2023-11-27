@@ -1,18 +1,31 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+import copy
 import logging
 import re
 from collections import OrderedDict
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from marshmallow.exceptions import ValidationError
 
 module_logger = logging.getLogger(__name__)
 
 
-def validate_arm_str(arm_str: str) -> bool:
+class ArmId(str):
+    def __new__(cls, content):
+        validate_arm_str(content)
+        return str.__new__(cls, content)
+
+
+def validate_arm_str(arm_str: Union[ArmId, str]) -> bool:
+    """Validate whether the given string is in fact in the format of an ARM ID.
+
+    :param arm_str: The string to validate.
+    :type arm_str: Either a string (in case of incorrect formatting) or ArmID (in case of correct formatting).
+    :returns: True if the string is correctly formatted, False otherwise.
+    :rtype: bool
+    """
     reg_str = (
         r"/subscriptions/[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}?/resourcegroups/.*/providers/[a-z.a-z]*/[a-z]*/.*"
     )
@@ -27,8 +40,8 @@ def get_subnet_str(vnet_name: str, subnet: str, sub_id: Optional[str] = None, rg
     if vnet_name and not subnet:
         raise ValidationError("Subnet is required when vnet name is specified.")
     try:
-        if validate_arm_str(subnet):
-            return subnet
+        validate_arm_str(subnet)
+        return subnet
     except ValidationError:
         return (
             f"/subscriptions/{sub_id}/resourceGroups/{rg}/"
@@ -61,3 +74,21 @@ def exit_if_registry_assets(data: Dict, caller: str) -> None:
         and data["code_configuration"].code.startswith(startswith)
     ):
         raise ValidationError(f"Registry reference for code_configuration.code is not supported for {caller}")
+
+
+def _resolve_group_inputs_for_component(component, **kwargs):  # pylint: disable=unused-argument
+    # Try resolve object's inputs & outputs and return a resolved new object
+    from azure.ai.ml.entities._inputs_outputs import GroupInput
+
+    result = copy.copy(component)
+
+    flatten_inputs = {}
+    for key, val in result.inputs.items():
+        if isinstance(val, GroupInput):
+            flatten_inputs.update(val.flatten(group_parameter_name=key))
+            continue
+        flatten_inputs[key] = val
+
+    # Flatten group inputs
+    result._inputs = flatten_inputs  # pylint: disable=protected-access
+    return result

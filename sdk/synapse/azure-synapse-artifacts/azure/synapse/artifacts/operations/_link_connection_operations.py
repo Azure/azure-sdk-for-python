@@ -26,7 +26,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -39,7 +39,7 @@ def build_list_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -58,7 +58,7 @@ def build_create_or_update_request(link_connection_name: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -68,7 +68,7 @@ def build_create_or_update_request(link_connection_name: str, **kwargs: Any) -> 
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -85,7 +85,7 @@ def build_get_request(link_connection_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -94,7 +94,7 @@ def build_get_request(link_connection_name: str, **kwargs: Any) -> HttpRequest:
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -109,7 +109,7 @@ def build_delete_request(link_connection_name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -118,7 +118,7 @@ def build_delete_request(link_connection_name: str, **kwargs: Any) -> HttpReques
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -133,7 +133,7 @@ def build_edit_tables_request(link_connection_name: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -143,7 +143,7 @@ def build_edit_tables_request(link_connection_name: str, **kwargs: Any) -> HttpR
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -160,7 +160,7 @@ def build_start_request(link_connection_name: str, **kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -169,7 +169,7 @@ def build_start_request(link_connection_name: str, **kwargs: Any) -> HttpRequest
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -184,7 +184,7 @@ def build_stop_request(link_connection_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -193,7 +193,7 @@ def build_stop_request(link_connection_name: str, **kwargs: Any) -> HttpRequest:
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -208,7 +208,7 @@ def build_get_detailed_status_request(link_connection_name: str, **kwargs: Any) 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -217,7 +217,7 @@ def build_get_detailed_status_request(link_connection_name: str, **kwargs: Any) 
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -232,7 +232,7 @@ def build_list_link_tables_request(link_connection_name: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -241,7 +241,7 @@ def build_list_link_tables_request(link_connection_name: str, **kwargs: Any) -> 
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -256,7 +256,7 @@ def build_query_table_status_request(link_connection_name: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -266,7 +266,7 @@ def build_query_table_status_request(link_connection_name: str, **kwargs: Any) -
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -285,7 +285,7 @@ def build_update_landing_zone_credential_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -295,7 +295,7 @@ def build_update_landing_zone_credential_request(  # pylint: disable=name-too-lo
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -312,7 +312,7 @@ def build_pause_request(link_connection_name: str, **kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -321,7 +321,7 @@ def build_pause_request(link_connection_name: str, **kwargs: Any) -> HttpRequest
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -336,7 +336,7 @@ def build_resume_request(link_connection_name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -345,7 +345,7 @@ def build_resume_request(link_connection_name: str, **kwargs: Any) -> HttpReques
         "linkConnectionName": _SERIALIZER.url("link_connection_name", link_connection_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -388,7 +388,7 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkConnectionListResponse] = kwargs.pop("cls", None)
 
         error_map = {
@@ -402,31 +402,30 @@ class LinkConnectionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_workspace_request(
+                _request = build_list_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.list_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("LinkConnectionListResponse", pipeline_response)
@@ -436,11 +435,11 @@ class LinkConnectionOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -451,8 +450,6 @@ class LinkConnectionOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list_by_workspace.metadata = {"url": "/linkconnections"}
 
     @overload
     def create_or_update(
@@ -527,7 +524,7 @@ class LinkConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LinkConnectionResource] = kwargs.pop("cls", None)
 
@@ -539,25 +536,24 @@ class LinkConnectionOperations:
         else:
             _json = self._serialize.body(link_connection, "LinkConnectionResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_or_update.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -569,11 +565,9 @@ class LinkConnectionOperations:
         deserialized = self._deserialize("LinkConnectionResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    create_or_update.metadata = {"url": "/linkconnections/{linkConnectionName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def get(self, link_connection_name: str, **kwargs: Any) -> _models.LinkConnectionResource:
@@ -597,25 +591,24 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkConnectionResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -627,11 +620,9 @@ class LinkConnectionOperations:
         deserialized = self._deserialize("LinkConnectionResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {"url": "/linkconnections/{linkConnectionName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -657,25 +648,24 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
-            template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -685,9 +675,7 @@ class LinkConnectionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {"url": "/linkconnections/{linkConnectionName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def edit_tables(  # pylint: disable=inconsistent-return-statements
@@ -715,31 +703,30 @@ class LinkConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _edit_tables_request = _models.EditTablesRequest(link_tables=link_tables)
         _json = self._serialize.body(_edit_tables_request, "EditTablesRequest")
 
-        request = build_edit_tables_request(
+        _request = build_edit_tables_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.edit_tables.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -749,9 +736,7 @@ class LinkConnectionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    edit_tables.metadata = {"url": "/linkconnections/{linkConnectionName}/edittables"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def start(self, link_connection_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -776,25 +761,24 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_start_request(
+        _request = build_start_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
-            template_url=self.start.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -804,9 +788,7 @@ class LinkConnectionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    start.metadata = {"url": "/linkconnections/{linkConnectionName}/start"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def stop(self, link_connection_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -831,25 +813,24 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_stop_request(
+        _request = build_stop_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
-            template_url=self.stop.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -859,9 +840,7 @@ class LinkConnectionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    stop.metadata = {"url": "/linkconnections/{linkConnectionName}/stop"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get_detailed_status(self, link_connection_name: str, **kwargs: Any) -> _models.LinkConnectionDetailedStatus:
@@ -885,25 +864,24 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkConnectionDetailedStatus] = kwargs.pop("cls", None)
 
-        request = build_get_detailed_status_request(
+        _request = build_get_detailed_status_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
-            template_url=self.get_detailed_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -915,11 +893,9 @@ class LinkConnectionOperations:
         deserialized = self._deserialize("LinkConnectionDetailedStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_detailed_status.metadata = {"url": "/linkconnections/{linkConnectionName}/detailedstatus"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_link_tables(self, link_connection_name: str, **kwargs: Any) -> _models.LinkTableListResponse:
@@ -943,25 +919,24 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[_models.LinkTableListResponse] = kwargs.pop("cls", None)
 
-        request = build_list_link_tables_request(
+        _request = build_list_link_tables_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
-            template_url=self.list_link_tables.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -973,11 +948,9 @@ class LinkConnectionOperations:
         deserialized = self._deserialize("LinkTableListResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    list_link_tables.metadata = {"url": "/linkconnections/{linkConnectionName}/linktables"}
+        return deserialized  # type: ignore
 
     @overload
     def query_table_status(
@@ -1060,7 +1033,7 @@ class LinkConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LinkConnectionQueryTableStatus] = kwargs.pop("cls", None)
 
@@ -1072,25 +1045,24 @@ class LinkConnectionOperations:
         else:
             _json = self._serialize.body(query_table_status_request, "QueryTableStatusRequest")
 
-        request = build_query_table_status_request(
+        _request = build_query_table_status_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.query_table_status.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1102,11 +1074,9 @@ class LinkConnectionOperations:
         deserialized = self._deserialize("LinkConnectionQueryTableStatus", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_table_status.metadata = {"url": "/linkconnections/{linkConnectionName}/querytablestatus"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def update_landing_zone_credential(  # pylint: disable=inconsistent-return-statements
@@ -1134,31 +1104,30 @@ class LinkConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _update_landing_zone_credential_request = _models.UpdateLandingZoneCredential(sas_token=sas_token)
         _json = self._serialize.body(_update_landing_zone_credential_request, "UpdateLandingZoneCredential")
 
-        request = build_update_landing_zone_credential_request(
+        _request = build_update_landing_zone_credential_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.update_landing_zone_credential.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1168,11 +1137,7 @@ class LinkConnectionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    update_landing_zone_credential.metadata = {
-        "url": "/linkconnections/{linkConnectionName}/updateLandingZoneCredential"
-    }
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def pause(self, link_connection_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -1197,25 +1162,24 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_pause_request(
+        _request = build_pause_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
-            template_url=self.pause.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1225,9 +1189,7 @@ class LinkConnectionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    pause.metadata = {"url": "/linkconnections/{linkConnectionName}/pause"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def resume(  # pylint: disable=inconsistent-return-statements
@@ -1254,25 +1216,24 @@ class LinkConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-18-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_resume_request(
+        _request = build_resume_request(
             link_connection_name=link_connection_name,
             api_version=api_version,
-            template_url=self.resume.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1282,6 +1243,4 @@ class LinkConnectionOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    resume.metadata = {"url": "/linkconnections/{linkConnectionName}/resume"}
+            return cls(pipeline_response, None, {})  # type: ignore

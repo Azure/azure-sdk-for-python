@@ -16,7 +16,10 @@ import sys
 from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
 )
+from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
+from gh_tools.vnext_issue_creator import create_vnext_issue
+
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -37,11 +40,12 @@ if __name__ == "__main__":
         "--next",
         default=False,
         help="Next version of mypy is being tested.",
-        required=False 
+        required=False
     )
 
     args = parser.parse_args()
-    package_name = os.path.basename(os.path.abspath(args.target_package))
+    package_dir = os.path.abspath(args.target_package)
+    package_name = os.path.basename(package_dir)
     if not args.next and in_ci():
         if not is_check_enabled(args.target_package, "mypy", True) or is_typing_ignored(package_name):
             logging.info(
@@ -49,16 +53,19 @@ if __name__ == "__main__":
             )
             exit(0)
 
+    pkg_details = ParsedSetup.from_path(package_dir)
+    top_level_module = pkg_details.namespace.split(".")[0]
+    python_version = "3.8" if args.next else "3.7"
     commands = [
         sys.executable,
         "-m",
         "mypy",
         "--python-version",
-        "3.7",
+        python_version,
         "--show-error-codes",
         "--ignore-missing-imports",
     ]
-    src_code = [*commands, os.path.join(args.target_package, "azure")]
+    src_code = [*commands, os.path.join(args.target_package, top_level_module)]
     src_code_error = None
     sample_code_error = None
     try:
@@ -74,21 +81,30 @@ if __name__ == "__main__":
             f"Package {package_name} opts-out of mypy check on samples."
         )
     else:
-        sample_code = [
-            *commands,
-            "--check-untyped-defs",
-            "--follow-imports=silent",
-            os.path.join(args.target_package, "samples")
-        ]
-        try:
+        # check if samples dir exists, if not, skip sample code check
+        if not os.path.exists(os.path.join(args.target_package, "samples")):
             logging.info(
-                f"Running mypy commands on sample code: {sample_code}"
+                f"Package {package_name} does not have a samples directory."
             )
-            check_call(sample_code)
-        except CalledProcessError as sample_err:
-            sample_code_error = sample_err
+        else:
+            sample_code = [
+                *commands,
+                "--check-untyped-defs",
+                "--follow-imports=silent",
+                os.path.join(args.target_package, "samples")
+            ]
+            try:
+                logging.info(
+                    f"Running mypy commands on sample code: {sample_code}"
+                )
+                check_call(sample_code)
+            except CalledProcessError as sample_err:
+                sample_code_error = sample_err
 
-    print("See https://aka.ms/python/typing-guide for information.\n\n")
+    if args.next and in_ci() and not is_typing_ignored(package_name):
+        if src_code_error or sample_code_error:
+            create_vnext_issue(package_name, "mypy")
+
     if src_code_error and sample_code_error:
         raise Exception(
             [

@@ -76,7 +76,11 @@ def fix_coverage_xml(coverage_file):
             cov_file.write(out)
 
 if __name__ == "__main__":
+    coverage_xml = os.path.join(root_dir, 'coverage.xml')
+
     collect_tox_coverage_files()
     generate_coverage_xml()
     create_coverage_report()
-    fix_coverage_xml(os.path.join(root_dir, 'coverage.xml'))
+
+    if os.path.exists(coverage_xml):
+        fix_coverage_xml(coverage_xml)

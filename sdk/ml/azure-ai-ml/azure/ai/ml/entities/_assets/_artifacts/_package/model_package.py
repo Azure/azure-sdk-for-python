@@ -6,46 +6,44 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, List, Dict, Optional, Union
+from typing import IO, AnyStr, Dict, List, Optional, Union
+import re
 
-
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
-    PackageRequest,
-    PackageResponse,
-    ModelPackageInput as RestModelPackageInput,
-    PackageInputPathId as RestPackageInputPathId,
-    PackageInputPathVersion as RestPackageInputPathVersion,
-    PackageInputPathUrl as RestPackageInputPathUrl,
-    CodeConfiguration,
-)
-
-from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml._restclient.v2023_08_01_preview.models import CodeConfiguration
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelPackageInput as RestModelPackageInput
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathId as RestPackageInputPathId
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathUrl as RestPackageInputPathUrl
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathVersion as RestPackageInputPathVersion
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageRequest, PackageResponse
 from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.constants._common import (
-    BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
-)
-from azure.ai.ml._utils.utils import snake_to_pascal, dump_yaml_to_file
 from azure.ai.ml._utils._experimental import experimental
-from .model_configuration import ModelConfiguration
-from .inferencing_server import AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer
+from azure.ai.ml._utils.utils import dump_yaml_to_file, snake_to_pascal
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml.entities._util import load_from_dict
+
 from .base_environment_source import BaseEnvironment
+from .inferencing_server import AzureMLBatchInferencingServer, AzureMLOnlineInferencingServer
+from .model_configuration import ModelConfiguration
 
 
 @experimental
 class PackageInputPathId:
+    """Package input path specified with a resource ID.
 
-    """Package input path specified with a resource id.
-
-    :param input_path_type: The type of the input path. Possible values include: "Url", "PathId", "PathVersion".
-    :type input_path_type: str
-    :param resource_id: The resource id of the input path. e.g. azureml://subscriptions/<>/resourceGroups/
-    <>/providers/Microsoft.MachineLearningServices/workspaces/<>/data/<>/versions/<>
-    :type resource_id: str
+    :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
+    :type input_path_type: Optional[str]
+    :param resource_id: The resource ID of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
+        <>/providers/Microsoft.MachineLearningServices/workspaces/<>/data/<>/versions/<>".
+    :type resource_id: Optional[str]
     """
 
-    def __init__(self, *, input_path_type: Optional[str] = None, resource_id: Optional[str] = None):
+    def __init__(
+        self,
+        *,
+        input_path_type: Optional[str] = None,
+        resource_id: Optional[str] = None,
+    ) -> None:
         self.input_path_type = input_path_type
         self.resource_id = resource_id
 
@@ -67,12 +65,12 @@ class PackageInputPathId:
 class PackageInputPathVersion:
     """Package input path specified with a resource name and version.
 
-    :param input_path_type: The type of the input path. Possible values include: "Url", "PathId", "PathVersion".
-    :type input_path_type: str
+    :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
+    :type input_path_type: Optional[str]
     :param resource_name: The resource name of the input path.
-    :type resource_name: str
+    :type resource_name: Optional[str]
     :param resource_version: The resource version of the input path.
-    :type resource_version: str
+    :type resource_version: Optional[str]
     """
 
     def __init__(
@@ -81,7 +79,7 @@ class PackageInputPathVersion:
         input_path_type: Optional[str] = None,
         resource_name: Optional[str] = None,
         resource_version: Optional[str] = None,
-    ):
+    ) -> None:
         self.input_path_type = input_path_type
         self.resource_name = resource_name
         self.resource_version = resource_version
@@ -108,14 +106,14 @@ class PackageInputPathVersion:
 class PackageInputPathUrl:
     """Package input path specified with a url.
 
-    :param input_path_type: The type of the input path. Possible values include: "Url", "PathId", "PathVersion".
-    :type input_path_type: str
-    :param url: The url of the input path. e.g. azureml://subscriptions/<>/resourceGroups/
-    <>/providers/Microsoft.MachineLearningServices/workspaces/data/<>/versions/<>
-    :type url: str
+    :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
+    :type input_path_type: Optional[str]
+    :param url: The url of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
+        <>/providers/Microsoft.MachineLearningServices/workspaces/data/<>/versions/<>".
+    :type url: Optional[str]
     """
 
-    def __init__(self, *, input_path_type: Optional[str] = None, url: Optional[str] = None):
+    def __init__(self, *, input_path_type: Optional[str] = None, url: Optional[str] = None) -> None:
         self.input_path_type = input_path_type
         self.url = url
 
@@ -138,14 +136,23 @@ class ModelPackageInput:
     """Model package input.
 
     :param type: The type of the input.
-    :type type: str
+    :type type: Optional[str]
     :param path: The path of the input.
-    :type path: azure.ai.ml.entities.PackageInputPathId
-     or azure.ai.ml.entities.PackageInputPathUrl or azure.ai.ml.entities.PackageInputPathVersion
-    :param mode: The mode of the input.
-    :type mode: str
-    :param mount_path: The mount path of the input.
-    :type mount_path: str
+    :type path: Optional[Union[~azure.ai.ml.entities.PackageInputPathId, ~azure.ai.ml.entities.PackageInputPathUrl,
+        ~azure.ai.ml.entities.PackageInputPathVersion]]
+    :param mode: The input mode.
+    :type mode: Optional[str]
+    :param mount_path: The mount path for the input.
+    :type mount_path: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START model_package_input_entity_create]
+            :end-before: [END model_package_input_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Model Package Input object.
     """
 
     def __init__(
@@ -155,7 +162,7 @@ class ModelPackageInput:
         path: Optional[Union[PackageInputPathId, PackageInputPathUrl, PackageInputPathVersion]] = None,
         mode: Optional[str] = None,
         mount_path: Optional[str] = None,
-    ):
+    ) -> None:
         self.type = type
         self.path = path
         self.mode = mode
@@ -183,40 +190,61 @@ class ModelPackageInput:
 class ModelPackage(Resource, PackageRequest):
     """Model package.
 
-    :param target_environment_name: The name of the model package.
+    :param target_environment_name: The target environment name for the model package.
     :type target_environment_name: str
     :param inferencing_server: The inferencing server of the model package.
-    :type inferencing_server: azure.ai.ml.entities.InferencingServer
+    :type inferencing_server: Union[~azure.ai.ml.entities.AzureMLOnlineInferencingServer,
+        ~azure.ai.ml.entities.AzureMLBatchInferencingServer]
     :param base_environment_source: The base environment source of the model package.
-    :type base_environment_source: azure.ai.ml.entities.BaseEnvironmentSource
+    :type base_environment_source: Optional[~azure.ai.ml.entities.BaseEnvironment]
     :param target_environment_version: The version of the model package.
-    :type target_environment_version: str
+    :type target_environment_version: Optional[str]
     :param environment_variables: The environment variables of the model package.
-    :type environment_variables: dict
+    :type environment_variables: Optional[dict[str, str]]
     :param inputs: The inputs of the model package.
-    :type inputs: list[azure.ai.ml.entities.ModelPackageInput]
-    :param model_configuration: The model configuration of the model package.
-    :type model_configuration: azure.ai.ml.entities.ModelConfiguration
+    :type inputs: Optional[list[~azure.ai.ml.entities.ModelPackageInput]]
+    :param model_configuration: The model configuration.
+    :type model_configuration: Optional[~azure.ai.ml.entities.ModelConfiguration]
     :param tags: The tags of the model package.
-    :type tags: dict
+    :type tags: Optional[dict[str, str]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START model_package_entity_create]
+            :end-before: [END model_package_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Model Package object.
     """
 
     def __init__(
         self,
         *,
-        target_environment_name: str,
+        target_environment: Union[str, Dict[str, str]],
         inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
         base_environment_source: BaseEnvironment = None,
-        target_environment_version: Optional[str] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         inputs: Optional[List[ModelPackageInput]] = None,
         model_configuration: Optional[ModelConfiguration] = None,
         tags: Optional[Dict[str, str]] = None,
+        **kwargs,
     ):
+        if isinstance(target_environment, dict):
+            target_environment = target_environment["name"]
+            env_version = None
+        else:
+            parse_id = re.match(r"azureml:(\w+):(\d+)$", target_environment)
+
+            if parse_id:
+                target_environment = parse_id.group(1)
+                env_version = parse_id.group(2)
+            else:
+                env_version = None
+
         super().__init__(
-            name=target_environment_name,
-            target_environment_name=target_environment_name,
-            target_environment_version=target_environment_version,
+            name=target_environment,
+            target_environment_id=target_environment,
             base_environment_source=base_environment_source,
             inferencing_server=inferencing_server,
             model_configuration=model_configuration,
@@ -224,6 +252,7 @@ class ModelPackage(Resource, PackageRequest):
             tags=tags,
             environment_variables=environment_variables,
         )
+        self.environment_version = env_version
 
     @classmethod
     def _load(
@@ -246,10 +275,14 @@ class ModelPackage(Resource, PackageRequest):
         dest: Union[str, PathLike, IO[AnyStr]],
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        """Dump the model package spec into a file in yaml format.
+        """Dumps the job content into a file in YAML format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
         """
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
@@ -277,12 +310,13 @@ class ModelPackage(Resource, PackageRequest):
                 else self.inferencing_server.code_configuration.code.id
             )
             code = CodeConfiguration(
-                code_id=code_id, scoring_script=self.inferencing_server.code_configuration.scoring_script
+                code_id=code_id,
+                scoring_script=self.inferencing_server.code_configuration.scoring_script,
             )
             self.inferencing_server.code_configuration = code
 
         package_request = PackageRequest(
-            target_environment_name=self.name,
+            target_environment_id=self.target_environment_id,
             base_environment_source=self.base_environment_source._to_rest_object()
             if self.base_environment_source
             else None,

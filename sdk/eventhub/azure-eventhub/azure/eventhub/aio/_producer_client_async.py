@@ -31,6 +31,7 @@ class EventHubProducerClient(
     ClientBaseAsync
 ):  # pylint: disable=client-accepts-api-version-keyword
     # pylint: disable=too-many-instance-attributes
+    # pylint: disable=client-method-missing-tracing-decorator-async
     """
     The EventHubProducerClient class defines a high level interface for
     sending events to the Azure Event Hubs service.
@@ -115,6 +116,11 @@ class EventHubProducerClient(
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If EventHubsConnectionError errors are occurring due to write
+     timing out, a larger than default value may need to be passed in. This is for advanced usage scenarios
+     and ordinarily the default value should be sufficient.
 
     .. admonition:: Example:
 
@@ -697,18 +703,18 @@ class EventHubProducerClient(
 
         The max_size_in_bytes should be no greater than the max allowed message size defined by the service.
 
-        :param str partition_id: The specific partition ID to send to. Default is None, in which case the service
-         will assign to all partitions using round-robin.
-        :param str partition_key: With the given partition_key, event data will be sent to
+        :keyword str or None partition_id: The specific partition ID to send to.
+         Default is None, in which case the service will assign to all partitions using round-robin.
+        :keyword str or None partition_key: With the given partition_key, event data will be sent to
          a particular partition of the Event Hub decided by the service.
          If both partition_id and partition_key are provided, the partition_id will take precedence.
          **WARNING: Setting partition_key of non-string value on the events to be sent is discouraged
          as the partition_key will be ignored by the Event Hub service and events will be assigned
          to all partitions using round-robin. Furthermore, there are SDKs for consuming events which expect
          partition_key to only be string type, they might fail to parse the non-string value.**
-        :param int max_size_in_bytes: The maximum size of bytes data that an EventDataBatch object can hold. By
-         default, the value is determined by your Event Hubs tier.
-        :rtype: ~azure.eventhub.EventDataBatch
+        :keyword int or None max_size_in_bytes: The maximum size of bytes data that an EventDataBatch
+         object can hold. By default, the value is determined by your Event Hubs tier.
+        :return: An EventDataBatch object
 
         .. admonition:: Example:
 
@@ -718,7 +724,7 @@ class EventHubProducerClient(
                 :language: python
                 :dedent: 4
                 :caption: Create EventDataBatch object within limited size
-
+        :rtype: ~azure.eventhub.EventDataBatch
         """
         if not self._max_message_size_on_link:
             await self._get_max_message_size()
@@ -750,7 +756,8 @@ class EventHubProducerClient(
             - `created_at` (UTC datetime.datetime)
             - `partition_ids` (list[str])
 
-        :rtype: Dict[str, Any]
+        :return: A dictionary containing information about the Event Hub.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -760,6 +767,7 @@ class EventHubProducerClient(
     async def get_partition_ids(self) -> List[str]:
         """Get partition IDs of the Event Hub.
 
+        :return: A list of partition IDs.
         :rtype: list[str]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
@@ -780,7 +788,8 @@ class EventHubProducerClient(
 
         :param partition_id: The target partition ID.
         :type partition_id: str
-        :rtype: Dict[str, Any]
+        :return: A dict of partition properties.
+        :rtype: dict[str, any]
         :raises: :class:`EventHubError<azure.eventhub.exceptions.EventHubError>`
         """
         return await super(
@@ -792,7 +801,8 @@ class EventHubProducerClient(
         Buffered mode only.
         Flush events in the buffer to be sent immediately if the client is working in buffered mode.
 
-        :keyword Optional[float] timeout: Timeout to flush the buffered events, default is None which means no timeout.
+        :keyword timeout: Timeout to flush the buffered events, default is None which means no timeout.
+        :paramtype timeout: float or None
         :rtype: None
         :raises EventDataSendError: If the producer fails to flush the buffer within the given timeout
          in buffered mode.
@@ -810,8 +820,9 @@ class EventHubProducerClient(
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
          immediately. Default is True.
-        :keyword Optional[float] timeout: Buffered mode only. Timeout to close the producer.
+        :keyword timeout: Buffered mode only. Timeout to close the producer.
          Default is None which means no timeout.
+        :paramtype timeout: float or None
         :rtype: None
         :raises EventHubError: If an error occurred when flushing the buffer if `flush` is set to True or closing the
          underlying AMQP connections in buffered mode.
@@ -835,9 +846,9 @@ class EventHubProducerClient(
                 )
                 self._buffered_producer_dispatcher = None
 
-            for pid in self._producers:
-                if self._producers[pid] is not None:
-                    await self._producers[pid].close()  # type: ignore
+            for pid, producer in self._producers.items():
+                if producer is not None:
+                    await producer.close()  # type: ignore
                 self._producers[pid] = None
 
         await super(EventHubProducerClient, self)._close_async()

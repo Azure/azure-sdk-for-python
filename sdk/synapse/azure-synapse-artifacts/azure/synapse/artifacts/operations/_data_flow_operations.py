@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -59,7 +59,7 @@ def build_create_or_update_data_flow_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -96,7 +96,7 @@ def build_get_data_flow_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -129,7 +129,7 @@ def build_delete_data_flow_request(data_flow_name: str, **kwargs: Any) -> HttpRe
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -161,7 +161,7 @@ def build_rename_data_flow_request(data_flow_name: str, **kwargs: Any) -> HttpRe
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -233,25 +233,24 @@ class DataFlowOperations:
         _data_flow = _models.DataFlowResource(properties=properties)
         _json = self._serialize.body(_data_flow, "DataFlowResource")
 
-        request = build_create_or_update_data_flow_request(
+        _request = build_create_or_update_data_flow_request(
             data_flow_name=data_flow_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_data_flow_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -265,11 +264,9 @@ class DataFlowOperations:
             deserialized = self._deserialize("DataFlowResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_data_flow_initial.metadata = {"url": "/dataflows/{dataFlowName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_create_or_update_data_flow(
@@ -323,7 +320,7 @@ class DataFlowOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("DataFlowResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -346,8 +343,6 @@ class DataFlowOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_data_flow.metadata = {"url": "/dataflows/{dataFlowName}"}
 
     @distributed_trace
     def get_data_flow(
@@ -380,23 +375,22 @@ class DataFlowOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.DataFlowResource] = kwargs.pop("cls", None)
 
-        request = build_get_data_flow_request(
+        _request = build_get_data_flow_request(
             data_flow_name=data_flow_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_data_flow.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -408,11 +402,9 @@ class DataFlowOperations:
         deserialized = self._deserialize("DataFlowResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_data_flow.metadata = {"url": "/dataflows/{dataFlowName}"}
+        return deserialized  # type: ignore
 
     def _delete_data_flow_initial(  # pylint: disable=inconsistent-return-statements
         self, data_flow_name: str, **kwargs: Any
@@ -431,22 +423,21 @@ class DataFlowOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_data_flow_request(
+        _request = build_delete_data_flow_request(
             data_flow_name=data_flow_name,
             api_version=api_version,
-            template_url=self._delete_data_flow_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -456,9 +447,7 @@ class DataFlowOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_data_flow_initial.metadata = {"url": "/dataflows/{dataFlowName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete_data_flow(self, data_flow_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -499,7 +488,7 @@ class DataFlowOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -522,8 +511,6 @@ class DataFlowOperations:
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_data_flow.metadata = {"url": "/dataflows/{dataFlowName}"}
-
     def _rename_data_flow_initial(  # pylint: disable=inconsistent-return-statements
         self, data_flow_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> None:
@@ -545,24 +532,23 @@ class DataFlowOperations:
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_data_flow_request(
+        _request = build_rename_data_flow_request(
             data_flow_name=data_flow_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_data_flow_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -572,9 +558,7 @@ class DataFlowOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _rename_data_flow_initial.metadata = {"url": "/dataflows/{dataFlowName}/rename"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_rename_data_flow(
@@ -622,7 +606,7 @@ class DataFlowOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -644,8 +628,6 @@ class DataFlowOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_rename_data_flow.metadata = {"url": "/dataflows/{dataFlowName}/rename"}
 
     @distributed_trace
     def get_data_flows_by_workspace(self, **kwargs: Any) -> Iterable["_models.DataFlowResource"]:
@@ -673,31 +655,30 @@ class DataFlowOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_data_flows_by_workspace_request(
+                _request = build_get_data_flows_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_data_flows_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("DataFlowListResponse", pipeline_response)
@@ -707,11 +688,11 @@ class DataFlowOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -722,5 +703,3 @@ class DataFlowOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    get_data_flows_by_workspace.metadata = {"url": "/dataflows"}

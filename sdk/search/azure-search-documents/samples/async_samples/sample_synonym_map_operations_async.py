@@ -21,14 +21,15 @@ USAGE:
 import asyncio
 import os
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import SynonymMap
 
 client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
+
 
 async def create_synonym_map():
     # [START create_synonym_map_async]
@@ -41,12 +42,14 @@ async def create_synonym_map():
     print("Create new Synonym Map 'test-syn-map succeeded")
     # [END create_synonym_map_async]
 
+
 async def get_synonym_maps():
     # [START get_synonym_maps_async]
     result = await client.get_synonym_maps()
     names = [x.name for x in result]
     print("Found {} Synonym Maps in the service: {}".format(len(result), ", ".join(names)))
     # [END get_synonym_maps_async]
+
 
 async def get_synonym_map():
     # [START get_synonym_map_async]
@@ -56,11 +59,13 @@ async def get_synonym_map():
         print("    {}".format(syn))
     # [END get_synonym_map_async]
 
+
 async def delete_synonym_map():
     # [START delete_synonym_map_async]
     await client.delete_synonym_map("test-syn-map")
     print("Synonym Map 'test-syn-map' deleted")
     # [END delete_synonym_map_async]
+
 
 async def main():
     await create_synonym_map()
@@ -69,5 +74,6 @@ async def main():
     await delete_synonym_map()
     await client.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

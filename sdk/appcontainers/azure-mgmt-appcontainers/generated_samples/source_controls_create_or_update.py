@@ -40,14 +40,16 @@ def main():
                     "azureCredentials": {
                         "clientId": "<clientid>",
                         "clientSecret": "<clientsecret>",
+                        "kind": "feaderated",
                         "tenantId": "<tenantid>",
                     },
                     "contextPath": "./",
+                    "githubPersonalAccessToken": "test",
                     "image": "image/tag",
                     "registryInfo": {
                         "registryPassword": "<registrypassword>",
-                        "registryUrl": "xwang971reg.azurecr.io",
-                        "registryUserName": "xwang971reg",
+                        "registryUrl": "test-registry.azurecr.io",
+                        "registryUserName": "test-registry",
                     },
                 },
                 "repoUrl": "https://github.com/xwang971/ghatest",
@@ -57,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2022-11-01-preview/examples/SourceControls_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/SourceControls_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

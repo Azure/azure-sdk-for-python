@@ -438,8 +438,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         telemetry: object,
         **kwargs
     ) -> None:
-        """Publish telemetry from a digital twin, which is then consumed by
-        one or many destination endpoints (subscribers) defined under.
+        """Publish telemetry from a digital twin. The result is then
+        consumed by one or many destination endpoints (subscribers) defined under
+        DigitalTwinsEventRoute. These event routes need to be set before publishing
+        a telemetry message, in order for the telemetry message to be consumed.
 
         :param str digital_twin_id: The ID of the digital twin
         :param object telemetry: The telemetry data to be sent
@@ -468,8 +470,10 @@ class DigitalTwinsClient(object): # pylint: disable=too-many-public-methods,clie
         telemetry: object,
         **kwargs
     ) -> None:
-        """Publish telemetry from a digital twin's component, which is then consumed
-        by one or many destination endpoints (subscribers) defined under.
+        """Publish telemetry from a digital twin. The result is then
+        consumed by one or many destination endpoints (subscribers) defined under
+        DigitalTwinsEventRoute. These event routes need to be set before publishing
+        a telemetry message, in order for the telemetry message to be consumed.
 
         :param str digital_twin_id: The ID of the digital twin.
         :param str component_name: The name of the DTDL component.

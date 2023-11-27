@@ -13,13 +13,13 @@ from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 TIME_TO_SLEEP = 3
 
-class TestSearchClientIndexDocument(AzureRecordedTestCase):
 
+class TestSearchClientIndexDocument(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_search_client_index_document(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key)
+        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
         doc_count = 10
         doc_count = self._test_upload_documents_new(client, doc_count)
         doc_count = self._test_upload_documents_existing(client, doc_count)

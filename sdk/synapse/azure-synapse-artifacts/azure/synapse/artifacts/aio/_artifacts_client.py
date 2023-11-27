@@ -10,6 +10,7 @@ from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
+from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models as _models
@@ -31,6 +32,7 @@ from .operations import (
     NotebookOperations,
     PipelineOperations,
     PipelineRunOperations,
+    RunNotebookOperations,
     SparkConfigurationOperations,
     SparkJobDefinitionOperations,
     SqlPoolsOperations,
@@ -51,6 +53,8 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     :ivar link_connection: LinkConnectionOperations operations
     :vartype link_connection: azure.synapse.artifacts.aio.operations.LinkConnectionOperations
+    :ivar run_notebook: RunNotebookOperations operations
+    :vartype run_notebook: azure.synapse.artifacts.aio.operations.RunNotebookOperations
     :ivar kql_scripts: KqlScriptsOperations operations
     :vartype kql_scripts: azure.synapse.artifacts.aio.operations.KqlScriptsOperations
     :ivar kql_script: KqlScriptOperations operations
@@ -104,7 +108,7 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The workspace development endpoint, for example
-     https://myworkspace.dev.azuresynapse.net. Required.
+     ``https://myworkspace.dev.azuresynapse.net``. Required.
     :type endpoint: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -113,13 +117,31 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def __init__(self, credential: "AsyncTokenCredential", endpoint: str, **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = ArtifactsClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.link_connection = LinkConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.run_notebook = RunNotebookOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_scripts = KqlScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.kql_script = KqlScriptOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metastore = MetastoreOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -179,7 +201,7 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()

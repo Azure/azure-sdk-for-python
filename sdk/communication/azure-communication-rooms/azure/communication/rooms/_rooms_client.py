@@ -16,9 +16,12 @@ from azure.communication.rooms._models import (
 )
 from azure.communication.rooms._shared.models import CommunicationIdentifier
 from ._generated._client import AzureCommunicationRoomsService
-from ._shared.utils import parse_connection_str, get_authentication_policy
+from ._generated._serialization import Serializer
+from ._shared.auth_policy_utils import get_authentication_policy
+from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
+
 
 class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
@@ -32,7 +35,7 @@ class RoomsClient(object):
     param Union[TokenCredential, AzureKeyCredential] credential:
         The access key we use to authenticate against the service.
     :keyword api_version: Azure Communication Rooms API version.
-        Default value is "2023-03-31-preview".
+        Default value is "2023-10-30-preview".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -45,8 +48,8 @@ class RoomsClient(object):
         try:
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
 
         if not credential:
             raise ValueError(
@@ -95,16 +98,17 @@ class RoomsClient(object):
         *,
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
+        pstn_dial_out_enabled: bool = False,
         participants: Optional[List[RoomParticipant]]=None,
         **kwargs
     ) -> CommunicationRoom:
         """Create a new room.
 
-        :param valid_from: The timestamp from when the room is open for joining. Optional.
-        :type valid_from: ~datetime.datetime
-        :param valid_until: The timestamp from when the room can no longer be joined. Optional.
-        :type valid_until: ~datetime.datetime
-        :param participants: Collection of identities invited to the room. Optional.
+        :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
+        :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
+        :keyword bool pstn_dial_out_enabled: Set this flag to true if, at the time of the call,
+        dial out to a PSTN number is enabled in a particular room. Optional.
+        :keyword List[RoomParticipant] participants: Collection of identities invited to the room. Optional.
         :type participants: List[~azure.communication.rooms.RoomParticipant]
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
@@ -112,20 +116,29 @@ class RoomsClient(object):
         """
         create_room_request = {
             "validFrom": valid_from,
-            "validUntil": valid_until
+            "validUntil": valid_until,
+            "pstnDialOutEnabled": pstn_dial_out_enabled,
         }
         if participants:
             create_room_request["participants"] ={
                 p.communication_identifier.raw_id: {"role": p.role} for p in participants
             }
+        _SERIALIZER = Serializer()
 
-        repeatability_request_id = uuid.uuid1()
-        repeatability_first_sent = datetime.utcnow()
+        repeatability_request_id =  str(uuid.uuid1())
+        repeatability_first_sent = _SERIALIZER.serialize_data(datetime.utcnow(), "rfc-1123")
+
+        request_headers = kwargs.pop("headers", {})
+        request_headers.update({
+            "Repeatability-Request-Id": repeatability_request_id,
+            "Repeatability-First-Sent": repeatability_first_sent
+        })
+
         create_room_response = self._rooms_service_client.rooms.create(
             create_room_request=create_room_request,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            **kwargs)
+            headers = request_headers,
+           **kwargs )
+
         return CommunicationRoom(create_room_response)
 
     @distributed_trace
@@ -151,26 +164,27 @@ class RoomsClient(object):
         self,
         *,
         room_id: str,
-        valid_from: datetime,
-        valid_until: datetime,
+        valid_from: Optional[datetime] = None,
+        valid_until: Optional[datetime] = None,
+        pstn_dial_out_enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> CommunicationRoom:
         """Update a valid room's attributes. For any argument that is passed
         in, the corresponding room property will be replaced with the new value.
 
-        :keyword room_id: Required. Id of room to be updated
-        :type room_id: str
-        :keyword valid_from: Required. The timestamp from when the room is open for joining.
-        :type valid_from: ~datetime.datetime
-        :keyword valid_until: Required. The timestamp from when the room can no longer be joined.
-        :type valid_until: ~datetime.datetime
+        :keyword str room_id: Required. Id of room to be updated
+        :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
+        :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
+        :keyword bool pstn_dial_out_enabled: Set this flag to true if, at the time of the call,
+        dial out to a PSTN number is enabled in a particular room. Optional.
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         update_room_request = {
             "validFrom": valid_from,
-            "validUntil": valid_until
+            "validUntil": valid_until,
+            "pstnDialOutEnabled": pstn_dial_out_enabled,
         }
         update_room_response = self._rooms_service_client.rooms.update(
             room_id=room_id, update_room_request=update_room_request, **kwargs)
@@ -222,10 +236,9 @@ class RoomsClient(object):
         """Update participants to a room. It looks for the room participants based on their
         communication identifier and replace the existing participants with the value passed in
         this API.
-        :param room_id: Required. Id of room to be updated
-        :type room_id: str
-        :param participants: Required. Collection of identities invited to be updated
-        :type participants: List[~azure.communication.rooms.RoomParticipant]
+        :keyword str room_id: Required. Id of room to be updated
+        :keyword List[RoomParticipant] participants:
+            Required. Collection of identities invited to be updated
         :returns: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -245,11 +258,9 @@ class RoomsClient(object):
         **kwargs
     ) -> None:
         """Remove participants from a room
-        :param room_id: Required. Id of room to be updated
-        :type room_id: str
-        :param participants: Required. Collection of identities to be removed from the room.
-        :type participants:
-         List[Union[~azure.communication.rooms.RoomParticipant, ~azure.communication.rooms.CommunicationIdentifier]]
+        :keyword str room_id: Required. Id of room to be updated
+        :keyword List[Union[RoomParticipant, CommunicationIdentifier]] participants:
+            Required. Collection of identities to be removed from the room.
         :returns: None.
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError

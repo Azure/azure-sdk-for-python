@@ -282,14 +282,20 @@ class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     READ_ONLY_FOLLOWING = "ReadOnlyFollowing"
 
 
+class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The language name, for example Python."""
+
+    PYTHON = "Python"
+
+
 class LanguageExtensionImageName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Language extension image name."""
 
     R = "R"
     PYTHON3_6_5 = "Python3_6_5"
-    PYTHON3_9_12 = "Python3_9_12"
-    PYTHON3_9_12_INCLUDE_DEEP_LEARNING = "Python3_9_12IncludeDeepLearning"
     PYTHON3_10_8 = "Python3_10_8"
+    PYTHON3_10_8_DL = "Python3_10_8_DL"
+    PYTHON_CUSTOM_IMAGE = "PythonCustomImage"
 
 
 class LanguageExtensionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -297,6 +303,13 @@ class LanguageExtensionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PYTHON = "PYTHON"
     R = "R"
+
+
+class MigrationClusterRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role of the cluster in the migration process."""
+
+    SOURCE = "Source"
+    DESTINATION = "Destination"
 
 
 class PrincipalsModificationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -362,6 +375,7 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STOPPED = "Stopped"
     STARTING = "Starting"
     UPDATING = "Updating"
+    MIGRATED = "Migrated"
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -380,3 +394,12 @@ class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_KUSTO_CLUSTERS_ATTACHED_DATABASE_CONFIGURATIONS = (
         "Microsoft.Kusto/clusters/attachedDatabaseConfigurations"
     )
+
+
+class VnetState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """When enabled, the cluster is deployed into the configured subnet, when disabled it will be
+    removed from the subnet.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

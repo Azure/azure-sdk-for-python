@@ -243,13 +243,16 @@ class EventProcessor(
                 partition_context._last_received_event = event  # type: ignore  #pylint:disable=protected-access
 
             links = []
+            is_batch = False
             if is_tracing_enabled():
                 links = get_span_links_from_received_events(event)
+                if isinstance(event, list):
+                    is_batch = True
 
             with receive_context_manager(self._eventhub_client, links=links, start_time=self._last_received_time):  # pylint:disable=protected-access
                 self._last_received_time = time.time_ns()
 
-            with process_context_manager(self._eventhub_client, links=links):
+            with process_context_manager(self._eventhub_client, links=links, is_batch=is_batch):
                 self._event_handler(partition_context, event)
         else:
             self._event_handler(partition_context, event)
@@ -259,8 +262,6 @@ class EventProcessor(
 
         The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
         and start receiving EventData from EventHub and processing events.
-
-        :return: None
 
         """
         while self._running:
@@ -354,7 +355,11 @@ class EventProcessor(
         self._ownership_manager.release_ownership(partition_id)
 
     def _do_receive(self, partition_id: str, consumer: EventHubConsumer) -> None:
-        """Call the consumer.receive() and handle exceptions if any after it exhausts retries."""
+        """Call the consumer.receive() and handle exceptions if any after it exhausts retries.
+
+        :param str partition_id: The partition id.
+        :param ~azure.eventhub._consumer.EventHubConsumer consumer: The consumer object.
+        """
         try:
             consumer.receive(self._batch, self._max_batch_size, self._max_wait_time)
         except Exception as error:  # pylint:disable=broad-except
@@ -405,8 +410,6 @@ class EventProcessor(
         Other running EventProcessor will take over these released partitions.
 
         A stopped EventProcessor can be restarted by calling method `start` again.
-
-        :return: None
 
         """
         if not self._running:

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=unused-argument,protected-access
 
 from typing import Any
 
@@ -59,6 +59,7 @@ class BatchJobSchema(PathAwareSchema):
     output_dataset = NestedField(OutputDataSchema)
     output_file_name = fields.Str()
     retry_settings = NestedField(BatchRetrySettingsSchema)
+    properties = fields.Dict(data_key="properties")
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=too-many-branches
@@ -85,12 +86,12 @@ class BatchJobSchema(PathAwareSchema):
                         data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = CustomModelJobInput(
                             mode=input_data.mode, uri=input_data.path
                         )  # pylint: disable=line-too-long
-                    if (
-                        input_data.type == InputTypes.INTEGER
-                        or input_data.type == InputTypes.NUMBER
-                        or input_data.type == InputTypes.STRING
-                        or input_data.type == InputTypes.BOOLEAN
-                    ):
+                    if input_data.type in {
+                        InputTypes.INTEGER,
+                        InputTypes.NUMBER,
+                        InputTypes.STRING,
+                        InputTypes.BOOLEAN,
+                    }:
                         data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = LiteralJobInput(
                             value=input_data.default
                         )  # pylint: disable=line-too-long

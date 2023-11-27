@@ -8,11 +8,15 @@
 
 """
 FILE: hello_world_sample.py
+
 DESCRIPTION:
     This sample demos set/get/delete operations for app configuration
-USAGE: python hello_world_sample.py
-"""
 
+USAGE: python hello_world_sample.py
+
+    Set the environment variables with your own values before running the sample:
+    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+"""
 from azure.appconfiguration import ConfigurationSetting
 from util import print_configuration_setting
 
@@ -38,9 +42,7 @@ def main():
     print("")
 
     print("Get configuration setting")
-    # [START get_config_setting]
     fetched_config_setting = client.get_configuration_setting(key="MyKey")
-    # [END get_config_setting]
     print("Fetched configuration setting:")
     print_configuration_setting(fetched_config_setting)
     print("")

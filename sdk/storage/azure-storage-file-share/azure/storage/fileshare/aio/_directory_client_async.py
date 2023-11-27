@@ -89,6 +89,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
     """
     def __init__(
             self, account_url: str,
@@ -164,7 +167,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 :dedent: 16
                 :caption: Gets the subdirectory client.
         """
-        directory_path = self.directory_path.rstrip('/') + "/" + directory_name
+        directory_path = directory_name
+        if self.directory_path:
+            directory_path = self.directory_path.rstrip('/') + "/" + directory_name
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
@@ -360,7 +365,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             new_dir_sas = self._query_str.strip('?')
 
         new_directory_client = ShareDirectoryClient(
-            '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_dir_path,
+            f'{self.scheme}://{self.primary_hostname}', self.share_name, new_dir_path,
             credential=new_dir_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,

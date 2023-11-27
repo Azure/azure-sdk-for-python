@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.elastic_pool_operations.cancel(
+    client.elastic_pool_operations.cancel(
         resource_group_name="sqlcrudtest-7398",
         server_name="sqlcrudtest-6661",
         elastic_pool_name="testpool",
         operation_id="f779414b-e748-4925-8cfe-c8598f7660ae",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/CancelElasticPoolOperation.json

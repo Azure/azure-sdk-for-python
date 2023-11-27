@@ -1,0 +1,13 @@
+name: model-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7
+  - numpy=1.21.2
+  - pip=21.2.4
+  - scikit-learn=0.24.2
+  - scipy=1.7.1
+  - pip:
+    - azureml-defaults==1.47.0
+    - inference-schema[numpy-support]==1.5
+    - joblib==1.0.1

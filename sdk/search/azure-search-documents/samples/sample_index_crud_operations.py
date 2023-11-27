@@ -20,9 +20,10 @@ USAGE:
 
 
 import os
+from typing import List
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes import SearchIndexClient
@@ -36,73 +37,78 @@ from azure.search.documents.indexes.models import (
     SearchableField,
 )
 
-client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
 def create_index():
     # [START create_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
-        ComplexField(name="address", fields=[
-            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-            SimpleField(name="city", type=SearchFieldDataType.String),
-        ], collection=True)
+        ComplexField(
+            name="address",
+            fields=[
+                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+                SimpleField(name="city", type=SearchFieldDataType.String),
+            ],
+            collection=True,
+        ),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-    scoring_profiles = []
-    index = SearchIndex(
-        name=name,
-        fields=fields,
-        scoring_profiles=scoring_profiles,
-        cors_options=cors_options)
+    scoring_profiles: List[ScoringProfile] = []
+    index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
     result = client.create_index(index)
     # [END create_index]
 
+
 def get_index():
     # [START get_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     result = client.get_index(name)
     # [END get_index]
 
+
 def update_index():
     # [START update_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
-        ComplexField(name="address", fields=[
-            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-            SimpleField(name="city", type=SearchFieldDataType.String),
-            SimpleField(name="state", type=SearchFieldDataType.String),
-        ], collection=True)
+        ComplexField(
+            name="address",
+            fields=[
+                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+                SimpleField(name="city", type=SearchFieldDataType.String),
+                SimpleField(name="state", type=SearchFieldDataType.String),
+            ],
+            collection=True,
+        ),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-    scoring_profile = ScoringProfile(
-        name="MyProfile"
-    )
+    scoring_profile = ScoringProfile(name="MyProfile")
     scoring_profiles = []
     scoring_profiles.append(scoring_profile)
-    index = SearchIndex(
-        name=name,
-        fields=fields,
-        scoring_profiles=scoring_profiles,
-        cors_options=cors_options)
+    index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
     result = client.create_or_update_index(index=index)
     # [END update_index]
 
+
 def delete_index():
     # [START delete_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     client.delete_index(name)
     # [END delete_index]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     create_index()
     get_index()
     update_index()

@@ -1595,6 +1595,37 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_delete_blob_with_properties_versioning(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container: ContainerClient = await self._create_container(bsc)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+        blob_client = container.get_blob_client(blob_name)
+
+        await blob_client.upload_blob(blob_data, overwrite=True)
+        v1_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 2, overwrite=True)
+        v2_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = await blob_client.get_blob_properties()
+
+        # Act
+        await container.delete_blob(v2_props, version_id=v1_props['version_id'])
+        await container.delete_blob(v2_props)
+
+        # Assert
+        with pytest.raises(HttpResponseError):
+            deleted = container.get_blob_client(v1_props)
+            await deleted.get_blob_properties()
+        assert (await blob_client.get_blob_properties(version_id=v3_props['version_id'])).get("version_id") == v3_props[
+            'version_id']
+
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_batch_blobs_with_container_sas(self, **kwargs):
@@ -1813,6 +1844,41 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert response[0].status_code == 202
         assert response[1].status_code == 202
         assert (await blob.get_blob_properties()).get("version_id") == new_blob_version_id
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_delete_blobs_with_properties_versioning(self, **kwargs):
+        set_custom_default_matcher(compare_bodies=False, ignored_headers="Content-Type")
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container: ContainerClient = await self._create_container(bsc)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+        blob_client = container.get_blob_client(blob_name)
+
+        await blob_client.upload_blob(blob_data, overwrite=True)
+        v1_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 2, overwrite=True)
+        v2_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = await blob_client.get_blob_properties()
+
+        # Act
+        response = await self._to_list(await container.delete_blobs(
+            v1_props,
+            v2_props
+        ))
+        remaining_blob = container.get_blob_client(v3_props)
+
+        # Assert
+        assert len(response) == 2
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert (await remaining_blob.get_blob_properties(version_id=v3_props['version_id'])).get("version_id") == \
+               v3_props['version_id']
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -2288,6 +2354,34 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
+    async def test_download_blob_with_properties_versioning(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container: ContainerClient = await self._create_container(bsc)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = b'abc'
+        blob_client = container.get_blob_client(blob_name)
+
+        await blob_client.upload_blob(blob_data, overwrite=True)
+        v1_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 2, overwrite=True)
+        v2_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = await blob_client.get_blob_properties()
+
+        # Act
+        downloaded = await container.download_blob(v2_props, version_id=v1_props['version_id'])
+        downloaded2 = await container.download_blob(v2_props, version_id=v3_props['version_id'])
+
+        # Assert
+        assert (await downloaded.readall()) == blob_data
+        assert (await downloaded2.readall()) == blob_data * 3
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
     async def test_download_blob_in_chunks_where_maxsinglegetsize_is_multiple_of_chunksize(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -2433,3 +2527,64 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert items_on_page1[1] == 'blob2'
         assert len(items_on_page2) == 1
         assert items_on_page2[0] == 'blob3'
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_get_blob_client_with_properties_versioning(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        container: ContainerClient = await self._create_container(bsc)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+        blob_client = container.get_blob_client(blob_name)
+
+        # Act
+        await blob_client.upload_blob(blob_data, overwrite=True)
+        v1_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 2, overwrite=True)
+        v2_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 3, overwrite=True)
+        v3_props = await blob_client.get_blob_properties()
+        await blob_client.upload_blob(blob_data * 4, overwrite=True)
+        v4_props = await blob_client.get_blob_properties()
+
+        v1_blob_client = container.get_blob_client(blob=v1_props['name'], version_id=v1_props['version_id'])
+        props1 = await v1_blob_client.get_blob_properties()
+        v2_blob_client = container.get_blob_client(blob=v1_props, version_id=v2_props['version_id'])
+        props2 = await v2_blob_client.get_blob_properties()
+        v3_blob_client = bsc.get_blob_client(container=container.container_name, blob=v2_props['name'],
+                                             version_id=v3_props['version_id'])
+        props3 = await v3_blob_client.get_blob_properties()
+        v4_blob_client = bsc.get_blob_client(container=container.container_name, blob=v3_props,
+                                             version_id=v4_props['version_id'])
+        props4 = await v4_blob_client.get_blob_properties()
+
+        # Assert
+        assert props1['version_id'] == v1_props['version_id']
+        assert props2['version_id'] == v2_props['version_id']
+        assert props3['version_id'] == v3_props['version_id']
+        assert props4['version_id'] == v4_props['version_id']
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_storage_account_audience_container_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        cc = ContainerClient(self.account_url(storage_account_name, "blob"), 'testcont', storage_account_key)
+        await cc.exists()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        cc = ContainerClient(
+            self.account_url(storage_account_name, "blob"), 'testcont', credential=token_credential,
+            audience=f'https://{storage_account_name}.blob.core.windows.net'
+        )
+
+        # Assert
+        response = await cc.exists()
+        assert response is not None

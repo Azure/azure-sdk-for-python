@@ -89,31 +89,30 @@ class SparkConfigurationOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_spark_configurations_by_workspace_request(
+                _request = build_get_spark_configurations_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_spark_configurations_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("SparkConfigurationListResponse", pipeline_response)
@@ -123,11 +122,11 @@ class SparkConfigurationOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -138,8 +137,6 @@ class SparkConfigurationOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_spark_configurations_by_workspace.metadata = {"url": "/sparkconfigurations"}
 
     async def _create_or_update_spark_configuration_initial(  # pylint: disable=name-too-long
         self,
@@ -166,25 +163,24 @@ class SparkConfigurationOperations:
         _spark_configuration = _models.SparkConfigurationResource(properties=properties)
         _json = self._serialize.body(_spark_configuration, "SparkConfigurationResource")
 
-        request = build_create_or_update_spark_configuration_request(
+        _request = build_create_or_update_spark_configuration_request(
             spark_configuration_name=spark_configuration_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_spark_configuration_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -198,11 +194,9 @@ class SparkConfigurationOperations:
             deserialized = self._deserialize("SparkConfigurationResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_spark_configuration_initial.metadata = {"url": "/sparkconfigurations/{sparkConfigurationName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_create_or_update_spark_configuration(  # pylint: disable=name-too-long
@@ -262,7 +256,7 @@ class SparkConfigurationOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("SparkConfigurationResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -286,8 +280,6 @@ class SparkConfigurationOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_spark_configuration.metadata = {"url": "/sparkconfigurations/{sparkConfigurationName}"}
 
     @distributed_trace_async
     async def get_spark_configuration(
@@ -320,23 +312,22 @@ class SparkConfigurationOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01-preview"))
         cls: ClsType[Optional[_models.SparkConfigurationResource]] = kwargs.pop("cls", None)
 
-        request = build_get_spark_configuration_request(
+        _request = build_get_spark_configuration_request(
             spark_configuration_name=spark_configuration_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_spark_configuration.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -350,11 +341,9 @@ class SparkConfigurationOperations:
             deserialized = self._deserialize("SparkConfigurationResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_spark_configuration.metadata = {"url": "/sparkconfigurations/{sparkConfigurationName}"}
+        return deserialized  # type: ignore
 
     async def _delete_spark_configuration_initial(  # pylint: disable=inconsistent-return-statements
         self, spark_configuration_name: str, **kwargs: Any
@@ -373,22 +362,21 @@ class SparkConfigurationOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_spark_configuration_request(
+        _request = build_delete_spark_configuration_request(
             spark_configuration_name=spark_configuration_name,
             api_version=api_version,
-            template_url=self._delete_spark_configuration_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -398,9 +386,7 @@ class SparkConfigurationOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_spark_configuration_initial.metadata = {"url": "/sparkconfigurations/{sparkConfigurationName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_spark_configuration(
@@ -443,7 +429,7 @@ class SparkConfigurationOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -467,8 +453,6 @@ class SparkConfigurationOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_spark_configuration.metadata = {"url": "/sparkconfigurations/{sparkConfigurationName}"}
-
     async def _rename_spark_configuration_initial(  # pylint: disable=inconsistent-return-statements
         self, spark_configuration_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> None:
@@ -490,24 +474,23 @@ class SparkConfigurationOperations:
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_spark_configuration_request(
+        _request = build_rename_spark_configuration_request(
             spark_configuration_name=spark_configuration_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_spark_configuration_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -517,9 +500,7 @@ class SparkConfigurationOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _rename_spark_configuration_initial.metadata = {"url": "/sparkconfigurations/{sparkConfigurationName}/rename"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_rename_spark_configuration(
@@ -567,7 +548,7 @@ class SparkConfigurationOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -590,5 +571,3 @@ class SparkConfigurationOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_rename_spark_configuration.metadata = {"url": "/sparkconfigurations/{sparkConfigurationName}/rename"}

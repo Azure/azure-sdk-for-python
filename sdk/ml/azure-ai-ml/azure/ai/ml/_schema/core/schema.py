@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import copy
 import logging
@@ -55,6 +55,7 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
         return data
 
     @pre_load
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def trim_dump_only(self, data, **kwargs):
         """Marshmallow raises if dump_only fields are present in the schema. This is not desirable for our use case,
         where read-only properties can be present in the yaml, and should simply be ignored, while we should raise in.
