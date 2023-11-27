@@ -8,7 +8,7 @@ from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 def do_while(body, mapping, max_iteration_count: int, condition=None):
     """Build a do_while node by specifying the loop body, output-input mapping, and termination condition.
 
-    .. remarks::
+    .. note::
         The following example shows how to use the `do_while` function to create a pipeline with a `do_while` node.
 
         .. code-block:: python

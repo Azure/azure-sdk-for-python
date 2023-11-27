@@ -699,6 +699,7 @@ class MiscConfigurationOptions(object):
             }
             ```
             """
+        # [END validation_result]
 
     @handle_resource_exists_error
     def ml_misc_config_3(self):

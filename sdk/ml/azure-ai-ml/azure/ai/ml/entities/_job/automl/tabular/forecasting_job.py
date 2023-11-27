@@ -148,8 +148,8 @@ class ForecastingJob(AutoMLTabular):
             the identifier columns specified do not identify all the series in the dataset, the time series identifiers
             will be automatically created for your data set.
         :paramtype time_series_id_column_names: Optional[Union[str, List[str]]]
-        :keyword target_lags:
-            The number of past periods to lag from the target column. By default the lags are turned off.
+        :keyword target_lags: The number of past periods to lag from the target column. By default the lags are turned
+            off.
 
             When forecasting, this parameter represents the number of rows to lag the target values based
             on the frequency of the data. This is represented as a list or single integer. Lag should be used
@@ -183,8 +183,8 @@ class ForecastingJob(AutoMLTabular):
         :type target_lags: Optional[Union[str, int, List[int]]]
         :keyword feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
         :paramtype feature_lags: Optional[str]
-        :keyword target_rolling_window_size:
-            The number of past periods used to create a rolling window average of the target column.
+        :keyword target_rolling_window_size: The number of past periods used to create a rolling window average of the
+            target column.
 
             When forecasting, this parameter represents `n` historical periods to use to generate forecasted values,
             <= training set size. If omitted, `n` is the full training set size. Specify this parameter
@@ -196,12 +196,12 @@ class ForecastingJob(AutoMLTabular):
             These should be ISO 3166 two-letter country/region codes, for example 'US' or 'GB'.
         :paramtype country_or_region_for_holidays: Optional[str]
         :keyword use_stl: Configure STL Decomposition of the time-series target column.
-                    use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
-                    season component and season_trend - generate both season and trend components.
+            use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
+            season component and season_trend - generate both season and trend components.
         :type use_stl: Optional[str]
         :keyword seasonality: Set time series seasonality as an integer multiple of the series frequency.
-                    If seasonality is set to 'auto', it will be inferred.
-                    If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
+            If seasonality is set to 'auto', it will be inferred.
+            If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
         :paramtype seasonality: Optional[Union[int, str]
         :keyword short_series_handling_config:
             The parameter defining how if AutoML should handle short time series.
@@ -209,7 +209,7 @@ class ForecastingJob(AutoMLTabular):
             Possible values: 'auto' (default), 'pad', 'drop' and None.
 
             * **auto** short series will be padded if there are no long series,
-            otherwise short series will be dropped.
+                otherwise short series will be dropped.
             * **pad** all the short series will be padded.
             * **drop**  all the short series will be dropped".
             * **None** the short series will not be modified.
@@ -281,10 +281,10 @@ class ForecastingJob(AutoMLTabular):
             https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects
         :type frequency: Optional[str]
         :keyword target_aggregate_function: The function to be used to aggregate the time series target
-                                            column to conform to a user specified frequency. If the
-                                            target_aggregation_function is set, but the freq parameter
-                                            is not set, the error is raised. The possible target
-                                            aggregation functions are: "sum", "max", "min" and "mean".
+            column to conform to a user specified frequency. If the target_aggregation_function is set,
+            but the freq parameter is not set, the error is raised. The possible target aggregation
+            functions are: "sum", "max", "min" and "mean".
+
                 * The target column values are aggregated based on the specified operation.
                   Typically, sum is appropriate for most scenarios.
                 * Numerical predictor columns in your data are aggregated by sum, mean, minimum value,
@@ -336,16 +336,13 @@ class ForecastingJob(AutoMLTabular):
                 +----------------+-------------------------------+--------------------------------------+
 
         :type target_aggregate_function: Optional[str]
-        :keyword cv_step_size:
-            Number of periods between the origin_time of one CV fold and the next fold. For
-            example, if `n_step` = 3 for daily data, the origin time for each fold will be
-            three days apart.
+        :keyword cv_step_size: Number of periods between the origin_time of one CV fold and the next fold.
+            For example, if `n_step` = 3 for daily data, the origin time for each fold will be three days apart.
         :paramtype cv_step_size: Optional[int]
-        :keyword features_unknown_at_forecast_time:
-            The feature columns that are available for training but unknown at the time of forecast/inference.
-            If features_unknown_at_forecast_time is set to an empty list, it is assumed that
-            all the feature columns in the dataset are known at inference time. If this parameter is not set
-            the support for future features is not enabled.
+        :keyword features_unknown_at_forecast_time: The feature columns that are available for training but
+            unknown at the time of forecast/inference. If features_unknown_at_forecast_time is set to an empty
+            list, it is assumed that all the feature columns in the dataset are known at inference time. If this
+            parameter is not set the support for future features is not enabled.
         :paramtype features_unknown_at_forecast_time: Optional[Union[str, List[str]]]
         """
         self._forecasting_settings = self._forecasting_settings or ForecastingSettings()

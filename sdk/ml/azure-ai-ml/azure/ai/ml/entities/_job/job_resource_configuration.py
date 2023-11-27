@@ -87,7 +87,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Job resource configuration class, inherited and extended functionalities from ResourceConfiguration.
 
     :keyword locations: A list of locations where the job can run.
-    :paramtype locations: Optional[list[str]]
+    :paramtype locations: Optional[List[str]]
     :keyword instance_count: The number of instances or nodes used by the compute target.
     :paramtype instance_count: Optional[int]
     :keyword instance_type: The type of VM to be used, as supported by the compute target.

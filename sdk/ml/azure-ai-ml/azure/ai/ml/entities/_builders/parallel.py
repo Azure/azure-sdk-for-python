@@ -292,7 +292,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         """Set the resources for the parallel job.
 
         :keyword instance_type: The instance type or a list of instance types used as supported by the compute target.
-        :paramtype instance_type: str or list[str]
+        :paramtype instance_type: Union[str, List[str]]
         :keyword instance_count: The number of instances or nodes used by the compute target.
         :paramtype instance_count: int
         :keyword properties: The property dictionary for the resources.

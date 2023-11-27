@@ -33,10 +33,10 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 # from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
@@ -81,12 +81,16 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype tags: dict[str, str]
     :keyword properties: The asset property dictionary.
     :paramtype properties: dict[str, str]
-    :keyword experiment_name:  Name of the experiment the job will be created under, if None is provided,
+    :keyword experiment_name: Name of the experiment the job will be created under, if None is provided,
         job will be created under experiment 'Default'.
     :paramtype experiment_name: str
     :keyword identity: Identity that the training job will use while running on compute.
-    :paramtype identity: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
-        ~azure.ai.ml.UserIdentityConfiguration]
+    :paramtype identity: Union[
+        ~azure.ai.ml.ManagedIdentityConfiguration,
+        ~azure.ai.ml.AmlTokenConfiguration,
+        ~azure.ai.ml.UserIdentityConfiguration
+
+    ]
     :keyword inputs: Inputs to the command.
     :paramtype inputs: dict
     :keyword outputs: Mapping of output data bindings used in the job.
@@ -106,9 +110,12 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     :paramtype trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
     :keyword early_termination: The early termination policy to use. A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
-    :paramtype early_termination:  Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
+    :paramtype early_termination: Union[
+        ~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy
+
+    ]
     :keyword limits: Limits for the sweep job.
     :paramtype limits: ~azure.ai.ml.entities.SweepJobLimits
     :keyword queue_settings: Queue settings for the job.

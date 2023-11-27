@@ -5,7 +5,7 @@
 """This package includes the type classes which could be used in dsl.pipeline,
 command function, or any other place that requires job inputs/outputs.
 
-.. remarks::
+.. note::
 
     The following pseudo-code shows how to create a pipeline with such classes.
 

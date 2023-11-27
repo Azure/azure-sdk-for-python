@@ -49,7 +49,7 @@ def parallel_run_function(
     For an example of using ParallelRunStep, see the notebook
     https://aka.ms/parallel-example-notebook
 
-    .. remarks::
+    .. note::
 
         To use parallel_run_function:
 

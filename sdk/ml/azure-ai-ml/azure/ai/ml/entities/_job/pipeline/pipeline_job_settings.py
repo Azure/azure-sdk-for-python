@@ -22,8 +22,8 @@ class PipelineJobSettings(_AttrDict):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
-            :start-after: [START configure_PipelineJob_and_PipelineJobSettings]
-            :end-before: [END configure_PipelineJob_and_PipelineJobSettings]
+            :start-after: [START configure_pipeline_job_and_settings]
+            :end-before: [END configure_pipeline_job_and_settings]
             :language: python
             :dedent: 8
             :caption: Shows how to set pipeline properties using this class.

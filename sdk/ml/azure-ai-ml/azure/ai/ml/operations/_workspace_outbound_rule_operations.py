@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 
 from typing import Dict, Iterable
+
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import OutboundRuleBasicResource
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._workspace.networking import OutboundRule
@@ -88,7 +88,7 @@ class WorkspaceOutboundRuleOperations:
                 :language: python
                 :dedent: 8
                 :caption: Create an FQDN outbound rule for a workspace with the given name,
-                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
+                    similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
@@ -132,7 +132,7 @@ class WorkspaceOutboundRuleOperations:
                 :language: python
                 :dedent: 8
                 :caption: Update an FQDN outbound rule for a workspace with the given name,
-                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
+                    similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)

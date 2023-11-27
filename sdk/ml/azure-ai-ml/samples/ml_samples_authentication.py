@@ -116,7 +116,7 @@ class MLClientSamples(object):
         # [START aml_token_configuration]
         from azure.ai.ml import Input, command
         from azure.ai.ml.constants import AssetTypes
-        from azure.ai.ml.entities import AmlTokenConfiguration
+        from azure.ai.ml.entities._credentials import AmlTokenConfiguration
 
         node = command(
             description="description",

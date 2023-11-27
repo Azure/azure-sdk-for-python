@@ -28,10 +28,9 @@ from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspac
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -392,8 +391,8 @@ class JobOperations(_ScopeDependentOperations):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START job_operations_begin_cancel]
-                :end-before: [END job_operations_begin_cancel]
+                :start-after: [START job_operations_cancel]
+                :end-before: [END job_operations_cancel]
                 :language: python
                 :dedent: 8
                 :caption: Canceling the job named "iris-dataset-job-1" and checking the poller for status.

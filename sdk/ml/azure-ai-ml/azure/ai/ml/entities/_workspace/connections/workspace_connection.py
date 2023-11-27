@@ -6,12 +6,13 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union, List, Type, Any
+from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     AccessKeyAuthTypeWorkspaceConnectionProperties,
     ApiKeyAuthWorkspaceConnectionProperties,
     ConnectionAuthType,
+    ConnectionCategory,
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
@@ -21,22 +22,21 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
-    ConnectionCategory,
 )
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes import (
-    OpenAIWorkspaceConnectionSchema,
     AzureAISearchWorkspaceConnectionSchema,
     AzureAIServiceWorkspaceConnectionSchema,
+    OpenAIWorkspaceConnectionSchema,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_API_VERSION_KEY,
     CONNECTION_KIND_KEY,
+    PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.entities._credentials import (
     AccessKeyConfiguration,
@@ -74,11 +74,17 @@ class WorkspaceConnection(Resource):
         "azure_postgres_db"
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: Union[
-        ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
-        ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
-        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
+
+        ~azure.ai.ml.entities.PatTokenConfiguration,
+        ~azure.ai.ml.entities.SasTokenConfiguration,
+        ~azure.ai.ml.entities.UsernamePasswordConfiguration,
+        ~azure.ai.ml.entities.ManagedIdentityConfiguration
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration,
+        ~azure.ai.ml.entities.AccessKeyConfiguration,
         ~azure.ai.ml.entities.ApiKeyConfiguration
-        ]
+
+    ]
+
     """
 
     def __init__(
@@ -149,10 +155,14 @@ class WorkspaceConnection(Resource):
 
         :return: Credentials for workspace connection.
         :rtype: Union[
-            ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
-            ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
-            ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
+            ~azure.ai.ml.entities.PatTokenConfiguration,
+            ~azure.ai.ml.entities.SasTokenConfiguration,
+            ~azure.ai.ml.entities.UsernamePasswordConfiguration,
+            ~azure.ai.ml.entities.ManagedIdentityConfiguration
+            ~azure.ai.ml.entities.ServicePrincipalConfiguration,
+            ~azure.ai.ml.entities.AccessKeyConfiguration,
             ~azure.ai.ml.entities.ApiKeyConfiguration
+
         ]
         """
         return self._credentials
@@ -225,9 +235,9 @@ class WorkspaceConnection(Resource):
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
         from .workspace_connection_subtypes import (
-            AzureOpenAIWorkspaceConnection,
             AzureAISearchWorkspaceConnection,
             AzureAIServiceWorkspaceConnection,
+            AzureOpenAIWorkspaceConnection,
         )
 
         if not rest_obj:
@@ -345,9 +355,9 @@ class WorkspaceConnection(Resource):
             return WorkspaceConnection
         # done here to avoid circular imports on load
         from .workspace_connection_subtypes import (
-            AzureOpenAIWorkspaceConnection,
             AzureAISearchWorkspaceConnection,
             AzureAIServiceWorkspaceConnection,
+            AzureOpenAIWorkspaceConnection,
         )
 
         cat = camel_to_snake(conn_type).lower()

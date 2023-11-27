@@ -76,7 +76,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
     :paramtype is_deterministic: Optional[bool]
     :keyword additional_includes: A list of shared additional files to be included in the component. Defaults to None.
-    :paramtype additional_includes: Optional[list[str]]
+    :paramtype additional_includes: Optional[List[str]]
     :keyword properties: The job property dictionary. Defaults to None.
     :paramtype properties: Optional[dict[str, str]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
