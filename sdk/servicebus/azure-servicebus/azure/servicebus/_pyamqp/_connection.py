@@ -10,7 +10,7 @@ import time
 from urllib.parse import urlparse
 import socket
 from ssl import SSLError
-from typing import Any, Dict, List, Tuple, Optional, NamedTuple, Union, cast
+from typing import Any, Dict, List, Tuple, Optional, NamedTuple, Type, Union, cast
 
 from ._transport import Transport
 from .sasl import SASLTransport, SASLWithWebSocket
@@ -111,8 +111,11 @@ class Connection():  # pylint:disable=too-many-instance-attributes
             http_proxy: Optional[Dict[str, Any]] = None,
             socket_timeout: Optional[float] = None,
             **kwargs: Any):  # pylint:disable=too-many-statements
-        # type(str, Any) -> None
         parsed_url = urlparse(endpoint)
+        
+        if parsed_url.hostname is None:
+            raise ValueError(f"Invalid endpoint: {endpoint}")
+        
         self._hostname = parsed_url.hostname
         endpoint = self._hostname
         if parsed_url.port:
@@ -147,9 +150,8 @@ class Connection():  # pylint:disable=too-many-instance-attributes
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:
-            sasl_transport = SASLTransport
-            if self._transport_type.name == "AmqpOverWebsocket" or kwargs.get("http_proxy"):
-                sasl_transport = SASLWithWebSocket
+            sasl_transport: Union[Type[SASLTransport], Type[SASLWithWebSocket]] = SASLTransport
+            if sasl_transport is SASLWithWebSocket:
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
                 host=endpoint,
@@ -166,7 +168,7 @@ class Connection():  # pylint:disable=too-many-instance-attributes
                 socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
                 **kwargs)
-        self._max_frame_size : int = max_frame_size if max_frame_size is not None else MAX_FRAME_SIZE_BYTES
+        self._max_frame_size: int = max_frame_size if max_frame_size is not None else MAX_FRAME_SIZE_BYTES
         self._remote_max_frame_size: Optional[int] = None
         self._channel_max: int = channel_max if channel_max is not None else MAX_CHANNELS
         self._idle_timeout: Optional[float] = idle_timeout
@@ -178,13 +180,13 @@ class Connection():  # pylint:disable=too-many-instance-attributes
         self._remote_properties: Optional[Dict[str, str]] = None
 
         self._allow_pipelined_open: bool = allow_pipelined_open
-        self._remote_idle_timeout: Optional[int] = None
-        self._remote_idle_timeout_send_frame: Optional[int] = None
-        self._idle_timeout_empty_frame_send_ratio: Optional[float] = idle_timeout_empty_frame_send_ratio if idle_timeout_empty_frame_send_ratio is not None else 0.5
+        self._remote_idle_timeout: Optional[float] = None
+        self._remote_idle_timeout_send_frame: Optional[float] = None
+        self._idle_timeout_empty_frame_send_ratio: float = idle_timeout_empty_frame_send_ratio if idle_timeout_empty_frame_send_ratio is not None else 0.5
         self._last_frame_received_time: Optional[float] = None
         self._last_frame_sent_time: Optional[float] = None
-        self._idle_wait_time: Optional[float] = idle_wait_time if idle_wait_time is not None else 0.1
-        self._error = None
+        self._idle_wait_time: float = idle_wait_time if idle_wait_time is not None else 0.1
+        self._error: Optional[AMQPConnectionError] = None
         self._outgoing_endpoints: Dict[int, Session] = {}
         self._incoming_endpoints: Dict[int, Session] = {}
 
@@ -299,7 +301,8 @@ class Connection():  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         try:
-            raise self._error
+            if self._error:
+                raise self._error
         except TypeError:
             pass
 
@@ -337,7 +340,8 @@ class Connection():  # pylint:disable=too-many-instance-attributes
         if self._network_trace:
             _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
         try:
-            raise self._error
+            if self._error:
+                raise self._error
         except TypeError:
             pass
         try:
@@ -429,7 +433,7 @@ class Connection():  # pylint:disable=too-many-instance-attributes
             _LOGGER.error("OPEN frame received in the OPENED state.", extra=self._network_trace_params)
             self.close()
         if frame[4]:
-            self._remote_idle_timeout = frame[4] / 1000  # Convert to seconds
+            self._remote_idle_timeout = cast(float, frame[4] / 1000)  # Convert to seconds
             self._remote_idle_timeout_send_frame = (
                 self._idle_timeout_empty_frame_send_ratio * self._remote_idle_timeout
             )
@@ -740,7 +744,8 @@ class Connection():  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         try:
-            raise self._error
+            if self._error:
+                raise self._error
         except TypeError:
             pass
         try:
