@@ -49,7 +49,8 @@ from ._blob_client_helpers import (
     _append_block_options,
     _append_block_from_url_options,
     _seal_append_blob_options,
-    _from_blob_url
+    _from_blob_url,
+    _format_url
 )
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, TransportWrapper
 from ._shared.response_handlers import return_response_headers, process_storage_error
@@ -190,10 +191,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
-        container_name = self.container_name
-        if isinstance(container_name, str):
-            container_name = container_name.encode('UTF-8')
-        return f"{self.scheme}://{hostname}/{quote(container_name)}/{quote(self.blob_name, safe='~/')}{self._query_str}"
+        return _format_url(
+            container_name=self.container_name,
+            scheme=self.scheme,
+            blob_name=self.blob_name,
+            query_str=self._query_str,
+            hostname=hostname
+        )
 
     @classmethod
     def from_blob_url(
