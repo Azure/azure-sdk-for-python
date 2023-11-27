@@ -10,6 +10,27 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AgentConfigurationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of configuration mode to use. Modes are pre-defined configurations of security controls,
+    extension allowlists and guest configuration, maintained by Microsoft.
+    """
+
+    FULL = "full"
+    MONITOR = "monitor"
+
+
+class ArcKindEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates which kind of Arc machine placement on-premises, such as HCI, SCVMM or VMware etc."""
+
+    AVS = "AVS"
+    HCI = "HCI"
+    SCVMM = "SCVMM"
+    V_MWARE = "VMware"
+    EPS = "EPS"
+    GCP = "GCP"
+    AWS = "AWS"
+
+
 class AssessmentModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the assessment mode."""
 
@@ -26,10 +47,87 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class EsuEligibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The ESU eligibility."""
+
+    ELIGIBLE = "Eligible"
+    INELIGIBLE = "Ineligible"
+    UNKNOWN = "Unknown"
+
+
+class EsuKeyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The ESU key state."""
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
+
+
+class EsuServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The server types for Esu."""
+
+    STANDARD = "Standard"
+    DATACENTER = "Datacenter"
+
+
 class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """InstanceViewTypes."""
 
     INSTANCE_VIEW = "instanceView"
+
+
+class LastAttemptStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the status of Agent Upgrade."""
+
+    SUCCESS = "Success"
+    FAILED = "Failed"
+
+
+class LicenseAssignmentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the license assignment state (Assigned or NotAssigned)."""
+
+    ASSIGNED = "Assigned"
+    NOT_ASSIGNED = "NotAssigned"
+
+
+class LicenseCoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the license core type (pCore or vCore)."""
+
+    P_CORE = "pCore"
+    V_CORE = "vCore"
+
+
+class LicenseEdition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the edition of the license. The values are either Standard or Datacenter."""
+
+    STANDARD = "Standard"
+    DATACENTER = "Datacenter"
+
+
+class LicenseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the state of the license."""
+
+    ACTIVATED = "Activated"
+    DEACTIVATED = "Deactivated"
+
+
+class LicenseTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the license target server."""
+
+    WINDOWS_SERVER2012 = "Windows Server 2012"
+    WINDOWS_SERVER2012_R2 = "Windows Server 2012 R2"
+
+
+class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the license resource."""
+
+    ESU = "ESU"
+
+
+class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operating system type of the machine."""
+
+    WINDOWS = "Windows"
+    LINUX = "Linux"
 
 
 class PatchModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -39,6 +137,50 @@ class PatchModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
     AUTOMATIC_BY_OS = "AutomaticByOS"
     MANUAL = "Manual"
+
+
+class PatchOperationStartedBy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if operation was triggered by user or by platform."""
+
+    USER = "User"
+    PLATFORM = "Platform"
+
+
+class PatchOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The overall success or failure status of the operation. It remains "InProgress" until the
+    operation completes. At that point it will become "Unknown", "Failed", "Succeeded", or
+    "CompletedWithWarnings.".
+    """
+
+    UNKNOWN = "Unknown"
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"
+
+
+class PatchServiceUsed(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the patch service used for the operation."""
+
+    UNKNOWN = "Unknown"
+    WU = "WU"
+    WU_WSUS = "WU_WSUS"
+    YUM = "YUM"
+    APT = "APT"
+    ZYPPER = "Zypper"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state, which only appears in the response."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    ACCEPTED = "Accepted"
+    CANCELED = "Canceled"
+    DELETED = "Deleted"
 
 
 class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -68,3 +210,43 @@ class StatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
     ERROR = "Error"
+
+
+class VMGuestPatchClassificationLinux(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VMGuestPatchClassificationLinux."""
+
+    CRITICAL = "Critical"
+    SECURITY = "Security"
+    OTHER = "Other"
+
+
+class VMGuestPatchClassificationWindows(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VMGuestPatchClassificationWindows."""
+
+    CRITICAL = "Critical"
+    SECURITY = "Security"
+    UPDATE_ROLL_UP = "UpdateRollUp"
+    FEATURE_PACK = "FeaturePack"
+    SERVICE_PACK = "ServicePack"
+    DEFINITION = "Definition"
+    TOOLS = "Tools"
+    UPDATES = "Updates"
+
+
+class VMGuestPatchRebootSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines when it is acceptable to reboot a VM during a software update operation."""
+
+    IF_REQUIRED = "IfRequired"
+    NEVER = "Never"
+    ALWAYS = "Always"
+
+
+class VMGuestPatchRebootStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reboot state of the VM following completion of the operation."""
+
+    UNKNOWN = "Unknown"
+    NOT_NEEDED = "NotNeeded"
+    REQUIRED = "Required"
+    STARTED = "Started"
+    FAILED = "Failed"
+    COMPLETED = "Completed"
