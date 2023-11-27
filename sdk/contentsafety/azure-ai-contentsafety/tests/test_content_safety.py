@@ -17,7 +17,7 @@ from azure.ai.contentsafety.models import (
     TextBlocklistItem,
     AddOrUpdateTextBlocklistItemsOptions,
 )
-from tests._test_case import ClientPreparer
+from testcase import ClientPreparer
 
 
 class TestContentSafetyCase(AzureRecordedTestCase):

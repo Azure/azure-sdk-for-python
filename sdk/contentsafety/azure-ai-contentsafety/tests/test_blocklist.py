@@ -13,7 +13,7 @@ from azure.ai.contentsafety.models import (
     AddOrUpdateTextBlocklistItemsOptions,
     RemoveTextBlocklistItemsOptions,
 )
-from tests._test_case import ClientPreparer
+from testcase import ClientPreparer
 
 
 class TestBlocklistCase(AzureRecordedTestCase):
