@@ -277,7 +277,7 @@ class Connection():  # pylint:disable=too-many-instance-attributes
         """
         return self.state not in _CLOSING_STATES
 
-    def _send_frame(self, channel: int, frame: NamedTuple, **kwargs: Any) -> None:
+    async def _send_frame(self, channel: int, frame: NamedTuple, **kwargs: Any) -> None:
         """Send a frame over the connection.
 
         :param int channel: The outgoing channel number.
