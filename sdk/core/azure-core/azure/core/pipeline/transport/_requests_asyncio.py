@@ -27,7 +27,16 @@ import asyncio
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType, Union, TYPE_CHECKING, overload, Type, Dict
+from typing import (
+    Any,
+    Optional,
+    AsyncIterator as AsyncIteratorType,
+    Union,
+    TYPE_CHECKING,
+    overload,
+    Type,
+    Mapping,
+)
 from types import TracebackType
 from urllib3.exceptions import (
     ProtocolError,
@@ -104,7 +113,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload  # type: ignore
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: HttpRequest, *, proxies: Optional[Dict] = None, **kwargs: Any
+        self, request: HttpRequest, *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
@@ -118,7 +127,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: "RestHttpRequest", *, proxies: Optional[Dict] = None, **kwargs: Any
+        self, request: "RestHttpRequest", *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send a `azure.core.rest` request using this HTTP sender.
 
@@ -131,7 +140,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         """
 
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: Union[HttpRequest, "RestHttpRequest"], *, proxies: Optional[Dict] = None, **kwargs
+        self, request: Union[HttpRequest, "RestHttpRequest"], *, proxies: Optional[Mapping[str, str]] = None, **kwargs
     ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
         """Send the request using this HTTP sender.
 

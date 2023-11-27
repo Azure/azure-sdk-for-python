@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING, Dict
+from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING, Mapping
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
@@ -286,7 +286,7 @@ class RequestsTransport(HttpTransport):
             self.session = None
 
     @overload
-    def send(self, request: HttpRequest, *, proxies: Optional[Dict] = None, **kwargs) -> HttpResponse:
+    def send(self, request: HttpRequest, *, proxies: Optional[Mapping[str, str]] = None, **kwargs) -> HttpResponse:
         """Send a rest request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -298,7 +298,9 @@ class RequestsTransport(HttpTransport):
         """
 
     @overload
-    def send(self, request: "RestHttpRequest", *, proxies: Optional[Dict] = None, **kwargs) -> "RestHttpResponse":
+    def send(
+        self, request: "RestHttpRequest", *, proxies: Optional[Mapping[str, str]] = None, **kwargs
+    ) -> "RestHttpResponse":
         """Send an `azure.core.rest` request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -310,7 +312,7 @@ class RequestsTransport(HttpTransport):
         """
 
     def send(
-        self, request: Union[HttpRequest, "RestHttpRequest"], *, proxies: Optional[Dict] = None, **kwargs
+        self, request: Union[HttpRequest, "RestHttpRequest"], *, proxies: Optional[Mapping[str, str]] = None, **kwargs
     ) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 

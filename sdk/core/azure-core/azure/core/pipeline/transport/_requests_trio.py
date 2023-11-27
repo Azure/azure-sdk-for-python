@@ -26,7 +26,7 @@
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, Type, Dict
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, Type, Mapping
 from types import TracebackType
 from urllib3.exceptions import (
     ProtocolError,
@@ -181,7 +181,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload  # type: ignore
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: HttpRequest, *, proxies: Optional[Dict] = None, **kwargs: Any
+        self, request: HttpRequest, *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
@@ -195,7 +195,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: "RestHttpRequest", *, proxies: Optional[Dict] = None, **kwargs: Any
+        self, request: "RestHttpRequest", *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send an `azure.core.rest` request using this HTTP sender.
 
@@ -208,7 +208,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         """
 
     async def send(
-        self, request, *, proxies: Optional[Dict] = None, **kwargs: Any
+        self, request, *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
     ):  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
