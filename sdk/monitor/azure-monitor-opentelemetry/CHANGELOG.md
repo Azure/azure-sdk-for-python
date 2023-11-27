@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Remove VM Resource Detector until OpenTelemetry bug fix
+- Remove VM Resource Detector for hotfix
     ([#33305](https://github.com/Azure/azure-sdk-for-python/pull/33305))
 
 ### Other Changes

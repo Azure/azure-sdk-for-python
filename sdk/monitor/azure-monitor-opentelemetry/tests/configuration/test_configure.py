@@ -199,7 +199,7 @@ class TestConfigure(unittest.TestCase):
         _setup_resources()
         self.assertEqual(
             os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
-            # TODO: Change back to "azure_app_service,azure_vm" after VM Resource Detector fix
+            # TODO: Change back to "azure_app_service,azure_vm" after VM Resource Detector fix for https://github.com/Azure/azure-sdk-for-python/issues/33295
             "azure_app_service"
         )
 
@@ -208,7 +208,7 @@ class TestConfigure(unittest.TestCase):
         _setup_resources()
         self.assertEqual(
             os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
-            # TODO: Change back to "azure_app_service,azure_vm" after VM Resource Detector fix
+            # TODO: Change back to "azure_app_service,azure_vm" after VM Resource Detector fix for https://github.com/Azure/azure-sdk-for-python/issues/33295
             "test_detector,azure_app_service"
         )
 
