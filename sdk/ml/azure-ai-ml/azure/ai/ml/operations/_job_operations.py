@@ -28,10 +28,9 @@ from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspac
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -943,10 +942,12 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: Dict[str, str]
         """
 
+        _tmp_output_names: set[str] = set()
+
         if isinstance(output_names, str):
-            output_names = {output_names}
+            _tmp_output_names = {output_names}
         elif output_names:
-            output_names = set(output_names)
+            _tmp_output_names = set(output_names)
 
         outputs = get_job_output_uris_from_dataplane(
             job_name,
@@ -956,7 +957,7 @@ class JobOperations(_ScopeDependentOperations):
             output_names=output_names,
         )
 
-        missing_outputs = (output_names or set()).difference(outputs.keys())
+        missing_outputs = (_tmp_output_names or set()).difference(outputs.keys())
 
         # Include default artifact store in outputs
         if (not output_names) or DEFAULT_ARTIFACT_STORE_OUTPUT_NAME in missing_outputs:
@@ -1023,7 +1024,7 @@ class JobOperations(_ScopeDependentOperations):
             **self._kwargs,
         )
 
-    def _get_workspace_url(self, url_key="history"):
+    def _get_workspace_url(self, url_key: str = "history") -> Any:
         discovery_url = (
             self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
             .get(self._operation_scope.workspace_name)
@@ -1125,7 +1126,7 @@ class JobOperations(_ScopeDependentOperations):
         except Exception:  # pylint: disable=broad-except
             return resolver(target, azureml_type=AzureMLResourceType.COMPUTE)
 
-    def _resolve_job_inputs(self, entries: Iterable[Union[Input, str, bool, int, float]], base_path: str):
+    def _resolve_job_inputs(self, entries: Iterable[Union[Input, str, bool, int, float]], base_path: str) -> None:
         """resolve job inputs as ARM id or remote url.
 
         :param entries: An iterable of job inputs
@@ -1154,10 +1155,11 @@ class JobOperations(_ScopeDependentOperations):
             if isinstance(item, _GroupAttrDict):
                 input_values.extend(item.flatten(group_parameter_name=key))
             else:
-                # skip resolving inferred optional input without path (in do-while + dynamic input case)
-                if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
-                    continue
-                input_values.append(item._data)
+                if isinstance(item, Input):
+                    # skip resolving inferred optional input without path (in do-while + dynamic input case)
+                    if isinstance(item._data, Input) and not item._data.path and item._meta._is_inferred_optional:
+                        continue
+                    input_values.append(item._data)
         return input_values
 
     def _resolve_job_input(self, entry: Union[Input, str, bool, int, float], base_path: str) -> None:
@@ -1524,7 +1526,7 @@ class JobOperations(_ScopeDependentOperations):
         except Exception:  # pylint: disable=broad-except
             module_logger.info("Proceeding with no tenant id appended to studio URL\n")
 
-    def _set_headers_with_user_aml_token(self, kwargs) -> Dict[str, str]:
+    def _set_headers_with_user_aml_token(self, kwargs: Any) -> None:
         aml_resource_id = _get_aml_resource_id_from_metadata()
         azure_ml_scopes = _resource_to_scopes(aml_resource_id)
         module_logger.debug("azure_ml_scopes used: `%s`\n", azure_ml_scopes)
