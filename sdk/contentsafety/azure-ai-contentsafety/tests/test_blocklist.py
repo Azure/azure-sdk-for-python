@@ -4,41 +4,22 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import functools
-
-from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.ai.contentsafety import BlocklistClient
 from azure.ai.contentsafety.models import (
     TextBlocklist,
     TextBlocklistItem,
     AddOrUpdateTextBlocklistItemsOptions,
     RemoveTextBlocklistItemsOptions,
 )
-
-ContentSafetyPreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "content_safety",
-    content_safety_endpoint="https://fake_cs_resource.cognitiveservices.azure.com",
-    content_safety_key="00000000000000000000000000000000",
-)
+from tests._test_case import ClientPreparer
 
 
-class TestBlocklist(AzureRecordedTestCase):
-    def create_blocklist_client(self, endpoint, key):
-        client = BlocklistClient(endpoint, AzureKeyCredential(key))
-        return client
-
-
-class TestBlocklistCase(TestBlocklist):
-    @ContentSafetyPreparer()
+class TestBlocklistCase(AzureRecordedTestCase):
+    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
     @recorded_by_proxy
-    def test_create_blocklist(self, content_safety_endpoint, content_safety_key):
-        client = self.create_blocklist_client(content_safety_endpoint, content_safety_key)
-        assert client is not None
-
+    def test_create_blocklist(self, client):
         name = "TestBlocklist"
         description = "Test blocklist management."
         response = client.create_or_update_text_blocklist(
@@ -49,17 +30,15 @@ class TestBlocklistCase(TestBlocklist):
         assert response.blocklist_name == name
         assert response.description == description
 
-    @ContentSafetyPreparer()
+    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
     @recorded_by_proxy
-    def test_list_text_blocklists(self, content_safety_endpoint, content_safety_key):
-        client = self.create_blocklist_client(content_safety_endpoint, content_safety_key)
-
+    def test_list_text_blocklists(self, client):
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
         create_blocklist_response = client.create_or_update_text_blocklist(
             blocklist_name=blocklist_name,
-            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description)
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
         )
         if not create_blocklist_response or not create_blocklist_response.blocklist_name:
             raise RuntimeError("Failed to create blocklist.")
@@ -68,20 +47,18 @@ class TestBlocklistCase(TestBlocklist):
         blocklists = list(client.list_text_blocklists())
 
         assert blocklists is not None
-        assert any(blocklist_name in item['blocklistName'] for item in blocklists) is True
-        assert any(blocklist_description in item['description'] for item in blocklists) is True
+        assert any(blocklist_name in item["blocklistName"] for item in blocklists) is True
+        assert any(blocklist_description in item["description"] for item in blocklists) is True
 
-    @ContentSafetyPreparer()
+    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
     @recorded_by_proxy
-    def test_get_text_blocklist(self, content_safety_endpoint, content_safety_key):
-        client = self.create_blocklist_client(content_safety_endpoint, content_safety_key)
-
+    def test_get_text_blocklist(self, client):
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
         create_blocklist_response = client.create_or_update_text_blocklist(
             blocklist_name=blocklist_name,
-            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description)
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
         )
         if not create_blocklist_response or not create_blocklist_response.blocklist_name:
             raise RuntimeError("Failed to create blocklist.")
@@ -92,17 +69,15 @@ class TestBlocklistCase(TestBlocklist):
         assert blocklist.blocklist_name == blocklist_name
         assert blocklist.description == blocklist_description
 
-    @ContentSafetyPreparer()
+    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
     @recorded_by_proxy
-    def test_delete_blocklist(self, content_safety_endpoint, content_safety_key):
-        client = self.create_blocklist_client(content_safety_endpoint, content_safety_key)
-
+    def test_delete_blocklist(self, client):
         # Create blocklist
         blocklist_name = "TestDeleteBlocklist"
         blocklist_description = "Test blocklist management."
         create_blocklist_response = client.create_or_update_text_blocklist(
             blocklist_name=blocklist_name,
-            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description)
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
         )
         if not create_blocklist_response or not create_blocklist_response.blocklist_name:
             raise RuntimeError("Failed to create blocklist.")
@@ -113,17 +88,15 @@ class TestBlocklistCase(TestBlocklist):
         except HttpResponseError:
             raise
 
-    @ContentSafetyPreparer()
+    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
     @recorded_by_proxy
-    def test_add_blocklist_items(self, content_safety_endpoint, content_safety_key):
-        client = self.create_blocklist_client(content_safety_endpoint, content_safety_key)
-
+    def test_add_blocklist_items(self, client):
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
         create_blocklist_response = client.create_or_update_text_blocklist(
             blocklist_name=blocklist_name,
-            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description)
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
         )
         if not create_blocklist_response or not create_blocklist_response.blocklist_name:
             raise RuntimeError("Failed to create blocklist.")
@@ -137,20 +110,18 @@ class TestBlocklistCase(TestBlocklist):
         )
         assert response is not None
         assert response.blocklist_items is not None
-        assert any(block_item_text_1 in item['text'] for item in response.blocklist_items) is True
-        assert any(block_item_text_2 in item['text'] for item in response.blocklist_items) is True
+        assert any(block_item_text_1 in item["text"] for item in response.blocklist_items) is True
+        assert any(block_item_text_2 in item["text"] for item in response.blocklist_items) is True
 
-    @ContentSafetyPreparer()
+    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
     @recorded_by_proxy
-    def test_list_blocklist_items(self, content_safety_endpoint, content_safety_key):
-        client = self.create_blocklist_client(content_safety_endpoint, content_safety_key)
-
+    def test_list_blocklist_items(self, client):
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
         create_blocklist_response = client.create_or_update_text_blocklist(
             blocklist_name=blocklist_name,
-            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description)
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
         )
         if not create_blocklist_response or not create_blocklist_response.blocklist_name:
             raise RuntimeError("Failed to create blocklist.")
@@ -161,7 +132,13 @@ class TestBlocklistCase(TestBlocklist):
         block_item_text_3 = "This is a test 3."
         block_item_text_4 = "This is a test 4."
         block_item_text_5 = "This is a test 5."
-        block_items = [TextBlocklistItem(text=block_item_text_1), TextBlocklistItem(text=block_item_text_2), TextBlocklistItem(text=block_item_text_3), TextBlocklistItem(text=block_item_text_4), TextBlocklistItem(text=block_item_text_5)]
+        block_items = [
+            TextBlocklistItem(text=block_item_text_1),
+            TextBlocklistItem(text=block_item_text_2),
+            TextBlocklistItem(text=block_item_text_3),
+            TextBlocklistItem(text=block_item_text_4),
+            TextBlocklistItem(text=block_item_text_5),
+        ]
         add_item_response = client.add_or_update_blocklist_items(
             blocklist_name=blocklist_name, options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=block_items)
         )
@@ -173,11 +150,11 @@ class TestBlocklistCase(TestBlocklist):
         assert response is not None
         items_count = len(response)
         assert items_count >= 5
-        assert any(block_item_text_1 in item['text'] for item in response) is True
-        assert any(block_item_text_2 in item['text'] for item in response) is True
-        assert any(block_item_text_3 in item['text'] for item in response) is True
-        assert any(block_item_text_4 in item['text'] for item in response) is True
-        assert any(block_item_text_5 in item['text'] for item in response) is True
+        assert any(block_item_text_1 in item["text"] for item in response) is True
+        assert any(block_item_text_2 in item["text"] for item in response) is True
+        assert any(block_item_text_3 in item["text"] for item in response) is True
+        assert any(block_item_text_4 in item["text"] for item in response) is True
+        assert any(block_item_text_5 in item["text"] for item in response) is True
 
         # List blocklist item, test top
         response = list(client.list_text_blocklist_items(blocklist_name=blocklist_name, top=2))
@@ -189,17 +166,15 @@ class TestBlocklistCase(TestBlocklist):
         assert response is not None
         assert len(response) <= items_count - 2
 
-    @ContentSafetyPreparer()
+    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
     @recorded_by_proxy
-    def test_get_blocklist_item(self, content_safety_endpoint, content_safety_key):
-        client = self.create_blocklist_client(content_safety_endpoint, content_safety_key)
-
+    def test_get_blocklist_item(self, client):
         # Create blocklist
         blocklist_name = "TestBlocklist"
         blocklist_description = "Test blocklist management."
         create_blocklist_response = client.create_or_update_text_blocklist(
             blocklist_name=blocklist_name,
-            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description)
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
         )
         if not create_blocklist_response or not create_blocklist_response.blocklist_name:
             raise RuntimeError("Failed to create blocklist.")
@@ -220,17 +195,15 @@ class TestBlocklistCase(TestBlocklist):
         assert blocklist_item is not None
         assert blocklist_item.text == block_item_text_1
 
-    @ContentSafetyPreparer()
+    @ClientPreparer(create_content_safety_client=False, create_blocklist_client=True)
     @recorded_by_proxy
-    def test_remove_blocklist_items(self, content_safety_endpoint, content_safety_key):
-        client = self.create_blocklist_client(content_safety_endpoint, content_safety_key)
-
+    def test_remove_blocklist_items(self, client):
         # Create blocklist
         blocklist_name = "TestRemoveBlocklistItem"
         blocklist_description = "Test blocklist management."
         create_blocklist_response = client.create_or_update_text_blocklist(
             blocklist_name=blocklist_name,
-            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description)
+            options=TextBlocklist(blocklist_name=blocklist_name, description=blocklist_description),
         )
         if not create_blocklist_response or not create_blocklist_response.blocklist_name:
             raise RuntimeError("Failed to create blocklist.")

@@ -24,11 +24,14 @@ def analyze_text_with_aad_auth():
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
     # Create a Content Safety client
-    client = ContentSafetyClient(endpoint, ClientSecretCredential(
+    client = ContentSafetyClient(
+        endpoint,
+        ClientSecretCredential(
             tenant_id=tenant_id,
             client_id=client_id,
             client_secret=client_secret,
-        ))
+        ),
+    )
 
     # Construct a request
     request = AnalyzeTextOptions(text="You are an idiot")
