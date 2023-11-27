@@ -429,7 +429,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
 
     @distributed_trace_async
     async def send_message(
-        self, content: Any,
+        self, content: Optional[object],
         *,
         visibility_timeout: Optional[int] = None,
         time_to_live: Optional[int] = None,
@@ -448,7 +448,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
 
-        :param Any content:
+        :param Optional[object] content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str. The encoded message can be up to
             64KB in size.
@@ -691,7 +691,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
     async def update_message(
         self, message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
-        content: object = None,
+        content: Optional[object] = None,
         *,
         visibility_timeout: Optional[int] = None,
         **kwargs: Any
@@ -716,7 +716,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
-        :param object content:
+        :param Optional[object] content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str.
         :keyword int visibility_timeout:
