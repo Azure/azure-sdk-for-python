@@ -942,12 +942,10 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: Dict[str, str]
         """
 
-        _tmp_output_names: set[str] = set()
-
         if isinstance(output_names, str):
-            _tmp_output_names = {output_names}
+            output_names = {output_names}
         elif output_names:
-            _tmp_output_names = set(output_names)
+            output_names = set(output_names)
 
         outputs = get_job_output_uris_from_dataplane(
             job_name,
@@ -957,7 +955,7 @@ class JobOperations(_ScopeDependentOperations):
             output_names=output_names,
         )
 
-        missing_outputs = (_tmp_output_names or set()).difference(outputs.keys())
+        missing_outputs = (output_names or set()).difference(outputs.keys())
 
         # Include default artifact store in outputs
         if (not output_names) or DEFAULT_ARTIFACT_STORE_OUTPUT_NAME in missing_outputs:
