@@ -7,7 +7,7 @@ import math
 import time
 import asyncio
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 
 # Used for verifying the perf framework correctly computes average throughput across parallel tests of different speed
