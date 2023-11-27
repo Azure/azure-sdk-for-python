@@ -65,13 +65,20 @@ text_translator = TextTranslationClient(endpoint=endpoint, credential=credential
 <!-- END SNIPPET -->
 
 ## Entra Authentication
-Credentials can also be provided using Azure.Identity to authenticate against Entra (AAD) applications.  To install the Azure.Identity library use the following command:
+
+`AzureKeyCredential` authentication is used in most of the examples, but you can also authenticate with Entra (Azure Active Directory) using the [Azure Identity library][azure_identity].  Note that regional endpoints do not support AAD authentication.
+
+Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.
+
+To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below, or other credential providers provided with the Azure SDK, please install the Azure.Identity package:
 
 ```powershell
 pip install azure-identity
 ```
 
-In addition to `endpoint`, this function requires configuring the `AZURE_TENANT_ID`, `AZURE_CLIENT_ID` and `AZURE_CLIENT_SECRET` environment variables acquired from the Auzre Portal.  Other configuration methods are not supported.  The environment variables are used to construct an Azure.Identity `DefaultAzureCredential` credential that will generate a token authorization header to authenticate against an Entra application.
+You will also need to [register a new AAD application][register_aad_app] and [grant access][aad_grant_access] to your Translator resource by assigning the `"Cognitive Services User"` role to your service principal.
+
+Set the values of the `client ID`, `tenant ID`, and `client secret` of the AAD application as environment variables: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_aad_credential -->
 
@@ -827,3 +834,9 @@ raise
 [breaksentence_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_break_sentence.py
 [dictionarylookup_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_dictionary_lookup.py
 [dictionaryexamples_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/sample_text_translation_dictionary_examples.py
+[azure_identity]: https://github.com/Azure/azure-sdk-for-net/blob/master/sdk/identity/Azure.Identity/README.md
+[DefaultAzureCredential]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/identity/Azure.Identity/README.md#defaultazurecredential
+[register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[aad_grant_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+[custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
+[cognitive_auth]: https://docs.microsoft.com/azure/cognitive-services/authentication
