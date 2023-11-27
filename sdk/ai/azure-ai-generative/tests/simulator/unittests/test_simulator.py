@@ -59,3 +59,28 @@ class TestSimulator:
         expected_keys = set(["messages", "$schema"])
         assert type(conv) == dict
         assert set(conv) == expected_keys
+
+    def test_simulator_parse_callback_citations(self, ):
+
+        tempalte_parameters = {'name': 'Jane',
+            'tone': 'happy',
+            'metadata': {'customer_info': '## customer_info      name: Jane Doe    age: 28',
+            'callback_citation_key': 'callback_citations',
+            'callback_citations': {'turn_0': {'documents': "\n>>> From: cHJvZHVjdF9pbmZvXzIubWQyMg==\n# Information about product item_number: 2"},
+                                   'turn_2': {'documents': "\n>>> From: wohdjewodhfjevwdjfywlemfhe==\n# Information about product item_number: 3"}}}
+            }
+        expected_turn_0_citations = {'citations': [{'id': 'documents',
+            'content': "\n>>> From: cHJvZHVjdF9pbmZvXzIubWQyMg==\n# Information about product item_number: 2"}]}
+        expected_turn_1_citations = {'citations': [{'id': 'customer_info',
+            'content': '## customer_info      name: Jane Doe    age: 28'}]}
+        expected_turn_2_citations = {'citations': [{'id': 'documents',
+            'content': "\n>>> From: wohdjewodhfjevwdjfywlemfhe==\n# Information about product item_number: 3"}]}
+        simulator = Simulator(None, None)
+
+        turn_0_citations = simulator._get_citations(tempalte_parameters, context_keys=['metadata'], turn_num = 0)
+        turn_1_citations = simulator._get_citations(tempalte_parameters, context_keys=['metadata'], turn_num = 1)
+        turn_2_citations = simulator._get_citations(tempalte_parameters, context_keys=['metadata'], turn_num = 2)
+
+        assert turn_0_citations == expected_turn_0_citations, "incorrect turn_0 citations"
+        assert turn_1_citations == expected_turn_1_citations, "incorrect turn_1 citations"
+        assert turn_2_citations == expected_turn_2_citations, "incorrect turn_2 citations"

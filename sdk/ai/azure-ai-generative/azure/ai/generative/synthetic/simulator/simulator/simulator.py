@@ -167,7 +167,7 @@ class Simulator:
             return json.dumps(obj)
 
     def _get_callback_citations(self, callback_citations: dict, turn_num: int = None):
-        if not turn_num:
+        if turn_num == None:
             return []
         current_turn_citations = []
         current_turn_str = "turn_" + str(turn_num)
