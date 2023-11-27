@@ -27,6 +27,7 @@ class TokenCredential(Protocol):
         *scopes: str,
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
         **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
