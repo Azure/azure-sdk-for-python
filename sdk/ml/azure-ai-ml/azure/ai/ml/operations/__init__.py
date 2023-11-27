@@ -6,7 +6,7 @@
 
 Operations are classes contain logic to interact with backend services, usually auto generated operations call.
 """
-__path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 
 from ._batch_deployment_operations import BatchDeploymentOperations
@@ -26,8 +26,8 @@ from ._online_endpoint_operations import OnlineEndpointOperations
 from ._registry_operations import RegistryOperations
 from ._schedule_operations import ScheduleOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
-from ._workspace_operations import WorkspaceOperations
 from ._workspace_hub_operation import WorkspaceHubOperations
+from ._workspace_operations import WorkspaceOperations
 from ._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 
 __all__ = [
