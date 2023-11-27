@@ -437,7 +437,7 @@ def get_job_output_uris_from_dataplane(
     job_name: str,
     run_operations: RunOperations,
     dataset_dataplane_operations: DatasetDataplaneOperations,
-    model_dataplane_operations: ModelDataplaneOperations,
+    model_dataplane_operations: Optional[ModelDataplaneOperations],
     output_names: Optional[Union[Iterable[str], str]] = None,
 ) -> Dict[str, str]:
     """Returns the output path for the given output in cloud storage of the given job.
