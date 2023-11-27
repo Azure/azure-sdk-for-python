@@ -11,30 +11,6 @@ import mmh3
 from azure.ai.resources._index._utils.tokens import token_length_function
 
 
-@dataclass
-class DocumentSource:
-    """Document Source."""
-
-    path: str
-    filename: str
-    url: str
-    mtime: float
-
-    def __post_init__(self):
-        """Normalize path and url to use forward slashes."""
-        self.filename = self.filename.replace("\\", "/")
-        if self.url.startswith("file://"):
-            self.url = self.url.replace("\\", "/")
-
-    def get_metadata(self) -> dict:
-        """Get the metadata of the document source."""
-        return {
-            "filename": self.filename,
-            "url": self.url,
-            "mtime": self.mtime,
-        }
-
-
 class Document(ABC):
     """Document."""
 

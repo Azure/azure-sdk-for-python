@@ -196,7 +196,7 @@ class ProductionData(RestTranslatableMixin):
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
             window_size=self.data_window_size,
-            window_offset=self.data_window_size,
+            window_offset="P0D",
         )
         return monitoring_input_data._to_rest_object()
 
@@ -746,7 +746,7 @@ class FADProductionData(RestTranslatableMixin):
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
             window_size=self.data_window_size,
-            window_offset=self.data_window_size,
+            window_offset="P0D",
         )
         return monitoring_input_data._to_rest_object()
 
@@ -1029,7 +1029,7 @@ class LlmData(RestTranslatableMixin):
             job_type=self.input_data.type,
             uri=self.input_data.path,
             window_size=self.data_window_size,
-            window_offset=self.data_window_size,
+            window_offset="P0D",
         )._to_rest_object()
 
     @classmethod
