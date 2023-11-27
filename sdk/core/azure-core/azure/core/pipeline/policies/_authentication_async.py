@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import asyncio
 import time
 from typing import TYPE_CHECKING, Any, Awaitable, Optional, cast, TypeVar
 
+from anyio import Lock
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -38,7 +38,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any) -> None:
         super().__init__()
         self._credential = credential
-        self._lock = asyncio.Lock()
+        self._lock = Lock()
         self._scopes = scopes
         self._token: Optional["AccessToken"] = None
         self._enable_cae: bool = kwargs.get("enable_cae", False)
