@@ -70,7 +70,7 @@ class Connection():  # pylint:disable=too-many-instance-attributes
      and 1 for transport type AmqpOverWebsocket.
     """
 
-    def __init__(
+    def __init__(# pylint:disable=too-many-locals,too-many-statements
             self,
             endpoint: str,
              *,
@@ -92,11 +92,12 @@ class Connection():  # pylint:disable=too-many-instance-attributes
             socket_timeout: Optional[float] = None,
             **kwargs: Any):  # pylint:disable=too-many-statements
         parsed_url = urlparse(endpoint)
-        
+
         if parsed_url.hostname is None:
             raise ValueError(f"Invalid endpoint: {endpoint}")
-        
+
         self._hostname = parsed_url.hostname
+        kwargs["http_proxy"] = http_proxy
         endpoint = self._hostname
         if parsed_url.port:
             self._port = parsed_url.port
@@ -150,9 +151,7 @@ class Connection():  # pylint:disable=too-many-instance-attributes
                 network_trace_params=self._network_trace_params,
                 **kwargs)
 
-        self._max_frame_size = kwargs.pop(
-            "max_frame_size", MAX_FRAME_SIZE_BYTES
-        )  # type: int
+        self._max_frame_size: int = max_frame_size if max_frame_size is not None else MAX_FRAME_SIZE_BYTES
 
         self._remote_max_frame_size: Optional[int] = None
         self._channel_max: int = channel_max if channel_max is not None else MAX_CHANNELS
@@ -168,7 +167,9 @@ class Connection():  # pylint:disable=too-many-instance-attributes
         self._allow_pipelined_open: bool = allow_pipelined_open
         self._remote_idle_timeout: Optional[float] = None
         self._remote_idle_timeout_send_frame: Optional[float] = None
-        self._idle_timeout_empty_frame_send_ratio: float = idle_timeout_empty_frame_send_ratio if idle_timeout_empty_frame_send_ratio is not None else 0.5
+        self._idle_timeout_empty_frame_send_ratio: float = (
+            idle_timeout_empty_frame_send_ratio if idle_timeout_empty_frame_send_ratio is not None else 0.5
+        )
         self._last_frame_received_time: Optional[float] = None
         self._last_frame_sent_time: Optional[float] = None
         self._idle_wait_time: float = idle_wait_time if idle_wait_time is not None else 0.1
@@ -281,7 +282,13 @@ class Connection():  # pylint:disable=too-many-instance-attributes
         """
         return self.state not in _CLOSING_STATES
 
-    async def _send_frame(self, channel: int, frame: NamedTuple, timeout: Optional[float] = None, **kwargs: Any) -> None:
+    async def _send_frame(
+        self,
+        channel: int,
+        frame: NamedTuple,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
         """Send a frame over the connection.
 
         :param int channel: The outgoing channel number.
@@ -838,12 +845,20 @@ class Connection():  # pylint:disable=too-many-instance-attributes
         :rtype: ~pyamqp._session.Session
         """
         assigned_channel = self._get_next_outgoing_channel()
-        kwargs["allow_pipelined_open"] = self._allow_pipelined_open
-        kwargs["idle_wait_time"] = self._idle_wait_time
+        kwargs['offered_capabilities'] = offered_capabilities or self._offered_capabilities
         session = Session(
             self,
             assigned_channel,
-            network_trace=kwargs.pop("network_trace", self._network_trace),
+            name=name,
+            handle_max=handle_max,
+            properties=properties,
+            next_outgoing_id=next_outgoing_id,
+            incoming_window=incoming_window,
+            outgoing_window=outgoing_window,
+            desired_capabilities=desired_capabilities,
+            allow_pipelined_open=allow_pipelined_open or self._allow_pipelined_open,
+            idle_wait_time=idle_wait_time or self._idle_wait_time,
+            network_trace= network_trace or self._network_trace,
             network_trace_params=dict(self._network_trace_params),
             **kwargs,
         )
