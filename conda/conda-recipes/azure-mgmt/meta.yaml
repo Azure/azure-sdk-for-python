@@ -134,11 +134,21 @@ test:
     - azure.mgmt.botservice.aio.operations
     - azure.mgmt.botservice.models
     - azure.mgmt.botservice.operations
+    - azure.mgmt.cdn
+    - azure.mgmt.cdn.aio
+    - azure.mgmt.cdn.aio.operations
+    - azure.mgmt.cdn.models
+    - azure.mgmt.cdn.operations
     - azure.mgmt.changeanalysis
     - azure.mgmt.changeanalysis.aio
     - azure.mgmt.changeanalysis.aio.operations
     - azure.mgmt.changeanalysis.models
     - azure.mgmt.changeanalysis.operations
+    - azure.mgmt.chaos
+    - azure.mgmt.chaos.aio
+    - azure.mgmt.chaos.aio.operations
+    - azure.mgmt.chaos.models
+    - azure.mgmt.chaos.operations
     - azure.mgmt.cognitiveservices
     - azure.mgmt.cognitiveservices.aio
     - azure.mgmt.cognitiveservices.aio.operations
@@ -212,11 +222,6 @@ test:
     - azure.mgmt.containerservicefleet.v2023_10_15.aio.operations
     - azure.mgmt.containerservicefleet.v2023_10_15.models
     - azure.mgmt.containerservicefleet.v2023_10_15.operations
-    - azure.mgmt.cdn
-    - azure.mgmt.cdn.aio
-    - azure.mgmt.cdn.aio.operations
-    - azure.mgmt.cdn.models
-    - azure.mgmt.cdn.operations
     - azure.mgmt.cosmosdb
     - azure.mgmt.cosmosdb.aio
     - azure.mgmt.cosmosdb.aio.operations

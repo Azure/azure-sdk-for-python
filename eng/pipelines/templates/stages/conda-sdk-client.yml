@@ -466,10 +466,12 @@ stages:
                   version: 6.0.0
                 - package: azure-mgmt-botservice
                   version: 2.0.0
-                - package: azure-mgmt-changeanalysis
-                  version: 1.0.0
                 - package: azure-mgmt-cdn
                   version: 13.0.0
+                - package: azure-mgmt-changeanalysis
+                  version: 1.0.0
+                - package: azure-mgmt-chaos
+                  version: 1.0.0
                 - package: azure-mgmt-cognitiveservices
                   version: 13.5.0
                 - package: azure-mgmt-commerce
