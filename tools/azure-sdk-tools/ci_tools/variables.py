@@ -62,7 +62,7 @@ def in_ci() -> int:
 def in_public() -> int:
     # PUBLIC is set to `true` on github actions agents, return 3
     # 0 otherwise
-    if os.getenv("PUBLIC", None):
+    if os.getenv("GITHUB_HEAD_REF", None):  # todo probably set our own env var for this
         return 3
 
     return 0

@@ -53,7 +53,7 @@ def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool
         package_path = os.getcwd()
 
     options = get_build_config(package_path)
-    if in_public() and options["ci_enabled"] is False:
+    if not in_public() and options["ci_enabled"] is False:
         return False
 
     # now pull the new pyproject.toml configuration
