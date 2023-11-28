@@ -21,6 +21,7 @@ from azure.ai.ml.entities import (
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
 )
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
@@ -101,6 +102,71 @@ class TestSweepJobSchema:
         rest.properties.search_space = {"ss": rest_search_space}
         sweep: SweepJob = Job._from_rest_object(rest)
         assert sweep.search_space == {"ss": expected}
+
+    @pytest.mark.parametrize(
+        "expected_resources, rest_resources",
+        [
+            (
+                JobResourceConfiguration(instance_type="d2", instance_count=2),
+                {"instance_type": "d2", "instance_count": 2},
+            ),
+            (JobResourceConfiguration(instance_type="d2"), {"instance_type": "d2"}),
+            (JobResourceConfiguration(instance_count=2), {"instance_count": 2}),
+        ],
+    )
+    def test_resources_from_rest(self, expected_resources: JobResourceConfiguration, rest_resources):
+        command_job = CommandJob(
+            code="./src",
+            command="python train.py --ss {search_space.ss}",
+            inputs={"input1": Input(path="testdata:1")},
+            compute="local",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+        )
+        sweep = SweepJob(
+            sampling_algorithm="random",
+            trial=command_job,
+            search_space={"ss": Choice([1.0, 2.0, 3.0])},
+            resources=rest_resources,
+        )
+
+        rest = sweep._to_rest_object()
+        rest.properties.resources = rest_resources
+        sweep: SweepJob = Job._from_rest_object(rest)
+        assert sweep.resources == expected_resources
+
+    @pytest.mark.parametrize(
+        "rest_resources, expected_resources",
+        [
+            (
+                JobResourceConfiguration(instance_type="d2", instance_count=2),
+                {"instance_type": "d2", "instance_count": 2},
+            ),
+            (JobResourceConfiguration(instance_type="d2"), {"instance_type": "d2"}),
+            (JobResourceConfiguration(instance_count=2), {"instance_count": 2}),
+        ],
+    )
+    def test_resources_to_rest(self, rest_resources: JobResourceConfiguration, expected_resources):
+        command_job = CommandJob(
+            code="./src",
+            command="python train.py --lr 0.01",
+            inputs={"input1": Input(path="testdata:1")},
+            compute="local",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+        )
+
+        sweep = SweepJob(
+            sampling_algorithm="random",
+            trial=command_job,
+            search_space={"ss": Choice([1.0, 2.0, 3.0])},
+            resources=rest_resources,
+        )
+        rest = sweep._to_rest_object()
+
+        if rest.properties.resources:
+            if "instance_count" in expected_resources:
+                assert rest.properties.resources.instance_count == expected_resources["instance_count"]
+            if "instance_type" in expected_resources:
+                assert rest.properties.resources.instance_type == expected_resources["instance_type"]
 
     def test_sweep_with_ints(self):
         expected_rest = ["quniform", [1, 100, 1]]

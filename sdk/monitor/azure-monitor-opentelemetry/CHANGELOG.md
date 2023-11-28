@@ -1,5 +1,18 @@
 # Release History
 
+## 1.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Remove VM Resource Detector for hotfix
+    ([#33305](https://github.com/Azure/azure-sdk-for-python/pull/33305))
+
+### Other Changes
+
 ## 1.1.0 (2023-11-08)
 
 ### Features Added

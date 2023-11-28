@@ -20,7 +20,7 @@ from azure.search.documents import (
     RequestEntityTooLargeError,
     ApiVersion,
 )
-from azure.search.documents.models import odata
+from azure.search.documents._utils import odata
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 

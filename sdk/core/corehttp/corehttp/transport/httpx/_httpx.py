@@ -59,8 +59,8 @@ class HttpXTransport(HttpTransport):
         if self.client is None:
             self.client = httpx.Client(
                 trust_env=self._use_env_settings,
-                verify=self.connection_config.get("verify", True),
-                cert=self.connection_config.get("cert"),
+                verify=self.connection_config.get("connection_verify", True),
+                cert=self.connection_config.get("connection_cert"),
             )
 
     def close(self) -> None:
@@ -91,7 +91,7 @@ class HttpXTransport(HttpTransport):
         """
         self.open()
         stream_response = kwargs.pop("stream", False)
-        connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("timeout"))
+        connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
         # not needed here as its already handled during init
         kwargs.pop("connection_verify", None)
@@ -153,8 +153,8 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         if self.client is None:
             self.client = httpx.AsyncClient(
                 trust_env=self._use_env_settings,
-                verify=self.connection_config.get("verify", True),
-                cert=self.connection_config.get("cert"),
+                verify=self.connection_config.get("connection_verify", True),
+                cert=self.connection_config.get("connection_cert"),
             )
 
     async def close(self) -> None:
@@ -180,7 +180,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         """
         await self.open()
         stream_response = kwargs.pop("stream", False)
-        connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("timeout"))
+        connect_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
         read_timeout = kwargs.pop("read_timeout", self.connection_config.get("read_timeout"))
         # not needed here as its already handled during init
         kwargs.pop("connection_verify", None)
