@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=too-many-lines
+from enum import Enum
 from typing import (
     Callable,
     cast,
@@ -14,8 +15,10 @@ from typing import (
     Optional,
     Dict,
     Union,
+    Protocol,
+    Tuple,
 )
-from enum import Enum
+from typing_extensions import Literal
 
 from ._encode import encode_payload
 from .utils import get_message_encoded_size
@@ -23,9 +26,20 @@ from .error import AMQPError
 from .message import Header, Properties
 
 if TYPE_CHECKING:
-    from ..amqp._amqp_message import AmqpAnnotatedMessage
+    from ..amqp._amqp_message import AmqpAnnotatedMessage, AmqpMessageProperties, AmqpMessageHeader
     from .message import Message
-    from .error import ErrorCondition
+    from .error import ErrorCondition, AMQPException
+    class Settler(Protocol):
+        def settle_messages(
+            self,
+            delivery_id: Union[int, Tuple[int, int]],
+            outcome: str,
+            *,
+            error: Optional[AMQPException] = None,
+            **kwargs: Any
+        ) -> None:
+            ...
+
 
 def _encode_property(value):
     try:
@@ -68,10 +82,10 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         self.state: "MessageState" = MessageState.SendComplete
         self.idle_time: int = 0
         self.retries: int = 0
-        self._settler = kwargs.get("settler")
+        self._settler: Optional["Settler"] = kwargs.get("settler")
         self._encoding = kwargs.get("encoding")
-        self.delivery_no: str = kwargs.get("delivery_no")
-        self.delivery_tag: str = kwargs.get("delivery_tag") or None
+        self.delivery_no: Optional[int] = kwargs.get("delivery_no")
+        self.delivery_tag: Optional[str] = kwargs.get("delivery_tag") or None
         self.on_send_complete: Optional[Callable] = None
         self.properties: Optional[LegacyMessageProperties] = (
             LegacyMessageProperties(self._message.properties)
@@ -97,9 +111,9 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
             self.state = MessageState.ReceivedUnsettled
         elif self.delivery_no:
             self.state = MessageState.ReceivedSettled
-        self._to_outgoing_amqp_message: Callable = kwargs.get(
+        self._to_outgoing_amqp_message: Callable = cast(Callable, kwargs.get(
             "to_outgoing_amqp_message"
-        )
+        ))
 
     def __str__(self) -> str:
         return str(self._message)
@@ -123,7 +137,10 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
     def encode_message(self) -> bytes:
         output = bytearray()
         # to maintain the same behavior as uamqp, app prop values will not be decoded
-        self.application_properties = self._message.application_properties.copy()
+        self.application_properties = cast(
+            Dict[Union[str, bytes], Any],
+            self._message.application_properties.copy()
+        )
         encode_payload(output, self._to_outgoing_amqp_message(self._message))
         return bytes(output)
 
@@ -178,7 +195,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         self,
         failed: bool,
         deliverable: bool,
-        annotations: Dict[Union[str, bytes], Any] = None
+        annotations: Optional[Dict[Union[str, bytes], Any]] = None
     ) -> bool:
         if self._can_settle_message():
             self._settler.settle_messages(
@@ -200,7 +217,7 @@ class LegacyBatchMessage(LegacyMessage):
 
 
 class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attributes
-    def __init__(self, properties: Dict[Union[str, bytes], Any]):
+    def __init__(self, properties: "AmqpMessageProperties"):
         self.message_id: Optional[bytes] = _encode_property(properties.message_id)
         self.user_id: Optional[bytes] = _encode_property(properties.user_id)
         self.to: Optional[bytes] = _encode_property(properties.to)
@@ -253,9 +270,9 @@ class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attr
 
 
 class LegacyMessageHeader(object):
-    def __init__(self, header: Header) -> None:
+    def __init__(self, header: "AmqpMessageHeader") -> None:
         self.delivery_count: Optional[int] = header.delivery_count or 0
-        self.time_to_live: Optional[int] = header.ttl
+        self.time_to_live: Optional[int] = header.time_to_live
         self.first_acquirer: Optional[bool] = header.first_acquirer
         self.durable: Optional[bool] = header.durable
         self.priority: Optional[int] = header.priority

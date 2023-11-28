@@ -21,14 +21,15 @@ class Header(NamedTuple):
     ttl: Optional[int] = None
     first_acquirer: Optional[bool] = None
     delivery_count: Optional[int] = None
-    _code = 0x00000070  # type: ignore # pylint:disable=protected-access
-    _definition = ( # type: ignore # pylint:disable=protected-access
-        FIELD("durable", AMQPTypes.boolean, False, None, False),
-        FIELD("priority", AMQPTypes.ubyte, False, None, False),
-        FIELD("ttl", AMQPTypes.uint, False, None, False),
-        FIELD("first_acquirer", AMQPTypes.boolean, False, None, False),
-        FIELD("delivery_count", AMQPTypes.uint, False, None, False)
-    )
+
+Header._code = 0x00000070  # type: ignore # pylint:disable=protected-access
+Header._definition = ( # type: ignore # pylint:disable=protected-access
+    FIELD("durable", AMQPTypes.boolean, False, None, False),
+    FIELD("priority", AMQPTypes.ubyte, False, None, False),
+    FIELD("ttl", AMQPTypes.uint, False, None, False),
+    FIELD("first_acquirer", AMQPTypes.boolean, False, None, False),
+    FIELD("delivery_count", AMQPTypes.uint, False, None, False)
+)
 
 if _CAN_ADD_DOCSTRING:
     Header.__doc__ = """
@@ -77,7 +78,7 @@ if _CAN_ADD_DOCSTRING:
 
 
 class Properties(NamedTuple):
-    message_id: Optional[Union[str, bytes, UUID]] = None
+    message_id: Optional[Union[str, bytes, "UUID"]] = None
     user_id: Optional[Union[str, bytes]] = None
     to: Optional[Union[str, bytes]] = None
     subject: Optional[Union[str, bytes]] = None
@@ -90,21 +91,22 @@ class Properties(NamedTuple):
     group_id: Optional[Union[str, bytes]] = None
     group_sequence: Optional[int] = None
     reply_to_group_id: Optional[Union[str, bytes]] = None
-    _code = 0x00000073 # type: ignore # pylint:disable=protected-access
-    _definition = ( # type: ignore # pylint:disable=protected-access
-        FIELD("message_id", FieldDefinition.message_id, False, None, False),
-        FIELD("user_id", AMQPTypes.binary, False, None, False),
-        FIELD("to", AMQPTypes.string, False, None, False),
-        FIELD("subject", AMQPTypes.string, False, None, False),
-        FIELD("reply_to", AMQPTypes.string, False, None, False),
-        FIELD("correlation_id", FieldDefinition.message_id, False, None, False),
-        FIELD("content_type", AMQPTypes.symbol, False, None, False),
-        FIELD("content_encoding", AMQPTypes.symbol, False, None, False),
-        FIELD("absolute_expiry_time", AMQPTypes.timestamp, False, None, False),
-        FIELD("creation_time", AMQPTypes.timestamp, False, None, False),
-        FIELD("group_id", AMQPTypes.string, False, None, False),
-        FIELD("group_sequence", AMQPTypes.uint, False, None, False),
-        FIELD("reply_to_group_id", AMQPTypes.string, False, None, False))
+
+Properties._code = 0x00000073 # type: ignore # pylint:disable=protected-access
+Properties._definition = ( # type: ignore # pylint:disable=protected-access
+    FIELD("message_id", FieldDefinition.message_id, False, None, False),
+    FIELD("user_id", AMQPTypes.binary, False, None, False),
+    FIELD("to", AMQPTypes.string, False, None, False),
+    FIELD("subject", AMQPTypes.string, False, None, False),
+    FIELD("reply_to", AMQPTypes.string, False, None, False),
+    FIELD("correlation_id", FieldDefinition.message_id, False, None, False),
+    FIELD("content_type", AMQPTypes.symbol, False, None, False),
+    FIELD("content_encoding", AMQPTypes.symbol, False, None, False),
+    FIELD("absolute_expiry_time", AMQPTypes.timestamp, False, None, False),
+    FIELD("creation_time", AMQPTypes.timestamp, False, None, False),
+    FIELD("group_id", AMQPTypes.string, False, None, False),
+    FIELD("group_sequence", AMQPTypes.uint, False, None, False),
+    FIELD("reply_to_group_id", AMQPTypes.string, False, None, False))
 
 if _CAN_ADD_DOCSTRING:
     Properties.__doc__ = """

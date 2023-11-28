@@ -210,26 +210,26 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def get_message_delivery_tag(
         _, frame: "TransferFrame"
-    ) -> str:  # pylint: disable=unused-argument
+    ) -> Optional[str]:  # pylint: disable=unused-argument
         """
         Gets delivery tag of a Message.
         :param any _: Ignored.
         :param ~pyamqp.performatives.TransferFrame frame: Frame to get delivery_tag from for pyamqp.Message.
         :return: Delivery tag of the message.
-        :rtype: str
+        :rtype: str or None
         """
         return frame[2] if frame else None
 
     @staticmethod
     def get_message_delivery_id(
         _, frame: "TransferFrame"
-    ) -> str:  # pylint: disable=unused-argument
+    ) -> Optional[str]:  # pylint: disable=unused-argument
         """
         Gets delivery id of a Message.
         :param any _: Ignored.
         :param ~pyamqp.performatives.TransferFrame frame: Message to get delivery_id from for pyamqp.Message.
         :return: Delivery id of the message.
-        :rtype: str
+        :rtype: str or None
         """
         return frame[1] if frame else None
 
@@ -356,6 +356,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         if not message.application_properties:
             message = message._replace(application_properties={})
+        message.application_properties = cast(Dict[Union[str, bytes], Any], message.application_properties)
         message.application_properties.setdefault(key, value)
         return message
 
@@ -367,6 +368,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: Batch message encoded size.
         :rtype: int
         """
+        # TODO: how to type below?
+        # type: ignore
         return utils.get_message_encoded_size(BatchMessage(*message))
 
     @staticmethod
