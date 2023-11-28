@@ -11,17 +11,15 @@ from typing import (
     Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse, quote, unquote
+from urllib.parse import urlparse, unquote
 
 from typing_extensions import Self
 
-from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
+from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
     process_storage_error,
@@ -30,7 +28,14 @@ from ._shared.response_handlers import (
 )
 from ._generated.models import SignedIdentifier
 from ._blob_client import BlobClient
-from ._container_client_helpers import _parse_url, _get_blob_name, _build_generated_client, _format_url, _generate_set_tiers_options, _generate_delete_blobs_options
+from ._container_client_helpers import (
+    _parse_url,
+    _get_blob_name,
+    _build_generated_client,
+    _format_url,
+    _generate_set_tiers_options,
+    _generate_delete_blobs_options
+)
 from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin

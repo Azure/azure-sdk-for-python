@@ -11,8 +11,8 @@ from typing import (  # pylint: disable=unused-import
     Any, AnyStr, AsyncIterable, AsyncIterator, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
+from urllib.parse import urlparse, unquote
 from typing_extensions import Self
-from urllib.parse import urlparse, quote, unquote
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -36,7 +36,14 @@ from .._encryption import StorageEncryptionMixin
 from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from ._blob_client_async import BlobClient
-from .._container_client_helpers import _parse_url, _get_blob_name, _build_generated_client, _format_url, _generate_set_tiers_options, _generate_delete_blobs_options
+from .._container_client_helpers import (
+    _parse_url,
+    _get_blob_name,
+    _build_generated_client,
+    _format_url,
+    _generate_set_tiers_options,
+    _generate_delete_blobs_options
+)
 from ._lease_async import BlobLeaseClient
 from ._list_blobs_helper import BlobNamesPaged, BlobPropertiesPaged, BlobPrefix
 from .._list_blobs_helper import IgnoreListBlobsDeserializer
@@ -54,7 +61,7 @@ if TYPE_CHECKING:
         PublicAccess)
 
 
-class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):
+class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific container, although that container
     may not yet exist.
 
@@ -142,7 +149,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             scheme=self.scheme,
             query_str=self._query_str
         )
-    
+
     @classmethod
     def from_container_url(
             cls, container_url: str,
@@ -190,7 +197,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         if not container_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid container name")
         return cls(account_url, container_name=container_name, credential=credential, **kwargs)
-    
+
     @classmethod
     def from_connection_string(
             cls, conn_str: str,
