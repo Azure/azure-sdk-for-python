@@ -193,10 +193,10 @@ class EventHubConsumerClient(
         self._lock = asyncio.Lock(**self._internal_kwargs)
         self._event_processors: Dict[Tuple[str, str], EventProcessor] = {}
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "EventHubConsumerClient":
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
     def _create_consumer(

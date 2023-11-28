@@ -45,7 +45,7 @@ class AmqpAnnotatedMessage(object):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self._encoding = kwargs.pop("encoding", "UTF-8")
+        self._encoding: str = kwargs.pop("encoding", "UTF-8")
         self._data_body: Optional[Union[str, bytes, List[Union[str, bytes]]]] = None
         self._sequence_body: Optional[List[Any]] = None
         self._value_body: Any = None
@@ -338,12 +338,12 @@ class AmqpMessageHeader(DictMixin):
     :vartype priority: Optional[int]
     """
 
-    def __init__(self, **kwargs):
-        self.delivery_count = kwargs.get("delivery_count")
-        self.time_to_live = kwargs.get("time_to_live")
-        self.first_acquirer = kwargs.get("first_acquirer")
-        self.durable = kwargs.get("durable")
-        self.priority = kwargs.get("priority")
+    def __init__(self, **kwargs: Any) -> None:
+        self.delivery_count: Optional[int] = kwargs.get("delivery_count")
+        self.time_to_live: Optional[int] = kwargs.get("time_to_live")
+        self.first_acquirer: Optional[bool] = kwargs.get("first_acquirer")
+        self.durable: Optional[bool] = kwargs.get("durable")
+        self.priority: Optional[int] = kwargs.get("priority")
 
 
 class AmqpMessageProperties(DictMixin):
@@ -422,17 +422,17 @@ class AmqpMessageProperties(DictMixin):
     :vartype reply_to_group_id: Optional[bytes]
     """
 
-    def __init__(self, **kwargs):
-        self.message_id = kwargs.get("message_id")
-        self.user_id = kwargs.get("user_id")
-        self.to = kwargs.get("to")
-        self.subject = kwargs.get("subject")
-        self.reply_to = kwargs.get("reply_to")
-        self.correlation_id = kwargs.get("correlation_id")
-        self.content_type = kwargs.get("content_type")
-        self.content_encoding = kwargs.get("content_encoding")
-        self.creation_time = kwargs.get("creation_time")
-        self.absolute_expiry_time = kwargs.get("absolute_expiry_time")
-        self.group_id = kwargs.get("group_id")
-        self.group_sequence = kwargs.get("group_sequence")
-        self.reply_to_group_id = kwargs.get("reply_to_group_id")
+    def __init__(self, **kwargs: Any) -> None:
+        self.message_id: Optional[bytes] = kwargs.get("message_id")
+        self.user_id: Optional[bytes] = kwargs.get("user_id")
+        self.to: Optional[bytes] = kwargs.get("to")
+        self.subject: Optional[bytes] = kwargs.get("subject")
+        self.reply_to: Optional[bytes] = kwargs.get("reply_to")
+        self.correlation_id: Optional[bytes] = kwargs.get("correlation_id")
+        self.content_type: Optional[bytes] = kwargs.get("content_type")
+        self.content_encoding: Optional[bytes] = kwargs.get("content_encoding")
+        self.creation_time: Optional[int] = kwargs.get("creation_time")
+        self.absolute_expiry_time: Optional[int] = kwargs.get("absolute_expiry_time")
+        self.group_id: Optional[bytes] = kwargs.get("group_id")
+        self.group_sequence: Optional[int] = kwargs.get("group_sequence")
+        self.reply_to_group_id: Optional[bytes] = kwargs.get("reply_to_group_id")

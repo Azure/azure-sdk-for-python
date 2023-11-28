@@ -76,8 +76,8 @@ PrimitiveTypes = Optional[
         bytes,
         bool,
         str,
-        Dict,
-        List,
+        Dict[str, Any],
+        List[Any],
         uuid.UUID,
     ]
 ]
@@ -340,7 +340,7 @@ class EventData(object):
         return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
 
     @property
-    def properties(self) -> Dict[Union[str, bytes], Any]:
+    def properties(self) -> Union[Dict[str, Any], Dict[bytes, Any]]:
         """Application-defined properties on the event.
 
         :rtype: dict[str, any] or dict[bytes, any]
@@ -348,7 +348,7 @@ class EventData(object):
         return self._raw_amqp_message.application_properties
 
     @properties.setter
-    def properties(self, value: Dict[Union[str, bytes], Any]):
+    def properties(self, value: Dict[Union[str, bytes], Any]) -> None:
         """Application-defined properties on the event.
 
         :param dict[str, any] or dict[bytes, any] value: The application properties for the EventData.
@@ -571,7 +571,7 @@ class EventDataBatch(object):
             self._message, self._partition_key
         )
         self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
-        self.max_size_in_bytes = (
+        self.max_size_in_bytes: Optional[int] = (
             max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
         )
 
