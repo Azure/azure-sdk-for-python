@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from collections import namedtuple
 from typing import Any, NamedTuple, Optional
 from typing_extensions import Protocol, runtime_checkable
 
@@ -47,7 +46,11 @@ class TokenCredential(Protocol):
         ...
 
 
-AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])
+class AzureNamedKey(NamedTuple):
+    """Represents a name and key pair."""
+
+    name: str
+    key: str
 
 
 __all__ = [
