@@ -11,13 +11,14 @@ DESCRIPTION:
     This sample demonstrates how to authenticate to the Text Translation service.
 
     There are two supported methods of authentication:
-    1) Use a Document Translation API key with AzureKeyCredential from azure.core.credentials
-    2) Use a token credential from azure-identity to authenticate with Azure Active Directory
+    1) Use a Text Translation API key with AzureKeyCredential from azure.core.credentials.
+    2) Use a token credential from azure-identity to authenticate with Azure Active Directory.
 
     See more details about authentication here:
     https://docs.microsoft.com/azure/cognitive-services/authentication
 
-    Note: the endpoint must be formatted to use the custom domain name for your resource:
+    Both methods of authentication require a Text Translation endpoint to be included in the client constructor:
+    The endpoint must be formatted to use the custom domain name for your resource:
     https://<NAME-OF-YOUR-RESOURCE>.cognitiveservices.azure.com/
 
 USAGE:
@@ -25,7 +26,14 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_TEXT_TRANSLATION_ENDPOINT - the endpoint to your Text Translation resource.
-    2) AZURE_TEXT_TRANSLATION_KEY - your Document Translation API key
+
+    For API key authentication, set an environment variable named AZURE_TEXT_TRANSLATION_KEY with your key.
+    2) AZURE_TEXT_TRANSLATION_KEY - your Text Translation API key
+
+    For Azure Active Directory authentication, first create an Azure Active Directory application registration:
+    https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
+    Next, set environment variables named AZURE_CLIENT_ID, AZURE_TENANT_ID, and AZURE_CLIENT_SECRET with your values.
+
     3) AZURE_CLIENT_ID - the client ID of your active directory application.
     4) AZURE_TENANT_ID - the tenant ID of your active directory application.
     5) AZURE_CLIENT_SECRET - the secret of your active directory application.
@@ -65,8 +73,3 @@ def sample_authentication_with_azure_active_directory():
 
     # make calls with authenticated client
     result = text_translation_client.translate(["hello"], "es");
-
-
-if __name__ == '__main__':
-    sample_authentication_api_key()
-    sample_authentication_with_azure_active_directory()
