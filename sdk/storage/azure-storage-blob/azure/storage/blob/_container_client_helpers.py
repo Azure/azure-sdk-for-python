@@ -138,7 +138,7 @@ def _generate_delete_blobs_options(
     client,
     query_str,
     container_name,
-    *blobs: Union[str, Dict[str, Any], BlobProperties],
+    blobs: Union[str, Dict[str, Any], BlobProperties],
     **kwargs: Any
     ):
     timeout = kwargs.pop('timeout', None)
@@ -237,7 +237,7 @@ def _generate_set_tiers_options(
         query_str,
         container_name,
         blob_tier: Optional[Union[str, 'StandardBlobTier', 'PremiumPageBlobTier']],
-        *blobs: Union[str, Dict[str, Any], BlobProperties],
+        blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
     ):
     timeout = kwargs.pop('timeout', None)

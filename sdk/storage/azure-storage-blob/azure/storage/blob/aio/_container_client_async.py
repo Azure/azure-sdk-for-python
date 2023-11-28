@@ -1381,7 +1381,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             return iter([])
 
         reqs, options = _generate_delete_blobs_options(
-            client=self._client, query_str=self._query_str, container_name=self.container_name, *blobs, **kwargs
+            client=self._client,
+            query_str=self._query_str,
+            container_name=self.container_name,
+            blobs=blobs,
+            **kwargs
         )
 
         return await self._batch_send(*reqs, **options)
@@ -1458,7 +1462,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             query_str=self._query_str,
             container_name=self.container_name,
             blob_tier=standard_blob_tier,
-            *blobs,
+            blobs=blobs,
             **kwargs)
 
         return await self._batch_send(*reqs, **options)
@@ -1517,7 +1521,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             query_str=self._query_str,
             container_name=self.container_name,
             blob_tier=premium_page_blob_tier,
-            *blobs,
+            blobs=blobs,
             **kwargs)
 
         return await self._batch_send(*reqs, **options)

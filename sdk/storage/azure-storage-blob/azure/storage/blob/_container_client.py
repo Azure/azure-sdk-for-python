@@ -1394,7 +1394,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             return iter([])
 
         reqs, options = _generate_delete_blobs_options(
-            client=self._client, query_str=self._query_str, container_name=self.container_name, *blobs, **kwargs
+            client=self._client,
+            query_str=self._query_str,
+            container_name=self.container_name,
+            blobs=blobs,
+            **kwargs
         )
 
         return self._batch_send(*reqs, **options)
@@ -1475,7 +1479,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             query_str=self._query_str,
             container_name=self.container_name,
             blob_tier=standard_blob_tier,
-            *blobs,
+            blobs=blobs,
             **kwargs)
 
         return self._batch_send(*reqs, **options)
@@ -1534,7 +1538,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             query_str=self._query_str,
             container_name=self.container_name,
             blob_tier=premium_page_blob_tier,
-            *blobs,
+            blobs=blobs,
             **kwargs)
 
         return self._batch_send(*reqs, **options)
