@@ -59,10 +59,10 @@ def create_text_translation_client_with_credential():
     return text_translator
 
 def create_text_translation_client_with_aad_credential():
-    # [START create_text_translation_client_with_aad_credential]
     """DefaultAzureCredential will use the values from these environment
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
     """
+    # [START create_text_translation_client_with_aad_credential]
     from azure.identity import DefaultAzureCredential
     from azure.ai.translation.text import TextTranslationClient
 
