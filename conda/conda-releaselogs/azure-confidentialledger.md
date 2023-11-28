@@ -1,5 +1,11 @@
 # Microsoft Azure Confidential Ledger Client Library for Python (conda)
 
+## 2023.12.01
+
+### Packages included
+
+- azure-confidentialledger-1.1.1
+
 ## 2023.09.01
 
 ### Packages included
