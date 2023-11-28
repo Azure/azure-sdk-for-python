@@ -142,8 +142,8 @@ class SchemaRegistryClient(object):
             cls=partial(prepare_schema_properties_result, format),
             **http_request_kwargs,
         )
-        schema_properties = cast("SchemaPropertiesDict", schema_properties)
-        return SchemaProperties(**schema_properties)
+        properties = cast("SchemaPropertiesDict", schema_properties)
+        return SchemaProperties(**properties)
 
     @overload
     async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
@@ -227,10 +227,10 @@ class SchemaRegistryClient(object):
                 **http_request_kwargs,
             )
         await http_response.read()
-        schema_properties = cast("SchemaPropertiesDict", schema_properties)
+        properties = cast("SchemaPropertiesDict", schema_properties)
         return Schema(
             definition=http_response.text(),
-            properties=SchemaProperties(**schema_properties),
+            properties=SchemaProperties(**properties),
         )
 
     @distributed_trace_async
@@ -278,5 +278,5 @@ class SchemaRegistryClient(object):
                 **http_request_kwargs,
             )
         )
-        schema_properties = cast("SchemaPropertiesDict", schema_properties)
-        return SchemaProperties(**schema_properties)
+        properties = cast("SchemaPropertiesDict", schema_properties)
+        return SchemaProperties(**properties)
