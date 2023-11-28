@@ -40,8 +40,8 @@ create_monitor:
           path: azureml:Direct:1
         data_context: test
         data_window: 
-          trailing_window_size: P30D
-          trailing_window_offset: P30D
+          data_window_size: P30D
+          data_window_offset: P30D
       metric_thresholds:
         numerical:
           jensen_shannon_distance: 0.5
