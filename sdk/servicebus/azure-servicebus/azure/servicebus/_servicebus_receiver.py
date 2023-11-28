@@ -238,7 +238,7 @@ class ServiceBusReceiver(
             self
         )
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator["ServiceBusReceivedMessage"]:
         return self._iter_contextual_wrapper()
 
     def _inner_next(
