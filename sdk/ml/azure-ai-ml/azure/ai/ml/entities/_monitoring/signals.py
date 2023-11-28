@@ -1025,6 +1025,7 @@ class LlmData(RestTranslatableMixin):
         self.input_data = input_data
         self.data_column_names = data_column_names
         self.data_window_size = data_window_size
+        self.data_window_offset = data_window_offset
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         if self.data_window_size is None:
