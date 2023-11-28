@@ -43,7 +43,8 @@ if TYPE_CHECKING:
     from ._models  import (
         ServerCallLocator,
         GroupCallLocator,
-        MediaStreamingConfiguration
+        MediaStreamingConfiguration,
+        TranscriptionConfiguration
     )
     from azure.core.credentials import (
         TokenCredential,
@@ -176,6 +177,7 @@ class CallAutomationClient:
         voip_headers: Optional[Dict[str, str]] = None,
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
+        transcription_configuration: Optional['TranscriptionConfiguration'] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
@@ -200,6 +202,9 @@ class CallAutomationClient:
         :paramtype voip_headers: Dict[str, str] or None
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
+         or None
+        :keyword transcription_configuration: Configuration of live transcription.
+        :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
          or None
         :keyword azure_cognitive_services_endpoint_url:
          The identifier of the Cognitive Service resource assigned to this call.
@@ -227,6 +232,7 @@ class CallAutomationClient:
         except TypeError:
             targets = [serialize_identifier(target_participant)]
         media_config = media_streaming_configuration.to_generated() if media_streaming_configuration else None
+        transcription_config = transcription_configuration.to_generated() if transcription_configuration else None
         create_call_request = CreateCallRequest(
             targets=targets,
             callback_uri=callback_url,
@@ -235,6 +241,7 @@ class CallAutomationClient:
             source_identity=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
             media_streaming_configuration=media_config,
+            transcription_configuration=transcription_config,
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
             custom_context=user_custom_context
         )
@@ -303,6 +310,7 @@ class CallAutomationClient:
         callback_url: str,
         *,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
+        transcription_configuration: Optional['TranscriptionConfiguration'] = None,
         azure_cognitive_services_endpoint_url: Optional[str] = None,
         operation_context: Optional[str] = None,
         **kwargs
@@ -317,6 +325,9 @@ class CallAutomationClient:
         :type callback_url: str
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
+        :keyword transcription_configuration: Configuration of live transcription.
+        :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
+         or None
         :keyword azure_cognitive_services_endpoint_url:
          The endpoint url of the Azure Cognitive Services resource attached.
         :paramtype azure_cognitive_services_endpoint_url: str
@@ -331,6 +342,8 @@ class CallAutomationClient:
             callback_uri=callback_url,
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
+            transcription_configuration=transcription_configuration.to_generated()
+            if transcription_configuration else None,
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
             answered_by_identifier=serialize_communication_user_identifier(
                 self.source) if self.source else None,
@@ -410,7 +423,7 @@ class CallAutomationClient:
         :paramtype call_reject_reason: str or ~azure.communication.callautomation.CallRejectReason
         :return: None
         :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseErrorr:
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         reject_call_request = RejectCallRequest(
             incoming_call_context=incoming_call_context,

@@ -23,7 +23,7 @@ class CommunicationErrorResponseConverter(object):
     """
 
     @classmethod
-    def _convert(cls, participants, chat_errors):
+    def convert(cls, participants, chat_errors):
         # type: (...) -> list[(ChatThreadParticipant, ChatError)]
         """
         Util function to convert AddChatParticipantsResult.

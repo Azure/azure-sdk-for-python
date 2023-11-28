@@ -27,7 +27,7 @@
                   "jobInputType": "mltable",
                   "dataContext": "model_inputs",
                   "windowSize": "P7D",
-                  "windowOffset": "P7D",
+                  "windowOffset": "P0D",
                   "columns": {
                     "correlation_id": "inference_correlation_id"
                   }
@@ -38,7 +38,7 @@
                   "jobInputType": "mltable",
                   "dataContext": "model_outputs",
                   "windowSize": "P7D",
-                  "windowOffset": "P7D",
+                  "windowOffset": "P0D",
                   "columns": {
                     "correlation_id": "inference_correlation_id",
                     "prediction": "is_fraud",
