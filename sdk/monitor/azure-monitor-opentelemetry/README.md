@@ -157,8 +157,8 @@ v2.x+
 ```
 
 ```
-...
 v1.x
+...
 {
   "logger": {
     "categoryFilter": {
