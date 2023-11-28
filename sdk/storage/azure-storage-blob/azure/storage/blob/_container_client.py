@@ -26,12 +26,12 @@ from ._shared.response_handlers import (
     return_response_headers,
     return_headers_and_deserialized
 )
+from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
 from ._blob_client import BlobClient
 from ._container_client_helpers import (
     _parse_url,
     _get_blob_name,
-    _build_generated_client,
     _format_url,
     _generate_set_tiers_options,
     _generate_delete_blobs_options
@@ -147,8 +147,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._api_version = get_api_version(kwargs)
-        self._client = _build_generated_client(base_url=self.url, pipeline=self._pipeline, api_version=self._api_version)
+        self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
+
+    def _build_generated_client(self):
+        client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
+        client._config.version = self._api_version # pylint: disable=protected-access
+        return client
 
     def _format_url(self, hostname):
         return _format_url(
@@ -844,7 +849,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         # For listing only names we need to create a one-off generated client and
         # override its deserializer to prevent deserialization of the full response.
-        client = _build_generated_client(base_url=self.url, pipeline=self._pipeline, api_version=self._api_version)
+        client = self._build_generated_client()
         client.container._deserialize = IgnoreListBlobsDeserializer()  # pylint: disable=protected-access
 
         command = functools.partial(
