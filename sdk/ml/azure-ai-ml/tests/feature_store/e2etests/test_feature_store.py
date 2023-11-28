@@ -69,14 +69,14 @@ class TestFeatureStore(AzureRecordedTestCase):
         assert create_fs.offline_store.target.startswith(create_fs.storage_account)
 
         if not materialization_identity_client_id or not materialization_identity_resource_id:
-            materialization_identity_client_id = fs.materialization_identity.client_id
-            materialization_identity_resource_id = fs.materialization_identity.resource_id
+            materialization_identity_client_id = create_fs.materialization_identity.client_id
+            materialization_identity_resource_id = create_fs.materialization_identity.resource_id
 
         if not offline_store_target:
-            offline_store_target = fs.offline_store.target
+            offline_store_target = create_fs.offline_store.target
 
         if not default_storage_account:
-            default_storage_account = fs.storage_account
+            default_storage_account = create_fs.storage_account
 
         # provision with online store
         fs_name = f"e2etest_fs1_{randstr('fs1')}"
