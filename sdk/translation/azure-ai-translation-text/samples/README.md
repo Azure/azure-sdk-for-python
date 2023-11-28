@@ -797,7 +797,7 @@ try:
     input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
     response = text_translator.lookup_dictionary_examples(
-        content=input_text_elements, from_parameter=source_language, to=target_language
+        request_body=input_text_elements, from_parameter=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 
