@@ -41,7 +41,7 @@ from azure.ai.ml.constants._common import (
     DefaultOpenEncoding,
     LROConfigurations,
 )
-from azure.ai.ml.entities import Component, Environment, ValidationResult
+from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
@@ -738,7 +738,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         if isinstance(component, str):
             return
-        potential_parents = [component]
+        potential_parents: List[BaseNode] = [component]
         if hasattr(component, "task"):
             potential_parents.append(component.task)
         for parent in potential_parents:
@@ -752,8 +752,6 @@ class ComponentOperations(_ScopeDependentOperations):
             if isinstance(parent.environment, dict):
                 continue
             if type(parent.environment).__name__ == "InternalEnvironment":
-                continue
-            if not isinstance(parent.environment, (str, Environment)):
                 continue
             parent.environment = resolver(parent.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
@@ -806,7 +804,7 @@ class ComponentOperations(_ScopeDependentOperations):
             resolver=resolver,
         )
 
-    def _resolve_inputs_for_pipeline_component_jobs(self, jobs: Dict[str, Any], base_path: str):
+    def _resolve_inputs_for_pipeline_component_jobs(self, jobs: Dict[str, Any], base_path: str) -> None:
         """Resolve inputs for jobs in a pipeline component.
 
         :param jobs: A dict of nodes in a pipeline component.
@@ -829,7 +827,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_automl_job_inputs(job_instance)
 
     @classmethod
-    def _resolve_binding_on_supported_fields_for_node(cls, node: BaseNode):
+    def _resolve_binding_on_supported_fields_for_node(cls, node: BaseNode) -> None:
         """Resolve all PipelineInput(binding from sdk) on supported fields to string.
 
         :param node: The node
@@ -847,7 +845,7 @@ class ComponentOperations(_ScopeDependentOperations):
                 setattr(node, field_name, val._data_binding())
 
     @classmethod
-    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
+    def _try_resolve_node_level_task_for_parallel_node(cls, node: BaseNode, _: str, resolver: _AssetResolver) -> None:
         """Resolve node.task.code for parallel node if it's a reference to node.component.task.code.
 
         This is a hack operation.
@@ -892,7 +890,7 @@ class ComponentOperations(_ScopeDependentOperations):
             node.task.environment = resolver(component.environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
 
     @classmethod
-    def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str):
+    def _set_default_display_name_for_anonymous_component_in_node(cls, node: BaseNode, default_name: str) -> None:
         """Set default display name for anonymous component in a node.
         If node._component is an anonymous component and without display name, set the default display name.
 
@@ -920,7 +918,7 @@ class ComponentOperations(_ScopeDependentOperations):
             component.display_name = default_name
 
     @classmethod
-    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver: _AssetResolver):
+    def _try_resolve_compute_for_node(cls, node: BaseNode, _: str, resolver: _AssetResolver) -> None:
         """Resolve compute for base node.
 
         :param node: The node
@@ -944,7 +942,7 @@ class ComponentOperations(_ScopeDependentOperations):
     @classmethod
     def _divide_nodes_to_resolve_into_layers(
         cls, component: PipelineComponent, extra_operations: List[Callable[[BaseNode, str], Any]]
-    ):
+    ) -> List:
         """Traverse the pipeline component and divide nodes to resolve into layers. Note that all leaf nodes will be
         put in the last layer.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
@@ -970,7 +968,7 @@ class ComponentOperations(_ScopeDependentOperations):
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
         nodes_to_process = list(component.jobs.items())
-        layers = []
+        layers: List = []
         leaf_nodes = []
 
         while nodes_to_process:
@@ -1006,7 +1004,7 @@ class ComponentOperations(_ScopeDependentOperations):
             workspace_rest = self._workspace_operations._operation.get(
                 resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
             )
-            return workspace_rest.workspace_id
+            return str(workspace_rest.workspace_id)
         except HttpResponseError:
             return "{}/{}/{}".format(self._subscription_id, self._resource_group_name, self._workspace_name)
 
@@ -1050,7 +1048,7 @@ class ComponentOperations(_ScopeDependentOperations):
         self,
         component: Union[Component, str],
         resolver: _AssetResolver,
-    ):
+    ) -> None:
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
 
@@ -1112,7 +1110,7 @@ class ComponentOperations(_ScopeDependentOperations):
             component_cache.resolve_nodes()
 
 
-def _refine_component(component_func: types.FunctionType) -> Component:
+def _refine_component(component_func: Any) -> Component:
     """Return the component of function that is decorated by command
     component decorator.
 
@@ -1122,7 +1120,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
     :rtype: Component
     """
 
-    def check_parameter_type(f: types.FunctionType):
+    def check_parameter_type(f: Any) -> None:
         """Check all parameter is annotated or has a default value with clear type(not None).
 
         :param f: The component function
@@ -1154,7 +1152,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-    def check_non_pipeline_inputs(f: types.FunctionType):
+    def check_non_pipeline_inputs(f: Any) -> None:
         """Check whether non_pipeline_inputs exist in pipeline builder.
 
         :param f: The component function
