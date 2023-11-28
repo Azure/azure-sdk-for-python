@@ -11,7 +11,6 @@ from typing import (  # pylint: disable=unused-import
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
-from urllib.parse import quote
 from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged

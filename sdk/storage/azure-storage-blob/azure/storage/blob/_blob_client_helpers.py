@@ -89,10 +89,10 @@ def _parse_url(
     return parsed_url, sas_token, path_snapshot
 
 def _format_url(container_name, scheme, blob_name, query_str, hostname):
-        container_name = container_name
-        if isinstance(container_name, str):
-            container_name = container_name.encode('UTF-8')
-        return f"{scheme}://{hostname}/{quote(container_name)}/{quote(blob_name, safe='~/')}{query_str}"
+    container_name = container_name
+    if isinstance(container_name, str):
+        container_name = container_name.encode('UTF-8')
+    return f"{scheme}://{hostname}/{quote(container_name)}/{quote(blob_name, safe='~/')}{query_str}"
 
 def _encode_source_url(source_url):
     parsed_source_url = urlparse(source_url)
