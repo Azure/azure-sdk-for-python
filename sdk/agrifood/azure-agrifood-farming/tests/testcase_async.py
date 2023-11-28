@@ -7,8 +7,7 @@
 import asyncio
 import functools
 
-from devtools_testutils import AzureRecordedTestCase
-from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
+from devtools_testutils import AzureRecordedTestCase, trim_kwargs_from_test_function
 from azure.agrifood.farming.aio import FarmBeatsClient
 
 class FarmBeatsAsyncTestCase(AzureRecordedTestCase):
