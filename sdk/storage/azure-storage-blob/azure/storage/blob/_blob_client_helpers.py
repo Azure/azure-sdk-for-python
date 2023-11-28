@@ -106,11 +106,7 @@ def _encode_source_url(source_url):
     return '?'.join(result)
 
 def _upload_blob_options(  # pylint:disable=too-many-statements
-    require_encryption,
-    encryption_version,
-    key_encryption_key,
-    key_resolver_function,
-    scheme,
+    encryption_options,
     config,
     sdk_moniker,
     client,
@@ -119,15 +115,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     length: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
     **kwargs
-    ) -> Dict[str, Any]:
-    if require_encryption and not key_encryption_key:
-        raise ValueError("Encryption required but no key was provided.")
-    encryption_options = {
-        'required': require_encryption,
-        'version': encryption_version,
-        'key': key_encryption_key,
-        'resolver': key_resolver_function,
-    }
+) -> Dict[str, Any]:
 
     encoding = kwargs.pop('encoding', 'UTF-8')
     if isinstance(data, str):
@@ -155,8 +143,6 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     kwargs['cpk_info'] = cpk_info
@@ -185,22 +171,22 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     kwargs['max_concurrency'] = max_concurrency
     kwargs['encryption_options'] = encryption_options
     # Add feature flag to user agent for encryption
-    if key_encryption_key:
+    if encryption_options['key']:
         modify_user_agent_for_encryption(
             config.user_agent_policy.user_agent,
             sdk_moniker,
-            encryption_version,
+            encryption_options['version'],
             kwargs)
 
     if blob_type == BlobType.BlockBlob:
         kwargs['client'] = client.block_blob
         kwargs['data'] = data
     elif blob_type == BlobType.PageBlob:
-        if encryption_version == '2.0' and (require_encryption or key_encryption_key is not None):
+        if encryption_options['version'] == '2.0' and (encryption_options['required'] or encryption_options['key'] is not None): # pylint: disable=line-too-long
             raise ValueError("Encryption version 2.0 does not currently support page blobs.")
         kwargs['client'] = client.page_blob
     elif blob_type == BlobType.AppendBlob:
-        if require_encryption or (key_encryption_key is not None):
+        if encryption_options['required'] or (encryption_options['key'] is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         kwargs['client'] = client.append_blob
     else:
@@ -208,10 +194,10 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     return kwargs
 
 def _upload_blob_from_url_options(
-    scheme,
     source_url,
-    **kwargs):
-    # type: (...) -> Dict[str, Any]
+    **kwargs
+):
+    source_url = _encode_source_url(source_url=source_url)
     tier = kwargs.pop('standard_blob_tier', None)
     overwrite = kwargs.pop('overwrite', False)
     content_settings = kwargs.pop('content_settings', None)
@@ -228,8 +214,6 @@ def _upload_blob_from_url_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
@@ -254,11 +238,8 @@ def _upload_blob_from_url_options(
     return options
 
 def _download_blob_options(
-    require_encryption,
-    key_encryption_key,
-    key_resolver_function,
+    encryption_options,
     version_id,
-    scheme,
     sdk_moniker,
     encryption_version,
     client,
@@ -269,12 +250,7 @@ def _download_blob_options(
     length=None,
     encoding=None,
     **kwargs
-    ) -> Dict[str, Any]:
-    # type: (Optonal[int], Optional[int], Optional[str], **Any) -> Dict[str, Any]
-    if require_encryption and not (key_encryption_key or key_resolver_function):
-        raise ValueError("Encryption required but no key was provided.")
-    if length is not None and offset is None:
-        raise ValueError("Offset value must not be None if length is set.")
+) -> Dict[str, Any]:
     if length is not None:
         length = offset + length - 1  # Service actually uses an end-range inclusive index
 
@@ -285,13 +261,11 @@ def _download_blob_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
     # Add feature flag to user agent for encryption
-    if key_encryption_key or key_resolver_function:
+    if encryption_options['key'] or encryption_options['resolver']:
         modify_user_agent_for_encryption(
             config.user_agent_policy.user_agent,
             sdk_moniker,
@@ -306,9 +280,9 @@ def _download_blob_options(
         'version_id': version_id,
         'validate_content': validate_content,
         'encryption_options': {
-            'required': require_encryption,
-            'key': key_encryption_key,
-            'resolver': key_resolver_function},
+            'required': encryption_options['required'],
+            'key': encryption_options['key'],
+            'resolver': encryption_options['resolver']},
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cpk_info': cpk_info,
@@ -322,12 +296,10 @@ def _download_blob_options(
     return options
 
 def _quick_query_options(
-        scheme,
-        snapshot,
-        query_expression,
-        **kwargs
-    ) -> Dict[str, Any]:
-    # type: (str, **Any) -> Dict[str, Any]
+    snapshot,
+    query_expression,
+    **kwargs
+) -> Dict[str, Any]:
     delimiter = '\n'
     input_format = kwargs.pop('blob_format', None)
     if input_format == QuickQueryDialect.DelimitedJson:
@@ -372,8 +344,6 @@ def _quick_query_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(
             encryption_key=cpk.key_value,
             encryption_key_sha256=cpk.key_hash,
@@ -392,7 +362,6 @@ def _quick_query_options(
     return options, delimiter
 
 def _generic_delete_blob_options(delete_snapshots=None, **kwargs):
-    # type: (str, **Any) -> Dict[str, Any]
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     if delete_snapshots:
@@ -409,8 +378,8 @@ def _generic_delete_blob_options(delete_snapshots=None, **kwargs):
 def _delete_blob_options(
     snapshot,
     version_id,
-    delete_snapshots=None, **kwargs):
-    # type: (str, **Any) -> Dict[str, Any]
+    delete_snapshots=None, **kwargs
+):
     if snapshot and delete_snapshots:
         raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
     options = _generic_delete_blob_options(delete_snapshots, **kwargs)
@@ -420,7 +389,6 @@ def _delete_blob_options(
     return options
 
 def _set_http_headers_options(content_settings=None, **kwargs):
-    # type: (Optional[ContentSettings], **Any) -> Dict[str, Any]
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     blob_headers = None
@@ -442,8 +410,7 @@ def _set_http_headers_options(content_settings=None, **kwargs):
     options.update(kwargs)
     return options
 
-def _set_blob_metadata_options(scheme, metadata=None, **kwargs):
-    # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+def _set_blob_metadata_options(metadata=None, **kwargs):
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -453,8 +420,6 @@ def _set_blob_metadata_options(scheme, metadata=None, **kwargs):
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     options = {
@@ -469,18 +434,12 @@ def _set_blob_metadata_options(scheme, metadata=None, **kwargs):
     return options
 
 def _create_page_blob_options(  # type: ignore
-        require_encryption,
-        key_encryption_key,
-        scheme,
-        size,  # type: int
-        content_settings=None,  # type: Optional[ContentSettings]
-        metadata=None, # type: Optional[Dict[str, str]]
-        premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
-        **kwargs
-    ):
-    # type: (...) -> Dict[str, Any]
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+    size,  # type: int
+    content_settings=None,  # type: Optional[ContentSettings]
+    metadata=None, # type: Optional[Dict[str, str]]
+    premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
+    **kwargs
+):
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -501,8 +460,6 @@ def _create_page_blob_options(  # type: ignore
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
@@ -537,14 +494,7 @@ def _create_page_blob_options(  # type: ignore
     options.update(kwargs)
     return options
 
-def _create_append_blob_options(
-        require_encryption,
-        key_encryption_key,
-        scheme,
-        content_settings=None, metadata=None, **kwargs):
-    # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+def _create_append_blob_options(content_settings=None, metadata=None, **kwargs):
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -564,8 +514,6 @@ def _create_append_blob_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
@@ -590,8 +538,7 @@ def _create_append_blob_options(
     options.update(kwargs)
     return options
 
-def _create_snapshot_options(scheme, metadata=None, **kwargs):
-    # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+def _create_snapshot_options(metadata=None, **kwargs):
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -600,8 +547,6 @@ def _create_snapshot_options(scheme, metadata=None, **kwargs):
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
@@ -617,7 +562,7 @@ def _create_snapshot_options(scheme, metadata=None, **kwargs):
     return options
 
 def _start_copy_from_url_options(source_url, metadata=None, incremental_copy=False, **kwargs):
-    # type: (str, Optional[Dict[str, str]], bool, **Any) -> Dict[str, Any]
+    source_url = _encode_source_url(source_url=source_url)
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     if 'source_lease' in kwargs:
@@ -694,7 +639,6 @@ def _start_copy_from_url_options(source_url, metadata=None, incremental_copy=Fal
     return options
 
 def _abort_copy_options(copy_id, **kwargs):
-    # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> Dict[str, Any]
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     try:
         copy_id = copy_id.copy.id
@@ -711,17 +655,11 @@ def _abort_copy_options(copy_id, **kwargs):
     return options
 
 def _stage_block_options(
-        require_encryption,
-        key_encryption_key,
-        scheme,
-        block_id,  # type: str
-        data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-        length=None,  # type: Optional[int]
-        **kwargs
-    ):
-    # type: (...) -> Dict[str, Any]
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+    block_id,  # type: str
+    data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+    length=None,  # type: Optional[int]
+    **kwargs
+):
     block_id = encode_base64(str(block_id))
     if isinstance(data, str):
         data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
@@ -738,8 +676,6 @@ def _stage_block_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
@@ -759,15 +695,14 @@ def _stage_block_options(
     return options
 
 def _stage_block_from_url_options(
-        scheme,
-        block_id,  # type: str
-        source_url,  # type: str
-        source_offset=None,  # type: Optional[int]
-        source_length=None,  # type: Optional[int]
-        source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
-        **kwargs
-    ):
-    # type: (...) -> Dict[str, Any]
+    block_id,  # type: str
+    source_url,  # type: str
+    source_offset=None,  # type: Optional[int]
+    source_length=None,  # type: Optional[int]
+    source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
+    **kwargs
+):
+    source_url = _encode_source_url(source_url=source_url)
     source_authorization = kwargs.pop('source_authorization', None)
     if source_length is not None and source_offset is None:
         raise ValueError("Source offset value must not be None if length is set.")
@@ -783,8 +718,6 @@ def _stage_block_from_url_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     options = {
@@ -804,7 +737,6 @@ def _stage_block_from_url_options(
     return options
 
 def _get_block_list_result(blocks):
-    # type: (BlockList) -> Tuple[List[BlobBlock], List[BlobBlock]]
     committed = [] # type: List
     uncommitted = [] # type: List
     if blocks.committed_blocks:
@@ -814,17 +746,11 @@ def _get_block_list_result(blocks):
     return committed, uncommitted
 
 def _commit_block_list_options( # type: ignore
-        require_encryption,
-        key_encryption_key,
-        scheme,
-        block_list,  # type: List[BlobBlock]
-        content_settings=None,  # type: Optional[ContentSettings]
-        metadata=None,  # type: Optional[Dict[str, str]]
-        **kwargs
-    ):
-    # type: (...) -> Dict[str, Any]
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+    block_list,  # type: List[BlobBlock]
+    content_settings=None,  # type: Optional[ContentSettings]
+    metadata=None,  # type: Optional[Dict[str, str]]
+    **kwargs
+):
     block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
     for block in block_list:
         try:
@@ -856,8 +782,6 @@ def _commit_block_list_options( # type: ignore
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
@@ -887,7 +811,6 @@ def _commit_block_list_options( # type: ignore
     return options
 
 def _set_blob_tags_options(version_id, tags=None, **kwargs):
-    # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
     tags = serialize_blob_tags(tags)
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
@@ -902,7 +825,6 @@ def _set_blob_tags_options(version_id, tags=None, **kwargs):
     return options
 
 def _get_blob_tags_options(version_id, snapshot, **kwargs):
-    # type: (**Any) -> Dict[str, str]
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
 
@@ -916,13 +838,12 @@ def _get_blob_tags_options(version_id, snapshot, **kwargs):
     return options
 
 def _get_page_ranges_options( # type: ignore
-        snapshot,
-        offset=None, # type: Optional[int]
-        length=None, # type: Optional[int]
-        previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
-        **kwargs
-    ):
-    # type: (...) -> Dict[str, Any]
+    snapshot,
+    offset=None, # type: Optional[int]
+    length=None, # type: Optional[int]
+    previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
+    **kwargs
+):
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     if length is not None and offset is None:
@@ -950,7 +871,6 @@ def _get_page_ranges_options( # type: ignore
     return options
 
 def _set_sequence_number_options(sequence_number_action, sequence_number=None, **kwargs):
-    # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Any]
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     if sequence_number_action is None:
@@ -965,8 +885,7 @@ def _set_sequence_number_options(sequence_number_action, sequence_number=None, *
     options.update(kwargs)
     return options
 
-def _resize_blob_options(scheme, size, **kwargs):
-    # type: (int, **Any) -> Dict[str, Any]
+def _resize_blob_options(size, **kwargs):
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     mod_conditions = get_modify_conditions(kwargs)
     if size is None:
@@ -975,8 +894,6 @@ def _resize_blob_options(scheme, size, **kwargs):
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     options = {
@@ -990,20 +907,13 @@ def _resize_blob_options(scheme, size, **kwargs):
     return options
 
 def _upload_page_options( # type: ignore
-        require_encryption,
-        key_encryption_key,
-        scheme,
-        page,  # type: bytes
-        offset,  # type: int
-        length,  # type: int
-        **kwargs
-    ):
-    # type: (...) -> Dict[str, Any]
+    page,  # type: bytes
+    offset,  # type: int
+    length,  # type: int
+    **kwargs
+):
     if isinstance(page, str):
         page = page.encode(kwargs.pop('encoding', 'UTF-8'))
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
     if offset is None or offset % 512 != 0:
         raise ValueError("offset must be an integer that aligns with 512 page size")
     if length is None or length % 512 != 0:
@@ -1022,8 +932,6 @@ def _upload_page_options( # type: ignore
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     options = {
@@ -1043,19 +951,13 @@ def _upload_page_options( # type: ignore
     return options
 
 def _upload_pages_from_url_options(  # type: ignore
-        require_encryption,
-        key_encryption_key,
-        scheme,
-        source_url,  # type: str
-        offset,  # type: int
-        length,  # type: int
-        source_offset,  # type: int
-        **kwargs
+    source_url,  # type: str
+    offset,  # type: int
+    length,  # type: int
+    source_offset,  # type: int
+    **kwargs
 ):
-    # type: (...) -> Dict[str, Any]
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
+    source_url = _encode_source_url(source_url=source_url)
     # TODO: extract the code to a method format_range
     if offset is None or offset % 512 != 0:
         raise ValueError("offset must be an integer that aligns with 512 page size")
@@ -1083,8 +985,6 @@ def _upload_pages_from_url_options(  # type: ignore
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
@@ -1107,15 +1007,10 @@ def _upload_pages_from_url_options(  # type: ignore
     return options
 
 def _clear_page_options(
-        require_encryption,
-        key_encryption_key,
-        scheme,
-        offset,
-        length,
-        **kwargs):
-    # type: (int, int, **Any) -> Dict[str, Any]
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+    offset,
+    length,
+    **kwargs
+):
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     seq_conditions = SequenceNumberAccessConditions(
         if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -1133,8 +1028,6 @@ def _clear_page_options(
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
@@ -1151,17 +1044,10 @@ def _clear_page_options(
     return options
 
 def _append_block_options( # type: ignore
-        require_encryption,
-        key_encryption_key,
-        scheme,
-        data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-        length=None,  # type: Optional[int]
-        **kwargs
-    ):
-    # type: (...) -> Dict[str, Any]
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
+    data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
+    length=None,  # type: Optional[int]
+    **kwargs
+):
     if isinstance(data, str):
         data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
     if length is None:
@@ -1188,8 +1074,6 @@ def _append_block_options( # type: ignore
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     options = {
@@ -1208,18 +1092,12 @@ def _append_block_options( # type: ignore
     return options
 
 def _append_block_from_url_options(  # type: ignore
-        require_encryption,
-        key_encryption_key,
-        scheme,
-        copy_source_url,  # type: str
-        source_offset=None,  # type: Optional[int]
-        source_length=None,  # type: Optional[int]
-        **kwargs
+    copy_source_url,  # type: str
+    source_offset=None,  # type: Optional[int]
+    source_length=None,  # type: Optional[int]
+    **kwargs
 ):
-    # type: (...) -> Dict[str, Any]
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
+    copy_source_url = _encode_source_url(source_url=copy_source_url)
     # If end range is provided, start range must be provided
     if source_length is not None and source_offset is None:
         raise ValueError("source_offset should also be specified if source_length is specified")
@@ -1248,8 +1126,6 @@ def _append_block_from_url_options(  # type: ignore
     cpk = kwargs.pop('cpk', None)
     cpk_info = None
     if cpk:
-        if scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
 
@@ -1272,7 +1148,6 @@ def _append_block_from_url_options(  # type: ignore
     return options
 
 def _seal_append_blob_options(require_encryption, key_encryption_key, **kwargs):
-    # type: (...) -> Dict[str, Any]
     if require_encryption or (key_encryption_key is not None):
         raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
