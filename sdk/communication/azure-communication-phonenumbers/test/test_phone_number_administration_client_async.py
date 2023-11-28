@@ -1,7 +1,6 @@
 import os
 from devtools_testutils.aio import recorded_by_proxy_async
 import pytest
-from _shared.testcase import BodyReplacerProcessor
 from _shared.utils import (
     async_create_token_credential,
     get_header_policy,
@@ -16,7 +15,6 @@ from azure.communication.phonenumbers import (
 )
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
-from phone_number_helper import PhoneNumberUriReplacer, PhoneNumberResponseReplacerProcessor
 from phone_numbers_testcase import PhoneNumbersTestCase
 
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
