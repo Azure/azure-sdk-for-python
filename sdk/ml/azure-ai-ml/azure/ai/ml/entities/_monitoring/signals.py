@@ -134,7 +134,7 @@ class BaselineDataRange:
     """Baseline data range for monitoring.
 
     This class is used when initializing a data_window for a ReferenceData object.
-    For trailing input, set trailing_window_size and trailing_window_offset to a desired value.
+    For trailing input, set data_window_size and data_window_offset to a desired value.
     For static input, set window_start and window_end to a desired value.
 
     """
@@ -144,13 +144,13 @@ class BaselineDataRange:
         *,
         window_start: str = None,
         window_end: str = None,
-        trailing_window_size: str = None,
-        trailing_window_offset: str = None,
+        data_window_size: str = None,
+        data_window_offset: str = None,
     ):
         self.window_start = window_start
         self.window_end = window_end
-        self.trailing_window_size = trailing_window_size
-        self.trailing_window_offset = trailing_window_offset
+        self.data_window_size = data_window_size
+        self.data_window_offset = data_window_offset
 
 
 @experimental
@@ -176,12 +176,14 @@ class ProductionData(RestTranslatableMixin):
         input_data: Input,
         data_context: MonitorDatasetContext = None,
         pre_processing_component: str = None,
-        data_window_size: str = None,
+        data_window_size: Optional[str] = None,
+        data_window_offset: Optional[str] = None,
     ):
         self.input_data = input_data
         self.data_context = data_context
         self.pre_processing_component = pre_processing_component
         self.data_window_size = data_window_size
+        self.data_window_offset = data_window_offset
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window_size = kwargs.get("default_data_window_size")
@@ -196,7 +198,7 @@ class ProductionData(RestTranslatableMixin):
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
             window_size=self.data_window_size,
-            window_offset="P0D",
+            window_offset=self.data_window_offset if self.data_window_offset is not None else "P0D",
         )
         return monitoring_input_data._to_rest_object()
 
@@ -248,7 +250,7 @@ class ReferenceData(RestTranslatableMixin):
 
     def _to_rest_object(self) -> RestMonitoringInputData:
         if self.data_window is not None:
-            if self.data_window.trailing_window_size is not None:
+            if self.data_window.data_window_size is not None:
                 return TrailingInputData(
                     data_context=self.data_context,
                     target_columns={"target_column": self.target_column_name}
@@ -257,10 +259,10 @@ class ReferenceData(RestTranslatableMixin):
                     job_type=self.input_data.type,
                     uri=self.input_data.path,
                     pre_processing_component_id=self.pre_processing_component,
-                    window_size=self.data_window.trailing_window_size,
-                    window_offset=self.data_window.trailing_window_offset
-                    if self.data_window.trailing_window_offset is not None
-                    else self.data_window.trailing_window_size,
+                    window_size=self.data_window.data_window_size,
+                    window_offset=self.data_window.data_window_offset
+                    if self.data_window.data_window_offset is not None
+                    else "P0D",
                 )._to_rest_object()
             if self.data_window.window_start is not None and self.data_window.window_end is not None:
                 return StaticInputData(
@@ -292,8 +294,8 @@ class ReferenceData(RestTranslatableMixin):
             )
         if obj.input_data_type == "Trailing":
             data_window = BaselineDataRange(
-                trailing_window_size=isodate.duration_isoformat(obj.window_size),
-                trailing_window_offset=isodate.duration_isoformat(obj.window_offset),
+                data_window_size=isodate.duration_isoformat(obj.window_size),
+                data_window_offset=isodate.duration_isoformat(obj.window_offset),
             )
 
         return cls(
@@ -725,13 +727,15 @@ class FADProductionData(RestTranslatableMixin):
         data_context: MonitorDatasetContext = None,
         data_column_names: Dict = None,
         pre_processing_component: str = None,
-        data_window_size: str = None,
+        data_window_size: Optional[str] = None,
+        data_window_offset: Optional[str] = None,
     ):
         self.input_data = input_data
         self.data_context = data_context
         self.data_column_names = data_column_names
         self.pre_processing_component = pre_processing_component
         self.data_window_size = data_window_size
+        self.data_window_offset = data_window_offset
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window_size = kwargs.get("default")
@@ -746,7 +750,7 @@ class FADProductionData(RestTranslatableMixin):
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
             window_size=self.data_window_size,
-            window_offset="P0D",
+            window_offset=self.data_window_offset if self.data_window_offset is not None else "P0D",
         )
         return monitoring_input_data._to_rest_object()
 
@@ -1016,6 +1020,7 @@ class LlmData(RestTranslatableMixin):
         input_data: Input,
         data_column_names: Optional[Dict[str, str]] = None,
         data_window_size: Optional[str] = None,
+        data_window_offset: Optional[str] = None,
     ):
         self.input_data = input_data
         self.data_column_names = data_column_names
@@ -1029,7 +1034,7 @@ class LlmData(RestTranslatableMixin):
             job_type=self.input_data.type,
             uri=self.input_data.path,
             window_size=self.data_window_size,
-            window_offset="P0D",
+            window_offset=self.data_window_offset if self.data_window_offset is not None else "P0D",
         )._to_rest_object()
 
     @classmethod
