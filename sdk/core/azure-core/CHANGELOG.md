@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Adjusted `AsyncBearerTokenCredentialPolicy` lock initialization logic to use `anyio`.  ([#33307](https://github.com/Azure/azure-sdk-for-python/pull/33307))
+- Adjusted `AsyncBearerTokenCredentialPolicy` to work properly with `trio` concurrency mechanisms.   ([#33307](https://github.com/Azure/azure-sdk-for-python/pull/33307))
 
 ### Other Changes
 
