@@ -141,8 +141,8 @@ Be sure to call the above BEFORE any loggers or the call to `configure_azure_mon
 
 You may also disable logging through [Azure Functions configuration](azure_functions_log_level_config).
 
-```
 v2.x+
+```
 ...
 {
   "logging": {
@@ -156,8 +156,8 @@ v2.x+
 ...
 ```
 
-```
 v1.x
+```
 ...
 {
   "logger": {
