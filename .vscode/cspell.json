@@ -31,6 +31,8 @@
     "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
+    "sdk/ai/**/index/**",
+    "sdk/ai/azure-ai-generative/tests/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -49,11 +51,13 @@
     "sdk/communication/azure-communication-chat/**",
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
+    "sdk/communication/azure-communication-callautomation/tests/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
+    "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
@@ -64,6 +68,8 @@
     "sdk/healthinsights/azure-healthinsights-clinicalmatching/azure/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/**",
     "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
@@ -71,7 +77,8 @@
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
-    "sdk/monitor/azure-monitor-query/**",
+    "sdk/remoterendering/test-resources.json",
+    "sdk/remoterendering/azure-mixedreality-remoterendering/swagger/azure/mixedreality/remoterendering/mr-arr.json",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -89,12 +96,16 @@
     "sdk/ml/azure-ai-ml/tests/**",
     "sdk/ml/azure-ai-ml/swagger/**",
     "sdk/ml/azure-ai-ml/NOTICE.txt",
+    "sdk/ml/azure-ai-ml/.pre-commit-config.yaml",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
-    "sdk/monitor/azure-monitor-ingestion/**",
     "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
     "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_model_base.py",
     "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
@@ -107,9 +118,25 @@
     "tools/azure-sdk-tools/setup.py",
     "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_serialization.py",
     "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_model_base.py",
-    "tools/azure-sdk-tools/tests/test_servicemetadata.py"
+    "tools/azure-sdk-tools/tests/test_servicemetadata.py",
+    "conda/conda-recipes/azure-ai-ml/meta.yaml",
+    "conda/conda-recipes/azure-eventhub/meta.yaml",
+    "conda/conda-recipes/azure-mgmt/meta.yaml",
+    "conda/conda-recipes/azure-security-attestation/meta.yaml",
+    "conda/conda-recipes/msal-extensions/meta.yaml",
+    "conda/conda-recipes/msrest/meta.yaml",
+    "conda/conda-recipes/uamqp/meta.yaml",
+    "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "spinup",
+    "cibuildwheel",
+    "aoai",
+    "pyprojects",
+    "certifi",
+    "cffi",
+    "tomlw",
+    "xdist",
     "pyprojecttoml",
     "tomli",
     "sdkrel",
@@ -191,6 +218,7 @@
     "ekus",
     "encryptor",
     "engsys",
+    "entra",
     "envname",
     "evals",
     "fileno",
@@ -261,6 +289,7 @@
     "mhsm",
     "mipsle",
     "mktime",
+    "mlindex",
     "msal",
     "msrest",
     "msrestazure",
@@ -285,6 +314,8 @@
     "oidc",
     "onboarded",
     "onmicrosoft",
+    "openai",
+    "OPENAI",
     "owasp",
     "ownerid",
     "PBYTE",
@@ -410,9 +441,44 @@
     "dacl",
     "whls",
     "aiter",
-    "solft"
+    "solft",
+    "amltmp",
+    "amltemp"
   ],
   "overrides": [
+    {
+      "filename": "sdk/ai/**",
+      "words": [
+        "azureml",
+        "mlflow",
+        "tika",
+        "pypdf",
+        "fsspec",
+        "openai",
+        "tiktoken",
+        "vectordb",
+        "pybase",
+        "mlindex",
+        "mlindexes",
+        "aoai",
+        "faiss",
+        "mlmodel",
+        "openmpi",
+        "vcpu",
+        "vcpus",
+        "levelno",
+        "miniconda",
+        "runsvdir",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "roups",
+        "mltable",
+        "wsid",
+        "runid"
+      ]
+    },
     {
       "filename": "doc/sphinx/generate_doc.py",
       "words": [
@@ -479,6 +545,12 @@
       ]
     },
     {
+      "filename": "sdk/identity/azure-identity/TROUBLESHOOTING.md",
+      "words": [
+        "wammsa"
+      ]
+    },
+    {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
         "tzutc",
@@ -504,6 +576,12 @@
         "mytable",
         "edmtypes",
         "specifed"
+      ]
+    },
+    {
+      "filename": "sdk/tables/azure-data-tables/CHANGELOG.md",
+      "words": [
+        "kldtz"
       ]
     },
     {
@@ -576,7 +654,7 @@
         "engelska",
         "fhir",
         "FHIR",
-        "naam",
+        "naam"
       ]
     },
     {
@@ -645,7 +723,11 @@
       "words": [
         "cncf",
         "CNCF",
-        "Cncf"
+        "Cncf",
+        "MQTT",
+        "Dicom",
+        "Errored",
+        "Fhir"
       ]
     },
     {
@@ -678,6 +760,26 @@
     },
     {
       "filename": "sdk/formrecognizer/azure-ai-formrecognizer/**",
+      "words": [
+        "allinone",
+        "dmac",
+        "ierr",
+        "mymodel",
+        "heif",
+        "racwd",
+        "rrggbb",
+        "UPCA",
+        "UPCE"
+      ]
+    },
+    {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/tests/*.py",
+      "words": [
+        "WDLABCD"
+      ]
+    },
+    {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/**",
       "words": [
         "allinone",
         "dmac",
@@ -802,7 +904,8 @@
     {
       "filename": "sdk/keyvault/**",
       "words": [
-        "eddsa"
+        "eddsa",
+        "Thawte"
       ]
     },
     {
@@ -816,6 +919,15 @@
         "authr",
         "dcrrole",
         "pergb"
+      ]
+    },
+    {
+      "filename": "sdk/monitor/azure-monitor-*/**/*",
+      "words": [
+        "ctxt",
+        "wday",
+        "percentilesw",
+        "plotly"
       ]
     },
     {
@@ -849,29 +961,13 @@
       ]
     },
     {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry/azure/monitor/opentelemetry/_vendor/**/*.py",
+      "filename": "sdk/schemaregistry/**/*.py",
       "words": [
-        "aiopg",
-        "asgiref",
-        "asyncpg",
-        "boto",
-        "botocore",
-        "Cbar",
-        "funcs",
-        "grpcio",
-        "islast",
-        "libpq",
-        "owais",
-        "psutil",
-        "pydantic",
-        "pymongo",
-        "pymysql",
-        "remoulade",
-        "setifnotnone",
-        "sklearn",
-        "starlette",
-        "tortoiseorm",
-        "trysetip"
+        "mros",
+        "deserializers",
+        "ctxt",
+        "wday",
+        "Nify"
       ]
     },
     {
@@ -1209,7 +1305,8 @@
         "Fdirectory",
         "Ffile",
         "Fsubdir",
-        "Fdir"
+        "Fdir",
+        "adal"
       ]
     },
     {
@@ -1316,6 +1413,12 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-resources/**",
+      "words": [
+        "etest"
       ]
     },
     {
@@ -1547,7 +1650,9 @@
         "mros",
         "deserializers",
         "ctxt",
-        "wday"
+        "wday",
+        "JSONify",
+        "Nify"
       ]
     },
     {

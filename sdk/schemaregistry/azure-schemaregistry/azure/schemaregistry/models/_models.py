@@ -7,8 +7,33 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import TYPE_CHECKING, Union
+
 from .. import _model_base
 from .._model_base import rest_field
+from ..models._enums import SchemaFormat
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+
+
+class Schema(_model_base.Model):
+    """The schema content of a schema, along with id and meta properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar definition: The content of the schema. Required.
+    :vartype definition: str
+    :ivar properties: The properties of the schema. Required.
+    :vartype properties: ~azure.schemaregistry.models.SchemaProperties
+    """
+
+    definition: str = rest_field()
+    """The content of the schema. Required."""
+    properties: "_models._models.SchemaProperties" = rest_field()
+    """The properties of the schema. Required."""
+
 
 
 class SchemaGroup(_model_base.Model):
@@ -27,7 +52,39 @@ class SchemaGroup(_model_base.Model):
 
 
 
-class Version(_model_base.Model):
+class SchemaProperties(_model_base.Model):
+    """Meta properties of a schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: References a specific schema in the registry namespace. Required.
+    :vartype id: str
+    :ivar format: Format for the schema being stored. Required. Known values are: "Avro", "Json",
+     "Custom", and "Protobuf".
+    :vartype format: str or ~azure.schemaregistry.models.SchemaFormat
+    :ivar group_name: Schema group under which schema is stored. Required.
+    :vartype group_name: str
+    :ivar name: Name of schema. Required.
+    :vartype name: str
+    :ivar version: Version of schema. Required.
+    :vartype version: int
+    """
+
+    id: str = rest_field()
+    """References a specific schema in the registry namespace. Required."""
+    format: Union[str, "SchemaFormat"] = rest_field(type=SchemaFormat)
+    """Format for the schema being stored. Required. Known values are: \"Avro\", \"Json\", \"Custom\",
+     and \"Protobuf\"."""
+    group_name: str = rest_field(name="groupName")
+    """Schema group under which schema is stored. Required."""
+    name: str = rest_field()
+    """Name of schema. Required."""
+    version: int = rest_field()
+    """Version of schema. Required."""
+
+
+
+class SchemaVersion(_model_base.Model):
     """Schema versions resource.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.

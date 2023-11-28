@@ -263,8 +263,6 @@ class EventProcessor(
         The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
         and start receiving EventData from EventHub and processing events.
 
-        :return: None
-
         """
         while self._running:
             random_jitter = self._load_balancing_interval * random.random() * 0.2
@@ -357,7 +355,11 @@ class EventProcessor(
         self._ownership_manager.release_ownership(partition_id)
 
     def _do_receive(self, partition_id: str, consumer: EventHubConsumer) -> None:
-        """Call the consumer.receive() and handle exceptions if any after it exhausts retries."""
+        """Call the consumer.receive() and handle exceptions if any after it exhausts retries.
+
+        :param str partition_id: The partition id.
+        :param ~azure.eventhub._consumer.EventHubConsumer consumer: The consumer object.
+        """
         try:
             consumer.receive(self._batch, self._max_batch_size, self._max_wait_time)
         except Exception as error:  # pylint:disable=broad-except
@@ -408,8 +410,6 @@ class EventProcessor(
         Other running EventProcessor will take over these released partitions.
 
         A stopped EventProcessor can be restarted by calling method `start` again.
-
-        :return: None
 
         """
         if not self._running:

@@ -8,6 +8,7 @@ $GithubUri = "https://github.com/Azure/azure-sdk-for-python"
 $PackageRepositoryUri = "https://pypi.org/project"
 
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
+."$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
@@ -22,7 +23,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
   try
   {
     Push-Location $RepoRoot
-    python -m pip install "./tools/azure-sdk-tools[build]" -q -I
+    $null = python -m pip install "./tools/azure-sdk-tools[build]" -q -I
     $allPkgPropLines = python (Join-path eng scripts get_package_properties.py) -s $searchPath
   }
   catch
@@ -487,8 +488,7 @@ function UpdateDocsMsPackages($DocConfigFile, $Mode, $DocsMetadata, $PackageSour
         };
         exclude_path = @("test*","example*","sample*","doc*");
       }
-    }
-    else {
+    } else {
       $package = [ordered]@{
           package_info = [ordered]@{
             name = $packageName;
@@ -589,6 +589,7 @@ function Get-python-DocsMsMetadataForPackage($PackageInfo) {
     DocsMsReadMeName = $readmeName
     LatestReadMeLocation  = 'docs-ref-services/latest'
     PreviewReadMeLocation = 'docs-ref-services/preview'
+    LegacyReadMeLocation  = 'docs-ref-services/legacy'
     Suffix = ''
   }
 }
@@ -612,10 +613,15 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
   }
 
   $allSucceeded = $true
-  foreach ($package in $PackageInfos) {
+  foreach ($item in $PackageInfos) {
+    # Some packages 
+    if ($item.Version -eq 'IGNORE') { 
+      continue
+    }
+
     $result = ValidatePackage `
-      -packageName $package.Name `
-      -packageVersion $package.Version `
+      -packageName $item.Name `
+      -packageVersion "==$($item.Version)" `
       -PackageSourceOverride $PackageSourceOverride `
       -DocValidationImageId $DocValidationImageId
 
@@ -633,4 +639,49 @@ function Get-python-EmitterName() {
 
 function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
   return "--option @azure-tools/typespec-python.emitter-output-dir=$projectDirectory/"
+}
+
+function Get-python-DirectoriesForGeneration () {
+  return Get-ChildItem "$RepoRoot/sdk" -Directory
+  | Get-ChildItem -Directory
+  | Where-Object { $_ -notmatch "-mgmt-" }
+  | Where-Object { (Test-Path "$_/tsp-location.yaml") }
+  # TODO: Reenable swagger generation when tox generate supports arbitrary generator versions
+  # -or (Test-Path "$_/swagger/README.md")
+}
+
+function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
+  $packageDirectories = Get-Content $PackageDirectoriesFile | ConvertFrom-Json
+  
+  $directoriesWithErrors = @()
+
+  foreach ($directory in $packageDirectories) {
+    Push-Location $RepoRoot/sdk/$directory
+    try {
+      Write-Host "`n`n======================================================================"
+      Write-Host "Generating project under directory 'sdk/$directory'" -ForegroundColor Yellow
+      Write-Host "======================================================================`n"
+
+      $toxConfigPath = Resolve-Path "$RepoRoot/eng/tox/tox.ini"
+      Invoke-LoggedCommand "tox run -e generate -c `"$toxConfigPath`" --root ."
+    }
+    catch {
+      Write-Host "##[error]Error generating project under directory $directory"
+      Write-Host $_.Exception.Message
+      $directoriesWithErrors += $directory
+    }
+    finally {
+      Pop-Location
+    }
+  }
+
+  if($directoriesWithErrors.Count -gt 0) {
+    Write-Host "##[error]Generation errors found in $($directoriesWithErrors.Count) directories:"
+
+    foreach ($directory in $directoriesWithErrors) {
+      Write-Host "  $directory"
+    }
+
+    exit 1
+  }
 }

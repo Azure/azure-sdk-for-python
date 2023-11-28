@@ -55,7 +55,6 @@ class Usage(RestTranslatableMixin):
         limit: Optional[int] = None,
         name: Optional[UsageName] = None,
     ) -> None:
-
         self.id = id
         self.aml_workspace_location = aml_workspace_location
         self.type = type

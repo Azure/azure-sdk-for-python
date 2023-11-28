@@ -1,0 +1,57 @@
+{% set name = "azure-keyvault" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('KEYVAULT_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.keyvault.keys
+    - azure.keyvault.certificates
+    - azure.keyvault.secrets
+    - azure.keyvault.administration
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Key Vault Keys Client Library for Python"
+  description: |
+    This is the Microsoft Azure Key Vault libraries bundle.
+    Please see https://aka.ms/azsdk/conda/releases/keyvault for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

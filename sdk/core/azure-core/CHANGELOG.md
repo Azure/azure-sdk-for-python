@@ -1,6 +1,36 @@
 # Release History
 
-## 1.29.3 (2023-08-18)
+## 1.29.6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.29.5 (2023-10-19)
+
+### Bugs Fixed
+
+- Fixed an issue with `multipart/form-data` in the async transport where `data` was not getting encoded into the request body. #32473
+
+### Other Changes
+
+- Use ssl context from aiohttp by default.
+
+## 1.29.4 (2023-09-07)
+
+### Bugs Fixed
+
+- Fixed the issue that some urls trigger an infinite loop. #31346
+- Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
+- Fixed issue unbound variable exception if dict is invalid in CloudEvent.from_dict. #31835
+- Fixed issue asyncBearerTokenCredentialPolicy is not backward compatible with SansIOHTTPPolicy. #31836
+- Fixed issue mypy complains with new version of azure-core. #31564
+
+## 1.29.3 (2023-08-22)
 
 ### Bugs Fixed
 

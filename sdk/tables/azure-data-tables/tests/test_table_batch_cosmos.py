@@ -13,7 +13,7 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_cus
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 from azure.data.tables import (
     EdmType,
     EntityProperty,
@@ -689,6 +689,41 @@ class TestTableBatchCosmos(AzureRecordedTestCase, TableTestCase):
 
         finally:
             self._tear_down()
+
+    # Playback doesn't work as test proxy issue: https://github.com/Azure/azure-sdk-tools/issues/2900
+    @pytest.mark.live_test_only
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_empty_batch(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        table_name = self.get_resource_name("mytable")
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
+            # client.create_table()
+            result = client.submit_transaction([])
+            assert result == []
+            client.delete_table()
+
+    # Playback doesn't work as test proxy issue: https://github.com/Azure/azure-sdk-tools/issues/2900
+    @pytest.mark.live_test_only
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_client_with_url_ends_with_table_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        table_name = self.get_resource_name("mytable")
+        invalid_url = url + "/" + table_name
+        entity = {"PartitionKey": "test-partition", "RowKey": "test-key", "name": "test-name"}
+
+        valid_tc = TableClient(url, table_name, credential=tables_primary_cosmos_account_key)
+        valid_tc.create_table()
+
+        tc = TableClient(invalid_url, table_name, credential=tables_primary_cosmos_account_key)
+        with pytest.raises(HttpResponseError) as ex:
+            tc.submit_transaction([("upsert", entity)])
+        assert "Request url is invalid" in str(ex.value)
+        assert ex.value.error_code == "InvalidInput"
+        assert ex.value.status_code == 400
+
+        valid_tc.delete_table()
 
 
 class TestBatchCosmosUnitTests(TableTestCase):

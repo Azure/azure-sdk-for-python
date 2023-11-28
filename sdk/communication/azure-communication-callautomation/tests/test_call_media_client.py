@@ -25,6 +25,8 @@ from azure.communication.callautomation._generated.models import (
     DtmfOptions,
     ContinuousDtmfRecognitionRequest,
     SendDtmfRequest,
+    StartHoldMusicRequest,
+    StopHoldMusicRequest
 )
 from azure.communication.callautomation._generated.models._enums import (
     RecognizeInputType,
@@ -339,3 +341,38 @@ class TestCallMediaClient(unittest.TestCase):
                          actual_send_dtmf_request.tones)
         self.assertEqual(expected_send_dtmf_request.operation_context,
                          actual_send_dtmf_request.operation_context)
+        
+    def test_start_hold_music(self):
+        mock_hold = Mock()
+        self.call_media_operations.start_hold_music = mock_hold
+        play_source = FileSource(url=self.url)
+
+        self.call_connection_client.start_hold_music(target_participant=self.target_user, play_source=play_source)
+
+        expected_hold_request = StartHoldMusicRequest(
+            play_source_info=play_source._to_generated(),
+            target_participant=serialize_identifier(self.target_user),
+            loop=True
+        )
+        mock_hold.assert_called_once()
+        actual_hold_request = mock_hold.call_args[0][1]
+
+        self.assertEqual(expected_hold_request.play_source_info.source_type, actual_hold_request.play_source_info.source_type)
+        self.assertEqual(expected_hold_request.play_source_info.file_source.uri, actual_hold_request.play_source_info.file_source.uri)
+        self.assertEqual(expected_hold_request.play_source_info.play_source_id, actual_hold_request.play_source_info.play_source_id)
+        self.assertEqual(expected_hold_request.target_participant['raw_id'], actual_hold_request.target_participant['raw_id'])
+        self.assertEqual(expected_hold_request.loop, actual_hold_request.loop)
+        
+    def test_stop_hold_music(self):
+        mock_hold = Mock()
+        self.call_media_operations.stop_hold_music = mock_hold
+
+        self.call_connection_client.stop_hold_music(target_participant=self.target_user)
+
+        expected_unhold_request = StopHoldMusicRequest(
+            target_participant=serialize_identifier(self.target_user),
+        )
+        mock_hold.assert_called_once()
+        actual_unhold_request = mock_hold.call_args[0][1]
+
+        self.assertEqual(expected_unhold_request.target_participant['raw_id'], actual_unhold_request.target_participant['raw_id'])

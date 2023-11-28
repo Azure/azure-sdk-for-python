@@ -184,6 +184,17 @@ class LogicalReplicationOnSourceDbEnum(str, Enum, metaclass=CaseInsensitiveEnumM
     FALSE = "False"
 
 
+class MigrationDbState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Migration db state of an individual database."""
+
+    IN_PROGRESS = "InProgress"
+    WAITING_FOR_CUTOVER_TRIGGER = "WaitingForCutoverTrigger"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    SUCCEEDED = "Succeeded"
+    CANCELING = "Canceling"
+
+
 class MigrationDetailsLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Migration details level."""
 
@@ -213,6 +224,14 @@ class MigrationNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMe
     ALREADY_EXISTS = "AlreadyExists"
 
 
+class MigrationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported types of migration request include Validate, Migrate and ValidateAndMigrate."""
+
+    VALIDATE = "Validate"
+    MIGRATE = "Migrate"
+    VALIDATE_AND_MIGRATE = "ValidateAndMigrate"
+
+
 class MigrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Migration state."""
 
@@ -221,6 +240,8 @@ class MigrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     FAILED = "Failed"
     SUCCEEDED = "Succeeded"
+    VALIDATION_FAILED = "ValidationFailed"
+    CLEANING_UP = "CleaningUp"
 
 
 class MigrationSubState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -236,6 +257,8 @@ class MigrationSubState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAITING_FOR_CUTOVER_TRIGGER = "WaitingForCutoverTrigger"
     COMPLETING_MIGRATION = "CompletingMigration"
     COMPLETED = "Completed"
+    CANCELING_REQUESTED_DB_MIGRATIONS = "CancelingRequestedDBMigrations"
+    VALIDATION_IN_PROGRESS = "ValidationInProgress"
 
 
 class OnlineResizeSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -288,6 +311,37 @@ class PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
 
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+
+
+class ReadReplicaPromoteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sets the promote mode for a replica server. This is a write only property."""
+
+    STANDALONE = "standalone"
+    SWITCHOVER = "switchover"
+
+
+class ReplicationPromoteOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sets the promote options for a replica server. This is a write only property."""
+
+    PLANNED = "planned"
+    FORCED = "forced"
+
+
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Used to indicate role of the server in replication set."""
 
@@ -295,6 +349,19 @@ class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRIMARY = "Primary"
     ASYNC_REPLICA = "AsyncReplica"
     GEO_ASYNC_REPLICA = "GeoAsyncReplica"
+
+
+class ReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the replication state of a replica server. This property is returned only for replicas api
+    call. Supported values are Active, Catchup, Provisioning, Updating, Broken, Reconfiguring.
+    """
+
+    ACTIVE = "Active"
+    CATCHUP = "Catchup"
+    PROVISIONING = "Provisioning"
+    UPDATING = "Updating"
+    BROKEN = "Broken"
+    RECONFIGURING = "Reconfiguring"
 
 
 class RestrictedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -344,6 +411,7 @@ class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     THIRTEEN = "13"
     TWELVE = "12"
     ELEVEN = "11"
+    SIXTEEN = "16"
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -352,6 +420,27 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BURSTABLE = "Burstable"
     GENERAL_PURPOSE = "GeneralPurpose"
     MEMORY_OPTIMIZED = "MemoryOptimized"
+
+
+class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Migration source server type : OnPremises, AWS, GCP, AzureVM or PostgreSQLSingleServer."""
+
+    ON_PREMISES = "OnPremises"
+    AWS = "AWS"
+    GCP = "GCP"
+    AZURE_VM = "AzureVM"
+    POSTGRE_SQL_SINGLE_SERVER = "PostgreSQLSingleServer"
+
+
+class SslMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported SSL modes for migration. VerifyFull is the recommended SSL mode for Single server
+    migration. Prefer, Require are recommended SSL modes for other source types.
+    """
+
+    PREFER = "Prefer"
+    REQUIRE = "Require"
+    VERIFY_CA = "VerifyCA"
+    VERIFY_FULL = "VerifyFull"
 
 
 class StartDataMigrationEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -377,11 +466,49 @@ class StorageAutoGrowthSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMet
     DISABLED = "Disabled"
 
 
+class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage type for the server. Allowed values are Premium_LRS and PremiumV2_LRS, and default is
+    Premium_LRS if not specified.
+    """
+
+    PREMIUM_LRS = "Premium_LRS"
+    PREMIUM_V2_LRS = "PremiumV2_LRS"
+
+
+class ThreatProtectionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ThreatProtectionName."""
+
+    DEFAULT = "Default"
+
+
+class ThreatProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the state of the Threat Protection, whether it is enabled or disabled or a state has
+    not been applied yet on the specific server.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class TriggerCutoverEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """To trigger cutover for entire migration we need to send this flag as True."""
 
     TRUE = "True"
     FALSE = "False"
+
+
+class ValidationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Validation status for migration."""
+
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    WARNING = "Warning"
+
+
+class VirtualEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The endpoint type for the virtual endpoint."""
+
+    READ_WRITE = "ReadWrite"
 
 
 class ZoneRedundantHaAndGeoBackupSupportedEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):

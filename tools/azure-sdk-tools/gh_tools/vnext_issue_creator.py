@@ -96,7 +96,7 @@ def create_vnext_issue(package_name: str, check_type: Literal["mypy", "pylint", 
     repo = g.get_repo("Azure/azure-sdk-for-python")
 
     issues = repo.get_issues(state="open", labels=[check_type], creator="azure-sdk")
-    vnext_issue = [issue for issue in issues if issue.body.find(package_name) != -1]
+    vnext_issue = [issue for issue in issues if issue.title.split("needs")[0].strip() == package_name]
 
     version = get_version_running(check_type)
     build_link = get_build_link(check_type)
@@ -114,7 +114,7 @@ def create_vnext_issue(package_name: str, check_type: Literal["mypy", "pylint", 
         f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
         f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
         f"the {error_type} errors.\n"
-        f"1) `../{package_name}>pip install tox<5`\n"
+        f"1) `../{package_name}>pip install \"tox<5\"`\n"
         f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
         f"See the {guide_link} for more information."
     )

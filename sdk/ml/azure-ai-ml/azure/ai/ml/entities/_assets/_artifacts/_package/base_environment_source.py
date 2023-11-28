@@ -6,7 +6,7 @@
 
 from typing import Dict
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import BaseEnvironmentId as RestBaseEnvironmentId
+from azure.ai.ml._restclient.v2023_08_01_preview.models import BaseEnvironmentId as RestBaseEnvironmentId
 from azure.ai.ml._schema.assets.package.base_environment_source import BaseEnvironmentSourceSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -25,7 +25,7 @@ class BaseEnvironment:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START base_env_entity_create]
             :end-before: [END base_env_entity_create]
             :language: python

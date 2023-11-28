@@ -43,9 +43,17 @@ def main():
     # [START set_config_setting]
     added_config_setting.value = "new value"
     added_config_setting.content_type = "new content type"
-    updated_config_setting = client.set_configuration_setting(config_setting)
+    updated_config_setting = client.set_configuration_setting(added_config_setting)
     # [END set_config_setting]
     print_configuration_setting(updated_config_setting)
+    print("")
+
+    print("Get configuration setting")
+    # [START get_config_setting]
+    fetched_config_setting = client.get_configuration_setting(key="MyKey", label="MyLabel")
+    # [END get_config_setting]
+    print("Fetched configuration setting:")
+    print_configuration_setting(fetched_config_setting)
     print("")
 
     print("List configuration settings")

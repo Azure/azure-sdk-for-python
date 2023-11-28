@@ -46,7 +46,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
     This default behavior is configurable with keyword arguments.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
     :keyword bool exclude_workload_identity_credential: Whether to exclude the workload identity from the credential.
@@ -146,7 +146,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         credentials: List["TokenCredential"] = []
         if not exclude_environment_credential:
-            credentials.append(EnvironmentCredential(authority=authority, **kwargs))
+            credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
             if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
                 client_id = workload_identity_client_id

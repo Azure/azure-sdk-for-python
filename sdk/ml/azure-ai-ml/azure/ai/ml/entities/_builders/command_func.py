@@ -221,8 +221,7 @@ def command(
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+        .. literalinclude:: ../samples/ml_samples_command_configurations.py
             :start-after: [START command_function]
             :end-before: [END command_function]
             :language: python

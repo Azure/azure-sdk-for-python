@@ -5,11 +5,11 @@
 from typing import Callable
 
 import pytest
-from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
+from azure.core.polling import LROPoller
 
 
 @pytest.mark.e2etest
@@ -76,9 +76,7 @@ class TestFeatureStore(AzureRecordedTestCase):
                 resource_id=new_materialization_identity_resource_id,
             ),
         )
-        fs_poller = client.feature_stores.begin_update(
-            feature_store=fs, grant_materialization_identity_permissions=False
-        )
+        fs_poller = client.feature_stores.begin_update(feature_store=fs, grant_materialization_permissions=False)
         assert isinstance(fs_poller, LROPoller)
 
         updated_fs = fs_poller.result()

@@ -23,6 +23,11 @@ module_logger = logging.getLogger(__name__)
 class QueueSettings(RestTranslatableMixin, DictMixin):
     """Queue settings for a pipeline job.
 
+    :ivar job_tier: Enum to determine the job tier. Possible values include: "Spot", "Basic",
+        "Standard", "Premium".
+    :vartype job_tier: str or ~azure.mgmt.machinelearningservices.models.JobTier
+    :ivar priority: Controls the priority of the job on a compute.
+    :vartype priority: str
     :keyword job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", and "Premium".
     :paramtype job_tier: Optional[Literal]]
     :keyword priority: The priority of the job on a compute. Accepted values are "low", "medium", and "high".

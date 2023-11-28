@@ -2,6 +2,7 @@ import unittest
 import uuid
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos._retry_utility as retry_utility
+from azure.cosmos import http_constants
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
@@ -293,6 +294,34 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(len(metrics) > 1)
         self.assertTrue(all(['=' in x for x in metrics]))
 
+    def test_populate_index_metrics(self):
+        created_collection = self.created_db.create_container_if_not_exists("query_index_test",
+                                                                            PartitionKey(path="/pk"))
+
+        doc_id = 'MyId' + str(uuid.uuid4())
+        document_definition = {'pk': 'pk', 'id': doc_id}
+        created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk',
+            populate_index_metrics=True
+        )
+
+        iter_list = list(query_iterable)
+        self.assertEqual(iter_list[0]['id'], doc_id)
+
+        INDEX_HEADER_NAME = http_constants.HttpHeaders.IndexUtilization
+        self.assertTrue(INDEX_HEADER_NAME in created_collection.client_connection.last_response_headers)
+        index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
+        self.assertIsNotNone(index_metrics)
+        expected_index_metrics = {'UtilizedSingleIndexes': [{'FilterExpression': '', 'IndexSpec': '/pk/?',
+                                'FilterPreciseSet': True, 'IndexPreciseSet': True, 'IndexImpactScore': 'High'}],
+                                'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
+                                'PotentialCompositeIndexes': []}
+        self.assertDictEqual(expected_index_metrics, index_metrics)
+
     def test_max_item_count_honored_in_order_by_query(self):
         created_collection = self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
@@ -408,7 +437,20 @@ class QueryTest(unittest.TestCase):
         values = []
         for i in range(10):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4())}
+            document_definition['value'] = i // 3
             values.append(created_collection.create_item(body=document_definition)['pk'])
+
+        self._validate_distinct_offset_limit(created_collection=created_collection,
+                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 0 LIMIT 2',
+                                             results=[0, 1])
+
+        self._validate_distinct_offset_limit(created_collection=created_collection,
+                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 2 LIMIT 2',
+                                             results=[2, 3])
+
+        self._validate_distinct_offset_limit(created_collection=created_collection,
+                                             query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 4 LIMIT 3',
+                                             results=[])
 
         self._validate_offset_limit(created_collection=created_collection,
                                     query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
@@ -432,6 +474,13 @@ class QueryTest(unittest.TestCase):
             enable_cross_partition_query=True
         )
         self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
+
+    def _validate_distinct_offset_limit(self, created_collection, query, results):
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        self.assertListEqual(list(map(lambda doc: doc['value'], list(query_iterable))), results)
 
     # TODO: Look into distinct query behavior to re-enable this test when possible
     @unittest.skip("intermittent failures in the pipeline")

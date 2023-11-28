@@ -1,6 +1,6 @@
 # Release History
 
-## 7.11.2 (Unreleased)
+## 7.11.5 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,37 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 7.11.4 (2023-11-13)
+
+### Bugs Fixed
+
+- Fixed a bug where a two character count session id was being incorrectly parsed by azure amqp.
+
+## 7.11.3 (2023-10-11)
+
+### Bugs Fixed
+
+- Fixed a bug where `prefetch_count` was not being passed through correctly and caused messages to not be received as expected when in `RECEIVE_AND_DELETE` mode ([#31712](https://github.com/Azure/azure-sdk-for-python/issues/31712), [#31711](https://github.com/Azure/azure-sdk-for-python/issues/31711)).
+
+## 7.11.2 (2023-09-13)
+
+### Bugs Fixed
+
+- Fixed the error `NoneType object has no attribute 'settle_messages'` which was raised when a connection was dropped due to a blocked process ([#30514](https://github.com/Azure/azure-sdk-for-python/issues/30514))
+
+### Other Changes
+
+- The `__contains__` method was added to `azure.servicebus` for the following (PR #30846, thanks @pamelafox).
+  - `ServiceBusConnectionStringProperties`
+  - `amqp.AmqpMessageHeader`
+  - `amqp.AmqpMessageProperties`
+  - `management.AccessRights`
+  - `management.NamespaceProperties`
+  - `management.QueueProperties`
+  - `management.TopicProperties`
+  - `management.SubscriptionProperties`
+  - `management.RuleProperties`
 
 ## 7.11.1 (2023-07-12)
 

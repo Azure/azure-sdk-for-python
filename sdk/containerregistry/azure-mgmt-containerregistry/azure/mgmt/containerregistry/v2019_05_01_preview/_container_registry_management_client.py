@@ -56,15 +56,21 @@ class ContainerRegistryManagementClient:  # pylint: disable=client-accepts-api-v
         self._config = ContainerRegistryManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.scope_maps = ScopeMapsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tokens = TokensOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registries = RegistriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.scope_maps = ScopeMapsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-05-01-preview"
+        )
+        self.tokens = TokensOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-05-01-preview"
+        )
+        self.registries = RegistriesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-05-01-preview"
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -95,5 +101,5 @@ class ContainerRegistryManagementClient:  # pylint: disable=client-accepts-api-v
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

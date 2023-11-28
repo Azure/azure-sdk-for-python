@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models import AddParticipantCancelled
 from ._models import AddParticipantFailed
 from ._models import AddParticipantRequest
 from ._models import AddParticipantResponse
@@ -19,6 +20,9 @@ from ._models import CallLocator
 from ._models import CallParticipant
 from ._models import CallTransferAccepted
 from ._models import CallTransferFailed
+from ._models import CancelAddParticipantFailed
+from ._models import CancelAddParticipantRequest
+from ._models import CancelAddParticipantResponse
 from ._models import ChannelAffinity
 from ._models import Choice
 from ._models import ChoiceResult
@@ -81,12 +85,23 @@ from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import StartDialogRequest
+from ._models import StartHoldMusicRequest
+from ._models import StartTranscriptionRequest
+from ._models import StopHoldMusicRequest
+from ._models import StopTranscriptionRequest
 from ._models import TextSource
 from ._models import ToneInfo
+from ._models import TranscriptionConfiguration
+from ._models import TranscriptionFailed
+from ._models import TranscriptionResumed
+from ._models import TranscriptionStarted
+from ._models import TranscriptionStopped
+from ._models import TranscriptionUpdate
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
+from ._models import UpdateTranscriptionDataRequest
 from ._models import UserConsent
 
 from ._enums import CallConnectionState
@@ -108,11 +123,16 @@ from ._enums import RecordingContent
 from ._enums import RecordingFormat
 from ._enums import RecordingState
 from ._enums import RecordingStorage
+from ._enums import RecordingType
+from ._enums import TranscriptionStatus
+from ._enums import TranscriptionStatusDetails
+from ._enums import TranscriptionTransportType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AddParticipantCancelled",
     "AddParticipantFailed",
     "AddParticipantRequest",
     "AddParticipantResponse",
@@ -126,6 +146,9 @@ __all__ = [
     "CallParticipant",
     "CallTransferAccepted",
     "CallTransferFailed",
+    "CancelAddParticipantFailed",
+    "CancelAddParticipantRequest",
+    "CancelAddParticipantResponse",
     "ChannelAffinity",
     "Choice",
     "ChoiceResult",
@@ -188,12 +211,23 @@ __all__ = [
     "SsmlSource",
     "StartCallRecordingRequest",
     "StartDialogRequest",
+    "StartHoldMusicRequest",
+    "StartTranscriptionRequest",
+    "StopHoldMusicRequest",
+    "StopTranscriptionRequest",
     "TextSource",
     "ToneInfo",
+    "TranscriptionConfiguration",
+    "TranscriptionFailed",
+    "TranscriptionResumed",
+    "TranscriptionStarted",
+    "TranscriptionStopped",
+    "TranscriptionUpdate",
     "TransferCallResponse",
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",
+    "UpdateTranscriptionDataRequest",
     "UserConsent",
     "CallConnectionState",
     "CallLocatorKind",
@@ -214,6 +248,10 @@ __all__ = [
     "RecordingFormat",
     "RecordingState",
     "RecordingStorage",
+    "RecordingType",
+    "TranscriptionStatus",
+    "TranscriptionStatusDetails",
+    "TranscriptionTransportType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

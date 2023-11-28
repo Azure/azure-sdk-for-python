@@ -6,7 +6,6 @@ import unittest
 from unittest import mock
 from datetime import datetime
 
-from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.metrics.export import NumberDataPoint
 
@@ -69,7 +68,6 @@ class TestStatsbeatExporter(unittest.TestCase):
 
     def test_point_to_envelope(self):
         resource = Resource.create(attributes={"asd":"test_resource"})
-        scope = InstrumentationScope("test_scope")
         point=NumberDataPoint(
             start_time_unix_nano=1646865018558419456,
             time_unix_nano=1646865018558419457,
@@ -77,7 +75,7 @@ class TestStatsbeatExporter(unittest.TestCase):
             attributes={},
         )
         for ot_name, sb_name in _STATSBEAT_METRIC_NAME_MAPPINGS.items():
-            envelope = self._exporter._point_to_envelope(point, ot_name, resource, scope)
+            envelope = self._exporter._point_to_envelope(point, ot_name, resource)
             self.assertEqual(envelope.data.base_data.metrics[0].name, sb_name)
     
     def test_transmit_200_reach_ingestion(self):
@@ -107,7 +105,7 @@ class TestStatsbeatExporter(unittest.TestCase):
                 ],
             )
             result = self._exporter._transmit(self._envelopes_to_export)
-        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         self.assertTrue(_STATSBEAT_STATE["INITIAL_SUCCESS"])
 
     def test_transmit_reach_ingestion_code(self):

@@ -109,12 +109,16 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit 'Analyze Dependencies' step in `analyze` job.
 - `Skip.VerifyDependencies`
   - Omit checking that a package's dependencies are on PyPI before releasing.
+- `Skip.KeywordCheck`
+  - Omit checking that a package's keywords are correctly formulated before releasing.
 
 ## The pyproject.toml
 
 Starting with [this pr](https://github.com/Azure/azure-sdk-for-python/pull/28345), which checks apply to which packages are now **established** in a `pyproject.toml`, right next to each package's `setup.py`. This not only allows devs to fine-tune which checks that are applied at a package-level, but also seriously reduces confusion as to which checks apply when.
 
 We default to **enabling** most of our checks like `pylint`, `mypy`, etc. Due to that, most `pyproject.toml` settings will likely be **disabling** checks.
+
+There is also an additional setting to turn on strict sphinx validation, for docstring validation.
 
 Here's an example:
 
@@ -128,6 +132,7 @@ verifytypes = false
 pyright = false
 pylint = false
 black = false
+strict_sphinx = false
 ```
 
 If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
@@ -194,6 +199,19 @@ Analyze job in both nightly CI and pull request validation pipeline runs a set o
 1. Go to root of the package.
 2. Execute following command: `tox run -e pylint -c ../../../eng/tox/tox.ini --root .`
 
+Note that the `pylint` environment is configured to run against the **earliest supported python version**. This means that users **must** have `python 3.7` installed on their machine to run this check locally.
+
+### Sphinx and docstring checker
+
+[`Sphinx`](https://www.sphinx-doc.org/en/master/) is the preferred documentation builder for Python libraries. The documentation is always built and attached to each PR builds. Sphinx can be configured to
+fail if docstring are invalid, helping to ensure the resulting documentation will be of high quality. Following are the steps to run `sphinx` locally for a specific package with strict docstring checking:
+
+1. Go to root of the package.
+2. Make sure the `pyproject.toml` file contains `strict_sphinx = true`
+3. Execute following command: `tox run -e sphinx -c ../../../eng/tox/tox.ini --root .`
+
+Note: While as of now the default value is `False`, it will become `True` by mid 2024.
+
 ### Bandit
 
 `Bandit` is static security analysis tool. This check is triggered for all Azure SDK package as part of analyze job. Following are the steps to `Bandit` tool locally for a specific package.
@@ -224,12 +242,10 @@ extends:
 
 #### Running locally
 
-To run locally first install `black` from pip if you do not have it already (the pipeline uses version 22.3.0). Currently, we use the `-l 120` option to allow lines up to 120 characters (consistent with our `pylint` check).
+1. Go to package root directory.
+2. Execute command: `tox run -e black -c ../../../eng/tox/tox.ini -- .`
 
-```bash
-python -m pip install black==22.3.0
-python -m black -l 120 <path/to/service_directory>
-```
+**Tip**: You can provide any arguments that `black` accepts after the `--`. Example: `tox run -e black -c ../../../eng/tox/tox.ini -- path/to/file.py`
 
 ### Change log verification
 
@@ -321,7 +337,7 @@ Note: Any dependency mentioned only in dev_requirements are not considered to id
 Tox name of this test is `latestdependency` and steps to manually run this test locally is as follows.
 
 1. Go to package root. For e.g azure-storage-blob or azure-identity
-2. Run command `tox run -e latestdependency -c ../../../tox/tox.ini --root .`
+2. Run command `tox run -e latestdependency -c ../../../eng/tox/tox.ini --root .`
 
 #### Minimum Dependency Test
 
@@ -338,7 +354,7 @@ Tox name of this test is `mindependency` and steps to manually run this test loc
 
 1. Go to package root. For e.g azure-storage-blob or azure-identity
 2. Run following command
-`tox run -e mindependency -c ../../../tox/tox.ini --root .`
+`tox run -e mindependency -c ../../../eng/tox/tox.ini --root .`
 
 #### Regression Test
 

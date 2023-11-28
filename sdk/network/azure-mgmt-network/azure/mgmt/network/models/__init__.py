@@ -758,6 +758,10 @@ from ._models import (
     WebApplicationFirewallScrubbingRules,
     MigrateLoadBalancerToIpBasedRequest,
     MigratedPools,
+    BastionHostPropertiesFormatNetworkAcls,
+    IPRule,
+    VirtualNetworkGatewayAutoScaleBounds,
+    VirtualNetworkGatewayAutoScaleConfiguration,
 )
 
 from ._enums import (
@@ -1759,6 +1763,10 @@ __all__ = [
     "WebApplicationFirewallScrubbingRules",
     "MigrateLoadBalancerToIpBasedRequest",
     "MigratedPools",
+    "BastionHostPropertiesFormatNetworkAcls",
+    "IPRule",
+    "VirtualNetworkGatewayAutoScaleBounds",
+    "VirtualNetworkGatewayAutoScaleConfiguration",
     "ApplicationGatewayCookieBasedAffinity",
     "ApplicationGatewayOperationalState",
     "ApplicationGatewayProtocol",

@@ -8,7 +8,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from __future__ import annotations
 from functools import partial
-from enum import Enum
 from typing import (
     cast,
     Tuple,
@@ -27,10 +26,11 @@ from typing import (
 )
 from typing_extensions import Protocol, TypedDict
 
-from azure.core import CaseInsensitiveEnumMeta
 from azure.core.tracing.decorator import distributed_trace
 
-from ._client import SchemaRegistryClient as ServiceClientGenerated
+from ._client import SchemaRegistryClient as GeneratedServiceClient
+from .models._models import SchemaProperties, Schema
+from .models._enums import SchemaFormat
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -56,12 +56,13 @@ def _get_format(content_type: str) -> SchemaFormat:
     try:
         format = content_type.split("serialization=")[1]
         try:
-            format = SchemaFormat(format)
+            return SchemaFormat(format)
         except ValueError:
-            format = SchemaFormat(format.capitalize())
+            return SchemaFormat(format.capitalize())
     except IndexError:
-        format = SchemaFormat.CUSTOM
-    return format
+        if 'protobuf' in content_type:
+            return SchemaFormat.PROTOBUF
+        return SchemaFormat.CUSTOM
 
 
 def prepare_schema_properties_result(  # pylint:disable=unused-argument,redefined-builtin
@@ -82,7 +83,7 @@ def prepare_schema_result(  # pylint:disable=unused-argument
     response_headers: Mapping[str, Union[str, int]],
 ) -> Tuple[Union["HttpResponse", "AsyncHttpResponse"], Dict[str, Union[int, str]]]:
     properties_dict = _parse_schema_properties_dict(response_headers)
-    # TODO: content type is not being added to the response headers b/c of
+    # re-generate after multi-content type response fix: https://github.com/Azure/autorest.python/issues/2122
     properties_dict["format"] = _get_format(
         cast(str, response_headers.get("Content-Type"))
     )
@@ -91,7 +92,6 @@ def prepare_schema_result(  # pylint:disable=unused-argument
 
 
 ###### Request Helper Functions ######
-
 
 def get_http_request_kwargs(kwargs):
     http_request_keywords = ["params", "headers", "json", "data", "files"]
@@ -104,6 +104,8 @@ def get_http_request_kwargs(kwargs):
 def get_content_type(format: str):  # pylint:disable=redefined-builtin
     if format.lower() == SchemaFormat.CUSTOM.value.lower():
         return "text/plain; charset=utf-8"
+    if format.lower() == SchemaFormat.PROTOBUF.value.lower():
+        return "text/vnd.ms.protobuf"
     return f"application/json; serialization={format}"
 
 
@@ -120,7 +122,6 @@ def get_case_insensitive_format(
 
 ###### Wrapper Class ######
 
-
 class SchemaRegistryClient(object):
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
@@ -130,7 +131,7 @@ class SchemaRegistryClient(object):
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-     Default value is "2022-10".
+     Default value is "2023-07-01".
 
     .. admonition:: Example:
 
@@ -150,11 +151,9 @@ class SchemaRegistryClient(object):
         # calling different operations conditionally within one method
         if "https://" not in fully_qualified_namespace:
             fully_qualified_namespace = f"https://{fully_qualified_namespace}"
-        api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._generated_client = ServiceClientGenerated(
-            endpoint=fully_qualified_namespace,
+        self._generated_client = GeneratedServiceClient(
+            fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
-            api_version=api_version,
             **kwargs,
         )
 
@@ -189,7 +188,6 @@ class SchemaRegistryClient(object):
         :param str name: Name of schema being registered.
         :param str definition: String representation of the schema being registered.
         :param format: Format for the schema being registered.
-         For now Avro is the only supported schema format by the service.
         :type format: Union[str, SchemaFormat]
         :return: The SchemaProperties associated with the registered schema.
         :rtype: ~azure.schemaregistry.SchemaProperties
@@ -210,15 +208,12 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = self._generated_client.register_schema(
+        ] = self._generated_client._register_schema( # pylint:disable=protected-access
             group_name=group_name,
             name=name,
             content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
-            headers={  # TODO: fix - currently `Accept: "*/*""`
-                "Accept": "application/json"
-            },
             **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)
@@ -282,12 +277,12 @@ class SchemaRegistryClient(object):
                 schema_id = kwargs.pop("schema_id")
             schema_id = cast(str, schema_id)
             # ignoring return type because the generated client operations are not annotated w/ cls return type
-            http_response, schema_properties = self._generated_client.get_schema_by_id(  # type: ignore
+            http_response, schema_properties = self._generated_client._get_schema_by_id(  # pylint:disable=protected-access
                 id=schema_id,
                 cls=prepare_schema_result,
-                headers={  # TODO: remove when multiple content types are supported
+                headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8"""
+                        serialization=json, text/plain; charset=utf-8, text/vnd.ms.protobuf"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -309,9 +304,9 @@ class SchemaRegistryClient(object):
                 name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
-                headers={  # TODO: remove when multiple content types are supported
+                headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8"""
+                        serialization=json, text/plain; charset=utf-8, text/vnd.ms.protobuf"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -359,98 +354,67 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = self._generated_client.get_schema_id_by_content(  # type: ignore
+        ] = self._generated_client._get_schema_id_by_content( # pylint:disable=protected-access
             group_name=group_name,
             name=name,
             schema_content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
-            headers={  # TODO: fix - currently `Accept: "*/*""`
-                "Accept": "application/json"
-            },
             **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)
 
 
-class SchemaProperties(object):
-    """
-    Meta properties of a schema.
-
-    :ivar id: References specific schema in registry namespace.
-    :vartype id: str
-    :ivar format: Format for the schema being stored.
-    :vartype format: ~azure.schemaregistry.SchemaFormat
-    :ivar group_name: Schema group under which schema is stored.
-    :vartype group_name: str
-    :ivar name: Name of schema.
-    :vartype name: str
-    :ivar version: Version of schema.
-    :vartype version: int
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.pop("id")
-        self.format = kwargs.pop("format")
-        self.group_name = kwargs.pop("group_name")
-        self.name = kwargs.pop("name")
-        self.version = kwargs.pop("version")
-
-    def __repr__(self):
-        return (
-            f"SchemaProperties(id={self.id}, format={self.format}, "
-            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
-                :1024
-            ]
-        )
-
-
-class Schema(object):
-    """
-    The schema content of a schema, along with id and meta properties.
-
-    :ivar definition: The content of the schema.
-    :vartype definition: str
-    :ivar properties: The properties of the schema.
-    :vartype properties: SchemaProperties
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.definition = kwargs.pop("definition")
-        self.properties = kwargs.pop("properties")
-
-    def __repr__(self):
-        return f"Schema(definition={self.definition}, properties={self.properties})"[
-            :1024
-        ]
-
-
-class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """
-    Represents the format of the schema to be stored by the Schema Registry service.
-    """
-
-    AVRO = "Avro"
-    """Represents the Apache Avro schema format."""
-
-    JSON = "Json"
-    """Represents the JSON schema format."""
-
-    CUSTOM = "Custom"
-    """Represents a custom schema format."""
-
-
-class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """
-    Represents the Schema Registry API version to use for requests.
-    """
-
-    V2021_10 = "2021-10"
-    V2022_10 = "2022-10"
-    """This is the default version."""
-
-
-DEFAULT_VERSION = ApiVersion.V2022_10
+#class SchemaProperties(object):
+#    """
+#    Meta properties of a schema.
+#
+#    :ivar id: References specific schema in registry namespace.
+#    :vartype id: str
+#    :ivar format: Format for the schema being stored.
+#    :vartype format: ~azure.schemaregistry.SchemaFormat
+#    :ivar group_name: Schema group under which schema is stored.
+#    :vartype group_name: str
+#    :ivar name: Name of schema.
+#    :vartype name: str
+#    :ivar version: Version of schema.
+#    :vartype version: int
+#    """
+#
+#    def __init__(self, **kwargs: Any) -> None:
+#        self.id = kwargs.pop("id")
+#        self.format = kwargs.pop("format")
+#        self.group_name = kwargs.pop("group_name")
+#        self.name = kwargs.pop("name")
+#        self.version = kwargs.pop("version")
+#
+#    def __repr__(self):
+#        return (
+#            f"SchemaProperties(id={self.id}, format={self.format}, "
+#            f"group_name={self.group_name}, name={self.name}, version={self.version})"[
+#                :1024
+#            ]
+#        )
+#
+#
+#class Schema(object):
+#    """
+#    The schema content of a schema, along with id and meta properties.
+#
+#    :ivar definition: The content of the schema.
+#    :vartype definition: str
+#    :ivar properties: The properties of the schema.
+#    :vartype properties: SchemaProperties
+#    """
+#
+#    def __init__(self, **kwargs: Any) -> None:
+#        self.definition = kwargs.pop("definition")
+#        self.properties = kwargs.pop("properties")
+#
+#    def __repr__(self):
+#        return f"Schema(definition={self.definition}, properties={self.properties})"[
+#            :1024
+#        ]
 
 
 ###### Encoder Protocols ######
@@ -723,8 +687,6 @@ __all__: List[str] = [
     "SchemaProperties",
     "Schema",
     "SchemaFormat",
-    "ApiVersion",
-    "DEFAULT_VERSION",
     "SchemaEncoder",
     "SchemaContentValidate",
     "MessageContent",

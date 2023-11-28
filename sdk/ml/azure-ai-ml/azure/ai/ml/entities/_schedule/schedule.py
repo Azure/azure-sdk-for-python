@@ -7,6 +7,7 @@ import typing
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
+
 from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import JobBase as RestJobBase
@@ -19,23 +20,24 @@ from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
+from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
+from azure.ai.ml.entities._job.spark_job import SparkJob
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
+from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
-from .. import CommandJob, SparkJob
 from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 module_logger = logging.getLogger(__name__)
 
 
-class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
+class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource):
     """Schedule object used to create and manage schedules.
 
     This class should not be instantiated directly. Instead, please use the subclasses.
@@ -93,8 +95,12 @@ class Schedule(YamlTranslatableMixin, SchemaValidatableMixin, Resource):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        return ErrorTarget.SCHEDULE
+    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+        return ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.SCHEDULE,
+        )
 
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
@@ -188,7 +194,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START job_schedule_configuration]
             :end-before: [END job_schedule_configuration]
             :language: python

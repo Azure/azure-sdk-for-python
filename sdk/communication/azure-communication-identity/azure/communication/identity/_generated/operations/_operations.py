@@ -18,14 +18,12 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _format_url_section
 
 T = TypeVar("T")
 ClsType = Optional[
@@ -46,7 +44,7 @@ def build_communication_identity_create_request(
         "content_type", _headers.pop("Content-Type", None)
     )
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -75,7 +73,7 @@ def build_communication_identity_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -85,7 +83,7 @@ def build_communication_identity_delete_request(
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -105,7 +103,7 @@ def build_communication_identity_revoke_access_tokens_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -115,7 +113,7 @@ def build_communication_identity_revoke_access_tokens_request(  # pylint: disabl
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -138,7 +136,7 @@ def build_communication_identity_exchange_teams_user_access_token_request(  # py
         "content_type", _headers.pop("Content-Type", None)
     )
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -170,7 +168,7 @@ def build_communication_identity_issue_access_token_request(  # pylint: disable=
         "content_type", _headers.pop("Content-Type", None)
     )
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -180,7 +178,7 @@ def build_communication_identity_issue_access_token_request(  # pylint: disable=
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -339,6 +337,8 @@ class CommunicationIdentityOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )
@@ -406,6 +406,8 @@ class CommunicationIdentityOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )
@@ -467,6 +469,8 @@ class CommunicationIdentityOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )
@@ -591,6 +595,8 @@ class CommunicationIdentityOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )
@@ -733,6 +739,8 @@ class CommunicationIdentityOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )

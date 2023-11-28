@@ -13,7 +13,10 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
 
 # the functions we patch
-from azure.core.pipeline.transport import RequestsTransport
+try:
+    from azure.core.pipeline.transport import RequestsTransport
+except:
+    pass
 
 # the trimming function to clean up incoming arguments to the test function we are wrapping
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function

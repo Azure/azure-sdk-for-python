@@ -7,13 +7,14 @@
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
+import re
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CodeConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ModelPackageInput as RestModelPackageInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageInputPathId as RestPackageInputPathId
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageInputPathUrl as RestPackageInputPathUrl
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageInputPathVersion as RestPackageInputPathVersion
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageRequest, PackageResponse
+from azure.ai.ml._restclient.v2023_08_01_preview.models import CodeConfiguration
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelPackageInput as RestModelPackageInput
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathId as RestPackageInputPathId
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathUrl as RestPackageInputPathUrl
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathVersion as RestPackageInputPathVersion
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageRequest, PackageResponse
 from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file, snake_to_pascal
@@ -37,7 +38,12 @@ class PackageInputPathId:
     :type resource_id: Optional[str]
     """
 
-    def __init__(self, *, input_path_type: Optional[str] = None, resource_id: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        *,
+        input_path_type: Optional[str] = None,
+        resource_id: Optional[str] = None,
+    ) -> None:
         self.input_path_type = input_path_type
         self.resource_id = resource_id
 
@@ -138,6 +144,15 @@ class ModelPackageInput:
     :type mode: Optional[str]
     :param mount_path: The mount path for the input.
     :type mount_path: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START model_package_input_entity_create]
+            :end-before: [END model_package_input_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Model Package Input object.
     """
 
     def __init__(
@@ -191,25 +206,45 @@ class ModelPackage(Resource, PackageRequest):
     :param model_configuration: The model configuration.
     :type model_configuration: Optional[~azure.ai.ml.entities.ModelConfiguration]
     :param tags: The tags of the model package.
-    :type tags: Optiona[dict[str, str]]
+    :type tags: Optional[dict[str, str]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START model_package_entity_create]
+            :end-before: [END model_package_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Model Package object.
     """
 
     def __init__(
         self,
         *,
-        target_environment_name: str,
+        target_environment: Union[str, Dict[str, str]],
         inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
         base_environment_source: BaseEnvironment = None,
-        target_environment_version: Optional[str] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         inputs: Optional[List[ModelPackageInput]] = None,
         model_configuration: Optional[ModelConfiguration] = None,
         tags: Optional[Dict[str, str]] = None,
-    ) -> None:
+        **kwargs,
+    ):
+        if isinstance(target_environment, dict):
+            target_environment = target_environment["name"]
+            env_version = None
+        else:
+            parse_id = re.match(r"azureml:(\w+):(\d+)$", target_environment)
+
+            if parse_id:
+                target_environment = parse_id.group(1)
+                env_version = parse_id.group(2)
+            else:
+                env_version = None
+
         super().__init__(
-            name=target_environment_name,
-            target_environment_name=target_environment_name,
-            target_environment_version=target_environment_version,
+            name=target_environment,
+            target_environment_id=target_environment,
             base_environment_source=base_environment_source,
             inferencing_server=inferencing_server,
             model_configuration=model_configuration,
@@ -217,6 +252,7 @@ class ModelPackage(Resource, PackageRequest):
             tags=tags,
             environment_variables=environment_variables,
         )
+        self.environment_version = env_version
 
     @classmethod
     def _load(
@@ -274,12 +310,13 @@ class ModelPackage(Resource, PackageRequest):
                 else self.inferencing_server.code_configuration.code.id
             )
             code = CodeConfiguration(
-                code_id=code_id, scoring_script=self.inferencing_server.code_configuration.scoring_script
+                code_id=code_id,
+                scoring_script=self.inferencing_server.code_configuration.scoring_script,
             )
             self.inferencing_server.code_configuration = code
 
         package_request = PackageRequest(
-            target_environment_name=self.name,
+            target_environment_id=self.target_environment_id,
             base_environment_source=self.base_environment_source._to_rest_object()
             if self.base_environment_source
             else None,

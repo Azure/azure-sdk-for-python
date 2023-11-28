@@ -7,7 +7,7 @@ from abc import ABC
 from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJobLimits as RestSweepJobLimits
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SweepJobLimits as RestSweepJobLimits
 from azure.ai.ml._utils.utils import from_iso_duration_format, is_data_binding_expression, to_iso_duration_format
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -40,8 +40,7 @@ class CommandJobLimits(JobLimits):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+        .. literalinclude:: ../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_definition]
             :end-before: [END command_job_definition]
             :language: python
@@ -87,8 +86,7 @@ class SweepJobLimits(JobLimits):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
             :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
             :language: python

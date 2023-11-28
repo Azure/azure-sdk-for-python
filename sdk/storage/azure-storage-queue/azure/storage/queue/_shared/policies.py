@@ -6,29 +6,22 @@
 
 import base64
 import hashlib
-import re
-import random
-from time import time
-from io import SEEK_SET, UnsupportedOperation
 import logging
+import random
+import re
 import uuid
-from typing import Any, TYPE_CHECKING
-from wsgiref.handlers import format_date_time
-try:
-    from urllib.parse import (
-        urlparse,
+from io import SEEK_SET, UnsupportedOperation
+from time import time
+from typing import Any, Dict, Optional, TYPE_CHECKING, Union
+from urllib.parse import (
         parse_qsl,
-        urlunparse,
         urlencode,
-    )
-except ImportError:
-    from urllib import urlencode # type: ignore
-    from urlparse import ( # type: ignore
         urlparse,
-        parse_qsl,
         urlunparse,
-    )
+)
+from wsgiref.handlers import format_date_time
 
+from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     HeadersPolicy,
@@ -37,10 +30,9 @@ from azure.core.pipeline.policies import (
     RequestHistory,
     SansIOHTTPPolicy,
 )
-from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
 from .authentication import StorageHttpChallenge
-from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
+from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode
 
 try:
@@ -50,7 +42,10 @@ except NameError:
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
+        PipelineRequest,
+        PipelineResponse
+    )
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -134,8 +129,7 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = 'x-ms-client-request-id'
 
-    def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request: "PipelineRequest") -> None:
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
@@ -165,8 +159,7 @@ class StorageHosts(SansIOHTTPPolicy):
         self.hosts = hosts
         super(StorageHosts, self).__init__()
 
-    def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request: "PipelineRequest") -> None:
         request.context.options['hosts'] = self.hosts
         parsed_url = urlparse(request.http_request.url)
 
@@ -197,12 +190,12 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
-    def __init__(self, logging_enable=False, **kwargs):
+
+    def __init__(self, logging_enable: bool = False, **kwargs) -> None:
         self.logging_body = kwargs.pop("logging_body", False)
         super(StorageLoggingPolicy, self).__init__(logging_enable=logging_enable, **kwargs)
 
-    def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request: "PipelineRequest") -> None:
         http_request = request.http_request
         options = request.context.options
         self.logging_body = self.logging_body or options.pop("logging_body", False)
@@ -242,8 +235,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse, Any) -> None
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
         if response.context.pop("logging_enable", self.enable_http_logger):
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
@@ -286,8 +278,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
         self._request_callback = kwargs.get('raw_request_hook')
         super(StorageRequestHook, self).__init__()
 
-    def on_request(self, request):
-        # type: (PipelineRequest, **Any) -> PipelineResponse
+    def on_request(self, request: "PipelineRequest") -> None:
         request_callback = request.context.options.pop('raw_request_hook', self._request_callback)
         if request_callback:
             request_callback(request)
@@ -299,8 +290,7 @@ class StorageResponseHook(HTTPPolicy):
         self._response_callback = kwargs.get('raw_response_hook')
         super(StorageResponseHook, self).__init__()
 
-    def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    def send(self, request: "PipelineRequest") -> "PipelineResponse":
         # Values could be 0
         data_stream_total = request.context.get('data_stream_total')
         if data_stream_total is None:
@@ -333,9 +323,10 @@ class StorageResponseHook(HTTPPolicy):
         elif should_update_counts and upload_stream_current is not None:
             upload_stream_current += int(response.http_request.headers.get('Content-Length', 0))
         for pipeline_obj in [request, response]:
-            pipeline_obj.context['data_stream_total'] = data_stream_total
-            pipeline_obj.context['download_stream_current'] = download_stream_current
-            pipeline_obj.context['upload_stream_current'] = upload_stream_current
+            if hasattr(pipeline_obj, 'context'):
+                pipeline_obj.context['data_stream_total'] = data_stream_total
+                pipeline_obj.context['download_stream_current'] = download_stream_current
+                pipeline_obj.context['upload_stream_current'] = upload_stream_current
         if response_callback:
             response_callback(response)
             request.context['response_callback'] = response_callback
@@ -350,7 +341,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
     """
     header_name = 'Content-MD5'
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         super(StorageContentValidation, self).__init__()
 
     @staticmethod
@@ -378,8 +369,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
         return md5.digest()
 
-    def on_request(self, request):
-        # type: (PipelineRequest, Any) -> None
+    def on_request(self, request: "PipelineRequest") -> None:
         validate_content = request.context.options.pop('validate_content', False)
         if validate_content and request.http_request.method != 'GET':
             computed_md5 = encode_base64(StorageContentValidation.get_content_md5(request.http_request.data))
@@ -387,7 +377,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
             request.context['validate_content_md5'] = computed_md5
         request.context['validate_content'] = validate_content
 
-    def on_response(self, request, response):
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
         if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
             computed_md5 = request.context.get('validate_content_md5') or \
                 encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
@@ -404,7 +394,18 @@ class StorageRetryPolicy(HTTPPolicy):
     The base class for Exponential and Linear retries containing shared code.
     """
 
-    def __init__(self, **kwargs):
+    total_retries: int
+    """The max number of retries."""
+    connect_retries: int
+    """The max number of connect retries."""
+    retry_read: int
+    """The max number of read retries."""
+    retry_status: int
+    """The max number of status retries."""
+    retry_to_secondary: bool
+    """Whether the secondary endpoint should be retried."""
+
+    def __init__(self, **kwargs: Any) -> None:
         self.total_retries = kwargs.pop('retry_total', 10)
         self.connect_retries = kwargs.pop('retry_connect', 3)
         self.read_retries = kwargs.pop('retry_read', 3)
@@ -412,11 +413,11 @@ class StorageRetryPolicy(HTTPPolicy):
         self.retry_to_secondary = kwargs.pop('retry_to_secondary', False)
         super(StorageRetryPolicy, self).__init__()
 
-    def _set_next_host_location(self, settings, request):
+    def _set_next_host_location(self, settings: Dict[str, Any], request: "PipelineRequest") -> None:
         """
         A function which sets the next host location on the request, if applicable.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the next host location.
         :param PipelineRequest request: A pipeline request object.
         """
         if settings['hosts'] and all(settings['hosts'].values()):
@@ -429,7 +430,7 @@ class StorageRetryPolicy(HTTPPolicy):
             updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
             request.url = updated.geturl()
 
-    def configure_retries(self, request):
+    def configure_retries(self, request: "PipelineRequest") -> Dict[str, Any]:
         body_position = None
         if hasattr(request.http_request.body, 'read'):
             try:
@@ -452,11 +453,11 @@ class StorageRetryPolicy(HTTPPolicy):
             'history': []
         }
 
-    def get_backoff_time(self, settings):  # pylint: disable=unused-argument
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:  # pylint: disable=unused-argument
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns: The backoff time.
         :rtype: float
         """
@@ -468,15 +469,20 @@ class StorageRetryPolicy(HTTPPolicy):
             return
         transport.sleep(backoff)
 
-    def increment(self, settings, request, response=None, error=None):
+    def increment(
+        self, settings: Dict[str, Any],
+        request: "PipelineRequest",
+        response: Optional["PipelineResponse"] = None,
+        error: Optional[Union[ServiceRequestError, ServiceResponseError]] = None
+    ) -> bool:
         """Increment the retry counters.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
-        :param "PipelineRequest" request: A pipeline request object.
-        :param "PipelineResponse": A pipeline response object.
+        Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
+        :param PipelineRequest request: A pipeline request object.
+        :param Optional[PipelineResponse] response: A pipeline response object.
         :param error: An error encountered during the request, or
             None if the response was received successfully.
-        :paramtype error: Union[ServiceRequestError, ServiceResponseError]
+        :paramtype error: Optional[Union[ServiceRequestError, ServiceResponseError]]
         :returns: Whether the retry attempts are exhausted.
         :rtype: bool
         """
@@ -562,9 +568,23 @@ class StorageRetryPolicy(HTTPPolicy):
 class ExponentialRetry(StorageRetryPolicy):
     """Exponential retry."""
 
-    def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
-                 retry_to_secondary=False, random_jitter_range=3, **kwargs):
-        '''
+    initial_backoff: int
+    """The initial backoff interval, in seconds, for the first retry."""
+    increment_base: int
+    """The base, in seconds, to increment the initial_backoff by after the
+    first retry."""
+    random_jitter_range: int
+    """A number in seconds which indicates a range to jitter/randomize for the back-off interval."""
+
+    def __init__(
+        self, initial_backoff: int = 15,
+        increment_base: int = 3,
+        retry_total: int = 3,
+        retry_to_secondary: bool = False,
+        random_jitter_range: int = 3,
+        **kwargs: Any
+    ) -> None:
+        """
         Constructs an Exponential retry object. The initial_backoff is used for
         the first retry. Subsequent retries are retried after initial_backoff +
         increment_power^retry_count seconds.
@@ -574,7 +594,7 @@ class ExponentialRetry(StorageRetryPolicy):
         :param int increment_base:
             The base, in seconds, to increment the initial_backoff by after the
             first retry.
-        :param int max_attempts:
+        :param int retry_total:
             The maximum number of retry attempts.
         :param bool retry_to_secondary:
             Whether the request should be retried to secondary, if able. This should
@@ -583,22 +603,22 @@ class ExponentialRetry(StorageRetryPolicy):
         :param int random_jitter_range:
             A number in seconds which indicates a range to jitter/randomize for the back-off interval.
             For example, a random_jitter_range of 3 results in the back-off interval x to vary between x+3 and x-3.
-        '''
+        """
         self.initial_backoff = initial_backoff
         self.increment_base = increment_base
         self.random_jitter_range = random_jitter_range
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """
         Calculates how long to sleep before retrying.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
         :returns:
-            An integer indicating how long to wait before retrying the request,
+            A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
-        :rtype: int or None
+        :rtype: float
         """
         random_generator = random.Random()
         backoff = self.initial_backoff + (0 if settings['count'] == 0 else pow(self.increment_base, settings['count']))
@@ -610,13 +630,24 @@ class ExponentialRetry(StorageRetryPolicy):
 class LinearRetry(StorageRetryPolicy):
     """Linear retry."""
 
-    def __init__(self, backoff=15, retry_total=3, retry_to_secondary=False, random_jitter_range=3, **kwargs):
+    initial_backoff: int
+    """The backoff interval, in seconds, between retries."""
+    random_jitter_range: int
+    """A number in seconds which indicates a range to jitter/randomize for the back-off interval."""
+
+    def __init__(
+        self, backoff: int = 15,
+        retry_total: int = 3,
+        retry_to_secondary: bool = False,
+        random_jitter_range: int = 3,
+        **kwargs: Any
+    ) -> None:
         """
         Constructs a Linear retry object.
 
         :param int backoff:
             The backoff interval, in seconds, between retries.
-        :param int max_attempts:
+        :param int retry_total:
             The maximum number of retry attempts.
         :param bool retry_to_secondary:
             Whether the request should be retried to secondary, if able. This should
@@ -631,15 +662,15 @@ class LinearRetry(StorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """
         Calculates how long to sleep before retrying.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns:
-            An integer indicating how long to wait before retrying the request,
+            A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
-        :rtype: int or None
+        :rtype: float
         """
         random_generator = random.Random()
         # the backoff interval normally does not change, however there is the possibility
@@ -653,12 +684,10 @@ class LinearRetry(StorageRetryPolicy):
 class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
     """ Custom Bearer token credential policy for following Storage Bearer challenges """
 
-    def __init__(self, credential, **kwargs):
-        # type: (TokenCredential, **Any) -> None
-        super(StorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
+    def __init__(self, credential: "TokenCredential", audience: str, **kwargs: Any) -> None:
+        super(StorageBearerTokenCredentialPolicy, self).__init__(credential, audience, **kwargs)
 
-    def on_challenge(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> bool
+    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         try:
             auth_header = response.http_response.headers.get("WWW-Authenticate")
             challenge = StorageHttpChallenge(auth_header)

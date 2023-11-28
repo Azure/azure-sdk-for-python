@@ -55,7 +55,7 @@ def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str
     # Build list of sorted tuples
     sorted_headers = []
     for key in header_keys:
-        sorted_headers.append((key, header_dict.get(key)))
+        sorted_headers.append((key, header_dict.pop(key)))
     return sorted_headers
 
 

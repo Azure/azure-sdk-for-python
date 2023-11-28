@@ -6,7 +6,7 @@
 
 import unittest
 
-from azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.fastapi import (
+from opentelemetry.instrumentation.fastapi import (
     FastAPIInstrumentor,
 )
 

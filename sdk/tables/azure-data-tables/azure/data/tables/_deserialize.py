@@ -156,14 +156,15 @@ def _convert_to_entity(entry_element):
         else:
             properties[name] = value
 
+    # TODO: investigate whether we can entirely remove lines 160-168
     # Partition key is a known property
     partition_key = properties.pop("PartitionKey", None)
-    if partition_key:
+    if partition_key is not None:
         entity["PartitionKey"] = partition_key
 
     # Row key is a known property
     row_key = properties.pop("RowKey", None)
-    if row_key:
+    if row_key is not None:
         entity["RowKey"] = row_key
 
     # Timestamp is a known property
@@ -250,11 +251,11 @@ def _normalize_headers(headers):
     return normalized
 
 
-def _return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def _return_headers_and_deserialized(_, deserialized, response_headers):
     return _normalize_headers(response_headers), deserialized
 
 
-def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def _return_context_and_deserialized(response, deserialized, response_headers):
     return response.context["location_mode"], deserialized, response_headers
 
 

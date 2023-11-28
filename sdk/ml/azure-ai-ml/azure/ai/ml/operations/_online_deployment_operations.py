@@ -184,8 +184,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             upload_dependencies(deployment, orchestrators)
             try:
                 location = self._get_workspace_location()
-                if kwargs.pop("package_model", False):
-                    deployment = package_deployment(deployment, self._all_operations.all_operations)
+                is_package_model = deployment.package_model if hasattr(deployment, "package_model") else False
+                if kwargs.pop("package_model", False) or is_package_model:
+                    deployment = package_deployment(deployment, self._all_operations.all_operations["models"])
                     module_logger.info("\nStarting deployment")
 
                 deployment_rest = deployment._to_rest_object(location=location)

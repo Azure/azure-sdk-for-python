@@ -81,8 +81,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_job_configuration]
             :end-before: [END spark_job_configuration]
             :language: python
@@ -372,6 +371,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         )
 
     def _validate(self) -> None:
+        # TODO: make spark job schema validatable?
+        if self.resources:
+            self.resources._validate()
         _validate_compute_or_resources(self.compute, self.resources)
         _validate_input_output_mode(self.inputs, self.outputs)
         _validate_spark_configurations(self)

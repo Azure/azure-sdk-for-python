@@ -41,10 +41,6 @@ Use the Azure.Search.Documents client library to:
 | [Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 ## Getting started
 
 ### Install the package
@@ -58,7 +54,7 @@ pip install azure-search-documents
 ### Prerequisites
 
 * Python 3.7 or later is required to use this package.
-* You need an [Azure subscription][azure_sub] and a
+* You need an [Azure subscription][azure_sub] and an
 [Azure Cognitive Search service][search_resource] to use this package.
 
 To create a new search service, you can use the [Azure portal][create_search_service_docs], [Azure PowerShell][create_search_service_ps], or the [Azure CLI][create_search_service_cli].
@@ -103,9 +99,9 @@ To instantiate the `SearchClient`, you'll need the **endpoint**, **API key** and
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 ```
@@ -259,7 +255,7 @@ fields = [
     ),
 ]
 cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-scoring_profiles = []
+scoring_profiles: List[ScoringProfile] = []
 index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
 result = client.create_index(index)
@@ -310,7 +306,7 @@ endpoint = os.environ["SEARCH_ENDPOINT"]
 key = os.environ["SEARCH_API_KEY"]
 credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA)
 
-search_client = SearchClient(endpoint, index_name, crdential=credential, audience="https://search.azure.cn")
+search_client = SearchClient(endpoint, index_name, credential=credential, audience="https://search.azure.cn")
 ```
 
 ### Retrieving a specific document from your index

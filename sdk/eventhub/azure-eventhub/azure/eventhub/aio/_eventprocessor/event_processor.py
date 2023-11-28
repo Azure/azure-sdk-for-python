@@ -356,8 +356,6 @@ class EventProcessor(
         The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
          and asynchronously start receiving EventData from EventHub and processing events.
 
-        :return: None
-
         """
         _LOGGER.info("EventProcessor %r is being started", self._id)
         if not self._running:
@@ -424,8 +422,6 @@ class EventProcessor(
         Other running EventProcessor will take over these released partitions.
 
         A stopped EventProcessor can be restarted by calling method `start` again.
-
-        :return: None
 
         """
         self._running = False

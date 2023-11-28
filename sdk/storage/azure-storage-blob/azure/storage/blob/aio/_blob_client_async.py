@@ -101,6 +101,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         or 4MB.
     :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
         specifies the version of the blob to operate on.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -1075,7 +1078,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
     @distributed_trace_async
     async def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
-        """Creates a new Append Blob.
+        """Creates a new Append Blob. This operation creates a new 0-length append blob. The content
+        of any existing blob is overwritten with the newly initialized append blob. To add content to
+        the append blob, call the :func:`append_block` or :func:`append_block_from_url` method.
 
         :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,

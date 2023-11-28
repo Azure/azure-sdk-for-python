@@ -27,7 +27,7 @@ class EnvironmentCredential(AsyncContextManager):
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_SECRET**: one of the service principal's client secrets
-      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+      - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
 
@@ -36,7 +36,7 @@ class EnvironmentCredential(AsyncContextManager):
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key.
       - **AZURE_CLIENT_CERTIFICATE_PASSWORD**: (optional) password of the certificate file, if any.
-      - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
+      - **AZURE_AUTHORITY_HOST**: authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
 
@@ -75,8 +75,10 @@ class EnvironmentCredential(AsyncContextManager):
             expected_variables = set(EnvironmentVariables.CERT_VARS + EnvironmentVariables.CLIENT_SECRET_VARS)
             set_variables = [v for v in expected_variables if v in os.environ]
             if set_variables:
-                _LOGGER.warning(
-                    "Incomplete environment configuration. These variables are set: %s", ", ".join(set_variables)
+                _LOGGER.log(
+                    logging.INFO if kwargs.get("_within_dac") else logging.WARNING,
+                    "Incomplete environment configuration for EnvironmentCredential. These variables are set: %s",
+                    ", ".join(set_variables),
                 )
             else:
                 _LOGGER.info("No environment configuration found.")

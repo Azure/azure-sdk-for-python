@@ -54,14 +54,16 @@ def _wrap_exception(ex, desired_type):
 def _validate_storage_tablename(table_name):
     if _STORAGE_VALID_TABLE.match(table_name) is None:
         raise ValueError(
-            "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."  # pylint: disable=line-too-long
+            "Storage table names must be alphanumeric, cannot begin with a number, \
+                and must be between 3-63 characters long."
         )
 
 
 def _validate_cosmos_tablename(table_name):
     if _COSMOS_VALID_TABLE.match(table_name) is None:
         raise ValueError(
-            "Cosmos table names must contain from 1-255 characters, and they cannot contain /, \\, #, ?, or a trailing space."  # pylint: disable=line-too-long
+            "Cosmos table names must contain from 1-255 characters, \
+                and they cannot contain /, \\, #, ?, or a trailing space."
         )
 
 
@@ -139,6 +141,7 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
                     additional_data[info.tag] = info.text
         else:
             if error_body:
+                # Attempt to parse from XML element
                 for info in error_body.iter():
                     if info.tag.lower().find("code") != -1:
                         error_code = info.text
@@ -146,6 +149,9 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
                         error_message = info.text
                     else:
                         additional_data[info.tag] = info.text
+    except AttributeError:
+        # Response body wasn't XML, give up trying to parse
+        error_message = str(error_body)
     except DecodeError:
         pass
 
@@ -258,7 +264,7 @@ class TableTransactionError(HttpResponseError):
         try:
             message_sections = self.message.split(":", 1)
             return int(message_sections[0])
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint:disable=broad-except
             return 0
 
 

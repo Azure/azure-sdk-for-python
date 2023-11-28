@@ -11,8 +11,14 @@ from azure.storage.blob import generate_account_sas as generate_blob_account_sas
 from azure.storage.blob import generate_container_sas, generate_blob_sas
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._models import AccountSasPermissions, FileSystemSasPermissions, FileSasPermissions, ResourceTypes, \
+    from ._models import (
+        AccountSasPermissions,
+        DirectorySasPermissions,
+        FileSasPermissions,
+        FileSystemSasPermissions,
+        ResourceTypes,
         UserDelegationKey
+    )
 
 
 def generate_account_sas(
@@ -20,7 +26,7 @@ def generate_account_sas(
         account_key,  # type: str
         resource_types,  # type: Union[ResourceTypes, str]
         permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
+        expiry,  # type: Union[datetime, str]
         **kwargs # type: Any
     ):  # type: (...) -> str
     """Generates a shared access signature for the DataLake service.
@@ -38,17 +44,11 @@ def generate_account_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has been
-        specified in an associated stored access policy.
     :type permission: str or ~azure.storage.filedatalake.AccountSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC.
+        Azure will always convert values to UTC. If a date is passed in
+        without timezone info, it is assumed to be UTC.
     :type expiry: ~datetime.datetime or str
     :keyword start:
         The time at which the shared access signature becomes valid. If
@@ -130,6 +130,10 @@ def generate_file_system_sas(
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
     :paramtype start: datetime or str
+    :keyword str policy_id:
+        A unique value up to 64 characters in length that correlates to a
+        stored access policy. To create a stored access policy, use
+        :func:`~azure.storage.filedatalake.FileSystemClient.set_file_system_access_policy`.
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
@@ -186,7 +190,7 @@ def generate_directory_sas(
         file_system_name,  # type: str
         directory_name,  # type: str
         credential,  # type: Union[str, UserDelegationKey]
-        permission=None,  # type: Optional[Union[FileSasPermissions, str]]
+        permission=None,  # type: Optional[Union[DirectorySasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
         **kwargs # type: Any
     ):
@@ -218,7 +222,7 @@ def generate_directory_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.filedatalake.FileSasPermissions
+    :type permission: str or ~azure.storage.filedatalake.DirectorySasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
@@ -234,6 +238,10 @@ def generate_directory_sas(
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
     :paramtype start: ~datetime.datetime or str
+    :keyword str policy_id:
+        A unique value up to 64 characters in length that correlates to a
+        stored access policy. To create a stored access policy, use
+        :func:`~azure.storage.filedatalake.FileSystemClient.set_file_system_access_policy`.
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
@@ -345,6 +353,10 @@ def generate_file_sas(
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
     :paramtype start: ~datetime.datetime or str
+    :keyword str policy_id:
+        A unique value up to 64 characters in length that correlates to a
+        stored access policy. To create a stored access policy, use
+        :func:`~azure.storage.filedatalake.FileSystemClient.set_file_system_access_policy`.
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address

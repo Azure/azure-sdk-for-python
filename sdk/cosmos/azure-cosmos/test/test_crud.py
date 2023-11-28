@@ -43,7 +43,6 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 import test_config
 import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos import _retry_utility
 import requests
@@ -210,16 +209,10 @@ class CRUDTests(unittest.TestCase):
         before_create_collections_count = len(collections)
         collection_id = 'test_collection_crud ' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
-        created_recorder = RecordDiagnostics()
         created_collection = created_db.create_container(id=collection_id,
                                                          indexing_policy=collection_indexing_policy,
-                                                         partition_key=PartitionKey(path="/pk", kind="Hash"), 
-                                                         response_hook=created_recorder)
+                                                         partition_key=PartitionKey(path="/pk", kind="Hash"))
         self.assertEqual(collection_id, created_collection.id)
-        assert isinstance(created_recorder.headers, Mapping)
-        assert 'Content-Type' in created_recorder.headers
-        assert isinstance(created_recorder.body, Mapping)
-        assert 'id' in created_recorder.body
 
         created_properties = created_collection.read()
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
@@ -2414,37 +2407,6 @@ class CRUDTests(unittest.TestCase):
         created_db.delete_container(created_collection1)
         created_db.delete_container(created_collection2)
 
-    #TODO: fix test
-    @pytest.mark.skip
-    def test_id_unicode_validation(self):
-        # create database
-        created_db = self.databaseForTest
-
-        # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        collection_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है' # cspell:disable-line
-
-        # Special chars for Id
-        collection_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"
-
-        # verify that collections are created with specified IDs
-        created_collection1 = created_db.create_container(
-            id=collection_id1,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-        created_collection2 = created_db.create_container(
-            id=collection_id2,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        self.assertEqual(collection_id1, created_collection1.id)
-        self.assertEqual(collection_id2, created_collection2.id)
-        
-        created_collection1_properties = created_collection1.read()
-        created_collection2_properties = created_collection2.read()
-
-        created_db.client_connection.DeleteContainer(created_collection1_properties['_self'])
-        created_db.client_connection.DeleteContainer(created_collection2_properties['_self'])
-
     def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
 
@@ -2776,6 +2738,52 @@ class CRUDTests(unittest.TestCase):
     #     properties = created_collection.read()
     #     ttl_key = "analyticalStorageTtl"
     #     self.assertTrue(ttl_key in properties and properties[ttl_key] == -1)
+
+    def test_priority_level(self):
+        # These test verify if headers for priority level are sent
+        # Feature must be enabled at the account level
+        # If feature is not enabled the test will still pass as we just verify the headers were sent
+        created_container = self.databaseForTest.create_container_if_not_exists(id="priority_level_container",
+                                                                                partition_key=PartitionKey(path="/pk"))
+        item1 = {"id": "item1", "pk": "pk1"}
+        item2 = {"id": "item2", "pk": "pk2"}
+        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        priority_level_headers = []
+        # mock execute function to check if priority level set in headers
+
+        def priority_mock_execute_function(function, *args, **kwargs):
+            if args:
+                priority_level_headers.append(args[4].headers[HttpHeaders.PriorityLevel]
+                                              if HttpHeaders.PriorityLevel in args[4].headers else '')
+            return self.OriginalExecuteFunction(function, *args, **kwargs)
+        _retry_utility.ExecuteFunction = priority_mock_execute_function
+        # upsert item with high priority
+        created_container.upsert_item(body=item1, priority_level="High")
+        # check if the priority level was passed
+        self.assertEqual(priority_level_headers[-1], "High")
+        # upsert item with low priority
+        created_container.upsert_item(body=item2, priority_level="Low")
+        # check that headers passed low priority
+        self.assertEqual(priority_level_headers[-1], "Low")
+        # Repeat for read operations
+        item1_read = created_container.read_item("item1", "pk1", priority_level="High")
+        self.assertEqual(priority_level_headers[-1], "High")
+        item2_read = created_container.read_item("item2", "pk2", priority_level="Low")
+        self.assertEqual(priority_level_headers[-1], "Low")
+        # repeat for query
+        query = list(created_container.query_items("Select * from c", partition_key="pk1", priority_level="High"))
+
+        self.assertEqual(priority_level_headers[-1], "High")
+
+        # Negative Test: Verify that if we send a value other than High or Low that it will not set the header value
+        item2_read = created_container.read_item("item2", "pk2", priority_level="Medium")
+        self.assertNotEqual(priority_level_headers[-1], "Medium")
+        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+
+
+
+
+
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]

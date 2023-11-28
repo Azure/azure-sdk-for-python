@@ -22,6 +22,7 @@ from .operations import (
     PrivateLinkResourcesOperations,
     SkusOperations,
     VolumeGroupsOperations,
+    VolumeSnapshotsOperations,
     VolumesOperations,
 )
 
@@ -49,14 +50,16 @@ class ElasticSanMgmtClient:  # pylint: disable=client-accepts-api-version-keywor
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.elasticsan.operations.PrivateLinkResourcesOperations
+    :ivar volume_snapshots: VolumeSnapshotsOperations operations
+    :vartype volume_snapshots: azure.mgmt.elasticsan.operations.VolumeSnapshotsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-12-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -87,6 +90,9 @@ class ElasticSanMgmtClient:  # pylint: disable=client-accepts-api-version-keywor
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.volume_snapshots = VolumeSnapshotsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

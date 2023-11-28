@@ -437,18 +437,46 @@
                 "description": "Feature store online store config"
             }
         },
-        "offline_store_connection_target": {
+        "offline_store_target": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store offline store connection target"
             }
         },
-        "online_store_connection_target": {
+        "offline_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store resource group"
+            }
+        },
+        "offline_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store subscription id"
+            }
+        },
+        "online_store_target": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store online store connection target"
+            }
+        },
+        "online_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store resource group"
+            }
+        },
+        "online_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store subscription id"
             }
         },
         "materialization_identity_client_id": {
@@ -529,7 +557,7 @@
                 "description": "Feature store materialization identity name"
             }
         },
-        "grant_materialization_identity_permissions": {
+        "grant_materialization_permissions": {
             "type": "string",
             "defaultValue": "false",
             "allowedValues": [
@@ -557,7 +585,35 @@
             "metadata": {
                 "description": "A flag to determine whether to set up feature store"
             }
-        }
+        },
+        "serverless_compute_settings": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Serverless compute configuration."
+            }
+        },
+        "endpoint_resource_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The resource id that this workspace hub's endpoints should reference."
+            }
+        },
+        "endpoint_kind": {
+            "type": "string",
+            "defaultValue": "AIServices",
+            "metadata": {
+                "description": "The kind of endpoints this workspace hub ought to contain."
+            }
+        },
+        "endpoint_option": {
+            "type": "string",
+            "defaultValue": "new",
+            "metadata": {
+                "description": "Testing value. Do not touch."
+            }
+        } 
     },
     "variables": {
         "tenantId": "[subscription().tenantId]",
@@ -610,39 +666,20 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-            "type": "Microsoft.Insights/components",
-            "tags": "[parameters('tagValues')]",
-            "apiVersion": "2020-02-02-preview",
-            "name": "[parameters('applicationInsightsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
-            "kind": "web",
-            "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
-            ],
-            "properties": {
-                "Application_Type": "web",
-                "WorkspaceResourceId": "[parameters('logAnalyticsArmId')]"
-            }
-        },
-        {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
-            "apiVersion": "2023-04-01-preview",
+            "apiVersion": "2023-08-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
             "kind": "[parameters('kind')]",
             "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]"
-            ],
             "identity": "[parameters('identity')]",
             "properties": {
                 "friendlyName": "[parameters('friendlyName')]",
                 "description": "[parameters('description')]",
-                "applicationInsights": "[variables('applicationInsights')]",
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                "hubResourceId": "[parameters('workspace_hub')]"
+                "hubResourceId": "[parameters('workspace_hub')]",
+                "serverlessComputeSettings": "[parameters('serverless_compute_settings')]"
             }
         }
     ]

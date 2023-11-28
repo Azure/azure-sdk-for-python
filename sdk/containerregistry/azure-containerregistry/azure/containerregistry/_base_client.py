@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional, TypeVar
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials import TokenCredential
@@ -14,6 +14,8 @@ from ._authentication_policy import ContainerRegistryChallengePolicy
 from ._anonymous_exchange_client import AnonymousAccessCredential
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
+
+ClientType = TypeVar("ClientType", bound="ContainerRegistryBaseClient")
 
 
 class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -34,7 +36,7 @@ class ContainerRegistryBaseClient(object):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Optional[TokenCredential], **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: Optional[TokenCredential], **kwargs: Any) -> None:
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential or AnonymousAccessCredential(),
@@ -44,12 +46,12 @@ class ContainerRegistryBaseClient(object):
             **kwargs
         )
 
-    def __enter__(self):
+    def __enter__(self: ClientType) -> ClientType:
         self._client.__enter__()
         self._auth_policy.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._auth_policy.__exit__(*args)
         self._client.__exit__(*args)
 
