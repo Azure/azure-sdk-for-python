@@ -50,10 +50,12 @@ if TYPE_CHECKING:
             Message as uamqp_Message,
             AMQPClientAsync as uamqp_AMQPClientAsync,
         )
+        from uamqp.authentication import JWTTokenAsync
     except ImportError:
         uamqp_authentication = None
         uamqp_Message = None
         uamqp_AMQPClientAsync = None
+        JWTTokenAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
 
     try:
@@ -86,11 +88,11 @@ if TYPE_CHECKING:
             pass
 
         @property
-        def _handler(self) -> Union[uamqp_AMQPClientAsync, AMQPClientAsync]:
+        def _handler(self) -> Union["uamqp_AMQPClientAsync", AMQPClientAsync]:
             """The instance of SendClientAsync or ReceiveClientAsync"""
 
         @property
-        def _internal_kwargs(self) -> dict:
+        def _internal_kwargs(self) -> Dict[Any, Any]:
             """The dict with an event loop that users may pass in to wrap sync calls to async API.
             It's furthur passed to uamqp APIs
             """
@@ -107,7 +109,7 @@ if TYPE_CHECKING:
         def running(self, value):
             pass
 
-        def _create_handler(self, auth: Union[uamqp_authentication.JWTTokenAsync, JWTTokenAuthAsync]) -> None:
+        def _create_handler(self, auth: Union["JWTTokenAsync", JWTTokenAuthAsync]) -> None:
             pass
 
     _MIXIN_BASE = AbstractConsumerProducer

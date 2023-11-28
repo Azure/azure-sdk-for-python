@@ -73,7 +73,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._shared_access_key
 
 
-def parse_connection_string(conn_str: str) -> Dict[str, Any]:
+def parse_connection_string(conn_str: str) -> EventHubConnectionStringProperties:
     """Parse the connection string into a properties bag containing its component parts.
 
     :param conn_str: The connection string that has to be parsed.

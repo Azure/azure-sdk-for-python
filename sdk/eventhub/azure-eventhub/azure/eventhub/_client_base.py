@@ -333,7 +333,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             kwargs["credential"] = EventHubSharedKeyCredential(policy, key)
         return kwargs
 
-    def _create_auth(self) -> Union[uamqp_JWTTokenAuth, JWTTokenAuth]:
+    def _create_auth(self) -> Union["uamqp_JWTTokenAuth", JWTTokenAuth]:
         """
         Create an ~uamqp.authentication.SASTokenAuth instance
          to authenticate the session.
