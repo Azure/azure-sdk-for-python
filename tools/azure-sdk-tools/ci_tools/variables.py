@@ -59,5 +59,14 @@ def in_ci() -> int:
     return 0
 
 
+def in_public() -> int:
+    # PUBLIC is set to `true` on github actions agents, return 3
+    # 0 otherwise
+    if os.getenv("PUBLIC", None):
+        return 3
+
+    return 0
+
+
 DEV_BUILD_IDENTIFIER = os.getenv("SDK_DEV_BUILD_IDENTIFIER", "a")
 DEFAULT_BUILD_ID = os.getenv("GITHUB_RUN_ID", os.getenv("BUILD.BUILDID", os.getenv("SDK_BUILD_ID", "20220101.1")))
