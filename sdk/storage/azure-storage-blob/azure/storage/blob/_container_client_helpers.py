@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING, Union
-from urllib.parse import quote, unquote, urlparse
+from urllib.parse import quote, urlparse
 
 from azure.core import MatchConditions
 from azure.core.pipeline.transport import HttpRequest
@@ -15,8 +15,6 @@ from ._generated import AzureBlobStorage
 from ._models import BlobProperties
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from azure.core.credentials_async import AsyncTokenCredential
     from urllib.parse import ParseResult
     from ._models import StandardBlobTier, PremiumPageBlobTier
 
@@ -140,7 +138,7 @@ def _generate_delete_blobs_options(
     container_name,
     blobs: Union[str, Dict[str, Any], BlobProperties],
     **kwargs: Any
-    ):
+):
     timeout = kwargs.pop('timeout', None)
     raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
     delete_snapshots = kwargs.pop('delete_snapshots', None)
@@ -195,7 +193,13 @@ def _generate_delete_blobs_options(
 # This code is a copy from _generated.
 # Once Autorest is able to provide request preparation this code should be removed.
 def _generate_set_tiers_subrequest_options(
-    client, tier, snapshot=None, version_id=None, rehydrate_priority=None, lease_access_conditions=None, **kwargs
+    client,
+    tier,
+    snapshot=None,
+    version_id=None,
+    rehydrate_priority=None,
+    lease_access_conditions=None,
+    **kwargs
 ):
     if not tier:
         raise ValueError("A blob tier must be specified")
@@ -233,13 +237,13 @@ def _generate_set_tiers_subrequest_options(
     return query_parameters, header_parameters
 
 def _generate_set_tiers_options(
-        client,
-        query_str,
-        container_name,
-        blob_tier: Optional[Union[str, 'StandardBlobTier', 'PremiumPageBlobTier']],
-        blobs: Union[str, Dict[str, Any], BlobProperties],
-        **kwargs: Any
-    ):
+    client,
+    query_str,
+    container_name,
+    blob_tier: Optional[Union[str, 'StandardBlobTier', 'PremiumPageBlobTier']],
+    blobs: Union[str, Dict[str, Any], BlobProperties],
+    **kwargs: Any
+):
     timeout = kwargs.pop('timeout', None)
     raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
     rehydrate_priority = kwargs.pop('rehydrate_priority', None)

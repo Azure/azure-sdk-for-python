@@ -38,11 +38,11 @@ from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlo
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
 from ._blob_client_async import BlobClient
 from .._container_client_helpers import (
-    _parse_url,
-    _get_blob_name,
     _format_url,
+    _generate_delete_blobs_options,
     _generate_set_tiers_options,
-    _generate_delete_blobs_options
+    _get_blob_name,
+    _parse_url
 )
 from ._lease_async import BlobLeaseClient
 from ._list_blobs_helper import BlobNamesPaged, BlobPropertiesPaged, BlobPrefix

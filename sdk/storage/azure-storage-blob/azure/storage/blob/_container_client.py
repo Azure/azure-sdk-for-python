@@ -30,11 +30,11 @@ from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
 from ._blob_client import BlobClient
 from ._container_client_helpers import (
-    _parse_url,
-    _get_blob_name,
     _format_url,
+    _generate_delete_blobs_options,
     _generate_set_tiers_options,
-    _generate_delete_blobs_options
+    _get_blob_name,
+    _parse_url
 )
 from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
