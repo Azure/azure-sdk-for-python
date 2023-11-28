@@ -5,27 +5,35 @@
 # --------------------------------------------------------------------------
 
 
-from typing import Optional
+from typing import Any, Optional, Union
 import uuid
 import logging
 
 from .endpoints import Source, Target
 from .constants import DEFAULT_LINK_CREDIT, SessionState, LinkState, Role, SenderSettleMode, ReceiverSettleMode
 from .performatives import AttachFrame, DetachFrame
+from .session import Session
 
-from .error import ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
+from .error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Link(object):  # pylint: disable=too-many-instance-attributes
+class Link():  # pylint: disable=too-many-instance-attributes
     """An AMQP Link.
 
     This object should not be used directly - instead use one of directional
     derivatives: Sender or Receiver.
     """
 
-    def __init__(self, session, handle, name, role, **kwargs):
+    def __init__(
+            self,
+            session: Session,
+            handle: int,
+            name: Optional[str] = None,
+            role: bool = Role.Receiver,
+            **kwargs
+        ) -> None:
         self.state = LinkState.DETACHED
         self.name = name or str(uuid.uuid4())
         self.handle = handle
@@ -88,13 +96,13 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self._is_closed = False
         self._on_link_state_change = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
-        self._error = None
+        self._error:  Union[AMQPLinkRedirect, AMQPLinkError]
 
-    def __enter__(self):
+    def __enter__(self) -> "Link":
         self.attach()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args) -> None:
         self.detach(close=True)
 
     @classmethod
@@ -103,14 +111,14 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         # check link_create_from_endpoint in C lib
         raise NotImplementedError("Pending")
 
-    def get_state(self):
+    def get_state(self) -> LinkState:
         try:
             raise self._error
         except TypeError:
             pass
         return self.state
 
-    def _check_if_closed(self):
+    def _check_if_closed(self) -> None:
         if self._is_closed:
             try:
                 raise self._error
@@ -118,8 +126,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
                 raise AMQPConnectionError(condition=ErrorCondition.InternalError,
                                           description="Link already closed.") from None
 
-    def _set_state(self, new_state):
-        # type: (LinkState) -> None
+    def _set_state(self, new_state: LinkState) -> None:
         """Update the link state.
         :param ~pyamqp.constants.LinkState new_state: The new state.
         """
@@ -129,13 +136,14 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self.state = new_state
         _LOGGER.info("Link state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
         try:
-            self._on_link_state_change(previous_state, new_state)
+            if self._on_link_state_change is not None:
+                self._on_link_state_change(previous_state, new_state)
         except TypeError:
             pass
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
 
-    def _on_session_state_change(self):
+    def _on_session_state_change(self) -> None:
         if self._session.state == SessionState.MAPPED:
             if not self._is_closed and self.state == LinkState.DETACHED:
                 self._outgoing_attach()
@@ -143,7 +151,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         elif self._session.state == SessionState.DISCARDING:
             self._set_state(LinkState.DETACHED)
 
-    def _outgoing_attach(self):
+    def _outgoing_attach(self) -> None:
         self.delivery_count = self.initial_delivery_count
         attach_frame = AttachFrame(
             name=self.name,
@@ -165,7 +173,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
             _LOGGER.debug("-> %r", attach_frame, extra=self.network_trace_params)
         self._session._outgoing_attach(attach_frame) # pylint: disable=protected-access
 
-    def _incoming_attach(self, frame):
+    def _incoming_attach(self, frame) -> None:
         if self.network_trace:
             _LOGGER.debug("<- %r", AttachFrame(*frame), extra=self.network_trace_params)
         if self._is_closed:
@@ -192,7 +200,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
             except Exception as e:  # pylint: disable=broad-except
                 _LOGGER.warning("Callback for link attach raised error: %r", e, extra=self.network_trace_params)
 
-    def _outgoing_flow(self, **kwargs):
+    def _outgoing_flow(self, **kwargs: Any) -> None:
         flow_frame = {
             "handle": self.handle,
             "delivery_count": self.delivery_count,
@@ -210,7 +218,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
     def _incoming_disposition(self, frame):
         pass
 
-    def _outgoing_detach(self, close=False, error=None):
+    def _outgoing_detach(self, close: bool = False, error: Optional[AMQPError] = None) -> None:
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
             _LOGGER.debug("-> %r", detach_frame, extra=self.network_trace_params)
@@ -218,7 +226,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         if close:
             self._is_closed = True
 
-    def _incoming_detach(self, frame):
+    def _incoming_detach(self, frame) -> None:
         if self.network_trace:
             _LOGGER.debug("<- %r", DetachFrame(*frame), extra=self.network_trace_params)
         if self.state == LinkState.ATTACHED:
@@ -237,13 +245,13 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         else:
             self._set_state(LinkState.DETACHED)
 
-    def attach(self):
+    def attach(self) -> None:
         if self._is_closed:
             raise ValueError("Link already closed.")
         self._outgoing_attach()
         self._set_state(LinkState.ATTACH_SENT)
 
-    def detach(self, close=False, error=None):
+    def detach(self, close: bool = False, error: Optional[AMQPError] = None) -> None:
         if self.state in (LinkState.DETACHED, LinkState.DETACH_SENT, LinkState.ERROR):
             return
         try:
@@ -258,6 +266,6 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
             _LOGGER.info("An error occurred when detaching the link: %r", exc, extra=self.network_trace_params)
             self._set_state(LinkState.DETACHED)
 
-    def flow(self, *, link_credit: Optional[int] = None, **kwargs) -> None:
+    def flow(self, *, link_credit: Optional[int] = None, **kwargs: Any) -> None:
         self.current_link_credit = link_credit if link_credit is not None else self.link_credit
         self._outgoing_flow(**kwargs)
