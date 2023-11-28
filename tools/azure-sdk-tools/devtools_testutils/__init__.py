@@ -17,8 +17,7 @@ from .storage_testcase import (
 
 # cSpell:disable
 from .envvariable_loader import EnvironmentVariableLoader
-
-PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
+from .exceptions import AzureTestError, ReservedResourceNameError
 from .proxy_fixtures import environment_variables, recorded_test, variable_recorder
 from .proxy_startup import start_test_proxy, stop_test_proxy, test_proxy
 from .proxy_testcase import recorded_by_proxy
@@ -53,6 +52,8 @@ from .cert import create_combined_bundle
 from .helpers import ResponseCallback, RetryCounter, is_live_and_not_recording, trim_kwargs_from_test_function
 from .fake_credentials import FakeTokenCredential
 
+PowerShellPreparer = EnvironmentVariableLoader  # Backward compat
+
 __all__ = [
     "add_api_version_transform",
     "add_body_key_sanitizer",
@@ -75,7 +76,9 @@ __all__ = [
     "AzureMgmtPreparer",
     "AzureMgmtRecordedTestCase",
     "AzureRecordedTestCase",
+    "AzureTestError",
     "FakeResource",
+    "ReservedResourceNameError",
     "ResourceGroupPreparer",
     "StorageAccountPreparer",
     "BlobAccountPreparer",

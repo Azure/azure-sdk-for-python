@@ -11,8 +11,7 @@ import inspect
 import json
 import requests
 
-from devtools_testutils import EnvironmentVariableLoader
-from azure_devtools.scenario_tests.exceptions import AzureTestError
+from devtools_testutils import AzureTestError, EnvironmentVariableLoader
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
