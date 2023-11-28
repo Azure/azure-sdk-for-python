@@ -101,7 +101,8 @@ def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         try:
-            error_body = error_body or storage_error.response.reason
+            if error_body is None or len(error_body) == 0:
+                error_body = storage_error.response.reason
         except AttributeError:
             error_body = ''
         # If it is an XML response
