@@ -811,7 +811,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
             message: Union["Message", "pyamqp_Message"],
             receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
             frame: Optional["TransferFrame"] = None,
-            **kwargs
+            **kwargs: Any
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
@@ -837,13 +837,13 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
             ) from None
         self._expiry: Optional[datetime.datetime] = None
 
-    def __getstate__(self):
+    def __getstate__(self) -> Dict[str, Any]:
         state = self.__dict__.copy()
         state['_receiver'] = None
         state['_uamqp_message'] = None
         return state
 
-    def __setstate__(self, state):
+    def __setstate__(self, state: Dict[str, Any]) -> None:
         self.__dict__.update(state)
 
     @property

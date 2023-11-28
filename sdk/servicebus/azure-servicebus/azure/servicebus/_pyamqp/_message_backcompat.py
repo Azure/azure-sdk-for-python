@@ -25,6 +25,7 @@ from .message import Header, Properties
 if TYPE_CHECKING:
     from ..amqp._amqp_message import AmqpAnnotatedMessage
     from .message import Message
+    from .error import ErrorCondition
 
 def _encode_property(value):
     try:
@@ -100,7 +101,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
             "to_outgoing_amqp_message"
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._message)
 
     def _can_settle_message(self):
@@ -148,7 +149,12 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
             return True
         return False
 
-    def reject(self, condition=None, description=None, info=None) -> bool:
+    def reject(
+        self,
+        condition: Optional[Union[bytes, "ErrorCondition"]] = None,
+        description: Optional[str] = None,
+        info: Optional[Dict[Any, Any]] = None
+    ) -> bool:
         if self._can_settle_message():
             self._settler.settle_messages(
                 self.delivery_no,
@@ -168,7 +174,12 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
             return True
         return False
 
-    def modify(self, failed, deliverable, annotations=None) -> bool:
+    def modify(
+        self,
+        failed: bool,
+        deliverable: bool,
+        annotations: Dict[Union[str, bytes], Any] = None
+    ) -> bool:
         if self._can_settle_message():
             self._settler.settle_messages(
                 self.delivery_no,
@@ -242,9 +253,9 @@ class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attr
 
 
 class LegacyMessageHeader(object):
-    def __init__(self, header):
+    def __init__(self, header: Header) -> None:
         self.delivery_count: Optional[int] = header.delivery_count or 0
-        self.time_to_live: Optional[int] = header.time_to_live
+        self.time_to_live: Optional[int] = header.ttl
         self.first_acquirer: Optional[bool] = header.first_acquirer
         self.durable: Optional[bool] = header.durable
         self.priority: Optional[int] = header.priority

@@ -150,12 +150,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
         self._connection_verify = kwargs.get("connection_verify")
 
-    def __enter__(self):
+    def __enter__(self) -> "ServiceBusClient":
         if self._connection_sharing:
             self._create_connection()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def _create_connection(self):

@@ -80,7 +80,7 @@ class SenderMixin(object):
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
         self._name = kwargs.get("client_identifier") or f"SBSender-{uuid.uuid4()}"
         self._max_message_size_on_link = 0
-        self.entity_name = self._entity_name
+        self.entity_name: str = self._entity_name
 
     @classmethod
     def _build_schedule_request(cls, schedule_time_utc, amqp_transport, tracing_attributes, *messages):
