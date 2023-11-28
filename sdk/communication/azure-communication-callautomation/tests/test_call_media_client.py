@@ -26,7 +26,10 @@ from azure.communication.callautomation._generated.models import (
     ContinuousDtmfRecognitionRequest,
     SendDtmfRequest,
     StartHoldMusicRequest,
-    StopHoldMusicRequest
+    StopHoldMusicRequest,
+    StartTranscriptionRequest,
+    StopTranscriptionRequest,
+    UpdateTranscriptionRequest,
 )
 from azure.communication.callautomation._generated.models._enums import (
     RecognizeInputType,
@@ -44,6 +47,7 @@ class TestCallMediaClient(unittest.TestCase):
         self.target_user = PhoneNumberIdentifier(self.phone_number)
         self.tones = [DtmfTone.ONE, DtmfTone.TWO, DtmfTone.THREE, DtmfTone.POUND]
         self.operation_context = "test_operation_context"
+        self.locale = "en-US"
         self.call_media_operations = Mock()
 
         self.call_connection_client = CallConnectionClient(
@@ -376,3 +380,53 @@ class TestCallMediaClient(unittest.TestCase):
         actual_unhold_request = mock_hold.call_args[0][1]
 
         self.assertEqual(expected_unhold_request.target_participant['raw_id'], actual_unhold_request.target_participant['raw_id'])
+
+    def test_start_transcription(self):
+        mock_start_transcription = Mock()
+        self.call_media_operations.start_transcription = mock_start_transcription
+        self.call_connection_client.start_transcription(locale=self.locale,
+                                                        operation_context=self.operation_context)
+
+        expected_start_transcription_request = StartTranscriptionRequest(
+            locale=self.locale,
+            operation_context=self.operation_context)
+
+        mock_start_transcription.assert_called_once()
+        actual_call_connection_id = mock_start_transcription.call_args[0][0]
+        actual_start_transcription_request = mock_start_transcription.call_args[0][1]
+
+        self.assertEqual(self.call_connection_id, actual_call_connection_id)
+        self.assertEqual(expected_start_transcription_request.locale,
+                         actual_start_transcription_request.locale)
+        self.assertEqual(expected_start_transcription_request.operation_context,
+                         actual_start_transcription_request.operation_context)
+
+    def test_stop_transcription(self):
+        mock_stop_transcription = Mock()
+        self.call_media_operations.stop_transcription = mock_stop_transcription
+        self.call_connection_client.stop_transcription(operation_context=self.operation_context)
+
+        expected_stop_transcription_request = StopTranscriptionRequest(operation_context=self.operation_context)
+
+        mock_stop_transcription.assert_called_once()
+        actual_call_connection_id = mock_stop_transcription.call_args[0][0]
+        actual_stop_transcription_request = mock_stop_transcription.call_args[0][1]
+
+        self.assertEqual(self.call_connection_id, actual_call_connection_id)
+        self.assertEqual(expected_stop_transcription_request.operation_context,
+                         actual_stop_transcription_request.operation_context)
+
+    def test_update_transcription(self):
+        mock_update_transcription = Mock()
+        self.call_media_operations.update_transcription = mock_update_transcription
+        self.call_connection_client.update_transcription(locale=self.locale)
+
+        expected_update_transcription_request = UpdateTranscriptionRequest(locale=self.locale)
+
+        mock_update_transcription.assert_called_once()
+        actual_call_connection_id = mock_update_transcription.call_args[0][0]
+        actual_update_transcription_request = mock_update_transcription.call_args[0][1]
+
+        self.assertEqual(self.call_connection_id, actual_call_connection_id)
+        self.assertEqual(expected_update_transcription_request.locale,
+                         actual_update_transcription_request.locale)
