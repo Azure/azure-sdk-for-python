@@ -94,9 +94,6 @@ Set the values of the `client ID`, `tenant ID`, and `client secret` of the AAD a
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_aad_credential -->
 
 ```python
-"""DefaultAzureCredential will use the values from these environment
-variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
-"""
 from azure.identity import DefaultAzureCredential
 from azure.ai.translation.text import TextTranslationClient
 
