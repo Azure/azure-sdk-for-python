@@ -664,4 +664,4 @@ additional questions or comments.
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_cli_key_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account/keys?view=azure-cli-latest#az-cognitiveservices-account-keys-list
 [azure_core_exception]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
-[authenticate_with_microsoft_entra_id]: https://learn.microsoft.com/en-us/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id
+[authenticate_with_microsoft_entra_id]: https://learn.microsoft.com/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id
