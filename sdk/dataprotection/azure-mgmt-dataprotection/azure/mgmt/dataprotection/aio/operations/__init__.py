@@ -17,6 +17,9 @@ from ._data_protection_operations_operations import DataProtectionOperationsOper
 from ._backup_policies_operations import BackupPoliciesOperations
 from ._backup_instances_operations import BackupInstancesOperations
 from ._recovery_points_operations import RecoveryPointsOperations
+from ._fetch_secondary_recovery_points_operations import FetchSecondaryRecoveryPointsOperations
+from ._fetch_cross_region_restore_job_operations import FetchCrossRegionRestoreJobOperations
+from ._fetch_cross_region_restore_jobs_operations import FetchCrossRegionRestoreJobsOperations
 from ._jobs_operations import JobsOperations
 from ._restorable_time_ranges_operations import RestorableTimeRangesOperations
 from ._export_jobs_operations import ExportJobsOperations
@@ -41,6 +44,9 @@ __all__ = [
     "BackupPoliciesOperations",
     "BackupInstancesOperations",
     "RecoveryPointsOperations",
+    "FetchSecondaryRecoveryPointsOperations",
+    "FetchCrossRegionRestoreJobOperations",
+    "FetchCrossRegionRestoreJobsOperations",
     "JobsOperations",
     "RestorableTimeRangesOperations",
     "ExportJobsOperations",
