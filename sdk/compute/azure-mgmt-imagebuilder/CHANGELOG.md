@@ -1,5 +1,12 @@
 # Release History
 
+## 1.3.0 (2023-12-18)
+
+### Features Added
+
+  - Model ImageTemplate has a new parameter error_handling
+  - Model ImageTemplateUpdateParameters has a new parameter properties
+
 ## 1.2.0 (2023-04-20)
 
 ### Features Added
