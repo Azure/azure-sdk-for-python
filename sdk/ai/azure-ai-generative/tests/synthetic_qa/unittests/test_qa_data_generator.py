@@ -116,7 +116,9 @@ class TestQADataGenerator:
 
             for i in range(0,len(expected_lines)):
                 assert expected_lines[i] == actual_lines[i]
-        except:
+        except Exception as e:
+            # Still raise exception
+            print(f"Exception encountered in test: {e}")
             raise
         finally:
             # clean up file
