@@ -64,9 +64,7 @@ if TYPE_CHECKING:
             BatchMessage,
         )
     except ImportError:
-        Message: "Message" = None
-        BatchMessage: "BatchMessage" = None
-
+        pass
 
     from ._transport._base import AmqpTransport
 
