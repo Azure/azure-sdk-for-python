@@ -77,7 +77,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            self._endpoint,
+            endpoint=self._endpoint,
             authentication_policy=BearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs
@@ -169,10 +169,9 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
             **kwargs)
 
         errors = None
-        if hasattr(create_chat_thread_result, 'errors') and \
-                create_chat_thread_result.errors is not None:
-            errors = CommunicationErrorResponseConverter._convert(  # pylint:disable=protected-access
-                participants=[thread_participants],
+        if hasattr(create_chat_thread_result, 'invalid_participants'):
+            errors = CommunicationErrorResponseConverter.convert(
+                participants=thread_participants or [],
                 chat_errors=create_chat_thread_result.invalid_participants
             )
 

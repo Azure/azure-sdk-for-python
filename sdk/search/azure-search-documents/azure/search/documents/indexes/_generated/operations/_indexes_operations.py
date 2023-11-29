@@ -38,7 +38,7 @@ def build_create_request(*, x_ms_client_request_id: Optional[str] = None, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -64,7 +64,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -96,7 +96,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -139,7 +139,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -169,7 +169,7 @@ def build_get_request(index_name: str, *, x_ms_client_request_id: Optional[str] 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -197,7 +197,7 @@ def build_get_statistics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -225,7 +225,7 @@ def build_analyze_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -281,7 +281,7 @@ class IndexesOperations:
         """Creates a new search index.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Index
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Index
 
         :param index: The definition of the index to create. Required.
         :type index: ~search_service_client.models.SearchIndex
@@ -308,7 +308,7 @@ class IndexesOperations:
         """Creates a new search index.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Index
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Index
 
         :param index: The definition of the index to create. Required.
         :type index: IO
@@ -333,7 +333,7 @@ class IndexesOperations:
         """Creates a new search index.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Index
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Index
 
         :param index: The definition of the index to create. Is either a SearchIndex type or a IO type.
          Required.
@@ -415,10 +415,10 @@ class IndexesOperations:
         """Lists all indexes available for a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/List-Indexes
+           - https://docs.microsoft.com/rest/api/searchservice/List-Indexes
 
         :param select: Selects which top-level properties of the index definitions to retrieve.
-         Specified as a comma-separated list of JSON property names, or ``*`` for all properties. The
+         Specified as a comma-separated list of JSON property names, or '*' for all properties. The
          default is all properties. Default value is None.
         :type select: str
         :param request_options: Parameter group. Default value is None.
@@ -528,7 +528,7 @@ class IndexesOperations:
         """Creates a new search index or updates an index if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Index
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Index
 
         :param index_name: The definition of the index to create or update. Required.
         :type index_name: str
@@ -577,7 +577,7 @@ class IndexesOperations:
         """Creates a new search index or updates an index if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Index
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Index
 
         :param index_name: The definition of the index to create or update. Required.
         :type index_name: str
@@ -624,7 +624,7 @@ class IndexesOperations:
         """Creates a new search index or updates an index if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Index
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Index
 
         :param index_name: The definition of the index to create or update. Required.
         :type index_name: str
@@ -739,7 +739,7 @@ class IndexesOperations:
         code, and a backup of the primary data source in case you need to re-build the index.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Delete-Index
+           - https://docs.microsoft.com/rest/api/searchservice/Delete-Index
 
         :param index_name: The name of the index to delete. Required.
         :type index_name: str
@@ -811,7 +811,7 @@ class IndexesOperations:
         """Retrieves an index definition.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Get-Index
+           - https://docs.microsoft.com/rest/api/searchservice/Get-Index
 
         :param index_name: The name of the index to retrieve. Required.
         :type index_name: str
@@ -879,7 +879,7 @@ class IndexesOperations:
         """Returns statistics for the given index, including a document count and storage usage.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Get-Index-Statistics
+           - https://docs.microsoft.com/rest/api/searchservice/Get-Index-Statistics
 
         :param index_name: The name of the index for which to retrieve statistics. Required.
         :type index_name: str
@@ -953,7 +953,7 @@ class IndexesOperations:
         """Shows how an analyzer breaks text into tokens.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/test-analyzer
+           - https://docs.microsoft.com/rest/api/searchservice/test-analyzer
 
         :param index_name: The name of the index for which to test an analyzer. Required.
         :type index_name: str
@@ -983,7 +983,7 @@ class IndexesOperations:
         """Shows how an analyzer breaks text into tokens.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/test-analyzer
+           - https://docs.microsoft.com/rest/api/searchservice/test-analyzer
 
         :param index_name: The name of the index for which to test an analyzer. Required.
         :type index_name: str
@@ -1011,7 +1011,7 @@ class IndexesOperations:
         """Shows how an analyzer breaks text into tokens.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/test-analyzer
+           - https://docs.microsoft.com/rest/api/searchservice/test-analyzer
 
         :param index_name: The name of the index for which to test an analyzer. Required.
         :type index_name: str
