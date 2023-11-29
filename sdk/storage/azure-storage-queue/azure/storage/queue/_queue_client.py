@@ -301,7 +301,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def set_queue_metadata(
         self, metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
@@ -425,7 +425,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def send_message(
-        self, content: Any,
+        self, content: Optional[object],
         *,
         visibility_timeout: Optional[int] = None,
         time_to_live: Optional[int] = None,
@@ -444,7 +444,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
 
-        :param Any content:
+        :param Optional[object] content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str. The encoded message can be up to
             64KB in size.
@@ -695,7 +695,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def update_message(
         self, message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
-        content: Optional[Any] = None,
+        content: Optional[object] = None,
         *,
         visibility_timeout: Optional[int] = None,
         **kwargs: Any
@@ -720,7 +720,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
-        :param Any content:
+        :param Optional[object] content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str.
         :keyword int visibility_timeout:
