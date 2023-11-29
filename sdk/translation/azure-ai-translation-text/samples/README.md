@@ -66,9 +66,9 @@ text_translator = TextTranslationClient(endpoint=endpoint, credential=credential
 
 ## Entra Authentication
 
-`AzureKeyCredential` authentication is used in most of the examples, but you can also authenticate with Entra (Azure Active Directory) using the [Azure Identity library][azure_identity].  Note that regional endpoints do not support AAD authentication.
+`AzureKeyCredential` authentication is used in most of the examples, but you can also authenticate with Entra (Azure Active Directory) using the [Azure Identity library][azure_identity].  Note that global endpoints do not support AAD authentication.
 
-Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.
+Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.  Use this value for the `endpoint` variable for `AZURE_TEXT_TRANSLATION_ENDPOINT`.
 
 To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below, or other credential providers provided with the Azure SDK, please install the Azure.Identity package:
 
