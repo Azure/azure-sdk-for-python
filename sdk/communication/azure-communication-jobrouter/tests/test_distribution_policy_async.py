@@ -12,7 +12,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from _router_test_case_async import AsyncRouterRecordedTestCase
 from _decorators_async import RouterPreparersAsync
 from _validators import DistributionPolicyValidator
-from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -55,9 +54,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
 
@@ -85,9 +82,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
 
@@ -104,7 +99,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 mode_copy = copy.deepcopy(mode)
                 mode_copy.min_concurrent_offers = 2
                 mode_copy.max_concurrent_offers = 2
-                distribution_policy_response.mode = mode
+                distribution_policy_response.mode = mode_copy
 
                 updated_distribution_policy = await router_client.upsert_distribution_policy(
                     dp_identifier, distribution_policy_response
@@ -133,9 +128,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
 
@@ -179,9 +172,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
 
@@ -218,9 +209,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=dp_identifier, offer_expires_after_seconds=10.0, mode=mode
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    dp_identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(dp_identifier, policy)
 
                 assert distribution_policy_response is not None
                 DistributionPolicyValidator.validate_distribution_policy(
@@ -253,9 +242,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     name=identifier, offer_expires_after_seconds=10.0, mode=distribution_modes[0]
                 )
 
-                distribution_policy_response = await router_client.upsert_distribution_policy(
-                    identifier, policy
-                )
+                distribution_policy_response = await router_client.upsert_distribution_policy(identifier, policy)
 
                 # add for cleanup
                 self.distribution_policy_ids[self._testMethodName].append(identifier)

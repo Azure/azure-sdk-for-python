@@ -4,21 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Union, Dict, Any, Optional
-
+from urllib.parse import quote
 from uuid import UUID
-import logging
 from datetime import datetime, timezone
 
 from ._entity import EntityProperty, EdmType, TableEntity
 from ._common_conversion import _decode_base64_to_bytes
-
-
-_LOGGER = logging.getLogger(__name__)
-
-try:
-    from urllib.parse import quote
-except ImportError:
-    from urllib2 import quote  # type: ignore
 
 
 class TablesEntityDatetime(datetime):
@@ -181,12 +172,8 @@ def _convert_to_entity(entry_element):
                 mtype = EdmType.INT64
 
         # Add type for String
-        try:
-            if isinstance(value, unicode) and mtype is None:  # type: ignore
-                mtype = EdmType.STRING
-        except NameError:
-            if isinstance(value, str) and mtype is None:
-                mtype = EdmType.STRING
+        if isinstance(value, str) and mtype is None:
+            mtype = EdmType.STRING
 
         # no type info, property should parse automatically
         if not mtype:
@@ -251,16 +238,16 @@ def _normalize_headers(headers):
     return normalized
 
 
-def _return_headers_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def _return_headers_and_deserialized(_, deserialized, response_headers):
     return _normalize_headers(response_headers), deserialized
 
 
-def _return_context_and_deserialized(response, deserialized, response_headers):  # pylint: disable=unused-argument
+def _return_context_and_deserialized(response, deserialized, response_headers):
     return response.context["location_mode"], deserialized, response_headers
 
 
 def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    result = {
+    result: Dict[str, Any] = {
         "date": metadata.pop("date", None),
         "etag": metadata.pop("etag", None),
         "version": metadata.pop("version", None),
@@ -268,5 +255,5 @@ def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str,
     preference = metadata.pop("preference_applied", None)
     if preference:
         result["preference_applied"] = preference
-        result["content"] = content  # type: ignore
+        result["content"] = content
     return result

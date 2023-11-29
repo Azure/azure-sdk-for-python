@@ -18,6 +18,8 @@ def get_http_request_kwargs(kwargs):
 def get_content_type(format: str):  # pylint:disable=redefined-builtin
     if format.lower() == SchemaFormat.CUSTOM.value.lower():
         return "text/plain; charset=utf-8"
+    if format.lower() == SchemaFormat.PROTOBUF.value.lower():
+        return "text/vnd.ms.protobuf"
     return f"application/json; serialization={format}"
 
 

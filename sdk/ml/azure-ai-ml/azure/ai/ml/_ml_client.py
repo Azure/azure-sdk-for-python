@@ -24,6 +24,9 @@ from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
+from azure.ai.ml._restclient.workspace_dataplane import (
+    AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
@@ -290,6 +293,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_workspace_dataplane = ServiceClientWorkspaceDataplane(
+            subscription_id=self._operation_scope._subscription_id,
+            credential=self._credential,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._service_client_02_2022_preview = ServiceClient022022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
@@ -402,13 +412,15 @@ class MLClient:
             self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
+            requests_pipeline=self._requests_pipeline,
+            dataplane_client=self._service_client_workspace_dataplane,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -556,6 +568,7 @@ class MLClient:
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
+            service_client_08_2023_preview=self._service_client_08_2023_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
@@ -585,7 +598,7 @@ class MLClient:
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -609,7 +622,7 @@ class MLClient:
 
         self._workspace_hubs = WorkspaceHubOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,

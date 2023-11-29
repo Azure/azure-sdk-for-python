@@ -31,12 +31,12 @@ def main():
 
     response = client.failover_groups.get(
         resource_group_name="Default",
-        server_name="failover-group-primary-server",
-        failover_group_name="failover-group-test",
+        server_name="failovergroupprimaryserver",
+        failover_group_name="failovergrouptest3",
     )
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-11-01-preview/examples/FailoverGroupGet.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-02-01-preview/examples/FailoverGroupGet.json
 if __name__ == "__main__":
     main()

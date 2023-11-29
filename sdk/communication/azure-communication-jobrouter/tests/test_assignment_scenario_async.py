@@ -13,7 +13,6 @@ from azure.core.exceptions import (
     HttpResponseError,
 )
 from _router_test_case_async import AsyncRouterRecordedTestCase
-from _shared.asynctestcase import AsyncCommunicationTestCase
 
 from _decorators_async import RouterPreparersAsync
 from azure.communication.jobrouter._shared.utils import parse_connection_str
@@ -38,7 +37,7 @@ from azure.communication.jobrouter.models import (
     CancelJobOptions,
     CompleteJobOptions,
     CloseJobOptions,
-    DeclineJobOfferOptions
+    DeclineJobOfferOptions,
 )
 
 
@@ -95,9 +94,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
                 mode=LongestIdleMode(min_concurrent_offers=1, max_concurrent_offers=1),
             )
 
-            distribution_policy = await client.upsert_distribution_policy(
-                distribution_policy_id, policy
-            )
+            distribution_policy = await client.upsert_distribution_policy(distribution_policy_id, policy)
 
             # add for cleanup later
             if self._testMethodName in self.distribution_policy_ids:
@@ -232,15 +229,14 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
 
             with pytest.raises(HttpResponseError) as sre:
                 await router_client.decline_job_offer(
-                    worker_id = self.get_router_worker_id(), offer_id = offer_id,
-                    decline_job_offer_options = DeclineJobOfferOptions(retry_offer_at = datetime.min)
+                    worker_id=self.get_router_worker_id(),
+                    offer_id=offer_id,
+                    options=DeclineJobOfferOptions(retry_offer_at=datetime.min),
                 )
             assert sre is not None
 
             # unassign job
-            unassign_job_result: UnassignJobResult = await router_client.unassign_job(
-                router_job.id, assignment_id
-            )
+            unassign_job_result: UnassignJobResult = await router_client.unassign_job(router_job.id, assignment_id)
 
             # accept unassigned job
             await self._poll_until_no_exception(
@@ -268,10 +264,10 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             assignment_id = accept_job_offer_result.assignment_id
 
             # complete job
-            await router_client.complete_job(job_identifier, CompleteJobOptions(assignment_id=assignment_id))
+            await router_client.complete_job(job_identifier, assignment_id)
 
             # close job
-            await router_client.close_job(job_identifier, CloseJobOptions(assignment_id=assignment_id))
+            await router_client.close_job(job_identifier, assignment_id)
 
             # validate post closure job details
             queried_job: RouterJob = await router_client.get_job(job_identifier)

@@ -26,17 +26,16 @@ from azure.mgmt.hybridcontainerservice import HybridContainerServiceMgmtClient
 def main():
     client = HybridContainerServiceMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="a3e42606-29b1-4d7d-b1d9-9ff6b9d3c71b",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.agent_pool.get(
-        resource_group_name="test-arcappliance-resgrp",
-        resource_name="test-hybridakscluster",
+        connected_cluster_resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.Kubernetes/connectedClusters/test-hybridakscluster",
         agent_pool_name="test-hybridaksnodepool",
     )
     print(response)
 
 
-# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2022-09-01-preview/examples/GetAgentPool.json
+# x-ms-original-file: specification/hybridaks/resource-manager/Microsoft.HybridContainerService/preview/2023-11-15-preview/examples/GetAgentPool.json
 if __name__ == "__main__":
     main()

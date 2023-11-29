@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import re
 from enum import Enum
+from typing import Any
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import (
@@ -54,14 +55,16 @@ def _wrap_exception(ex, desired_type):
 def _validate_storage_tablename(table_name):
     if _STORAGE_VALID_TABLE.match(table_name) is None:
         raise ValueError(
-            "Storage table names must be alphanumeric, cannot begin with a number, and must be between 3-63 characters long."  # pylint: disable=line-too-long
+            "Storage table names must be alphanumeric, cannot begin with a number, \
+                and must be between 3-63 characters long."
         )
 
 
 def _validate_cosmos_tablename(table_name):
     if _COSMOS_VALID_TABLE.match(table_name) is None:
         raise ValueError(
-            "Cosmos table names must contain from 1-255 characters, and they cannot contain /, \\, #, ?, or a trailing space."  # pylint: disable=line-too-long
+            "Cosmos table names must contain from 1-255 characters, \
+                and they cannot contain /, \\, #, ?, or a trailing space."
         )
 
 
@@ -185,9 +188,9 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
         error_type = HttpResponseError
 
     try:
-        error_message += f"\nErrorCode:{error_code.value}"
+        error_message = f"{error_message}\nErrorCode:{error_code.value}"
     except AttributeError:
-        error_message += f"\nErrorCode:{error_code}"
+        error_message = f"{error_message}\nErrorCode:{error_code}"
     for name, info in additional_data.items():
         error_message += f"\n{name}:{info}"
 
@@ -254,15 +257,15 @@ class TableTransactionError(HttpResponseError):
     :vartype additional_info: Mapping[str, Any]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super(TableTransactionError, self).__init__(**kwargs)
         self.index = kwargs.get("index", self._extract_index())
 
-    def _extract_index(self):
+    def _extract_index(self) -> int:
         try:
             message_sections = self.message.split(":", 1)
             return int(message_sections[0])
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint:disable=broad-except
             return 0
 
 

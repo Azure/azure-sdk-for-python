@@ -25,6 +25,7 @@ USAGE:
 from datetime import datetime, timedelta
 import asyncio
 import os
+import sys
 
 
 class QueueMessageSamplesAsync(object):
@@ -32,6 +33,10 @@ class QueueMessageSamplesAsync(object):
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     async def set_access_policy_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # [START async_create_queue_client_from_connection_string]
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue1")
@@ -83,6 +88,10 @@ class QueueMessageSamplesAsync(object):
                 await queue.delete_queue()
 
     async def queue_metadata_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue2")
@@ -106,6 +115,10 @@ class QueueMessageSamplesAsync(object):
                 await queue.delete_queue()
 
     async def send_and_receive_messages_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue3")
@@ -134,7 +147,7 @@ class QueueMessageSamplesAsync(object):
                 # Receive messages by batch
                 messages = queue.receive_messages(messages_per_page=5)
                 async for msg_batch in messages.by_page():
-                    for msg in msg_batch:
+                    async for msg in msg_batch:
                         print(msg.content)
                         await queue.delete_message(msg)
                 # [END async_receive_messages]
@@ -150,6 +163,10 @@ class QueueMessageSamplesAsync(object):
                 await queue.delete_queue()
 
     async def receive_one_message_from_queue(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue4")
@@ -171,6 +188,9 @@ class QueueMessageSamplesAsync(object):
                 # We should see message 3 if we peek
                 message3 = await queue.peek_messages()
 
+                if not message1 or not message2 or not message3:
+                    raise ValueError("One of the messages are None.")
+
                 print(message1.content)
                 print(message2.content)
                 print(message3[0].content)
@@ -180,6 +200,10 @@ class QueueMessageSamplesAsync(object):
                 await queue.delete_queue()
 
     async def delete_and_clear_messages_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue5")
@@ -216,6 +240,10 @@ class QueueMessageSamplesAsync(object):
                 await queue.delete_queue()
 
     async def peek_messages_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue6")
@@ -251,6 +279,10 @@ class QueueMessageSamplesAsync(object):
                 await queue.delete_queue()
 
     async def update_message_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue7")
@@ -281,6 +313,10 @@ class QueueMessageSamplesAsync(object):
                 await queue.delete_queue()
     
     async def receive_messages_with_max_messages(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: connection_string")
+            sys.exit(1)
+
         # Instantiate a queue client
         from azure.storage.queue.aio import QueueClient
         queue = QueueClient.from_connection_string(self.connection_string, "myqueue8")

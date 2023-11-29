@@ -6,7 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.fields import NumberVersionField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import NumberVersionField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 
 
@@ -14,7 +14,10 @@ class SparkResourceConfigurationSchema(metaclass=PatchedSchemaMeta):
     """Schema for SparkResourceConfiguration."""
 
     instance_type = fields.Str(metadata={"description": "Optional type of VM used as supported by the compute target."})
-    runtime_version = UnionField([fields.Str(), fields.Number()])
+    runtime_version = NumberVersionField(
+        upper_bound="3.4",
+        lower_bound="3.2",
+    )
 
     @post_load
     def make(self, data, **kwargs):

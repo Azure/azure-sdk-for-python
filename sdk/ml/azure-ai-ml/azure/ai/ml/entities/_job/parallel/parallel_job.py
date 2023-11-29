@@ -14,7 +14,11 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+)
 from ..job import Job
 from ..job_io_mixin import JobIOMixin
 from .parameterized_parallel import ParameterizedParallel
@@ -51,6 +55,9 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     :type error_threshold: int
     :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored.
     :type mini_batch_error_threshold: int
+    :keyword identity: The identity that the job will use while running on compute.
+    :paramtype identity: Optional[Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
+        ~azure.ai.ml.UserIdentityConfiguration]]
     :param task: The parallel task.
     :type task: ParallelTask
     :param mini_batch_size: The mini batch size.
@@ -70,6 +77,9 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         *,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Output]] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.PARALLEL
@@ -78,6 +88,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
 
         self.inputs = inputs
         self.outputs = outputs
+        self.identity = identity
 
     def _to_dict(self):
         return ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
@@ -193,6 +204,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             mini_batch_error_threshold=self.mini_batch_error_threshold,
             environment_variables=self.environment_variables,
             properties=self.properties,
+            identity=self.identity,
             resources=self.resources if self.resources else None,
         )
 

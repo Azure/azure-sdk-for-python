@@ -23,7 +23,7 @@ class JobRouterAdministrationClient(
 ):  # pylint: disable=client-accepts-api-version-keyword
     """JobRouterAdministrationClient.
 
-    :param endpoint: Required.
+    :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
      Note that overriding this default value may result in unsupported behavior.
@@ -58,7 +58,7 @@ class JobRouterAdministrationClient(
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -82,7 +82,7 @@ class JobRouterAdministrationClient(
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)  # type: ignore
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
@@ -98,7 +98,7 @@ class JobRouterAdministrationClient(
 class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """JobRouterClient.
 
-    :param endpoint: Required.
+    :param endpoint: Uri of your Communication resource. Required.
     :type endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
      Note that overriding this default value may result in unsupported behavior.
@@ -133,7 +133,7 @@ class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -157,7 +157,7 @@ class JobRouterClient(JobRouterClientOperationsMixin):  # pylint: disable=client
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)  # type: ignore
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()

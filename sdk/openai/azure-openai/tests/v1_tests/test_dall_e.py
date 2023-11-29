@@ -6,14 +6,14 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure, AZURE, OPENAI, ALL
+from conftest import configure, AZURE, OPENAI, ALL, DALLE_AZURE
 
 
 class TestDallE(AzureRecordedTestCase):
 
     @configure
     # @pytest.mark.parametrize("api_type", ALL)  # re-enable when supported
-    @pytest.mark.parametrize("api_type", [OPENAI])
+    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
     def test_image_create(self, client, azure_openai_creds, api_type, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal"
@@ -24,7 +24,7 @@ class TestDallE(AzureRecordedTestCase):
 
     @configure
     # @pytest.mark.parametrize("api_type", [AZURE, OPENAI])  # re-enable when supported
-    @pytest.mark.parametrize("api_type", [OPENAI])
+    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
     def test_image_create_n(self, client, azure_openai_creds, api_type, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
@@ -37,7 +37,7 @@ class TestDallE(AzureRecordedTestCase):
 
     @configure
     # @pytest.mark.parametrize("api_type", [AZURE, OPENAI])  # re-enable when supported
-    @pytest.mark.parametrize("api_type", [OPENAI])
+    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
     def test_image_create_size(self, client, azure_openai_creds, api_type, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
@@ -60,7 +60,7 @@ class TestDallE(AzureRecordedTestCase):
 
     @configure
     # @pytest.mark.parametrize("api_type", [AZURE, OPENAI])  # re-enable when supported
-    @pytest.mark.parametrize("api_type", [OPENAI])
+    @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
     def test_image_create_user(self, client, azure_openai_creds, api_type, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
