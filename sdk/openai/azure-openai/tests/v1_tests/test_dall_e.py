@@ -21,6 +21,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.created
         assert len(image.data) == 1
         assert image.data[0].url
+        assert image.data[0].revised_prompt
 
     @configure
     @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
@@ -34,6 +35,7 @@ class TestDallE(AzureRecordedTestCase):
         assert len(image.data) == 1
         for img in image.data:
             assert img.url
+            assert image.revised_prompt
 
     @configure
     @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
@@ -46,6 +48,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.created
         assert len(image.data) == 1
         assert image.data[0].url
+        assert image.data[0].revised_prompt
 
     @configure
     @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
@@ -58,6 +61,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.created
         assert len(image.data) == 1
         assert image.data[0].b64_json
+        assert image.data[0].revised_prompt
 
     @configure
     @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
@@ -70,6 +74,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.created
         assert len(image.data) == 1
         assert image.data[0].url
+        assert image.data[0].revised_prompt
 
     @configure
     @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
@@ -82,6 +87,7 @@ class TestDallE(AzureRecordedTestCase):
         assert image.created
         assert len(image.data) == 1
         assert image.data[0].url
+        assert image.data[0].revised_prompt
 
     @configure
     @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])
@@ -94,3 +100,4 @@ class TestDallE(AzureRecordedTestCase):
         assert image.created
         assert len(image.data) == 1
         assert image.data[0].url
+        assert image.data[0].revised_prompt
