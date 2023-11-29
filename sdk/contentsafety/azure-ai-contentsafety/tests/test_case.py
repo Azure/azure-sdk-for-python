@@ -18,18 +18,18 @@ class ContentSafetyTest(AzureRecordedTestCase):
     def create_blocklist_client_from_key(self, endpoint, key):
         return self._create_client_from_key(BlocklistClient, endpoint, key)
 
-    def create_content_safety_client_from_aad(self, endpoint):
-        return self._create_client_from_aad(ContentSafetyClient, endpoint)
+    def create_content_safety_client_from_entra_id(self, endpoint):
+        return self._create_client_from_entra_id(ContentSafetyClient, endpoint)
 
-    def create_blocklist_client_from_aad(self, endpoint):
-        return self._create_client_from_aad(BlocklistClient, endpoint)
+    def create_blocklist_client_from_entra_id(self, endpoint):
+        return self._create_client_from_entra_id(BlocklistClient, endpoint)
 
     def _create_client_from_key(self, client_class, endpoint, key):
         return self.create_client_from_credential(
             client_class, credential=AzureKeyCredential(key), endpoint=endpoint
         )
 
-    def _create_client_from_aad(self, client_class, endpoint):
+    def _create_client_from_entra_id(self, client_class, endpoint):
         if is_live():
             credential = self.get_credential(client_class)
         else:

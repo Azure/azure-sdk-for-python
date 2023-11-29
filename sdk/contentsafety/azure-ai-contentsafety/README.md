@@ -48,16 +48,16 @@ The API key can be found in the [Azure Portal][azure_portal] or by running the f
     client = ContentSafetyClient(endpoint, credential)
     ```
 
-#### Create a ContentSafetyClient with Azure Active Directory (AAD) token credential
+#### Create a ContentSafetyClient with Microsoft Entra ID token credential
 
-- Step 1: Enable AAD for your resource
-    Please refer to this Cognitive Services authentication document [Authenticate with Microsoft Entra ID.][authenticate_with_microsoft_entra_id] for the steps to enable AAD for your resource.
+- Step 1: Enable Microsoft Entra ID for your resource
+    Please refer to this Cognitive Services authentication document [Authenticate with Microsoft Entra ID.][authenticate_with_microsoft_entra_id] for the steps to enable Microsoft Entra ID for your resource.
 
     The main steps are:
   - Create resource with a custom subdomain. 
   - Create Service Principal and assign Cognitive Services User role to it.
 
-- Step 2: Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
+- Step 2: Set the values of the client ID, tenant ID, and client secret of the Microsoft Entra application as environment variables: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
   DefaultAzureCredential will use the values from these environment variables.
 

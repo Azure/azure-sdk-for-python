@@ -100,8 +100,8 @@ class TestContentSafetyCase(ContentSafetyTest):
 
     @ContentSafetyPreparer()
     @recorded_by_proxy
-    def test_analyze_text_with_aad_credential(self, content_safety_endpoint):
-        client = self.create_content_safety_client_from_aad(content_safety_endpoint)
+    def test_analyze_text_with_entra_id_credential(self, content_safety_endpoint):
+        client = self.create_content_safety_client_from_entra_id(content_safety_endpoint)
 
         text_path = os.path.abspath(
             os.path.join(os.path.abspath(__file__), "..", "..", "./samples/sample_data/text.txt")

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 
-def analyze_text_with_aad_auth():
+def analyze_text_with_entra_id_auth():
     # [START analyze_text]
 
     import os
@@ -60,4 +60,4 @@ def analyze_text_with_aad_auth():
 
 
 if __name__ == "__main__":
-    analyze_text_with_aad_auth()
+    analyze_text_with_entra_id_auth()
