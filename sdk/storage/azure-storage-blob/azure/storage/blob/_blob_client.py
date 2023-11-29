@@ -703,7 +703,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :dedent: 12
                 :caption: Download a blob.
         """
-        if self.encryption_options['required'] and not (self._encryption_options['key'] or self._encryption_options['resolver']):  # pylint: disable=line-too-long
+        if self._encryption_options['required'] and not (self._encryption_options['key'] or self._encryption_options['resolver']):  # pylint: disable=line-too-long
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")

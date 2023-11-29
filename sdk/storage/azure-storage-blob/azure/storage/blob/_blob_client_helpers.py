@@ -89,7 +89,6 @@ def _parse_url(
     return parsed_url, sas_token, path_snapshot
 
 def _format_url(container_name, scheme, blob_name, query_str, hostname):
-    container_name = container_name
     if isinstance(container_name, str):
         container_name = container_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(container_name)}/{quote(blob_name, safe='~/')}{query_str}"
@@ -561,7 +560,7 @@ def _create_snapshot_options(metadata=None, **kwargs):
     options.update(kwargs)
     return options
 
-def _start_copy_from_url_options(source_url, metadata=None, incremental_copy=False, **kwargs):
+def _start_copy_from_url_options(source_url, metadata=None, incremental_copy=False, **kwargs):  # pylint:disable=too-many-statements
     source_url = _encode_source_url(source_url=source_url)
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))

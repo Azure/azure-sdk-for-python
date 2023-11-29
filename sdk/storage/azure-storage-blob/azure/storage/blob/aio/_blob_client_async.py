@@ -701,7 +701,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 16
                 :caption: Download a blob.
         """
-        if self.encryption_options['required'] and not (self._encryption_options['key'] or self._encryption_options['resolver']):  # pylint: disable=line-too-long
+        if self._encryption_options['required'] and not (self._encryption_options['key'] or self._encryption_options['resolver']):  # pylint: disable=line-too-long
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
@@ -1254,7 +1254,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-    
+
         options = _create_page_blob_options(
             size=size,
             content_settings=content_settings,
