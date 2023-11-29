@@ -209,9 +209,8 @@ class PartitionKey(dict):
             writer.write(bytes([PartitionKeyComponentType.Number]))
             writer.write(value.to_bytes(8, 'little'))  # assuming value is a 64-bit integer
         elif isinstance(value, float):
-            # Encoding as 4-byte le float. TODO: check correct encoding.
-            writer.write(bytes([PartitionKeyComponentType.Float]))
-            writer.write(struct.pack('<f', value))
+            writer.write(bytes([PartitionKeyComponentType.Number]))
+            writer.write(struct.pack('<d', value))
         elif isinstance(value, str):
             writer.write(bytes([PartitionKeyComponentType.String]))
             writer.write(value.encode('utf-8'))
