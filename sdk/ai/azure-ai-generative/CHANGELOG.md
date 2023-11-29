@@ -3,6 +3,7 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
+ - Added new format to export data to in qa generator.
 
 ### Breaking Changes
 
