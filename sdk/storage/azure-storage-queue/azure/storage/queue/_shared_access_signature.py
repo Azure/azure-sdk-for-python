@@ -138,7 +138,7 @@ def generate_account_sas(
     account_key: str,
     resource_types: Union["ResourceTypes", str],
     permission: Union["AccountSasPermissions", str],
-    expiry: Optional[Union["datetime", str]],
+    expiry: Union["datetime", str],
     start: Optional[Union["datetime", str]] = None,
     ip: Optional[str] = None,
     **kwargs: Any

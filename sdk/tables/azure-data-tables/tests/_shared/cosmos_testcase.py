@@ -12,9 +12,7 @@ from azure.mgmt.cosmosdb.models import (
     Capability,
 )
 
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from devtools_testutils import AzureMgmtPreparer, AzureTestError, ResourceGroupPreparer, FakeResource
 
 FakeCosmosAccount = FakeResource
 RESOURCE_GROUP_PARAM = "resource_group"

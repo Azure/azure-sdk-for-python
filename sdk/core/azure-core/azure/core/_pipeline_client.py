@@ -179,7 +179,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
 
         return Pipeline(transport, policies)
 
-    def send_request(self, request: HTTPRequestType, **kwargs: Any) -> HTTPResponseType:
+    def send_request(self, request: HTTPRequestType, *, stream: bool = False, **kwargs: Any) -> HTTPResponseType:
         """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -194,7 +194,6 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
-        stream = kwargs.pop("stream", False)  # want to add default value
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = self._pipeline.run(request, stream=stream, **kwargs)  # pylint: disable=protected-access
         if return_pipeline_response:
