@@ -139,7 +139,7 @@ for handler in root_logger.handlers[:]:
 
 Be sure to call the above BEFORE any loggers or the call to `configure_azure_monitor()` is setup.
 
-You may also disable logging through [Azure Functions configuration](azure_functions_log_level_config).
+You may also disable logging through [Azure Functions configuration](https://learn.microsoft.com/azure/azure-functions/configure-monitoring?tabs=v2#configure-log-levels).
 
 v2.x+
 ```
@@ -201,7 +201,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 <!-- LINKS -->
 [azure_core_tracing_opentelemetry_plugin]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry
 [azure_core_tracing_opentelemetry_plugin_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/azure_core.py
-[azure_functions_log_level_config]: https://learn.microsoft.com/azure/azure-functions/configure-monitoring?tabs=v2#configure-log-levels
 [azure_monitor_enable_docs]: https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable?tabs=python
 [azure_monitor_opentelemetry_exporters]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter#microsoft-opentelemetry-exporter-for-azure-monitor
 [azure_portal]: https://portal.azure.com
