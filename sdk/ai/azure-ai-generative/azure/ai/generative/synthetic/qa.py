@@ -288,7 +288,6 @@ class QADataGenerator:
         )
         modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
         # Replace first question with unmodified question to keep subject
-        print(f"Questions before: {questions}")
         modified_questions[0] = questions[0]
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
         return modified_questions, response["usage"]
