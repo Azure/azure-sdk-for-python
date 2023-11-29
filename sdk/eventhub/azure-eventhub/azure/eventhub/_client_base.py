@@ -484,23 +484,25 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
             }
         )
         response = self._management_request(mgmt_msg, op_type=MGMT_PARTITION_OPERATION)
-        partition_info: Dict[bytes, Any] = response.value
-        output = {}
+        partition_info: Dict[bytes, Union[bytes, int]] = response.value
+        output: Dict[str, Any] = {}
         if partition_info:
-            output["eventhub_name"] = partition_info[b"name"].decode("utf-8")
-            output["id"] = partition_info[b"partition"].decode("utf-8")
-            output["beginning_sequence_number"] = partition_info[
-                b"begin_sequence_number"
-            ]
-            output["last_enqueued_sequence_number"] = partition_info[
-                b"last_enqueued_sequence_number"
-            ]
-            output["last_enqueued_offset"] = partition_info[
-                b"last_enqueued_offset"
-            ].decode("utf-8")
+            output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode(
+                "utf-8"
+            )
+            output["id"] = cast(bytes, partition_info[b"partition"]).decode("utf-8")
+            output["beginning_sequence_number"] = cast(
+                int, partition_info[b"begin_sequence_number"]
+            )
+            output["last_enqueued_sequence_number"] = cast(
+                int, partition_info[b"last_enqueued_sequence_number"]
+            )
+            output["last_enqueued_offset"] = cast(
+                bytes, partition_info[b"last_enqueued_offset"]
+            ).decode("utf-8")
             output["is_empty"] = partition_info[b"is_partition_empty"]
             output["last_enqueued_time_utc"] = utc_from_timestamp(
-                float(partition_info[b"last_enqueued_time_utc"] / 1000)
+                float(cast(int, partition_info[b"last_enqueued_time_utc"]) / 1000)
             )
         return output
 
