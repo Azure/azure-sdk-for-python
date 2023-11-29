@@ -43,6 +43,12 @@ test:
     - azure.communication.phonenumbers.aio
     - azure.communication.sms
     - azure.communication.sms.aio
+    - azure.communication.jobrouter
+    - azure.communication.jobrouter.aio
+    - azure.communication.rooms
+    - azure.communication.rooms.aio
+    - azure.communication.callautomation
+    - azure.communication.callautomation.aio
 
 
 about:
