@@ -51,7 +51,7 @@ The API key can be found in the [Azure Portal][azure_portal] or by running the f
 #### Create a ContentSafetyClient with Azure Active Directory credential
 
  - Step 1: Enable AAD for your resource
-    Please refer to this Cognitive Services authentication document [Authenticate with Microsoft Entra ID.](https://learn.microsoft.com/en-us/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id) for the steps to enable AAD for your resource.
+    Please refer to this Cognitive Services authentication document [Authenticate with Microsoft Entra ID.][authenticate_with_microsoft_entra_id] for the steps to enable AAD for your resource.
 
     The main steps are:
    - Create resource with a custom subdomain. 
@@ -664,3 +664,4 @@ additional questions or comments.
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_cli_key_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account/keys?view=azure-cli-latest#az-cognitiveservices-account-keys-list
 [azure_core_exception]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
+[authenticate_with_microsoft_entra_id]: https://learn.microsoft.com/en-us/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id
