@@ -37,7 +37,7 @@ from ..error import ErrorCondition, AMQPConnectionError, AMQPError
 _LOGGER = logging.getLogger(__name__)
 
 
-class Connection():  # pylint:disable=too-many-instance-attributes
+class Connection:  # pylint:disable=too-many-instance-attributes
     """An AMQP Connection.
 
     :ivar str state: The connection state.
