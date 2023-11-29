@@ -164,7 +164,7 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
         return str(dict(self.items()))
 
 
-def parse_status_link(status_link: str, lro_options: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
+def parse_status_link(status_link: str, lro_options: Optional[Dict[str, Any]] = None) -> Tuple[str, Dict[str, Any]]:
     """Handle status link.
 
     :param status_link: Lro status link.

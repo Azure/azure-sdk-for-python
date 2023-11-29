@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, cast, Union, Dict, Any
+from typing import TypeVar, cast, Union
 from ..exceptions import HttpResponseError
 from .base_polling import (
     _failed,
