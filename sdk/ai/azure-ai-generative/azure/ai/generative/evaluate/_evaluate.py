@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
 import json
 import os
 import shutil
@@ -22,10 +23,12 @@ from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path, _copy_artifact
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
-from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT
+from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT, \
+    TYPE_TO_KWARGS_MAPPING
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 
 from ._utils import _write_properties_to_run_history
+from .metrics.custom_metric import LLMMetric
 
 LOGGER = logging.getLogger(__name__)
 
@@ -223,7 +226,7 @@ def _evaluate(
         metrics_config.update({"openai_params": model_config})
 
     if data_mapping:
-        metrics_config.update(data_mapping)
+        metrics_config.update({"data_mapping": data_mapping})
 
     with mlflow.start_run(nested=True if mlflow.active_run() else False, run_name=evaluation_name) as run, \
             RedirectUserOutputStreams(logger=LOGGER) as _:
@@ -246,18 +249,51 @@ def _evaluate(
             **kwargs
         )
 
+        inbuilt_metrics = [metric for metric in metrics if not isinstance(metric, LLMMetric)]
+        custom_metrics = [metric for metric in metrics if isinstance(metric, LLMMetric)]
+
         metrics_handler = MetricHandler(
             task_type=SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING[task_type],
-            metrics=metrics,
+            metrics=inbuilt_metrics,
             prediction_data=asset_handler.prediction_data,
             truth_data=asset_handler.ground_truth,
             test_data=asset_handler.test_data,
             metrics_mapping=metrics_config,
             prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
             ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
+            type_to_kwargs=TYPE_TO_KWARGS_MAPPING[task_type]
         )
+        custom_metrics_results = None
+        for metric in custom_metrics:
+            metrics_config = copy.deepcopy(metrics_config)
+            metrics_config.update({"data_mapping": {param: param for param in metric.parameters}})
+
+            metrics_handler_custom_metrics = MetricHandler(
+                task_type="custom-prompt-metric",
+                metrics=[metric._to_aml_metric(metrics_config["openai_params"])],
+                prediction_data=asset_handler.prediction_data,
+                truth_data=asset_handler.ground_truth,
+                test_data=asset_handler.test_data,
+                metrics_mapping=metrics_config,
+                prediction_data_column_name=prediction_data if isinstance(prediction_data, str) else None,
+                ground_truth_column_name=truth_data if isinstance(truth_data, str) else None,
+                type_to_kwargs=metric.parameters
+            )
+
+            custom_metric = metrics_handler_custom_metrics.calculate_metrics()
+            custom_metric["artifacts"].pop("custom_prompt_metric")
+            if custom_metrics_results is None:
+                custom_metrics_results = custom_metric
+            else:
+                for k, v in custom_metrics_results.items():
+                    v.update(custom_metric[k])
 
         metrics = metrics_handler.calculate_metrics()
+
+        for k, v in metrics.items():
+            v.update(custom_metrics_results[k])
+
+        print(metrics)
 
         def _get_instance_table():
             metrics.get("artifacts").pop("bertscore", None)

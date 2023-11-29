@@ -5,6 +5,7 @@ import copy
 
 from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING
 from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
+from azure.ai.generative.evaluate.metrics.custom_metric import LLMMetric
 
 
 class MetricHandler(object):
@@ -18,7 +19,8 @@ class MetricHandler(object):
             prediction_data_column_name=None,
             ground_truth_column_name=None,
             metrics_mapping=None,
-            metrics=None
+            metrics=None,
+            type_to_kwargs=None,
     ):
         self.task_type = task_type
         self.prediction_data = prediction_data
@@ -29,31 +31,33 @@ class MetricHandler(object):
         self.ground_truth_column_name = ground_truth_column_name
         self._metrics_mapping_to_log = {}
         self.metrics = metrics
+        self._type_to_kwargs = type_to_kwargs if type_to_kwargs is not None else TYPE_TO_KWARGS_MAPPING[self.task_type]
 
     def _get_data_for_metrics(self):
         metrics_mapping = copy.deepcopy(self.metrics_mapping)
         metrics_mapping_to_log = {}
 
-        if self.prediction_data_column_name:
-            metrics_mapping.update(
-                {"y_pred": self.prediction_data_column_name}
-            )
-
-        if self.ground_truth_column_name:
-            metrics_mapping.update(
-                {"y_test": self.ground_truth_column_name}
-            )
+        # if self.prediction_data_column_name:
+        #     metrics_mapping.update(
+        #         {"y_pred": self.prediction_data_column_name}
+        #     )
+        #
+        # if self.ground_truth_column_name:
+        #     metrics_mapping.update(
+        #         {"y_test": self.ground_truth_column_name}
+        #     )
 
         metrics_data = {}
-        data_columns = TYPE_TO_KWARGS_MAPPING[self.task_type]
+        data_mapping = metrics_mapping["data_mapping"]
+        data_columns = self._type_to_kwargs
         for data_column in data_columns:
-            if data_column in metrics_mapping.keys():
+            if data_column in data_mapping.keys():
                 data_source = None
-                if metrics_mapping[data_column] in self.test_data.columns.values:
+                if data_mapping[data_column] in self.test_data.columns.values:
                     data_source = self.test_data
-                elif metrics_mapping[data_column] in self.prediction_data.columns:
+                elif data_mapping[data_column] in self.prediction_data.columns:
                     data_source = self.prediction_data
-                elif self.truth_data is not None and metrics_mapping[data_column] in self.truth_data.columns:
+                elif self.truth_data is not None and data_mapping[data_column] in self.truth_data.columns:
                     data_source = self.truth_data
 
                 if data_column is None:
@@ -62,13 +66,13 @@ class MetricHandler(object):
                 if data_source is not None:
                     metrics_data.update(
                         {
-                            data_column: data_source[metrics_mapping[data_column]].values.tolist()
+                            data_column: data_source[data_mapping[data_column]].values.tolist()
                         }
                     )
-                popped_value = metrics_mapping.pop(data_column, None)
-                metrics_mapping_to_log[data_column] = popped_value
+                # popped_value = data_mapping.pop(data_column, None)
+                # metrics_mapping_to_log[data_column] = popped_value
 
-        metrics_data.update(metrics_mapping)
+        # metrics_data.update(metrics_mapping)
 
         self._metrics_mapping_to_log = metrics_mapping_to_log
 
@@ -85,5 +89,6 @@ class MetricHandler(object):
             metrics=metrics,
             task_type=self.task_type,
             use_chat_completion_api=True,
+            openai_params=self.metrics_mapping["openai_params"],
             **metrics_calculation_data,
         )
