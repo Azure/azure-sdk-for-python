@@ -564,7 +564,7 @@ def update_acs_index_component_local(ubuntu_rag_environment, local_azureml_rag_b
         },
         code=local_azureml_rag_base,
         command=
-        """python -m azureml.rag.tasks.update_acs\
+        """python -m azure.ai.generative.index._tasks.update_acs\
         --embeddings ${{inputs.embeddings}}\
         --acs_config '${{inputs.acs_config}}'\
         $[[--connection_id '${{inputs.connection_id}}']]\
@@ -674,7 +674,7 @@ def register_mlindex_asset_component_local(ubuntu_rag_environment, local_azureml
         },
         code=local_azureml_rag_base,
         command=
-        """python -m azureml.rag.tasks.register_mlindex\
+        """python -m azure.ai.generative.index._tasks.register_mlindex\
         --storage-uri ${{inputs.storage_uri}}\
         --asset-name ${{inputs.asset_name}}\
         --output-asset-id ${{outputs.asset_id}}\
