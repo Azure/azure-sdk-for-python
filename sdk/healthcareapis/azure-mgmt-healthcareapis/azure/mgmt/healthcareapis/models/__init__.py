@@ -12,11 +12,12 @@ from ._models_py3 import DicomService
 from ._models_py3 import DicomServiceAuthenticationConfiguration
 from ._models_py3 import DicomServiceCollection
 from ._models_py3 import DicomServicePatchResource
+from ._models_py3 import Encryption
+from ._models_py3 import EncryptionCustomerManagedKeyEncryption
 from ._models_py3 import Error
 from ._models_py3 import ErrorDetails
 from ._models_py3 import ErrorDetailsInternal
 from ._models_py3 import FhirService
-from ._models_py3 import FhirServiceAccessPolicyEntry
 from ._models_py3 import FhirServiceAcrConfiguration
 from ._models_py3 import FhirServiceAuthenticationConfiguration
 from ._models_py3 import FhirServiceCollection
@@ -24,6 +25,7 @@ from ._models_py3 import FhirServiceCorsConfiguration
 from ._models_py3 import FhirServiceExportConfiguration
 from ._models_py3 import FhirServiceImportConfiguration
 from ._models_py3 import FhirServicePatchResource
+from ._models_py3 import ImplementationGuidesConfiguration
 from ._models_py3 import IotConnector
 from ._models_py3 import IotConnectorCollection
 from ._models_py3 import IotConnectorPatchResource
@@ -107,11 +109,12 @@ __all__ = [
     "DicomServiceAuthenticationConfiguration",
     "DicomServiceCollection",
     "DicomServicePatchResource",
+    "Encryption",
+    "EncryptionCustomerManagedKeyEncryption",
     "Error",
     "ErrorDetails",
     "ErrorDetailsInternal",
     "FhirService",
-    "FhirServiceAccessPolicyEntry",
     "FhirServiceAcrConfiguration",
     "FhirServiceAuthenticationConfiguration",
     "FhirServiceCollection",
@@ -119,6 +122,7 @@ __all__ = [
     "FhirServiceExportConfiguration",
     "FhirServiceImportConfiguration",
     "FhirServicePatchResource",
+    "ImplementationGuidesConfiguration",
     "IotConnector",
     "IotConnectorCollection",
     "IotConnectorPatchResource",
