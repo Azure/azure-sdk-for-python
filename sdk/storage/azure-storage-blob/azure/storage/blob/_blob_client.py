@@ -188,12 +188,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
-        self._encryption_options = {
-            'required': self.require_encryption,
-            'version': self.encryption_version,
-            'key': self.key_encryption_key,
-            'resolver': self.key_resolver_function
-        }
 
     def _format_url(self, hostname):
         return _format_url(
@@ -203,6 +197,14 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             query_str=self._query_str,
             hostname=hostname
         )
+
+    def _build_encryption_options(self):
+        return {
+                'required': self.require_encryption,
+                'version': self.encryption_version,
+                'key': self.key_encryption_key,
+                'resolver': self.key_resolver_function
+                }
 
     @classmethod
     def from_blob_url(
@@ -569,12 +571,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :dedent: 12
                 :caption: Upload a blob to the container.
         """
-        if self._encryption_options['required'] and not self._encryption_options['key']:
+        if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_blob_options(
-            encryption_options=self._encryption_options,
+            encryption_options=self._build_encryption_options(),
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
@@ -703,14 +705,14 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :dedent: 12
                 :caption: Download a blob.
         """
-        if self._encryption_options['required'] and not (self._encryption_options['key'] or self._encryption_options['resolver']):  # pylint: disable=line-too-long
+        if self.require_encryption and not (self.key_encryption_key or self.key_resolver_function):  # pylint: disable=line-too-long
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _download_blob_options(
-            encryption_options=self._encryption_options,
+            encryption_options=self._build_encryption_options(),
             version_id=get_version_id(self.version_id, kwargs),
             sdk_moniker=self._sdk_moniker,
             encryption_version=self.encryption_version,
@@ -1352,9 +1354,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :rtype: dict[str, Any]
         """
         options = _create_page_blob_options(
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            scheme=self.scheme,
             size=size,
             content_settings=content_settings,
             metadata=metadata,
@@ -1443,7 +1442,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        if self._encryption_options['required'] or (self._encryption_options['key'] is not None):
+        if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -1931,7 +1930,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob property dict.
         :rtype: dict[str, Any]
         """
-        if self._encryption_options['required'] or (self._encryption_options['key'] is not None):
+        if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -2153,7 +2152,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        if self._encryption_options['required'] or (self._encryption_options['key'] is not None):
+        if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -2752,7 +2751,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        if self._encryption_options['required'] or (self._encryption_options['key'] is not None):
+        if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -2872,7 +2871,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         """
-        if self._encryption_options['required'] or (self._encryption_options['key'] is not None):
+        if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -2953,7 +2952,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        if self._encryption_options['required'] or (self._encryption_options['key'] is not None):
+        if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -3051,7 +3050,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
-        if self._encryption_options['required'] or (self._encryption_options['key'] is not None):
+        if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
@@ -3163,7 +3162,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         """
-        if self._encryption_options['required'] or (self._encryption_options['key'] is not None):
+        if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
