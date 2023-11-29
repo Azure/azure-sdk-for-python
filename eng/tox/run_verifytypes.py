@@ -19,6 +19,7 @@ import logging
 import sys
 import tempfile
 
+from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.variables import in_ci
 
@@ -109,8 +110,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
-    module = package_name.replace("-", ".")
     setup_path = os.path.abspath(args.target_package)
+    pkg_details = ParsedSetup.from_path(setup_path)
+    module = pkg_details.namespace
 
     if in_ci():
         if not is_check_enabled(args.target_package, "verifytypes") or is_typing_ignored(package_name):
