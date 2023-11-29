@@ -13,6 +13,7 @@ from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
 from ._models_py3 import ConnectionDetails
 from ._models_py3 import DiagnosticStorageProperties
+from ._models_py3 import Encryption
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
@@ -75,6 +76,7 @@ __all__ = [
     "CheckNameAvailabilityResponse",
     "ConnectionDetails",
     "DiagnosticStorageProperties",
+    "Encryption",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
