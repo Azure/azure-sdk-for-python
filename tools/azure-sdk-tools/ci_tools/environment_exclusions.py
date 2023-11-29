@@ -5,7 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from ci_tools.parsing import get_config_setting, get_build_config
-from ci_tools import in_public
+from ci_tools.variables import in_public
 import os
 from typing import Any
 
