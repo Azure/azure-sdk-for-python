@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0
+## 1.0.0.
 
 ### Features Added
 - Support Microsoft Entra ID authentication.
