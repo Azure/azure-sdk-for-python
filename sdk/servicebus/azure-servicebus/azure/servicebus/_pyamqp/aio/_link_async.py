@@ -21,7 +21,7 @@ from ..error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Link():  # pylint: disable=too-many-instance-attributes
+class Link:  # pylint: disable=too-many-instance-attributes
     """An AMQP Link.
 
     This object should not be used directly - instead use one of directional

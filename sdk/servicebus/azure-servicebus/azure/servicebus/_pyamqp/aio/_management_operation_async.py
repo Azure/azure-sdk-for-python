@@ -86,7 +86,7 @@ class ManagementOperation(object):
         else:
             self._responses[operation_id] = (status_code, status_description, raw_message)
 
-    async def execute(self, message, operation=None, operation_type=None, timeout=0):
+    async def execute(self, message, operation=None, operation_type=None, timeout: float = 0):
         start_time = time.time()
         operation_id = str(uuid.uuid4())
         self._responses[operation_id] = None
