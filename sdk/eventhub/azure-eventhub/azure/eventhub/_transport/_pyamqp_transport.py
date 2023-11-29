@@ -342,7 +342,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> Message:
         """Set the partition key as an annotation on a uamqp message.
         :param ~pyamqp.message.Message message: The message to update.
-        :param str partition_key: The partition key value.
+        :param str or bytes or None partition_key: The partition key value.
         :return: The message with the partition key annotation.
         :rtype: ~pyamqp.message.Message
         """
