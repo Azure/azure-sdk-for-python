@@ -122,11 +122,11 @@ class ConsistencyLevel:
         prefix of all writes with no gaps. All writes will be eventually be
         available for reads.
     """
-    Strong: str = "Strong"
-    BoundedStaleness: str = "BoundedStaleness"
-    Session: str = "Session"
-    Eventual: str = "Eventual"
-    ConsistentPrefix: str = "ConsistentPrefix"
+    Strong: Literal["Strong"] = "Strong"
+    BoundedStaleness: Literal["BoundedStaleness"] = "BoundedStaleness"
+    Session: Literal["Session"] = "Session"
+    Eventual: Literal["Eventual"] = "Eventual"
+    ConsistentPrefix: Literal["ConsistentPrefix"] = "ConsistentPrefix"
 
 
 class IndexingMode:
@@ -149,9 +149,9 @@ class IndexingMode:
         storage cost or improve the write throughput. Your queries will
         degenerate to scans of the entire collection.
     """
-    Consistent: str = "consistent"
-    Lazy: str = "lazy"
-    NoIndex: str = "none"
+    Consistent: Literal["consistent"] = "consistent"
+    Lazy: Literal["lazy"] = "lazy"
+    NoIndex: Literal["none"] = "none"
 
 
 class IndexKind:
@@ -166,9 +166,9 @@ class IndexKind:
         Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
     :cvar str MultiHash:
     """
-    Hash: str = "Hash"
-    Range: str = "Range"
-    MultiHash: str = "MultiHash"
+    Hash: Literal["Hash"] = "Hash"
+    Range: Literal["Range"] = "Range"
+    MultiHash: Literal["MultiHash"] = "MultiHash"
 
 
 class PartitionKind:
@@ -198,12 +198,12 @@ class DataType:
     :cvar str MultiPolygon:
         Represents a multi-polygon data type.
     """
-    Number = "Number"
-    String = "String"
-    Point = "Point"
-    LineString = "LineString"
-    Polygon = "Polygon"
-    MultiPolygon = "MultiPolygon"
+    Number: Literal["Number"] = "Number"
+    String: Literal["String"] = "String"
+    Point: Literal["Point"] = "Point"
+    LineString: Literal["LineString"] = "LineString"
+    Polygon: Literal["Polygon"] = "Polygon"
+    MultiPolygon: Literal["MultiPolygon"] = "MultiPolygon"
 
 
 class IndexingDirective:
@@ -241,9 +241,9 @@ class PermissionMode:
     :cvar str All:
         Permission applicable for all operations.
     """
-    NoneMode: str = "none"  # None is python's key word.
-    Read: str = "read"
-    All: str = "all"
+    NoneMode: Literal["none"] = "none"  # None is python's key word.
+    Read: Literal["read"] = "read"
+    All: Literal["all"] = "all"
 
 
 class TriggerType:
@@ -254,8 +254,8 @@ class TriggerType:
     :cvar str Post:
         Trigger should be executed after the associated operation(s).
     """
-    Pre: str = "pre"
-    Post: str = "post"
+    Pre: Literal["pre"] = "pre"
+    Post: Literal["post"] = "post"
 
 
 class TriggerOperation:
@@ -272,11 +272,11 @@ class TriggerOperation:
     :cvar str Replace:
         Replace operations only.
     """
-    All: str = "all"
-    Create: str = "create"
-    Update: str = "update"
-    Delete: str = "delete"
-    Replace: str = "replace"
+    All: Literal["all"] = "all"
+    Create: Literal["create"] = "create"
+    Update: Literal["update"] = "update"
+    Delete: Literal["delete"] = "delete"
+    Replace: Literal["replace"] = "replace"
 
 
 class SSLConfiguration:
@@ -375,22 +375,22 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
 class _OperationType:
     """Represents the type of the operation
     """
-    Create: str = "Create"
-    Delete: str = "Delete"
-    ExecuteJavaScript: str = "ExecuteJavaScript"
-    Head: str = "Head"
-    HeadFeed: str = "HeadFeed"
-    Patch: str = "Patch"
-    Query: str = "Query"
-    QueryPlan: str = "QueryPlan"
-    Read: str = "Read"
-    ReadFeed: str = "ReadFeed"
-    Recreate: str = "Recreate"
-    Replace: str = "Replace"
-    SqlQuery: str = "SqlQuery"
-    Update: str = "Update"
-    Upsert: str = "Upsert"
-    Batch: str = "Batch"
+    Create: Literal["Create"] = "Create"
+    Delete: Literal["Delete"] = "Delete"
+    ExecuteJavaScript: Literal["ExecuteJavaScript"] = "ExecuteJavaScript"
+    Head: Literal["Head"] = "Head"
+    HeadFeed: Literal["HeadFeed"] = "HeadFeed"
+    Patch: Literal["Patch"] = "Patch"
+    Query: Literal["Query"] = "Query"
+    QueryPlan: Literal["QueryPlan"] = "QueryPlan"
+    Read: Literal["Read"] = "Read"
+    ReadFeed: Literal["ReadFeed"] = "ReadFeed"
+    Recreate: Literal["Recreate"] = "Recreate"
+    Replace: Literal["Replace"] = "Replace"
+    SqlQuery: Literal["SqlQuery"] = "SqlQuery"
+    Update: Literal["Update"] = "Update"
+    Upsert: Literal["Upsert"] = "Upsert"
+    Batch: Literal["Batch"] = "Batch"
 
     @staticmethod
     def IsWriteOperation(operationType: str) -> bool:
@@ -428,18 +428,18 @@ class _OperationType:
         )
 
 class _QueryFeature:
-    NoneQuery: str = "NoneQuery"
-    Aggregate: str = "Aggregate"
-    CompositeAggregate: str = "CompositeAggregate"
-    Distinct: str = "Distinct"
-    GroupBy: str = "GroupBy"
-    MultipleAggregates: str = "MultipleAggregates"
-    MultipleOrderBy: str = "MultipleOrderBy"
-    OffsetAndLimit: str = "OffsetAndLimit"
-    OrderBy: str = "OrderBy"
-    Top: str = "Top"
+    NoneQuery: Literal["NoneQuery"] = "NoneQuery"
+    Aggregate: Literal["Aggregate"] = "Aggregate"
+    CompositeAggregate: Literal["CompositeAggregate"] = "CompositeAggregate"
+    Distinct: Literal["Distinct"] = "Distinct"
+    GroupBy: Literal["GroupBy"] = "GroupBy"
+    MultipleAggregates: Literal["MultipleAggregates"] = "MultipleAggregates"
+    MultipleOrderBy: Literal["MultipleOrderBy"] = "MultipleOrderBy"
+    OffsetAndLimit: Literal["OffsetAndLimit"] = "OffsetAndLimit"
+    OrderBy: Literal["OrderBy"] = "OrderBy"
+    Top: Literal["Top"] = "Top"
 
 class _DistinctType:
-    NoneType: str = "None"
-    Ordered: str = "Ordered"
-    Unordered: str = "Unordered"
+    NoneType: Literal["None"] = "None"
+    Ordered: Literal["Ordered"] = "Ordered"
+    Unordered: Literal["Unordered"] = "Unordered"
