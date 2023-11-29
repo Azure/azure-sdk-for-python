@@ -64,8 +64,10 @@ if TYPE_CHECKING:
             BatchMessage,
         )
     except ImportError:
-        Message = None
-        BatchMessage = None
+        Message: "Message" = None
+        BatchMessage: "BatchMessage" = None
+
+
     from ._transport._base import AmqpTransport
 
 MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
@@ -550,7 +552,7 @@ class EventDataBatch(object):
         max_size_in_bytes: Optional[int] = None,
         partition_id: Optional[str] = None,
         partition_key: Optional[Union[str, bytes]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
         self._tracing_attributes: Dict[str, Union[str, int]] = kwargs.pop("tracing_attributes", {})
