@@ -19,13 +19,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# disable (too-many-lines) check
-# pylint: disable=C0302
+# pylint: disable=too-many-lines, protected-access
 
 """Document client class for the Azure Cosmos database service.
 """
-import re
-from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast
+from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, TypedDict
 import urllib.parse
 
 from urllib3.util.retry import Retry
@@ -57,19 +55,17 @@ from ._routing import routing_map_provider, routing_range
 from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
-from .partition_key import _Undefined, _Empty, PartitionKey
+from .partition_key import _Undefined, _Empty, PartitionKey, _return_undefined_or_empty_partition_key
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._range_partition_resolver import RangePartitionResolver
 
 
-# Cosmos table validation regex breakdown:
-# ^ Match start of string.
-# [^/\#?]{0,255} Match any character that is not /\#? for between 0-255 characters.
-# $ End of string
-_VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]{0,255}$")
-
-# pylint: disable=protected-access
+class CredentialDict(TypedDict, total=False):
+    masterKey: str
+    resourceTokens: Mapping[str, Any]
+    permissionFeed: Iterable[Mapping[str, Any]]
+    clientSecretCredential: TokenCredential
 
 
 class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
@@ -99,7 +95,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def __init__(
             self,
             url_connection: str,
-            auth: Dict[str, Any],
+            auth: CredentialDict,
             connection_policy: Optional[ConnectionPolicy] = None,
             consistency_level: Optional[str] = None,
             **kwargs: Any
@@ -120,7 +116,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         self.url_connection = url_connection
         self.master_key: Optional[str] = None
-        self.resource_tokens: Optional[Dict[str, Any]] = None
+        self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[TokenCredential] = None
         if auth is not None:
             self.master_key = auth.get("masterKey")
@@ -232,7 +228,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :type consistency_level: Optional[str]
         :rtype: None
         """
-        if consistency_level is None:
+        if consistency_level is None and database_account.ConsistencyPolicy:
             # Set to default level present in account
             user_consistency_policy = database_account.ConsistencyPolicy
             consistency_level = user_consistency_policy.get(Constants.DefaultConsistencyLevel)
@@ -310,7 +306,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if not database_link:
             raise ValueError("database_link is None or empty.")
-
         return self.partition_resolvers.get(base.TrimBeginningAndEndingSlashes(database_link))
 
     def CreateDatabase(
@@ -332,8 +327,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if options is None:
             options = {}
-
-        CosmosClientConnection.__ValidateResource(database)
+        base._validate_resource(database)
         path = "/dbs"
         return self.Create(database, path, "dbs", None, None, options, **kwargs)
 
@@ -501,7 +495,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(collection)
+        base._validate_resource(collection)
         path = base.GetPathFromLink(database_link, "colls")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return self.Create(collection, path, "colls", database_id, None, options, **kwargs)
@@ -531,7 +525,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(collection)
+        base._validate_resource(collection)
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return self.Replace(collection, path, "colls", collection_id, None, options, **kwargs)
@@ -617,7 +611,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self.Upsert(user, path, "users", database_id, None, options, **kwargs)
 
     def _GetDatabaseIdWithPathForUser(self, database_link: str, user: Mapping[str, Any]) -> Tuple[Optional[str], str]:
-        CosmosClientConnection.__ValidateResource(user)
+        base._validate_resource(user)
         path = base.GetPathFromLink(database_link, "users")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return database_id, path
@@ -798,7 +792,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission: Mapping[str, Any],
         user_link: str
     ) -> Tuple[str, Optional[str]]:
-        CosmosClientConnection.__ValidateResource(permission)
+        base._validate_resource(permission)
         path = base.GetPathFromLink(user_link, "permissions")
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return path, user_id
@@ -916,7 +910,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(user)
+        base._validate_resource(user)
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return self.Replace(user, path, "users", user_id, None, options, **kwargs)
@@ -971,7 +965,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(permission)
+        base._validate_resource(permission)
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
         return self.Replace(permission, path, "permissions", permission_id, None, options, **kwargs)
@@ -1340,7 +1334,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if document is None:
             raise ValueError("document is None.")
 
-        CosmosClientConnection.__ValidateResource(document)
+        base._validate_resource(document)
         document = dict(document)
         if not document.get("id") and not options.get("disableAutomaticIdGeneration"):
             document["id"] = base.GenerateGuidId()
@@ -1507,7 +1501,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         trigger: Mapping[str, Any]
     ) -> Tuple[Optional[str], str, Dict[str, Any]]:
-        CosmosClientConnection.__ValidateResource(trigger)
+        base._validate_resource(trigger)
         trigger = dict(trigger)
         if trigger.get("serverScript"):
             trigger["body"] = str(trigger.pop("serverScript", ""))
@@ -1667,7 +1661,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         udf: Mapping[str, Any]
     ) -> Tuple[Optional[str], str, Dict[str, Any]]:
-        CosmosClientConnection.__ValidateResource(udf)
+        base._validate_resource(udf)
         udf = dict(udf)
         if udf.get("serverScript"):
             udf["body"] = str(udf.pop("serverScript", ""))
@@ -1827,7 +1821,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         sproc: Mapping[str, Any]
     ) -> Tuple[Optional[str], str, Dict[str, Any]]:
-        CosmosClientConnection.__ValidateResource(sproc)
+        base._validate_resource(sproc)
         sproc = dict(sproc)
         if sproc.get("serverScript"):
             sproc["body"] = str(sproc.pop("serverScript", ""))
@@ -1998,7 +1992,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             dict
 
         """
-        CosmosClientConnection.__ValidateResource(new_document)
+        base._validate_resource(new_document)
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
 
@@ -2217,7 +2211,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(trigger)
+        base._validate_resource(trigger)
         trigger = dict(trigger)
         if trigger.get("serverScript"):
             trigger["body"] = str(trigger.pop("serverScript", ""))
@@ -2278,7 +2272,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(udf)
+        base._validate_resource(udf)
         udf = dict(udf)
         if udf.get("serverScript"):
             udf["body"] = str(udf.pop("serverScript", ""))
@@ -2379,7 +2373,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if options is None:
             options = {}
 
-        CosmosClientConnection.__ValidateResource(sproc)
+        base._validate_resource(sproc)
         sproc = dict(sproc)
         if sproc.get("serverScript"):
             sproc["body"] = str(sproc.pop("serverScript", ""))
@@ -2460,7 +2454,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             dict
 
         """
-        CosmosClientConnection.__ValidateResource(offer)
+        base._validate_resource(offer)
         path = base.GetPathFromLink(offer_link)
         offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
         return self.Replace(offer, path, "offers", offer_id, None, None, **kwargs)
@@ -3173,20 +3167,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             raise TypeError("query body must be a string.")
         else:
             raise SystemError("Unexpected query compatibility mode.")
-
         return query_body
-
-    @staticmethod
-    def __ValidateResource(resource: Mapping[str, Any]) -> None:
-        id_: Optional[str] = resource.get("id")
-        if id_:
-            try:
-                if _VALID_COSMOS_RESOURCE.match(id_) is None:
-                    raise ValueError("Id contains illegal chars.")
-                if id_[-1] in [" ", "\n"]:
-                    raise ValueError("Id ends with a space or newline.")
-            except TypeError as e:
-                raise TypeError("Id type must be a string.") from e
 
     # Adds the partition key to options
     def _AddPartitionKey(
@@ -3252,14 +3233,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 break
             # At any point if we don't find the value of a sub-property in the document, we return as Undefined
             if part not in partitionKey:
-                return self._return_undefined_or_empty_partition_key(is_system_key)
+                return _return_undefined_or_empty_partition_key(is_system_key)
             partitionKey = partitionKey[part]
             matchCount += 1
 
         # Match the count of hops we did to get the partitionKey with the length of
         # partition key parts and validate that it's not a dict at that level
         if (matchCount != expected_matchCount) or isinstance(partitionKey, Mapping):
-            return self._return_undefined_or_empty_partition_key(is_system_key)
+            return _return_undefined_or_empty_partition_key(is_system_key)
         return partitionKey
 
     def refresh_routing_map_provider(self) -> None:
@@ -3304,9 +3285,3 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = collection.get("partitionKey")
             self.partition_key_definition_cache[collection_link] = partition_key_definition
         return partition_key_definition
-
-    @staticmethod
-    def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empty, _Undefined]:
-        if is_system_key:
-            return _Empty()
-        return _Undefined()

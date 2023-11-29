@@ -32,8 +32,8 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from .http_constants import HttpHeaders
 
-HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)
-HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)
+HTTPResponseType_co = TypeVar("HTTPResponseType_co", covariant=True)
+HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
 
 
 def _format_error(payload: str) -> str:
@@ -44,11 +44,12 @@ def _format_error(payload: str) -> str:
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def __init__(
-            self,
-            logger: Optional[logging.Logger] = None,
-            *,
-            enable_diagnostics_logging: Optional[bool] = False,
-            **kwargs):  # pylint: disable=unused-argument
+        self,
+        logger: Optional[logging.Logger] = None,
+        *,
+        enable_diagnostics_logging: bool = False,
+        **kwargs
+    ):
         self._enable_diagnostics_logging = enable_diagnostics_logging
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
@@ -58,16 +59,15 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             ]
             self.allowed_header_names = set(cosmos_allow_list)
 
-    def on_request(self, request):  # pylint: disable=too-many-return-statements, too-many-statements
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         super().on_request(request)
         if self._enable_diagnostics_logging:
             request.context["start_time"] = time.time()
 
     def on_response(
             self,
-            request: PipelineRequest[HTTPRequestType],
-            response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+            request: PipelineRequest[HTTPRequestType_co],
+            response: PipelineResponse[HTTPRequestType_co, HTTPResponseType_co],
     ) -> None:
         super().on_response(request, response)
         if self._enable_diagnostics_logging:

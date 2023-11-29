@@ -22,10 +22,25 @@
 """Classes and enums for documents in the Azure Cosmos database service.
 """
 
-from . import _retry_options
+from typing import List, Optional, TypedDict
+from typing_extensions import Literal
+
+from ._retry_options import RetryOptions
+from ._retry_utility import ConnectionRetryPolicy
 
 
-class DatabaseAccount(object):  # pylint: disable=too-many-instance-attributes
+class UserConsistencyPolicy(TypedDict, total=False):
+    defaultConsistencyLevel: str
+    """The default consistency level."""
+    maxStalenessPrefix: int
+    """In bounded staleness consistency, the maximum allowed staleness in
+    terms difference in sequence numbers (aka version)."""
+    maxStalenessIntervalInSeconds: int
+    """In bounded staleness consistency, the maximum allowed staleness in
+    terms time interval."""
+
+
+class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
     """Database account.
 
     A DatabaseAccount is the container for databases.
@@ -42,34 +57,26 @@ class DatabaseAccount(object):  # pylint: disable=too-many-instance-attributes
         is not guaranteed to be real time.
     :ivar dict ConsistencyPolicy:
         UserConsistencyPolicy settings.
-    :ivar dict ConsistencyPolicy['defaultConsistencyLevel']:
-        The default consistency level.
-    :ivar int ConsistencyPolicy['maxStalenessPrefix']:
-        In bounded staleness consistency, the maximum allowed staleness in
-        terms difference in sequence numbers (aka version).
-    :ivar int ConsistencyPolicy['maxStalenessIntervalInSeconds']:
-        In bounded staleness consistency, the maximum allowed staleness in
-        terms time interval.
     :ivar boolean EnableMultipleWritableLocations:
         Flag on the azure Cosmos account that indicates if writes can take
         place in multiple locations.
     """
 
-    def __init__(self):
-        self.DatabasesLink = ""
-        self.MediaLink = ""
-        self.MaxMediaStorageUsageInMB = 0
-        self.CurrentMediaStorageUsageInMB = 0
-        self.ConsumedDocumentStorageInMB = 0
-        self.ReservedDocumentStorageInMB = 0
-        self.ProvisionedDocumentStorageInMB = 0
-        self.ConsistencyPolicy = None
-        self._WritableLocations = []
-        self._ReadableLocations = []
+    def __init__(self) -> None:
+        self.DatabasesLink: str = ""
+        self.MediaLink: str = ""
+        self.MaxMediaStorageUsageInMB: int = 0
+        self.CurrentMediaStorageUsageInMB: int = 0
+        self.ConsumedDocumentStorageInMB: int = 0
+        self.ReservedDocumentStorageInMB: int = 0
+        self.ProvisionedDocumentStorageInMB: int = 0
+        self.ConsistencyPolicy: Optional[UserConsistencyPolicy] = None
+        self._WritableLocations: List[str] = []
+        self._ReadableLocations: List[str] = []
         self._EnableMultipleWritableLocations = False
 
     @property
-    def WritableLocations(self):
+    def WritableLocations(self) -> List[str]:
         """The list of writable locations for a geo-replicated database account.
         :returns: List of writable locations for the database account.
         :rtype: List[str]
@@ -77,7 +84,7 @@ class DatabaseAccount(object):  # pylint: disable=too-many-instance-attributes
         return self._WritableLocations
 
     @property
-    def ReadableLocations(self):
+    def ReadableLocations(self) -> List[str]:
         """The list of readable locations for a geo-replicated database account.
         :returns: List of readable locations for the database account.
         :rtype: List[str]
@@ -85,7 +92,7 @@ class DatabaseAccount(object):  # pylint: disable=too-many-instance-attributes
         return self._ReadableLocations
 
 
-class ConsistencyLevel(object):
+class ConsistencyLevel:
     """Represents the consistency levels supported for Azure Cosmos client
     operations.
 
@@ -95,109 +102,102 @@ class ConsistencyLevel(object):
     Consistency levels by order of strength are Strong, BoundedStaleness,
     Session, ConsistentPrefix and Eventual.
 
-    :ivar str ConsistencyLevel.Strong:
+    :cvar str Strong:
         Strong Consistency guarantees that read operations always return the
         value that was last written.
-    :ivar str ConsistencyLevel.BoundedStaleness:
+    :cvar str BoundedStaleness:
         Bounded Staleness guarantees that reads are not too out-of-date. This
         can be configured based on number of operations (MaxStalenessPrefix)
         or time (MaxStalenessIntervalInSeconds).
-    :ivar str ConsistencyLevel.Session:
+    :cvar str Session:
         Session Consistency guarantees monotonic reads (you never read old data,
         then new, then old again), monotonic writes (writes are ordered) and
         read your writes (your writes are immediately visible to your reads)
         within any single session.
-    :ivar str ConsistencyLevel.Eventual:
+    :cvar str Eventual:
         Eventual Consistency guarantees that reads will return a subset of
         writes. All writes will be eventually be available for reads.
-    :ivar str ConsistencyLevel.ConsistentPrefix:
+    :cvar str ConsistentPrefix:
         ConsistentPrefix Consistency guarantees that reads will return some
         prefix of all writes with no gaps. All writes will be eventually be
         available for reads.
     """
+    Strong: str = "Strong"
+    BoundedStaleness: str = "BoundedStaleness"
+    Session: str = "Session"
+    Eventual: str = "Eventual"
+    ConsistentPrefix: str = "ConsistentPrefix"
 
-    Strong = "Strong"
-    BoundedStaleness = "BoundedStaleness"
-    Session = "Session"
-    Eventual = "Eventual"
-    ConsistentPrefix = "ConsistentPrefix"
 
-
-class IndexingMode(object):
+class IndexingMode:
     """Specifies the supported indexing modes.
 
-    :ivar str Consistent:
+    :cvar str Consistent:
         Index is updated synchronously with a create or update operation. With
         consistent indexing, query behavior is the same as the default
         consistency level for the collection.
-
         The index is always kept up to date with the data.
-    :ivar str Lazy:
+    :cvar str Lazy:
         Index is updated asynchronously with respect to a create or update
         operation. Not supported for new containers since June/2020.
-
         With lazy indexing, queries are eventually consistent. The index is
         updated when the collection is idle.
-    :ivar str NoIndex:
+    :cvar str NoIndex:
         No index is provided.
-
         Setting IndexingMode to "None" drops the index. Use this if you don't
         want to maintain the index for a document collection, to save the
         storage cost or improve the write throughput. Your queries will
         degenerate to scans of the entire collection.
     """
+    Consistent: str = "consistent"
+    Lazy: str = "lazy"
+    NoIndex: str = "none"
 
-    Consistent = "consistent"
-    Lazy = "lazy"
-    NoIndex = "none"
 
-
-class IndexKind(object):
+class IndexKind:
     """Specifies the index kind of index specs.
 
-    :ivar str IndexKind.Hash:
+    :cvar str Hash:
         The index entries are hashed to serve point look up queries.
         Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop = 5
-
-    :ivar str IndexKind.Range:
+    :cvar str Range:
         The index entries are ordered. Range indexes are optimized for
         inequality predicate queries with efficient range scans.
         Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
+    :cvar str MultiHash:
     """
+    Hash: str = "Hash"
+    Range: str = "Range"
+    MultiHash: str = "MultiHash"
 
-    Hash = "Hash"
-    Range = "Range"
-    MultiHash = "MultiHash"
 
-
-class PartitionKind(object):
+class PartitionKind:
     """Specifies the kind of partitioning to be applied.
 
-    :ivar str PartitionKind.Hash:
+    :cvar str Hash:
         The partition key definition path is hashed.
+    :cvar str MultiHash:
     """
+    Hash: Literal["Hash"] = "Hash"
+    MultiHash: Literal["MultiHash"] = "MultiHash"
 
-    Hash = "Hash"
-    MultiHash = "MultiHash"
 
-
-class DataType(object):
+class DataType:
     """Specifies the data type of index specs.
 
-    :ivar str Number:
+    :cvar str Number:
         Represents a numeric data type.
-    :ivar str String:
+    :cvar str String:
         Represents a string data type.
-    :ivar str Point:
+    :cvar str Point:
         Represents a point data type.
-    :ivar str LineString:
+    :cvar str LineString:
         Represents a line string data type.
-    :ivar str Polygon:
+    :cvar str Polygon:
         Represents a polygon data type.
-    :ivar str MultiPolygon:
+    :cvar str MultiPolygon:
         Represents a multi-polygon data type.
     """
-
     Number = "Number"
     String = "String"
     Point = "Point"
@@ -206,85 +206,80 @@ class DataType(object):
     MultiPolygon = "MultiPolygon"
 
 
-class IndexingDirective(object):
+class IndexingDirective:
     """Specifies whether or not the resource is to be indexed.
 
-    :ivar int Default:
+    :cvar int Default:
         Use any pre-defined/pre-configured defaults.
-    :ivar int Exclude:
+    :cvar int Exclude:
         Index the resource.
-    :ivar int Include:
+    :cvar int Include:
         Do not index the resource.
     """
+    Default: int = 0
+    Exclude: int = 1
+    Include: int = 2
 
-    Default = 0
-    Exclude = 1
-    Include = 2
 
-
-class ConnectionMode(object):
+class ConnectionMode:
     """Represents the connection mode to be used by the client.
 
-    :ivar int Gateway:
+    :cvar int Gateway:
         Use the Azure Cosmos gateway to route all requests. The gateway proxies
         requests to the right data partition.
     """
+    Gateway: int = 0
 
-    Gateway = 0
 
+class PermissionMode:
+    """Applicability of a permission.
 
-class PermissionMode(object):
-    """Enumeration specifying applicability of a permission.
-
-    :ivar str PermissionMode.NoneMode:
+    :cvar str NoneMode:
         None.
-    :ivar str PermissionMode.Read:
+    :cvar str Read:
         Permission applicable for read operations only.
-    :ivar str PermissionMode.All:
+    :cvar str All:
         Permission applicable for all operations.
     """
+    NoneMode: str = "none"  # None is python's key word.
+    Read: str = "read"
+    All: str = "all"
 
-    NoneMode = "none"  # None is python's key word.
-    Read = "read"
-    All = "all"
 
-
-class TriggerType(object):
+class TriggerType:
     """Specifies the type of a trigger.
 
-    :ivar str TriggerType.Pre:
+    :cvar str Pre:
         Trigger should be executed before the associated operation(s).
-    :ivar str TriggerType.Post:
+    :cvar str Post:
         Trigger should be executed after the associated operation(s).
     """
+    Pre: str = "pre"
+    Post: str = "post"
 
-    Pre = "pre"
-    Post = "post"
 
-
-class TriggerOperation(object):
+class TriggerOperation:
     """Specifies the operations on which a trigger should be executed.
 
-    :ivar str TriggerOperation.All:
+    :cvar str All:
         All operations.
-    :ivar str TriggerOperation.Create:
+    :cvar str Create:
         Create operations only.
-    :ivar str TriggerOperation.Update:
+    :cvar str Update:
         Update operations only.
-    :ivar str TriggerOperation.Delete:
+    :cvar str Delete:
         Delete operations only.
-    :ivar str TriggerOperation.Replace:
+    :cvar str Replace:
         Replace operations only.
     """
+    All: str = "all"
+    Create: str = "create"
+    Update: str = "update"
+    Delete: str = "delete"
+    Replace: str = "replace"
 
-    All = "all"
-    Create = "create"
-    Update = "update"
-    Delete = "delete"
-    Replace = "replace"
 
-
-class SSLConfiguration(object):
+class SSLConfiguration:
     """Configuration for SSL connections.
 
     See https://requests.readthedocs.io/en/master/user/advanced/#ssl-cert-verification
@@ -297,14 +292,13 @@ class SSLConfiguration(object):
     :ivar str SSLCaCerts:
         The path of the CA_BUNDLE file with certificates of trusted CAs.
     """
+    def __init__(self) -> None:
+        self.SSLKeyFile: Optional[str] = None
+        self.SSLCertFile: Optional[str] = None
+        self.SSLCaCerts: Optional[str] = None
 
-    def __init__(self):
-        self.SSLKeyFile = None
-        self.SSLCertFile = None
-        self.SSLCaCerts = None
 
-
-class ProxyConfiguration(object):
+class ProxyConfiguration:
     """Configuration for a proxy.
 
     :ivar str Host:
@@ -312,13 +306,12 @@ class ProxyConfiguration(object):
     :ivar int Port:
         The port number of the proxy.
     """
+    def __init__(self) -> None:
+        self.Host: Optional[str] = None
+        self.Port: Optional[int] = None
 
-    def __init__(self):
-        self.Host = None
-        self.Port = None
 
-
-class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
+class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     """Represents the Connection policy associated with a CosmosClientConnection.
 
     :ivar int RequestTimeout:
@@ -364,43 +357,43 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
         int or azure.cosmos.ConnectionRetryPolicy or urllib3.util.retry
     """
 
-    __defaultRequestTimeout = 60  # seconds
+    __defaultRequestTimeout: int = 60  # seconds
 
-    def __init__(self):
-        self.RequestTimeout = self.__defaultRequestTimeout
-        self.ConnectionMode = ConnectionMode.Gateway
-        self.SSLConfiguration = None
-        self.ProxyConfiguration = None
-        self.EnableEndpointDiscovery = True
-        self.PreferredLocations = []
-        self.RetryOptions = _retry_options.RetryOptions()
-        self.DisableSSLVerification = False
-        self.UseMultipleWriteLocations = False
-        self.ConnectionRetryConfiguration = None
+    def __init__(self) -> None:
+        self.RequestTimeout: int = self.__defaultRequestTimeout
+        self.ConnectionMode: int = ConnectionMode.Gateway
+        self.SSLConfiguration: Optional[SSLConfiguration] = None
+        self.ProxyConfiguration: Optional[ProxyConfiguration] = None
+        self.EnableEndpointDiscovery: bool = True
+        self.PreferredLocations: List[str] = []
+        self.RetryOptions = RetryOptions()
+        self.DisableSSLVerification: bool = False
+        self.UseMultipleWriteLocations: bool = False
+        self.ConnectionRetryConfiguration: Optional[ConnectionRetryPolicy] = None
 
 
-class _OperationType(object):
+class _OperationType:
     """Represents the type of the operation
     """
-    Create = "Create"
-    Delete = "Delete"
-    ExecuteJavaScript = "ExecuteJavaScript"
-    Head = "Head"
-    HeadFeed = "HeadFeed"
-    Patch = "Patch"
-    Query = "Query"
-    QueryPlan = "QueryPlan"
-    Read = "Read"
-    ReadFeed = "ReadFeed"
-    Recreate = "Recreate"
-    Replace = "Replace"
-    SqlQuery = "SqlQuery"
-    Update = "Update"
-    Upsert = "Upsert"
-    Batch = "Batch"
+    Create: str = "Create"
+    Delete: str = "Delete"
+    ExecuteJavaScript: str = "ExecuteJavaScript"
+    Head: str = "Head"
+    HeadFeed: str = "HeadFeed"
+    Patch: str = "Patch"
+    Query: str = "Query"
+    QueryPlan: str = "QueryPlan"
+    Read: str = "Read"
+    ReadFeed: str = "ReadFeed"
+    Recreate: str = "Recreate"
+    Replace: str = "Replace"
+    SqlQuery: str = "SqlQuery"
+    Update: str = "Update"
+    Upsert: str = "Upsert"
+    Batch: str = "Batch"
 
     @staticmethod
-    def IsWriteOperation(operationType):
+    def IsWriteOperation(operationType: str) -> bool:
         return operationType in (
             _OperationType.Create,
             _OperationType.Delete,
@@ -412,7 +405,7 @@ class _OperationType(object):
         )
 
     @staticmethod
-    def IsReadOnlyOperation(operationType):
+    def IsReadOnlyOperation(operationType: str) -> bool:
         return operationType in (
             _OperationType.Read,
             _OperationType.ReadFeed,
@@ -423,7 +416,7 @@ class _OperationType(object):
         )
 
     @staticmethod
-    def IsFeedOperation(operationType):
+    def IsFeedOperation(operationType: str) -> bool:
         return operationType in (
             _OperationType.Create,
             _OperationType.Upsert,
@@ -434,19 +427,19 @@ class _OperationType(object):
             _OperationType.HeadFeed,
         )
 
-class _QueryFeature(object):
-    NoneQuery = "NoneQuery"
-    Aggregate = "Aggregate"
-    CompositeAggregate = "CompositeAggregate"
-    Distinct = "Distinct"
-    GroupBy = "GroupBy"
-    MultipleAggregates = "MultipleAggregates"
-    MultipleOrderBy = "MultipleOrderBy"
-    OffsetAndLimit = "OffsetAndLimit"
-    OrderBy = "OrderBy"
-    Top = "Top"
+class _QueryFeature:
+    NoneQuery: str = "NoneQuery"
+    Aggregate: str = "Aggregate"
+    CompositeAggregate: str = "CompositeAggregate"
+    Distinct: str = "Distinct"
+    GroupBy: str = "GroupBy"
+    MultipleAggregates: str = "MultipleAggregates"
+    MultipleOrderBy: str = "MultipleOrderBy"
+    OffsetAndLimit: str = "OffsetAndLimit"
+    OrderBy: str = "OrderBy"
+    Top: str = "Top"
 
-class _DistinctType(object):
-    NoneType = "None"
-    Ordered = "Ordered"
-    Unordered = "Unordered"
+class _DistinctType:
+    NoneType: str = "None"
+    Ordered: str = "Ordered"
+    Unordered: str = "Unordered"
