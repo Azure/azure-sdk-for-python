@@ -52,7 +52,6 @@ from azure.monitor.opentelemetry._util.configurations import (
 
 _SUPPORTED_RESOURCE_DETECTORS = (
     "azure_app_service",
-    "azure_vm",
 )
 
 _logger = getLogger(__name__)

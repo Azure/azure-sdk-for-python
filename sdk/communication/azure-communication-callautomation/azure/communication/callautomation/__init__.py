@@ -19,6 +19,7 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MediaStreamingConfiguration,
+    TranscriptionConfiguration,
     ChannelAffinity,
     MuteParticipantsResult,
     CancelAddParticipantResult,
@@ -42,6 +43,7 @@ from ._generated.models._enums import (
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
     MediaStreamingTransportType,
+    TranscriptionTransportType,
     DtmfTone,
     CallConnectionState,
     RecordingState,
@@ -58,6 +60,7 @@ __all__ = [
     "SsmlSource",
     "ChannelAffinity",
     "MediaStreamingConfiguration",
+    "TranscriptionConfiguration",
 
     # models for output
     "CallConnectionProperties",
@@ -88,6 +91,7 @@ __all__ = [
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
     "MediaStreamingTransportType",
+    "TranscriptionTransportType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",

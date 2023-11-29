@@ -351,7 +351,7 @@ class TestWorkspaceOperation:
             workspace=feature_store, grant_materialization_permissions=True
         )
 
-        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["kind"] == {"value": "featurestore"}
         assert param["grant_materialization_permissions"] == {"value": "true"}
         assert param["materialization_identity_name"] == {"value": "materialization-uai-rg-name"}
         assert param["materialization_identity_resource_id"] == {"value": ""}
@@ -362,7 +362,7 @@ class TestWorkspaceOperation:
             grant_materialization_permissions=False,
         )
 
-        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["kind"] == {"value": "featurestore"}
         assert param["grant_materialization_permissions"] == {"value": "false"}
         assert param["materialization_identity_name"] == {"value": "empty"}
         assert param["materialization_identity_resource_id"] == {"value": "resource_id"}

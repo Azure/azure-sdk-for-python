@@ -10,10 +10,10 @@ from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
 from azure.ai.resources.entities import BaseConnection
 from azure.ai.ml import MLClient
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+activity_logger = ActivityLogger(__name__)
+logger, module_logger = activity_logger.package_logger, activity_logger.module_logger
 
 
 class ConnectionOperations:
@@ -26,7 +26,7 @@ class ConnectionOperations:
 
     def __init__(self, ml_client: MLClient, **kwargs: Any):
         self._ml_client = ml_client
-        ops_logger.update_info(kwargs)
+        activity_logger.update_info(kwargs)
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.List", ActivityType.PUBLICAPI)

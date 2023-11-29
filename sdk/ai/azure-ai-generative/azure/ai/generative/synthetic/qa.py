@@ -16,7 +16,7 @@ try:
     from collections import defaultdict
     from azure.ai.resources.entities import BaseConnection
     from azure.identity import DefaultAzureCredential
-    from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, OpsLogger
+    from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
     from azure.core.tracing.decorator import distributed_trace
 except ImportError as e:
     print("In order to use qa, please install the 'qa_generation' extra of azure-ai-generative")
@@ -24,8 +24,8 @@ except ImportError as e:
 
 
 _TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
-ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+activity_logger = ActivityLogger(__name__)
+logger, module_logger = activity_logger.package_logger, activity_logger.module_logger
 
 _DEFAULT_AOAI_VERSION = "2023-07-01-preview"
 _MAX_RETRIES = 7
@@ -114,7 +114,7 @@ class QADataGenerator:
             temperature=0.0,  # don't need creativity
         )
 
-        ops_logger.update_info(kwargs)
+        activity_logger.update_info()
 
     def _validate(self, qa_type: QAType, num_questions: int):
         if qa_type == QAType.SUMMARY and num_questions is not None:

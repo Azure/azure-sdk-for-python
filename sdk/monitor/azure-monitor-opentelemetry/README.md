@@ -91,6 +91,85 @@ configure_azure_monitor(
 
 Samples are available [here][samples] to demonstrate how to utilize the above configuration options.
 
+### Monitoring in Azure Functions
+
+#### Trace correlation
+
+Tracked incoming requests coming into your Python application hosted in Azure Functions will not be automatically correlated with telemetry being tracked within it. You can manually achieve trace correlation by extract the `TraceContext` directly as shown below:
+
+```python
+
+import azure.functions as func
+
+from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry import trace
+from opentelemetry.propagate import extract
+
+# Configure Azure monitor collection telemetry pipeline
+configure_azure_monitor()
+
+def main(req: func.HttpRequest, context) -> func.HttpResponse:
+   ...
+   # Store current TraceContext in dictionary format
+   carrier = {
+      "traceparent": context.trace_context.Traceparent,
+      "tracestate": context.trace_context.Tracestate,
+   }
+   tracer = trace.get_tracer(__name__)
+   # Start a span using the current context
+   with tracer.start_as_current_span(
+      "http_trigger_span",
+      context=extract(carrier),
+   ):
+      ...
+
+```
+
+#### Logging issues
+
+The Azure Functions worker itself sends logging telemetry itself without the use of the azure monitor sdk (the call to `configure_azure_monitor()`). This will cause you to possibly experience duplicate telemetry entries when sending logging telemetry. Our recommendation to customers is to use solely the SDK as it will allow much more rich telemetry and features than using the built in one provided by the Azure Functions worker. You can turn off the Azure Functions telemetry logger by clearing the list of handlers of your logger.
+
+```python
+...
+root_logger = logging.getLogger()
+for handler in root_logger.handlers[:]:
+    root_logger.removeHandler(handler)
+...
+```
+
+Be sure to call the above BEFORE any loggers or the call to `configure_azure_monitor()` is setup.
+
+You may also disable logging through [Azure Functions configuration](https://learn.microsoft.com/azure/azure-functions/configure-monitoring?tabs=v2#configure-log-levels).
+
+v2.x+
+```
+...
+{
+  "logging": {
+    ...
+    "logLevel": {
+      "default": "None",
+      ...
+    }
+  }
+}
+...
+```
+
+v1.x
+```
+...
+{
+  "logger": {
+    "categoryFilter": {
+      "defaultLevel": "None",
+      ...
+    }
+  }
+}
+...
+```
+
 ## Troubleshooting
 
 The exporter raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#azure-core-library-exceptions).
