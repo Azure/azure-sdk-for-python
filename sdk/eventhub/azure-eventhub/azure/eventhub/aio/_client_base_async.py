@@ -247,7 +247,7 @@ class ClientBaseAsync(ClientBase):
             **kwargs
         )
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         raise TypeError(
             "Asynchronous client must be opened with async context manager."
         )
