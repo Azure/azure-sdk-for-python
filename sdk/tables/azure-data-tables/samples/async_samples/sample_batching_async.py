@@ -22,21 +22,24 @@ USAGE:
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
-
 import os
 import asyncio
 from dotenv import find_dotenv, load_dotenv
+from typing import Any, List, Mapping, Tuple, Union
+from azure.data.tables import TableEntity, TransactionOperation
+
+EntityType = Union[TableEntity, Mapping[str, Any]]
+OperationType = Union[TransactionOperation, str]
+TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 
 class CreateClients(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
+        self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]
+        self.endpoint_suffix = os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"]
+        self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
+        self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "sampleTransactionAsync"
 
     async def _create_entities(self):
@@ -76,17 +79,17 @@ class CreateClients(object):
 
         await self._create_entities()
 
-        operations = [
+        operations: List[TransactionOperationType] = [
             ("create", self.entity1),
             ("delete", self.entity2),
             ("upsert", self.entity3),
             ("update", self.entity4, {"mode": "replace"}),
         ]
         try:
-            await self.table_client.submit_transaction(operations)  # type: ignore[arg-type]
+            await self.table_client.submit_transaction(operations)
         except TableTransactionError as e:
             print("There was an error with the transaction operation")
-            print("Error: {}".format(e))
+            print(f"Error: {e}")
         # [END batching]
 
     async def clean_up(self):
