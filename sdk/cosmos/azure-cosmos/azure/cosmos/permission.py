@@ -36,4 +36,4 @@ class Permission(object):
         self.permission_mode = permission_mode
         self.resource_link = resource_link
         self.properties = properties
-        self.permission_link = u"{}/permissions/{}".format(self.user_link, self.id)
+        self.permission_link = "{}/permissions/{}".format(self.user_link, self.id)
