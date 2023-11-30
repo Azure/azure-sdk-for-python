@@ -60,8 +60,8 @@ class MonitorFeatureFilterSchema(metaclass=PatchedSchemaMeta):
 class BaselineDataRangeSchema(metaclass=PatchedSchemaMeta):
     window_start = fields.Str()
     window_end = fields.Str()
-    data_window_size = fields.Str()
-    data_window_offset = fields.Str()
+    lookback_window_size = fields.Str()
+    lookback_window_offset = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):
@@ -74,8 +74,8 @@ class ProductionDataSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
     pre_processing_component = fields.Str()
-    data_window_size = fields.Str()
-    data_window_offset = fields.Str()
+    lookback_window_size = fields.Str()
+    lookback_window_offset = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):
@@ -188,8 +188,8 @@ class FADProductionDataSchema(metaclass=PatchedSchemaMeta):
         keys=StringTransformedEnum(allowed_values=[o.value for o in FADColumnNames]), values=fields.Str()
     )
     pre_processing_component = fields.Str()
-    data_window_size = fields.Str()
-    data_window_offset = fields.Str()
+    lookback_window_size = fields.Str()
+    lookback_window_offset = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):
@@ -285,8 +285,8 @@ class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
 class LlmDataSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
     data_column_names = fields.Dict()
-    data_window_size = fields.Str()
-    data_window_offset = fields.Str()
+    lookback_window_size = fields.Str()
+    lookback_window_offset = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):

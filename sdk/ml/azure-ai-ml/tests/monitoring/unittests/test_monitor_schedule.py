@@ -103,7 +103,7 @@ def override_frequency_interval_and_check_window_size(
     schedule.trigger.frequency = frequency
     schedule.trigger.interval = interval
     for signal in schedule.create_monitor.monitoring_signals.values():
-        signal.production_data.data_window_size = None
+        signal.production_data.lookback_window_size = None
 
     to_rest_schedule = schedule._to_rest_object()
     for signal in to_rest_schedule.properties.action.monitor_definition.signals.values():

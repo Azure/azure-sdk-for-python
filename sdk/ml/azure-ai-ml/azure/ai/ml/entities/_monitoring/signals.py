@@ -134,7 +134,7 @@ class BaselineDataRange:
     """Baseline data range for monitoring.
 
     This class is used when initializing a data_window for a ReferenceData object.
-    For trailing input, set data_window_size and data_window_offset to a desired value.
+    For trailing input, set lookback_window_size and lookback_window_offset to a desired value.
     For static input, set window_start and window_end to a desired value.
 
     """
@@ -144,13 +144,13 @@ class BaselineDataRange:
         *,
         window_start: str = None,
         window_end: str = None,
-        data_window_size: str = None,
-        data_window_offset: str = None,
+        lookback_window_size: str = None,
+        lookback_window_offset: str = None,
     ):
         self.window_start = window_start
         self.window_end = window_end
-        self.data_window_size = data_window_size
-        self.data_window_offset = data_window_offset
+        self.lookback_window_size = lookback_window_size
+        self.lookback_window_offset = lookback_window_offset
 
 
 @experimental
@@ -166,8 +166,8 @@ class ProductionData(RestTranslatableMixin):
     :param pre_processing_component : ARM resource ID of the component resource used to
         preprocess the data.
     :type pre_processing_component: string
-    :param data_window_size: The number of days, in ISO 8061 format, a single monitor looks back over the target.
-    :type data_window_size: string
+    :param lookback_window_size: The number of days, in ISO 8061 format, a single monitor looks back over the target.
+    :type lookback_window_size: string
     """
 
     def __init__(
@@ -176,19 +176,19 @@ class ProductionData(RestTranslatableMixin):
         input_data: Input,
         data_context: MonitorDatasetContext = None,
         pre_processing_component: str = None,
-        data_window_size: Optional[str] = None,
-        data_window_offset: Optional[str] = None,
+        lookback_window_size: Optional[str] = None,
+        lookback_window_offset: Optional[str] = None,
     ):
         self.input_data = input_data
         self.data_context = data_context
         self.pre_processing_component = pre_processing_component
-        self.data_window_size = data_window_size
-        self.data_window_offset = data_window_offset
+        self.lookback_window_size = lookback_window_size
+        self.lookback_window_offset = lookback_window_offset
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.data_window_size is None:
-            self.data_window_size = default_data_window_size
+        if self.lookback_window_size is None:
+            self.lookback_window_size = default_data_window_size
         uri = self.input_data.path
         job_type = self.input_data.type
         monitoring_input_data = TrailingInputData(
@@ -197,8 +197,8 @@ class ProductionData(RestTranslatableMixin):
             job_type=job_type,
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
-            window_size=self.data_window_size,
-            window_offset=self.data_window_offset if self.data_window_offset is not None else "P0D",
+            window_size=self.lookback_window_size,
+            window_offset=self.lookback_window_offset if self.lookback_window_offset is not None else "P0D",
         )
         return monitoring_input_data._to_rest_object()
 
@@ -211,7 +211,7 @@ class ProductionData(RestTranslatableMixin):
             ),
             data_context=obj.data_context,
             pre_processing_component=obj.preprocessing_component_id,
-            data_window_size=isodate.duration_isoformat(obj.window_size),
+            lookback_window_size=isodate.duration_isoformat(obj.window_size),
         )
 
 
@@ -230,7 +230,7 @@ class ReferenceData(RestTranslatableMixin):
     :param target_column_name: The name of the target column in the dataset.
     :type target_column_name: string
     :param data_window: The number of days or a time frame that a singal monitor looks back over the target.
-    :type data_window_size: BaselineDataRange
+    :type lookback_window_size: BaselineDataRange
     """
 
     def __init__(
@@ -250,7 +250,7 @@ class ReferenceData(RestTranslatableMixin):
 
     def _to_rest_object(self) -> RestMonitoringInputData:
         if self.data_window is not None:
-            if self.data_window.data_window_size is not None:
+            if self.data_window.lookback_window_size is not None:
                 return TrailingInputData(
                     data_context=self.data_context,
                     target_columns={"target_column": self.target_column_name}
@@ -259,9 +259,9 @@ class ReferenceData(RestTranslatableMixin):
                     job_type=self.input_data.type,
                     uri=self.input_data.path,
                     pre_processing_component_id=self.pre_processing_component,
-                    window_size=self.data_window.data_window_size,
-                    window_offset=self.data_window.data_window_offset
-                    if self.data_window.data_window_offset is not None
+                    window_size=self.data_window.lookback_window_size,
+                    window_offset=self.data_window.lookback_window_offset
+                    if self.data_window.lookback_window_offset is not None
                     else "P0D",
                 )._to_rest_object()
             if self.data_window.window_start is not None and self.data_window.window_end is not None:
@@ -294,8 +294,8 @@ class ReferenceData(RestTranslatableMixin):
             )
         if obj.input_data_type == "Trailing":
             data_window = BaselineDataRange(
-                data_window_size=isodate.duration_isoformat(obj.window_size),
-                data_window_offset=isodate.duration_isoformat(obj.window_offset),
+                lookback_window_size=isodate.duration_isoformat(obj.window_size),
+                lookback_window_offset=isodate.duration_isoformat(obj.window_offset),
             )
 
         return cls(
@@ -473,8 +473,8 @@ class DataDriftSignal(DataSignal):
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringDataDriftSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window_size is None:
-            self.production_data.data_window_size = default_data_window_size
+        if self.production_data.lookback_window_size is None:
+            self.production_data.lookback_window_size = default_data_window_size
         rest_features = _to_rest_features(self.features) if self.features else None
         return RestMonitoringDataDriftSignal(
             production_data=self.production_data._to_rest_object(),
@@ -549,8 +549,8 @@ class PredictionDriftSignal(MonitoringSignal):
 
     def _to_rest_object(self, **kwargs) -> RestPredictionDriftMonitoringSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window_size is None:
-            self.production_data.data_window_size = default_data_window_size
+        if self.production_data.lookback_window_size is None:
+            self.production_data.lookback_window_size = default_data_window_size
         return RestPredictionDriftMonitoringSignal(
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),
@@ -627,8 +627,8 @@ class DataQualitySignal(DataSignal):
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringDataQualitySignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window_size is None:
-            self.production_data.data_window_size = default_data_window_size
+        if self.production_data.lookback_window_size is None:
+            self.production_data.lookback_window_size = default_data_window_size
         rest_features = _to_rest_features(self.features) if self.features else None
         rest_metrics = _to_rest_data_quality_metrics(
             self.metric_thresholds.numerical, self.metric_thresholds.categorical
@@ -716,8 +716,8 @@ class FADProductionData(RestTranslatableMixin):
     :keyword pre_processing_component : The ARM (Azure Resource Manager) resource ID of the component resource used to
         preprocess the data.
     :paramtype pre_processing_component: string
-    :param data_window_size: The number of days a single monitor looks back over the target.
-    :type data_window_size: string
+    :param lookback_window_size: The number of days a single monitor looks back over the target.
+    :type lookback_window_size: string
     """
 
     def __init__(
@@ -727,20 +727,20 @@ class FADProductionData(RestTranslatableMixin):
         data_context: MonitorDatasetContext = None,
         data_column_names: Dict = None,
         pre_processing_component: str = None,
-        data_window_size: Optional[str] = None,
-        data_window_offset: Optional[str] = None,
+        lookback_window_size: Optional[str] = None,
+        lookback_window_offset: Optional[str] = None,
     ):
         self.input_data = input_data
         self.data_context = data_context
         self.data_column_names = data_column_names
         self.pre_processing_component = pre_processing_component
-        self.data_window_size = data_window_size
-        self.data_window_offset = data_window_offset
+        self.lookback_window_size = lookback_window_size
+        self.lookback_window_offset = lookback_window_offset
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window_size = kwargs.get("default")
-        if self.data_window_size is None:
-            self.data_window_size = default_data_window_size
+        if self.lookback_window_size is None:
+            self.lookback_window_size = default_data_window_size
         uri = self.input_data.path
         job_type = self.input_data.type
         monitoring_input_data = TrailingInputData(
@@ -749,8 +749,8 @@ class FADProductionData(RestTranslatableMixin):
             job_type=job_type,
             uri=uri,
             pre_processing_component_id=self.pre_processing_component,
-            window_size=self.data_window_size,
-            window_offset=self.data_window_offset if self.data_window_offset is not None else "P0D",
+            window_size=self.lookback_window_size,
+            window_offset=self.lookback_window_offset if self.lookback_window_offset is not None else "P0D",
         )
         return monitoring_input_data._to_rest_object()
 
@@ -764,7 +764,7 @@ class FADProductionData(RestTranslatableMixin):
             data_context=obj.data_context,
             data_column_names=obj.columns,
             pre_processing_component=obj.preprocessing_component_id,
-            data_window_size=isodate.duration_isoformat(obj.window_size),
+            lookback_window_size=isodate.duration_isoformat(obj.window_size),
         )
 
 
@@ -865,8 +865,8 @@ class ModelPerformanceSignal(ModelSignal):
 
     def _to_rest_object(self, **kwargs) -> RestModelPerformanceSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window_size is None:
-            self.production_data.data_window_size = default_data_window_size
+        if self.production_data.lookback_window_size is None:
+            self.production_data.lookback_window_size = default_data_window_size
         return RestModelPerformanceSignal(
             production_data=self.production_data._to_rest_object(),
             reference_data=self.reference_data._to_rest_object(),
@@ -1009,9 +1009,9 @@ class LlmData(RestTranslatableMixin):
     :paramtype input_data: ~azure.ai.ml.entities.Input
     :param data_column_names: The names of columns in the input data.
     :paramtype data_column_names: Dict[str, str]
-    :param data_window_size: The number of days a single monitor looks back
+    :param lookback_window_size: The number of days a single monitor looks back
         over the target
-    :paramtype data_window_size: Optional[int]
+    :paramtype lookback_window_size: Optional[int]
     """
 
     def __init__(
@@ -1019,23 +1019,23 @@ class LlmData(RestTranslatableMixin):
         *,
         input_data: Input,
         data_column_names: Optional[Dict[str, str]] = None,
-        data_window_size: Optional[str] = None,
-        data_window_offset: Optional[str] = None,
+        lookback_window_size: Optional[str] = None,
+        lookback_window_offset: Optional[str] = None,
     ):
         self.input_data = input_data
         self.data_column_names = data_column_names
-        self.data_window_size = data_window_size
-        self.data_window_offset = data_window_offset
+        self.lookback_window_size = lookback_window_size
+        self.lookback_window_offset = lookback_window_offset
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
-        if self.data_window_size is None:
-            self.data_window_size = kwargs.get("default")
+        if self.lookback_window_size is None:
+            self.lookback_window_size = kwargs.get("default")
         return TrailingInputData(
             target_columns=self.data_column_names,
             job_type=self.input_data.type,
             uri=self.input_data.path,
-            window_size=self.data_window_size,
-            window_offset=self.data_window_offset if self.data_window_offset is not None else "P0D",
+            window_size=self.lookback_window_size,
+            window_offset=self.lookback_window_offset if self.lookback_window_offset is not None else "P0D",
         )._to_rest_object()
 
     @classmethod
@@ -1046,7 +1046,7 @@ class LlmData(RestTranslatableMixin):
                 type=obj.job_input_type,
             ),
             data_column_names=obj.columns,
-            data_window_size=isodate.duration_isoformat(obj.window_size),
+            lookback_window_size=isodate.duration_isoformat(obj.window_size),
         )
 
 
