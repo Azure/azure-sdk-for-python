@@ -7,7 +7,7 @@ from typing import Optional
 from azureml._base_sdk_common.service_discovery import get_service_url
 from azureml.core import Run, Workspace
 from azureml.exceptions import UserErrorException
-from azure.ai.generative.index._utils.logging import get_logger
+from azure.ai.resources._index._utils.logging import get_logger
 
 from ._restclient._azure_machine_learning_workspaces import AzureMachineLearningWorkspaces as rest_client
 from ._restclient.models import CreateRun, DataVersion
