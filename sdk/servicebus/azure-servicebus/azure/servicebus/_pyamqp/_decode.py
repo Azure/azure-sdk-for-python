@@ -9,6 +9,7 @@ import struct
 import uuid
 import logging
 from typing import (
+    Callable,
     List,
     Optional,
     Tuple,
