@@ -424,9 +424,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [cognitive_auth]: https://docs.microsoft.com/azure/cognitive-services/authentication
 [endpoint_details]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/translation/Azure.AI.Translation.Text/samples/Sample0_CreateClient.md#create-a-texttranslationclient-using-an-api-key-from-global-text-translator-resource
-[resource_details]: https://learn.microsoft.com/en-us/azure/ai-services/translator/create-translator-resource#authentication-keys-and-endpoint-url
-[custom_details]: https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-reference#authentication-with-microsoft-entra-id
-[authentication_details]: https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-reference
+[resource_details]: https://learn.microsoft.com/azure/ai-services/translator/create-translator-resource#authentication-keys-and-endpoint-url
+[custom_details]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference#authentication-with-microsoft-entra-id
+[authentication_details]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

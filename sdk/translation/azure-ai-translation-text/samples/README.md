@@ -835,6 +835,6 @@ raise
 [aad_grant_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [cognitive_auth]: https://docs.microsoft.com/azure/cognitive-services/authentication
-[resource_details]: https://learn.microsoft.com/en-us/azure/ai-services/translator/create-translator-resource#authentication-keys-and-endpoint-url
-[custom_details]: https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-reference#authentication-with-microsoft-entra-id
-[authentication_details]: https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-reference
+[resource_details]: https://learn.microsoft.com/azure/ai-services/translator/create-translator-resource#authentication-keys-and-endpoint-url
+[custom_details]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference#authentication-with-microsoft-entra-id
+[authentication_details]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference
