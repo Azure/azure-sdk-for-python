@@ -274,7 +274,6 @@ jobs:
         InjectedPackages: ${{ parameters.InjectedPackages }}
         UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
         TestProxy: ${{ parameters.TestProxy }}
-        Public: ${{ parameters.Public }}
 
   - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
     parameters:
@@ -311,4 +310,3 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestTimeoutInMinutes: 90
-        Public: ${{ parameters.Public }}
