@@ -64,6 +64,9 @@ parameters:
   - name: AdvancedBuild
     type: boolean
     default: false
+  - name: Public
+    type: boolean
+    default: true
 
 jobs:
   
@@ -195,6 +198,7 @@ jobs:
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        Public: ${{ parameters.Public }}
 
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
@@ -219,6 +223,7 @@ jobs:
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+        Public: ${{ parameters.Public }}
 
   - job: Compliance
     pool:
