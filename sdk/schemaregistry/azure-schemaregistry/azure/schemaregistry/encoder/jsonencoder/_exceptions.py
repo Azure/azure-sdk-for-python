@@ -25,28 +25,6 @@
 # --------------------------------------------------------------------------
 from typing import Any, Optional, Dict
 
-class InvalidSchemaError(ValueError):
-    """Error during schema validation.
-
-    :param str message: The message object stringified as 'message' attribute
-    :keyword error: The original exception, if any.
-
-    :ivar str message: A stringified version of the message parameter
-    :ivar dict details: The error details related to the schema. Depending on the error,
-     this may include information like: `schema_id`, `schema_definition`, `message_content`.
-    """
-
-    def __init__(
-        self,
-        message: str,
-        *args: Any,
-        details: Optional[Dict[str, str]] = None
-    ) -> None:
-        self.message: str = str(message)
-        self.details: Dict[str, str] = details or {}
-        super(InvalidSchemaError, self).__init__(self.message, *args)
-
-
 class InvalidContentError(ValueError):
     """Error during encoding or decoding content with a schema.
 
