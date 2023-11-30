@@ -1,5 +1,5 @@
-
 # Azure AI Document Intelligence client library for Python
+
 Azure AI Document Intelligence ([previously known as Form Recognizer][service-rename]) is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
@@ -10,6 +10,9 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 - Classifiers - Build custom classification models that combine layout and language features to accurately detect and identify documents you process within your application.
 - Add-on capabilities - Extract barcodes/QR codes, formulas, font/style, etc. or enable high resolution mode for large documents with optional parameters.
 
+[Source code][python-di-src]
+| [Package (PyPI)][python-di-pypi]
+| [Samples][python-di-samples]
 
 ## Getting started
 
@@ -18,6 +21,13 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 ```bash
 python -m pip install azure-ai-documentintelligence
 ```
+
+This table shows the relationship between SDK versions and supported API versions of the service:
+|SDK version|Supported API version of service
+|-|-
+|1.0.0b1 | 2023-10-31-preview
+
+Older API versions are supported in `azure-ai-formrecognizer`, please check the relationship from [there](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#install-the-package). 
 
 #### Prequisites
 
@@ -585,19 +595,17 @@ additional questions or comments.
 <!-- LINKS -->
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
 
 [python-di-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/azure/ai/documentintelligence
 [python-di-pypi]: https://pypi.org/project/azure-ai-formrecognizer/
-[python-di-product-docs]: https://learn.microsoft.com/azure/applied-ai-services/form-recognizer/overview?view=form-recog-3.0.0
-[python-di-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
 [python-di-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
 
 [azure_portal]: https://ms.portal.azure.com/
 [regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=form-recognizer
 [FR_or_CS_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [cognitive_resource_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
+https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesDocumentIntelligence
 [cognitive_resource_cli]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
 [labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
