@@ -28,6 +28,7 @@ pr:
 extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
+    Public: true
     ServiceDirectory: textanalytics
     TestProxy: true
     Artifacts:
