@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
-from typing import Any
+from typing import Any, Union
 from enum import Enum
 from collections import namedtuple
 
@@ -201,7 +201,7 @@ class AMQPException(Exception):
     :keyword dict info: A dictionary of additional data associated with the error.
     """
     def __init__(self, condition: bytes, **kwargs: Any):
-        self.condition: bytes = condition or ErrorCondition.UnknownError
+        self.condition: Union[bytes, Enum] = condition or ErrorCondition.UnknownError
         self.description: str = kwargs.get("description", None)
         self.info: str = kwargs.get("info", None)
         self.message: str = kwargs.get("message", None)

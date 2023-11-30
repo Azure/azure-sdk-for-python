@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Union, List, Optional, TYPE_CHECKING, cast
+from enum import Enum
 
 if TYPE_CHECKING:
     from ._pyamqp.error import AMQPException
@@ -23,23 +24,23 @@ class EventHubError(Exception):
         self.error: Optional[str] = None
         self.message: str = message
         self.details: Union[List[str], "AMQPException"]
+        details = cast("AMQPException", details)
         if details and isinstance(details, Exception):
             self.details = details
             try:
-                details_cast = cast("AMQPException", details)
-                condition = details_cast.condition.value.decode("UTF-8")
+                details.condition = cast(Enum, details.condition)
+                condition = details.condition.value.decode("UTF-8")
             except AttributeError:
                 try:
-                    details_cast = cast("AMQPException", details)
-                    condition = details_cast.condition.decode("UTF-8")
+                    details.condition = cast(bytes, details.condition)
+                    condition = details.condition.decode("UTF-8")
                 except AttributeError:
                     condition = None
             if condition:
                 _, _, self.error = condition.partition(":")
                 self.message += "\nError: {}".format(self.error)
             try:
-                details_cast = cast("AMQPException", details)
-                self._parse_error(details_cast.description)
+                self._parse_error(details.description)
                 self.details = cast(List[str], self.details)
                 for detail in self.details:
                     self.message += "\n{}".format(detail)

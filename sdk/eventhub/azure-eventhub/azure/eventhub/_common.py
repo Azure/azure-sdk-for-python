@@ -348,7 +348,7 @@ class EventData(object):
         return self._raw_amqp_message.application_properties
 
     @properties.setter
-    def properties(self, value: Dict[Union[str, bytes], Any]) -> None:
+    def properties(self, value: Union[Dict[str, Any], Dict[bytes, Any]]) -> None:
         """Application-defined properties on the event.
 
         :param dict[str, any] or dict[bytes, any] value: The application properties for the EventData.
