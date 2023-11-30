@@ -9,7 +9,7 @@ import functools
 
 import requests
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.storage.blob import BlockBlobService
 
