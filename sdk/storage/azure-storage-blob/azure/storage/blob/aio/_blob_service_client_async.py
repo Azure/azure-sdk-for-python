@@ -19,6 +19,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 
+from .._shared.base_client import StorageAccountHostsMixin, parse_query
+from .._blob_service_client_helpers import _parse_url
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.response_handlers import (
     parse_to_internal_user_delegation_key,
@@ -30,7 +32,6 @@ from .._shared.parser import _to_utc_datetime
 from .._shared.policies_async import ExponentialRetry
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageServiceProperties, KeyInfo
-from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
 from .._encryption import StorageEncryptionMixin
 from .._models import BlobProperties, ContainerProperties
@@ -55,7 +56,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, StorageEncryptionMixin):
+class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with the Blob Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -124,13 +125,24 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        super(BlobServiceClient, self).__init__(
-            account_url,
-            credential=credential,
-            **kwargs)
+        parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
+        _, sas_token = parse_query(parsed_url.query)
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+
+        :param str hostname:
+            The hostname of the current location mode.
+        :returns: A formatted endpoint URL including current location mode hostname.
+        :rtype: str
+        """
+        return f"{self.scheme}://{hostname}/{self._query_str}"
 
     @distributed_trace_async
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
