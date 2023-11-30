@@ -110,8 +110,8 @@ setup(
             "azure-search-documents==11.4.0b11"
         ],
         "promptflow": [
-            "promptflow[azure]",
-            "promptflow-tools",
+            "promptflow[azure]<1",
+            "promptflow-tools<1",
             "promptflow-vectordb"
         ],
         "qa_generation": [
