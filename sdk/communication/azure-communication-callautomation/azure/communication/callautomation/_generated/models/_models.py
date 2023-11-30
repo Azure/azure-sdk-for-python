@@ -76,7 +76,7 @@ class AddParticipantFailed(_serialization.Model):
 class AddParticipantRequest(_serialization.Model):
     """The request payload for adding participant to the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_caller_id_number: The source caller Id, a phone number, that's shown to the PSTN
      participant being invited.
@@ -265,7 +265,7 @@ class AddParticipantSucceeded(_serialization.Model):
 class AnswerCallRequest(_serialization.Model):
     """The request payload for answering the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar incoming_call_context: The context associated with the call. Required.
     :vartype incoming_call_context: str
@@ -415,7 +415,7 @@ class AzureOpenAIDialog(BaseDialog):
 class BlobStorage(_serialization.Model):
     """Used to specify Blob container url to recording storage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar container_uri: Url of a container or a location within a container. Required.
     :vartype container_uri: str
@@ -864,7 +864,7 @@ class CancelAddParticipantFailed(_serialization.Model):
 class CancelAddParticipantRequest(_serialization.Model):
     """Request payload for cancelling add participant request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar invitation_id: Invitation ID used to add a participant. Required.
     :vartype invitation_id: str
@@ -995,7 +995,7 @@ class CancelAddParticipantSucceeded(_serialization.Model):
 class ChannelAffinity(_serialization.Model):
     """Channel affinity for a participant.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar channel: Channel number to which bitstream from a particular participant will be written.
     :vartype channel: int
@@ -1035,7 +1035,7 @@ class ChannelAffinity(_serialization.Model):
 class Choice(_serialization.Model):
     """Choice.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar label: Identifier for a given choice. Required.
     :vartype label: str
@@ -1135,7 +1135,7 @@ class CommunicationError(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: The error code. Required.
     :vartype code: str
@@ -1183,7 +1183,7 @@ class CommunicationError(_serialization.Model):
 class CommunicationErrorResponse(_serialization.Model):
     """The Communication Services error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error: The Communication Services error. Required.
     :vartype error: ~azure.communication.callautomation.models.CommunicationError
@@ -1272,7 +1272,7 @@ class CommunicationIdentifierModel(_serialization.Model):
 class CommunicationUserIdentifierModel(_serialization.Model):
     """A user that got created with an Azure Communication Services resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The Id of the communication user. Required.
     :vartype id: str
@@ -1298,7 +1298,7 @@ class CommunicationUserIdentifierModel(_serialization.Model):
 class ContinuousDtmfRecognitionRequest(_serialization.Model):
     """ContinuousDtmfRecognitionRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participant: Defines options for recognition. Required.
     :vartype target_participant:
@@ -1492,7 +1492,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
 class CreateCallRequest(_serialization.Model):
     """The request payload for creating the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar targets: The targets of the call. Required.
     :vartype targets: list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
@@ -1954,9 +1954,38 @@ class DialogLanguageChange(_serialization.Model):
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
         self.ivr_context = None
-        self.call_connection_id = None
-        self.server_call_id = None
-        self.correlation_id = None
+
+
+class DialogOptions(_serialization.Model):
+    """DialogOptions.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar bot_app_id: Bot identifier.
+    :vartype bot_app_id: str
+    :ivar dialog_context: Dialog context. Required.
+    :vartype dialog_context: dict[str, JSON]
+    """
+
+    _validation = {
+        "dialog_context": {"required": True},
+    }
+
+    _attribute_map = {
+        "bot_app_id": {"key": "botAppId", "type": "str"},
+        "dialog_context": {"key": "dialogContext", "type": "{object}"},
+    }
+
+    def __init__(self, *, dialog_context: Dict[str, JSON], bot_app_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword bot_app_id: Bot identifier.
+        :paramtype bot_app_id: str
+        :keyword dialog_context: Dialog context. Required.
+        :paramtype dialog_context: dict[str, JSON]
+        """
+        super().__init__(**kwargs)
+        self.bot_app_id = bot_app_id
+        self.dialog_context = dialog_context
 
 
 class DialogSensitivityUpdate(_serialization.Model):
@@ -2273,7 +2302,7 @@ class DtmfResult(_serialization.Model):
 class ExternalStorage(_serialization.Model):
     """ExternalStorage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar storage_type: Defines the type of external storage. Required. Known values are: "acs" and
      "blobStorage".
@@ -2313,7 +2342,7 @@ class ExternalStorage(_serialization.Model):
 class FileSource(_serialization.Model):
     """FileSource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: Uri for the audio file to be played. Required.
     :vartype uri: str
@@ -2373,7 +2402,7 @@ class GetParticipantsResponse(_serialization.Model):
 class MediaStreamingConfiguration(_serialization.Model):
     """Configuration of Media streaming.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar transport_url: Transport URL for media streaming. Required.
     :vartype transport_url: str
@@ -2438,7 +2467,7 @@ class MediaStreamingConfiguration(_serialization.Model):
 class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
     """A Microsoft Teams user.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar user_id: The Id of the Microsoft Teams user. If not anonymous, this is the AAD object Id
      of the user. Required.
@@ -2490,7 +2519,7 @@ class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
 class MuteParticipantsRequest(_serialization.Model):
     """The request payload for muting participants from the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participants: Participants to be muted from the call.
      Only ACS Users are supported. Required.
@@ -2598,7 +2627,7 @@ class ParticipantsUpdated(_serialization.Model):
 class PhoneNumberIdentifierModel(_serialization.Model):
     """A phone number.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The phone number in E.164 format. Required.
     :vartype value: str
@@ -2754,7 +2783,7 @@ class PlayFailed(_serialization.Model):
 class PlayOptions(_serialization.Model):
     """PlayOptions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar loop: The option to play the provided audio source in loop when set to true. Required.
     :vartype loop: bool
@@ -2780,7 +2809,7 @@ class PlayOptions(_serialization.Model):
 class PlayRequest(_serialization.Model):
     """PlayRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar play_sources: The source of the audio to be played. Required.
     :vartype play_sources: list[~azure.communication.callautomation.models.PlaySource]
@@ -2848,7 +2877,7 @@ class PlayRequest(_serialization.Model):
 class PlaySource(_serialization.Model):
     """PlaySource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Defines the type of the play source. Required. Known values are: "file", "text",
      and "ssml".
@@ -3114,7 +3143,7 @@ class RecognizeFailed(_serialization.Model):
 class RecognizeOptions(_serialization.Model):
     """RecognizeOptions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar interrupt_prompt: Determines if we interrupt the prompt and start recognizing.
     :vartype interrupt_prompt: bool
@@ -3198,7 +3227,7 @@ class RecognizeOptions(_serialization.Model):
 class RecognizeRequest(_serialization.Model):
     """RecognizeRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar recognize_input_type: Determines the type of the recognition. Required. Known values are:
      "dtmf", "speech", "speechOrDtmf", and "choices".
@@ -3379,7 +3408,7 @@ class RecordingStateResponse(_serialization.Model):
 class RedirectCallRequest(_serialization.Model):
     """The request payload for redirecting the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar incoming_call_context: The context associated with the call. Required.
     :vartype incoming_call_context: str
@@ -3425,7 +3454,7 @@ class RedirectCallRequest(_serialization.Model):
 class RejectCallRequest(_serialization.Model):
     """The request payload for rejecting the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar incoming_call_context: The context associated with the call. Required.
     :vartype incoming_call_context: str
@@ -3516,7 +3545,7 @@ class RemoveParticipantFailed(_serialization.Model):
 class RemoveParticipantRequest(_serialization.Model):
     """The remove participant by identifier request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar participant_to_remove: The participants to be removed from the call. Required.
     :vartype participant_to_remove:
@@ -3774,7 +3803,7 @@ class SendDtmfTonesFailed(_serialization.Model):
 class SendDtmfTonesRequest(_serialization.Model):
     """SendDtmfTonesRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar tones: List of tones to be sent to target participant. Required.
     :vartype tones: list[str or ~azure.communication.callautomation.models.DtmfTone]
@@ -3897,7 +3926,7 @@ class SpeechResult(_serialization.Model):
 class SsmlSource(_serialization.Model):
     """SsmlSource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar ssml_text: Ssml string for the cognitive service to be played. Required.
     :vartype ssml_text: str
@@ -3929,7 +3958,7 @@ class SsmlSource(_serialization.Model):
 class StartCallRecordingRequest(_serialization.Model):
     """The request payload start for call recording operation with call locator.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar call_locator: The call locator. Required.
     :vartype call_locator: ~azure.communication.callautomation.models.CallLocator
@@ -4058,7 +4087,7 @@ class StartCallRecordingRequest(_serialization.Model):
 class StartDialogRequest(_serialization.Model):
     """StartDialogRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar dialog: Defines the dialog. Required.
     :vartype dialog: ~azure.communication.callautomation.models.BaseDialog
@@ -4090,7 +4119,7 @@ class StartDialogRequest(_serialization.Model):
 class StartHoldMusicRequest(_serialization.Model):
     """The request payload for holding participant from the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participant: Participant to be held from the call. Required.
     :vartype target_participant:
@@ -4173,7 +4202,7 @@ class StartTranscriptionRequest(_serialization.Model):
 class StopHoldMusicRequest(_serialization.Model):
     """The request payload for holding participant from the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participant: Participants to be hold from the call.
      Only ACS Users are supported. Required.
@@ -4237,7 +4266,7 @@ class StopTranscriptionRequest(_serialization.Model):
 class TextSource(_serialization.Model):
     """TextSource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar text: Text for the cognitive service to be played. Required.
     :vartype text: str
@@ -4308,7 +4337,7 @@ class TextSource(_serialization.Model):
 class ToneInfo(_serialization.Model):
     """The information about the tone.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar sequence_id: The sequence id which can be used to determine if the same tone was played
      multiple times or if any tones were missed. Required.
@@ -4345,7 +4374,7 @@ class ToneInfo(_serialization.Model):
 class TranscriptionConfiguration(_serialization.Model):
     """Configuration of live transcription.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar transport_url: Transport URL for live transcription. Required.
     :vartype transport_url: str
@@ -4676,7 +4705,7 @@ class TransferCallResponse(_serialization.Model):
 class TransferToParticipantRequest(_serialization.Model):
     """The request payload for transferring call to a participant.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participant: The identity of the target where call should be transferred to.
      Required.
@@ -4747,7 +4776,7 @@ class TransferToParticipantRequest(_serialization.Model):
 class UnmuteParticipantsRequest(_serialization.Model):
     """The request payload for unmuting participant from the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_participants: Participants to be unmuted from the call.
      Only ACS Users are supported. Required.
@@ -4808,10 +4837,10 @@ class UnmuteParticipantsResponse(_serialization.Model):
         self.operation_context = operation_context
 
 
-class UpdateTranscriptionDataRequest(_serialization.Model):
-    """UpdateTranscriptionDataRequest.
+class UpdateTranscriptionRequest(_serialization.Model):
+    """UpdateTranscriptionRequest.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar locale: Defines new locale for transcription. Required.
     :vartype locale: str

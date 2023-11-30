@@ -13,7 +13,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from _decorators_async import RouterPreparersAsync
 from _validators import JobQueueValidator
 from _router_test_case_async import AsyncRouterRecordedTestCase
-from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -59,9 +58,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1),
             )
 
-            distribution_policy = await client.upsert_distribution_policy(
-                distribution_policy_id, policy
-            )
+            distribution_policy = await client.upsert_distribution_policy(distribution_policy_id, policy)
 
         # add for cleanup later
         if self._testMethodName in self.distribution_policy_ids:

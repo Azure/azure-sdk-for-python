@@ -54,7 +54,7 @@ from ...operations._operations import (
     build_call_media_stop_continuous_dtmf_recognition_request,
     build_call_media_stop_hold_music_request,
     build_call_media_stop_transcription_request,
-    build_call_media_update_transcription_data_request,
+    build_call_media_update_transcription_request,
     build_call_recording_get_recording_properties_request,
     build_call_recording_pause_recording_request,
     build_call_recording_resume_recording_request,
@@ -2555,7 +2555,7 @@ class CallMediaOperations:
         else:
             _json = self._serialize.body(send_dtmf_tones_request, "SendDtmfTonesRequest")
 
-        _request = build_call_media_send_dtmf_tones_request(
+        _request = build_call_media_send_dtmf_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2586,28 +2586,26 @@ class CallMediaOperations:
         deserialized = self._deserialize("SendDtmfTonesResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def update_transcription_data(  # pylint: disable=inconsistent-return-statements
+    async def update_transcription(  # pylint: disable=inconsistent-return-statements
         self,
         call_connection_id: str,
-        update_transcription_data_request: _models.UpdateTranscriptionDataRequest,
+        update_transcription_request: _models.UpdateTranscriptionRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
-        """UpdateTranscriptionData Api.
+        """UpdateTranscription Api.
 
         API to change transcription language.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param update_transcription_data_request: The updateTranscriptionData request. Required.
-        :type update_transcription_data_request:
-         ~azure.communication.callautomation.models.UpdateTranscriptionDataRequest
+        :param update_transcription_request: The updateTranscription request. Required.
+        :type update_transcription_request:
+         ~azure.communication.callautomation.models.UpdateTranscriptionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2617,22 +2615,22 @@ class CallMediaOperations:
         """
 
     @overload
-    async def update_transcription_data(  # pylint: disable=inconsistent-return-statements
+    async def update_transcription(  # pylint: disable=inconsistent-return-statements
         self,
         call_connection_id: str,
-        update_transcription_data_request: IO,
+        update_transcription_request: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
-        """UpdateTranscriptionData Api.
+        """UpdateTranscription Api.
 
         API to change transcription language.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param update_transcription_data_request: The updateTranscriptionData request. Required.
-        :type update_transcription_data_request: IO
+        :param update_transcription_request: The updateTranscription request. Required.
+        :type update_transcription_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2642,22 +2640,22 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def update_transcription_data(  # pylint: disable=inconsistent-return-statements
+    async def update_transcription(  # pylint: disable=inconsistent-return-statements
         self,
         call_connection_id: str,
-        update_transcription_data_request: Union[_models.UpdateTranscriptionDataRequest, IO],
+        update_transcription_request: Union[_models.UpdateTranscriptionRequest, IO],
         **kwargs: Any
     ) -> None:
-        """UpdateTranscriptionData Api.
+        """UpdateTranscription Api.
 
         API to change transcription language.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param update_transcription_data_request: The updateTranscriptionData request. Is either a
-         UpdateTranscriptionDataRequest type or a IO type. Required.
-        :type update_transcription_data_request:
-         ~azure.communication.callautomation.models.UpdateTranscriptionDataRequest or IO
+        :param update_transcription_request: The updateTranscription request. Is either a
+         UpdateTranscriptionRequest type or a IO type. Required.
+        :type update_transcription_request:
+         ~azure.communication.callautomation.models.UpdateTranscriptionRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -2682,12 +2680,12 @@ class CallMediaOperations:
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(update_transcription_data_request, (IOBase, bytes)):
-            _content = update_transcription_data_request
+        if isinstance(update_transcription_request, (IOBase, bytes)):
+            _content = update_transcription_request
         else:
-            _json = self._serialize.body(update_transcription_data_request, "UpdateTranscriptionDataRequest")
+            _json = self._serialize.body(update_transcription_request, "UpdateTranscriptionRequest")
 
-        _request = build_call_media_update_transcription_data_request(
+        _request = build_call_media_update_transcription_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,

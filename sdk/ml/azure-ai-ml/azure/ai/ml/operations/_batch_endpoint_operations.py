@@ -249,7 +249,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.Invoke", ActivityType.PUBLICAPI)
-    def invoke(
+    def invoke(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements
         self,
         endpoint_name: str,
         *,
@@ -290,6 +290,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         outputs = kwargs.get("outputs", None)
         job_name = kwargs.get("job_name", None)
         params_override = kwargs.get("params_override", None) or []
+        experiment_name = kwargs.get("experiment_name", None)
         input = kwargs.get("input", None)  # pylint: disable=redefined-builtin
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
         if deployment_name:
@@ -327,10 +328,17 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     self._resolve_input(input_data, os.getcwd())
             params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})
 
+        properties = {}
+
         if outputs:
             params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
         if job_name:
             params_override.append({EndpointYamlFields.BATCH_JOB_NAME: job_name})
+        if experiment_name:
+            properties["experimentName"] = experiment_name
+
+        if properties:
+            params_override.append({EndpointYamlFields.BATCH_JOB_PROPERTIES: properties})
 
         # Batch job doesn't have a python class, loading a rest object using params override
         context = {

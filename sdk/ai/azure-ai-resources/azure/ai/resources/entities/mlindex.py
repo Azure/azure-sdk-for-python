@@ -22,7 +22,7 @@ class Index:
 
     def query(self, text: str):
         try:
-            from azure.ai.resources.index._mlindex import MLIndex as InternalMLIndex
+            from azure.ai.resources._index._mlindex import MLIndex as InternalMLIndex
         except ImportError as e:
             print("In order to query an Index, you must have azure-ai-generative[index] installed")
             raise e

@@ -87,6 +87,11 @@ class HttpHeaders(object):
     Referer = "referer"
     Pragma = "Pragma"
 
+    # Bulk/Batch
+    IsBatchRequest = "x-ms-cosmos-is-batch-request"
+    IsBatchAtomic = "x-ms-cosmos-batch-atomic"
+    ShouldBatchContinueOnError = "x-ms-cosmos-batch-continue-on-error"
+
     # Query
     Query = "x-ms-documentdb-query"
     IsQuery = "x-ms-documentdb-isquery"
@@ -95,6 +100,7 @@ class HttpHeaders(object):
     QueryVersion = "x-ms-cosmos-query-version"
     QueryMetrics = "x-ms-documentdb-query-metrics"
     QueryExecutionInfo = "x-ms-cosmos-query-execution-info"
+    IndexUtilization = "x-ms-cosmos-index-utilization"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
@@ -125,6 +131,7 @@ class HttpHeaders(object):
     ContentPath = "x-ms-content-path"
     IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
     PopulateQueryMetrics = "x-ms-documentdb-populatequerymetrics"
+    PopulateIndexMetrics = "x-ms-cosmos-populateindexmetrics"
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
 
@@ -225,15 +232,15 @@ class HttpHeaders(object):
     GatewayVersion = "x-ms-gatewayversion"
     ServiceVersion = "x-ms-serviceversion"
     SchemaVersion = "x-ms-schemaversion"
-    QuorumAckedLsn = "x-ms-quorum-acked-lsn" # cspell:disable-line
+    QuorumAckedLsn = "x-ms-quorum-acked-lsn"  # cspell:disable-line
     CurrentWriteQuorum = "x-ms-current-write-quorum"
     CurrentReplicaSetSize = "x-ms-current-replica-set-size"
     XpRole = "x-ms-xp-role"
     GlobalCommittedLsn = "x-ms-global-committed-lsn"
     NumberOfReadRegions = "x-ms-number-of-read-regions"
     TransportRequestId = "x-ms-transport-request-id"
-    CosmosLsn = "x-ms-cosmos-llsn" # cspell:disable-line
-    CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn" # cspell:disable-line
+    CosmosLsn = "x-ms-cosmos-llsn"  # cspell:disable-line
+    CosmosQuorumAckedLsn = "x-ms-cosmos-quorum-acked-llsn"  # cspell:disable-line
     RequestDurationMs = "x-ms-request-duration-ms"
 
 class HttpHeaderPreferenceTokens(object):
@@ -377,6 +384,7 @@ class StatusCodes(object):
     GONE = 410
     PRECONDITION_FAILED = 412
     REQUEST_ENTITY_TOO_LARGE = 413
+    FAILED_DEPENDENCY = 424
     TOO_MANY_REQUESTS = 429
     RETRY_WITH = 449
 

@@ -171,9 +171,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
             name=distribution_policy_id,
         )
 
-        distribution_policy = client.upsert_distribution_policy(
-            distribution_policy_id, policy
-        )
+        distribution_policy = client.upsert_distribution_policy(distribution_policy_id, policy)
 
         # add for cleanup later
         if self._testMethodName in self.distribution_policy_ids:
@@ -218,9 +216,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 worker_selector_attachments=worker_selectors,
             )
 
-            classification_policy = router_client.upsert_classification_policy(
-                cp_identifier, classification_policy
-            )
+            classification_policy = router_client.upsert_classification_policy(cp_identifier, classification_policy)
 
             # add for cleanup
             self.classification_policy_ids[self._testMethodName] = [cp_identifier]
@@ -254,9 +250,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 worker_selector_attachments=worker_selectors,
             )
 
-            classification_policy = router_client.upsert_classification_policy(
-                cp_identifier, classification_policy
-            )
+            classification_policy = router_client.upsert_classification_policy(cp_identifier, classification_policy)
 
             # add for cleanup
             self.classification_policy_ids[self._testMethodName] = [cp_identifier]
@@ -306,9 +300,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 worker_selector_attachments=worker_selectors,
             )
 
-            classification_policy = router_client.upsert_classification_policy(
-                cp_identifier, classification_policy
-            )
+            classification_policy = router_client.upsert_classification_policy(cp_identifier, classification_policy)
 
             # add for cleanup
             self.classification_policy_ids[self._testMethodName] = [cp_identifier]
@@ -358,9 +350,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                 worker_selector_attachments=worker_selectors,
             )
 
-            classification_policy = router_client.upsert_classification_policy(
-                cp_identifier, classification_policy
-            )
+            classification_policy = router_client.upsert_classification_policy(cp_identifier, classification_policy)
 
             # add for cleanup
             self.classification_policy_ids[self._testMethodName] = [cp_identifier]
@@ -411,9 +401,7 @@ class TestClassificationPolicy(RouterRecordedTestCase):
                     worker_selector_attachments=worker_selectors,
                 )
 
-                classification_policy = router_client.upsert_classification_policy(
-                    _identifier, classification_policy
-                )
+                classification_policy = router_client.upsert_classification_policy(_identifier, classification_policy)
 
                 policy_count += 1
 

@@ -48,6 +48,9 @@ from ._generated.models import (
     CustomContext,
     StartHoldMusicRequest,
     StopHoldMusicRequest,
+    StartTranscriptionRequest,
+    StopTranscriptionRequest,
+    UpdateTranscriptionRequest,
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
@@ -75,7 +78,7 @@ if TYPE_CHECKING:
 MediaSources = Union['FileSource', 'TextSource', 'SsmlSource']
 
 
-class CallConnectionClient:
+class CallConnectionClient:  # pylint: disable=too-many-public-methods
     """A client to interact with an ongoing call. This client can be used to do mid-call actions,
     such as Transfer and Play Media. Call must be established to perform these actions.
 
@@ -740,7 +743,7 @@ class CallConnectionClient:
     ) -> MuteParticipantResult:
         """Mute participant from the call using identifier.
 
-        :param target_participant: Participant to be muted from the call. Only ACS Users are supported. Required.
+        :param target_participant: Participant to be muted from the call. Only ACS Users are supported.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the request to the
          response event.
@@ -861,3 +864,73 @@ class CallConnectionClient:
             **kwargs
         )
         self._call_media_client.stop_hold_music(self._call_connection_id, stop_hold_request)
+
+    @distributed_trace
+    def start_transcription(
+        self,
+        *,
+        locale: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Starts transcription in the call.
+
+        :keyword locale: Defines Locale for the transcription e,g en-US.
+        :paramtype locale: str
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        start_transcription_request = StartTranscriptionRequest(
+            locale=locale,
+            operation_context=operation_context,
+            **kwargs
+        )
+        self._call_media_client.start_transcription(self._call_connection_id, start_transcription_request)
+
+
+    @distributed_trace
+    def stop_transcription(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Stops transcription in the call.
+
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        stop_transcription_request = StopTranscriptionRequest(
+            operation_context=operation_context,
+            **kwargs
+        )
+        self._call_media_client.stop_transcription(self._call_connection_id, stop_transcription_request)
+
+    @distributed_trace
+    def update_transcription(
+        self,
+        locale: str,
+        **kwargs
+    ) -> None:
+        """API to change transcription language.
+
+        :param locale: Defines new locale for transcription.
+        :type locale: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        update_transcription_request = UpdateTranscriptionRequest(
+            locale=locale,
+            **kwargs
+        )
+        self._call_media_client.update_transcription(self._call_connection_id, update_transcription_request)

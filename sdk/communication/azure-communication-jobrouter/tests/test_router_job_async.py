@@ -14,7 +14,6 @@ from _router_test_case_async import AsyncRouterRecordedTestCase
 from _validators import RouterJobValidator
 from azure.communication.jobrouter._model_base import _deserialize_datetime as _convert_str_to_datetime
 from _decorators_async import RouterPreparersAsync
-from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -57,9 +56,9 @@ job_requested_worker_selectors = [
     RouterWorkerSelector(key="FakeKey1", label_operator=LabelOperator.EQUAL, value=True),
     RouterWorkerSelector(key="FakeKey2", label_operator=LabelOperator.NOT_EQUAL, value=False),
     RouterWorkerSelector(key="FakeKey3", label_operator=LabelOperator.LESS_THAN, value=10),
-    RouterWorkerSelector(key="FakeKey4", label_operator=LabelOperator.LESS_THAN_EQUAL, value=10.01),
+    RouterWorkerSelector(key="FakeKey4", label_operator=LabelOperator.LESS_THAN_OR_EQUAL, value=10.01),
     RouterWorkerSelector(key="FakeKey5", label_operator=LabelOperator.GREATER_THAN, value=10),
-    RouterWorkerSelector(key="FakeKey6", label_operator=LabelOperator.GREATER_THAN_EQUAL, value=10),
+    RouterWorkerSelector(key="FakeKey6", label_operator=LabelOperator.GREATER_THAN_OR_EQUAL, value=10),
 ]
 
 
@@ -133,9 +132,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
                 mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1),
             )
 
-            distribution_policy = await client.upsert_distribution_policy(
-                distribution_policy_id, policy
-            )
+            distribution_policy = await client.upsert_distribution_policy(distribution_policy_id, policy)
 
             # add for cleanup later
             if self._testMethodName in self.distribution_policy_ids:

@@ -12,8 +12,10 @@ from corehttp.exceptions import (
     SerializationError,
     DeserializationError,
 )
-from corehttp.rest._http_response_impl import _HttpResponseBaseImpl as RestHttpResponseBase
-from utils import HTTP_REQUESTS
+from corehttp.rest import HttpRequest
+
+from rest_client import MockRestClient
+from utils import SYNC_TRANSPORTS
 
 
 class FakeErrorOne(object):
@@ -59,9 +61,10 @@ class TestExceptions(object):
         assert error.status_code is None
         assert error.continuation_token == "foo"
 
-    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-    def test_httpresponse_error_with_response(self, client, port, http_request):
-        request = http_request("GET", url="http://localhost:{}/basic/string".format(port))
+    @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+    def test_httpresponse_error_with_response(self, port, transport):
+        request = HttpRequest("GET", url="http://localhost:{}/basic/string".format(port))
+        client = MockRestClient(port, transport=transport())
         response = client.send_request(request, stream=False)
         error = HttpResponseError(response=response)
         assert error.message == "Operation returned an invalid status 'OK'"
@@ -69,9 +72,10 @@ class TestExceptions(object):
         assert error.reason == "OK"
         assert isinstance(error.status_code, int)
 
-    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-    def test_malformed_json(self, client, http_request):
-        request = http_request("GET", "/errors/malformed-json")
+    @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+    def test_malformed_json(self, port, transport):
+        request = HttpRequest("GET", "/errors/malformed-json")
+        client = MockRestClient(port, transport=transport())
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
@@ -80,9 +84,10 @@ class TestExceptions(object):
             == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
         )
 
-    @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-    def test_text(self, client, http_request):
-        request = http_request("GET", "/errors/text")
+    @pytest.mark.parametrize("transport", SYNC_TRANSPORTS)
+    def test_text(self, port, transport):
+        request = HttpRequest("GET", "/errors/text")
+        client = MockRestClient(port, transport=transport())
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()

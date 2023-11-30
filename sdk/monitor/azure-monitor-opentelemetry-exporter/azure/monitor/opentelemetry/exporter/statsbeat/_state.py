@@ -2,10 +2,11 @@
 # Licensed under the MIT License.
 import os
 import threading
+from typing import Dict, Union
 
 from azure.monitor.opentelemetry.exporter._constants import _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL
 
-_REQUESTS_MAP = {}
+_REQUESTS_MAP: Dict[str, Union[int, Dict[int, int]]] = {}
 _REQUESTS_MAP_LOCK = threading.Lock()
 
 _STATSBEAT_STATE = {

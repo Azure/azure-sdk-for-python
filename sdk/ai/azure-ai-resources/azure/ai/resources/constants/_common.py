@@ -4,6 +4,7 @@
 
 
 DEFAULT_OPEN_AI_CONNECTION_NAME = "Default_AzureOpenAI"
+DEFAULT_CONTENT_SAFETY_CONNECTION_NAME = "Default_AzureAIContentSafety"
 
 class AssetTypes:
     """AssetTypes is an enumeration of values for the asset types of a data.

@@ -1446,6 +1446,8 @@ class TestStorageFile(StorageRecordedTestCase):
             source_file_client.share_name,
             source_file_client.file_path,
             source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
         )
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file

@@ -20,6 +20,7 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MediaStreamingConfiguration,
+    TranscriptionConfiguration,
     ChannelAffinity,
     MuteParticipantResult,
     SendDtmfTonesResult,
@@ -32,7 +33,6 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     CommunicationIdentifierKind,
     CommunicationCloudEnvironment,
-    MicrosoftBotIdentifier,
     UnknownIdentifier,
 )
 from ._generated.models._enums import (
@@ -45,6 +45,7 @@ from ._generated.models._enums import (
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
     MediaStreamingTransportType,
+    TranscriptionTransportType,
     DtmfTone,
     CallConnectionState,
     RecordingState,
@@ -62,6 +63,7 @@ __all__ = [
     "RecognitionChoice",
     "ChannelAffinity",
     "MediaStreamingConfiguration",
+    "TranscriptionConfiguration",
 
     # models for output
     "CallConnectionProperties",
@@ -81,7 +83,6 @@ __all__ = [
     "CommunicationUserIdentifier",
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
-    "MicrosoftBotIdentifier",
     "UnknownIdentifier",
 
     # enums
@@ -94,6 +95,7 @@ __all__ = [
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
     "MediaStreamingTransportType",
+    "TranscriptionTransportType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
@@ -124,5 +126,8 @@ def __getattr__(name):
         )
         from ._models import ServerCallLocator
         return ServerCallLocator
-
+    if name == 'MicrosoftBotIdentifier':
+        warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
+        from ._shared.models  import _MicrosoftBotIdentifier
+        return _MicrosoftBotIdentifier
     raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")

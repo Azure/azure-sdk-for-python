@@ -8,12 +8,7 @@
 from datetime import datetime
 from azure.communication.jobrouter._model_base import _deserialize_datetime as _convert_str_to_datetime
 from collections import Counter
-from typing import (
-    Any,
-    Dict,
-    List,
-    Union
-)
+from typing import Any, Dict, List, Union
 
 from router_test_constants import SANITIZED, FAKE_FUNCTION_URI
 from azure.communication.jobrouter.models import (
@@ -51,6 +46,13 @@ from azure.communication.jobrouter.models import (
     ExpressionRouterRule,
     LabelOperator,
     RouterJobNote,
+    RouterRuleKind,
+    DistributionModeKind,
+    ExceptionTriggerKind,
+    ExceptionActionKind,
+    QueueSelectorAttachmentKind,
+    WorkerSelectorAttachmentKind,
+    JobMatchingModeKind,
 )
 
 
@@ -69,15 +71,15 @@ class DistributionPolicyValidator(object):
 
     @staticmethod
     def validate_longest_idle_mode(distribution_policy, mode, **kwargs):
-        assert distribution_policy.mode.kind == "longest-idle"
+        assert distribution_policy.mode.kind == DistributionModeKind.LONGEST_IDLE
 
     @staticmethod
     def validate_round_robin_mode(distribution_policy, mode, **kwargs):
-        assert distribution_policy.mode.kind == "round-robin"
+        assert distribution_policy.mode.kind == DistributionModeKind.ROUND_ROBIN
 
     @staticmethod
     def validate_best_worker_mode(distribution_policy, mode, **kwargs):
-        assert distribution_policy.mode.kind == "best-worker"
+        assert distribution_policy.mode.kind == DistributionModeKind.BEST_WORKER
         # TODO: Add more validations for best worker mode
 
     @staticmethod
@@ -98,18 +100,18 @@ class DistributionPolicyValidator(object):
     @staticmethod
     def validate_distribution_policy(distribution_policy, **kwargs):
 
-        if not kwargs.get("identifier", None):
+        if kwargs.get("identifier", None) is not None:
             DistributionPolicyValidator.validate_id(distribution_policy, kwargs.pop("identifier"))
 
-        if not kwargs.get("name", None):
+        if kwargs.get("name", None) is not None:
             DistributionPolicyValidator.validate_name(distribution_policy, kwargs.pop("name"))
 
-        if not kwargs.get("offer_expires_after_seconds", None):
+        if kwargs.get("offer_expires_after_seconds", None) is not None:
             DistributionPolicyValidator.validate_offer_ttl(
                 distribution_policy, kwargs.pop("offer_expires_after_seconds")
             )
 
-        if not kwargs.get("mode", None):
+        if kwargs.get("mode", None) is not None:
             DistributionPolicyValidator.validate_distribution_mode(distribution_policy, kwargs.pop("mode"))
 
 
@@ -258,18 +260,17 @@ class ClassificationPolicyValidator(object):
 
     @staticmethod
     def validate_queue_selectors(entity, queue_selector_attachments, **kwargs):
-
         def validate_static_queue_selector_attachment(
-                actual,  # type: StaticQueueSelectorAttachment
-                expected,  # type: StaticQueueSelectorAttachment
-                **kwargs,
+            actual,  # type: StaticQueueSelectorAttachment
+            expected,  # type: StaticQueueSelectorAttachment
+            **kwargs,
         ):
             QueueSelectorValidator.validate_queue_selector(actual.queue_selector, expected.queue_selector)
 
         def validate_conditional_queue_selector_attachment(
-                actual,  # type: ConditionalQueueSelectorAttachment
-                expected,  # type: ConditionalQueueSelectorAttachment
-                **kwargs,  # type: Any
+            actual,  # type: ConditionalQueueSelectorAttachment
+            expected,  # type: ConditionalQueueSelectorAttachment
+            **kwargs,  # type: Any
         ):
             RouterRuleValidator.validate_router_rule(actual.condition, expected.condition)
 
@@ -277,16 +278,16 @@ class ClassificationPolicyValidator(object):
                 QueueSelectorValidator.validate_queue_selector(i, j)
 
         def validate_rule_engine_selector_attachment(
-                actual,  # type: RuleEngineQueueSelectorAttachment
-                expected,  # type: RuleEngineQueueSelectorAttachment
-                **kwargs,  # type: Any
+            actual,  # type: RuleEngineQueueSelectorAttachment
+            expected,  # type: RuleEngineQueueSelectorAttachment
+            **kwargs,  # type: Any
         ):
             RouterRuleValidator.validate_router_rule(actual.rule, expected.rule)
 
         def validate_weighted_allocation_selector_attachment(
-                actual,  # type: WeightedAllocationQueueSelectorAttachment
-                expected,  # type: WeightedAllocationQueueSelectorAttachment
-                **kwargs,  # type: Any
+            actual,  # type: WeightedAllocationQueueSelectorAttachment
+            expected,  # type: WeightedAllocationQueueSelectorAttachment
+            **kwargs,  # type: Any
         ):
             for i, j in zip(actual.allocations, expected.allocations):
                 assert i.weight == j.weight
@@ -294,9 +295,9 @@ class ClassificationPolicyValidator(object):
                     QueueSelectorValidator.validate_queue_selector(ac_qs, ex_qs)
 
         def validate_passthrough_attachment(
-                actual,  # type: PassThroughQueueSelectorAttachment
-                expected,  # type: PassThroughQueueSelectorAttachment
-                **kwargs,  # type: Any
+            actual,  # type: PassThroughQueueSelectorAttachment
+            expected,  # type: PassThroughQueueSelectorAttachment
+            **kwargs,  # type: Any
         ):
             assert actual.kind == expected.kind
             assert actual.key == expected.key
@@ -402,8 +403,9 @@ class ClassificationPolicyValidator(object):
             )
 
         if "queue_selector_attachments" in kwargs:
-            ClassificationPolicyValidator.validate_queue_selectors(classification_policy,
-                                                                   kwargs.pop("queue_selector_attachments"))
+            ClassificationPolicyValidator.validate_queue_selectors(
+                classification_policy, kwargs.pop("queue_selector_attachments")
+            )
 
         if "prioritization_rule" in kwargs:
             ClassificationPolicyValidator.validate_prioritization_rule(

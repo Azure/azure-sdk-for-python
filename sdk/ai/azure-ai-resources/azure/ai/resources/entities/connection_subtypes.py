@@ -16,7 +16,9 @@ from azure.ai.ml.constants._common import (
 from .base_connection import BaseConnection
 
 class AzureOpenAIConnection(BaseConnection):
-    """A Connection for Azure Open AI.
+    """A Connection for Azure Open AI. Note: This object usually shouldn't be created manually by users.
+    To get the default AzureOpenAIConnection for an AI Resource, use an AIClient object to call the
+    'get_default_aoai_connection' function.
 
     :param name: Name of the connection.
     :type name: str
@@ -27,7 +29,7 @@ class AzureOpenAIConnection(BaseConnection):
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for.
-    :type api_version: str
+    :type api_version: Optional[str]
     :param api_type: The api type that this connection was created for. Defaults to "Azure" and currently rarely changes.
     :type api_type: str
     """
@@ -37,7 +39,7 @@ class AzureOpenAIConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str = "unset",
+        api_version: Optional[str] = None,
         api_type: str = "Azure",
         **kwargs,
     ):
@@ -137,7 +139,7 @@ class AzureAISearchConnection(BaseConnection):
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for. Only applies to certain connection types.
-    :type api_version: str
+    :type api_version: Optional[str]
     """
 
     def __init__(
@@ -145,7 +147,7 @@ class AzureAISearchConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str = "unset",
+        api_version: Optional[str] = None,
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -191,7 +193,9 @@ class AzureAISearchConnection(BaseConnection):
 
 
 class AzureAIServiceConnection(BaseConnection):
-    """A Connection for an Azure Cognitive Service.
+    """A Connection for an Azure Cognitive Service. Note: This object usually shouldn't be created manually by users.
+    To get the default AzureOpenAIConnection for an AI Resource, use an AIClient object to call the
+    'get_default_aoai_connection' function.
 
     :param name: Name of the connection.
     :type name: str
@@ -202,7 +206,7 @@ class AzureAIServiceConnection(BaseConnection):
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for.
-    :type api_version: str
+    :type api_version: Optional[str]
     :param kind: The kind of ai service that this connection points to. Valid inputs include:
         "AzureOpenAI", "ContentSafety", and "Speech"
     :type kind: str
@@ -213,7 +217,7 @@ class AzureAIServiceConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str = "unset",
+        api_version: Optional[str] = None,
         kind: str,
         **kwargs,
     ):

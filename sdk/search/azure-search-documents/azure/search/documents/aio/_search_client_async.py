@@ -26,7 +26,7 @@ from .._generated.models import (
     ScoringStatistics,
     VectorFilterMode,
     VectorQuery,
-    SemanticErrorHandling,
+    SemanticErrorMode,
     QueryDebugMode,
     SuggestRequest,
 )
@@ -66,11 +66,7 @@ class SearchClient(HeadersMixin):
     _client: SearchIndexClient
 
     def __init__(
-        self,
-        endpoint: str,
-        index_name: str,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        **kwargs: Any
+        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._index_documents_batch = IndexDocumentsBatch()
@@ -89,9 +85,7 @@ class SearchClient(HeadersMixin):
             )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(
-                credential, audience=audience, is_async=True
-            )
+            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
             self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
@@ -102,9 +96,7 @@ class SearchClient(HeadersMixin):
             )
 
     def __repr__(self) -> str:
-        return "<SearchClient [endpoint={}, index={}]>".format(
-            repr(self._endpoint), repr(self._index_name)
-        )[:1024]
+        return "<SearchClient [endpoint={}, index={}]>".format(repr(self._endpoint), repr(self._index_name))[:1024]
 
     async def close(self) -> None:
         """Close the :class:`~azure.search.documents.aio.SearchClient` session.
@@ -125,9 +117,7 @@ class SearchClient(HeadersMixin):
         return int(await self._client.documents.count(**kwargs))
 
     @distributed_trace_async
-    async def get_document(
-        self, key: str, selected_fields: Optional[List[str]] = None, **kwargs: Any
-    ) -> Dict:
+    async def get_document(self, key: str, selected_fields: Optional[List[str]] = None, **kwargs: Any) -> Dict:
         """Retrieve a document from the Azure search index by its key.
 
         :param key: The primary key value for the document to retrieve
@@ -147,15 +137,13 @@ class SearchClient(HeadersMixin):
                 :caption: Get a specific document from the search index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.documents.get(
-            key=key, selected_fields=selected_fields, **kwargs
-        )
+        result = await self._client.documents.get(key=key, selected_fields=selected_fields, **kwargs)
         return cast(dict, result)
 
     @distributed_trace_async
     async def search(
         self,
-        search_text: str,
+        search_text: Optional[str] = None,
         *,
         include_total_count: Optional[bool] = None,
         facets: Optional[List[str]] = None,
@@ -177,7 +165,7 @@ class SearchClient(HeadersMixin):
         query_answer_count: Optional[int] = None,
         query_answer_threshold: Optional[float] = None,
         query_caption: Optional[Union[str, QueryCaptionType]] = None,
-        query_caption_highlight: Optional[bool] = None,
+        query_caption_highlight_enabled: Optional[bool] = None,
         semantic_fields: Optional[List[str]] = None,
         semantic_configuration_name: Optional[str] = None,
         select: Optional[List[str]] = None,
@@ -187,7 +175,7 @@ class SearchClient(HeadersMixin):
         session_id: Optional[str] = None,
         vector_queries: Optional[List[VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
-        semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
+        semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
         **kwargs
@@ -265,7 +253,7 @@ class SearchClient(HeadersMixin):
          query returns captions extracted from key passages in the highest ranked documents.
          Defaults to 'None'. Possible values include: "none", "extractive".
         :paramtype query_caption: str or ~azure.search.documents.models.QueryCaptionType
-        :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
+        :keyword bool query_caption_highlight_enabled: This parameter is only valid if the query type is 'semantic' when
          query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
         :keyword list[str] semantic_fields: The list of field names used for semantic search.
@@ -293,10 +281,10 @@ class SearchClient(HeadersMixin):
          interfere with the load balancing of the requests across replicas and adversely affect the
          performance of the search service. The value used as sessionId cannot start with a '_'
          character.
-        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
+        :keyword semantic_error_mode: Allows the user to choose whether a semantic call should fail
          completely (default / current behavior), or to return partial results. Known values are:
          "partial" and "fail".
-        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorHandling
+        :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
          time it takes for semantic enrichment to finish processing before the request fails.
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
@@ -340,20 +328,12 @@ class SearchClient(HeadersMixin):
         include_total_result_count = include_total_count
         filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
-        answers = (
-            query_answer
-            if not query_answer_count
-            else "{}|count-{}".format(query_answer, query_answer_count)
-        )
-        answers = (
-            answers
-            if not query_answer_threshold
-            else "{}|threshold-{}".format(answers, query_answer_threshold)
-        )
+        answers = query_answer if not query_answer_count else "{}|count-{}".format(query_answer, query_answer_count)
+        answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
         captions = (
             query_caption
-            if not query_caption_highlight
-            else "{}|highlight-{}".format(query_caption, query_caption_highlight)
+            if not query_caption_highlight_enabled
+            else "{}|highlight-{}".format(query_caption, query_caption_highlight_enabled)
         )
         semantic_configuration = semantic_configuration_name
 
@@ -386,7 +366,7 @@ class SearchClient(HeadersMixin):
             scoring_statistics=scoring_statistics,
             vector_queries=vector_queries,
             vector_filter_mode=vector_filter_mode,
-            semantic_error_handling=semantic_error_handling,
+            semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
         )
@@ -396,9 +376,7 @@ class SearchClient(HeadersMixin):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["api_version"] = self._api_version
-        return AsyncSearchItemPaged(
-            self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator
-        )
+        return AsyncSearchItemPaged(self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator)
 
     @distributed_trace_async
     async def suggest(
@@ -406,6 +384,7 @@ class SearchClient(HeadersMixin):
         search_text: str,
         suggester_name: str,
         *,
+        filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
@@ -460,7 +439,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search suggestions.
         """
-        filter_arg = kwargs.pop("filter", None)
+        filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
         query = SuggestQuery(
             search_text=search_text,
@@ -481,9 +460,7 @@ class SearchClient(HeadersMixin):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(SuggestRequest, query.request)
-        response = await self._client.documents.suggest_post(
-            suggest_request=request, **kwargs
-        )
+        response = await self._client.documents.suggest_post(suggest_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
@@ -560,17 +537,13 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(AutocompleteRequest, query.request)
-        response = await self._client.documents.autocomplete_post(
-            autocomplete_request=request, **kwargs
-        )
+        response = await self._client.documents.autocomplete_post(autocomplete_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
 
     # pylint:disable=client-method-missing-tracing-decorator-async
-    async def upload_documents(
-        self, documents: List[Dict], **kwargs: Any
-    ) -> List[IndexingResult]:
+    async def upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Upload documents to the Azure search index.
 
         An upload action is similar to an "upsert" where the document will be
@@ -599,9 +572,7 @@ class SearchClient(HeadersMixin):
         return cast(List[IndexingResult], results)
 
     # pylint:disable=client-method-missing-tracing-decorator-async, delete-operation-wrong-return-type
-    async def delete_documents(
-        self, documents: List[Dict], **kwargs: Any
-    ) -> List[IndexingResult]:
+    async def delete_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Delete documents from the Azure search index
 
         Delete removes the specified document from the index. Any field you
@@ -635,9 +606,7 @@ class SearchClient(HeadersMixin):
         return cast(List[IndexingResult], results)
 
     # pylint:disable=client-method-missing-tracing-decorator-async
-    async def merge_documents(
-        self, documents: List[Dict], **kwargs: Any
-    ) -> List[IndexingResult]:
+    async def merge_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Merge documents in to existing documents in the Azure search index.
 
         Merge updates an existing document with the specified fields. If the
@@ -667,9 +636,7 @@ class SearchClient(HeadersMixin):
         return cast(List[IndexingResult], results)
 
     # pylint:disable=client-method-missing-tracing-decorator-async
-    async def merge_or_upload_documents(
-        self, documents: List[Dict], **kwargs: Any
-    ) -> List[IndexingResult]:
+    async def merge_or_upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
         """Merge documents in to existing documents in the Azure search index,
         or upload them if they do not yet exist.
 
@@ -690,9 +657,7 @@ class SearchClient(HeadersMixin):
         return cast(List[IndexingResult], results)
 
     @distributed_trace_async
-    async def index_documents(
-        self, batch: IndexDocumentsBatch, **kwargs: Any
-    ) -> List[IndexingResult]:
+    async def index_documents(self, batch: IndexDocumentsBatch, **kwargs: Any) -> List[IndexingResult]:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
@@ -703,17 +668,13 @@ class SearchClient(HeadersMixin):
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
 
-    async def _index_documents_actions(
-        self, actions: List[IndexAction], **kwargs: Any
-    ) -> List[IndexingResult]:
+    async def _index_documents_actions(self, actions: List[IndexAction], **kwargs: Any) -> List[IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = await self._client.documents.index(
-                batch=batch, error_map=error_map, **kwargs
-            )
+            batch_response = await self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:

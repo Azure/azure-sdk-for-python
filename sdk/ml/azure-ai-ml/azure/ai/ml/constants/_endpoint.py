@@ -45,6 +45,8 @@ class EndpointYamlFields(object):
     BATCH_JOB_OUTPUT_PATH = "output_dataset.path"
     BATCH_JOB_OUTPUT_DATSTORE = "output_dataset.datastore_id"
     BATCH_JOB_NAME = "job_name"
+    BATCH_JOB_EXPERIMENT_NAME = "experiment_name"
+    BATCH_JOB_PROPERTIES = "properties"
 
 
 class EndpointConfigurations:

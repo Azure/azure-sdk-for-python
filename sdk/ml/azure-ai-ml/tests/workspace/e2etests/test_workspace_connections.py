@@ -16,7 +16,6 @@ from azure.ai.ml._utils.utils import camel_to_snake
 @pytest.mark.core_sdk_test
 @pytest.mark.usefixtures("recorded_test")
 class TestWorkspaceConnections(AzureRecordedTestCase):
-    @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_python_feed(
         self,
         client: MLClient,
@@ -64,7 +63,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         for conn in connection_list:
             print(conn)
 
-    @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_git_pat(
         self,
         client: MLClient,
@@ -109,7 +107,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         for conn in connection_list:
             print(conn)
 
-    @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_cr_msi(
         self,
         client: MLClient,
@@ -157,7 +154,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         for conn in connection_list:
             print(conn)
 
-    @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_git_user_pwd(
         self,
         client: MLClient,
@@ -204,7 +200,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         for conn in connection_list:
             print(conn)
 
-    @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_snowflake_user_pwd(
         self,
         client: MLClient,
@@ -249,7 +244,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         for conn in connection_list:
             print(conn)
 
-    @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_s3_access_key(
         self,
         client: MLClient,
@@ -294,7 +288,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         for conn in connection_list:
             print(conn)
 
-    @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_open_ai_conn(
         self,
         client: MLClient,
@@ -313,8 +306,8 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
         assert wps_connection.tags is not None
         assert wps_connection.tags["hello"] == "world"
-        assert wps_connection.api_type == "some_type"
-        assert wps_connection.api_version == "some_version"
+        assert wps_connection.api_type == "Azure"
+        assert wps_connection.api_version == None
 
         client.connections.delete(name=wps_connection_name)
 
@@ -326,7 +319,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         for conn in connection_list:
             print(conn)
 
-    @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_cog_search_conn(
         self,
         client: MLClient,
@@ -356,7 +348,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         for conn in connection_list:
             print(conn)
 
-    @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_cog_service_conn(
         self,
         client: MLClient,

@@ -27,16 +27,16 @@ class PostgreSQLManagementClientConfiguration(Configuration):  # pylint: disable
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2023-03-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
         super(PostgreSQLManagementClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-03-01-preview")
+        api_version: str = kwargs.pop("api_version", "2023-06-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

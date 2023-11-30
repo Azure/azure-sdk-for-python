@@ -57,7 +57,7 @@ class SchemaRegistryClient(object):
     :param credential: To authenticate managing the entities of the SchemaRegistry namespace.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Schema Registry service API version to use for requests.
-     Default value is "2022-10".
+     Default value is "2023-07-01".
 
     .. admonition:: Example:
 

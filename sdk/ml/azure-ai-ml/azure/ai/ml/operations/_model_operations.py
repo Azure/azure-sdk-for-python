@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long
+# pylint: disable=protected-access,no-value-for-parameter,disable=docstring-missing-return,docstring-missing-param,docstring-missing-rtype,ungrouped-imports,line-too-long,too-many-statements
 
 from contextlib import contextmanager
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
+import re
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -675,6 +676,7 @@ class ModelOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Package a model example.
         """
+
         is_deployment_flow = kwargs.pop("skip_to_rest", False)
         if not is_deployment_flow:
             orchestrators = OperationOrchestrator(
@@ -768,9 +770,16 @@ class ModelOperations(_ScopeDependentOperations):
         else:
             environment_id = package_out.additional_properties["targetEnvironmentId"]
 
-        parsed_id = AMLVersionedArmId(environment_id)
-        environment_name = parsed_id.asset_name
-        environment_version = parsed_id.asset_version
+        pattern = r"azureml://locations/(\w+)/workspaces/([\w-]+)/environments/([\w.-]+)/versions/(\d+)"
+        parsed_id = re.search(pattern, environment_id)
+
+        if parsed_id:
+            environment_name = parsed_id.group(3)
+            environment_version = parsed_id.group(4)
+        else:
+            parsed_id = AMLVersionedArmId(environment_id)
+            environment_name = parsed_id.asset_name
+            environment_version = parsed_id.asset_version
 
         module_logger.info("\nPackage Created")
         if package_out is not None and package_out.__class__.__name__ == "PackageResponse":

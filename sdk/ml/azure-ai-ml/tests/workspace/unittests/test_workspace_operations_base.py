@@ -8,6 +8,7 @@ from pytest_mock import MockFixture
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
+    ManagedNetworkSettings,
 )
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
@@ -18,9 +19,14 @@ from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.entities import (
     CustomerManagedKey,
     FeatureStore,
+    FqdnDestination,
     IdentityConfiguration,
+    IsolationMode,
     ManagedIdentityConfiguration,
+    ManagedNetwork,
+    PrivateEndpointDestination,
     ServerlessComputeSettings,
+    ServiceTagDestination,
     Workspace,
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
@@ -38,12 +44,15 @@ def mock_workspace_operation_base(
     mock_aml_services_2023_06_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperationsBase:
     yield WorkspaceOperationsBase(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2023_06_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -126,6 +135,43 @@ class TestWorkspaceOperation:
         mock_workspace_operation_base.begin_create(workspace=ws)
         mock_workspace_operation_base._operation.get.assert_called()
 
+    def test_get(self, mock_workspace_operation_base: WorkspaceOperationsBase) -> None:
+        def outgoing_get_call(rg, name):
+            ws = Workspace(name=name)
+            ws.managed_network = ManagedNetwork(
+                isolation_mode=IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND,
+                outbound_rules=[
+                    FqdnDestination(name="fqdn-rule", destination="google.com"),
+                    PrivateEndpointDestination(
+                        name="perule", service_resource_id="/storageid", subresource_target="blob", spark_enabled=False
+                    ),
+                    ServiceTagDestination(
+                        name="servicetag-rule", service_tag="sometag", protocol="*", port_ranges="1,2"
+                    ),
+                ],
+            )
+            return ws._to_rest_object()
+
+        mock_workspace_operation_base._operation.get.side_effect = outgoing_get_call
+        ws = mock_workspace_operation_base.get(name="random_name", resource_group="rg")
+        mock_workspace_operation_base._operation.get.assert_called_once()
+
+        assert ws.managed_network is not None
+        assert ws.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        rules = ws.managed_network.outbound_rules
+        assert isinstance(rules[0], FqdnDestination)
+        assert rules[0].destination == "google.com"
+
+        assert isinstance(rules[1], PrivateEndpointDestination)
+        assert rules[1].service_resource_id == "/storageid"
+        assert rules[1].spark_enabled == False
+        assert rules[1].subresource_target == "blob"
+
+        assert isinstance(rules[2], ServiceTagDestination)
+        assert rules[2].service_tag == "sometag"
+        assert rules[2].protocol == "*"
+        assert rules[2].port_ranges == "1,2"
+
     def test_create_get_exception_swallow(
         self,
         mock_workspace_operation_base: WorkspaceOperationsBase,
@@ -168,6 +214,7 @@ class TestWorkspaceOperation:
                     ManagedIdentityConfiguration(resource_id="resource2"),
                 ],
             ),
+            managed_network=ManagedNetwork(),
             primary_user_assigned_identity="resource2",
             customer_managed_key=CustomerManagedKey(key_uri="new_cmk_uri"),
         )
@@ -190,6 +237,8 @@ class TestWorkspaceOperation:
                     key_identifier="new_cmk_uri",
                 )
             )
+            assert params.managed_network.isolation_mode == "Disabled"
+            assert params.managed_network.outbound_rules == {}
             assert polling is True
             assert callable(cls)
             return DEFAULT
@@ -302,7 +351,7 @@ class TestWorkspaceOperation:
             workspace=feature_store, grant_materialization_permissions=True
         )
 
-        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["kind"] == {"value": "featurestore"}
         assert param["grant_materialization_permissions"] == {"value": "true"}
         assert param["materialization_identity_name"] == {"value": "materialization-uai-rg-name"}
         assert param["materialization_identity_resource_id"] == {"value": ""}
@@ -313,7 +362,7 @@ class TestWorkspaceOperation:
             grant_materialization_permissions=False,
         )
 
-        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["kind"] == {"value": "featurestore"}
         assert param["grant_materialization_permissions"] == {"value": "false"}
         assert param["materialization_identity_name"] == {"value": "empty"}
         assert param["materialization_identity_resource_id"] == {"value": "resource_id"}
@@ -365,8 +414,8 @@ class TestWorkspaceOperation:
         "serverless_compute_settings",
         [
             None,
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
-            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(subnet_name="npip"), no_public_ip=True),
         ],
     )
     def test_create_workspace_with_serverless_custom_vnet(
@@ -393,8 +442,8 @@ class TestWorkspaceOperation:
         "serverless_compute_settings",
         [
             None,
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
-            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(subnet_name="npip"), no_public_ip=True),
         ],
     )
     def test_update_workspace_with_serverless_custom_vnet(
@@ -417,7 +466,7 @@ class TestWorkspaceOperation:
     @pytest.mark.parametrize(
         "new_settings",
         [
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
             ServerlessComputeSettings(no_public_ip=True),
         ],
     )
@@ -428,7 +477,7 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ) -> None:
         original_settings = ServerlessComputeSettings(
-            gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
+            custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
         )
         wsname = "fake"
         ws = Workspace(name=wsname, location="test", serverless_compute=new_settings)

@@ -34,12 +34,15 @@ def mock_workspace_operation(
     mock_aml_services_2023_06_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2023_06_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -49,12 +52,15 @@ def mock_workspace_operation_aug_2023_preview(
     mock_aml_services_2023_08_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2023_08_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -199,8 +205,8 @@ class TestWorkspaceOperation:
         "serverless_compute_settings",
         [
             None,
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
-            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(subnet_name="npip"), no_public_ip=True),
         ],
     )
     def test_create_workspace_with_serverless_custom_vnet(
@@ -224,45 +230,24 @@ class TestWorkspaceOperation:
             RestServerlessComputeSettings.deserialize(settings) == serverless_compute_settings._to_rest_object()
 
     @pytest.mark.parametrize(
-        "serverless_compute_settings",
-        [
-            None,
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
-            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
-        ],
-    )
-    def test_update_workspace_with_serverless_custom_vnet(
-        self,
-        serverless_compute_settings: ServerlessComputeSettings,
-        mock_workspace_operation_aug_2023_preview: WorkspaceOperations,
-        mocker: MockFixture,
-    ) -> None:
-        ws = Workspace(name="name", location="test", serverless_compute=serverless_compute_settings)
-        spy = mocker.spy(mock_workspace_operation_aug_2023_preview._operation, "begin_update")
-        mock_workspace_operation_aug_2023_preview.begin_update(ws)
-        if serverless_compute_settings is None:
-            assert spy.call_args[0][2].serverless_compute_settings is None
-        else:
-            assert (
-                ServerlessComputeSettings._from_rest_object(spy.call_args[0][2].serverless_compute_settings)
-                == serverless_compute_settings
-            )
-
-    @pytest.mark.parametrize(
         "new_settings",
         [
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
-            ServerlessComputeSettings(no_public_ip=True),
+            ServerlessComputeSettings(
+                custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet"), no_public_ip=False
+            ),
+            ServerlessComputeSettings(
+                custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet"), no_public_ip=True
+            ),
         ],
     )
-    def test_can_perform_partial_update_of_serverless_compute_settings(
+    def test_can_update_of_serverless_compute_settings(
         self,
         new_settings: ServerlessComputeSettings,
         mock_workspace_operation_aug_2023_preview: WorkspaceOperations,
         mocker: MockFixture,
     ) -> None:
         original_settings = ServerlessComputeSettings(
-            gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
+            custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
         )
         wsname = "fake"
         ws = Workspace(name=wsname, location="test", serverless_compute=new_settings)
@@ -280,4 +265,52 @@ class TestWorkspaceOperation:
         mock_workspace_operation_aug_2023_preview.begin_update(ws)
         assert (
             ServerlessComputeSettings._from_rest_object(spy.call_args[0][2].serverless_compute_settings) == new_settings
+        )
+
+    def test_can_remove_serverless_compute_settings_via_none_subnet_and_false_npip(
+        self, mock_workspace_operation_aug_2023_preview: WorkspaceOperations, mocker: MockFixture
+    ) -> None:
+        original_settings = ServerlessComputeSettings(
+            custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
+        )
+        removal_settings = ServerlessComputeSettings(custom_subnet=None, no_public_ip=False)
+        wsname = "fake"
+        ws = Workspace(name=wsname, location="test", serverless_compute=removal_settings)
+
+        key = CustomerManagedKey()
+        original_workspace = Workspace(
+            name=wsname,
+            location="test",
+            serverless_compute=original_settings,
+            customer_managed_key=key,
+        )
+        rest_workspace: RestWorkspace = original_workspace._to_rest_object()  # pylint: disable=protected-access
+        mock_workspace_operation_aug_2023_preview._operation.get = MagicMock(return_value=rest_workspace)
+        spy = mocker.spy(mock_workspace_operation_aug_2023_preview._operation, "begin_update")
+        mock_workspace_operation_aug_2023_preview.begin_update(ws)
+        assert (
+            ServerlessComputeSettings._from_rest_object(spy.call_args[0][2].serverless_compute_settings)
+            == ServerlessComputeSettings()
+        )
+
+    def test_can_remove_via_file(
+        self, mock_workspace_operation_aug_2023_preview: WorkspaceOperations, mocker: MockFixture
+    ) -> None:
+        import os
+
+        removal_settings = ServerlessComputeSettings(custom_subnet=None, no_public_ip=False)
+        wsname = "fake"
+        config_dir = os.path.join("tests", "test_configs", "workspace")
+        default_source = os.path.join(config_dir, "workspace_min_with_serverless.yaml")
+        ws = load_workspace(source=default_source)
+        assert ws.serverless_compute.custom_subnet is not None
+        assert ws.serverless_compute.no_public_ip
+        rest_workspace = ws._to_rest_object()  # pylint: disable=protected-access
+        mock_workspace_operation_aug_2023_preview._operation.get = MagicMock(return_value=rest_workspace)
+        spy = mocker.spy(mock_workspace_operation_aug_2023_preview._operation, "begin_update")
+        ws_update = load_workspace(source=os.path.join(config_dir, "workspace_removing_serverless.yaml"))
+        mock_workspace_operation_aug_2023_preview.begin_update(ws_update)
+        assert (
+            ServerlessComputeSettings._from_rest_object(spy.call_args[0][2].serverless_compute_settings)
+            == ServerlessComputeSettings()
         )

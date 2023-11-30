@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from typing import Optional, Union
     from azure.core.async_paging import AsyncItemPaged
     from .. import KeyType
-    from .._generated_models import KeyAttributes
+    from .._generated.models import KeyAttributes
 
 
 class KeyClient(AsyncKeyVaultClientBase):

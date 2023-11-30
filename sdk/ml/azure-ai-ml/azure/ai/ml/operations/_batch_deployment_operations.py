@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-boolean-expressions
 
 import re
 from typing import Dict, Optional, TypeVar, Union
@@ -116,9 +116,9 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 :dedent: 8
                 :caption: Create example.
         """
-
         if (
             not skip_script_validation
+            and not isinstance(deployment, PipelineComponentBatchDeployment)
             and deployment
             and deployment.code_configuration
             and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
@@ -136,9 +136,10 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
         )
-        upload_dependencies(deployment, orchestrators)
         if isinstance(deployment, PipelineComponentBatchDeployment):
             self._validate_component(deployment, orchestrators)
+        else:
+            upload_dependencies(deployment, orchestrators)
         try:
             location = self._get_workspace_location()
             if kwargs.pop("package_model", False):

@@ -125,8 +125,6 @@ class NginxCertificate(_serialization.Model):
     :vartype type: str
     :ivar properties:
     :vartype properties: ~azure.mgmt.nginx.models.NginxCertificateProperties
-    :ivar tags: Dictionary of :code:`<string>`.
-    :vartype tags: dict[str, str]
     :ivar location:
     :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
@@ -145,7 +143,6 @@ class NginxCertificate(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "properties": {"key": "properties", "type": "NginxCertificateProperties"},
-        "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
@@ -154,15 +151,12 @@ class NginxCertificate(_serialization.Model):
         self,
         *,
         properties: Optional["_models.NginxCertificateProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.nginx.models.NginxCertificateProperties
-        :keyword tags: Dictionary of :code:`<string>`.
-        :paramtype tags: dict[str, str]
         :keyword location:
         :paramtype location: str
         """
@@ -171,7 +165,6 @@ class NginxCertificate(_serialization.Model):
         self.name = None
         self.type = None
         self.properties = properties
-        self.tags = tags
         self.location = location
         self.system_data = None
 
@@ -271,8 +264,6 @@ class NginxConfiguration(_serialization.Model):
     :vartype type: str
     :ivar properties:
     :vartype properties: ~azure.mgmt.nginx.models.NginxConfigurationProperties
-    :ivar tags: Dictionary of :code:`<string>`.
-    :vartype tags: dict[str, str]
     :ivar location:
     :vartype location: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
@@ -291,7 +282,6 @@ class NginxConfiguration(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "properties": {"key": "properties", "type": "NginxConfigurationProperties"},
-        "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
@@ -300,15 +290,12 @@ class NginxConfiguration(_serialization.Model):
         self,
         *,
         properties: Optional["_models.NginxConfigurationProperties"] = None,
-        tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.nginx.models.NginxConfigurationProperties
-        :keyword tags: Dictionary of :code:`<string>`.
-        :paramtype tags: dict[str, str]
         :keyword location:
         :paramtype location: str
         """
@@ -317,7 +304,6 @@ class NginxConfiguration(_serialization.Model):
         self.name = None
         self.type = None
         self.properties = properties
-        self.tags = tags
         self.location = location
         self.system_data = None
 
@@ -385,19 +371,27 @@ class NginxConfigurationPackage(_serialization.Model):
 
     :ivar data:
     :vartype data: str
+    :ivar protected_files:
+    :vartype protected_files: list[str]
     """
 
     _attribute_map = {
         "data": {"key": "data", "type": "str"},
+        "protected_files": {"key": "protectedFiles", "type": "[str]"},
     }
 
-    def __init__(self, *, data: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, data: Optional[str] = None, protected_files: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword data:
         :paramtype data: str
+        :keyword protected_files:
+        :paramtype protected_files: list[str]
         """
         super().__init__(**kwargs)
         self.data = data
+        self.protected_files = protected_files
 
 
 class NginxConfigurationProperties(_serialization.Model):
@@ -584,6 +578,10 @@ class NginxDeploymentProperties(_serialization.Model):
     :vartype enable_diagnostics_support: bool
     :ivar logging:
     :vartype logging: ~azure.mgmt.nginx.models.NginxLogging
+    :ivar scaling_properties:
+    :vartype scaling_properties: ~azure.mgmt.nginx.models.NginxDeploymentScalingProperties
+    :ivar user_profile:
+    :vartype user_profile: ~azure.mgmt.nginx.models.NginxDeploymentUserProfile
     """
 
     _validation = {
@@ -600,6 +598,8 @@ class NginxDeploymentProperties(_serialization.Model):
         "ip_address": {"key": "ipAddress", "type": "str"},
         "enable_diagnostics_support": {"key": "enableDiagnosticsSupport", "type": "bool"},
         "logging": {"key": "logging", "type": "NginxLogging"},
+        "scaling_properties": {"key": "scalingProperties", "type": "NginxDeploymentScalingProperties"},
+        "user_profile": {"key": "userProfile", "type": "NginxDeploymentUserProfile"},
     }
 
     def __init__(
@@ -609,6 +609,8 @@ class NginxDeploymentProperties(_serialization.Model):
         network_profile: Optional["_models.NginxNetworkProfile"] = None,
         enable_diagnostics_support: Optional[bool] = None,
         logging: Optional["_models.NginxLogging"] = None,
+        scaling_properties: Optional["_models.NginxDeploymentScalingProperties"] = None,
+        user_profile: Optional["_models.NginxDeploymentUserProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -621,6 +623,10 @@ class NginxDeploymentProperties(_serialization.Model):
         :paramtype enable_diagnostics_support: bool
         :keyword logging:
         :paramtype logging: ~azure.mgmt.nginx.models.NginxLogging
+        :keyword scaling_properties:
+        :paramtype scaling_properties: ~azure.mgmt.nginx.models.NginxDeploymentScalingProperties
+        :keyword user_profile:
+        :paramtype user_profile: ~azure.mgmt.nginx.models.NginxDeploymentUserProfile
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -630,6 +636,28 @@ class NginxDeploymentProperties(_serialization.Model):
         self.ip_address = None
         self.enable_diagnostics_support = enable_diagnostics_support
         self.logging = logging
+        self.scaling_properties = scaling_properties
+        self.user_profile = user_profile
+
+
+class NginxDeploymentScalingProperties(_serialization.Model):
+    """NginxDeploymentScalingProperties.
+
+    :ivar capacity:
+    :vartype capacity: int
+    """
+
+    _attribute_map = {
+        "capacity": {"key": "capacity", "type": "int"},
+    }
+
+    def __init__(self, *, capacity: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword capacity:
+        :paramtype capacity: int
+        """
+        super().__init__(**kwargs)
+        self.capacity = capacity
 
 
 class NginxDeploymentUpdateParameters(_serialization.Model):
@@ -692,11 +720,17 @@ class NginxDeploymentUpdateProperties(_serialization.Model):
     :vartype enable_diagnostics_support: bool
     :ivar logging:
     :vartype logging: ~azure.mgmt.nginx.models.NginxLogging
+    :ivar scaling_properties:
+    :vartype scaling_properties: ~azure.mgmt.nginx.models.NginxDeploymentScalingProperties
+    :ivar user_profile:
+    :vartype user_profile: ~azure.mgmt.nginx.models.NginxDeploymentUserProfile
     """
 
     _attribute_map = {
         "enable_diagnostics_support": {"key": "enableDiagnosticsSupport", "type": "bool"},
         "logging": {"key": "logging", "type": "NginxLogging"},
+        "scaling_properties": {"key": "scalingProperties", "type": "NginxDeploymentScalingProperties"},
+        "user_profile": {"key": "userProfile", "type": "NginxDeploymentUserProfile"},
     }
 
     def __init__(
@@ -704,6 +738,8 @@ class NginxDeploymentUpdateProperties(_serialization.Model):
         *,
         enable_diagnostics_support: Optional[bool] = None,
         logging: Optional["_models.NginxLogging"] = None,
+        scaling_properties: Optional["_models.NginxDeploymentScalingProperties"] = None,
+        user_profile: Optional["_models.NginxDeploymentUserProfile"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -711,10 +747,42 @@ class NginxDeploymentUpdateProperties(_serialization.Model):
         :paramtype enable_diagnostics_support: bool
         :keyword logging:
         :paramtype logging: ~azure.mgmt.nginx.models.NginxLogging
+        :keyword scaling_properties:
+        :paramtype scaling_properties: ~azure.mgmt.nginx.models.NginxDeploymentScalingProperties
+        :keyword user_profile:
+        :paramtype user_profile: ~azure.mgmt.nginx.models.NginxDeploymentUserProfile
         """
         super().__init__(**kwargs)
         self.enable_diagnostics_support = enable_diagnostics_support
         self.logging = logging
+        self.scaling_properties = scaling_properties
+        self.user_profile = user_profile
+
+
+class NginxDeploymentUserProfile(_serialization.Model):
+    """NginxDeploymentUserProfile.
+
+    :ivar preferred_email: The preferred support contact email address of the user used for sending
+     alerts and notification. Can be an empty string or a valid email address.
+    :vartype preferred_email: str
+    """
+
+    _validation = {
+        "preferred_email": {"pattern": r"^$|^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$"},
+    }
+
+    _attribute_map = {
+        "preferred_email": {"key": "preferredEmail", "type": "str"},
+    }
+
+    def __init__(self, *, preferred_email: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword preferred_email: The preferred support contact email address of the user used for
+         sending alerts and notification. Can be an empty string or a valid email address.
+        :paramtype preferred_email: str
+        """
+        super().__init__(**kwargs)
+        self.preferred_email = preferred_email
 
 
 class NginxFrontendIPConfiguration(_serialization.Model):

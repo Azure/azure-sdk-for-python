@@ -64,10 +64,9 @@ class UInt64:
     def __or__(self, other):
         if isinstance(other, UInt64):
             return UInt64(self.value | other.value)
-        elif isinstance(other, int):
+        if isinstance(other, int):
             return UInt64(self.value | other)
-        else:
-            raise TypeError("Unsupported type for OR operation")
+        raise TypeError("Unsupported type for OR operation")
 
     def __invert__(self):
         return UInt64(~self.value & 0xFFFFFFFFFFFFFFFF)
@@ -162,7 +161,8 @@ class UInt128:
     def to_byte_array(self):
         high_bytes = self.high.value.to_bytes(8, byteorder='little')
         low_bytes = self.low.value.to_bytes(8, byteorder='little')
-        return low_bytes + high_bytes
+        byte_array = bytearray(low_bytes + high_bytes)
+        return byte_array
 
     @staticmethod
     def create(low, high):
