@@ -15,7 +15,7 @@ class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
             warnings.warn("MICROSOFT_BOT is deprecated and has been replaced by \
                           MICROSOFT_TEAMS_APP identifier.", DeprecationWarning)
             item = "MICROSOFT_TEAMS_APP"
-        return super().__getattribute__(cls, item)
+        return super().__getattribute__(item)
 
 
 class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
@@ -104,7 +104,7 @@ class CommunicationUserIdentifier:
 
 
 def _communication_user_raw_id(identifier: CommunicationUserIdentifier) -> str:
-    if identifier.raw_id:
+    if hasattr(identifier, "raw_id"):
         return identifier.raw_id
     return identifier.properties["id"]
 
@@ -141,7 +141,7 @@ class PhoneNumberIdentifier:
 
 
 def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
-    if identifier.raw_id:
+    if hasattr(identifier, "raw_id"):
         return identifier.raw_id
     value = identifier.properties["value"]
     # We just assume correct E.164 format here because
@@ -224,7 +224,7 @@ class MicrosoftTeamsUserIdentifier:
 
 
 def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
-    if identifier.raw_id:
+    if hasattr(identifier, "raw_id"):
         return identifier.raw_id
     user_id = identifier.properties["user_id"]
     if identifier.properties["is_anonymous"]:
@@ -312,7 +312,7 @@ class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
 
 
 def _microsoft_teams_app_raw_id(identifier: MicrosoftTeamsAppIdentifier) -> str:
-    if identifier.raw_id:
+    if hasattr(identifier, "raw_id"):
         return identifier.raw_id
     app_id = identifier.properties["app_id"]
     cloud = identifier.properties["cloud"]
