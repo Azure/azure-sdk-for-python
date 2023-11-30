@@ -2,17 +2,26 @@ parameters:
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
+  - name: Public
+    type: boolean
+    default: false
 
 steps:
   - pwsh: |
       $setting = "${{ parameters.BuildTargetingString }}"
+      $public = "${{ parameters.Public }}"
 
       # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
       if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
           $setting = "$(BuildTargetingString)"
       }
+      if ('$(Public)' -ne ('$' + '(Public)')) {
+          $public = "$(Public)"
+      }
 
       Write-Host "Setting TargetingString to $setting"
       Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
+      Write-Host "Setting Public to $public"
+      Write-Host "##vso[task.setvariable variable=Public]$public"
     displayName: Check override of targeting string
-    condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))
+    condition: and(succeededOrFailed(), eq(variables['TargetingString'],''), eq(variables['Public'],'')
