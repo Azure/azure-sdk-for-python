@@ -16,9 +16,10 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._serialization import Deserializer, Serializer
 from ._configuration import TextTranslationClientConfiguration
 from ._operations import TextTranslationClientOperationsMixin
-
+from ._vendor import TextTranslationClientMixinABC
 
 class TextTranslationClient(TextTranslationClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+    # pyright: reportMissingImports=false
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural
     machine translation technology to enable quick and accurate source-to-target text translation
     in real time across all supported languages.

@@ -37,10 +37,12 @@ pip install azure-ai-translation-text
 
 #### Create a Translator service resource
 
-You can create Translator resource following [Create a Translator resource][translator_resource_create].
+You can create Translator resource following [Create a Translator resource][translator_resource_create].  For general information about authentication with a cognitive services resource please refer to the documentation [here][cognitive_auth].
+
+### Endpoint
+The values of the `endpoint` variable can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.  Four different types of authentication are available for different types of endpoints: global, regional, token and Entra (AAD).  For details about each including curl examples refer to the documentation available [here][authentication_details].
 
 ### Authenticate the client
-
 Interaction with the service using the client library begins with creating an instance of the [TextTranslationClient][translator_client_class] class. You will need an **API key** or ``TokenCredential`` to instantiate a client object. For more information regarding authenticating with cognitive services, see [Authenticate requests to Translator Service][translator_auth].
 
 #### Get an API key
@@ -77,17 +79,17 @@ text_translator = TextTranslationClient(endpoint=endpoint, credential=credential
 
 #### Create a `TextTranslationClient` using Entra (Azure Active Directory) Authentication
 
-`AzureKeyCredential` authentication is used in most of the examples, but you can also authenticate with Entra (Azure Active Directory) using the [Azure Identity library][azure_identity].  Note that gobal endpoints do not support AAD authentication.
+`AzureKeyCredential` authentication is used in most of the examples, but you can also authenticate with Entra (Azure Active Directory) using the [Azure Identity library][azure_identity].
 
-Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.
+Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.  Use this value for the `endpoint` variable for `AZURE_TEXT_TRANSLATION_ENDPOINT`.
 
-To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below, or other credential providers provided with the Azure SDK, please install the Azure.Identity package:
+To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below install the Azure.Identity package:
 
 ```powershell
 pip install azure-identity
 ```
 
-You will also need to [register a new AAD application][register_aad_app] and [grant access][aad_grant_access] to your Translator resource by assigning the `"Cognitive Services User"` role to your service principal.
+You will also need to [register a new AAD application][register_aad_app] and [grant access][aad_grant_access] to your Translator resource by assigning the `"Cognitive Services User"` role to your service principal.  Additional information about Entra authentication is available [here][custom_details].
 
 Set the values of the `client ID`, `tenant ID`, and `client secret` of the AAD application as environment variables: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
@@ -421,6 +423,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [aad_grant_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [cognitive_auth]: https://docs.microsoft.com/azure/cognitive-services/authentication
+[endpoint_details]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/translation/Azure.AI.Translation.Text/samples/Sample0_CreateClient.md#create-a-texttranslationclient-using-an-api-key-from-global-text-translator-resource
+[resource_details]: https://learn.microsoft.com/en-us/azure/ai-services/translator/create-translator-resource#authentication-keys-and-endpoint-url
+[custom_details]: https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-reference#authentication-with-microsoft-entra-id
+[authentication_details]: https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-reference
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
