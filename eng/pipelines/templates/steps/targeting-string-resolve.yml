@@ -16,6 +16,10 @@ steps:
           $setting = "$(BuildTargetingString)"
       }
 
+      if ("$(Build.Reason)" -eq 'PullRequest') {
+          $public = true
+      }
+
       Write-Host "Setting TargetingString to $setting"
       Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
       Write-Host "Setting Public to $public"

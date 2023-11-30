@@ -55,7 +55,7 @@ def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool
     ci_setting = get_config_setting(package_path, "ci_enabled", default)
     print(f"CI setting: {ci_setting}")
     print(f"in_public: {in_public()}")
-    if not in_public() and ci_setting["ci_enabled"] is False:
+    if not in_public() and ci_setting is False:
         return False
 
     # now pull the new pyproject.toml configuration
