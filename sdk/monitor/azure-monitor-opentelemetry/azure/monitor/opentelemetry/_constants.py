@@ -97,3 +97,6 @@ _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES 
 
 def _is_attach_enabled():
     return isdir("/agents/python/")
+
+_AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME = "azure_app_service"
+_AZURE_VM_RESOURCE_DETECTOR_NAME = "azure_vm"
