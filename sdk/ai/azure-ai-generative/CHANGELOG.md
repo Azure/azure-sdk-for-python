@@ -5,10 +5,6 @@
 ### Features Added
  - Added new format to export data to in qa generator.
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Dependency improvements.

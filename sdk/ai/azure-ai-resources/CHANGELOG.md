@@ -2,12 +2,6 @@
 
 ## 1.0.0b2 (2023-11-30)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Dependency improvements.
