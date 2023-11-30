@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Iterable, Dict, Any, Optional, List, TYPE_CHECKING, Union
+from typing import Iterable, Dict, Any, Optional
 import logging
 import copy
 from collections import defaultdict
@@ -12,10 +12,6 @@ from azure.eventhub.aio import CheckpointStore  # type: ignore  # pylint: disabl
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, ResourceNotFoundError  # type: ignore
 from ._vendor.storage.blob.aio import ContainerClient, BlobClient
 from ._vendor.storage.blob._shared.base_client import parse_connection_str
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 
 logger = logging.getLogger(__name__)
@@ -45,14 +41,8 @@ class BlobCheckpointStore(CheckpointStore):
      The hostname of the secondary endpoint.
     """
 
-    def __init__(
-            self,
-            blob_account_url: str,
-            container_name: str,
-            *,
-            credential: Optional[Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"]]=None,
-            **kwargs
-        ) -> None:
+    def __init__(self, blob_account_url, container_name, *, credential=None, **kwargs):
+        # type(str, str, Optional[Any], Any) -> None
         self._container_client = kwargs.pop("container_client", None)
         if not self._container_client:
             api_version = kwargs.pop("api_version", None)
@@ -65,7 +55,7 @@ class BlobCheckpointStore(CheckpointStore):
             self._container_client = ContainerClient(
                 blob_account_url, container_name, credential=credential, **kwargs
             )
-        self._cached_blob_clients: Dict[str, BlobClient] = defaultdict()
+        self._cached_blob_clients = defaultdict()  # type: Dict[str, BlobClient]
 
     @classmethod
     def from_connection_string(
@@ -98,11 +88,11 @@ class BlobCheckpointStore(CheckpointStore):
 
         return cls(account_url, container_name, credential=credential, **kwargs)
 
-    async def __aenter__(self) -> "BlobCheckpointStore":
+    async def __aenter__(self):
         await self._container_client.__aenter__()
         return self
 
-    async def __aexit__(self, *args: Any) -> None:
+    async def __aexit__(self, *args):
         await self._container_client.__aexit__(*args)
 
     def _get_blob_client(self, blob_name: str) -> BlobClient:
@@ -301,8 +291,8 @@ class BlobCheckpointStore(CheckpointStore):
             )
 
     async def list_checkpoints(
-        self, fully_qualified_namespace: str, eventhub_name: str, consumer_group: str, **kwargs: Any
-    ) -> List[Dict[str, Any]]:
+        self, fully_qualified_namespace, eventhub_name, consumer_group, **kwargs
+    ):
         """List the updated checkpoints from the storage blob.
 
         :param str fully_qualified_namespace: The fully qualified namespace that the Event Hub belongs to.
