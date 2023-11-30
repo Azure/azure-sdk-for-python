@@ -15,9 +15,6 @@ steps:
       if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
           $setting = "$(BuildTargetingString)"
       }
-      if ('$(Public)' -ne ('$' + '(Public)')) {
-          $public = "$(Public)"
-      }
 
       Write-Host "Setting TargetingString to $setting"
       Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
