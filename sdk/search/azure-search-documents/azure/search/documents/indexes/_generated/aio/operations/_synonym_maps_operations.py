@@ -71,7 +71,7 @@ class SynonymMapsOperations:
         """Creates a new synonym map or updates a synonym map if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Synonym-Map
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Synonym-Map
 
         :param synonym_map_name: The name of the synonym map to create or update. Required.
         :type synonym_map_name: str
@@ -113,7 +113,7 @@ class SynonymMapsOperations:
         """Creates a new synonym map or updates a synonym map if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Synonym-Map
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Synonym-Map
 
         :param synonym_map_name: The name of the synonym map to create or update. Required.
         :type synonym_map_name: str
@@ -153,7 +153,7 @@ class SynonymMapsOperations:
         """Creates a new synonym map or updates a synonym map if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Update-Synonym-Map
+           - https://docs.microsoft.com/rest/api/searchservice/Update-Synonym-Map
 
         :param synonym_map_name: The name of the synonym map to create or update. Required.
         :type synonym_map_name: str
@@ -259,7 +259,7 @@ class SynonymMapsOperations:
         """Deletes a synonym map.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Delete-Synonym-Map
+           - https://docs.microsoft.com/rest/api/searchservice/Delete-Synonym-Map
 
         :param synonym_map_name: The name of the synonym map to delete. Required.
         :type synonym_map_name: str
@@ -331,7 +331,7 @@ class SynonymMapsOperations:
         """Retrieves a synonym map definition.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Get-Synonym-Map
+           - https://docs.microsoft.com/rest/api/searchservice/Get-Synonym-Map
 
         :param synonym_map_name: The name of the synonym map to retrieve. Required.
         :type synonym_map_name: str
@@ -399,10 +399,10 @@ class SynonymMapsOperations:
         """Lists all synonym maps available for a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/List-Synonym-Maps
+           - https://docs.microsoft.com/rest/api/searchservice/List-Synonym-Maps
 
         :param select: Selects which top-level properties of the synonym maps to retrieve. Specified as
-         a comma-separated list of JSON property names, or ``*`` for all properties. The default is all
+         a comma-separated list of JSON property names, or '*' for all properties. The default is all
          properties. Default value is None.
         :type select: str
         :param request_options: Parameter group. Default value is None.
@@ -474,7 +474,7 @@ class SynonymMapsOperations:
         """Creates a new synonym map.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Synonym-Map
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Synonym-Map
 
         :param synonym_map: The definition of the synonym map to create. Required.
         :type synonym_map: ~search_service_client.models.SynonymMap
@@ -501,7 +501,7 @@ class SynonymMapsOperations:
         """Creates a new synonym map.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Synonym-Map
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Synonym-Map
 
         :param synonym_map: The definition of the synonym map to create. Required.
         :type synonym_map: IO
@@ -526,7 +526,7 @@ class SynonymMapsOperations:
         """Creates a new synonym map.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Synonym-Map
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Synonym-Map
 
         :param synonym_map: The definition of the synonym map to create. Is either a SynonymMap type or
          a IO type. Required.

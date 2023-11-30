@@ -6,12 +6,22 @@
 
 from typing import Dict, Iterable, Optional
 
+from marshmallow import ValidationError
+
+from azure.core.exceptions import HttpResponseError
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import Scope
+from azure.ai.ml._utils._http_utils import HttpPipeline
+from azure.ai.ml._utils.utils import (
+    get_resource_and_group_name_from_resource_id,
+    get_resource_group_name_from_resource_group_id,
+    _get_workspace_base_url,
+    modified_operation_client,
+)
+from azure.ai.ml.constants._common import Scope, AzureMLResourceType
 from azure.ai.ml.entities import (
     DiagnoseRequestProperties,
     DiagnoseResponseResult,
@@ -21,6 +31,8 @@ from azure.ai.ml.entities import (
     WorkspaceKeys,
     ManagedNetworkProvisionStatus,
 )
+from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -45,6 +57,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
+        self.dataplane_workspace_operations = kwargs.pop("dataplane_client").workspaces
+        self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
         ops_logger.update_info(kwargs)
         self._provision_network_operation = service_client.managed_network_provisions
         super().__init__(
@@ -225,7 +239,26 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                 :dedent: 8
                 :caption: Begin create for a workspace.
         """
-        return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
+        try:
+            return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
+        except HttpResponseError as error:
+            if error.status_code == 403 and workspace._kind == PROJECT_WORKSPACE_KIND:
+                resource_group = kwargs.get("resource_group") or self._resource_group_name
+                hub_name, _ = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
+                rest_workspace_obj = self._operation.get(resource_group, hub_name)
+                hub_default_workspace_resource_group = get_resource_group_name_from_resource_group_id(
+                    rest_workspace_obj.workspace_hub_config.default_workspace_resource_group
+                )
+                # we only want to try joining the workspaceHub when the default workspace resource group
+                # is same with the user provided resource group.
+                if hub_default_workspace_resource_group == resource_group:
+                    log_msg = (
+                        "User lacked permission to create project workspace,"
+                        + "trying to join the workspaceHub default resource group."
+                    )
+                    module_logger.info(log_msg)
+                    return self._begin_join(workspace, **kwargs)
+            raise error
 
     @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
@@ -331,3 +364,47 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         poller = self._operation.begin_diagnose(resource_group, name, parameters, polling=True, cls=callback)
         module_logger.info("Diagnose request initiated for workspace: %s\n", name)
         return poller
+
+    @distributed_trace
+    def _begin_join(self, workspace: Workspace, **kwargs: Dict) -> LROPoller[Workspace]:
+        """Join a WorkspaceHub by creating a project workspace under workspaceHub's default resource group.
+
+        :param workspace: Project workspace definition to create
+        :type workspace: Workspace
+        :return: An instance of LROPoller that returns a project Workspace.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
+        """
+        if not workspace.workspace_hub:
+            raise ValidationError(
+                "{0} is not a Project workspace, join operation can only perform with workspaceHub provided".format(
+                    workspace.name
+                )
+            )
+
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+        workspace_hub_name, _ = get_resource_and_group_name_from_resource_id(workspace.workspace_hub)
+        rest_workspace_obj = self._operation.get(resource_group, workspace_hub_name)
+
+        # override the location to the same as the workspaceHub
+        workspace.location = rest_workspace_obj.location
+        # set this to system assigned so ARM will create MSI
+        if not hasattr(workspace, "identity") or not workspace.identity:
+            workspace.identity = IdentityConfiguration(type="system_assigned")
+
+        workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
+        workspace_base_uri = _get_workspace_base_url(workspace_operations, workspace_hub_name, self._requests_pipeline)
+
+        # pylint:disable=unused-argument
+        def callback(_, deserialized, args):
+            return Workspace._from_rest_object(deserialized)
+
+        with modified_operation_client(self.dataplane_workspace_operations, workspace_base_uri):
+            result = self.dataplane_workspace_operations.begin_hub_join(
+                resource_group_name=resource_group,
+                workspace_name=workspace_hub_name,
+                project_workspace_name=workspace.name,
+                body=workspace._to_rest_object(),
+                cls=callback,
+                **self._init_kwargs,
+            )
+            return result

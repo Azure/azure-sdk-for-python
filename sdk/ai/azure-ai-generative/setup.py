@@ -73,7 +73,7 @@ setup(
     python_requires="<4.0,>=3.8",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "azure-ai-resources!=0.0.0b0",
+        "azure-ai-resources<2.0.0,>=1.0.0b1",
         "azureml-telemetry~=1.0,>=1.51.0",
         "mlflow-skinny<3",
         "opencensus-ext-azure~=1.0",
@@ -81,9 +81,7 @@ setup(
     ],
     extras_require={
         "evaluate": [
-            "azureml-metrics[generative-ai]",
-            "promptflow",
-            "promptflow-tools",
+            "azureml-metrics[generative-ai]>=0.0.33", # generative-ai extra doesn't exist before this version
         ],
         "faiss": [
             "faiss-cpu>=1.7,<1.8"

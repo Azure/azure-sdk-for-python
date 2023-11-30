@@ -29,7 +29,7 @@ from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
 from azure.ai.ml._scope_dependent_operations import (
@@ -707,6 +707,9 @@ class JobOperations(_ScopeDependentOperations):
         service_client_operation = self._operation_2023_02_preview
         # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
+            service_client_operation = self.service_client_08_2023_preview.jobs
+
+        if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_08_2023_preview.jobs
 
         result = service_client_operation.create_or_update(

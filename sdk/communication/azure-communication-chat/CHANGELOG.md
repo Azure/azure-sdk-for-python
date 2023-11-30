@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b1 (Unreleased)
+## 1.2.0 (Unreleased)
 
 ### Features Added
 - Added support for proactive refreshing of tokens
@@ -10,6 +10,7 @@
 - Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
 
 ### Bugs Fixed
+- Fixed bug where invalid participants were not being correctly deserialized in the response of `create_chat_thread`.
 
 ### Other Changes
 Python 2.7 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).

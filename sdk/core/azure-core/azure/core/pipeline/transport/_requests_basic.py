@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING
+from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING, Mapping
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
@@ -286,7 +286,7 @@ class RequestsTransport(HttpTransport):
             self.session = None
 
     @overload
-    def send(self, request: HttpRequest, **kwargs) -> HttpResponse:
+    def send(self, request: HttpRequest, *, proxies: Optional[Mapping[str, str]] = None, **kwargs) -> HttpResponse:
         """Send a rest request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -294,13 +294,13 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     @overload
-    def send(self, request: "RestHttpRequest", **kwargs) -> "RestHttpResponse":
+    def send(
+        self, request: "RestHttpRequest", *, proxies: Optional[Mapping[str, str]] = None, **kwargs
+    ) -> "RestHttpResponse":
         """Send an `azure.core.rest` request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -308,12 +308,12 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.rest.HttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(self, request: Union[HttpRequest, "RestHttpRequest"], **kwargs) -> Union[HttpResponse, "RestHttpResponse"]:
+    def send(
+        self, request: Union[HttpRequest, "RestHttpRequest"], *, proxies: Optional[Mapping[str, str]] = None, **kwargs
+    ) -> Union[HttpResponse, "RestHttpResponse"]:
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -321,8 +321,6 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
@@ -350,6 +348,7 @@ class RequestsTransport(HttpTransport):
                 timeout=timeout,
                 cert=kwargs.pop("connection_cert", self.connection_config.cert),
                 allow_redirects=False,
+                proxies=proxies,
                 **kwargs
             )
             response.raw.enforce_content_length = True

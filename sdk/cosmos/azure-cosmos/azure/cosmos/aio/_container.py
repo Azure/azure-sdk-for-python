@@ -22,13 +22,8 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-
 from typing import Any, Dict, Optional, Union, cast, Awaitable, List, Tuple
-try:
-    from typing import Literal
-except ImportError:
-    from typing_extensions import Literal
-    
+
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
@@ -40,7 +35,7 @@ from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
 from ._scripts import ScriptsProxy
-from ..partition_key import NonePartitionKeyValue, PartitionKey
+from ..partition_key import NonePartitionKeyValue
 
 __all__ = ("ContainerProxy",)
 
@@ -74,7 +69,7 @@ class ContainerProxy(object):
         self.id = id
         self._properties = properties
         self.database_link = database_link
-        self.container_link = u"{}/colls/{}".format(database_link, self.id)
+        self.container_link = "{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
         self._scripts: Optional[ScriptsProxy] = None
 
@@ -103,12 +98,12 @@ class ContainerProxy(object):
 
     def _get_document_link(self, item_or_link: Union[Dict[str, Any], str]) -> str:
         if isinstance(item_or_link, str):
-            return u"{}/docs/{}".format(self.container_link, item_or_link)
+            return "{}/docs/{}".format(self.container_link, item_or_link)
         return item_or_link["_self"]
 
     def _get_conflict_link(self, conflict_or_link: Union[Dict[str, Any], str]) -> str:
         if isinstance(conflict_or_link, str):
-            return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
+            return "{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
     def _set_partition_key(self, partition_key) -> Union[str, Awaitable]:

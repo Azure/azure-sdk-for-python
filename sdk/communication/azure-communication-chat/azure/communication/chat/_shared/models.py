@@ -8,6 +8,7 @@ import warnings
 from typing_extensions import TypedDict, Protocol
 from azure.core import CaseInsensitiveEnumMeta
 
+
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
     def __getattribute__(cls, item):
@@ -18,7 +19,11 @@ class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
         return super().__getattribute__(item)
 
 
-class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
+
+# The Chat SDK is diverging to not use the DeprecatedEnumMeta until the new
+# replacement for the BotIdentifier is released to prevent exposing the deprecated
+# enum value.
+class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Communication Identifier Kind.
 
     For checking yet unknown identifiers it is better to rely on the presence of the `raw_id` property,

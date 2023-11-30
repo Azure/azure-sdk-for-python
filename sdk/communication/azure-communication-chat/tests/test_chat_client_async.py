@@ -14,8 +14,7 @@ from azure.communication.chat._shared.models import(
 )
 from unittest_helpers import mock_response
 from azure.core.exceptions import HttpResponseError
-from datetime import datetime
-from azure.core.serialization import TZ_UTC
+from datetime import datetime, timezone
 
 from unittest.mock import Mock, patch
 
@@ -28,7 +27,7 @@ def _convert_datetime_to_utc_int(input):
 
 
 async def mock_get_token(*_, **__):
-    return AccessToken("some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=TZ_UTC)))
+    return AccessToken("some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=timezone.utc)))
 
 credential = Mock(get_token=mock_get_token)
 
