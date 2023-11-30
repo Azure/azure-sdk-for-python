@@ -3,11 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import Literal, Mapping, Union, Any, runtime_checkable, cast
+from typing import Mapping, Union, Any, cast
+try:
+    from typing import Literal, runtime_checkable
+except ImportError:
+    from typing_extensions import Literal, runtime_checkable
 import warnings
 from typing_extensions import TypedDict, Protocol
 from azure.core import CaseInsensitiveEnumMeta
-
 
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
@@ -19,10 +22,7 @@ class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
         return super().__getattribute__(item)
 
 
-
-# The Identity SDK is diverging to not use the DeprecatedEnumMeta until the new replacement
-# for the BotIdentifier is released to prevent exposing the deprecated enum value.
-class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
     """Communication Identifier Kind.
 
     For checking yet unknown identifiers it is better to rely on the presence of the `raw_id` property,

@@ -3,7 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import Literal, Mapping, Union, Any, runtime_checkable, cast
+from typing import Mapping, Union, Any, cast
+try:
+    from typing import Literal, runtime_checkable
+except ImportError:
+    from typing_extensions import Literal, runtime_checkable
 import warnings
 from typing_extensions import TypedDict, Protocol
 from azure.core import CaseInsensitiveEnumMeta
