@@ -85,10 +85,16 @@ class MetricHandler(object):
 
         metrics = self.metrics if self.metrics is not None else TASK_TYPE_TO_METRICS_MAPPING[self.task_type].DEFAULT_LIST
 
-        return compute_metrics(
+        metrics_value = compute_metrics(
             metrics=metrics,
             task_type=self.task_type,
             use_chat_completion_api=True,
             openai_params=self.metrics_mapping["openai_params"],
             **metrics_calculation_data,
         )
+
+        if self.task_type == "custom-prompt-metric":
+            for metric_value in metrics_value:
+                print(metric_value)
+
+        return metrics_value

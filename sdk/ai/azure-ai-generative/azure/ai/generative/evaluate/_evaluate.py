@@ -281,7 +281,17 @@ def _evaluate(
             )
 
             custom_metric = metrics_handler_custom_metrics.calculate_metrics()
-            custom_metric["artifacts"].pop("custom_prompt_metric")
+            custom_metric["artifacts"].pop("custom_prompt_metric", None)
+
+            row_level_metrics = custom_metric["artifacts"].pop(metric._name, None)
+            score_list = []
+            for value in row_level_metrics:
+                value_json = json.loads(value)
+                score = value_json["score"]
+                score_list.append(score)
+
+            custom_metric["artifacts"].update({metric._name: score_list})
+
             if custom_metrics_results is None:
                 custom_metrics_results = custom_metric
             else:
@@ -290,8 +300,9 @@ def _evaluate(
 
         metrics = metrics_handler.calculate_metrics()
 
-        for k, v in metrics.items():
-            v.update(custom_metrics_results[k])
+        if custom_metrics_results is not None:
+            for k, v in metrics.items():
+                v.update(custom_metrics_results[k])
 
         print(metrics)
 
