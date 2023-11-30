@@ -5,11 +5,11 @@
 from enum import Enum
 from typing import Mapping, Union, Any, cast
 try:
-    from typing import Literal, runtime_checkable
+    from typing import Literal
 except ImportError:
-    from typing_extensions import Literal, runtime_checkable
+    from typing_extensions import Literal
 import warnings
-from typing_extensions import TypedDict, Protocol
+from typing_extensions import TypedDict
 from azure.core import CaseInsensitiveEnumMeta
 
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
@@ -46,8 +46,7 @@ class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta
     GCCH = "GCCH"
 
 
-@runtime_checkable
-class CommunicationIdentifier(Protocol):
+class CommunicationIdentifier():
     """Communication Identifier."""
     raw_id: str
     """The raw ID of the identifier."""
