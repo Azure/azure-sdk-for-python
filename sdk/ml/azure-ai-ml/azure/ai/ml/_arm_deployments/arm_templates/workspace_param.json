@@ -131,31 +131,43 @@
     "spark_runtime_version" : {
         "value": ""
     },
-    "featureStoreStorageAccountName": {
-        "value": ""
+    "offlineStoreStorageAccountOption": {
+        "value": "none"
     },
     "offline_store_connection_name" : {
-        "value": ""
+        "value": null
     },
-    "offline_store_target" : {
-        "value": ""
+    "offline_store_storage_account_name": {
+        "value": null
+    },
+    "offline_store_container_name" : {
+        "value": null
     },
     "offline_store_resource_group_name" : {
-        "value": ""
+        "value": null
     },
     "offline_store_subscription_id" : {
-        "value": ""
+        "value": null
     },
-    "materialization_identity_resource_id" : {
-        "value": ""
+    "materializationIdentityOption": {
+        "value": null
+    },
+    "materialization_identity_name": {
+        "value": null
+    },
+    "materialization_identity_resource_group_name": {
+        "value": null
+    },
+    "materialization_identity_subscription_id": {
+        "value": null
     },
     "grant_materialization_permissions" : {
         "value": "true"
     },
     "online_store_connection_name" : {
-        "value": ""
+        "value": null
     },
-    "online_store_target" : {
+    "online_store_resource_id" : {
         "value": ""
     },
     "online_store_resource_group_name" : {
