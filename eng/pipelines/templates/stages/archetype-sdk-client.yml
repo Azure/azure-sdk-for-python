@@ -77,7 +77,7 @@ parameters:
   default: false
 - name: Public
   type: boolean
-  default: true
+  default: false
 
 variables:
   - template: /eng/pipelines/templates/variables/globals.yml
