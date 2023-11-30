@@ -12,6 +12,8 @@
 
 ### Bugs Fixed
 
+ - When creating an Indexer in Azure Search, the advanced properties can now be set for both blob and sql data connections.
+
 ### Other Changes
 
 ## 11.4.0 (2023-10-13)
