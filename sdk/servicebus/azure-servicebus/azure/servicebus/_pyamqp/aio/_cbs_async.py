@@ -6,7 +6,7 @@
 
 import logging
 from datetime import datetime
-from typing import Any, Optional, Union, TYPE_CHECKING, cast
+from typing import Any, Optional, Union, cast
 
 from ..utils import utc_now, utc_from_timestamp
 from ._management_link_async import ManagementLink
@@ -24,9 +24,9 @@ from ..constants import (
     ManagementOpenResult,
 )
 from ..cbs import check_put_timeout_status, check_expiration_and_refresh_status
-if TYPE_CHECKING:
-    from ._session_async import Session
-    from ._authentication_async import JWTTokenAuth, SASTokenAuth
+
+from ._session_async import Session
+from ._authentication_async import JWTTokenAuth, SASTokenAuth
 
 _LOGGER = logging.getLogger(__name__)
 

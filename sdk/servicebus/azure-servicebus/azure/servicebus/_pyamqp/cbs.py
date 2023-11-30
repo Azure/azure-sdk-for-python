@@ -6,7 +6,7 @@
 
 import logging
 from datetime import datetime
-from typing import Any, Optional, Tuple, Union, cast, TYPE_CHECKING
+from typing import Any, Optional, Tuple, Union, cast
 
 from .utils import utc_now, utc_from_timestamp
 from .management_link import ManagementLink
@@ -29,9 +29,8 @@ from .constants import (
     ManagementOpenResult,
 )
 
-if TYPE_CHECKING:
-    from .session import Session
-    from .authentication import JWTTokenAuth, SASTokenAuth, SASLPlainAuth
+from .session import Session
+from .authentication import JWTTokenAuth, SASTokenAuth, SASLPlainAuth
 
 _LOGGER = logging.getLogger(__name__)
 
