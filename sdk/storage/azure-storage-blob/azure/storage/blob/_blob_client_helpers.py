@@ -40,11 +40,10 @@ from ._serialize import (
 )
 from ._deserialize import deserialize_blob_stream
 
-from ._encryption import modify_user_agent_for_encryption
+from ._encryption import modify_user_agent_for_encryption, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from ._models import (
     BlobType,
     BlobBlock,
-    BlobProperties,
     QuickQueryDialect,
     DelimitedJsonDialect,
     DelimitedTextDialect,
@@ -53,10 +52,6 @@ from ._upload_helpers import _any_conditions
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
-
-_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
-    'The require_encryption flag is set, but encryption is not supported'
-    ' for this method.')
 
 
 def _parse_url(
@@ -105,14 +100,14 @@ def _encode_source_url(source_url):
     return '?'.join(result)
 
 def _upload_blob_options(  # pylint:disable=too-many-statements
+    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+    blob_type: Union[str, BlobType],
+    length: Optional[int],
+    metadata: Optional[Dict[str, str]],
     encryption_options,
     config,
     sdk_moniker,
     client,
-    data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
-    blob_type: Union[str, BlobType] = BlobType.BlockBlob,
-    length: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
     **kwargs
 ) -> Dict[str, Any]:
 
@@ -181,7 +176,8 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
         kwargs['client'] = client.block_blob
         kwargs['data'] = data
     elif blob_type == BlobType.PageBlob:
-        if encryption_options['version'] == '2.0' and (encryption_options['required'] or encryption_options['key'] is not None): # pylint: disable=line-too-long
+        if (encryption_options['version'] == '2.0' and
+            encryption_options['required'] or encryption_options['key'] is not None):
             raise ValueError("Encryption version 2.0 does not currently support page blobs.")
         kwargs['client'] = client.page_blob
     elif blob_type == BlobType.AppendBlob:
@@ -237,17 +233,16 @@ def _upload_blob_from_url_options(
     return options
 
 def _download_blob_options(
-    encryption_options,
-    version_id,
-    sdk_moniker,
-    encryption_version,
-    client,
-    config,
     blob_name,
     container_name,
-    offset=None,
-    length=None,
-    encoding=None,
+    version_id,
+    offset,
+    length,
+    encoding,
+    encryption_options,
+    config,
+    sdk_moniker,
+    client,
     **kwargs
 ) -> Dict[str, Any]:
     if length is not None:
@@ -268,7 +263,7 @@ def _download_blob_options(
         modify_user_agent_for_encryption(
             config.user_agent_policy.user_agent,
             sdk_moniker,
-            encryption_version,
+            encryption_options['version'],
             kwargs)
 
     options = {
@@ -1146,10 +1141,7 @@ def _append_block_from_url_options(  # type: ignore
     options.update(kwargs)
     return options
 
-def _seal_append_blob_options(require_encryption, key_encryption_key, **kwargs):
-    if require_encryption or (key_encryption_key is not None):
-        raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
+def _seal_append_blob_options(**kwargs):
     appendpos_condition = kwargs.pop('appendpos_condition', None)
     append_conditions = None
     if appendpos_condition is not None:

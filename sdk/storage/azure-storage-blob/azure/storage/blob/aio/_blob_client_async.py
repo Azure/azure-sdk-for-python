@@ -31,7 +31,6 @@ from .._blob_client_helpers import (
     _create_snapshot_options,
     _delete_blob_options,
     _download_blob_options,
-    _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION,
     _format_url,
     _from_blob_url,
     _get_blob_tags_options,
@@ -64,7 +63,7 @@ from .._deserialize import (
     get_page_ranges_result,
     parse_tags
 )
-from .._encryption import StorageEncryptionMixin
+from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from .._models import BlobType, BlobBlock, BlobProperties, PageRange
 from .._serialize import get_modify_conditions, get_api_version, get_access_conditions, get_version_id
 from ._download_async import StorageStreamDownloader
@@ -164,8 +163,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        parsed_url, sas_token, path_snapshot = _parse_url(account_url=account_url, container_name=container_name, blob_name=blob_name)  # pylint: disable=line-too-long
-
+        parsed_url, sas_token, path_snapshot = _parse_url(
+            account_url=account_url,
+            container_name=container_name,
+            blob_name=blob_name)
         self.container_name = container_name
         self.blob_name = blob_name
         try:
@@ -193,14 +194,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             query_str=self._query_str,
             hostname=hostname
         )
-
-    def _build_encryption_options(self):
-        return {
-                'required': self.require_encryption,
-                'version': self.encryption_version,
-                'key': self.key_encryption_key,
-                'resolver': self.key_resolver_function
-                }
 
     @classmethod
     def from_blob_url(
@@ -574,14 +567,19 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_blob_options(
-            encryption_options=self._build_encryption_options(),
-            config=self._config,
-            sdk_moniker=self._sdk_moniker,
-            client=self._client,
             data=data,
             blob_type=blob_type,
             length=length,
             metadata=metadata,
+            encryption_options={
+                'required': self.require_encryption,
+                'version': self.encryption_version,
+                'key': self.key_encryption_key,
+                'resolver': self.key_resolver_function
+            },
+            config=self._config,
+            sdk_moniker=self._sdk_moniker,
+            client=self._client,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
             return await upload_block_blob(**options)
@@ -710,17 +708,21 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _download_blob_options(
-            encryption_options=self._build_encryption_options(),
-            version_id=get_version_id(self.version_id, kwargs),
-            sdk_moniker=self._sdk_moniker,
-            encryption_version=self.encryption_version,
-            client=self._client,
-            config=self._config,
             blob_name=self.blob_name,
             container_name=self.container_name,
+            version_id=get_version_id(self.version_id, kwargs),
             offset=offset,
             length=length,
             encoding=encoding,
+            encryption_options={
+                'required': self.require_encryption,
+                'version': self.encryption_version,
+                'key': self.key_encryption_key,
+                'resolver': self.key_resolver_function
+            },
+            config=self._config,
+            sdk_moniker=self._sdk_moniker,
+            client=self._client,
             **kwargs)
         downloader = StorageStreamDownloader(**options)
         await downloader._setup()  # pylint: disable=protected-access
@@ -3126,11 +3128,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
-        options = _seal_append_blob_options(
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            **kwargs
-        )
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        options = _seal_append_blob_options(**kwargs)
         try:
             return await self._client.append_blob.seal(**options) # type: ignore
         except HttpResponseError as error:
