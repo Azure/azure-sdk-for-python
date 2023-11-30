@@ -8,7 +8,19 @@
 import struct
 import uuid
 import logging
-from typing import List, Optional, Tuple, Dict, Callable, Any, cast, Union, TYPE_CHECKING
+from typing import (
+    List,
+    Optional,
+    Tuple,
+    Dict,
+    Callable,
+    Any,
+    Union,
+    cast,
+    TYPE_CHECKING,
+)
+
+from typing_extensions import Literal
 
 
 from .message import Message, Header, Properties
@@ -43,19 +55,19 @@ def _decode_null(buffer: memoryview) -> Tuple[memoryview, None]:
     return buffer, None
 
 
-def _decode_true(buffer: memoryview) -> Tuple[memoryview, bool]:
+def _decode_true(buffer: memoryview) -> Tuple[memoryview, Literal[True]]:
     return buffer, True
 
 
-def _decode_false(buffer: memoryview) -> Tuple[memoryview, bool]:
+def _decode_false(buffer: memoryview) -> Tuple[memoryview, Literal[False]]:
     return buffer, False
 
 
-def _decode_zero(buffer: memoryview) -> Tuple[memoryview, int]:
+def _decode_zero(buffer: memoryview) -> Tuple[memoryview, Literal[0]]:
     return buffer, 0
 
 
-def _decode_empty(buffer: memoryview) -> Tuple[memoryview, List[None]]:
+def _decode_empty(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     return buffer, []
 
 
