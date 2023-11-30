@@ -18,7 +18,6 @@ from typing import (
     Protocol,
     Tuple,
 )
-from typing_extensions import Literal
 
 from ._encode import encode_payload
 from .utils import get_message_encoded_size
