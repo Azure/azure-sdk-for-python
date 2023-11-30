@@ -1050,7 +1050,7 @@
                         {
                             "type": "Microsoft.Authorization/roleAssignments",
                             "apiVersion": "2022-04-01",
-                            "name": "[guid(variables('materializationIdentity'), subscription().subscriptionId, resourceGroup().name, parameters('workspaceName'), 'azureml ds role')]",
+                            "name": "[guid(variables('materializationIdentity'), resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName')), 'azureml ds role')]",
                             "scope": "[resourceId(resourceGroup().name, 'Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
                             "properties": {
                                 "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'f6c7c914-8db3-469d-8ca1-694a8f32e121')]",
