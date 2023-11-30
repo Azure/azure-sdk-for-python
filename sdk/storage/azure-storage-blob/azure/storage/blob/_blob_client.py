@@ -1353,6 +1353,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _create_page_blob_options(
             size=size,
             content_settings=content_settings,
