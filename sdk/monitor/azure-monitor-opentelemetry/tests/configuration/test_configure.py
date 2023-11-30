@@ -194,13 +194,12 @@ class TestConfigure(unittest.TestCase):
         metrics_mock.assert_not_called()
         instrumentation_mock.assert_called_once_with(configurations)
 
-    @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": ""})
+    @patch.dict("os.environ", {}, clear=True)
     def test_setup_resources(self):
         _setup_resources()
         self.assertEqual(
             os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
-            # TODO: Change back to "azure_app_service,azure_vm" after VM Resource Detector fix for https://github.com/Azure/azure-sdk-for-python/issues/33295
-            "azure_app_service"
+            "azure_app_service,azure_vm"
         )
 
     @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "test_detector"})
@@ -208,8 +207,15 @@ class TestConfigure(unittest.TestCase):
         _setup_resources()
         self.assertEqual(
             os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
-            # TODO: Change back to "azure_app_service,azure_vm" after VM Resource Detector fix for https://github.com/Azure/azure-sdk-for-python/issues/33295
-            "test_detector,azure_app_service"
+            "test_detector"
+        )
+
+    @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "test_detector,azure_vm"})
+    def test_setup_resources_existing_with_azure_detectors(self):
+        _setup_resources()
+        self.assertEqual(
+            os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
+            "test_detector,azure_vm"
         )
 
     @patch(

@@ -4,12 +4,12 @@
 
 ### Features Added
 
+- Default Resource Detector environment variable to allow for customization. Add App Service Resource Detector to Auto-Instrumentation.
+    ([#33340](https://github.com/Azure/azure-sdk-for-python/pull/33340))
+
 ### Breaking Changes
 
 ### Bugs Fixed
-
-- Remove VM Resource Detector for hotfix
-    ([#33305](https://github.com/Azure/azure-sdk-for-python/pull/33305))
 
 ### Other Changes
 
