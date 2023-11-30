@@ -30,7 +30,9 @@ See the [README][README] of the Text Translator client library for more informat
 
 You can create Translator resource following [Create a Translator resource][translator_resource_create].  For general information about authentication with a cognitive services resource please refer to the documentation [here][cognitive_auth].
 
-To get a list of languages you can create a new `TextTranslationClient` without any authentication. You will only need your `endpoint``.  The values of the `endpoint` variable can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.  Four different types of authentication are available for different types of endpoints: global, regional, token and Entra (AAD).  For details about each including curl examples refer to the documentation available [here][authentication_details].
+To get a list of languages you can create a new `TextTranslationClient` without any authentication. You will only need your `endpoint``.  The values of the `endpoint` variable can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
+
+Four different types of authentication are available for different types of endpoints: global, regional, token and Entra (Azure Active Directory).  For details about each including curl examples refer to the documentation available [here][authentication_details].  These samples demonstrate API Key and Entra (AAD) authentication.
 
 <!-- SNIPPET: sample_text_translation_client.create_text_translation_client_with_endpoint -->
 
@@ -62,11 +64,9 @@ text_translator = TextTranslationClient(endpoint=endpoint, credential=credential
 
 <!-- END SNIPPET -->
 
-## Entra (AAD) Authentication
+## Entra (Azure Active Directory) Authentication
 
-`AzureKeyCredential` authentication is used in most of the examples, but you can also authenticate with Entra (Azure Active Directory) using the [Azure Identity library][azure_identity].
-
-Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.  Use this value for the `endpoint` variable for `AZURE_TEXT_TRANSLATION_ENDPOINT`.
+`AzureKeyCredential` authentication is used in most of the examples, but you can also authenticate with Entra (Azure Active Directory) using the [Azure Identity library][azure_identity].  Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.  Use this value for the `endpoint` variable for `AZURE_TEXT_TRANSLATION_ENDPOINT`.  Only custom subdomains are supported.
 
 To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below, install the Azure.Identity package:
 

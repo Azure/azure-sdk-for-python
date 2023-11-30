@@ -40,7 +40,7 @@ pip install azure-ai-translation-text
 You can create Translator resource following [Create a Translator resource][translator_resource_create].  For general information about authentication with a cognitive services resource please refer to the documentation [here][cognitive_auth].
 
 ### Endpoint
-The values of the `endpoint` variable can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.  Four different types of authentication are available for different types of endpoints: global, regional, token and Entra (AAD).  For details about each including curl examples refer to the documentation available [here][authentication_details].
+The values of the `endpoint` variable can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.  Four different types of authentication are available for different types of endpoints: global, regional, token and Entra (AAD).  For details about each including curl examples refer to the documentation available [here][authentication_details].  These samples demonstrate API Key and Entra (AAD) authentication.
 
 ### Authenticate the client
 Interaction with the service using the client library begins with creating an instance of the [TextTranslationClient][translator_client_class] class. You will need an **API key** or ``TokenCredential`` to instantiate a client object. For more information regarding authenticating with cognitive services, see [Authenticate requests to Translator Service][translator_auth].
@@ -57,7 +57,7 @@ az cognitiveservices account keys list --resource-group <your-resource-group-nam
 
 #### Create a `TextTranslationClient` using an API key and Region credential
 
-Once you have the value for the API key and Region, create an `TranslatorCredential`. This will allow you to
+Once you have the value for the API key and Region, create a `TranslatorCredential`. This will allow you to
 update the API key without creating a new client.
 
 With the value of the `endpoint`, `credential` and a `region`, you can create the [TextTranslationClient][client_sample]:
@@ -81,7 +81,7 @@ text_translator = TextTranslationClient(endpoint=endpoint, credential=credential
 
 `AzureKeyCredential` authentication is used in most of the examples, but you can also authenticate with Entra (Azure Active Directory) using the [Azure Identity library][azure_identity].
 
-Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.  Use this value for the `endpoint` variable for `AZURE_TEXT_TRANSLATION_ENDPOINT`.
+Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.  Use this value for the `endpoint` variable for `AZURE_TEXT_TRANSLATION_ENDPOINT`.  Only custom subdomains are supported.
 
 To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below install the Azure.Identity package:
 
