@@ -14,6 +14,7 @@ from ..performatives import (
     AttachFrame,
     DetachFrame,
 )
+
 from ..session import Session
 
 from ..error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError

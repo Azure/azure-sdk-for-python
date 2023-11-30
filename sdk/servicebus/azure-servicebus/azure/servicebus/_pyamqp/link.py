@@ -4,22 +4,22 @@
 # license information.
 # --------------------------------------------------------------------------
 
-
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, TYPE_CHECKING
 import uuid
 import logging
 
+from .error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
 from .endpoints import Source, Target
 from .constants import DEFAULT_LINK_CREDIT, SessionState, LinkState, Role, SenderSettleMode, ReceiverSettleMode
 from .performatives import AttachFrame, DetachFrame
-from .session import Session
 
-from .error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
+if TYPE_CHECKING:
+    from .session import Session
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class Link():  # pylint: disable=too-many-instance-attributes
+class Link:  # pylint: disable=too-many-instance-attributes
     """An AMQP Link.
 
     This object should not be used directly - instead use one of directional
@@ -28,7 +28,7 @@ class Link():  # pylint: disable=too-many-instance-attributes
 
     def __init__(
             self,
-            session: Session,
+            session: "Session",
             handle: int,
             name: Optional[str] = None,
             role: bool = Role.Receiver,

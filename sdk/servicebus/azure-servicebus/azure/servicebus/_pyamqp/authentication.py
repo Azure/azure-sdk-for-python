@@ -7,7 +7,7 @@
 import time
 from functools import partial
 
-from typing import Any, NamedTuple, Optional, Callable, Tuple, Union
+from typing import Any, NamedTuple, Optional, Callable, Tuple, Union, cast
 from .sasl import SASLAnonymousCredential, SASLPlainCredential
 from .utils import generate_sas_token
 
@@ -97,7 +97,7 @@ class _CBSAuth():
             expires_in = expires_on - time.time()
             if expires_in < 1:
                 raise ValueError("Token has already expired.")
-        return expires_in, expires_on # type: ignore
+        return cast(float, expires_in), cast(float, expires_on)
 
 
 class JWTTokenAuth(_CBSAuth):
