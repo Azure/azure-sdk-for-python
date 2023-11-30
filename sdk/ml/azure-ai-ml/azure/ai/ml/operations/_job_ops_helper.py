@@ -149,7 +149,7 @@ def _get_last_log_primary_instance(logs: List) -> Any:
     return matching_logs[0]
 
 
-def _wait_before_polling(current_seconds: float) -> float:
+def _wait_before_polling(current_seconds: float) -> int:
     if current_seconds < 0:
         msg = "current_seconds must be positive"
         raise JobException(
@@ -161,8 +161,8 @@ def _wait_before_polling(current_seconds: float) -> float:
     import math
 
     # Sigmoid that tapers off near the_get_logs max at ~ 3 min
-    duration = int(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MAX) / (
-        1.0 + 100 * math.exp(-current_seconds / 20.0)
+    duration = int(
+        int(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MAX) / (1.0 + 100 * math.exp(-current_seconds / 20.0))
     )
     return max(int(RunHistoryConstants._WAIT_COMPLETION_POLLING_INTERVAL_MIN), duration)
 
