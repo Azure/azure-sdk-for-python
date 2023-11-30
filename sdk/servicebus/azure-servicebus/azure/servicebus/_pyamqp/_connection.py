@@ -95,8 +95,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             endpoint: str,
              *,
             container_id: Optional[str] = None,
-            max_frame_size: Optional[int] = None,
-            channel_max: Optional[int] = None,
+            max_frame_size: int = MAX_FRAME_SIZE_BYTES,
+            channel_max: int = MAX_CHANNELS,
             idle_timeout: Optional[float] = None,
             outgoing_locales: Optional[List[str]] = None,
             incoming_locales: Optional[List[str]] = None,
@@ -104,8 +104,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             desired_capabilities: Optional[List[str]] = None,
             properties: Optional[Dict[str, Any]] = None,
             allow_pipelined_open: bool = True,
-            idle_timeout_empty_frame_send_ratio: Optional[float] = None,
-            idle_wait_time: Optional[float] = None,
+            idle_timeout_empty_frame_send_ratio: float = 0.5,
+            idle_wait_time: float = 0.1,
             network_trace: bool = False,
             transport_type: TransportType = TransportType.Amqp,
             http_proxy: Optional[Dict[str, Any]] = None,
@@ -169,9 +169,9 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
                 **kwargs)
-        self._max_frame_size: int = max_frame_size if max_frame_size is not None else MAX_FRAME_SIZE_BYTES
+        self._max_frame_size: int = max_frame_size
         self._remote_max_frame_size: Optional[int] = None
-        self._channel_max: int = channel_max if channel_max is not None else MAX_CHANNELS
+        self._channel_max: int = channel_max
         self._idle_timeout: Optional[float] = idle_timeout
         self._outgoing_locales: Optional[List[str]] = outgoing_locales
         self._incoming_locales: Optional[List[str]] = incoming_locales
@@ -184,11 +184,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._remote_idle_timeout: Optional[float] = None
         self._remote_idle_timeout_send_frame: Optional[float] = None
         self._idle_timeout_empty_frame_send_ratio: float = (
-            idle_timeout_empty_frame_send_ratio if idle_timeout_empty_frame_send_ratio is not None else 0.5
+            idle_timeout_empty_frame_send_ratio
         )
         self._last_frame_received_time: Optional[float] = None
         self._last_frame_sent_time: Optional[float] = None
-        self._idle_wait_time: float = idle_wait_time if idle_wait_time is not None else 0.1
+        self._idle_wait_time: float = idle_wait_time
         self._error: Optional[AMQPConnectionError] = None
         self._outgoing_endpoints: Dict[int, Session] = {}
         self._incoming_endpoints: Dict[int, Session] = {}
