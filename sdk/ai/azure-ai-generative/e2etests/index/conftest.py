@@ -76,6 +76,7 @@ def local_environments_base():
 
 @pytest.fixture(scope="session")
 def local_azureml_rag_base():
+    # This points to "azure-sdk-for-python/sdk/ai", which contains both azure-ai-generative and azure-ai-resources
     return Path(__file__).parent.parent.parent
 
 
