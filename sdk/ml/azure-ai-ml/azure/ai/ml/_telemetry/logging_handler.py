@@ -33,7 +33,6 @@ test_subscriptions = [
 
 # activate operation id tracking
 config_integration.trace_integrations(["logging"])
-logging.basicConfig(format="%(asctime)s traceId=%(traceId)s spanId=%(spanId)s %(message)s")
 
 
 class CustomDimensionsFilter(logging.Filter):
