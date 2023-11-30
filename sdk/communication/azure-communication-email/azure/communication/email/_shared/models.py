@@ -9,7 +9,7 @@ try:
 except ImportError:
     from typing_extensions import Literal
 import warnings
-from typing_extensions import TypedDict
+from typing_extensions import TypedDict, Protocol, runtime_checkable
 from azure.core import CaseInsensitiveEnumMeta
 
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
@@ -45,8 +45,8 @@ class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta
     DOD = "DOD"
     GCCH = "GCCH"
 
-
-class CommunicationIdentifier():
+@runtime_checkable
+class CommunicationIdentifier(Protocol):
     """Communication Identifier."""
     raw_id: str
     """The raw ID of the identifier."""
