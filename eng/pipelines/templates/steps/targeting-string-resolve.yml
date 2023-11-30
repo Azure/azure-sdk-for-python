@@ -24,4 +24,4 @@ steps:
       Write-Host "Setting Public to $public"
       Write-Host "##vso[task.setvariable variable=Public]$public"
     displayName: Check override of targeting string
-    condition: and(succeededOrFailed(), eq(variables['TargetingString'],''), eq(variables['Public'],'')
+    condition: and(succeededOrFailed(), eq(variables['TargetingString'],''), eq(variables['Public'],''))
