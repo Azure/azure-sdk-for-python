@@ -13,7 +13,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from _decorators_async import RouterPreparersAsync
 from _validators import JobQueueValidator
 from _router_test_case_async import AsyncRouterRecordedTestCase
-from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
