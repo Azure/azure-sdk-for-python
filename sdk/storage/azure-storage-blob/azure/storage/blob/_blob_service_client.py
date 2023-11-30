@@ -126,7 +126,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
-        parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
+        parsed_url, sas_token = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)

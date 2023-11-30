@@ -125,7 +125,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin,
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
+        parsed_url, sas_token = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
