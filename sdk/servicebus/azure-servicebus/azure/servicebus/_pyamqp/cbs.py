@@ -6,7 +6,7 @@
 
 import logging
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional, Tuple, Union, cast, TYPE_CHECKING
 
 from .utils import utc_now, utc_from_timestamp
 from .management_link import ManagementLink
@@ -29,24 +29,33 @@ from .constants import (
     ManagementOpenResult,
 )
 
+if TYPE_CHECKING:
+    from .session import Session
+    from .authentication import JWTTokenAuth, SASTokenAuth, SASLPlainAuth
+
 _LOGGER = logging.getLogger(__name__)
 
 
-def check_expiration_and_refresh_status(expires_on, refresh_window):
+def check_expiration_and_refresh_status(expires_on: int, refresh_window: int) -> Tuple[bool, bool]:
     seconds_since_epoc = int(utc_now().timestamp())
     is_expired = seconds_since_epoc >= expires_on
     is_refresh_required = (expires_on - seconds_since_epoc) <= refresh_window
     return is_expired, is_refresh_required
 
 
-def check_put_timeout_status(auth_timeout, token_put_time):
+def check_put_timeout_status(auth_timeout: float, token_put_time: int) -> bool:
     if auth_timeout > 0:
         return (int(utc_now().timestamp()) - token_put_time) >= auth_timeout
     return False
 
 
-class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
-    def __init__(self, session, auth, **kwargs):
+class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
+    def __init__(
+            self,
+            session: Session,
+            auth: Union[JWTTokenAuth, SASTokenAuth, SASLPlainAuth],
+            **kwargs: Any
+        ) -> None:
         self._session = session
         self._connection = self._session._connection
         self._mgmt_link = self._session.create_request_response_link_pair(
@@ -57,24 +66,24 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             status_description_field=b"status-description",
         )  # type: ManagementLink
 
-        if not auth.get_token or not callable(auth.get_token):
+        if not auth.get_token or not callable(auth.get_token): # type: ignore
             raise ValueError("get_token must be a callable object.")
 
         self._auth = auth
         self._encoding = "UTF-8"
-        self._auth_timeout = kwargs.get("auth_timeout")
-        self._token_put_time = None
-        self._expires_on = None
-        self._token = None
-        self._refresh_window = None
+        self._auth_timeout: float = cast(float, kwargs.get("auth_timeout"))
+        self._token_put_time: Optional[int] = None
+        self._expires_on: Optional[int] = None
+        self._token: Optional[str] = None
+        self._refresh_window: Optional[int] = None
         self._network_trace_params = {
             "amqpConnection": self._session._connection._container_id,
             "amqpSession": self._session.name,
             "amqpLink": None
         }
 
-        self._token_status_code = None
-        self._token_status_description = None
+        self._token_status_code: Optional[int] = None
+        self._token_status_description: Optional[str] = None
 
         self.state = CbsState.CLOSED
         self.auth_state = CbsAuthState.IDLE
@@ -99,7 +108,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         )
         self._mgmt_link.next_message_id += 1
 
-    def _on_amqp_management_open_complete(self, management_open_result):
+    def _on_amqp_management_open_complete(self, management_open_result: ManagementOpenResult) -> None:
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
             _LOGGER.debug(
                 "CSB with status: %r encounters unexpected AMQP management open complete.",
@@ -124,7 +133,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
                 extra=self._network_trace_params
             )
 
-    def _on_amqp_management_error(self):
+    def _on_amqp_management_error(self) -> None:
         if self.state == CbsState.CLOSED:
             _LOGGER.info("Unexpected AMQP error in CLOSED state.", extra=self._network_trace_params)
         elif self.state == CbsState.OPENING:
@@ -141,12 +150,12 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
 
     def _on_execute_operation_complete(
         self,
-        execute_operation_result,
-        status_code,
-        status_description,
+        execute_operation_result: ManagementExecuteOperationResult,
+        status_code: int,
+        status_description: str,
         _,
         error_condition=None,
-    ):
+    ) -> None:
         if error_condition:
             _LOGGER.info(
                 "CBS Put token error: %r",
@@ -178,12 +187,12 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         ):
             self.auth_state = CbsAuthState.ERROR
 
-    def _update_status(self):
+    def _update_status(self) -> None:
         if (
             self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED)
         ):
             is_expired, is_refresh_required = check_expiration_and_refresh_status(
-                self._expires_on, self._refresh_window
+                cast(int, self._expires_on), cast(int,self._refresh_window)
             )
             _LOGGER.debug(
                 "CBS status check: state == %r, expired == %r, refresh required == %r",
@@ -203,12 +212,12 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
                 extra=self._network_trace_params
             )
             put_timeout = check_put_timeout_status(
-                self._auth_timeout, self._token_put_time
+                self._auth_timeout, cast(int, self._token_put_time)
             )
             if put_timeout:
                 self.auth_state = CbsAuthState.TIMEOUT
 
-    def _cbs_link_ready(self):
+    def _cbs_link_ready(self) -> Optional[bool]:
         if self.state == CbsState.OPEN:
             return True
         if self.state != CbsState.OPEN:
@@ -220,17 +229,17 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             )
         return None
 
-    def open(self):
+    def open(self) -> None:
         self.state = CbsState.OPENING
         self._mgmt_link.open()
 
-    def close(self):
+    def close(self) -> None:
         self._mgmt_link.close()
         self.state = CbsState.CLOSED
 
-    def update_token(self):
+    def update_token(self) -> None:
         self.auth_state = CbsAuthState.IN_PROGRESS
-        access_token = self._auth.get_token()
+        access_token = self._auth.get_token() # type: ignore
         if not access_token:
             _LOGGER.info(
                 "Token refresh function received an empty token object.",
@@ -242,26 +251,26 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
                 extra=self._network_trace_params
             )
         self._expires_on = access_token.expires_on
-        expires_in = self._expires_on - int(utc_now().timestamp())
+        expires_in = cast(int, self._expires_on) - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
         try:
             self._token = access_token.token.decode()
         except AttributeError:
-            self._token = access_token.token
+            self._token = cast(str, access_token.token)
         try:
-            token_type = self._auth.token_type.decode()
+            token_type = cast(bytes, self._auth.token_type).decode() # type: ignore
         except AttributeError:
-            token_type = self._auth.token_type
+            token_type = cast(str, self._auth.token_type) # type: ignore
 
         self._token_put_time = int(utc_now().timestamp())
         self._put_token(
-            self._token,
+            cast(str, self._token),
             token_type,
-            self._auth.audience,
+            self._auth.audience, # type: ignore
             utc_from_timestamp(self._expires_on),
         )
 
-    def handle_token(self): # pylint: disable=inconsistent-return-statements
+    def handle_token(self) -> Optional[bool]: # pylint: disable=inconsistent-return-statements
         if not self._cbs_link_ready():
             return False
         self._update_status()

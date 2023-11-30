@@ -20,7 +20,7 @@ from .constants import (
 )
 
 class AccessToken(NamedTuple):
-    token: str
+    token: bytes
     expires_on: int
 
 def _generate_sas_access_token(
