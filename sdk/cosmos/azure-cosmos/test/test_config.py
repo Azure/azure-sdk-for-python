@@ -150,7 +150,6 @@ class _test_config(object):
             read_documents = list(query_iterable)
             try:
                 for document in read_documents:
-                    partition_key = 'dummy_pk'
                     if not use_custom_partition_key:
                         partition_key = document[cls.TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY]
                     else:
