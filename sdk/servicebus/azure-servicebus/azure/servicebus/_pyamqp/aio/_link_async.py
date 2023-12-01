@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, TYPE_CHECKING
 import uuid
 import logging
 
@@ -15,9 +15,10 @@ from ..performatives import (
     DetachFrame,
 )
 
-from ._session_async import Session
-
 from ..error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
+
+if TYPE_CHECKING:
+    from ._session_async import Session
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
 
     def __init__(
             self,
-            session: Session,
+            session: "Session",
             handle: int,
             name: Optional[str] = None,
             role: bool = Role.Receiver,
