@@ -1,5 +1,6 @@
 # coding: utf-8
 
+
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -7,21 +8,24 @@
 # --------------------------------------------------------------------------
 
 
-def analyze_text():
+def analyze_text_with_entra_id_auth():
     # [START analyze_text]
 
     import os
     from azure.ai.contentsafety import ContentSafetyClient
     from azure.ai.contentsafety.models import TextCategory
-    from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import HttpResponseError
     from azure.ai.contentsafety.models import AnalyzeTextOptions
+    from azure.identity import DefaultAzureCredential
 
-    key = os.environ["CONTENT_SAFETY_KEY"]
     endpoint = os.environ["CONTENT_SAFETY_ENDPOINT"]
 
+    """DefaultAzureCredential will use the values from these environment
+    variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+    """
+    credential = DefaultAzureCredential()
     # Create a Content Safety client
-    client = ContentSafetyClient(endpoint, AzureKeyCredential(key))
+    client = ContentSafetyClient(endpoint, credential)
 
     # Construct a request
     request = AnalyzeTextOptions(text="You are an idiot")
@@ -56,4 +60,4 @@ def analyze_text():
 
 
 if __name__ == "__main__":
-    analyze_text()
+    analyze_text_with_entra_id_auth()
