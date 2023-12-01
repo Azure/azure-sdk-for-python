@@ -3,26 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from collections import namedtuple
 import inspect
 import re
 import six
 import os.path
 import zlib
 
-from azure_devtools.scenario_tests import (
-    ReplayableTest,
-    AzureTestError,
-    AbstractPreparer,
-    GeneralNameReplacer,
-    OAuthRequestResponsesFilter,
-    DeploymentNameReplacer,
-    RequestUrlNormalizer,
-)
+from azure_devtools.scenario_tests import AbstractPreparer, GeneralNameReplacer
 from azure_devtools.scenario_tests.utilities import is_text_payload
 from .azure_testcase import AzureTestCase
-from .config import TEST_SETTING_FILENAME
-from . import mgmt_settings_fake as fake_settings
 
 
 class HttpStatusCode(object):
