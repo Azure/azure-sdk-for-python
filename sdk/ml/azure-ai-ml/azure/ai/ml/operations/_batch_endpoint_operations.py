@@ -389,15 +389,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     json=request,
                     headers=headers,
                 )
-            except Exception as e:  # pylint: disable=broad-except
-                if isinstance(e, (ServiceRequestError, ServiceResponseError)) or e.error_code == "408":
-                    retry_attempts += 1
-                    continue
-                else:
-                    raise e
+            except (ServiceRequestError, ServiceResponseError):
+                retry_attempts += 1
+                continue
             break
         if retry_attempts == 5:
-            retry_msg = "Max retry attempts reached while trying to connect to server. Please check connection and invoke again."
+            retry_msg = "Max retry attempts reached while trying to connect to server. Please check connection and invoke again." # pylint: disable=line-too-long
             raise MlException(message=retry_msg, no_personal_data_message=retry_msg, target=ErrorTarget.BATCH_ENDPOINT)
         validate_response(response)
         batch_job = json.loads(response.text())
