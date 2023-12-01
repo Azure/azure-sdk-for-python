@@ -1,0 +1,6 @@
+{
+    "AssetsRepo": "Azure/azure-sdk-assets",
+    "AssetsRepoPrefixPath": "python",
+    "TagPrefix": "python/edgemarketplace/azure-mgmt-edgemarketplace",
+    "Tag": ""
+}
