@@ -88,7 +88,7 @@ class AmqpAnnotatedMessage(object):
         self._properties = (
             AmqpMessageProperties(**properties_dict) if "properties" in kwargs else None
         )
-        self._application_properties = kwargs.get("application_properties")
+        self._application_properties = kwargs.get("application_properties") or {}
         self._annotations = kwargs.get("annotations")
         self._delivery_annotations = kwargs.get("delivery_annotations")
 
@@ -208,7 +208,7 @@ class AmqpAnnotatedMessage(object):
         self._properties = value
 
     @property
-    def application_properties(self) -> Optional[Dict[Union[str, bytes], Any]]:
+    def application_properties(self) -> Dict[str, Any]:
         """
         Service specific application properties.
 
@@ -217,7 +217,7 @@ class AmqpAnnotatedMessage(object):
         return self._application_properties
 
     @application_properties.setter
-    def application_properties(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
+    def application_properties(self, value: Optional[Dict[str, Any]]) -> None:
         self._application_properties = value
 
     @property

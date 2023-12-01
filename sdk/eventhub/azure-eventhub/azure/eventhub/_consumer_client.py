@@ -312,7 +312,12 @@ class EventHubConsumerClient(
         )
         return cls(**constructor_args)
 
-    def _receive(self, on_event, **kwargs):
+    def _receive(
+        self,
+        on_event: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None],
+        # on_event: Union[Callable[["PartitionContext", "EventData"], None], Callable[["PartitionContext", List["EventData"]], None]],
+        **kwargs: Any
+    ) -> None:
         partition_id = kwargs.get("partition_id")
         with self._lock:
             error: Optional[str] = None
@@ -444,8 +449,9 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-
-        self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
+        # Ignoring type - on_event is a callable with two parameters
+        # one of which is a union of event data and list of event data
+        self._receive(on_event, batch=False, max_batch_size=1, **kwargs) # type: ignore[arg-type]
 
     def receive_batch(
             self,
@@ -528,7 +534,9 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events in batches from the EventHub.
         """
-        self._receive(on_event_batch, batch=True, **kwargs)
+        # Ignoring type - on_event is a callable with two parameters
+        # one of which is a union of event data and list of event data
+        self._receive(on_event_batch, batch=True, **kwargs) # type: ignore[arg-type]
 
     def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.

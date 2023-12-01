@@ -167,10 +167,10 @@ if _CAN_ADD_DOCSTRING:
 # TODO: should be a class, namedtuple or dataclass, immutability vs performance, need to collect performance data
 class Message(NamedTuple):
     header: Optional[Header] = None
-    delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = None
-    message_annotations: Optional[Dict[Union[str, bytes], Any]] = None
+    delivery_annotations: Dict[bytes, Any] = {}
+    message_annotations: Dict[bytes, Any] = {}
     properties: Optional[Properties] = None
-    application_properties: Optional[Dict[Union[str, bytes], Any]] = None
+    application_properties: Dict[str, Any] = {}
     data: Optional[bytes] = None
     sequence: Optional[List[Any]] = None
     value: Optional[Any] = None

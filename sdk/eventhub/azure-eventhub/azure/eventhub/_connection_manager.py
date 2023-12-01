@@ -49,7 +49,7 @@ class _ConnectionMode(Enum):
 
 
 class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attributes
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         self._lock = Lock()
         self._conn: Union[Connection, uamqp_Connection] = None
 

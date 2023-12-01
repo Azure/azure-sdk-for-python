@@ -340,7 +340,7 @@ class EventData(object):
         return self._raw_amqp_message.annotations.get(PROP_PARTITION_KEY, None)
 
     @property
-    def properties(self) -> Union[Dict[str, Any], Dict[bytes, Any]]:
+    def properties(self) -> Dict[str, Any]:
         """Application-defined properties on the event.
 
         :rtype: dict[str, any] or dict[bytes, any]
@@ -348,12 +348,12 @@ class EventData(object):
         return self._raw_amqp_message.application_properties
 
     @properties.setter
-    def properties(self, value: Union[Dict[str, Any], Dict[bytes, Any]]) -> None:
+    def properties(self, value: Dict[str, Any]) -> None:
         """Application-defined properties on the event.
 
         :param dict[str, any] or dict[bytes, any] value: The application properties for the EventData.
         """
-        properties = None if value is None else dict(value)
+        properties = None if value is None else value
         self._raw_amqp_message.application_properties = properties
 
     @property

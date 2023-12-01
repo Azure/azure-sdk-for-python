@@ -600,7 +600,7 @@ if uamqp_installed:
             return mgmt_auth.token
 
         @staticmethod
-        def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+        def mgmt_client_request(mgmt_client: AMQPClient, mgmt_msg: str, **kwargs: Any):
             """
             Send mgmt request.
             :param uamqp.AMQPClient mgmt_client: Client to send request with.
