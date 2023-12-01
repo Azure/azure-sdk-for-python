@@ -33,9 +33,13 @@ requirements:
 test:
   imports:
     - azure.storage.blob
+    - azure.storage.blob.aio
     - azure.storage.queue
+    - azure.storage.queue.aio
     - azure.storage.fileshare
+    - azure.storage.fileshare.aio
     - azure.storage.filedatalake
+    - azure.storage.filedatalake.aio
 
 about:
   home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage"
