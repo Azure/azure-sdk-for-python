@@ -181,7 +181,7 @@ def apply_business_filter(collected_packages: List[str], filter_type: str) -> Li
     return pkg_set_ci_filtered
 
 def apply_ci_disabled_filter(collected_packages: List[str]) -> List[str]:
-    if os.getenv("PUBLIC"):
+    if str_to_bool(os.getenv("PUBLIC", "False")):
         print(f"Type: {type(os.getenv('PUBLIC'))}; Value of PUBLIC in if: {os.getenv('PUBLIC')}")
         return collected_packages
     print(f"Type: {type(os.getenv('PUBLIC'))}; Value of PUBLIC in if: {os.getenv('PUBLIC')}")

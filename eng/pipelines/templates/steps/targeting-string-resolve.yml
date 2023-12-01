@@ -16,6 +16,7 @@ steps:
           $setting = "$(BuildTargetingString)"
       }
 
+      Write-Host "Build reason: $(Build.Reason)"
       if ("$(Build.Reason)" -eq 'PullRequest') {
           $public = true
       }
