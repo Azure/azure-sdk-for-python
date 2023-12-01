@@ -68,6 +68,7 @@ class TestCallAutomationClient(unittest.TestCase):
         call_connection_properties = call_automation_client.create_call(
             target_participant=call_invite,
             callback_url=self.callback_url,
+            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
@@ -77,6 +78,7 @@ class TestCallAutomationClient(unittest.TestCase):
         call_connection_properties = call_automation_client.create_call(
             target_participant=user,
             callback_url=self.callback_url,
+            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
@@ -176,11 +178,12 @@ class TestCallAutomationClient(unittest.TestCase):
             transport=Mock(send=mock_send)
         )
         call_automation_client.redirect_call(self.incoming_call_context, call_redirect_to)
-        call_automation_client.redirect_call(self.incoming_call_context, user)
+        call_automation_client.redirect_call(self.incoming_call_context, user, voip_headers={"foo": "bar"})
         with pytest.raises(ValueError) as e:
             call_automation_client.redirect_call(
                 self.incoming_call_context,
                 user,
+                voip_headers={"foo": "bar"},
                 source_display_name="baz"
             )
         assert "unexpected kwargs" in str(e.value)

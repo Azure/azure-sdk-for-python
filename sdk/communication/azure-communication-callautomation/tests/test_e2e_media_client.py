@@ -86,7 +86,6 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
 
-    @unittest.skip('mute needs to be fixed live test')
     @recorded_by_proxy
     def test_add_and_mute_participant_in_a_call(self):
 
