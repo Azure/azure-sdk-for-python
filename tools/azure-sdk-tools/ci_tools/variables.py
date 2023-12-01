@@ -62,8 +62,8 @@ def in_ci() -> int:
 def in_public() -> int:
     # PUBLIC is set to `true` when running `- ci` pipelines, return 3
     # 0 otherwise
-    if os.getenv("PUBLIC"):
-        print(f"value of PUBLIC: {os.getenv('PUBLIC')}")
+    if os.getenv("PULLREQUEST"):
+        print(f"value of PULLREQUEST: {os.getenv('PULLREQUEST')}")
         return 3
 
     return 0
