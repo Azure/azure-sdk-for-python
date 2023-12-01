@@ -235,7 +235,7 @@ def discover_targeted_packages(
     collected_packages = apply_business_filter(collected_packages, filter_type)
 
     # Apply filter based on libraries that have ci_enabled=false
-    collected_packages = apply_ci_disabled_filter(collected_packages)
+    # collected_packages = apply_ci_disabled_filter(collected_packages)
 
     return sorted(collected_packages)
 
