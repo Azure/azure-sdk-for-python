@@ -611,7 +611,7 @@ class EventHubProducerClient(
 
     def send_batch(
         self,
-        event_data_batch: Union[List[Union[EventData, AmqpAnnotatedMessage]], EventDataBatch],
+        event_data_batch: Union[EventDataBatch, SendEventTypes],
         **kwargs: Any
     ) -> None:
         # pylint: disable=protected-access
