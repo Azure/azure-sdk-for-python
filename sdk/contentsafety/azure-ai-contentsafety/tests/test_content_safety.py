@@ -39,8 +39,7 @@ class TestContentSafetyCase(ContentSafetyTest):
         assert next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE) is not None
         assert next(item for item in response.categories_analysis if item.category == TextCategory.SEXUAL) is not None
         assert (
-                next(item for item in response.categories_analysis if
-                     item.category == TextCategory.SELF_HARM) is not None
+            next(item for item in response.categories_analysis if item.category == TextCategory.SELF_HARM) is not None
         )
         assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE).severity > 0
 
@@ -59,8 +58,7 @@ class TestContentSafetyCase(ContentSafetyTest):
         assert response is not None
         assert response.categories_analysis is not None
         assert (
-                next(item for item in response.categories_analysis if
-                     item.category == TextCategory.VIOLENCE).severity > 0
+            next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE).severity > 0
         )
 
     @ContentSafetyPreparer()
@@ -116,7 +114,6 @@ class TestContentSafetyCase(ContentSafetyTest):
         assert next(item for item in response.categories_analysis if item.category == TextCategory.VIOLENCE) is not None
         assert next(item for item in response.categories_analysis if item.category == TextCategory.SEXUAL) is not None
         assert (
-                next(item for item in response.categories_analysis if
-                     item.category == TextCategory.SELF_HARM) is not None
+            next(item for item in response.categories_analysis if item.category == TextCategory.SELF_HARM) is not None
         )
         assert next(item for item in response.categories_analysis if item.category == TextCategory.HATE).severity > 0

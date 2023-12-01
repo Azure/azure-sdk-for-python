@@ -345,7 +345,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
     @overload
     def analyze_text(
-        self, options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
@@ -353,7 +353,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         four categories: Hate, SelfHarm, Sexual, and Violence.
 
         :param options: The text analysis request. Required.
-        :type options: IO
+        :type options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -366,7 +366,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
     @distributed_trace
     def analyze_text(
-        self, options: Union[_models.AnalyzeTextOptions, JSON, IO], **kwargs: Any
+        self, options: Union[_models.AnalyzeTextOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AnalyzeTextResult:
         """Analyze Text.
 
@@ -374,8 +374,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         four categories: Hate, SelfHarm, Sexual, and Violence.
 
         :param options: The text analysis request. Is one of the following types: AnalyzeTextOptions,
-         JSON, IO Required.
-        :type options: ~azure.ai.contentsafety.models.AnalyzeTextOptions or JSON or IO
+         JSON, IO[bytes] Required.
+        :type options: ~azure.ai.contentsafety.models.AnalyzeTextOptions or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -485,7 +485,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
     @overload
     def analyze_image(
-        self, options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
@@ -493,7 +493,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         four categories: Hate, SelfHarm, Sexual, and Violence.
 
         :param options: The image analysis request. Required.
-        :type options: IO
+        :type options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -506,7 +506,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
     @distributed_trace
     def analyze_image(
-        self, options: Union[_models.AnalyzeImageOptions, JSON, IO], **kwargs: Any
+        self, options: Union[_models.AnalyzeImageOptions, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AnalyzeImageResult:
         """Analyze Image.
 
@@ -514,8 +514,8 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         four categories: Hate, SelfHarm, Sexual, and Violence.
 
         :param options: The image analysis request. Is one of the following types: AnalyzeImageOptions,
-         JSON, IO Required.
-        :type options: ~azure.ai.contentsafety.models.AnalyzeImageOptions or JSON or IO
+         JSON, IO[bytes] Required.
+        :type options: ~azure.ai.contentsafety.models.AnalyzeImageOptions or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -638,7 +638,7 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
 
     @overload
     def add_or_update_blocklist_items(
-        self, blocklist_name: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, blocklist_name: str, options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AddOrUpdateTextBlocklistItemsResult:
         """Add or update BlocklistItems To Text Blocklist.
 
@@ -648,7 +648,7 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param options: Options for adding or updating blocklist items. Required.
-        :type options: IO
+        :type options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -662,7 +662,10 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
 
     @distributed_trace
     def add_or_update_blocklist_items(
-        self, blocklist_name: str, options: Union[_models.AddOrUpdateTextBlocklistItemsOptions, JSON, IO], **kwargs: Any
+        self,
+        blocklist_name: str,
+        options: Union[_models.AddOrUpdateTextBlocklistItemsOptions, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.AddOrUpdateTextBlocklistItemsResult:
         """Add or update BlocklistItems To Text Blocklist.
 
@@ -672,9 +675,9 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param options: Options for adding or updating blocklist items. Is one of the following types:
-         AddOrUpdateTextBlocklistItemsOptions, JSON, IO Required.
+         AddOrUpdateTextBlocklistItemsOptions, JSON, IO[bytes] Required.
         :type options: ~azure.ai.contentsafety.models.AddOrUpdateTextBlocklistItemsOptions or JSON or
-         IO
+         IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -793,7 +796,12 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
 
     @overload
     def create_or_update_text_blocklist(
-        self, blocklist_name: str, options: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        blocklist_name: str,
+        options: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.TextBlocklist:
         """Create Or Update Text Blocklist.
 
@@ -802,7 +810,7 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param options: The resource instance. Required.
-        :type options: IO
+        :type options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -815,7 +823,7 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
 
     @distributed_trace
     def create_or_update_text_blocklist(
-        self, blocklist_name: str, options: Union[_models.TextBlocklist, JSON, IO], **kwargs: Any
+        self, blocklist_name: str, options: Union[_models.TextBlocklist, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TextBlocklist:
         """Create Or Update Text Blocklist.
 
@@ -823,9 +831,9 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
 
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
-        :param options: The resource instance. Is one of the following types: TextBlocklist, JSON, IO
-         Required.
-        :type options: ~azure.ai.contentsafety.models.TextBlocklist or JSON or IO
+        :param options: The resource instance. Is one of the following types: TextBlocklist, JSON,
+         IO[bytes] Required.
+        :type options: ~azure.ai.contentsafety.models.TextBlocklist or JSON or IO[bytes]
         :keyword content_type: This request has a JSON Merge Patch body. Default value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -1314,7 +1322,7 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
 
     @overload
     def remove_blocklist_items(  # pylint: disable=inconsistent-return-statements
-        self, blocklist_name: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, blocklist_name: str, options: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Remove BlocklistItems From Text Blocklist.
 
@@ -1324,7 +1332,7 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param options: Options for removing blocklist items. Required.
-        :type options: IO
+        :type options: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1335,7 +1343,10 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
 
     @distributed_trace
     def remove_blocklist_items(  # pylint: disable=inconsistent-return-statements
-        self, blocklist_name: str, options: Union[_models.RemoveTextBlocklistItemsOptions, JSON, IO], **kwargs: Any
+        self,
+        blocklist_name: str,
+        options: Union[_models.RemoveTextBlocklistItemsOptions, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> None:
         """Remove BlocklistItems From Text Blocklist.
 
@@ -1345,8 +1356,9 @@ class BlocklistClientOperationsMixin(BlocklistClientMixinABC):
         :param blocklist_name: Text blocklist name. Required.
         :type blocklist_name: str
         :param options: Options for removing blocklist items. Is one of the following types:
-         RemoveTextBlocklistItemsOptions, JSON, IO Required.
-        :type options: ~azure.ai.contentsafety.models.RemoveTextBlocklistItemsOptions or JSON or IO
+         RemoveTextBlocklistItemsOptions, JSON, IO[bytes] Required.
+        :type options: ~azure.ai.contentsafety.models.RemoveTextBlocklistItemsOptions or JSON or
+         IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
