@@ -69,12 +69,10 @@ def add_block_items():
         result = client.add_or_update_blocklist_items(
             blocklist_name=blocklist_name, options=AddOrUpdateTextBlocklistItemsOptions(blocklist_items=block_items)
         )
-        if result and result.blocklist_items:
-            print("\nBlock items added: ")
-            for block_item in result.blocklist_items:
-                print(
-                    f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, Description: {block_item.description}"
-                )
+        for block_item in result.blocklist_items:
+            print(
+                f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, Description: {block_item.description}"
+            )
     except HttpResponseError as e:
         print("\nAdd block items failed: ")
         if e.error:
