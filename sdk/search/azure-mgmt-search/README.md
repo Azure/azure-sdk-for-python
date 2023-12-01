@@ -1,6 +1,7 @@
 # Microsoft Azure SDK for Python
 
-This is the Microsoft Azure Search Management Client Library.
+This is the API reference for the Microsoft Azure AI Search Management client library. Use this library to create, configure, and manage an Azure AI Search resource.
+
 This package has been tested with Python 3.7+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
