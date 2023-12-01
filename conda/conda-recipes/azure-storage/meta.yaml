@@ -15,6 +15,7 @@ build:
 requirements:
   host:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography >=2.1.4
     - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
@@ -22,6 +23,7 @@ requirements:
     - aiohttp
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography >=2.1.4
     - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
