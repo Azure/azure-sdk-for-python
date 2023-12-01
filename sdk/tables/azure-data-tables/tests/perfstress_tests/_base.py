@@ -9,7 +9,7 @@ from datetime import timezone, datetime
 import string
 import random
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.data.tables import EdmType, EntityProperty
 from azure.data.tables import TableServiceClient as SyncTableServiceClient

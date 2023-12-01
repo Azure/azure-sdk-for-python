@@ -7,6 +7,7 @@ from typing import List, Optional, Union, TYPE_CHECKING, Dict
 from ._generated.models import (
     CallLocator,
     MediaStreamingConfiguration as MediaStreamingConfigurationRest,
+    TranscriptionConfiguration as TranscriptionConfigurationRest,
     FileSource as FileSourceInternal,
     TextSource as TextSourceInternal,
     SsmlSource as SsmlSourceInternal,
@@ -31,6 +32,7 @@ if TYPE_CHECKING:
         MediaStreamingTransportType,
         MediaStreamingContentType,
         MediaStreamingAudioChannelType,
+        TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
         Gender,
@@ -340,6 +342,49 @@ class MediaStreamingConfiguration:
             audio_channel_type=self.audio_channel_type
         )
 
+class TranscriptionConfiguration:
+    """Configuration of live transcription.
+
+    :param transport_url: Transport URL for live transcription. Required.
+    :type transport_url: str
+    :param transport_type: The type of transport to be used for live transcription, eg. Websocket.
+     Required. "websocket"
+    :type transport_type: str or ~azure.communication.callautomation.TranscriptionTransportType
+    :param locale: Defines the locale for the data e.g en-CA, en-AU. Required.
+    :type locale: str
+    :param start_transcription: Determines if the transcription should be started immediately after
+     call is answered or not. Required.
+    :type start_transcription: bool
+    """
+
+    transport_url: str
+    """Transport URL for live transcription."""
+    transport_type: Union[str, 'TranscriptionTransportType']
+    """The type of transport to be used for live transcription."""
+    locale: str
+    """Defines the locale for the data."""
+    start_transcription: bool
+    """Determines if the transcription should be started immediately after call is answered or not."""
+
+    def __init__(
+        self,
+        transport_url: str,
+        transport_type: Union[str, 'TranscriptionTransportType'],
+        locale: str,
+        start_transcription: bool
+    ):
+        self.transport_url = transport_url
+        self.transport_type = transport_type
+        self.locale = locale
+        self.start_transcription = start_transcription
+
+    def to_generated(self):
+        return TranscriptionConfigurationRest(
+            transport_url=self.transport_url,
+            transport_type=self.transport_type,
+            locale=self.locale,
+            start_transcription=self.start_transcription
+        )
 
 class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.
