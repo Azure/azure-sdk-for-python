@@ -66,6 +66,10 @@ class LLMMetric(Metric):
     def _to_aml_metric(self, openai_params):
         from azureml.metrics import AzureMLCustomPromptMetric
 
+        openai_params.update({
+            "max_tokens": 100
+        })
+
         custom_prompt_config = {
             "input_vars": self.parameters,
             "metric_name": self._name,
