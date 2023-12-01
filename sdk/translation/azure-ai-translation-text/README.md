@@ -37,10 +37,10 @@ pip install azure-ai-translation-text
 
 #### Create a Translator service resource
 
-You can create Translator resource following [Create a Translator resource][translator_resource_create].  For general information about authentication with a cognitive services resource please refer to the documentation [here][cognitive_auth].
+You can create Translator resource following [Create a Translator resource][translator_resource_create].
 
 ### Endpoint
-The values of the `endpoint` variable can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.  Four different types of authentication are available for different types of endpoints: global, regional, token and Entra (AAD).  For details about each including curl examples refer to the documentation available [here][authentication_details].  These samples demonstrate API Key and Entra (AAD) authentication.
+The values of the `endpoint` variable can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.  Different types of authentication are available depending on the endpoint used.  For details about each including curl examples refer to the documentation available [here][authentication_details].  These samples demonstrate API Key and Entra (AAD) authentication.
 
 ### Authenticate the client
 Interaction with the service using the client library begins with creating an instance of the [TextTranslationClient][translator_client_class] class. You will need an **API key** or ``TokenCredential`` to instantiate a client object. For more information regarding authenticating with cognitive services, see [Authenticate requests to Translator Service][translator_auth].
@@ -81,7 +81,7 @@ text_translator = TextTranslationClient(endpoint=endpoint, credential=credential
 
 `AzureKeyCredential` authentication is used in most of the examples, but you can also authenticate with Entra (Azure Active Directory) using the [Azure Identity library][azure_identity].
 
-Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.  Use this value for the `endpoint` variable for `AZURE_TEXT_TRANSLATION_ENDPOINT`.  Only custom subdomains are supported.
+Create a [custom subdomain][custom_subdomain] for your resource in order to use this type of authentication.  Use this value for the `endpoint` variable for `AZURE_TEXT_TRANSLATION_ENDPOINT`.  Only custom subdomains are supported by the SDK.  Outside of the SDK you can use AAD authorization for Machine Tranlsation endpoints as detailed [here][mt_endpoints].
 
 To use the [DefaultAzureCredential][DefaultAzureCredential] provider shown below install the Azure.Identity package:
 
@@ -422,11 +422,11 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [aad_grant_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
-[cognitive_auth]: https://docs.microsoft.com/azure/cognitive-services/authentication
 [endpoint_details]: https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/translation/Azure.AI.Translation.Text/samples/Sample0_CreateClient.md#create-a-texttranslationclient-using-an-api-key-from-global-text-translator-resource
 [resource_details]: https://learn.microsoft.com/azure/ai-services/translator/create-translator-resource#authentication-keys-and-endpoint-url
 [custom_details]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference#authentication-with-microsoft-entra-id
 [authentication_details]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference
+[mt_endpoints]:https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-reference#base-urls
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
