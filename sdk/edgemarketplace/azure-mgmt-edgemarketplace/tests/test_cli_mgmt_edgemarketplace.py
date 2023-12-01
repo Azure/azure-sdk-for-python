@@ -17,7 +17,7 @@ class TestMgmtEdgeMarketPlace(AzureMgmtRecordedTestCase):
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_list_by_resource_group(self, resource_group):
-        assert list(self.client.publishers.list(resource_uri=f"subscriptions/{self.client._config.subscription_id}/resourceGroups/{resource_group.name}")) == []
+        assert list(self.client.offers.list(resource_uri=f"subscriptions/{self.client._config.subscription_id}/resourceGroups/{resource_group.name}")) == []
 
     @recorded_by_proxy
     def test_list_operations(self):
