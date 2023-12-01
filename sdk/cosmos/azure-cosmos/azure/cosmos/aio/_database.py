@@ -87,7 +87,7 @@ class DatabaseProxy(object):
         """
         self.client_connection = client_connection
         self.id = id
-        self.database_link = u"dbs/{}".format(self.id)
+        self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
 
     def __repr__(self) -> str:
@@ -104,16 +104,16 @@ class DatabaseProxy(object):
         return cast("Dict[str, str]", container_or_id)["id"]
 
     def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Dict[str, Any]]) -> str:
-        return u"{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
+        return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id: Union[UserProxy, str, Dict[str, Any]]) -> str:
         if isinstance(user_or_id, str):
-            return u"{}/users/{}".format(self.database_link, user_or_id)
+            return "{}/users/{}".format(self.database_link, user_or_id)
         try:
             return cast("UserProxy", user_or_id).user_link
         except AttributeError:
             pass
-        return u"{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
+        return "{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
 
     async def _get_properties(self) -> Dict[str, Any]:
         if self._properties is None:
