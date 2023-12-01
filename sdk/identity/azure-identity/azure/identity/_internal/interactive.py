@@ -112,7 +112,12 @@ class InteractiveCredential(MsalCredential, ABC):
             super(InteractiveCredential, self).__init__(**kwargs)
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -124,6 +129,8 @@ class InteractiveCredential(MsalCredential, ABC):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
@@ -140,7 +147,9 @@ class InteractiveCredential(MsalCredential, ABC):
 
         allow_prompt = kwargs.pop("_allow_prompt", not self._disable_automatic_authentication)
         try:
-            token = self._acquire_token_silent(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = self._acquire_token_silent(
+                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+            )
             _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
             return token
         except Exception as ex:  # pylint:disable=broad-except
@@ -157,7 +166,7 @@ class InteractiveCredential(MsalCredential, ABC):
         now = int(time.time())
 
         try:
-            result = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            result = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
             if "access_token" not in result:
                 message = "Authentication failed: {}".format(result.get("error_description") or result.get("error"))
                 response = self._client.get_error_response(result)
