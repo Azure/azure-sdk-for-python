@@ -30,7 +30,7 @@ Contract change for AnalyzeText, AnalyzeImage, Blocklist management related meth
 
 #### Blocklist management
 
-- Added BlocklistAsyncClient
+- Added BlocklistClient
 - Renamed AddBlockItemsOptions to AddOrUpdateTextBlocklistItemsOptions
 - Renamed AddBlockItemsResult to AddOrUpdateTextBlocklistItemsResult
 - Renamed RemoveBlockItemsOptions to RemoveTextBlocklistItemsOptions
