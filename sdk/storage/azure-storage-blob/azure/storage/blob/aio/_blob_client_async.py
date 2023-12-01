@@ -701,7 +701,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
                 :dedent: 16
                 :caption: Download a blob.
         """
-        if self.require_encryption and not (self.key_encryption_key or self.key_resolver_function):  # pylint: disable=line-too-long
+        if self.require_encryption and not (self.key_encryption_key or self.key_resolver_function):
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
