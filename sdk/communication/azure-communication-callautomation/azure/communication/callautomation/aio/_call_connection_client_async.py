@@ -793,7 +793,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             loop=loop,
             **kwargs
         )
-        self._call_media_client.start_hold_music(self._call_connection_id, hold_request)
+        await self._call_media_client.start_hold_music(self._call_connection_id, hold_request)
 
     @distributed_trace_async
     async def stop_hold_music(
@@ -820,7 +820,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             operation_context=operation_context,
             **kwargs
         )
-        self._call_media_client.stop_hold_music(self._call_connection_id, stop_hold_request)
+        await self._call_media_client.stop_hold_music(self._call_connection_id, stop_hold_request)
 
     @distributed_trace_async
     async def start_transcription(

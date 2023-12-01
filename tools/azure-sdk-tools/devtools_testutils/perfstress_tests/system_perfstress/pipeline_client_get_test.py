@@ -8,7 +8,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 
 class PipelineClientGetTest(PerfStressTest):

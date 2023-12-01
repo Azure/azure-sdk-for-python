@@ -8,7 +8,7 @@ import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 
-from azure_devtools.perfstress_tests import EventPerfTest
+from devtools_testutils.perfstress_tests import EventPerfTest
 
 
 class MockEventProcessor():
