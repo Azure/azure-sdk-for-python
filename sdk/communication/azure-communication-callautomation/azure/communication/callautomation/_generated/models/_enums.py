@@ -177,7 +177,7 @@ class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSCRIPTION_STARTED = "transcriptionStarted"
     TRANSCRIPTION_FAILED = "transcriptionFailed"
     TRANSCRIPTION_RESUMED = "transcriptionResumed"
-    TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
+    TRANSCRIPTION_UPDATED = "transcriptionUpdated"
     TRANSCRIPTION_STOPPED = "transcriptionStopped"
     UNSPECIFIED_ERROR = "unspecifiedError"
 
@@ -194,6 +194,12 @@ class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SPEECH_SERVICES_CONNECTION_ERROR = "speechServicesConnectionError"
     SUBSCRIPTION_STOPPED = "subscriptionStopped"
     UNSPECIFIED_ERROR = "unspecifiedError"
+    AUTHENTICATION_FAILURE = "authenticationFailure"
+    BAD_REQUEST = "badRequest"
+    TOO_MANY_REQUESTS = "tooManyRequests"
+    FORBIDDEN = "forbidden"
+    SERVICE_TIMEOUT = "serviceTimeout"
+    TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
 
 
 class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

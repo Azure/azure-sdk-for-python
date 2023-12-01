@@ -30,7 +30,7 @@ class AzureCommunicationCallAutomationServiceConfiguration:  # pylint: disable=t
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2023-01-15-preview")
+        api_version: str = kwargs.pop("api_version", "2023-10-03-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

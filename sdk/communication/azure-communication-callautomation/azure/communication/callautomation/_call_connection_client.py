@@ -28,7 +28,7 @@ from ._models import (
     MuteParticipantResult,
     SendDtmfTonesResult,
     CallInvite,
-    CancelAddParticipantResult,
+    CancelAddParticipantOperationResult,
 )
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
@@ -45,7 +45,7 @@ from ._generated.models import (
     RecognizeOptions,
     MuteParticipantsRequest,
     CancelAddParticipantRequest,
-    CustomContext,
+    CustomCallingContext,
     StartHoldMusicRequest,
     StopHoldMusicRequest,
     StartTranscriptionRequest,
@@ -74,9 +74,6 @@ if TYPE_CHECKING:
         TokenCredential,
         AzureKeyCredential
     )
-
-MediaSources = Union['FileSource', 'TextSource', 'SsmlSource']
-
 
 class CallConnectionClient:  # pylint: disable=too-many-public-methods
     """A client to interact with an ongoing call. This client can be used to do mid-call actions,
@@ -278,7 +275,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        user_custom_context = CustomContext(
+        user_custom_context = CustomCallingContext(
             voip_headers=voip_headers,
             sip_headers=sip_headers
             ) if sip_headers or voip_headers else None
@@ -286,11 +283,11 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
-            custom_context=user_custom_context
+            custom_calling_context=user_custom_context
         )
         process_repeatability_first_sent(kwargs)
         if transferee:
-            request.transferee=serialize_identifier(transferee)
+            request.transferee = serialize_identifier(transferee)
         result = self._call_connection_client.transfer_to_participant(
             self._call_connection_id,
             request,
@@ -348,7 +345,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
 
         user_custom_context = None
         if sip_headers or voip_headers:
-            user_custom_context = CustomContext(
+            user_custom_context = CustomCallingContext(
                 voip_headers=voip_headers,
                 sip_headers=sip_headers
             )
@@ -359,7 +356,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             invitation_timeout_in_seconds=invitation_timeout,
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
-            custom_context=user_custom_context
+            custom_calling_context=user_custom_context
         )
         process_repeatability_first_sent(kwargs)
         response = self._call_connection_client.add_participant(
@@ -409,7 +406,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def play_media(
         self,
-        play_source: Union[MediaSources],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
@@ -439,8 +436,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        play_source_single: Optional[MediaSources] = None
+        play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
         if isinstance(play_source, list):
+            warnings.warn("Currently only single play source per request is supported.")
             if play_source:  # Check if the list is not empty
                 play_source_single = play_source[0]
         else:
@@ -460,7 +458,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def play_media_to_all(
         self,
-        play_source: Union['FileSource'],
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -470,7 +468,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         """Play media to all participants in this call.
 
         :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource
         :keyword loop: Whether the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -503,7 +503,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union[MediaSources]] = None,
+        play_prompt: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -517,7 +517,7 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         operation_callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Recognize tones from specific participant in this call.
+        """Recognize inputs from specific participant in this call.
 
         :param input_type: Determines the type of the recognition.
         :type input_type: str or ~azure.communication.callautomation.RecognizeInputType
@@ -536,18 +536,21 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         :paramtype operation_context: str
         :keyword interrupt_prompt: Determines if we interrupt the prompt and start recognizing.
         :paramtype interrupt_prompt: bool
-        :keyword dtmf_inter_tone_timeout: Time to wait between DTMF inputs to stop recognizing.
+        :keyword dtmf_inter_tone_timeout: Time to wait between DTMF inputs to stop recognizing. Will be ignored
+         unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_inter_tone_timeout: int
-        :keyword dtmf_max_tones_to_collect: Maximum number of DTMF tones to be collected.
+        :keyword dtmf_max_tones_to_collect: Maximum number of DTMF tones to be collected. Will be ignored
+         unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_max_tones_to_collect: int
-        :keyword dtmf_stop_tones: List of tones that will stop recognizing.
+        :keyword dtmf_stop_tones: List of tones that will stop recognizing. Will be ignored
+         unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
-        :keyword choices: Defines Ivr choices for recognize.
+        :keyword choices: Defines Ivr choices for recognize. Will be ignored unless input_type is 'choices'.
         :paramtype choices: list[~azure.communication.callautomation.RecognitionChoice]
         :keyword end_silence_timeout: The length of end silence when user stops speaking and cogservice
-         send response.
+         send response. Will be ingored unless input_type is 'speech' or 'speechOrDtmf'.
         :paramtype end_silence_timeout: int
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
         :paramtype speech_recognition_model_endpoint_id: str
@@ -568,8 +571,9 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             speech_recognition_model_endpoint_id=speech_recognition_model_endpoint_id
         )
 
-        play_source_single: Optional[MediaSources] = None
+        play_source_single: Optional[Union['FileSource', 'TextSource', 'SsmlSource']] = None
         if isinstance(play_prompt, list):
+            warnings.warn("Currently only single play source per request is supported.")
             if play_prompt:  # Check if the list is not empty
                 play_source_single = play_prompt[0]
         else:
@@ -764,14 +768,14 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
         return MuteParticipantResult._from_generated(response)  # pylint:disable=protected-access
 
     @distributed_trace
-    def cancel_add_participant(
+    def cancel_add_participant_operation(
         self,
         invitation_id: str,
         *,
         operation_context: Optional[str] = None,
         operation_callback_url: Optional[str] = None,
         **kwargs
-    ) -> CancelAddParticipantResult:
+    ) -> CancelAddParticipantOperationResult:
         """Cancel add participant request sent out to a participant.
         :param  invitation_id: The invitation ID that was used to add the participant.
         :type invitation_id: str
@@ -782,8 +786,8 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_url: str or None
-        :return: CancelAddParticipantResult
-        :rtype: ~azure.communication.callautomation.CancelAddParticipantResult
+        :return: CancelAddParticipantOperationResult
+        :rtype: ~azure.communication.callautomation.CancelAddParticipantOperationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         cancel_add_participant_request = CancelAddParticipantRequest(
@@ -797,13 +801,13 @@ class CallConnectionClient:  # pylint: disable=too-many-public-methods
             cancel_add_participant_request,
             **kwargs
         )
-        return CancelAddParticipantResult._from_generated(response) # pylint:disable=protected-access
+        return CancelAddParticipantOperationResult._from_generated(response) # pylint:disable=protected-access
 
     @distributed_trace
     def start_hold_music(
         self,
         target_participant: 'CommunicationIdentifier',
-        play_source: MediaSources,
+        play_source: Union['FileSource', 'TextSource', 'SsmlSource'],
         *,
         loop: bool = True,
         operation_context: Optional[str] = None,

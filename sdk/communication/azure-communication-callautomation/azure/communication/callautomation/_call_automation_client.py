@@ -23,7 +23,8 @@ from ._generated.models import (
     RedirectCallRequest,
     RejectCallRequest,
     StartCallRecordingRequest,
-    CustomContext
+    CallIntelligenceOptions,
+    CustomCallingContext
 )
 from ._models import (
     CallConnectionProperties,
@@ -179,7 +180,6 @@ class CallAutomationClient:
         voip_headers: Optional[Dict[str, str]] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         transcription_configuration: Optional['TranscriptionConfiguration'] = None,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Create a call connection request to a target identity.
@@ -210,9 +210,6 @@ class CallAutomationClient:
         :keyword transcription_configuration: Configuration of live transcription.
         :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
          or None
-        :keyword azure_cognitive_services_endpoint_url:
-         The identifier of the Cognitive Service resource assigned to this call.
-        :paramtype azure_cognitive_services_endpoint_url: str or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -225,10 +222,14 @@ class CallAutomationClient:
 
         user_custom_context = None
         if sip_headers or voip_headers:
-            user_custom_context = CustomContext(
+            user_custom_context = CustomCallingContext(
                 voip_headers=voip_headers,
                 sip_headers=sip_headers
             )
+
+        call_intelligence_options = CallIntelligenceOptions(
+            cognitive_services_endpoint=cognitive_services_endpoint
+            ) if cognitive_services_endpoint else None
 
         try:
             targets = [serialize_identifier(p) for p in target_participant]
@@ -243,10 +244,11 @@ class CallAutomationClient:
             source_display_name=source_display_name,
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
+            call_intelligence_options=call_intelligence_options,
             media_streaming_configuration=media_config,
             transcription_configuration=transcription_config,
-            azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
-            custom_context=user_custom_context
+            cognitive_services_endpoint=cognitive_services_endpoint,
+            custom_calling_context=user_custom_context
         )
         process_repeatability_first_sent(kwargs)
         result = self._client.create_call(
@@ -310,10 +312,10 @@ class CallAutomationClient:
         incoming_call_context: str,
         callback_url: str,
         *,
+        cognitive_services_endpoint: Optional[str] = None,
+        operation_context: Optional[str] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         transcription_configuration: Optional['TranscriptionConfiguration'] = None,
-        azure_cognitive_services_endpoint_url: Optional[str] = None,
-        operation_context: Optional[str] = None,
         **kwargs
     ) -> CallConnectionProperties:
         """Answer incoming call with Azure Communication Service's IncomingCall event
@@ -324,32 +326,35 @@ class CallAutomationClient:
         :type incoming_call_context: str
         :param callback_url: The call back url for receiving events.
         :type callback_url: str
-        :keyword media_streaming_configuration: Media Streaming Configuration.
-        :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
-        :keyword transcription_configuration: Configuration of live transcription.
-        :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
-         or None
-        :keyword azure_cognitive_services_endpoint_url:
+        :keyword cognitive_services_endpoint:
          The endpoint url of the Azure Cognitive Services resource attached.
         :paramtype cognitive_services_endpoint: str
         :keyword operation_context: The operation context.
         :paramtype operation_context: str
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
+        :keyword transcription_configuration: Configuration of live transcription.
+        :paramtype transcription_configuration: ~azure.communication.callautomation.TranscriptionConfiguration
+         or None
         :return: CallConnectionProperties
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        call_intelligence_options = CallIntelligenceOptions(
+            cognitive_services_endpoint=cognitive_services_endpoint
+            ) if cognitive_services_endpoint else None
+
         answer_call_request = AnswerCallRequest(
             incoming_call_context=incoming_call_context,
             callback_uri=callback_url,
+            call_intelligence_options=call_intelligence_options,
+            answered_by=serialize_communication_user_identifier(
+                self.source) if self.source else None,
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
             transcription_configuration=transcription_configuration.to_generated()
             if transcription_configuration else None,
-            azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
-            answered_by_identifier=serialize_communication_user_identifier(
-                self.source) if self.source else None,
+            cognitive_services_endpoint=cognitive_services_endpoint,
             operation_context=operation_context
         )
 
@@ -392,14 +397,14 @@ class CallAutomationClient:
 
         user_custom_context = None
         if sip_headers or voip_headers:
-            user_custom_context = CustomContext(
+            user_custom_context = CustomCallingContext(
                 voip_headers=voip_headers,
                 sip_headers=sip_headers
             )
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
             target=serialize_identifier(target_participant),
-            custom_context=user_custom_context
+            custom_calling_context=user_custom_context
         )
         process_repeatability_first_sent(kwargs)
         self._client.redirect_call(

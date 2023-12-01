@@ -98,8 +98,9 @@ class AddParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar custom_context: Used by customer to send custom context to targets.
-    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
+    :ivar custom_calling_context: Used by customer to send custom calling context to targets.
+    :vartype custom_calling_context:
+     ~azure.communication.callautomation.models.CustomCallingContext
     :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
      CreateCall/AnswerCall for this operation.
      This setup is per-action. If this is not set, the default callback URI set by
@@ -118,7 +119,7 @@ class AddParticipantRequest(_serialization.Model):
         "participant_to_add": {"key": "participantToAdd", "type": "CommunicationIdentifierModel"},
         "invitation_timeout_in_seconds": {"key": "invitationTimeoutInSeconds", "type": "int"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "custom_context": {"key": "customContext", "type": "CustomContext"},
+        "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
         "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
@@ -130,7 +131,7 @@ class AddParticipantRequest(_serialization.Model):
         source_display_name: Optional[str] = None,
         invitation_timeout_in_seconds: Optional[int] = None,
         operation_context: Optional[str] = None,
-        custom_context: Optional["_models.CustomContext"] = None,
+        custom_calling_context: Optional["_models.CustomCallingContext"] = None,
         operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -155,8 +156,9 @@ class AddParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword custom_context: Used by customer to send custom context to targets.
-        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
+        :keyword custom_calling_context: Used by customer to send custom calling context to targets.
+        :paramtype custom_calling_context:
+         ~azure.communication.callautomation.models.CustomCallingContext
         :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URI set by
@@ -169,7 +171,7 @@ class AddParticipantRequest(_serialization.Model):
         self.participant_to_add = participant_to_add
         self.invitation_timeout_in_seconds = invitation_timeout_in_seconds
         self.operation_context = operation_context
-        self.custom_context = custom_context
+        self.custom_calling_context = custom_calling_context
         self.operation_callback_uri = operation_callback_uri
 
 
@@ -279,9 +281,9 @@ class AnswerCallRequest(_serialization.Model):
     :ivar transcription_configuration: Live Transcription Configuration.
     :vartype transcription_configuration:
      ~azure.communication.callautomation.models.TranscriptionConfiguration
-    :ivar cognitive_services_endpoint: The endpoint URL of the Azure Cognitive Services resource
-     attached.
-    :vartype cognitive_services_endpoint: str
+    :ivar call_intelligence_options: AI options for the call.
+    :vartype call_intelligence_options:
+     ~azure.communication.callautomation.models.CallIntelligenceOptions
     :ivar answered_by: The identifier of the call automation entity which answers the call.
     :vartype answered_by:
      ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
@@ -298,7 +300,7 @@ class AnswerCallRequest(_serialization.Model):
         "operation_context": {"key": "operationContext", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
         "transcription_configuration": {"key": "transcriptionConfiguration", "type": "TranscriptionConfiguration"},
-        "cognitive_services_endpoint": {"key": "cognitiveServicesEndpoint", "type": "str"},
+        "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
         "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
     }
 
@@ -310,7 +312,7 @@ class AnswerCallRequest(_serialization.Model):
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         transcription_configuration: Optional["_models.TranscriptionConfiguration"] = None,
-        cognitive_services_endpoint: Optional[str] = None,
+        call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
         answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
         **kwargs: Any
     ) -> None:
@@ -327,9 +329,9 @@ class AnswerCallRequest(_serialization.Model):
         :keyword transcription_configuration: Live Transcription Configuration.
         :paramtype transcription_configuration:
          ~azure.communication.callautomation.models.TranscriptionConfiguration
-        :keyword cognitive_services_endpoint: The endpoint URL of the Azure Cognitive Services resource
-         attached.
-        :paramtype cognitive_services_endpoint: str
+        :keyword call_intelligence_options: AI options for the call.
+        :paramtype call_intelligence_options:
+         ~azure.communication.callautomation.models.CallIntelligenceOptions
         :keyword answered_by: The identifier of the call automation entity which answers the call.
         :paramtype answered_by:
          ~azure.communication.callautomation.models.CommunicationUserIdentifierModel
@@ -340,7 +342,7 @@ class AnswerCallRequest(_serialization.Model):
         self.operation_context = operation_context
         self.media_streaming_configuration = media_streaming_configuration
         self.transcription_configuration = transcription_configuration
-        self.cognitive_services_endpoint = cognitive_services_endpoint
+        self.call_intelligence_options = call_intelligence_options
         self.answered_by = answered_by
 
 
@@ -350,7 +352,7 @@ class BaseDialog(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureOpenAIDialog, PowerVirtualAgentsDialog
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
      and "azureOpenAI".
@@ -384,7 +386,7 @@ class BaseDialog(_serialization.Model):
 class AzureOpenAIDialog(BaseDialog):
     """Azure Open AI Dialog.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
      and "azureOpenAI".
@@ -635,6 +637,28 @@ class CallDisconnected(_serialization.Model):
         self.call_connection_id = None
         self.server_call_id = None
         self.correlation_id = None
+
+
+class CallIntelligenceOptions(_serialization.Model):
+    """AI options for the call.
+
+    :ivar cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned to
+     this call.
+    :vartype cognitive_services_endpoint: str
+    """
+
+    _attribute_map = {
+        "cognitive_services_endpoint": {"key": "cognitiveServicesEndpoint", "type": "str"},
+    }
+
+    def __init__(self, *, cognitive_services_endpoint: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned
+         to this call.
+        :paramtype cognitive_services_endpoint: str
+        """
+        super().__init__(**kwargs)
+        self.cognitive_services_endpoint = cognitive_services_endpoint
 
 
 class CallLocator(_serialization.Model):
@@ -1446,10 +1470,13 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
 
     :ivar result_information: Result information defines the code, subcode and message.
     :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
-    :ivar tone_info: Define the information for a tone.
-    :vartype tone_info: ~azure.communication.callautomation.models.ToneInfo
-    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
-     request to the response event.
+    :ivar sequence_id: The sequence id which can be used to determine if the same tone was played
+     multiple times or if any tones were missed.
+    :vartype sequence_id: int
+    :ivar tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
+     "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
+    :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
+    :ivar operation_context:
     :vartype operation_context: str
     :ivar call_connection_id: Call connection ID.
     :vartype call_connection_id: str
@@ -1462,7 +1489,7 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
 
     _validation = {
         "result_information": {"readonly": True},
-        "tone_info": {"readonly": True},
+        "sequence_id": {"readonly": True},
         "operation_context": {"readonly": True},
         "call_connection_id": {"readonly": True},
         "server_call_id": {"readonly": True},
@@ -1471,18 +1498,24 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
 
     _attribute_map = {
         "result_information": {"key": "resultInformation", "type": "ResultInformation"},
-        "tone_info": {"key": "toneInfo", "type": "ToneInfo"},
+        "sequence_id": {"key": "sequenceId", "type": "int"},
+        "tone": {"key": "tone", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "call_connection_id": {"key": "callConnectionId", "type": "str"},
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, tone: Optional[Union[str, "_models.DtmfTone"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
+         "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
+        :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
+        """
         super().__init__(**kwargs)
         self.result_information = None
-        self.tone_info = None
+        self.sequence_id = None
+        self.tone = tone
         self.operation_context = None
         self.call_connection_id = None
         self.server_call_id = None
@@ -1515,11 +1548,12 @@ class CreateCallRequest(_serialization.Model):
     :ivar transcription_configuration: Live Transcription Configuration.
     :vartype transcription_configuration:
      ~azure.communication.callautomation.models.TranscriptionConfiguration
-    :ivar cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned to
-     this call.
-    :vartype cognitive_services_endpoint: str
-    :ivar custom_context: Used by customer to send custom context to targets.
-    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
+    :ivar call_intelligence_options: AI options for the call.
+    :vartype call_intelligence_options:
+     ~azure.communication.callautomation.models.CallIntelligenceOptions
+    :ivar custom_calling_context: Used by customer to send custom calling context to targets.
+    :vartype custom_calling_context:
+     ~azure.communication.callautomation.models.CustomCallingContext
     """
 
     _validation = {
@@ -1536,8 +1570,8 @@ class CreateCallRequest(_serialization.Model):
         "callback_uri": {"key": "callbackUri", "type": "str"},
         "media_streaming_configuration": {"key": "mediaStreamingConfiguration", "type": "MediaStreamingConfiguration"},
         "transcription_configuration": {"key": "transcriptionConfiguration", "type": "TranscriptionConfiguration"},
-        "cognitive_services_endpoint": {"key": "cognitiveServicesEndpoint", "type": "str"},
-        "custom_context": {"key": "customContext", "type": "CustomContext"},
+        "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
+        "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
     }
 
     def __init__(
@@ -1551,8 +1585,8 @@ class CreateCallRequest(_serialization.Model):
         operation_context: Optional[str] = None,
         media_streaming_configuration: Optional["_models.MediaStreamingConfiguration"] = None,
         transcription_configuration: Optional["_models.TranscriptionConfiguration"] = None,
-        cognitive_services_endpoint: Optional[str] = None,
-        custom_context: Optional["_models.CustomContext"] = None,
+        call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
+        custom_calling_context: Optional["_models.CustomCallingContext"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1578,11 +1612,12 @@ class CreateCallRequest(_serialization.Model):
         :keyword transcription_configuration: Live Transcription Configuration.
         :paramtype transcription_configuration:
          ~azure.communication.callautomation.models.TranscriptionConfiguration
-        :keyword cognitive_services_endpoint: The identifier of the Cognitive Service resource assigned
-         to this call.
-        :paramtype cognitive_services_endpoint: str
-        :keyword custom_context: Used by customer to send custom context to targets.
-        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
+        :keyword call_intelligence_options: AI options for the call.
+        :paramtype call_intelligence_options:
+         ~azure.communication.callautomation.models.CallIntelligenceOptions
+        :keyword custom_calling_context: Used by customer to send custom calling context to targets.
+        :paramtype custom_calling_context:
+         ~azure.communication.callautomation.models.CustomCallingContext
         """
         super().__init__(**kwargs)
         self.targets = targets
@@ -1593,12 +1628,12 @@ class CreateCallRequest(_serialization.Model):
         self.callback_uri = callback_uri
         self.media_streaming_configuration = media_streaming_configuration
         self.transcription_configuration = transcription_configuration
-        self.cognitive_services_endpoint = cognitive_services_endpoint
-        self.custom_context = custom_context
+        self.call_intelligence_options = call_intelligence_options
+        self.custom_calling_context = custom_calling_context
 
 
-class CustomContext(_serialization.Model):
-    """CustomContext.
+class CustomCallingContext(_serialization.Model):
+    """CustomCallingContext.
 
     :ivar voip_headers: Dictionary of :code:`<string>`.
     :vartype voip_headers: dict[str, str]
@@ -1954,38 +1989,9 @@ class DialogLanguageChange(_serialization.Model):
         self.dialog_input_type = dialog_input_type
         self.dialog_id = None
         self.ivr_context = None
-
-
-class DialogOptions(_serialization.Model):
-    """DialogOptions.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar bot_app_id: Bot identifier.
-    :vartype bot_app_id: str
-    :ivar dialog_context: Dialog context. Required.
-    :vartype dialog_context: dict[str, JSON]
-    """
-
-    _validation = {
-        "dialog_context": {"required": True},
-    }
-
-    _attribute_map = {
-        "bot_app_id": {"key": "botAppId", "type": "str"},
-        "dialog_context": {"key": "dialogContext", "type": "{object}"},
-    }
-
-    def __init__(self, *, dialog_context: Dict[str, JSON], bot_app_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword bot_app_id: Bot identifier.
-        :paramtype bot_app_id: str
-        :keyword dialog_context: Dialog context. Required.
-        :paramtype dialog_context: dict[str, JSON]
-        """
-        super().__init__(**kwargs)
-        self.bot_app_id = bot_app_id
-        self.dialog_context = dialog_context
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class DialogSensitivityUpdate(_serialization.Model):
@@ -2368,7 +2374,7 @@ class FileSource(_serialization.Model):
 class GetParticipantsResponse(_serialization.Model):
     """The response payload for getting participants of the call.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: List of the current participants in the call. Required.
     :vartype value: list[~azure.communication.callautomation.models.CallParticipant]
@@ -2939,7 +2945,7 @@ class PlaySource(_serialization.Model):
 class PowerVirtualAgentsDialog(BaseDialog):
     """Power Virtual Agents Dialog.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar kind: Determines the type of the dialog. Required. Known values are: "powerVirtualAgents"
      and "azureOpenAI".
@@ -3414,8 +3420,9 @@ class RedirectCallRequest(_serialization.Model):
     :vartype incoming_call_context: str
     :ivar target: The target identity to redirect the call to. Required.
     :vartype target: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar custom_context: Used by customer to send custom context to targets.
-    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
+    :ivar custom_calling_context: Used by customer to send custom calling context to targets.
+    :vartype custom_calling_context:
+     ~azure.communication.callautomation.models.CustomCallingContext
     """
 
     _validation = {
@@ -3426,7 +3433,7 @@ class RedirectCallRequest(_serialization.Model):
     _attribute_map = {
         "incoming_call_context": {"key": "incomingCallContext", "type": "str"},
         "target": {"key": "target", "type": "CommunicationIdentifierModel"},
-        "custom_context": {"key": "customContext", "type": "CustomContext"},
+        "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
     }
 
     def __init__(
@@ -3434,7 +3441,7 @@ class RedirectCallRequest(_serialization.Model):
         *,
         incoming_call_context: str,
         target: "_models.CommunicationIdentifierModel",
-        custom_context: Optional["_models.CustomContext"] = None,
+        custom_calling_context: Optional["_models.CustomCallingContext"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3442,13 +3449,14 @@ class RedirectCallRequest(_serialization.Model):
         :paramtype incoming_call_context: str
         :keyword target: The target identity to redirect the call to. Required.
         :paramtype target: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword custom_context: Used by customer to send custom context to targets.
-        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
+        :keyword custom_calling_context: Used by customer to send custom calling context to targets.
+        :paramtype custom_calling_context:
+         ~azure.communication.callautomation.models.CustomCallingContext
         """
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
         self.target = target
-        self.custom_context = custom_context
+        self.custom_calling_context = custom_calling_context
 
 
 class RejectCallRequest(_serialization.Model):
@@ -4091,6 +4099,11 @@ class StartDialogRequest(_serialization.Model):
 
     :ivar dialog: Defines the dialog. Required.
     :vartype dialog: ~azure.communication.callautomation.models.BaseDialog
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
     """
@@ -4101,18 +4114,32 @@ class StartDialogRequest(_serialization.Model):
 
     _attribute_map = {
         "dialog": {"key": "dialog", "type": "BaseDialog"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
     }
 
-    def __init__(self, *, dialog: "_models.BaseDialog", operation_context: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        dialog: "_models.BaseDialog",
+        operation_callback_uri: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dialog: Defines the dialog. Required.
         :paramtype dialog: ~azure.communication.callautomation.models.BaseDialog
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
         self.dialog = dialog
+        self.operation_callback_uri = operation_callback_uri
         self.operation_context = operation_context
 
 
@@ -4332,43 +4359,6 @@ class TextSource(_serialization.Model):
         self.voice_kind = voice_kind
         self.voice_name = voice_name
         self.custom_voice_endpoint_id = custom_voice_endpoint_id
-
-
-class ToneInfo(_serialization.Model):
-    """The information about the tone.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar sequence_id: The sequence id which can be used to determine if the same tone was played
-     multiple times or if any tones were missed. Required.
-    :vartype sequence_id: int
-    :ivar tone: Required. Known values are: "zero", "one", "two", "three", "four", "five", "six",
-     "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-    :vartype tone: str or ~azure.communication.callautomation.models.DtmfTone
-    """
-
-    _validation = {
-        "sequence_id": {"required": True},
-        "tone": {"required": True},
-    }
-
-    _attribute_map = {
-        "sequence_id": {"key": "sequenceId", "type": "int"},
-        "tone": {"key": "tone", "type": "str"},
-    }
-
-    def __init__(self, *, sequence_id: int, tone: Union[str, "_models.DtmfTone"], **kwargs: Any) -> None:
-        """
-        :keyword sequence_id: The sequence id which can be used to determine if the same tone was
-         played multiple times or if any tones were missed. Required.
-        :paramtype sequence_id: int
-        :keyword tone: Required. Known values are: "zero", "one", "two", "three", "four", "five",
-         "six", "seven", "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
-        :paramtype tone: str or ~azure.communication.callautomation.models.DtmfTone
-        """
-        super().__init__(**kwargs)
-        self.sequence_id = sequence_id
-        self.tone = tone
 
 
 class TranscriptionConfiguration(_serialization.Model):
@@ -4640,14 +4630,14 @@ class TranscriptionUpdate(_serialization.Model):
     """TranscriptionUpdate.
 
     :ivar transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-     "transcriptionResumed", "transcriptionLocaleUpdated", "transcriptionStopped", and
-     "unspecifiedError".
+     "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", and "unspecifiedError".
     :vartype transcription_status: str or
      ~azure.communication.callautomation.models.TranscriptionStatus
     :ivar transcription_status_details: Known values are: "subscriptionStarted",
      "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
      "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
-     "subscriptionStopped", and "unspecifiedError".
+     "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
+     "tooManyRequests", "forbidden", "serviceTimeout", and "transcriptionLocaleUpdated".
     :vartype transcription_status_details: str or
      ~azure.communication.callautomation.models.TranscriptionStatusDetails
     """
@@ -4666,20 +4656,71 @@ class TranscriptionUpdate(_serialization.Model):
     ) -> None:
         """
         :keyword transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-         "transcriptionResumed", "transcriptionLocaleUpdated", "transcriptionStopped", and
-         "unspecifiedError".
+         "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", and "unspecifiedError".
         :paramtype transcription_status: str or
          ~azure.communication.callautomation.models.TranscriptionStatus
         :keyword transcription_status_details: Known values are: "subscriptionStarted",
          "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
          "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
-         "subscriptionStopped", and "unspecifiedError".
+         "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
+         "tooManyRequests", "forbidden", "serviceTimeout", and "transcriptionLocaleUpdated".
         :paramtype transcription_status_details: str or
          ~azure.communication.callautomation.models.TranscriptionStatusDetails
         """
         super().__init__(**kwargs)
         self.transcription_status = transcription_status
         self.transcription_status_details = transcription_status_details
+
+
+class TranscriptionUpdated(_serialization.Model):
+    """TranscriptionUpdated.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar transcription_update: Defines the result for TranscriptionUpdate with the current status
+     and the details about the status.
+    :vartype transcription_update: ~azure.communication.callautomation.models.TranscriptionUpdate
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    """
+
+    _validation = {
+        "operation_context": {"readonly": True},
+        "result_information": {"readonly": True},
+        "transcription_update": {"readonly": True},
+        "call_connection_id": {"readonly": True},
+        "server_call_id": {"readonly": True},
+        "correlation_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "transcription_update": {"key": "transcriptionUpdate", "type": "TranscriptionUpdate"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.operation_context = None
+        self.result_information = None
+        self.transcription_update = None
+        self.call_connection_id = None
+        self.server_call_id = None
+        self.correlation_id = None
 
 
 class TransferCallResponse(_serialization.Model):
@@ -4711,8 +4752,9 @@ class TransferToParticipantRequest(_serialization.Model):
      Required.
     :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar custom_context: Used by customer to send custom context to targets.
-    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
+    :ivar custom_calling_context: Used by customer to send custom calling context to targets.
+    :vartype custom_calling_context:
+     ~azure.communication.callautomation.models.CustomCallingContext
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
@@ -4731,7 +4773,7 @@ class TransferToParticipantRequest(_serialization.Model):
 
     _attribute_map = {
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
-        "custom_context": {"key": "customContext", "type": "CustomContext"},
+        "custom_calling_context": {"key": "customCallingContext", "type": "CustomCallingContext"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
         "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
@@ -4741,7 +4783,7 @@ class TransferToParticipantRequest(_serialization.Model):
         self,
         *,
         target_participant: "_models.CommunicationIdentifierModel",
-        custom_context: Optional["_models.CustomContext"] = None,
+        custom_calling_context: Optional["_models.CustomCallingContext"] = None,
         operation_context: Optional[str] = None,
         transferee: Optional["_models.CommunicationIdentifierModel"] = None,
         operation_callback_uri: Optional[str] = None,
@@ -4752,8 +4794,9 @@ class TransferToParticipantRequest(_serialization.Model):
          Required.
         :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword custom_context: Used by customer to send custom context to targets.
-        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
+        :keyword custom_calling_context: Used by customer to send custom calling context to targets.
+        :paramtype custom_calling_context:
+         ~azure.communication.callautomation.models.CustomCallingContext
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
@@ -4767,7 +4810,7 @@ class TransferToParticipantRequest(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
-        self.custom_context = custom_context
+        self.custom_calling_context = custom_calling_context
         self.operation_context = operation_context
         self.transferee = transferee
         self.operation_callback_uri = operation_callback_uri

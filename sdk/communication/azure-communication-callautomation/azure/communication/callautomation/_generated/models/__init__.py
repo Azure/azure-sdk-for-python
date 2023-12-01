@@ -17,6 +17,7 @@ from ._models import BlobStorage
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
+from ._models import CallIntelligenceOptions
 from ._models import CallLocator
 from ._models import CallParticipant
 from ._models import CallTransferAccepted
@@ -38,7 +39,7 @@ from ._models import ContinuousDtmfRecognitionStopped
 from ._models import ContinuousDtmfRecognitionToneFailed
 from ._models import ContinuousDtmfRecognitionToneReceived
 from ._models import CreateCallRequest
-from ._models import CustomContext
+from ._models import CustomCallingContext
 from ._models import DialogCompleted
 from ._models import DialogConsent
 from ._models import DialogFailed
@@ -93,13 +94,13 @@ from ._models import StartTranscriptionRequest
 from ._models import StopHoldMusicRequest
 from ._models import StopTranscriptionRequest
 from ._models import TextSource
-from ._models import ToneInfo
 from ._models import TranscriptionConfiguration
 from ._models import TranscriptionFailed
 from ._models import TranscriptionResumed
 from ._models import TranscriptionStarted
 from ._models import TranscriptionStopped
 from ._models import TranscriptionUpdate
+from ._models import TranscriptionUpdated
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
@@ -146,6 +147,7 @@ __all__ = [
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",
+    "CallIntelligenceOptions",
     "CallLocator",
     "CallParticipant",
     "CallTransferAccepted",
@@ -167,7 +169,7 @@ __all__ = [
     "ContinuousDtmfRecognitionToneFailed",
     "ContinuousDtmfRecognitionToneReceived",
     "CreateCallRequest",
-    "CustomContext",
+    "CustomCallingContext",
     "DialogCompleted",
     "DialogConsent",
     "DialogFailed",
@@ -222,13 +224,13 @@ __all__ = [
     "StopHoldMusicRequest",
     "StopTranscriptionRequest",
     "TextSource",
-    "ToneInfo",
     "TranscriptionConfiguration",
     "TranscriptionFailed",
     "TranscriptionResumed",
     "TranscriptionStarted",
     "TranscriptionStopped",
     "TranscriptionUpdate",
+    "TranscriptionUpdated",
     "TransferCallResponse",
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",

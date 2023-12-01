@@ -1300,7 +1300,7 @@ class CallConnectionOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -2555,7 +2555,7 @@ class CallMediaOperations:
         else:
             _json = self._serialize.body(send_dtmf_tones_request, "SendDtmfTonesRequest")
 
-        _request = build_call_media_send_dtmf_request(
+        _request = build_call_media_send_dtmf_tones_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2586,7 +2586,9 @@ class CallMediaOperations:
         deserialized = self._deserialize("SendDtmfTonesResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def update_transcription(  # pylint: disable=inconsistent-return-statements
@@ -2603,7 +2605,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param update_transcription_request: The updateTranscription request. Required.
+        :param update_transcription_request: The UpdateTranscription request. Required.
         :type update_transcription_request:
          ~azure.communication.callautomation.models.UpdateTranscriptionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2629,7 +2631,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param update_transcription_request: The updateTranscription request. Required.
+        :param update_transcription_request: The UpdateTranscription request. Required.
         :type update_transcription_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2652,7 +2654,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param update_transcription_request: The updateTranscription request. Is either a
+        :param update_transcription_request: The UpdateTranscription request. Is either a
          UpdateTranscriptionRequest type or a IO type. Required.
         :type update_transcription_request:
          ~azure.communication.callautomation.models.UpdateTranscriptionRequest or IO
@@ -3127,7 +3129,7 @@ class CallDialogOperations:
 
     @distributed_trace_async
     async def stop_dialog(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, dialog_id: str, **kwargs: Any
+        self, call_connection_id: str, dialog_id: str, *, operation_callback_uri: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Stop a dialog.
 
@@ -3137,6 +3139,8 @@ class CallDialogOperations:
         :type call_connection_id: str
         :param dialog_id: The dialog id. Required.
         :type dialog_id: str
+        :keyword operation_callback_uri: Opeation callback URI. Default value is None.
+        :paramtype operation_callback_uri: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3157,6 +3161,7 @@ class CallDialogOperations:
         _request = build_call_dialog_stop_dialog_request(
             call_connection_id=call_connection_id,
             dialog_id=dialog_id,
+            operation_callback_uri=operation_callback_uri,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
