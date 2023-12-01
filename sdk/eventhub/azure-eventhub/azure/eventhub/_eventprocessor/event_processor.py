@@ -58,7 +58,6 @@ class EventProcessor(
         eventhub_client: EventHubConsumerClient,
         consumer_group: str,
         on_event: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None],
-        # on_event: Union[Callable[["PartitionContext", "EventData"], None], Callable[["PartitionContext", List["EventData"]], None]],
         **kwargs: Any
     ) -> None:
         # pylint: disable=line-too-long

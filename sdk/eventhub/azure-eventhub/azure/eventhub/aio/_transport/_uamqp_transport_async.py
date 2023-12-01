@@ -199,7 +199,12 @@ if uamqp_installed:
             consumer._message_buffer.append(message) # pylint: disable=protected-access
 
         @staticmethod
-        async def receive_messages_async(consumer: "EventHubConsumer", batch: bool, max_batch_size: int, max_wait_time: Optional[int] = None):
+        async def receive_messages_async(
+            consumer: "EventHubConsumer",
+            batch: bool,
+            max_batch_size: int,
+            max_wait_time: Optional[int] = None
+        ):
             """
             Receives messages, creates events, and returns them by calling the on received callback.
             :param ~azure.eventhub.aio.EventHubConsumer consumer: The EventHubConsumer.
