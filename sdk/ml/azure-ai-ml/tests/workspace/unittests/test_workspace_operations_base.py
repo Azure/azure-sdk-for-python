@@ -19,11 +19,13 @@ from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.entities import (
     CustomerManagedKey,
     FeatureStore,
+    FeatureStoreSettings,
     FqdnDestination,
     IdentityConfiguration,
     IsolationMode,
     ManagedIdentityConfiguration,
     ManagedNetwork,
+    MaterializationStore,
     PrivateEndpointDestination,
     ServerlessComputeSettings,
     ServiceTagDestination,
@@ -335,7 +337,7 @@ class TestWorkspaceOperation:
         ws.param = {"tagValues": {"value": {}}}
         mock_workspace_operation_base._populate_arm_parameters(workspace=ws)
 
-    def test_populate_arm_parameters_feature_store(
+    def test_populate_feature_store_arm_parameters(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
         mocker.patch(
@@ -346,35 +348,118 @@ class TestWorkspaceOperation:
             return_value=("random_id", True),
         )
 
+        # test create feature store
         feature_store = FeatureStore(name="name", resource_group="rg")
         template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
             workspace=feature_store, grant_materialization_permissions=True
         )
 
-        assert param["kind"] == {"value": "featurestore"}
-        assert param["grant_materialization_permissions"] == {"value": "true"}
-        assert param["materialization_identity_resource_id"] == {"value": ""}
+        assert param["kind"]["value"] == "featurestore"
+        assert param["grant_materialization_permissions"]["value"] == "true"
+        assert param["materializationIdentityOption"]["value"] == "new"
+        assert param["materialization_identity_name"]["value"].startswith("materialization-uai-")
+        assert param["materialization_identity_subscription_id"]["value"] == "test_subscription"
+        assert param["materialization_identity_resource_group_name"]["value"] == "rg"
+        assert param["offlineStoreStorageAccountOption"]["value"] == "new"
+        assert param["offline_store_storage_account_name"]["value"] == param["storageAccountName"]["value"]
+        assert param["offline_store_container_name"]["value"]
+        assert param["offline_store_resource_group_name"]["value"] == "rg"
+        assert param["offline_store_subscription_id"]["value"] == "test_subscription"
+        assert param["offline_store_connection_name"]["value"] is None
+        assert param["online_store_resource_id"]["value"] == ""
+        assert param["online_store_resource_group_name"]["value"] == ""
+        assert param["online_store_subscription_id"]["value"] == ""
+        assert param["online_store_connection_name"]["value"] is None
 
-        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
-            workspace=feature_store,
-            materialization_identity=ManagedIdentityConfiguration(client_id="client_id", resource_id="resource_id"),
-            grant_materialization_permissions=False,
+        # test create feature store with materialization identity
+        mock_materialization_identity_resource_id = (
+            "/subscriptions/sub/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/uai"
         )
-
-        assert param["kind"] == {"value": "featurestore"}
-        assert param["grant_materialization_permissions"] == {"value": "false"}
-        assert param["materialization_identity_resource_id"] == {"value": "resource_id"}
-
         feature_store = FeatureStore(
             name="name",
             resource_group="rg",
-            storage_account="/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/existing",
         )
         template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
             workspace=feature_store,
+            grant_materialization_permissions=False,
+            materialization_identity=ManagedIdentityConfiguration(
+                client_id="client_id", resource_id=mock_materialization_identity_resource_id
+            ),
         )
 
-        assert param["featureStoreStorageAccountName"]["value"]
+        assert param["kind"]["value"] == "featurestore"
+        assert param["grant_materialization_permissions"]["value"] == "false"
+        assert param["materializationIdentityOption"]["value"] == "existing"
+        assert param["materialization_identity_name"]["value"] == "uai"
+        assert param["materialization_identity_resource_group_name"]["value"] == "rg1"
+        assert param["materialization_identity_subscription_id"]["value"] == "sub"
+
+        # test create feature store with offline store
+        mock_offline_store_target = "/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Storage/storageAccounts/offlinestorage/blobServices/default/containers/offlinestore"
+        feature_store._feature_store_settings = FeatureStoreSettings(
+            offline_store_connection_name="OfflineStoreConnectionName",
+            online_store_connection_name="",
+        )
+        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
+            workspace=feature_store, offline_store_target=mock_offline_store_target
+        )
+        assert param["kind"]["value"] == "featurestore"
+        assert param["offlineStoreStorageAccountOption"]["value"] == "existing"
+        assert param["offline_store_storage_account_name"]["value"] == "offlinestorage"
+        assert param["offline_store_container_name"]["value"] == "offlinestore"
+        assert param["offline_store_resource_group_name"]["value"] == "rg1"
+        assert param["offline_store_subscription_id"]["value"] == "sub1"
+        assert param["offline_store_connection_name"]["value"] == "OfflineStoreConnectionName"
+        assert param["online_store_connection_name"]["value"] is None
+
+        # offline store with provided storage account
+        mock_storage_account = (
+            "/subscriptions/sub2/resourceGroups/rg2/providers/Microsoft.Storage/storageAccounts/storage"
+        )
+        feature_store = FeatureStore(
+            name="name",
+            resource_group="rg",
+            storage_account=mock_storage_account,
+        )
+        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
+            workspace=feature_store, offline_store_target=mock_offline_store_target
+        )
+        assert param["kind"]["value"] == "featurestore"
+        assert param["offlineStoreStorageAccountOption"]["value"] == "existing"
+        assert param["offline_store_storage_account_name"]["value"] == "offlinestorage"
+        assert param["offline_store_container_name"]["value"] == "offlinestore"
+        assert param["offline_store_resource_group_name"]["value"] == "rg1"
+        assert param["offline_store_subscription_id"]["value"] == "sub1"
+        assert param["offline_store_connection_name"]["value"] is None
+
+        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
+            workspace=feature_store,
+        )
+        assert param["kind"]["value"] == "featurestore"
+        assert param["offlineStoreStorageAccountOption"]["value"] == "new"
+        assert param["offline_store_storage_account_name"]["value"]
+        assert param["offline_store_storage_account_name"]["value"] != "storage"
+        assert param["offline_store_container_name"]["value"]
+        assert param["offline_store_resource_group_name"]["value"] == "rg"
+        assert param["offline_store_subscription_id"]["value"] == "test_subscription"
+        assert param["offline_store_connection_name"]["value"] is None
+
+        # test create feature store with online store
+        mock_online_store_target = "/subscriptions/sub3/resourceGroups/rg3/providers/Microsoft.Cache/Redis/onlinestore"
+        feature_store = FeatureStore(name="name", resource_group="rg")
+        feature_store._feature_store_settings = FeatureStoreSettings(
+            offline_store_connection_name="OfflineStoreConnectionName",
+            online_store_connection_name="OnlineStoreConnectionName",
+        )
+        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
+            workspace=feature_store, online_store_target=mock_online_store_target
+        )
+        assert param["kind"]["value"] == "featurestore"
+        assert param["online_store_resource_id"]["value"] == mock_online_store_target
+        assert param["online_store_resource_group_name"]["value"] == "rg3"
+        assert param["online_store_subscription_id"]["value"] == "sub3"
+        assert param["offline_store_connection_name"]["value"] == "OfflineStoreConnectionName"
+        assert param["online_store_connection_name"]["value"] == "OnlineStoreConnectionName"
 
     def test_populate_feature_store_role_assignments_paramaters(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
@@ -413,6 +498,29 @@ class TestWorkspaceOperation:
         assert param["update_workspace_role_assignment"] == {"value": "true"}
         assert param["update_offline_store_role_assignment"] == {"value": "true"}
         assert param["update_online_store_role_assignment"] == {"value": "true"}
+
+        # false case
+        template, param, _ = mock_workspace_operation_base._populate_feature_store_role_assignment_parameters(
+            workspace=FeatureStore(name="name"),
+            materialization_identity_id="",
+            offline_store_target="",
+            online_store_target="",
+            update_workspace_role_assignment=False,
+            update_offline_store_role_assignment=False,
+            update_online_store_role_assignment=False,
+        )
+
+        assert template is not None
+        assert param["materialization_identity_resource_id"] == {"value": ""}
+        assert param["offline_store_target"] == {"value": ""}
+        assert param["offline_store_resource_group_name"] == {"value": ""}
+        assert param["offline_store_subscription_id"] == {"value": ""}
+        assert param["online_store_target"] == {"value": ""}
+        assert param["online_store_resource_group_name"] == {"value": ""}
+        assert param["online_store_subscription_id"] == {"value": ""}
+        assert param["update_workspace_role_assignment"] == {"value": "false"}
+        assert param["update_offline_store_role_assignment"] == {"value": "false"}
+        assert param["update_online_store_role_assignment"] == {"value": "false"}
 
     def test_check_workspace_name(self, mock_workspace_operation_base: WorkspaceOperationsBase):
         mock_workspace_operation_base._default_workspace_name = None
