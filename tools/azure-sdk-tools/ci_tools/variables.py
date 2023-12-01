@@ -1,4 +1,5 @@
 import os
+from ci_tools.functions import str_to_bool
 
 
 def discover_repo_root(input_repo: str = None):
@@ -62,7 +63,7 @@ def in_ci() -> int:
 def in_public() -> int:
     # PUBLIC is set to `true` when running `- ci` pipelines, return 3
     # 0 otherwise
-    if os.getenv("PUBLIC", None):
+    if str_to_bool(os.getenv("PUBLIC", "False")):
         print(f"value of PUBLIC: {os.getenv('PUBLIC')}")
         return 3
 
