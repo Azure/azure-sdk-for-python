@@ -426,7 +426,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [resource_details]: https://learn.microsoft.com/azure/ai-services/translator/create-translator-resource#authentication-keys-and-endpoint-url
 [custom_details]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference#authentication-with-microsoft-entra-id
 [authentication_details]: https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference
-[mt_endpoints]:https://learn.microsoft.com/en-us/azure/ai-services/translator/reference/v3-0-reference#base-urls
+[mt_endpoints]:https://learn.microsoft.com/azure/ai-services/translator/reference/v3-0-reference#base-urls
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
