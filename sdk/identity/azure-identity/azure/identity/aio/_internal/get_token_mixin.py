@@ -54,7 +54,12 @@ class GetTokenMixin(abc.ABC):
         return True
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -66,6 +71,8 @@ class GetTokenMixin(abc.ABC):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -78,14 +85,20 @@ class GetTokenMixin(abc.ABC):
             raise ValueError('"get_token" requires at least one scope')
 
         try:
-            token = await self._acquire_token_silently(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = await self._acquire_token_silently(
+                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+            )
             if not token:
                 self._last_request_time = int(time.time())
-                token = await self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+                token = await self._request_token(
+                    *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                )
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())
-                    token = await self._request_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+                    token = await self._request_token(
+                        *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                    )
                 except Exception:  # pylint:disable=broad-except
                     pass
             _LOGGER.log(
