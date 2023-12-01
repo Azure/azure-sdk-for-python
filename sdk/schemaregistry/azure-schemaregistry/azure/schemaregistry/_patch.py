@@ -134,7 +134,8 @@ def get_case_insensitive_format(
 
 class SchemaRegistryClient(object):
     """
-    SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
+    SchemaRegistryClient is a client for registering and retrieving schemas from the
+     Azure Schema Registry service.
 
     :param str fully_qualified_namespace: The Schema Registry service fully qualified host name.
      For example: my-namespace.servicebus.windows.net.

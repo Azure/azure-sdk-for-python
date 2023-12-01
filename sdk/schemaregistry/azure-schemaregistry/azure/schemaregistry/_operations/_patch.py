@@ -162,7 +162,12 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             params=_params,
         )
         path_format_arguments = {
-            "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
+            "fullyQualifiedNamespace": self._serialize.url(
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                'str',
+                skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -250,7 +255,12 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
             params=_params,
         )
         path_format_arguments = {
-            "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
+            "fullyQualifiedNamespace": self._serialize.url(
+                "self._config.fully_qualified_namespace",
+                self._config.fully_qualified_namespace,
+                'str',
+                skip_quote=True
+            ),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
