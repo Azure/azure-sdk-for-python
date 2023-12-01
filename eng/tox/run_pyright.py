@@ -51,8 +51,6 @@ def get_pyright_config_path(args):
     else:
         config.update({"executionEnvironments": [{"root": args.target_package}]})
 
-    if args.next:
-        config["pythonVersion"] = "3.8"
     # write the pyrightconfig.json to the tox environment and return the path so we can point to it
     pyright_env = "pyright" if not args.next else "next-pyright"
     pyright_config_path = os.path.join(args.target_package, ".tox", pyright_env, "tmp", "pyrightconfig.json")

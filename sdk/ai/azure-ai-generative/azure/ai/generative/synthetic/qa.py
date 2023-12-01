@@ -69,6 +69,13 @@ async def _completion_with_retries_async(*args, **kwargs):
             continue
         return response
 
+class OutputStructure(str, Enum):
+    """OutputStructure defines what structure the QAs should be written to file in."""
+
+    PROMPTFLOW = "PROMPTFLOW"
+    """Chat history will be in format used by promptflow"""
+    CHAT_PROTOCOL = "CHAT_PROTOCOL"
+    """QAs will be in OpenAI message format"""
 
 class QAType(str, Enum):
     """QAType defines different types of QAs that can be generated."""
@@ -188,12 +195,14 @@ class QADataGenerator:
             **self._chat_completion_params,
         )
         modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
+        # Don't modify first question of conversation
+        modified_questions[0] = questions[0]
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
         return modified_questions, response["usage"]
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Export", ActivityType.INTERNALCALL)
-    def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]]):
+    def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]], output_format: OutputStructure = OutputStructure.PROMPTFLOW, field_mapping: Dict[str,str] = {"chat_history_key": "chat_history", "question_key": "question"}):
         """
             Writes results from QA gen to a jsonl file for Promptflow batch run
             results is either a list of questions and answers or list of list of questions and answers grouped by their chunk
@@ -204,20 +213,45 @@ class QADataGenerator:
         if not isinstance(results[0], List):
             results = [results]
         
-        for qs_and_as in results:
-            chat_history = []
-            for question, answer in qs_and_as: 
-                if qa_type == QAType.CONVERSATION:
-                    # Chat History columns:
-                    data_dict["chat_history"].append(json.dumps(chat_history))
-                    data_dict["chat_input"].append(question)
-                    chat_history.append({"inputs": {"chat_input": question}, "outputs": {"chat_output": answer}})
-                else:
-                    # QnA columns:
-                    data_dict["question"].append(question)   
+        if output_format == OutputStructure.PROMPTFLOW:
+            
+            if qa_type == QAType.CONVERSATION and not ("chat_history_key" in field_mapping and "question_key" in field_mapping):
+                raise Exception("Field mapping for Promptflow output with Conversation must contain following keys: chat_history_key, question_key")
+            # Only the question key is required in non-conversation cases, we can default to chat_history as chat_history_key
+            elif not ("question_key" in field_mapping):
+                raise Exception(f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key")
 
-                data_dict["ground_truth"].append(answer)  # Consider generated answer as the ground truth
+            question_key = field_mapping["question_key"]
+            # Set this here for parity with eval flows
+            answer_key = "ground_truth"
+            chat_history_key = field_mapping.get("chat_history_key", "chat_history")
+            for qs_and_as in results:
+                chat_history = []
+                for question, answer in qs_and_as: 
+                    data_dict[chat_history_key].append(list(chat_history))
+                    if qa_type == QAType.CONVERSATION:
+                        # Chat History columns:
+                        data_dict[question_key].append(question)
+                        chat_history.append({"inputs": {question_key: question}, "outputs": {answer_key: answer}})
+                    else:
+                        # QnA columns:
+                        data_dict[question_key].append(question)   
 
+                    data_dict[answer_key].append(answer)  # Consider generated answer as the ground truth
+        else:
+            for qs_and_as in results:
+                chat_history = []
+                for question, answer in qs_and_as: 
+                    if qa_type == QAType.CONVERSATION:
+                        print(f"Chat data dict: {data_dict['messages']}\n\n")
+                        chat_history.append({"role": "user", "content": question})
+                        chat_history.append({"role": "assistant", "content": answer})
+                        data_dict["messages"].append(list(chat_history))
+                    else:
+                        messages = []
+                        messages.append({"role": "user", "content": question})
+                        messages.append({"role": "assistant", "content": answer})
+                        data_dict["messages"].append(list(messages))
         # export to jsonl file
         try:
             import pandas as pd
@@ -253,6 +287,8 @@ class QADataGenerator:
             **self._chat_completion_params,
         )
         modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
+        # Don't modify first question of conversation
+        modified_questions[0] = questions[0]
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
         return modified_questions, response["usage"]
 

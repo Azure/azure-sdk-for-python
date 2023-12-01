@@ -20,28 +20,40 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the Tables storage account name
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the Tables storage account access key
 """
+import sys
 import os
 from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
-from uuid import uuid4
+from uuid import uuid4, UUID
 from azure.data.tables import TableClient
 from azure.data.tables._models import UpdateMode
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
+from typing_extensions import TypedDict
+
+
+class EntityType(TypedDict, total=False):
+    PartitionKey: str
+    RowKey: str
+    text: str
+    color: str
+    price: float
+    last_updated: datetime
+    product_id: UUID
+    inventory_count: int
+    barcode: bytes
 
 
 class ConditionalUpdateSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
+        self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]
+        self.endpoint_suffix = os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"]
+        self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
+        self.endpoint = f"{self.account_name}.table.{self.endpoint_suffix}"
+        self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name_prefix = "SampleConditionalUpdate"
-        self.entity1 = {
+        self.entity1: EntityType = {
             "PartitionKey": "color",
             "RowKey": "brand",
             "text": "Marker",
@@ -50,7 +62,7 @@ class ConditionalUpdateSamples(object):
             "last_updated": datetime.today(),
             "product_id": uuid4(),
         }
-        self.entity2 = {
+        self.entity2: EntityType = {
             "PartitionKey": "color",
             "RowKey": "brand",
             "color": "Red",
