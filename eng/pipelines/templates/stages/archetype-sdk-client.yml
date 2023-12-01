@@ -75,9 +75,6 @@ parameters:
 - name: AdvancedBuild
   type: boolean
   default: false
-- name: Public
-  type: boolean
-  default: false
 
 variables:
   - template: /eng/pipelines/templates/variables/globals.yml
@@ -113,7 +110,7 @@ stages:
         TestProxy: ${{ parameters.TestProxy }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
         AdvancedBuild: ${{ parameters.AdvancedBuild }}
-        Public: ${{ parameters.Public }}
+        
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
@@ -129,4 +126,4 @@ stages:
         TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
         TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
         DevFeedName: ${{ parameters.DevFeedName }}
-        Public: ${{ parameters.Public }}
+        
