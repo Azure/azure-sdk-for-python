@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Callable, Optional, Dict, List, Mapping
 
 import mlflow
+import numpy as np
 import pandas as pd
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
@@ -286,11 +287,16 @@ def _evaluate(
             row_level_metrics = custom_metric["artifacts"].pop(metric._name, None)
             score_list = []
             for value in row_level_metrics:
-                value_json = json.loads(value)
-                score = value_json["score"]
-                score_list.append(score)
+                try:
+                    value_json = json.loads(value)
+                    score = value_json["score"]
+                    score_list.append(score)
+                except Exception as ex:
+                    print(ex)
 
             custom_metric["artifacts"].update({metric._name: score_list})
+            custom_metric.pop("metrics")
+            custom_metric.update({"metrics": {f"mean_{metric._name}": np.mean(score_list)}})
 
             if custom_metrics_results is None:
                 custom_metrics_results = custom_metric
