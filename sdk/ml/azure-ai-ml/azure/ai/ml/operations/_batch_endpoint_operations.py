@@ -16,7 +16,7 @@ from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remo
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningWorkspaces as ServiceClient102023
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -77,9 +77,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client_05_2022: Service client to allow end users to operate on Azure Machine Learning Workspace
+    :param service_client_10_2023: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources.
-    :type service_client_05_2022: ~azure.ai.ml._restclient.v2022_05_01._azure_machine_learning_workspaces.
+    :type service_client_10_2023: ~azure.ai.ml._restclient.v2022_05_01._azure_machine_learning_workspaces.
         AzureMachineLearningWorkspaces
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
@@ -91,15 +91,15 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_05_2022: ServiceClient052022,
+        service_client_10_2023: ServiceClient102023,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._batch_operation = service_client_05_2022.batch_endpoints
-        self._batch_deployment_operation = service_client_05_2022.batch_deployments
+        self._batch_operation = service_client_10_2023.batch_endpoints
+        self._batch_deployment_operation = service_client_10_2023.batch_deployments
         self._batch_job_endpoint = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_endpoint
         self._all_operations = all_operations
         self._credentials = credentials
