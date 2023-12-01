@@ -15,7 +15,7 @@ Contract change for AnalyzeText, AnalyzeImage, Blocklist management related meth
 
 - AnalyzeTextOptions
   - Renamed breakByBlocklists to haltOnBlocklistHit
-  - Add AnalyzeTextOutputType
+  - Added AnalyzeTextOutputType model for the `output_type` property.
 - AnalyzeTextResult
   - Renamed blocklistsMatchResults to blocklistsMatch
   - Replaced TextAnalyzeSeverityResult by TextCategoriesAnalysis
