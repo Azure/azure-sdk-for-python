@@ -181,10 +181,10 @@ def apply_business_filter(collected_packages: List[str], filter_type: str) -> Li
     return pkg_set_ci_filtered
 
 def apply_ci_disabled_filter(collected_packages: List[str]) -> List[str]:
-    if str_to_bool(os.getenv("PUBLIC", "False")):
-        print(f"Type: {type(os.getenv('PUBLIC'))}; Value of PUBLIC in if: {os.getenv('PUBLIC')}")
-        return collected_packages
-    print(f"Type: {type(os.getenv('PUBLIC'))}; Value of PUBLIC in if: {os.getenv('PUBLIC')}")
+    # if str_to_bool(os.getenv("PUBLIC", "False")):
+    #     print(f"Type: {type(os.getenv('PUBLIC'))}; Value of PUBLIC in if: {os.getenv('PUBLIC')}")
+    #     return collected_packages
+    # print(f"Type: {type(os.getenv('PUBLIC'))}; Value of PUBLIC in if: {os.getenv('PUBLIC')}")
     print(f"collected packages before filtering: {collected_packages}")
     pkg_set_ci_disabled_filtered = list(filter(lambda x: str_to_bool(get_config_setting(x, "ci_enabled", True)), collected_packages))
     print(f"collected packages after filtering: {pkg_set_ci_disabled_filtered}")
