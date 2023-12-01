@@ -30,7 +30,7 @@ from .constants import (
 )
 
 from .session import Session
-from .authentication import JWTTokenAuth, SASTokenAuth, SASLPlainAuth
+from .authentication import JWTTokenAuth, SASTokenAuth
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +52,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
     def __init__(
             self,
             session: Session,
-            auth: Union[JWTTokenAuth, SASTokenAuth, SASLPlainAuth],
+            auth: Union[JWTTokenAuth, SASTokenAuth],
             **kwargs: Any
         ) -> None:
         self._session = session
@@ -253,13 +253,13 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
         expires_in = cast(int, self._expires_on) - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
         try:
-            self._token = access_token.token.decode()
+            self._token = cast(bytes, access_token.token).decode()
         except AttributeError:
             self._token = cast(str, access_token.token)
         try:
-            token_type = cast(bytes, self._auth.token_type).decode() # type: ignore
+            token_type = cast(bytes, self._auth.token_type).decode()
         except AttributeError:
-            token_type = cast(str, self._auth.token_type) # type: ignore
+            token_type = cast(str, self._auth.token_type)
 
         self._token_put_time = int(utc_now().timestamp())
         self._put_token(

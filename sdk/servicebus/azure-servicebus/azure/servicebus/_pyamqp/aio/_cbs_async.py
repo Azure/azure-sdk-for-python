@@ -211,7 +211,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
 
     async def update_token(self) -> None:
         self.auth_state = CbsAuthState.IN_PROGRESS
-        access_token = self._auth.get_token() # type: ignore
+        access_token = self._auth.get_token()
         if not access_token:
             _LOGGER.info(
                 "Token refresh function received an empty token object.",
@@ -226,7 +226,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
         try:
-            self._token = access_token.token.decode()
+            self._token = cast(bytes, access_token.token).decode()
         except AttributeError:
             self._token = cast(str, access_token.token)
         try:

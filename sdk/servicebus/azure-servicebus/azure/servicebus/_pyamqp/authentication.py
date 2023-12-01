@@ -7,7 +7,7 @@
 import time
 from functools import partial
 
-from typing import Any, NamedTuple, Optional, Callable, Tuple, Union, cast
+from typing import Any, Callable, NamedTuple, Optional, Tuple, Union, cast
 from .sasl import SASLAnonymousCredential, SASLPlainCredential
 from .utils import generate_sas_token
 
@@ -20,7 +20,7 @@ from .constants import (
 )
 
 class AccessToken(NamedTuple):
-    token: bytes
+    token: Union[str, bytes]
     expires_on: int
 
 def _generate_sas_access_token(
@@ -28,7 +28,7 @@ def _generate_sas_access_token(
         sas_name: str,
         sas_key: str,
         expiry_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS
-    ):
+    ) -> AccessToken:
     expires_on = int(time.time() + expiry_in)
     token = generate_sas_token(auth_uri, sas_name, sas_key, expires_on)
     return AccessToken(
@@ -56,7 +56,7 @@ class _CBSAuth():
         uri: str,
         audience: str,
         token_type: Union[str, bytes],
-        get_token: Callable[[str], AccessToken],
+        get_token: Callable[..., AccessToken],
         *,
         expires_in: float = AUTH_DEFAULT_EXPIRATION_SECONDS,
         expires_on: Optional[float] = None,
@@ -107,7 +107,7 @@ class JWTTokenAuth(_CBSAuth):
         self,
         uri: str,
         audience: str,
-        get_token: Callable[[str], AccessToken],
+        get_token: Callable[..., AccessToken],
         *,
         token_type: Union[str, bytes] = TOKEN_TYPE_JWT,
         **kwargs: Any
