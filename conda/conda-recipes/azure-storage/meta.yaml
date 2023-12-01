@@ -21,6 +21,7 @@ requirements:
     - pip
     - python
     - aiohttp
+    - isodate
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
@@ -29,6 +30,7 @@ requirements:
     - python
     - aiohttp
     - requests-oauthlib >=0.5.0
+    - isodate
 
 test:
   imports:
@@ -47,6 +49,9 @@ about:
   license_family: MIT
   license_file:
   summary: Microsoft Azure Storage Client Library for Python.
+  description: |
+    This package is the Microsoft Azure Storage bundle.
+    Please see https://aka.ms/azsdk/conda/releases/storage for version details.
   doc_url:
   dev_url:
 
