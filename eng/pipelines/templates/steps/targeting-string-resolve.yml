@@ -18,6 +18,7 @@ steps:
           Write-Host "Setting PULLREQUEST to $public"
           Write-Host "##vso[task.setvariable variable=PULLREQUEST]$public"
       }
+      $public = true
       Write-Host "Setting PULLREQUEST to $public"
       Write-Host "##vso[task.setvariable variable=PULLREQUEST]$public"
       Write-Host "Setting TargetingString to $setting"
