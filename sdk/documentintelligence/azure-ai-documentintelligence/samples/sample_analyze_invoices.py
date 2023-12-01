@@ -208,10 +208,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         analyze_invoice()
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:
