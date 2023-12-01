@@ -394,7 +394,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 continue
             break
         if retry_attempts == 5:
-            retry_msg = "Max retry attempts reached while trying to connect to server. Please check connection and invoke again." # pylint: disable=line-too-long
+            retry_msg = "Max retry attempts reached while trying to connect to server. Please check connection and invoke again."  # pylint: disable=line-too-long
             raise MlException(message=retry_msg, no_personal_data_message=retry_msg, target=ErrorTarget.BATCH_ENDPOINT)
         validate_response(response)
         batch_job = json.loads(response.text())
