@@ -177,7 +177,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
         kwargs['data'] = data
     elif blob_type == BlobType.PageBlob:
         if (encryption_options['version'] == '2.0' and
-            encryption_options['required'] or encryption_options['key'] is not None):
+            (encryption_options['required'] or encryption_options['key'] is not None)):
             raise ValueError("Encryption version 2.0 does not currently support page blobs.")
         kwargs['client'] = client.page_blob
     elif blob_type == BlobType.AppendBlob:
