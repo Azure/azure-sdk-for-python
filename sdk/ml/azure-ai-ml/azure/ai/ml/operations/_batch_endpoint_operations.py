@@ -94,7 +94,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         service_client_05_2022: ServiceClient052022,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ):
         super(BatchEndpointOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)

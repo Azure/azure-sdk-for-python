@@ -90,7 +90,7 @@ class WorkspaceOperationsBase(ABC):
         workspace: Workspace,
         update_dependent_resources: bool = False,
         get_callback: Optional[Callable[[], Workspace]] = None,
-        **kwargs: Dict,
+        **kwargs: Any,
     ) -> LROPoller[Workspace]:
         """Create a new Azure Machine Learning Workspace.
 
@@ -227,8 +227,8 @@ class WorkspaceOperationsBase(ABC):
         workspace: Workspace,
         *,
         update_dependent_resources: bool = False,
-        deserialize_callback: Optional[Callable[[], Workspace]] = None,
-        **kwargs: Dict,
+        deserialize_callback: Optional[Callable] = None,
+        **kwargs: Any,
     ) -> LROPoller[Workspace]:
         """Updates a Azure Machine Learning Workspace.
 
@@ -422,7 +422,7 @@ class WorkspaceOperationsBase(ABC):
         return poller
 
     def begin_delete(
-        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
+        self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a Workspace.
 
