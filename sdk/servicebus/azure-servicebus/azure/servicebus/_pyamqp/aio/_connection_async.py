@@ -105,7 +105,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             self._port = SECURE_PORT
         else:
             self._port = PORT
-        self.state = None  # type: Optional[ConnectionState]
+        self.state: Optional[ConnectionState] = None
 
         # Custom Endpoint
         custom_endpoint_address = kwargs.get("custom_endpoint_address")

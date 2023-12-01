@@ -15,7 +15,7 @@ from ..performatives import (
     DetachFrame,
 )
 
-from ..session import Session
+from ._session_async import Session
 
 from ..error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
 
