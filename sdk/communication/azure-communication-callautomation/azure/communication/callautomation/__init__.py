@@ -25,9 +25,6 @@ from ._models import (
     MuteParticipantResult,
     SendDtmfTonesResult,
     CancelAddParticipantOperationResult,
-    CallInvite,
-    ServerCallLocator,
-    GroupCallLocator
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -102,12 +99,7 @@ __all__ = [
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
-    "VoiceKind",
-
-    # deprecated models
-    "CallInvite",
-    "ServerCallLocator",
-    "GroupCallLocator",
+    "VoiceKind"
 ]
 __version__ = VERSION
 

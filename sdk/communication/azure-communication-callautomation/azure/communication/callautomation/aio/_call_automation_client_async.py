@@ -27,7 +27,6 @@ from .._generated.models import (
 from .._models import (
     CallConnectionProperties,
     RecordingProperties,
-    TranscriptionConfiguration,
     ChannelAffinity,
     CallInvite
 )
