@@ -4,6 +4,8 @@
 
 ### Features Added
 - StartRecording now accepts PauseOnStart.
+- Start, Stop, Update transcript added.
+- Start, Stop hold music added.
 
 ### Breaking Changes
 
@@ -11,7 +13,7 @@
 
 ### Other Changes
 
-## 1.1.0 (2023-11-30)
+## 1.1.0 (2023-11-23)
 ### Features Added
 - Mid Call actions support overriding callback url.
 - Cancel adding Participant invitation.

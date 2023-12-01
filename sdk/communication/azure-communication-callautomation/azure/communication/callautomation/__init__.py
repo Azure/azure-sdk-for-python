@@ -24,7 +24,10 @@ from ._models import (
     ChannelAffinity,
     MuteParticipantResult,
     SendDtmfTonesResult,
-    CancelAddParticipantResult
+    CancelAddParticipantOperationResult,
+    CallInvite,
+    ServerCallLocator,
+    GroupCallLocator
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -74,7 +77,7 @@ __all__ = [
     "TransferCallResult",
     "MuteParticipantResult",
     "SendDtmfTonesResult",
-    "CancelAddParticipantResult",
+    "CancelAddParticipantOperationResult",
 
     # common ACS communication identifier
     "CommunicationIdentifier",
@@ -99,7 +102,12 @@ __all__ = [
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
-    "VoiceKind"
+    "VoiceKind",
+
+    # deprecated models
+    "CallInvite",
+    "ServerCallLocator",
+    "GroupCallLocator",
 ]
 __version__ = VERSION
 

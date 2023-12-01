@@ -18,7 +18,6 @@ from azure.communication.callautomation._shared.models import identifier_from_ra
 
 class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
 
-    @unittest.skip('skip until rerecorded with alpha3 endpoint')
     @recorded_by_proxy
     def test_play_media_in_a_call(self):
         # try to establish the call
@@ -49,7 +48,6 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
 
-    @unittest.skip('skip until rerecorded with alpha3 endpoint')
     @recorded_by_proxy
     def test_dtmf_actions_in_a_call(self):
         # try to establish the call
@@ -88,7 +86,7 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
 
-    @unittest.skip('skip until rerecorded with alpha3 endpoint')
+    @unittest.skip('mute needs to be fixed live test')
     @recorded_by_proxy
     def test_add_and_mute_participant_in_a_call(self):
 

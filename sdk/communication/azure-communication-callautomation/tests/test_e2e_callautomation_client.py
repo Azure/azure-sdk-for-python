@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 from datetime import timedelta
 import time
-import unittest
 
 from devtools_testutils import recorded_by_proxy
 
@@ -15,7 +14,6 @@ from azure.communication.callautomation._shared.models import identifier_from_ra
 
 class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
 
-    @unittest.skip('skip until rerecorded with alpha3 endpoint')
     @recorded_by_proxy
     def test_create_VOIP_call_and_answer_then_hangup(self):
         # try to establish the call
@@ -35,7 +33,6 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
 
-    @unittest.skip('skip until rerecorded with alpha3 endpoint')
     @recorded_by_proxy
     def test_add_participant_then_cancel_request(self):
         # try to establish the call
@@ -58,7 +55,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         # ensure invitation is sent
         time.sleep(3)
 
-        call_connection.cancel_add_participant(add_participant_result.invitation_id)
+        call_connection.cancel_add_participant_operation(add_participant_result.invitation_id)
 
         cancel_add_participant_succeeded_event = self.check_for_event('CancelAddParticipantSucceeded', call_connection._call_connection_id, timedelta(seconds=15))
 
