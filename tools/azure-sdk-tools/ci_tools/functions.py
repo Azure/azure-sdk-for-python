@@ -192,7 +192,8 @@ def apply_ci_disabled_filter(collected_packages: List[str]) -> List[str]:
     logging.debug(
         "Package(s) omitted by ci enabled filter: {}".format(generate_difference(collected_packages, pkg_set_ci_disabled_filtered))
     )
-
+    if not pkg_set_ci_disabled_filtered:
+        pkg_set_ci_disabled_filtered = [""]
     return pkg_set_ci_disabled_filtered
 
 
