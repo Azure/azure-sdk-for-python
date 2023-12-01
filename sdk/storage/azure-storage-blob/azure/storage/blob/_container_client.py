@@ -1394,10 +1394,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             return iter([])
 
         reqs, options = _generate_delete_blobs_options(
-            client=self._client,
             query_str=self._query_str,
             container_name=self.container_name,
-            blobs=blobs,
+            client=self._client,
+            *blobs,
             **kwargs
         )
 
@@ -1475,11 +1475,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         reqs, options = _generate_set_tiers_options(
-            client=self._client,
-            query_str=self._query_str,
-            container_name=self.container_name,
-            blob_tier=standard_blob_tier,
-            blobs=blobs,
+            self._query_str,
+            self.container_name,
+            standard_blob_tier,
+            self._client,
+            *blobs,
             **kwargs)
 
         return self._batch_send(*reqs, **options)
@@ -1534,11 +1534,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
         reqs, options = _generate_set_tiers_options(
-            client=self._client,
-            query_str=self._query_str,
-            container_name=self.container_name,
-            blob_tier=premium_page_blob_tier,
-            blobs=blobs,
+            self._query_str,
+            self.container_name,
+            premium_page_blob_tier,
+            self._client,
+            *blobs,
             **kwargs)
 
         return self._batch_send(*reqs, **options)

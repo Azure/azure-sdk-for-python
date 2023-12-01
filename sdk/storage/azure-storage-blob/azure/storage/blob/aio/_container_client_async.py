@@ -1381,10 +1381,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             return iter([])
 
         reqs, options = _generate_delete_blobs_options(
-            client=self._client,
             query_str=self._query_str,
             container_name=self.container_name,
-            blobs=blobs,
+            client=self._client,
+            *blobs,
             **kwargs
         )
 
@@ -1458,11 +1458,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
         reqs, options = _generate_set_tiers_options(
-            client=self._client,
-            query_str=self._query_str,
-            container_name=self.container_name,
-            blob_tier=standard_blob_tier,
-            blobs=blobs,
+            self._query_str,
+            self.container_name,
+            standard_blob_tier,
+            self._client,
+            *blobs,
             **kwargs)
 
         return await self._batch_send(*reqs, **options)
