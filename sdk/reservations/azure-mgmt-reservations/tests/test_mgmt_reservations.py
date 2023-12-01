@@ -1,6 +1,6 @@
 from azure.mgmt.reservations import AzureReservationAPI
 from azure.mgmt.reservations.models import *
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase
 from azure.mgmt.reservations.models import (
     ReservedResourceType,
     InstanceFlexibility,
@@ -13,10 +13,10 @@ import unittest
 _CUSTOM_ENDPOINT = "https://api-dogfood.resources.windows-int.net/"
 
 @unittest.skip("skip test")
-class MgmtReservationsTest(AzureMgmtTestCase):
+class TestMgmtReservations(AzureMgmtRecordedTestCase):
 
     def setUp(self):
-        super(MgmtReservationsTest, self).setUp()
+        super(TestMgmtReservations, self).setUp()
         self.reservation_client = self.create_basic_client(AzureReservationAPI, base_url=_CUSTOM_ENDPOINT)
         # self.reservation_client = self.create_basic_client(AzureReservationAPI)
 

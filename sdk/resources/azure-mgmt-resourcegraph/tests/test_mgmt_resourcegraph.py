@@ -9,13 +9,13 @@ import unittest
 
 from azure.mgmt.resourcegraph import ResourceGraphClient
 from azure.mgmt.resourcegraph.models import *
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase
 
 @unittest.skip("The test doesn't work.")
-class MgmtResourceGraphTest(AzureMgmtTestCase):
+class TestMgmtResourceGraph(AzureMgmtRecordedTestCase):
 
     def setUp(self):
-        super(MgmtResourceGraphTest, self).setUp()
+        super(TestMgmtResourceGraph, self).setUp()
         self.resourcegraph_client = self.create_basic_client(
             ResourceGraphClient
         )
