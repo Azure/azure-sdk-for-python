@@ -314,7 +314,7 @@ class EventHubConsumerClient(
 
     def _receive(
         self,
-        on_event: Callable[[PartitionContext, Union[Optional[EventData], List[EventData]]], None],
+        on_event: Callable[["PartitionContext", Union[Optional["EventData"], List["EventData"]]], None],
         # on_event: Union[Callable[["PartitionContext", "EventData"], None], Callable[["PartitionContext", List["EventData"]], None]],
         **kwargs: Any
     ) -> None:
