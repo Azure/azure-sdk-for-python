@@ -7,7 +7,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint
+from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
 from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpointProperties as RestBatchEndpoint
 from azure.ai.ml._schema._endpoint import BatchEndpointSchema
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
@@ -78,7 +78,7 @@ class BatchEndpoint(Endpoint):
             self.defaults = {}
             self.defaults["deployment_name"] = default_deployment_name
 
-    def _to_rest_batch_endpoint(self, location: str) -> BatchEndpoint:
+    def _to_rest_batch_endpoint(self, location: str) -> BatchEndpointData:
         validate_endpoint_or_deployment_name(self.name)
         batch_endpoint = RestBatchEndpoint(
             description=self.description,
@@ -86,10 +86,10 @@ class BatchEndpoint(Endpoint):
             properties=self.properties,
             defaults=self.defaults,
         )
-        return BatchEndpoint(location=location, tags=self.tags, properties=batch_endpoint)
+        return BatchEndpointData(location=location, tags=self.tags, properties=batch_endpoint)
 
     @classmethod
-    def _from_rest_object(cls, obj: BatchEndpoint) -> "BatchEndpoint":
+    def _from_rest_object(cls, obj: BatchEndpointData) -> "BatchEndpoint":
         return BatchEndpoint(
             id=obj.id,
             name=obj.name,
