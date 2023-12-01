@@ -10,8 +10,6 @@ from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse
-
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -150,7 +148,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             cls, conn_str: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> Self:
+    ) -> Self:
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:
