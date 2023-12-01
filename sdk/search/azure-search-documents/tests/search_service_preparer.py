@@ -29,6 +29,8 @@ SearchEnvVarPreparer = functools.partial(
     search_query_api_key="fakequeryapikey",
     search_storage_connection_string="DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net",
     search_storage_container_name="fakestoragecontainer",
+    search_sql_connection_string="Data Source=tcp:fakesql.database.windows.net,1433;Initial Catalog=fakedb;User ID=...;Password=...;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False",
+    search_sql_table_name="faketablename",
 )
 
 
