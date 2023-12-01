@@ -38,10 +38,10 @@ from ._constants import (
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
     from ._transport._base import AmqpTransport
-    from ._pyamqp.message import Message as pyamqp_message
+    from ._pyamqp.message import Message as pyamqp_Message
     try:
         from uamqp import types as uamqp_types
-        from uamqp import Message as uamqp_message
+        from uamqp import Message as uamqp_Message
     except ImportError:
         uamqp_types = None
     from azure.core.credentials import AzureSasCredential
@@ -234,7 +234,7 @@ def parse_sas_credential(credential: AzureSasCredential) -> Tuple[str, Optional[
 def transform_outbound_single_message(
         message: Union[AmqpAnnotatedMessage, EventData],
         message_type: Type[EventData],
-        to_outgoing_amqp_message: Callable[[AmqpAnnotatedMessage], Union[uamqp_message, pyamqp_message]]
+        to_outgoing_amqp_message: Callable[[AmqpAnnotatedMessage], Union[uamqp_Message, pyamqp_Message]]
     ) -> EventData:
     """
     This method serves multiple goals:
