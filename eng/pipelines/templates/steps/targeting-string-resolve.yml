@@ -21,9 +21,11 @@ steps:
           $public = true
       }
 
+      if ($public -eq true) {
+          Write-Host "Setting Public to $public"
+          Write-Host "##vso[task.setvariable variable=Public]$public"
+      }
       Write-Host "Setting TargetingString to $setting"
       Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
-      Write-Host "Setting Public to $public"
-      Write-Host "##vso[task.setvariable variable=Public]$public"
     displayName: Check override of targeting string
-    condition: and(succeededOrFailed(), eq(variables['TargetingString'],''), eq(variables['Public'],''))
+    condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))

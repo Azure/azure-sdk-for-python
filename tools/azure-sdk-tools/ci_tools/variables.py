@@ -63,7 +63,7 @@ def in_ci() -> int:
 def in_public() -> int:
     # PUBLIC is set to `true` when running `- ci` pipelines, return 3
     # 0 otherwise
-    if str_to_bool(os.getenv("PUBLIC", "False")):
+    if os.getenv("PUBLIC"):
         print(f"value of PUBLIC: {os.getenv('PUBLIC')}")
         return 3
 
