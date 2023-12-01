@@ -1,5 +1,4 @@
 import os
-from ci_tools.functions import str_to_bool
 
 
 def discover_repo_root(input_repo: str = None):
