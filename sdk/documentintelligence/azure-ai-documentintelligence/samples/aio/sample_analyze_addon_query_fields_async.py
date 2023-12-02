@@ -15,9 +15,9 @@ DESCRIPTION:
 
     This sample uses Layout model to demonstrate.
 
-    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
     enum class. For more information, see:
-    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+    https://learn.microsoft.com/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
 
     The following capabilities are free:
     - BARCODES

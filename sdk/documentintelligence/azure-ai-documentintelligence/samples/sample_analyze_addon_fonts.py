@@ -13,12 +13,11 @@ DESCRIPTION:
     This sample demonstrates how to extract font information using the add-on
     'STYLE_FONT' capability.
 
-    Add-on capabilities are available within all models except for the Business card
-    model. This sample uses Layout model to demonstrate.
+    This sample uses Layout model to demonstrate.
 
-    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
     enum class. For more information, see:
-    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+    https://learn.microsoft.com/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
 
     The following capabilities are free:
     - BARCODES
@@ -28,6 +27,7 @@ DESCRIPTION:
     - FORMULAS
     - OCR_HIGH_RESOLUTION
     - STYLE_FONT
+    - QUERY_FIELDS
 
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
