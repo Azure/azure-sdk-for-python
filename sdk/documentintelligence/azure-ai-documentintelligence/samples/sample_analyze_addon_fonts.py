@@ -41,7 +41,13 @@ USAGE:
 
 import os
 from collections import defaultdict
-from utils import get_styled_text
+
+
+def get_styled_text(styles, content):
+    # Iterate over the styles and merge the spans from each style.
+    spans = [span for style in styles for span in style.spans]
+    spans.sort(key=lambda span: span.offset)
+    return ",".join([content[span.offset : span.offset + span.length] for span in spans])
 
 
 def analyze_fonts():

@@ -24,7 +24,10 @@ USAGE:
 """
 
 import os
-from utils import format_address_value
+
+
+def format_address_value(address_value):
+    return f"\n......House/building number: {address_value.house_number}\n......Road: {address_value.road}\n......City: {address_value.city}\n......State: {address_value.state}\n......Postal code: {address_value.postal_code}"
 
 
 def analyze_tax_us_w2():

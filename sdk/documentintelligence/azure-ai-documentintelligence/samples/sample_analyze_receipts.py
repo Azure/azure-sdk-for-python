@@ -25,7 +25,10 @@ USAGE:
 """
 
 import os
-from utils import format_price
+
+
+def format_price(price_dict):
+    return "".join([f"{p}" for p in price_dict.values()])
 
 
 def analyze_receipts():
