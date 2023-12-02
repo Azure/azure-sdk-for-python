@@ -992,17 +992,17 @@ def _generate_materialization_identity(
     :return: String for name of materialization identity.
     :rtype: str
     """
-    import hashlib
     import uuid
 
-    m = hashlib.md5()
-    m.update(f"{subscription_id}_{workspace.resource_group}_{workspace.name}_{workspace.location}".encode("utf-8"))
-    materialization_identity = f"materialization-uai-{uuid.UUID(m.hexdigest()).hex}"
+    id = f"{subscription_id}_{workspace.resource_group}_{workspace.name}_{workspace.location}"
+    materialization_identity = (
+        f"materialization-uai-" f"{uuid.uuid3(uuid.UUID(ArmConstants.USER_ASSIGNED_IDENTITIES_UUID_NAMESPACE), id).hex}"
+    )
     resources_being_deployed[materialization_identity] = (
         ArmConstants.USER_ASSIGNED_IDENTITIES,
         None,
     )
-    return f"materialization-uai-{uuid.UUID(m.hexdigest()).hex}"
+    return materialization_identity
 
 
 class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
