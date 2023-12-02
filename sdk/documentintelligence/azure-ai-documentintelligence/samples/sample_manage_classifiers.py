@@ -19,7 +19,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
-    3) DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER - The shared access signature (SAS) Url of your Azure Blob Storage container
+    3) DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container
 """
 
 import os
@@ -38,7 +38,7 @@ def sample_manage_classifiers():
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
-    container_sas_url = os.environ["DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER"]
+    container_sas_url = os.environ["DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL"]
 
     document_model_admin_client = DocumentIntelligenceAdministrationClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)

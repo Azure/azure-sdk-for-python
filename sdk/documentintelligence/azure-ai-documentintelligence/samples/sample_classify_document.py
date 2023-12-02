@@ -24,7 +24,7 @@ USAGE:
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
     3) CLASSIFIER_ID - the ID of your trained document classifier
         -OR-
-       DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER - The shared access signature (SAS) Url of your Azure Blob Storage container
+       DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container
        with your training files. A document classifier will be built and used to run the sample.
 """
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     try:
         load_dotenv(find_dotenv())
         classifier_id = None
-        if os.getenv("DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER") and not os.getenv("CLASSIFIER_ID"):
+        if os.getenv("DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL") and not os.getenv("CLASSIFIER_ID"):
             from azure.core.credentials import AzureKeyCredential
             from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
             from azure.ai.documentintelligence.models import (
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
             endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
             key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
-            blob_container_sas_url = os.environ["DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER"]
+            blob_container_sas_url = os.environ["DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL"]
 
             document_model_admin_client = DocumentIntelligenceAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
