@@ -37,6 +37,7 @@ async def classify_document(classifier_id):
         os.path.join(
             os.path.abspath(__file__),
             "..",
+            "..",
             "./sample_forms/forms/IRS-1040.pdf",
         )
     )

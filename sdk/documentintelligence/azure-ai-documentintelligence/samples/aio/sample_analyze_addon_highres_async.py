@@ -63,6 +63,7 @@ async def analyze_with_highres():
         os.path.join(
             os.path.abspath(__file__),
             "..",
+            "..",
             "sample_forms/add_ons/highres.png",
         )
     )

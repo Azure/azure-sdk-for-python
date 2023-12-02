@@ -37,6 +37,7 @@ async def analyze_receipts():
         os.path.join(
             os.path.abspath(__file__),
             "..",
+            "..",
             "./sample_forms/receipt/contoso-allinone.jpg",
         )
     )

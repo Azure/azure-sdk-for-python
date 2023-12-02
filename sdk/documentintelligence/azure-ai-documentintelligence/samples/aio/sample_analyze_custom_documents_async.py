@@ -36,7 +36,7 @@ import asyncio
 
 async def analyze_custom_documents(custom_model_id):
     path_to_sample_documents = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg")
+        os.path.join(os.path.abspath(__file__), "..", "..", "./sample_forms/forms/Form_1.jpg")
     )
     # [START analyze_custom_documents]
     from azure.core.credentials import AzureKeyCredential

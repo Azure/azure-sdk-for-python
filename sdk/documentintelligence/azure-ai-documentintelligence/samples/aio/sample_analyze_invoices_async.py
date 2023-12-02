@@ -32,6 +32,7 @@ async def analyze_invoice():
         os.path.join(
             os.path.abspath(__file__),
             "..",
+            "..",
             "./sample_forms/forms/sample_invoice.jpg",
         )
     )

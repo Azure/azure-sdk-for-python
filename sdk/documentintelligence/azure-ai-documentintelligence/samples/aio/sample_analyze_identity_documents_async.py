@@ -32,6 +32,7 @@ async def analyze_identity_documents():
         os.path.join(
             os.path.abspath(__file__),
             "..",
+            "..",
             "./sample_forms/id_documents/license.jpg",
         )
     )

@@ -45,6 +45,7 @@ async def analyze_read():
         os.path.join(
             os.path.abspath(__file__),
             "..",
+            "..",
             "./sample_forms/forms/Form_1.jpg",
         )
     )

@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_barcodes_async.py
+FILE: sample_analyze_addon_formulas_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract all identified barcodes using the
-    add-on 'BARCODES' capability.
+    This sample demonstrates how to extract all identified formulas, such as mathematical
+    equations, using the add-on 'FORMULAS' capability.
 
     Add-on capabilities are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.
@@ -32,7 +32,7 @@ DESCRIPTION:
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_barcodes_async.py
+    python sample_analyze_addon_formulas_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -43,15 +43,16 @@ import asyncio
 import os
 
 
-async def analyze_barcodes():
+async def analyze_formulas():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "sample_forms/add_ons/barcodes.jpg",
+            "..",
+            "sample_forms/add_ons/formulas.pdf",
         )
     )
-    # [START analyze_barcodes]
+    # [START analyze_formulas]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature
@@ -62,32 +63,41 @@ async def analyze_barcodes():
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_analysis_client:
-        # Specify which add-on capabilities to enable.
+        # Specify which add-on capabilities to enable
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
                 "prebuilt-layout",
                 analyze_request=f,
-                features=[DocumentAnalysisFeature.BARCODES],
+                features=[DocumentAnalysisFeature.FORMULAS],
                 content_type="application/octet-stream",
             )
         result = await poller.result()
 
-    # Iterate over extracted barcodes on each page.
+    # Iterate over extracted formulas on each page and print inline and display formulas
+    # separately.
     for page in result.pages:
-        print(f"----Barcodes detected from page #{page.page_number}----")
-        print(f"Detected {len(page.barcodes)} barcodes:")
-        for barcode_idx, barcode in enumerate(page.barcodes):
-            print(f"- Barcode #{barcode_idx}: {barcode.value}")
-            print(f"  Kind: {barcode.kind}")
-            print(f"  Confidence: {barcode.confidence}")
-            print(f"  Bounding regions: {barcode.polygon}")
+        print(f"----Formulas detected from page #{page.page_number}----")
+        inline_formulas = [f for f in page.formulas if f.kind == "inline"]
+        display_formulas = [f for f in page.formulas if f.kind == "display"]
+
+        print(f"Detected {len(inline_formulas)} inline formulas.")
+        for formula_idx, formula in enumerate(inline_formulas):
+            print(f"- Inline #{formula_idx}: {formula.value}")
+            print(f"  Confidence: {formula.confidence}")
+            print(f"  Bounding regions: {formula.polygon}")
+
+        print(f"\nDetected {len(display_formulas)} display formulas.")
+        for formula_idx, formula in enumerate(display_formulas):
+            print(f"- Display #{formula_idx}: {formula.value}")
+            print(f"  Confidence: {formula.confidence}")
+            print(f"  Bounding regions: {formula.polygon}")
 
     print("----------------------------------------")
-    # [END analyze_barcodes]
+    # [END analyze_formulas]
 
 
 async def main():
-    await analyze_barcodes()
+    await analyze_formulas()
 
 
 if __name__ == "__main__":

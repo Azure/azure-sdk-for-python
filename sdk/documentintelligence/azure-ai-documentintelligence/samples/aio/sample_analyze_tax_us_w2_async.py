@@ -36,6 +36,7 @@ async def analyze_tax_us_w2():
         os.path.join(
             os.path.abspath(__file__),
             "..",
+            "..",
             "./sample_forms/tax/sample_w2.png",
         )
     )

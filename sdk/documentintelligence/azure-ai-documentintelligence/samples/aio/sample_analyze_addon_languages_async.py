@@ -7,11 +7,11 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_formulas_async.py
+FILE: sample_analyze_addon_languages_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract all identified formulas, such as mathematical
-    equations, using the add-on 'FORMULAS' capability.
+    This sample demonstrates how to detect languages from the document using the
+    add-on 'LANGUAGES' capability.
 
     Add-on capabilities are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.
@@ -32,7 +32,7 @@ DESCRIPTION:
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_formulas_async.py
+    python sample_analyze_addon_languages_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -43,15 +43,16 @@ import asyncio
 import os
 
 
-async def analyze_formulas():
+async def analyze_languages():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "sample_forms/add_ons/formulas.pdf",
+            "..",
+            "sample_forms/add_ons/fonts_and_languages.png",
         )
     )
-    # [START analyze_formulas]
+    # [START analyze_languages]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature
@@ -62,41 +63,29 @@ async def analyze_formulas():
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_analysis_client:
-        # Specify which add-on capabilities to enable
+        # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
                 "prebuilt-layout",
                 analyze_request=f,
-                features=[DocumentAnalysisFeature.FORMULAS],
+                features=[DocumentAnalysisFeature.LANGUAGES],
                 content_type="application/octet-stream",
             )
         result = await poller.result()
 
-    # Iterate over extracted formulas on each page and print inline and display formulas
-    # separately.
-    for page in result.pages:
-        print(f"----Formulas detected from page #{page.page_number}----")
-        inline_formulas = [f for f in page.formulas if f.kind == "inline"]
-        display_formulas = [f for f in page.formulas if f.kind == "display"]
-
-        print(f"Detected {len(inline_formulas)} inline formulas.")
-        for formula_idx, formula in enumerate(inline_formulas):
-            print(f"- Inline #{formula_idx}: {formula.value}")
-            print(f"  Confidence: {formula.confidence}")
-            print(f"  Bounding regions: {formula.polygon}")
-
-        print(f"\nDetected {len(display_formulas)} display formulas.")
-        for formula_idx, formula in enumerate(display_formulas):
-            print(f"- Display #{formula_idx}: {formula.value}")
-            print(f"  Confidence: {formula.confidence}")
-            print(f"  Bounding regions: {formula.polygon}")
+    print("----Languages detected in the document----")
+    print(f"Detected {len(result.languages)} languages:")
+    for lang_idx, lang in enumerate(result.languages):
+        print(f"- Language #{lang_idx}: locale '{lang.locale}'")
+        print(f"  Confidence: {lang.confidence}")
+        print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
 
     print("----------------------------------------")
-    # [END analyze_formulas]
+    # [END analyze_languages]
 
 
 async def main():
-    await analyze_formulas()
+    await analyze_languages()
 
 
 if __name__ == "__main__":
