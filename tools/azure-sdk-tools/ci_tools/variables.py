@@ -60,10 +60,10 @@ def in_ci() -> int:
 
 
 def in_public() -> int:
-    # PUBLIC is set to `true` when running `- ci` pipelines, return 3
+    # PULLREQUEST is set to `True` for PRs, return 3
     # 0 otherwise
     if os.getenv("PULLREQUEST"):
-        print(f"value of PULLREQUEST: {os.getenv('PULLREQUEST')}")
+        print(f"Type of PULLREQUEST: {type(os.getenv('PULLREQUEST'))}; value of PULLREQUEST: {os.getenv('PULLREQUEST')}")
         return 3
 
     return 0

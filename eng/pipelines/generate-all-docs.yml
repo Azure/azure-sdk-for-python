@@ -34,6 +34,7 @@ jobs:
             --toxenv=sphinx
 
       - task: PublishPipelineArtifact@0
+        condition: succeeded()
         inputs:
           artifactName: 'documentation' 
           targetPath: '$(Build.SourcesDirectory)/_docs'
