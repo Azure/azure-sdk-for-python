@@ -43,7 +43,7 @@ import asyncio
 import os
 
 
-async def analyze_barcodes():
+async def analyze_query_fields():
     # [START analyze_query_fields]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
@@ -72,7 +72,7 @@ async def analyze_barcodes():
 
 
 async def main():
-    await analyze_barcodes()
+    await analyze_query_fields()
 
 if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError

@@ -42,7 +42,7 @@ USAGE:
 import os
 
 
-def analyze_barcodes():
+def analyze_query_fields():
     # [START analyze_query_fields]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     try:
         load_dotenv(find_dotenv())
-        analyze_barcodes()
+        analyze_query_fields()
     except HttpResponseError as error:
         # Examples of how to check an HttpResponseError
         # Check by error code:
