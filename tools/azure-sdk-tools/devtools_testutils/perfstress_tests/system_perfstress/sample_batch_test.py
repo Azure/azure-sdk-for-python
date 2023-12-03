@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from azure_devtools.perfstress_tests import BatchPerfTest
+from devtools_testutils.perfstress_tests import BatchPerfTest
 import random
 
 class MockReceiver():

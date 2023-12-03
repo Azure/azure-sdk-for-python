@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     pkg_details = ParsedSetup.from_path(package_dir)
     top_level_module = pkg_details.namespace.split(".")[0]
-    python_version = "3.8" if args.next else "3.7"
+    python_version = "3.8"
     commands = [
         sys.executable,
         "-m",

@@ -1,17 +1,14 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.1.1 (2023-11-30)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-- Remove VM Resource Detector for hotfix
+- Add App Service Resource Detector to Auto-Instrumentation.
+    ([#33340](https://github.com/Azure/azure-sdk-for-python/pull/33340))
+- Remove VM Resource Detector while bug is investigated.
     ([#33305](https://github.com/Azure/azure-sdk-for-python/pull/33305))
-
-### Other Changes
+    ([#33373](https://github.com/Azure/azure-sdk-for-python/pull/33373))
 
 ## 1.1.0 (2023-11-08)
 
