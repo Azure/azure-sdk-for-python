@@ -30,6 +30,7 @@ from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._constants import (
     _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
+    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_SDK_INSTRUMENTATION_NAME,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
@@ -51,8 +52,8 @@ from azure.monitor.opentelemetry._util.configurations import (
 
 
 _SUPPORTED_RESOURCE_DETECTORS = (
-    "azure_app_service",
-    "azure_vm",
+    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
+    # _AZURE_VM_RESOURCE_DETECTOR_NAME,
 )
 
 _logger = getLogger(__name__)
