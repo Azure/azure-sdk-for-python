@@ -263,7 +263,10 @@ class Randint(SweepDistribution):
 
 
 class Uniform(SweepDistribution):
-    """Uniform distribution configuration.
+    """
+    :noindex:
+
+    Uniform distribution configuration.
 
     :param min_value: Minimum value of the distribution.
     :type min_value: float
