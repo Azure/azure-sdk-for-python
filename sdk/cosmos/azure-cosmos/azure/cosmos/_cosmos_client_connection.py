@@ -23,7 +23,8 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, TypedDict
+from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast
+from typing_extensions import TypedDict
 import urllib.parse
 
 from urllib3.util.retry import Retry

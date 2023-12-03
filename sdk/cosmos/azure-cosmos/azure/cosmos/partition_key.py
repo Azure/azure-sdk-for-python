@@ -96,9 +96,9 @@ class PartitionKey(dict):
     See https://docs.microsoft.com/azure/cosmos-db/partitioning-overview#choose-partitionkey
     for information on how to choose partition keys.
 
-    :ivar path: The path of the partition key
-    :ivar kind: What kind of partition key is being defined (default: "Hash")
-    :ivar version: The version of the partition key (default: 2)
+    :ivar str path: The path of the partition key
+    :ivar str kind: What kind of partition key is being defined (default: "Hash")
+    :ivar int version: The version of the partition key (default: 2)
     """
 
     @overload

@@ -22,11 +22,13 @@
 """Classes and enums for documents in the Azure Cosmos database service.
 """
 
-from typing import List, Optional, TypedDict
-from typing_extensions import Literal
+from typing import List, Optional, TYPE_CHECKING
+from typing_extensions import Literal, TypedDict
 
 from ._retry_options import RetryOptions
-from ._retry_utility import ConnectionRetryPolicy
+
+if TYPE_CHECKING:
+    from ._retry_utility import ConnectionRetryPolicy
 
 
 class UserConsistencyPolicy(TypedDict, total=False):
@@ -55,8 +57,9 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         Current attachment content (media) usage in MBs (Retrieved from gateway).
         Value is returned from cached information updated periodically and
         is not guaranteed to be real time.
-    :ivar dict ConsistencyPolicy:
+    :ivar ConsistencyPolicy:
         UserConsistencyPolicy settings.
+    :vartype: Dict[str, Union[str, int]]
     :ivar boolean EnableMultipleWritableLocations:
         Flag on the azure Cosmos account that indicates if writes can take
         place in multiple locations.
@@ -101,182 +104,144 @@ class ConsistencyLevel:
 
     Consistency levels by order of strength are Strong, BoundedStaleness,
     Session, ConsistentPrefix and Eventual.
-
-    :cvar str Strong:
-        Strong Consistency guarantees that read operations always return the
-        value that was last written.
-    :cvar str BoundedStaleness:
-        Bounded Staleness guarantees that reads are not too out-of-date. This
-        can be configured based on number of operations (MaxStalenessPrefix)
-        or time (MaxStalenessIntervalInSeconds).
-    :cvar str Session:
-        Session Consistency guarantees monotonic reads (you never read old data,
-        then new, then old again), monotonic writes (writes are ordered) and
-        read your writes (your writes are immediately visible to your reads)
-        within any single session.
-    :cvar str Eventual:
-        Eventual Consistency guarantees that reads will return a subset of
-        writes. All writes will be eventually be available for reads.
-    :cvar str ConsistentPrefix:
-        ConsistentPrefix Consistency guarantees that reads will return some
-        prefix of all writes with no gaps. All writes will be eventually be
-        available for reads.
     """
     Strong: Literal["Strong"] = "Strong"
+    """Strong Consistency guarantees that read operations always return the
+    value that was last written.
+    """
     BoundedStaleness: Literal["BoundedStaleness"] = "BoundedStaleness"
+    """Bounded Staleness guarantees that reads are not too out-of-date. This
+    can be configured based on number of operations (MaxStalenessPrefix)
+    or time (MaxStalenessIntervalInSeconds).
+    """
     Session: Literal["Session"] = "Session"
+    """Session Consistency guarantees monotonic reads (you never read old data,
+    then new, then old again), monotonic writes (writes are ordered) and
+    read your writes (your writes are immediately visible to your reads)
+    within any single session.
+    """
     Eventual: Literal["Eventual"] = "Eventual"
+    """Eventual Consistency guarantees that reads will return a subset of
+    writes. All writes will be eventually be available for reads.
+    """
     ConsistentPrefix: Literal["ConsistentPrefix"] = "ConsistentPrefix"
+    """ConsistentPrefix Consistency guarantees that reads will return some
+    prefix of all writes with no gaps. All writes will be eventually be
+    available for reads.
+    """
 
 
 class IndexingMode:
-    """Specifies the supported indexing modes.
-
-    :cvar str Consistent:
-        Index is updated synchronously with a create or update operation. With
-        consistent indexing, query behavior is the same as the default
-        consistency level for the collection.
-        The index is always kept up to date with the data.
-    :cvar str Lazy:
-        Index is updated asynchronously with respect to a create or update
-        operation. Not supported for new containers since June/2020.
-        With lazy indexing, queries are eventually consistent. The index is
-        updated when the collection is idle.
-    :cvar str NoIndex:
-        No index is provided.
-        Setting IndexingMode to "None" drops the index. Use this if you don't
-        want to maintain the index for a document collection, to save the
-        storage cost or improve the write throughput. Your queries will
-        degenerate to scans of the entire collection.
-    """
+    """Specifies the supported indexing modes."""
     Consistent: Literal["consistent"] = "consistent"
+    """Index is updated synchronously with a create or update operation. With
+    consistent indexing, query behavior is the same as the default
+    consistency level for the collection.
+    The index is always kept up to date with the data.
+    """
     Lazy: Literal["lazy"] = "lazy"
+    """Index is updated asynchronously with respect to a create or update
+    operation. Not supported for new containers since June/2020.
+    With lazy indexing, queries are eventually consistent. The index is
+    updated when the collection is idle.
+    """
     NoIndex: Literal["none"] = "none"
+    """No index is provided.
+    Setting IndexingMode to "None" drops the index. Use this if you don't
+    want to maintain the index for a document collection, to save the
+    storage cost or improve the write throughput. Your queries will
+    degenerate to scans of the entire collection.
+    """
 
 
 class IndexKind:
-    """Specifies the index kind of index specs.
-
-    :cvar str Hash:
-        The index entries are hashed to serve point look up queries.
-        Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop = 5
-    :cvar str Range:
-        The index entries are ordered. Range indexes are optimized for
-        inequality predicate queries with efficient range scans.
-        Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
-    :cvar str MultiHash:
-    """
+    """Specifies the index kind of index specs."""
     Hash: Literal["Hash"] = "Hash"
+    """The index entries are hashed to serve point look up queries.
+    Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop = 5
+    """
     Range: Literal["Range"] = "Range"
+    """
+    The index entries are ordered. Range indexes are optimized for
+    inequality predicate queries with efficient range scans.
+    Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
+    """
     MultiHash: Literal["MultiHash"] = "MultiHash"
+    """MultiHash"""
 
 
 class PartitionKind:
-    """Specifies the kind of partitioning to be applied.
-
-    :cvar str Hash:
-        The partition key definition path is hashed.
-    :cvar str MultiHash:
-    """
+    """Specifies the kind of partitioning to be applied."""
     Hash: Literal["Hash"] = "Hash"
+    """The partition key definition path is hashed."""
     MultiHash: Literal["MultiHash"] = "MultiHash"
+    """MultiHash"""
 
 
 class DataType:
-    """Specifies the data type of index specs.
-
-    :cvar str Number:
-        Represents a numeric data type.
-    :cvar str String:
-        Represents a string data type.
-    :cvar str Point:
-        Represents a point data type.
-    :cvar str LineString:
-        Represents a line string data type.
-    :cvar str Polygon:
-        Represents a polygon data type.
-    :cvar str MultiPolygon:
-        Represents a multi-polygon data type.
-    """
+    """Specifies the data type of index specs."""
     Number: Literal["Number"] = "Number"
+    """Represents a numeric data type."""
     String: Literal["String"] = "String"
+    """Represents a string data type."""
     Point: Literal["Point"] = "Point"
+    """Represents a point data type."""
     LineString: Literal["LineString"] = "LineString"
+    """Represents a line string data type."""
     Polygon: Literal["Polygon"] = "Polygon"
+    """Represents a polygon data type."""
     MultiPolygon: Literal["MultiPolygon"] = "MultiPolygon"
+    """Represents a multi-polygon data type."""
 
 
 class IndexingDirective:
-    """Specifies whether or not the resource is to be indexed.
-
-    :cvar int Default:
-        Use any pre-defined/pre-configured defaults.
-    :cvar int Exclude:
-        Index the resource.
-    :cvar int Include:
-        Do not index the resource.
-    """
+    """Specifies whether or not the resource is to be indexed."""
     Default: int = 0
+    """Use any pre-defined/pre-configured defaults."""
     Exclude: int = 1
+    """Index the resource."""
     Include: int = 2
+    """Do not index the resource."""
 
 
 class ConnectionMode:
-    """Represents the connection mode to be used by the client.
-
-    :cvar int Gateway:
-        Use the Azure Cosmos gateway to route all requests. The gateway proxies
-        requests to the right data partition.
-    """
+    """Represents the connection mode to be used by the client."""
     Gateway: int = 0
+    """Use the Azure Cosmos gateway to route all requests. The gateway proxies
+    requests to the right data partition.
+    """
 
 
 class PermissionMode:
-    """Applicability of a permission.
-
-    :cvar str NoneMode:
-        None.
-    :cvar str Read:
-        Permission applicable for read operations only.
-    :cvar str All:
-        Permission applicable for all operations.
-    """
+    """Applicability of a permission."""
     NoneMode: Literal["none"] = "none"  # None is python's key word.
+    """None"""
     Read: Literal["read"] = "read"
+    """Permission applicable for read operations only."""
     All: Literal["all"] = "all"
+    """Permission applicable for all operations."""
 
 
 class TriggerType:
-    """Specifies the type of a trigger.
-
-    :cvar str Pre:
-        Trigger should be executed before the associated operation(s).
-    :cvar str Post:
-        Trigger should be executed after the associated operation(s).
-    """
+    """Specifies the type of a trigger."""
     Pre: Literal["pre"] = "pre"
+    """Trigger should be executed before the associated operation(s)."""
     Post: Literal["post"] = "post"
+    """Trigger should be executed after the associated operation(s)."""
 
 
 class TriggerOperation:
-    """Specifies the operations on which a trigger should be executed.
-
-    :cvar str All:
-        All operations.
-    :cvar str Create:
-        Create operations only.
-    :cvar str Update:
-        Update operations only.
-    :cvar str Delete:
-        Delete operations only.
-    :cvar str Replace:
-        Replace operations only.
-    """
+    """Specifies the operations on which a trigger should be executed."""
     All: Literal["all"] = "all"
+    """All operations."""
     Create: Literal["create"] = "create"
+    """Create operations only."""
     Update: Literal["update"] = "update"
+    """Update operations only."""
     Delete: Literal["delete"] = "delete"
+    """Delete operations only."""
     Replace: Literal["replace"] = "replace"
+    """Replace operations only."""
 
 
 class SSLConfiguration:
@@ -317,36 +282,39 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     :ivar int RequestTimeout:
         Gets or sets the request timeout (time to wait for a response from a
         network peer).
-    :ivar documents.ConnectionMode ConnectionMode:
+    :ivar ConnectionMode:
         Gets or sets the connection mode used in the client. (Currently only
         Gateway is supported.)
-    :ivar documents.SSLConfiguration SSLConfiguration:
+    :vartype ConnectionMode: ~azure.cosmos.documents.ConnectionMode
+    :ivar SSLConfiguration:
         Gets or sets the SSL configuration.
-    :ivar documents.ProxyConfiguration ProxyConfiguration:
+    :vartype SSLConfiguration: ~azure.cosmos.documents.SSLConfiguration
+    :ivar ProxyConfiguration:
         Gets or sets the proxy configuration.
+    :vartype ProxyConfiguration: ~azure.cosmos.documents.ProxyConfiguration
     :ivar boolean EnableEndpointDiscovery:
         Gets or sets endpoint discovery flag for geo-replicated database
         accounts. When EnableEndpointDiscovery is true, the client will
         automatically discover the current write and read locations and direct
         the requests to the correct location taking into consideration of the
         user's preference(if provided) as PreferredLocations.
-    :ivar list PreferredLocations:
+    :ivar PreferredLocations:
         Gets or sets the preferred locations for geo-replicated database
         accounts. When EnableEndpointDiscovery is true and PreferredLocations is
         non-empty, the client will use this list to evaluate the final location,
         taking into consideration the order specified in PreferredLocations. The
         locations in this list are specified as the names of the azure Cosmos
         locations like, 'West US', 'East US', 'Central India' and so on.
-    :ivar RetryOptions RetryOptions:
+    :vartype PreferredLocations: List[str]
+    :ivar RetryOptions:
         Gets or sets the retry options to be applied to all requests when
         retrying.
+    :vartype RetryOptions: ~RetryOptions
     :ivar boolean DisableSSLVerification:
         Flag to disable SSL verification for the requests. SSL verification is
         enabled by default.
-
         This is intended to be used only when targeting emulator endpoint to
         avoid failing your requests with SSL related error.
-
         DO NOT set this when targeting production endpoints.
     :ivar boolean UseMultipleWriteLocations:
         Flag to enable writes on any locations (regions) for geo-replicated
@@ -354,7 +322,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     :ivar ConnectionRetryConfiguration:
         Retry Configuration to be used for connection retries.
     :vartype ConnectionRetryConfiguration:
-        int or azure.cosmos.ConnectionRetryPolicy or urllib3.util.retry
+        int or ~azure.cosmos.ConnectionRetryPolicy
     """
 
     __defaultRequestTimeout: int = 60  # seconds
@@ -366,15 +334,14 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
         self.PreferredLocations: List[str] = []
-        self.RetryOptions = RetryOptions()
+        self.RetryOptions: RetryOptions = RetryOptions()
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
-        self.ConnectionRetryConfiguration: Optional[ConnectionRetryPolicy] = None
+        self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
 
 
 class _OperationType:
-    """Represents the type of the operation
-    """
+    """Represents the type of the operation"""
     Create: Literal["Create"] = "Create"
     Delete: Literal["Delete"] = "Delete"
     ExecuteJavaScript: Literal["ExecuteJavaScript"] = "ExecuteJavaScript"
@@ -427,6 +394,7 @@ class _OperationType:
             _OperationType.HeadFeed,
         )
 
+
 class _QueryFeature:
     NoneQuery: Literal["NoneQuery"] = "NoneQuery"
     Aggregate: Literal["Aggregate"] = "Aggregate"
@@ -438,6 +406,7 @@ class _QueryFeature:
     OffsetAndLimit: Literal["OffsetAndLimit"] = "OffsetAndLimit"
     OrderBy: Literal["OrderBy"] = "OrderBy"
     Top: Literal["Top"] = "Top"
+
 
 class _DistinctType:
     NoneType: Literal["None"] = "None"
