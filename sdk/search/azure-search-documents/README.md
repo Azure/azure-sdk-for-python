@@ -133,8 +133,8 @@ search_client = SearchClient(service_endpoint, index_name, credential)
 An Azure AI Search service contains one or more indexes that provide
 persistent storage of searchable data in the form of JSON documents.  _(If
 you're brand new to search, you can make a very rough analogy between
-indexes and database tables.)_  The Azure.Search.Documents client librSearchServiceClientary
-exposes operations on these resources through two main client types.
+indexes and database tables.)_  The Azure.Search.Documents client library
+exposes operations on these resources through three main client types.
 
 * `SearchClient` helps with:
   * [Searching](https://docs.microsoft.com/azure/search/search-lucene-query-architecture)
