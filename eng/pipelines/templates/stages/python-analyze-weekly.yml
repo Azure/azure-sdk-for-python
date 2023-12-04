@@ -86,3 +86,14 @@ stages:
                 --disablecov
             env:
               GH_TOKEN: $(azuresdk-github-pat)
+
+          - task: PythonScript@0
+            displayName: 'Generate Docs'
+            continueOnError: true
+            inputs:
+              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+              arguments: >-
+                ${{ parameters.BuildTargetingString }}
+                --service="${{ parameters.ServiceDirectory }}" 
+                --toxenv=sphinx
+                --strict=true
