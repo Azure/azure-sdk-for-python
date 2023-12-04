@@ -195,6 +195,8 @@ class QADataGenerator:
             **self._chat_completion_params,
         )
         modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
+        # Don't modify first question of conversation
+        modified_questions[0] = questions[0]
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
         return modified_questions, response["usage"]
 
@@ -285,6 +287,8 @@ class QADataGenerator:
             **self._chat_completion_params,
         )
         modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
+        # Don't modify first question of conversation
+        modified_questions[0] = questions[0]
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
         return modified_questions, response["usage"]
 
