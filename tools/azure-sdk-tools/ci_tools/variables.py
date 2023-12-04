@@ -63,7 +63,6 @@ def in_public() -> int:
     # PULLREQUEST is set to `True` for PRs, return 3
     # 0 otherwise
     if os.getenv("PULLREQUEST"):
-        print(f"Type of PULLREQUEST: {type(os.getenv('PULLREQUEST'))}; value of PULLREQUEST: {os.getenv('PULLREQUEST')}")
         return 3
 
     return 0
