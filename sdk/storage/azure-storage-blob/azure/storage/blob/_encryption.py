@@ -44,6 +44,7 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     'The require_encryption flag is set, but encryption is not supported'
     ' for this method.')
 
+
 def _validate_not_none(param_name, param):
     if param is None:
         raise ValueError(f'{param_name} should not be None.')
