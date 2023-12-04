@@ -33,7 +33,12 @@ jobs:
             "$(BuildTargetingString)"
             --toxenv=sphinx
 
+      - pwsh: |
+          $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
+          Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
+
       - task: PublishPipelineArtifact@0
+        condition: eq(variables['DirectoryExists'], True)
         inputs:
           artifactName: 'documentation' 
           targetPath: '$(Build.SourcesDirectory)/_docs'
