@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added the support to receive inline images from Microsoft Teams users in an interoperability Chat
+- Added the support to receive inline images from Microsoft Teams users in an interoperability Chat with new type `ChatAttachment`
 - Added support for proactive refreshing of tokens
 - `CommunicationTokenCredential` exposes a new boolean keyword argument `proactive_refresh` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
 - Added disposal function `close` for `CommunicationTokenCredential`.
