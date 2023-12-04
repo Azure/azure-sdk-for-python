@@ -29,9 +29,9 @@ class AtlasAttributeDef(_model_base.Model):  # pylint: disable=too-many-instance
 
     :ivar cardinality: single-valued attribute or multi-valued attribute. Known values are:
      "SINGLE", "LIST", and "SET".
-    :vartype cardinality: str or ~azure.analytics.purview.datamap.models.Cardinality
+    :vartype cardinality: str or ~azure.purview.datamap.models.Cardinality
     :ivar constraints: An array of constraints.
-    :vartype constraints: list[~azure.analytics.purview.datamap.models.AtlasConstraintDef]
+    :vartype constraints: list[~azure.purview.datamap.models.AtlasConstraintDef]
     :ivar default_value: The default value of the attribute.
     :vartype default_value: str
     :ivar description: The description of the attribute.
@@ -121,13 +121,13 @@ class AtlasBusinessMetadataDef(_model_base.Model):  # pylint: disable=too-many-i
     :ivar category: The enum of type category. Known values are: "PRIMITIVE", "OBJECT_ID_TYPE",
      "ENUM", "STRUCT", "CLASSIFICATION", "ENTITY", "ARRAY", "MAP", "RELATIONSHIP", and
      "TERM_TEMPLATE".
-    :vartype category: str or ~azure.analytics.purview.datamap.models.TypeCategory
+    :vartype category: str or ~azure.purview.datamap.models.TypeCategory
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
     :vartype created_by: str
     :ivar date_formatter: The date format.
-    :vartype date_formatter: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_formatter: ~azure.purview.datamap.models.DateFormat
     :ivar description: The description of the type definition.
     :vartype description: str
     :ivar guid: The GUID of the type definition.
@@ -149,7 +149,7 @@ class AtlasBusinessMetadataDef(_model_base.Model):  # pylint: disable=too-many-i
     :ivar last_modified_t_s: ETag for concurrency control.
     :vartype last_modified_t_s: str
     :ivar attribute_defs: An array of attribute definitions.
-    :vartype attribute_defs: list[~azure.analytics.purview.datamap.models.AtlasAttributeDef]
+    :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
 
     category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
@@ -232,12 +232,12 @@ class AtlasClassification(_model_base.Model):
     :vartype entity_guid: str
     :ivar entity_status: Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: "ACTIVE" and "DELETED".
-    :vartype entity_status: str or ~azure.analytics.purview.datamap.models.Status
+    :vartype entity_status: str or ~azure.purview.datamap.models.Status
     :ivar remove_propagations_on_entity_delete: Determines if propagations will be removed on
      entity deletion.
     :vartype remove_propagations_on_entity_delete: bool
     :ivar validity_periods: An array of time boundaries indicating validity periods.
-    :vartype validity_periods: list[~azure.analytics.purview.datamap.models.TimeBoundary]
+    :vartype validity_periods: list[~azure.purview.datamap.models.TimeBoundary]
     """
 
     attributes: Optional[Dict[str, Any]] = rest_field()
@@ -287,13 +287,13 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
     :ivar category: The enum of type category. Known values are: "PRIMITIVE", "OBJECT_ID_TYPE",
      "ENUM", "STRUCT", "CLASSIFICATION", "ENTITY", "ARRAY", "MAP", "RELATIONSHIP", and
      "TERM_TEMPLATE".
-    :vartype category: str or ~azure.analytics.purview.datamap.models.TypeCategory
+    :vartype category: str or ~azure.purview.datamap.models.TypeCategory
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
     :vartype created_by: str
     :ivar date_formatter: The date format.
-    :vartype date_formatter: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_formatter: ~azure.purview.datamap.models.DateFormat
     :ivar description: The description of the type definition.
     :vartype description: str
     :ivar guid: The GUID of the type definition.
@@ -315,7 +315,7 @@ class AtlasClassificationDef(_model_base.Model):  # pylint: disable=too-many-ins
     :ivar last_modified_t_s: ETag for concurrency control.
     :vartype last_modified_t_s: str
     :ivar attribute_defs: An array of attribute definitions.
-    :vartype attribute_defs: list[~azure.analytics.purview.datamap.models.AtlasAttributeDef]
+    :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     :ivar entity_types: Specifying a list of entityType names in the classificationDef, ensures
      that
      classifications can
@@ -459,7 +459,7 @@ class AtlasClassifications(_model_base.Model):
     :vartype sort_by: str
     :ivar sort_type: to specify whether the result should be sorted? If yes, whether asc or desc.
      Known values are: "NONE", "ASC", and "DESC".
-    :vartype sort_type: str or ~azure.analytics.purview.datamap.models.SortType
+    :vartype sort_type: str or ~azure.purview.datamap.models.SortType
     :ivar start_index: The start index of the page.
     :vartype start_index: int
     :ivar total_count: The total count of items.
@@ -543,9 +543,9 @@ class AtlasEntitiesWithExtInfo(_model_base.Model):
     hive_database.
 
     :ivar referred_entities: The referred entities.
-    :vartype referred_entities: dict[str, ~azure.analytics.purview.datamap.models.AtlasEntity]
+    :vartype referred_entities: dict[str, ~azure.purview.datamap.models.AtlasEntity]
     :ivar entities: An array of entities.
-    :vartype entities: list[~azure.analytics.purview.datamap.models.AtlasEntity]
+    :vartype entities: list[~azure.purview.datamap.models.AtlasEntity]
     """
 
     referred_entities: Optional[Dict[str, "_models.AtlasEntity"]] = rest_field(name="referredEntities")
@@ -587,7 +587,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     :ivar business_attributes: Business attributes.
     :vartype business_attributes: dict[str, any]
     :ivar classifications: An array of classifications.
-    :vartype classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification]
+    :vartype classifications: list[~azure.purview.datamap.models.AtlasClassification]
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
@@ -605,7 +605,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     :ivar labels: labels.
     :vartype labels: list[str]
     :ivar meanings: An array of term assignment headers indicating the meanings of the entity.
-    :vartype meanings: list[~azure.analytics.purview.datamap.models.AtlasTermAssignmentHeader]
+    :vartype meanings: list[~azure.purview.datamap.models.AtlasTermAssignmentHeader]
     :ivar provenance_type: Used to record the provenance of an instance of an entity or
      relationship.
     :vartype provenance_type: int
@@ -615,7 +615,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     :vartype relationship_attributes: dict[str, any]
     :ivar status: Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: "ACTIVE" and "DELETED".
-    :vartype status: str or ~azure.analytics.purview.datamap.models.Status
+    :vartype status: str or ~azure.purview.datamap.models.Status
     :ivar update_time: The update time of the record.
     :vartype update_time: int
     :ivar updated_by: The user who updated the record.
@@ -623,7 +623,7 @@ class AtlasEntity(_model_base.Model):  # pylint: disable=too-many-instance-attri
     :ivar version: The version of the entity.
     :vartype version: int
     :ivar contacts: The dictionary of contacts for entities. Key could be Expert or Owner.
-    :vartype contacts: dict[str, list[~azure.analytics.purview.datamap.models.ContactBasic]]
+    :vartype contacts: dict[str, list[~azure.purview.datamap.models.ContactBasic]]
     """
 
     attributes: Optional[Dict[str, Any]] = rest_field()
@@ -717,13 +717,13 @@ class AtlasEntityDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     :ivar category: The enum of type category. Known values are: "PRIMITIVE", "OBJECT_ID_TYPE",
      "ENUM", "STRUCT", "CLASSIFICATION", "ENTITY", "ARRAY", "MAP", "RELATIONSHIP", and
      "TERM_TEMPLATE".
-    :vartype category: str or ~azure.analytics.purview.datamap.models.TypeCategory
+    :vartype category: str or ~azure.purview.datamap.models.TypeCategory
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
     :vartype created_by: str
     :ivar date_formatter: The date format.
-    :vartype date_formatter: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_formatter: ~azure.purview.datamap.models.DateFormat
     :ivar description: The description of the type definition.
     :vartype description: str
     :ivar guid: The GUID of the type definition.
@@ -745,14 +745,14 @@ class AtlasEntityDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     :ivar last_modified_t_s: ETag for concurrency control.
     :vartype last_modified_t_s: str
     :ivar attribute_defs: An array of attribute definitions.
-    :vartype attribute_defs: list[~azure.analytics.purview.datamap.models.AtlasAttributeDef]
+    :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     :ivar sub_types: An array of sub types.
     :vartype sub_types: list[str]
     :ivar super_types: An array of super types.
     :vartype super_types: list[str]
     :ivar relationship_attribute_defs: An array of relationship attributes.
     :vartype relationship_attribute_defs:
-     list[~azure.analytics.purview.datamap.models.AtlasRelationshipAttributeDef]
+     list[~azure.purview.datamap.models.AtlasRelationshipAttributeDef]
     """
 
     category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
@@ -844,7 +844,7 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
     :ivar classification_names: An array of classification names.
     :vartype classification_names: list[str]
     :ivar classifications: An array of classifications.
-    :vartype classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification]
+    :vartype classifications: list[~azure.purview.datamap.models.AtlasClassification]
     :ivar display_text: The display text.
     :vartype display_text: str
     :ivar guid: The GUID of the record.
@@ -856,10 +856,10 @@ class AtlasEntityHeader(_model_base.Model):  # pylint: disable=too-many-instance
     :ivar meaning_names: An array of meanings.
     :vartype meaning_names: list[str]
     :ivar meanings: An array of term assignment headers.
-    :vartype meanings: list[~azure.analytics.purview.datamap.models.AtlasTermAssignmentHeader]
+    :vartype meanings: list[~azure.purview.datamap.models.AtlasTermAssignmentHeader]
     :ivar status: Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: "ACTIVE" and "DELETED".
-    :vartype status: str or ~azure.analytics.purview.datamap.models.Status
+    :vartype status: str or ~azure.purview.datamap.models.Status
     """
 
     attributes: Optional[Dict[str, Any]] = rest_field()
@@ -922,7 +922,7 @@ class AtlasEntityHeaders(_model_base.Model):
     """An instance of an entity header map.
 
     :ivar guid_header_map: The description of the guid header map,.
-    :vartype guid_header_map: dict[str, ~azure.analytics.purview.datamap.models.AtlasEntityHeader]
+    :vartype guid_header_map: dict[str, ~azure.purview.datamap.models.AtlasEntityHeader]
     """
 
     guid_header_map: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(name="guidHeaderMap")
@@ -952,9 +952,9 @@ class AtlasEntityWithExtInfo(_model_base.Model):
     hive_database.
 
     :ivar referred_entities: The referred entities.
-    :vartype referred_entities: dict[str, ~azure.analytics.purview.datamap.models.AtlasEntity]
+    :vartype referred_entities: dict[str, ~azure.purview.datamap.models.AtlasEntity]
     :ivar entity: An instance of an entity - like hive_table, hive_database.
-    :vartype entity: ~azure.analytics.purview.datamap.models.AtlasEntity
+    :vartype entity: ~azure.purview.datamap.models.AtlasEntity
     """
 
     referred_entities: Optional[Dict[str, "_models.AtlasEntity"]] = rest_field(name="referredEntities")
@@ -988,13 +988,13 @@ class AtlasEnumDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :ivar category: The enum of type category. Known values are: "PRIMITIVE", "OBJECT_ID_TYPE",
      "ENUM", "STRUCT", "CLASSIFICATION", "ENTITY", "ARRAY", "MAP", "RELATIONSHIP", and
      "TERM_TEMPLATE".
-    :vartype category: str or ~azure.analytics.purview.datamap.models.TypeCategory
+    :vartype category: str or ~azure.purview.datamap.models.TypeCategory
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
     :vartype created_by: str
     :ivar date_formatter: The date format.
-    :vartype date_formatter: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_formatter: ~azure.purview.datamap.models.DateFormat
     :ivar description: The description of the type definition.
     :vartype description: str
     :ivar guid: The GUID of the type definition.
@@ -1018,7 +1018,7 @@ class AtlasEnumDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :ivar default_value: The default value.
     :vartype default_value: str
     :ivar element_defs: An array of enum element definitions.
-    :vartype element_defs: list[~azure.analytics.purview.datamap.models.AtlasEnumElementDef]
+    :vartype element_defs: list[~azure.purview.datamap.models.AtlasEnumElementDef]
     """
 
     category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
@@ -1135,7 +1135,7 @@ class AtlasGlossary(_model_base.Model):  # pylint: disable=too-many-instance-att
     :ivar guid: The GUID of the object.
     :vartype guid: str
     :ivar classifications: An array of classifications.
-    :vartype classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification]
+    :vartype classifications: list[~azure.purview.datamap.models.AtlasClassification]
     :ivar long_description: The long version description.
     :vartype long_description: str
     :ivar name: The name of the glossary object.
@@ -1155,11 +1155,11 @@ class AtlasGlossary(_model_base.Model):  # pylint: disable=too-many-instance-att
     :ivar updated_by: The user who updated the record.
     :vartype updated_by: str
     :ivar categories: An array of categories.
-    :vartype categories: list[~azure.analytics.purview.datamap.models.AtlasRelatedCategoryHeader]
+    :vartype categories: list[~azure.purview.datamap.models.AtlasRelatedCategoryHeader]
     :ivar language: The language of the glossary.
     :vartype language: str
     :ivar terms: An array of related term headers.
-    :vartype terms: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype terms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar usage: The usage of the glossary.
     :vartype usage: str
     """
@@ -1234,7 +1234,7 @@ class AtlasGlossaryCategory(_model_base.Model):  # pylint: disable=too-many-inst
     :ivar guid: The GUID of the object.
     :vartype guid: str
     :ivar classifications: An array of classifications.
-    :vartype classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification]
+    :vartype classifications: list[~azure.purview.datamap.models.AtlasClassification]
     :ivar long_description: The long version description.
     :vartype long_description: str
     :ivar name: The name of the glossary object.
@@ -1254,14 +1254,13 @@ class AtlasGlossaryCategory(_model_base.Model):  # pylint: disable=too-many-inst
     :ivar updated_by: The user who updated the record.
     :vartype updated_by: str
     :ivar anchor: The glossary header with basic information.
-    :vartype anchor: ~azure.analytics.purview.datamap.models.AtlasGlossaryHeader
+    :vartype anchor: ~azure.purview.datamap.models.AtlasGlossaryHeader
     :ivar children_categories: An array of children categories.
-    :vartype children_categories:
-     list[~azure.analytics.purview.datamap.models.AtlasRelatedCategoryHeader]
+    :vartype children_categories: list[~azure.purview.datamap.models.AtlasRelatedCategoryHeader]
     :ivar parent_category: The header of the related category.
-    :vartype parent_category: ~azure.analytics.purview.datamap.models.AtlasRelatedCategoryHeader
+    :vartype parent_category: ~azure.purview.datamap.models.AtlasRelatedCategoryHeader
     :ivar terms: An array of related term headers.
-    :vartype terms: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype terms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     """
 
     guid: Optional[str] = rest_field()
@@ -1334,7 +1333,7 @@ class AtlasGlossaryExtInfo(_model_base.Model):  # pylint: disable=too-many-insta
     :ivar guid: The GUID of the object.
     :vartype guid: str
     :ivar classifications: An array of classifications.
-    :vartype classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification]
+    :vartype classifications: list[~azure.purview.datamap.models.AtlasClassification]
     :ivar long_description: The long version description.
     :vartype long_description: str
     :ivar name: The name of the glossary object.
@@ -1354,18 +1353,17 @@ class AtlasGlossaryExtInfo(_model_base.Model):  # pylint: disable=too-many-insta
     :ivar updated_by: The user who updated the record.
     :vartype updated_by: str
     :ivar categories: An array of categories.
-    :vartype categories: list[~azure.analytics.purview.datamap.models.AtlasRelatedCategoryHeader]
+    :vartype categories: list[~azure.purview.datamap.models.AtlasRelatedCategoryHeader]
     :ivar language: The language of the glossary.
     :vartype language: str
     :ivar terms: An array of related term headers.
-    :vartype terms: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype terms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar usage: The usage of the glossary.
     :vartype usage: str
     :ivar category_info: The glossary category information.
-    :vartype category_info: dict[str,
-     ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory]
+    :vartype category_info: dict[str, ~azure.purview.datamap.models.AtlasGlossaryCategory]
     :ivar term_info: The glossary term information.
-    :vartype term_info: dict[str, ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm]
+    :vartype term_info: dict[str, ~azure.purview.datamap.models.AtlasGlossaryTerm]
     """
 
     guid: Optional[str] = rest_field()
@@ -1483,7 +1481,7 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
     :ivar guid: The GUID of the object.
     :vartype guid: str
     :ivar classifications: An array of classifications.
-    :vartype classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification]
+    :vartype classifications: list[~azure.purview.datamap.models.AtlasClassification]
     :ivar long_description: The long version description.
     :vartype long_description: str
     :ivar name: The name of the glossary object.
@@ -1507,60 +1505,56 @@ class AtlasGlossaryTerm(_model_base.Model):  # pylint: disable=too-many-instance
     :ivar template_name: The name of the template.
     :vartype template_name: list[any]
     :ivar anchor: The glossary header with basic information.
-    :vartype anchor: ~azure.analytics.purview.datamap.models.AtlasGlossaryHeader
+    :vartype anchor: ~azure.purview.datamap.models.AtlasGlossaryHeader
     :ivar antonyms: An array of related term headers as antonyms.
-    :vartype antonyms: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype antonyms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar status: Status of the AtlasGlossaryTerm. Known values are: "Draft", "Approved", "Alert",
      and "Expired".
-    :vartype status: str or ~azure.analytics.purview.datamap.models.TermStatus
+    :vartype status: str or ~azure.purview.datamap.models.TermStatus
     :ivar nick_name: The nick name of the term.
     :vartype nick_name: str
     :ivar hierarchy_info: The hierarchy information of the term.
-    :vartype hierarchy_info: list[~azure.analytics.purview.datamap.models.PurviewObjectId]
+    :vartype hierarchy_info: list[~azure.purview.datamap.models.PurviewObjectId]
     :ivar resources: An array of resource link for term.
-    :vartype resources: list[~azure.analytics.purview.datamap.models.ResourceLink]
+    :vartype resources: list[~azure.purview.datamap.models.ResourceLink]
     :ivar contacts: The dictionary of contacts for terms. Key could be Expert or Steward.
-    :vartype contacts: dict[str, list[~azure.analytics.purview.datamap.models.ContactBasic]]
+    :vartype contacts: dict[str, list[~azure.purview.datamap.models.ContactBasic]]
     :ivar attributes: The custom attributes of the term, which is map<string,map<string,object>>.
      The
      key of the first layer map is term template name.
     :vartype attributes: dict[str, dict[str, any]]
     :ivar assigned_entities: An array of related object IDs.
-    :vartype assigned_entities: list[~azure.analytics.purview.datamap.models.AtlasRelatedObjectId]
+    :vartype assigned_entities: list[~azure.purview.datamap.models.AtlasRelatedObjectId]
     :ivar categories: An array of term categorization headers.
-    :vartype categories:
-     list[~azure.analytics.purview.datamap.models.AtlasTermCategorizationHeader]
+    :vartype categories: list[~azure.purview.datamap.models.AtlasTermCategorizationHeader]
     :ivar classifies: An array of related term headers.
-    :vartype classifies: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype classifies: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar examples: An array of examples.
     :vartype examples: list[str]
     :ivar is_a: An array of related term headers indicating the is-a relationship.
-    :vartype is_a: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype is_a: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar preferred_terms: An array of preferred related term headers.
-    :vartype preferred_terms: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype preferred_terms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar preferred_to_terms: An array of related term headers that are preferred to.
-    :vartype preferred_to_terms:
-     list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype preferred_to_terms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar replaced_by: An array of related term headers that are replaced by.
-    :vartype replaced_by: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype replaced_by: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar replacement_terms: An array of related term headers for replacement.
-    :vartype replacement_terms:
-     list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype replacement_terms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar see_also: An array of related term headers for see also.
-    :vartype see_also: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype see_also: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar synonyms: An array of related term headers as synonyms.
-    :vartype synonyms: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype synonyms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar translated_terms: An array of translated related term headers.
-    :vartype translated_terms: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype translated_terms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar translation_terms: An array of related term headers for translation.
-    :vartype translation_terms:
-     list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype translation_terms: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar usage: The usage of the term.
     :vartype usage: str
     :ivar valid_values: An array of related term headers as valid values.
-    :vartype valid_values: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype valid_values: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     :ivar valid_values_for: An array of related term headers as valid values for other records.
-    :vartype valid_values_for: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+    :vartype valid_values_for: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
     """
 
     guid: Optional[str] = rest_field()
@@ -1702,7 +1696,7 @@ class AtlasLineageInfo(_model_base.Model):
     :ivar base_entity_guid: The GUID of the base entity.
     :vartype base_entity_guid: str
     :ivar guid_entity_map: The GUID entity map.
-    :vartype guid_entity_map: dict[str, ~azure.analytics.purview.datamap.models.AtlasEntityHeader]
+    :vartype guid_entity_map: dict[str, ~azure.purview.datamap.models.AtlasEntityHeader]
     :ivar width_counts: The entity count in specific direction.
     :vartype width_counts: dict[str, dict[str, any]]
     :ivar lineage_depth: The depth of lineage.
@@ -1713,11 +1707,11 @@ class AtlasLineageInfo(_model_base.Model):
     :vartype children_count: int
     :ivar lineage_direction: The enum of lineage direction. Known values are: "INPUT", "OUTPUT",
      and "BOTH".
-    :vartype lineage_direction: str or ~azure.analytics.purview.datamap.models.LineageDirection
+    :vartype lineage_direction: str or ~azure.purview.datamap.models.LineageDirection
     :ivar parent_relations: An array of parentRelations relations.
-    :vartype parent_relations: list[~azure.analytics.purview.datamap.models.ParentRelation]
+    :vartype parent_relations: list[~azure.purview.datamap.models.ParentRelation]
     :ivar relations: An array of lineage relations.
-    :vartype relations: list[~azure.analytics.purview.datamap.models.LineageRelation]
+    :vartype relations: list[~azure.purview.datamap.models.LineageRelation]
     """
 
     base_entity_guid: Optional[str] = rest_field(name="baseEntityGuid")
@@ -1868,19 +1862,18 @@ class AtlasRelatedObjectId(_model_base.Model):
     :vartype display_text: str
     :ivar entity_status: Status of the entity - can be active or deleted. Deleted entities are not
      removed. Known values are: "ACTIVE" and "DELETED".
-    :vartype entity_status: str or ~azure.analytics.purview.datamap.models.Status
+    :vartype entity_status: str or ~azure.purview.datamap.models.Status
     :ivar relationship_type: Relationship type.
     :vartype relationship_type: str
     :ivar relationship_attributes: Captures details of struct contents. Not instantiated directly,
      used only via
      AtlasEntity, AtlasClassification.
-    :vartype relationship_attributes: ~azure.analytics.purview.datamap.models.AtlasStruct
+    :vartype relationship_attributes: ~azure.purview.datamap.models.AtlasStruct
     :ivar relationship_guid: The GUID of the relationship.
     :vartype relationship_guid: str
     :ivar relationship_status: The enum of relationship status. Known values are: "ACTIVE" and
      "DELETED".
-    :vartype relationship_status: str or
-     ~azure.analytics.purview.datamap.models.StatusAtlasRelationship
+    :vartype relationship_status: str or ~azure.purview.datamap.models.StatusAtlasRelationship
     """
 
     guid: Optional[str] = rest_field()
@@ -1944,7 +1937,7 @@ class AtlasRelatedTermHeader(_model_base.Model):
     :vartype relation_guid: str
     :ivar status: The status of term relationship. Known values are: "DRAFT", "ACTIVE",
      "DEPRECATED", "OBSOLETE", and "OTHER".
-    :vartype status: str or ~azure.analytics.purview.datamap.models.AtlasTermRelationshipStatus
+    :vartype status: str or ~azure.purview.datamap.models.AtlasTermRelationshipStatus
     :ivar steward: The steward of the term.
     :vartype steward: str
     :ivar term_guid: The GUID of the term.
@@ -2006,9 +1999,9 @@ class AtlasRelationship(_model_base.Model):  # pylint: disable=too-many-instance
     :ivar created_by: The user who created the record.
     :vartype created_by: str
     :ivar end1: Reference to an object-instance of a type - like entity.
-    :vartype end1: ~azure.analytics.purview.datamap.models.AtlasObjectId
+    :vartype end1: ~azure.purview.datamap.models.AtlasObjectId
     :ivar end2: Reference to an object-instance of a type - like entity.
-    :vartype end2: ~azure.analytics.purview.datamap.models.AtlasObjectId
+    :vartype end2: ~azure.purview.datamap.models.AtlasObjectId
     :ivar guid: The GUID of the relationship.
     :vartype guid: str
     :ivar home_id: The home ID of the relationship.
@@ -2019,7 +2012,7 @@ class AtlasRelationship(_model_base.Model):  # pylint: disable=too-many-instance
      relationship.
     :vartype provenance_type: int
     :ivar status: The enum of relationship status. Known values are: "ACTIVE" and "DELETED".
-    :vartype status: str or ~azure.analytics.purview.datamap.models.StatusAtlasRelationship
+    :vartype status: str or ~azure.purview.datamap.models.StatusAtlasRelationship
     :ivar update_time: The update time of the record.
     :vartype update_time: int
     :ivar updated_by: The user who updated the record.
@@ -2100,9 +2093,9 @@ class AtlasRelationshipAttributeDef(_model_base.Model):  # pylint: disable=too-m
 
     :ivar cardinality: single-valued attribute or multi-valued attribute. Known values are:
      "SINGLE", "LIST", and "SET".
-    :vartype cardinality: str or ~azure.analytics.purview.datamap.models.Cardinality
+    :vartype cardinality: str or ~azure.purview.datamap.models.Cardinality
     :ivar constraints: An array of constraints.
-    :vartype constraints: list[~azure.analytics.purview.datamap.models.AtlasConstraintDef]
+    :vartype constraints: list[~azure.purview.datamap.models.AtlasConstraintDef]
     :ivar default_value: The default value of the attribute.
     :vartype default_value: str
     :ivar description: The description of the attribute.
@@ -2258,13 +2251,13 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
     :ivar category: The enum of type category. Known values are: "PRIMITIVE", "OBJECT_ID_TYPE",
      "ENUM", "STRUCT", "CLASSIFICATION", "ENTITY", "ARRAY", "MAP", "RELATIONSHIP", and
      "TERM_TEMPLATE".
-    :vartype category: str or ~azure.analytics.purview.datamap.models.TypeCategory
+    :vartype category: str or ~azure.purview.datamap.models.TypeCategory
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
     :vartype created_by: str
     :ivar date_formatter: The date format.
-    :vartype date_formatter: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_formatter: ~azure.purview.datamap.models.DateFormat
     :ivar description: The description of the type definition.
     :vartype description: str
     :ivar guid: The GUID of the type definition.
@@ -2286,17 +2279,17 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
     :ivar last_modified_t_s: ETag for concurrency control.
     :vartype last_modified_t_s: str
     :ivar attribute_defs: An array of attribute definitions.
-    :vartype attribute_defs: list[~azure.analytics.purview.datamap.models.AtlasAttributeDef]
+    :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     :ivar end_def1: The relationshipEndDef represents an end of the relationship. The end of the
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship.
-    :vartype end_def1: ~azure.analytics.purview.datamap.models.AtlasRelationshipEndDef
+    :vartype end_def1: ~azure.purview.datamap.models.AtlasRelationshipEndDef
     :ivar end_def2: The relationshipEndDef represents an end of the relationship. The end of the
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship.
-    :vartype end_def2: ~azure.analytics.purview.datamap.models.AtlasRelationshipEndDef
+    :vartype end_def2: ~azure.purview.datamap.models.AtlasRelationshipEndDef
     :ivar relationship_category: The Relationship category determines the style of relationship
      around
      containment and lifecycle.
@@ -2316,8 +2309,7 @@ class AtlasRelationshipDef(_model_base.Model):  # pylint: disable=too-many-insta
      cycles
      of the container and children are totally independent. Known values are: "ASSOCIATION",
      "AGGREGATION", and "COMPOSITION".
-    :vartype relationship_category: str or
-     ~azure.analytics.purview.datamap.models.RelationshipCategory
+    :vartype relationship_category: str or ~azure.purview.datamap.models.RelationshipCategory
     :ivar relationship_label: The label of the relationship.
     :vartype relationship_label: str
     """
@@ -2433,7 +2425,7 @@ class AtlasRelationshipEndDef(_model_base.Model):
 
     :ivar cardinality: single-valued attribute or multi-valued attribute. Known values are:
      "SINGLE", "LIST", and "SET".
-    :vartype cardinality: str or ~azure.analytics.purview.datamap.models.Cardinality
+    :vartype cardinality: str or ~azure.purview.datamap.models.Cardinality
     :ivar description: The description of the relationship end definition.
     :vartype description: str
     :ivar is_container: Determines if it is container.
@@ -2488,10 +2480,9 @@ class AtlasRelationshipWithExtInfo(_model_base.Model):
     """The relationship with extended information.
 
     :ivar referred_entities: The referred entity header.
-    :vartype referred_entities: dict[str,
-     ~azure.analytics.purview.datamap.models.AtlasEntityHeader]
+    :vartype referred_entities: dict[str, ~azure.purview.datamap.models.AtlasEntityHeader]
     :ivar relationship: Atlas relationship instance.
-    :vartype relationship: ~azure.analytics.purview.datamap.models.AtlasRelationship
+    :vartype relationship: ~azure.purview.datamap.models.AtlasRelationship
     """
 
     referred_entities: Optional[Dict[str, "_models.AtlasEntityHeader"]] = rest_field(name="referredEntities")
@@ -2565,13 +2556,13 @@ class AtlasStructDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     :ivar category: The enum of type category. Known values are: "PRIMITIVE", "OBJECT_ID_TYPE",
      "ENUM", "STRUCT", "CLASSIFICATION", "ENTITY", "ARRAY", "MAP", "RELATIONSHIP", and
      "TERM_TEMPLATE".
-    :vartype category: str or ~azure.analytics.purview.datamap.models.TypeCategory
+    :vartype category: str or ~azure.purview.datamap.models.TypeCategory
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
     :vartype created_by: str
     :ivar date_formatter: The date format.
-    :vartype date_formatter: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_formatter: ~azure.purview.datamap.models.DateFormat
     :ivar description: The description of the type definition.
     :vartype description: str
     :ivar guid: The GUID of the type definition.
@@ -2593,7 +2584,7 @@ class AtlasStructDef(_model_base.Model):  # pylint: disable=too-many-instance-at
     :ivar last_modified_t_s: ETag for concurrency control.
     :vartype last_modified_t_s: str
     :ivar attribute_defs: An array of attribute definitions.
-    :vartype attribute_defs: list[~azure.analytics.purview.datamap.models.AtlasAttributeDef]
+    :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
 
     category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
@@ -2679,7 +2670,7 @@ class AtlasTermAssignmentHeader(_model_base.Model):
     :vartype relation_guid: str
     :ivar status: The status of terms assignment. Known values are: "DISCOVERED", "PROPOSED",
      "IMPORTED", "VALIDATED", "DEPRECATED", "OBSOLETE", and "OTHER".
-    :vartype status: str or ~azure.analytics.purview.datamap.models.AtlasTermAssignmentStatus
+    :vartype status: str or ~azure.purview.datamap.models.AtlasTermAssignmentStatus
     :ivar steward: The steward of the term.
     :vartype steward: str
     :ivar term_guid: The GUID of the term.
@@ -2746,7 +2737,7 @@ class AtlasTermCategorizationHeader(_model_base.Model):
     :vartype relation_guid: str
     :ivar status: The status of term relationship. Known values are: "DRAFT", "ACTIVE",
      "DEPRECATED", "OBSOLETE", and "OTHER".
-    :vartype status: str or ~azure.analytics.purview.datamap.models.AtlasTermRelationshipStatus
+    :vartype status: str or ~azure.purview.datamap.models.AtlasTermRelationshipStatus
     """
 
     category_guid: Optional[str] = rest_field(name="categoryGuid")
@@ -2790,13 +2781,13 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :ivar category: The enum of type category. Known values are: "PRIMITIVE", "OBJECT_ID_TYPE",
      "ENUM", "STRUCT", "CLASSIFICATION", "ENTITY", "ARRAY", "MAP", "RELATIONSHIP", and
      "TERM_TEMPLATE".
-    :vartype category: str or ~azure.analytics.purview.datamap.models.TypeCategory
+    :vartype category: str or ~azure.purview.datamap.models.TypeCategory
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
     :vartype created_by: str
     :ivar date_formatter: The date format.
-    :vartype date_formatter: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_formatter: ~azure.purview.datamap.models.DateFormat
     :ivar description: The description of the type definition.
     :vartype description: str
     :ivar guid: The GUID of the type definition.
@@ -2850,21 +2841,21 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :vartype super_types: list[str]
     :ivar relationship_attribute_defs: An array of relationship attributes.
     :vartype relationship_attribute_defs:
-     list[~azure.analytics.purview.datamap.models.AtlasRelationshipAttributeDef]
+     list[~azure.purview.datamap.models.AtlasRelationshipAttributeDef]
     :ivar default_value: The default value.
     :vartype default_value: str
     :ivar element_defs: An array of enum element definitions.
-    :vartype element_defs: list[~azure.analytics.purview.datamap.models.AtlasEnumElementDef]
+    :vartype element_defs: list[~azure.purview.datamap.models.AtlasEnumElementDef]
     :ivar end_def1: The relationshipEndDef represents an end of the relationship. The end of the
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship.
-    :vartype end_def1: ~azure.analytics.purview.datamap.models.AtlasRelationshipEndDef
+    :vartype end_def1: ~azure.purview.datamap.models.AtlasRelationshipEndDef
     :ivar end_def2: The relationshipEndDef represents an end of the relationship. The end of the
      relationship is defined by a type, an
      attribute name, cardinality and whether
      it  is the container end of the relationship.
-    :vartype end_def2: ~azure.analytics.purview.datamap.models.AtlasRelationshipEndDef
+    :vartype end_def2: ~azure.purview.datamap.models.AtlasRelationshipEndDef
     :ivar relationship_category: The Relationship category determines the style of relationship
      around
      containment and lifecycle.
@@ -2884,12 +2875,11 @@ class AtlasTypeDef(_model_base.Model):  # pylint: disable=too-many-instance-attr
      cycles
      of the container and children are totally independent. Known values are: "ASSOCIATION",
      "AGGREGATION", and "COMPOSITION".
-    :vartype relationship_category: str or
-     ~azure.analytics.purview.datamap.models.RelationshipCategory
+    :vartype relationship_category: str or ~azure.purview.datamap.models.RelationshipCategory
     :ivar relationship_label: The label of the relationship.
     :vartype relationship_label: str
     :ivar attribute_defs: An array of attribute definitions.
-    :vartype attribute_defs: list[~azure.analytics.purview.datamap.models.AtlasAttributeDef]
+    :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
 
     category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
@@ -3045,7 +3035,7 @@ class AtlasTypeDefHeader(_model_base.Model):
     :ivar category: The enum of type category. Known values are: "PRIMITIVE", "OBJECT_ID_TYPE",
      "ENUM", "STRUCT", "CLASSIFICATION", "ENTITY", "ARRAY", "MAP", "RELATIONSHIP", and
      "TERM_TEMPLATE".
-    :vartype category: str or ~azure.analytics.purview.datamap.models.TypeCategory
+    :vartype category: str or ~azure.purview.datamap.models.TypeCategory
     :ivar guid: The GUID of the type definition.
     :vartype guid: str
     :ivar name: The name of the type definition.
@@ -3086,21 +3076,19 @@ class AtlasTypesDef(_model_base.Model):
     """The definitions of types.
 
     :ivar business_metadata_defs: businessMetadataDefs.
-    :vartype business_metadata_defs:
-     list[~azure.analytics.purview.datamap.models.AtlasBusinessMetadataDef]
+    :vartype business_metadata_defs: list[~azure.purview.datamap.models.AtlasBusinessMetadataDef]
     :ivar classification_defs: An array of classification definitions.
-    :vartype classification_defs:
-     list[~azure.analytics.purview.datamap.models.AtlasClassificationDef]
+    :vartype classification_defs: list[~azure.purview.datamap.models.AtlasClassificationDef]
     :ivar entity_defs: An array of entity definitions.
-    :vartype entity_defs: list[~azure.analytics.purview.datamap.models.AtlasEntityDef]
+    :vartype entity_defs: list[~azure.purview.datamap.models.AtlasEntityDef]
     :ivar enum_defs: An array of enum definitions.
-    :vartype enum_defs: list[~azure.analytics.purview.datamap.models.AtlasEnumDef]
+    :vartype enum_defs: list[~azure.purview.datamap.models.AtlasEnumDef]
     :ivar relationship_defs: An array of relationship definitions.
-    :vartype relationship_defs: list[~azure.analytics.purview.datamap.models.AtlasRelationshipDef]
+    :vartype relationship_defs: list[~azure.purview.datamap.models.AtlasRelationshipDef]
     :ivar struct_defs: An array of struct definitions.
-    :vartype struct_defs: list[~azure.analytics.purview.datamap.models.AtlasStructDef]
+    :vartype struct_defs: list[~azure.purview.datamap.models.AtlasStructDef]
     :ivar term_template_defs: An array of term template definitions.
-    :vartype term_template_defs: list[~azure.analytics.purview.datamap.models.TermTemplateDef]
+    :vartype term_template_defs: list[~azure.purview.datamap.models.TermTemplateDef]
     """
 
     business_metadata_defs: Optional[List["_models.AtlasBusinessMetadataDef"]] = rest_field(name="businessMetadataDefs")
@@ -3190,7 +3178,7 @@ class AutoCompleteResult(_model_base.Model):
     """The result of the autocomplete request.
 
     :ivar value: The result value.
-    :vartype value: list[~azure.analytics.purview.datamap.models.AutoCompleteResultValue]
+    :vartype value: list[~azure.purview.datamap.models.AutoCompleteResultValue]
     """
 
     value: Optional[List["_models.AutoCompleteResultValue"]] = rest_field()
@@ -3253,9 +3241,9 @@ class BulkImportResponse(_model_base.Model):
     """example.
 
     :ivar failed_import_info_list: failed importInfoList.
-    :vartype failed_import_info_list: list[~azure.analytics.purview.datamap.models.ImportInfo]
+    :vartype failed_import_info_list: list[~azure.purview.datamap.models.ImportInfo]
     :ivar success_import_info_list: successful importInfoList.
-    :vartype success_import_info_list: list[~azure.analytics.purview.datamap.models.ImportInfo]
+    :vartype success_import_info_list: list[~azure.purview.datamap.models.ImportInfo]
     """
 
     failed_import_info_list: Optional[List["_models.ImportInfo"]] = rest_field(name="failedImportInfoList")
@@ -3288,7 +3276,7 @@ class ClassificationAssociateRequest(_model_base.Model):
 
     :ivar classification: An instance of a classification; it doesn't have an identity, this object
      exists only when associated with an entity.
-    :vartype classification: ~azure.analytics.purview.datamap.models.AtlasClassification
+    :vartype classification: ~azure.purview.datamap.models.AtlasClassification
     :ivar entity_guids: The GUID of the entity.
     :vartype entity_guids: list[str]
     """
@@ -3402,19 +3390,19 @@ class DateFormat(_model_base.Model):
     :ivar calendar: Calendar.
     :vartype calendar: float
     :ivar date_instance: The date format.
-    :vartype date_instance: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_instance: ~azure.purview.datamap.models.DateFormat
     :ivar date_time_instance: The date format.
-    :vartype date_time_instance: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_time_instance: ~azure.purview.datamap.models.DateFormat
     :ivar instance: The date format.
-    :vartype instance: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype instance: ~azure.purview.datamap.models.DateFormat
     :ivar lenient: Determines the leniency of the date format.
     :vartype lenient: bool
     :ivar number_format: The number format.
-    :vartype number_format: ~azure.analytics.purview.datamap.models.NumberFormat
+    :vartype number_format: ~azure.purview.datamap.models.NumberFormat
     :ivar time_instance: The date format.
-    :vartype time_instance: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype time_instance: ~azure.purview.datamap.models.DateFormat
     :ivar time_zone: The timezone information.
-    :vartype time_zone: ~azure.analytics.purview.datamap.models.TimeZone
+    :vartype time_zone: ~azure.purview.datamap.models.TimeZone
     """
 
     available_locales: Optional[List[str]] = rest_field(name="availableLocales")
@@ -3469,11 +3457,9 @@ class EntityMutationResponse(_model_base.Model):
     :ivar guid_assignments: A map of GUID assignments with entities.
     :vartype guid_assignments: dict[str, str]
     :ivar mutated_entities: The entity headers of mutated entities.
-    :vartype mutated_entities: dict[str,
-     list[~azure.analytics.purview.datamap.models.AtlasEntityHeader]]
+    :vartype mutated_entities: dict[str, list[~azure.purview.datamap.models.AtlasEntityHeader]]
     :ivar partial_updated_entities: An array of entity headers that partially updated.
-    :vartype partial_updated_entities:
-     list[~azure.analytics.purview.datamap.models.AtlasEntityHeader]
+    :vartype partial_updated_entities: list[~azure.purview.datamap.models.AtlasEntityHeader]
     """
 
     guid_assignments: Optional[Dict[str, str]] = rest_field(name="guidAssignments")
@@ -3549,7 +3535,7 @@ class ImportInfo(_model_base.Model):
     :ivar child_object_name: childObjectName.
     :vartype child_object_name: str
     :ivar import_status: importStatus. Known values are: "SUCCESS" and "FAILED".
-    :vartype import_status: str or ~azure.analytics.purview.datamap.models.ImportStatus
+    :vartype import_status: str or ~azure.purview.datamap.models.ImportStatus
     :ivar parent_object_name: parentObjectName.
     :vartype parent_object_name: str
     :ivar remarks: remarks.
@@ -3663,13 +3649,13 @@ class NumberFormat(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :ivar currency: The currency.
     :vartype currency: str
     :ivar currency_instance: The number format.
-    :vartype currency_instance: ~azure.analytics.purview.datamap.models.NumberFormat
+    :vartype currency_instance: ~azure.purview.datamap.models.NumberFormat
     :ivar grouping_used: Determines if grouping is used.
     :vartype grouping_used: bool
     :ivar instance: The number format.
-    :vartype instance: ~azure.analytics.purview.datamap.models.NumberFormat
+    :vartype instance: ~azure.purview.datamap.models.NumberFormat
     :ivar integer_instance: The number format.
-    :vartype integer_instance: ~azure.analytics.purview.datamap.models.NumberFormat
+    :vartype integer_instance: ~azure.purview.datamap.models.NumberFormat
     :ivar maximum_fraction_digits: The maximum of fraction digits.
     :vartype maximum_fraction_digits: int
     :ivar maximum_integer_digits: The maximum of integer digits.
@@ -3679,14 +3665,14 @@ class NumberFormat(_model_base.Model):  # pylint: disable=too-many-instance-attr
     :ivar minimum_integer_digits: The minimum of integer digits.
     :vartype minimum_integer_digits: int
     :ivar number_instance: The number format.
-    :vartype number_instance: ~azure.analytics.purview.datamap.models.NumberFormat
+    :vartype number_instance: ~azure.purview.datamap.models.NumberFormat
     :ivar parse_integer_only: Determines if only integer is parsed.
     :vartype parse_integer_only: bool
     :ivar percent_instance: The number format.
-    :vartype percent_instance: ~azure.analytics.purview.datamap.models.NumberFormat
+    :vartype percent_instance: ~azure.purview.datamap.models.NumberFormat
     :ivar rounding_mode: The enum of rounding mode. Known values are: "UP", "DOWN", "CEILING",
      "FLOOR", "HALF_UP", "HALF_DOWN", "HALF_EVEN", and "UNNECESSARY".
-    :vartype rounding_mode: str or ~azure.analytics.purview.datamap.models.RoundingMode
+    :vartype rounding_mode: str or ~azure.purview.datamap.models.RoundingMode
     """
 
     available_locales: Optional[List[str]] = rest_field(name="availableLocales")
@@ -3967,25 +3953,25 @@ class SearchFacetResultValue(_model_base.Model):
     the facet is returned as an element of @search.facets.
 
     :ivar entity_type: Entity type.
-    :vartype entity_type: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype entity_type: list[~azure.purview.datamap.models.SearchFacetItemValue]
     :ivar asset_type: Asset type.
-    :vartype asset_type: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype asset_type: list[~azure.purview.datamap.models.SearchFacetItemValue]
     :ivar classification: Classification.
-    :vartype classification: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype classification: list[~azure.purview.datamap.models.SearchFacetItemValue]
     :ivar term: Term.
-    :vartype term: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype term: list[~azure.purview.datamap.models.SearchFacetItemValue]
     :ivar contact_id: Contact id.
-    :vartype contact_id: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype contact_id: list[~azure.purview.datamap.models.SearchFacetItemValue]
     :ivar contact_type: Contact type.
-    :vartype contact_type: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype contact_type: list[~azure.purview.datamap.models.SearchFacetItemValue]
     :ivar label: Label.
-    :vartype label: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype label: list[~azure.purview.datamap.models.SearchFacetItemValue]
     :ivar glossary_type: Glossary type.
-    :vartype glossary_type: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype glossary_type: list[~azure.purview.datamap.models.SearchFacetItemValue]
     :ivar term_status: Term status.
-    :vartype term_status: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype term_status: list[~azure.purview.datamap.models.SearchFacetItemValue]
     :ivar term_template: Term template.
-    :vartype term_template: list[~azure.analytics.purview.datamap.models.SearchFacetItemValue]
+    :vartype term_template: list[~azure.purview.datamap.models.SearchFacetItemValue]
     """
 
     entity_type: Optional[List["_models.SearchFacetItemValue"]] = rest_field(name="entityType")
@@ -4106,9 +4092,9 @@ class SearchRequest(_model_base.Model):
     :ivar filter: The filter for the search. See examples for the usage of supported filters.
     :vartype filter: any
     :ivar facets: The facets for search. See examples for the usage of supported facets.
-    :vartype facets: list[~azure.analytics.purview.datamap.models.SearchFacetItem]
+    :vartype facets: list[~azure.purview.datamap.models.SearchFacetItem]
     :ivar taxonomy_setting: The taxonomy setting for search.
-    :vartype taxonomy_setting: ~azure.analytics.purview.datamap.models.SearchRequestTaxonomySetting
+    :vartype taxonomy_setting: ~azure.purview.datamap.models.SearchRequestTaxonomySetting
     """
 
     keywords: Optional[str] = rest_field()
@@ -4159,7 +4145,7 @@ class SearchRequestTaxonomySetting(_model_base.Model):
     :ivar asset_types: Asset types.
     :vartype asset_types: list[str]
     :ivar facet: The content of a search facet result item.
-    :vartype facet: ~azure.analytics.purview.datamap.models.SearchFacetItem
+    :vartype facet: ~azure.purview.datamap.models.SearchFacetItem
     """
 
     asset_types: Optional[List[str]] = rest_field(name="assetTypes")
@@ -4202,9 +4188,9 @@ class SearchResult(_model_base.Model):
     :ivar search_facets: A facet list that consists of index fields assetType ,classification,
      contactId, and label. When the facet is specified in the request, the value of
      the facet is returned as an element of @search.facets.
-    :vartype search_facets: ~azure.analytics.purview.datamap.models.SearchFacetResultValue
+    :vartype search_facets: ~azure.purview.datamap.models.SearchFacetResultValue
     :ivar value: Search result value.
-    :vartype value: list[~azure.analytics.purview.datamap.models.SearchResultValue]
+    :vartype value: list[~azure.purview.datamap.models.SearchResultValue]
     """
 
     search_count: Optional[int] = rest_field(name="@search.count")
@@ -4256,7 +4242,7 @@ class SearchResultValue(_model_base.Model):  # pylint: disable=too-many-instance
      description, entityType. When the keyword appears in those fields, the value of
      the field, attached with emphasis mark, is returned as an element of
      @search.highlights.
-    :vartype search_highlights: ~azure.analytics.purview.datamap.models.SearchHighlights
+    :vartype search_highlights: ~azure.purview.datamap.models.SearchHighlights
     :ivar object_type: The object type of the record. Object type is the top-level property to
      distinguish whether a record is an asset or a term.
     :vartype object_type: str
@@ -4283,9 +4269,9 @@ class SearchResultValue(_model_base.Model):  # pylint: disable=too-many-instance
     :ivar label: The labels of the asset.
     :vartype label: list[str]
     :ivar term: The terms assigned to the asset.
-    :vartype term: list[~azure.analytics.purview.datamap.models.TermSearchResultValue]
+    :vartype term: list[~azure.purview.datamap.models.TermSearchResultValue]
     :ivar contact: The contacts of the asset.
-    :vartype contact: list[~azure.analytics.purview.datamap.models.ContactSearchResultValue]
+    :vartype contact: list[~azure.purview.datamap.models.ContactSearchResultValue]
     :ivar asset_type: The asset types of the asset.
     :vartype asset_type: list[str]
     :ivar glossary_type: The type name of the term. Could be AtlasGlossary, AtlasGlossaryTerm or
@@ -4443,7 +4429,7 @@ class SuggestResult(_model_base.Model):
     """The result item of the search suggest.
 
     :ivar value: The result value.
-    :vartype value: list[~azure.analytics.purview.datamap.models.SuggestResultValue]
+    :vartype value: list[~azure.purview.datamap.models.SuggestResultValue]
     """
 
     value: Optional[List["_models.SuggestResultValue"]] = rest_field()
@@ -4504,9 +4490,9 @@ class SuggestResultValue(_model_base.Model):  # pylint: disable=too-many-instanc
     :ivar label: The labels of the asset.
     :vartype label: list[str]
     :ivar term: The terms assigned to the asset.
-    :vartype term: list[~azure.analytics.purview.datamap.models.TermSearchResultValue]
+    :vartype term: list[~azure.purview.datamap.models.TermSearchResultValue]
     :ivar contact: The contacts of the asset.
-    :vartype contact: list[~azure.analytics.purview.datamap.models.ContactSearchResultValue]
+    :vartype contact: list[~azure.purview.datamap.models.ContactSearchResultValue]
     :ivar asset_type: The asset types of the asset.
     :vartype asset_type: list[str]
     :ivar glossary_type: The type name of the term. Could be AtlasGlossary, AtlasGlossaryTerm or
@@ -4656,13 +4642,13 @@ class TermTemplateDef(_model_base.Model):  # pylint: disable=too-many-instance-a
     :ivar category: The enum of type category. Known values are: "PRIMITIVE", "OBJECT_ID_TYPE",
      "ENUM", "STRUCT", "CLASSIFICATION", "ENTITY", "ARRAY", "MAP", "RELATIONSHIP", and
      "TERM_TEMPLATE".
-    :vartype category: str or ~azure.analytics.purview.datamap.models.TypeCategory
+    :vartype category: str or ~azure.purview.datamap.models.TypeCategory
     :ivar create_time: The created time of the record.
     :vartype create_time: int
     :ivar created_by: The user who created the record.
     :vartype created_by: str
     :ivar date_formatter: The date format.
-    :vartype date_formatter: ~azure.analytics.purview.datamap.models.DateFormat
+    :vartype date_formatter: ~azure.purview.datamap.models.DateFormat
     :ivar description: The description of the type definition.
     :vartype description: str
     :ivar guid: The GUID of the type definition.
@@ -4684,7 +4670,7 @@ class TermTemplateDef(_model_base.Model):  # pylint: disable=too-many-instance-a
     :ivar last_modified_t_s: ETag for concurrency control.
     :vartype last_modified_t_s: str
     :ivar attribute_defs: An array of attribute definitions.
-    :vartype attribute_defs: list[~azure.analytics.purview.datamap.models.AtlasAttributeDef]
+    :vartype attribute_defs: list[~azure.purview.datamap.models.AtlasAttributeDef]
     """
 
     category: Optional[Union[str, "_models.TypeCategory"]] = rest_field()
@@ -4802,7 +4788,7 @@ class TimeZone(_model_base.Model):
     :ivar available_ids: An array of available IDs.
     :vartype available_ids: list[str]
     :ivar default: The timezone information.
-    :vartype default: ~azure.analytics.purview.datamap.models.TimeZone
+    :vartype default: ~azure.purview.datamap.models.TimeZone
     :ivar display_name: The display name of the timezone.
     :vartype display_name: str
     :ivar raw_offset: The raw offset of the timezone.

@@ -45,7 +45,7 @@ class PurviewDataMapClientConfiguration:  # pylint: disable=too-many-instance-at
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["user_impersonation"])
-        kwargs.setdefault("sdk_moniker", "analytics-purview-datamap/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "purview-datamap/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 

@@ -12,8 +12,8 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "azure-analytics-purview-datamap"
-PACKAGE_PPRINT_NAME = "Azure Analytics Purview Datamap"
+PACKAGE_NAME = "azure-purview-datamap"
+PACKAGE_PPRINT_NAME = "Azure Purview Datamap"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -55,13 +55,12 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
-            "azure.analytics",
-            "azure.analytics.purview",
+            "azure.purview",
         ]
     ),
     include_package_data=True,
     package_data={
-        "azure.analytics.purview.datamap": ["py.typed"],
+        "azure.purview.datamap": ["py.typed"],
     },
     install_requires=[
         "isodate<1.0.0,>=0.6.1",

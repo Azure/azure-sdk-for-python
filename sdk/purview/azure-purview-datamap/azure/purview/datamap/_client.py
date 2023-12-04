@@ -36,17 +36,17 @@ class PurviewDataMapClient:  # pylint: disable=client-accepts-api-version-keywor
     existing investments. This spec defines REST API of Purview Data Map Service.
 
     :ivar entity: EntityOperations operations
-    :vartype entity: azure.analytics.purview.datamap.operations.EntityOperations
+    :vartype entity: azure.purview.datamap.operations.EntityOperations
     :ivar glossary: GlossaryOperations operations
-    :vartype glossary: azure.analytics.purview.datamap.operations.GlossaryOperations
+    :vartype glossary: azure.purview.datamap.operations.GlossaryOperations
     :ivar discovery: DiscoveryOperations operations
-    :vartype discovery: azure.analytics.purview.datamap.operations.DiscoveryOperations
+    :vartype discovery: azure.purview.datamap.operations.DiscoveryOperations
     :ivar lineage: LineageOperations operations
-    :vartype lineage: azure.analytics.purview.datamap.operations.LineageOperations
+    :vartype lineage: azure.purview.datamap.operations.LineageOperations
     :ivar relationship: RelationshipOperations operations
-    :vartype relationship: azure.analytics.purview.datamap.operations.RelationshipOperations
+    :vartype relationship: azure.purview.datamap.operations.RelationshipOperations
     :ivar type: TypeOperations operations
-    :vartype type: azure.analytics.purview.datamap.operations.TypeOperations
+    :vartype type: azure.purview.datamap.operations.TypeOperations
     :param endpoint: Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.

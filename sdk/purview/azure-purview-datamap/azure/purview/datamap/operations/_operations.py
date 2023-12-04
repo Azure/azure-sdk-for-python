@@ -20,110 +20,13 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize
-from ...operations._operations import (
-    build_discovery_auto_complete_request,
-    build_discovery_query_request,
-    build_discovery_suggest_request,
-    build_entity_add_classification_request,
-    build_entity_add_classifications_by_unique_attribute_request,
-    build_entity_add_classifications_request,
-    build_entity_add_label_request,
-    build_entity_add_labels_by_unique_attribute_request,
-    build_entity_add_or_update_business_metadata_attributes_request,
-    build_entity_add_or_update_business_metadata_request,
-    build_entity_bulk_create_or_update_request,
-    build_entity_bulk_delete_request,
-    build_entity_bulk_set_classifications_request,
-    build_entity_create_or_update_request,
-    build_entity_delete_by_unique_attribute_request,
-    build_entity_delete_request,
-    build_entity_get_by_unique_attributes_request,
-    build_entity_get_classification_request,
-    build_entity_get_classifications_request,
-    build_entity_get_header_request,
-    build_entity_get_request,
-    build_entity_get_sample_business_metadata_template_request,
-    build_entity_import_business_metadata_request,
-    build_entity_list_by_guids_request,
-    build_entity_list_by_unique_attributes_request,
-    build_entity_move_entities_to_collection_request,
-    build_entity_partial_update_attribute_by_guid_request,
-    build_entity_partial_update_by_unique_attributes_request,
-    build_entity_remove_business_metadata_attributes_request,
-    build_entity_remove_business_metadata_request,
-    build_entity_remove_classification_by_unique_attribute_request,
-    build_entity_remove_classification_request,
-    build_entity_remove_labels_by_unique_attribute_request,
-    build_entity_remove_labels_request,
-    build_entity_set_labels_by_unique_attribute_request,
-    build_entity_set_labels_request,
-    build_entity_update_classifications_by_unique_attribute_request,
-    build_entity_update_classifications_request,
-    build_glossary_assign_term_to_entities_request,
-    build_glossary_create_categories_request,
-    build_glossary_create_category_request,
-    build_glossary_create_request,
-    build_glossary_create_term_request,
-    build_glossary_create_terms_request,
-    build_glossary_delete_category_request,
-    build_glossary_delete_request,
-    build_glossary_delete_term_assignment_from_entities_request,
-    build_glossary_delete_term_request,
-    build_glossary_get_category_request,
-    build_glossary_get_detailed_request,
-    build_glossary_get_request,
-    build_glossary_get_term_request,
-    build_glossary_list_categories_headers_request,
-    build_glossary_list_categories_request,
-    build_glossary_list_category_terms_request,
-    build_glossary_list_entities_assigned_with_term_request,
-    build_glossary_list_related_categories_request,
-    build_glossary_list_related_terms_request,
-    build_glossary_list_request,
-    build_glossary_list_term_headers_request,
-    build_glossary_list_terms_request,
-    build_glossary_partial_update_category_request,
-    build_glossary_partial_update_request,
-    build_glossary_partial_update_term_request,
-    build_glossary_update_category_request,
-    build_glossary_update_request,
-    build_glossary_update_term_request,
-    build_lineage_get_by_unique_attribute_request,
-    build_lineage_get_next_page_request,
-    build_lineage_get_request,
-    build_relationship_create_request,
-    build_relationship_delete_request,
-    build_relationship_get_request,
-    build_relationship_update_request,
-    build_type_bulk_create_request,
-    build_type_bulk_delete_request,
-    build_type_bulk_update_request,
-    build_type_delete_request,
-    build_type_get_business_metadata_def_by_guid_request,
-    build_type_get_business_metadata_def_by_name_request,
-    build_type_get_by_guid_request,
-    build_type_get_by_name_request,
-    build_type_get_classification_def_by_guid_request,
-    build_type_get_classification_def_by_name_request,
-    build_type_get_entity_def_by_guid_request,
-    build_type_get_entity_def_by_name_request,
-    build_type_get_enum_def_by_guid_request,
-    build_type_get_enum_def_by_name_request,
-    build_type_get_relationship_def_by_guid_request,
-    build_type_get_relationship_def_by_name_request,
-    build_type_get_struct_def_by_guid_request,
-    build_type_get_struct_def_by_name_request,
-    build_type_get_term_template_def_by_guid_request,
-    build_type_get_term_template_def_by_name_request,
-    build_type_list_headers_request,
-    build_type_list_request,
-)
+from .. import models as _models
+from .._model_base import SdkJSONEncoder, _deserialize
+from .._serialization import Serializer
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -132,7 +35,2640 @@ else:
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+
+
+def build_entity_create_or_update_request(
+    *,
+    business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
+    collection_id: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if business_attribute_update_behavior is not None:
+        _params["businessAttributeUpdateBehavior"] = _SERIALIZER.query(
+            "business_attribute_update_behavior", business_attribute_update_behavior, "str"
+        )
+    if collection_id is not None:
+        _params["collectionId"] = _SERIALIZER.query("collection_id", collection_id, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_list_by_guids_request(
+    *, guid: List[str], min_ext_info: Optional[bool] = None, ignore_relationships: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/bulk"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["guid"] = [_SERIALIZER.query("guid", q, "str") if q is not None else "" for q in guid]
+    if min_ext_info is not None:
+        _params["minExtInfo"] = _SERIALIZER.query("min_ext_info", min_ext_info, "bool")
+    if ignore_relationships is not None:
+        _params["ignoreRelationships"] = _SERIALIZER.query("ignore_relationships", ignore_relationships, "bool")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_bulk_create_or_update_request(  # pylint: disable=name-too-long
+    *,
+    collection_id: Optional[str] = None,
+    business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/bulk"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if collection_id is not None:
+        _params["collectionId"] = _SERIALIZER.query("collection_id", collection_id, "str")
+    if business_attribute_update_behavior is not None:
+        _params["businessAttributeUpdateBehavior"] = _SERIALIZER.query(
+            "business_attribute_update_behavior", business_attribute_update_behavior, "str"
+        )
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_bulk_delete_request(*, guid: List[str], **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/bulk"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["guid"] = [_SERIALIZER.query("guid", q, "str") if q is not None else "" for q in guid]
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_add_classification_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/bulk/classification"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_get_request(
+    guid: str, *, min_ext_info: Optional[bool] = None, ignore_relationships: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if min_ext_info is not None:
+        _params["minExtInfo"] = _SERIALIZER.query("min_ext_info", min_ext_info, "bool")
+    if ignore_relationships is not None:
+        _params["ignoreRelationships"] = _SERIALIZER.query("ignore_relationships", ignore_relationships, "bool")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_partial_update_attribute_by_guid_request(  # pylint: disable=name-too-long
+    guid: str, *, name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["name"] = _SERIALIZER.query("name", name, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_delete_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_get_classification_request(guid: str, classification_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/classification/{classificationName}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+        "classificationName": _SERIALIZER.url("classification_name", classification_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_remove_classification_request(  # pylint: disable=name-too-long
+    guid: str, classification_name: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/classification/{classificationName}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+        "classificationName": _SERIALIZER.url("classification_name", classification_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_entity_get_classifications_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/classifications"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_add_classifications_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/classifications"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_update_classifications_request(  # pylint: disable=name-too-long
+    guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/classifications"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_get_by_unique_attributes_request(  # pylint: disable=name-too-long
+    type_name: str,
+    *,
+    min_ext_info: Optional[bool] = None,
+    ignore_relationships: Optional[bool] = None,
+    attr: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/uniqueAttribute/type/{typeName}"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if min_ext_info is not None:
+        _params["minExtInfo"] = _SERIALIZER.query("min_ext_info", min_ext_info, "bool")
+    if ignore_relationships is not None:
+        _params["ignoreRelationships"] = _SERIALIZER.query("ignore_relationships", ignore_relationships, "bool")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_partial_update_by_unique_attributes_request(  # pylint: disable=name-too-long
+    type_name: str, *, attr: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/uniqueAttribute/type/{typeName}"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_delete_by_unique_attribute_request(  # pylint: disable=name-too-long
+    type_name: str, *, attr: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/uniqueAttribute/type/{typeName}"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_remove_classification_by_unique_attribute_request(  # pylint: disable=name-too-long
+    type_name: str, classification_name: str, *, attr: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/uniqueAttribute/type/{typeName}/classification/{classificationName}"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+        "classificationName": _SERIALIZER.url("classification_name", classification_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_entity_add_classifications_by_unique_attribute_request(  # pylint: disable=name-too-long
+    type_name: str, *, attr: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/uniqueAttribute/type/{typeName}/classifications"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_update_classifications_by_unique_attribute_request(  # pylint: disable=name-too-long
+    type_name: str, *, attr: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/uniqueAttribute/type/{typeName}/classifications"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_bulk_set_classifications_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/bulk/setClassifications"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_list_by_unique_attributes_request(  # pylint: disable=name-too-long
+    type_name: str,
+    *,
+    min_ext_info: Optional[bool] = None,
+    ignore_relationships: Optional[bool] = None,
+    attr_n_qualified_name: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/bulk/uniqueAttribute/type/{typeName}"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if min_ext_info is not None:
+        _params["minExtInfo"] = _SERIALIZER.query("min_ext_info", min_ext_info, "bool")
+    if ignore_relationships is not None:
+        _params["ignoreRelationships"] = _SERIALIZER.query("ignore_relationships", ignore_relationships, "bool")
+    if attr_n_qualified_name is not None:
+        _params["attr_N:qualifiedName"] = _SERIALIZER.query("attr_n_qualified_name", attr_n_qualified_name, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_get_header_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/header"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_remove_business_metadata_request(  # pylint: disable=name-too-long
+    guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/businessmetadata"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_add_or_update_business_metadata_request(  # pylint: disable=name-too-long
+    guid: str, *, is_overwrite: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/businessmetadata"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if is_overwrite is not None:
+        _params["isOverwrite"] = _SERIALIZER.query("is_overwrite", is_overwrite, "bool")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_remove_business_metadata_attributes_request(  # pylint: disable=name-too-long
+    bm_name: str, guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/businessmetadata/{bmName}"
+    path_format_arguments = {
+        "bmName": _SERIALIZER.url("bm_name", bm_name, "str"),
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_add_or_update_business_metadata_attributes_request(  # pylint: disable=name-too-long
+    bm_name: str, guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/businessmetadata/{bmName}"
+    path_format_arguments = {
+        "bmName": _SERIALIZER.url("bm_name", bm_name, "str"),
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_get_sample_business_metadata_template_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/businessmetadata/import/template"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_import_business_metadata_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/entity/businessmetadata/import"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_remove_labels_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/labels"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_set_labels_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/labels"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_add_label_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/guid/{guid}/labels"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_remove_labels_by_unique_attribute_request(  # pylint: disable=name-too-long
+    type_name: str, *, attr: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/uniqueAttribute/type/{typeName}/labels"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_set_labels_by_unique_attribute_request(  # pylint: disable=name-too-long
+    type_name: str, *, attr: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/uniqueAttribute/type/{typeName}/labels"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_add_labels_by_unique_attribute_request(  # pylint: disable=name-too-long
+    type_name: str, *, attr: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/entity/uniqueAttribute/type/{typeName}/labels"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entity_move_entities_to_collection_request(  # pylint: disable=name-too-long
+    *, collection_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/entity/moveTo"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["collectionId"] = _SERIALIZER.query("collection_id", collection_id, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_list_request(
+    *,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    sort: Optional[str] = None,
+    ignore_terms_and_categories: Optional[bool] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if sort is not None:
+        _params["sort"] = _SERIALIZER.query("sort", sort, "str")
+    if ignore_terms_and_categories is not None:
+        _params["ignoreTermsAndCategories"] = _SERIALIZER.query(
+            "ignore_terms_and_categories", ignore_terms_and_categories, "bool"
+        )
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_create_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_create_categories_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/categories"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_create_category_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/category"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_get_category_request(category_guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/category/{categoryGuid}"
+    path_format_arguments = {
+        "categoryGuid": _SERIALIZER.url("category_guid", category_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_update_category_request(category_guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/category/{categoryGuid}"
+    path_format_arguments = {
+        "categoryGuid": _SERIALIZER.url("category_guid", category_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_delete_category_request(category_guid: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/glossary/category/{categoryGuid}"
+    path_format_arguments = {
+        "categoryGuid": _SERIALIZER.url("category_guid", category_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_glossary_partial_update_category_request(  # pylint: disable=name-too-long
+    category_guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/category/{categoryGuid}/partial"
+    path_format_arguments = {
+        "categoryGuid": _SERIALIZER.url("category_guid", category_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_list_related_categories_request(  # pylint: disable=name-too-long
+    category_guid: str,
+    *,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    sort: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/category/{categoryGuid}/related"
+    path_format_arguments = {
+        "categoryGuid": _SERIALIZER.url("category_guid", category_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if sort is not None:
+        _params["sort"] = _SERIALIZER.query("sort", sort, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_list_category_terms_request(  # pylint: disable=name-too-long
+    category_guid: str,
+    *,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    sort: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/category/{categoryGuid}/terms"
+    path_format_arguments = {
+        "categoryGuid": _SERIALIZER.url("category_guid", category_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if sort is not None:
+        _params["sort"] = _SERIALIZER.query("sort", sort, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_create_term_request(*, include_term_hierarchy: Optional[bool] = None, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/term"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if include_term_hierarchy is not None:
+        _params["includeTermHierarchy"] = _SERIALIZER.query("include_term_hierarchy", include_term_hierarchy, "bool")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_get_term_request(term_guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/term/{termGuid}"
+    path_format_arguments = {
+        "termGuid": _SERIALIZER.url("term_guid", term_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_update_term_request(
+    term_guid: str, *, include_term_hierarchy: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/term/{termGuid}"
+    path_format_arguments = {
+        "termGuid": _SERIALIZER.url("term_guid", term_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if include_term_hierarchy is not None:
+        _params["includeTermHierarchy"] = _SERIALIZER.query("include_term_hierarchy", include_term_hierarchy, "bool")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_delete_term_request(term_guid: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/glossary/term/{termGuid}"
+    path_format_arguments = {
+        "termGuid": _SERIALIZER.url("term_guid", term_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_glossary_partial_update_term_request(  # pylint: disable=name-too-long
+    term_guid: str, *, include_term_hierarchy: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/term/{termGuid}/partial"
+    path_format_arguments = {
+        "termGuid": _SERIALIZER.url("term_guid", term_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if include_term_hierarchy is not None:
+        _params["includeTermHierarchy"] = _SERIALIZER.query("include_term_hierarchy", include_term_hierarchy, "bool")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_create_terms_request(*, include_term_hierarchy: Optional[bool] = None, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/terms"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if include_term_hierarchy is not None:
+        _params["includeTermHierarchy"] = _SERIALIZER.query("include_term_hierarchy", include_term_hierarchy, "bool")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_list_entities_assigned_with_term_request(  # pylint: disable=name-too-long
+    term_guid: str,
+    *,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    sort: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/terms/{termGuid}/assignedEntities"
+    path_format_arguments = {
+        "termGuid": _SERIALIZER.url("term_guid", term_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if sort is not None:
+        _params["sort"] = _SERIALIZER.query("sort", sort, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_assign_term_to_entities_request(  # pylint: disable=name-too-long
+    term_guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/glossary/terms/{termGuid}/assignedEntities"
+    path_format_arguments = {
+        "termGuid": _SERIALIZER.url("term_guid", term_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_delete_term_assignment_from_entities_request(  # pylint: disable=name-too-long
+    term_guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/glossary/terms/{termGuid}/assignedEntities"
+    path_format_arguments = {
+        "termGuid": _SERIALIZER.url("term_guid", term_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_list_related_terms_request(  # pylint: disable=name-too-long
+    term_guid: str,
+    *,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    sort: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/terms/{termGuid}/related"
+    path_format_arguments = {
+        "termGuid": _SERIALIZER.url("term_guid", term_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if sort is not None:
+        _params["sort"] = _SERIALIZER.query("sort", sort, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_get_request(glossary_guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/{glossaryGuid}"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_update_request(
+    glossary_guid: str, *, ignore_terms_and_categories: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/{glossaryGuid}"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if ignore_terms_and_categories is not None:
+        _params["ignoreTermsAndCategories"] = _SERIALIZER.query(
+            "ignore_terms_and_categories", ignore_terms_and_categories, "bool"
+        )
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_delete_request(glossary_guid: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/glossary/{glossaryGuid}"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_glossary_list_categories_request(
+    glossary_guid: str,
+    *,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    sort: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/{glossaryGuid}/categories"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if sort is not None:
+        _params["sort"] = _SERIALIZER.query("sort", sort, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_list_categories_headers_request(  # pylint: disable=name-too-long
+    glossary_guid: str,
+    *,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    sort: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/{glossaryGuid}/categories/headers"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if sort is not None:
+        _params["sort"] = _SERIALIZER.query("sort", sort, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_get_detailed_request(glossary_guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/{glossaryGuid}/detailed"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_partial_update_request(
+    glossary_guid: str, *, ignore_terms_and_categories: Optional[bool] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/{glossaryGuid}/partial"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if ignore_terms_and_categories is not None:
+        _params["ignoreTermsAndCategories"] = _SERIALIZER.query(
+            "ignore_terms_and_categories", ignore_terms_and_categories, "bool"
+        )
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_list_terms_request(
+    glossary_guid: str,
+    *,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    sort: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/{glossaryGuid}/terms"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if sort is not None:
+        _params["sort"] = _SERIALIZER.query("sort", sort, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_glossary_list_term_headers_request(
+    glossary_guid: str,
+    *,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
+    sort: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/glossary/{glossaryGuid}/terms/headers"
+    path_format_arguments = {
+        "glossaryGuid": _SERIALIZER.url("glossary_guid", glossary_guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if sort is not None:
+        _params["sort"] = _SERIALIZER.query("sort", sort, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_discovery_query_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/search/query"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_discovery_suggest_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/search/suggest"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_discovery_auto_complete_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/search/autocomplete"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_lineage_get_request(
+    guid: str, *, direction: Union[str, _models.Direction], depth: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/lineage/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if depth is not None:
+        _params["depth"] = _SERIALIZER.query("depth", depth, "int")
+    _params["direction"] = _SERIALIZER.query("direction", direction, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_lineage_get_next_page_request(
+    guid: str,
+    *,
+    direction: Union[str, _models.Direction],
+    offset: Optional[int] = None,
+    limit: Optional[int] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/lineage/{guid}/next"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    _params["direction"] = _SERIALIZER.query("direction", direction, "str")
+    if offset is not None:
+        _params["offset"] = _SERIALIZER.query("offset", offset, "int")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_lineage_get_by_unique_attribute_request(  # pylint: disable=name-too-long
+    type_name: str,
+    *,
+    direction: Union[str, _models.Direction],
+    depth: Optional[int] = None,
+    attr: Optional[str] = None,
+    **kwargs: Any,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/lineage/uniqueAttribute/type/{typeName}"
+    path_format_arguments = {
+        "typeName": _SERIALIZER.url("type_name", type_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if depth is not None:
+        _params["depth"] = _SERIALIZER.query("depth", depth, "int")
+    _params["direction"] = _SERIALIZER.query("direction", direction, "str")
+    if attr is not None:
+        _params["attr:qualifiedName"] = _SERIALIZER.query("attr", attr, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_relationship_create_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/relationship"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_relationship_update_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/relationship"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_relationship_get_request(guid: str, *, extended_info: Optional[bool] = None, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/relationship/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if extended_info is not None:
+        _params["extendedInfo"] = _SERIALIZER.query("extended_info", extended_info, "bool")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_relationship_delete_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/relationship/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_type_get_business_metadata_def_by_guid_request(  # pylint: disable=name-too-long
+    guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/businessmetadatadef/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_business_metadata_def_by_name_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/businessmetadatadef/name/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_classification_def_by_guid_request(  # pylint: disable=name-too-long
+    guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/classificationdef/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_classification_def_by_name_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/classificationdef/name/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_entity_def_by_guid_request(guid: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/entitydef/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_entity_def_by_name_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/entitydef/name/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_enum_def_by_guid_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/enumdef/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_enum_def_by_name_request(name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/enumdef/name/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_relationship_def_by_guid_request(  # pylint: disable=name-too-long
+    guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/relationshipdef/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_relationship_def_by_name_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/relationshipdef/name/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_struct_def_by_guid_request(guid: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/structdef/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_struct_def_by_name_request(name: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/structdef/name/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_by_guid_request(guid: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/typedef/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_by_name_request(name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/typedef/name/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_delete_request(name: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/types/typedef/name/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_type_list_request(
+    *, include_term_template: Optional[bool] = None, type: Optional[Union[str, _models.Typedef]] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/typedefs"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if include_term_template is not None:
+        _params["includeTermTemplate"] = _SERIALIZER.query("include_term_template", include_term_template, "bool")
+    if type is not None:
+        _params["type"] = _SERIALIZER.query("type", type, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_bulk_create_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/typedefs"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_bulk_update_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/typedefs"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_bulk_delete_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    # Construct URL
+    _url = "/atlas/v2/types/typedefs"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_list_headers_request(
+    *, include_term_template: Optional[bool] = None, type: Optional[Union[str, _models.Typedef]] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/atlas/v2/types/typedefs/headers"
+
+    # Construct parameters
+    if api_version is not None:
+        _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if include_term_template is not None:
+        _params["includeTermTemplate"] = _SERIALIZER.query("include_term_template", include_term_template, "bool")
+    if type is not None:
+        _params["type"] = _SERIALIZER.query("type", type, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_term_template_def_by_guid_request(  # pylint: disable=name-too-long
+    guid: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/types/termtemplatedef/guid/{guid}"
+    path_format_arguments = {
+        "guid": _SERIALIZER.url("guid", guid, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_type_get_term_template_def_by_name_request(  # pylint: disable=name-too-long
+    name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/types/termtemplatedef/name/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class EntityOperations:  # pylint: disable=too-many-public-methods
@@ -141,11 +2677,11 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.analytics.purview.datamap.aio.PurviewDataMapClient`'s
+        :class:`~azure.purview.datamap.PurviewDataMapClient`'s
         :attr:`entity` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -153,14 +2689,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create_or_update(
+    def create_or_update(
         self,
         entity: _models.AtlasEntityWithExtInfo,
         *,
         business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
         collection_id: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Create or update an entity.
         Existing entity is matched using its unique guid if
@@ -171,12 +2707,12 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         For each contact type, the maximum number of contacts is 20.
 
         :param entity: Atlas entity with extended information. Required.
-        :type entity: ~azure.analytics.purview.datamap.models.AtlasEntityWithExtInfo
+        :type entity: ~azure.purview.datamap.models.AtlasEntityWithExtInfo
         :keyword business_attribute_update_behavior: Used to define the update behavior for business
          attributes when updating
          entities. Known values are: "ignore", "replace", and "merge". Default value is None.
         :paramtype business_attribute_update_behavior: str or
-         ~azure.analytics.purview.datamap.models.BusinessAttributeUpdateBehavior
+         ~azure.purview.datamap.models.BusinessAttributeUpdateBehavior
         :keyword collection_id: The collection where entities will be moved to. Only specify a value if
          you
          need to move an entity to another collection. Default value is None.
@@ -187,19 +2723,19 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_or_update(
+    def create_or_update(
         self,
         entity: JSON,
         *,
         business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
         collection_id: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Create or update an entity.
         Existing entity is matched using its unique guid if
@@ -215,7 +2751,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
          attributes when updating
          entities. Known values are: "ignore", "replace", and "merge". Default value is None.
         :paramtype business_attribute_update_behavior: str or
-         ~azure.analytics.purview.datamap.models.BusinessAttributeUpdateBehavior
+         ~azure.purview.datamap.models.BusinessAttributeUpdateBehavior
         :keyword collection_id: The collection where entities will be moved to. Only specify a value if
          you
          need to move an entity to another collection. Default value is None.
@@ -226,19 +2762,19 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_or_update(
+    def create_or_update(
         self,
         entity: IO[bytes],
         *,
         business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
         collection_id: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Create or update an entity.
         Existing entity is matched using its unique guid if
@@ -254,7 +2790,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
          attributes when updating
          entities. Known values are: "ignore", "replace", and "merge". Default value is None.
         :paramtype business_attribute_update_behavior: str or
-         ~azure.analytics.purview.datamap.models.BusinessAttributeUpdateBehavior
+         ~azure.purview.datamap.models.BusinessAttributeUpdateBehavior
         :keyword collection_id: The collection where entities will be moved to. Only specify a value if
          you
          need to move an entity to another collection. Default value is None.
@@ -265,18 +2801,18 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def create_or_update(
+    @distributed_trace
+    def create_or_update(
         self,
         entity: Union[_models.AtlasEntityWithExtInfo, JSON, IO[bytes]],
         *,
         business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
         collection_id: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Create or update an entity.
         Existing entity is matched using its unique guid if
@@ -288,13 +2824,12 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         :param entity: Atlas entity with extended information. Is one of the following types:
          AtlasEntityWithExtInfo, JSON, IO[bytes] Required.
-        :type entity: ~azure.analytics.purview.datamap.models.AtlasEntityWithExtInfo or JSON or
-         IO[bytes]
+        :type entity: ~azure.purview.datamap.models.AtlasEntityWithExtInfo or JSON or IO[bytes]
         :keyword business_attribute_update_behavior: Used to define the update behavior for business
          attributes when updating
          entities. Known values are: "ignore", "replace", and "merge". Default value is None.
         :paramtype business_attribute_update_behavior: str or
-         ~azure.analytics.purview.datamap.models.BusinessAttributeUpdateBehavior
+         ~azure.purview.datamap.models.BusinessAttributeUpdateBehavior
         :keyword collection_id: The collection where entities will be moved to. Only specify a value if
          you
          need to move an entity to another collection. Default value is None.
@@ -305,7 +2840,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -344,7 +2879,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -352,7 +2887,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -367,14 +2902,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_by_guids(
+    @distributed_trace
+    def list_by_guids(
         self,
         *,
         guid: List[str],
         min_ext_info: Optional[bool] = None,
         ignore_relationships: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasEntitiesWithExtInfo:
         """List entities in bulk identified by its GUIDs.
 
@@ -390,7 +2925,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
          will have to context manage the returned stream.
         :return: AtlasEntitiesWithExtInfo. The AtlasEntitiesWithExtInfo is compatible with
          MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasEntitiesWithExtInfo
+        :rtype: ~azure.purview.datamap.models.AtlasEntitiesWithExtInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -420,7 +2955,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -428,7 +2963,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -444,14 +2979,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def bulk_create_or_update(
+    def bulk_create_or_update(
         self,
         entities: _models.AtlasEntitiesWithExtInfo,
         *,
         collection_id: Optional[str] = None,
         business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Create or update entities in bulk.
         Existing entity is matched using its unique
@@ -463,7 +2998,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         is 20.
 
         :param entities: An array of entities to create or update. Required.
-        :type entities: ~azure.analytics.purview.datamap.models.AtlasEntitiesWithExtInfo
+        :type entities: ~azure.purview.datamap.models.AtlasEntitiesWithExtInfo
         :keyword collection_id: The collection where entities will be moved to. Only specify a value if
          you
          need to move an entity to another collection. Default value is None.
@@ -472,26 +3007,26 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
          attributes when updating
          entities. Known values are: "ignore", "replace", and "merge". Default value is None.
         :paramtype business_attribute_update_behavior: str or
-         ~azure.analytics.purview.datamap.models.BusinessAttributeUpdateBehavior
+         ~azure.purview.datamap.models.BusinessAttributeUpdateBehavior
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def bulk_create_or_update(
+    def bulk_create_or_update(
         self,
         entities: JSON,
         *,
         collection_id: Optional[str] = None,
         business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Create or update entities in bulk.
         Existing entity is matched using its unique
@@ -512,26 +3047,26 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
          attributes when updating
          entities. Known values are: "ignore", "replace", and "merge". Default value is None.
         :paramtype business_attribute_update_behavior: str or
-         ~azure.analytics.purview.datamap.models.BusinessAttributeUpdateBehavior
+         ~azure.purview.datamap.models.BusinessAttributeUpdateBehavior
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def bulk_create_or_update(
+    def bulk_create_or_update(
         self,
         entities: IO[bytes],
         *,
         collection_id: Optional[str] = None,
         business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Create or update entities in bulk.
         Existing entity is matched using its unique
@@ -552,25 +3087,25 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
          attributes when updating
          entities. Known values are: "ignore", "replace", and "merge". Default value is None.
         :paramtype business_attribute_update_behavior: str or
-         ~azure.analytics.purview.datamap.models.BusinessAttributeUpdateBehavior
+         ~azure.purview.datamap.models.BusinessAttributeUpdateBehavior
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def bulk_create_or_update(
+    @distributed_trace
+    def bulk_create_or_update(
         self,
         entities: Union[_models.AtlasEntitiesWithExtInfo, JSON, IO[bytes]],
         *,
         collection_id: Optional[str] = None,
         business_attribute_update_behavior: Optional[Union[str, _models.BusinessAttributeUpdateBehavior]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Create or update entities in bulk.
         Existing entity is matched using its unique
@@ -583,8 +3118,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         :param entities: An array of entities to create or update. Is one of the following types:
          AtlasEntitiesWithExtInfo, JSON, IO[bytes] Required.
-        :type entities: ~azure.analytics.purview.datamap.models.AtlasEntitiesWithExtInfo or JSON or
-         IO[bytes]
+        :type entities: ~azure.purview.datamap.models.AtlasEntitiesWithExtInfo or JSON or IO[bytes]
         :keyword collection_id: The collection where entities will be moved to. Only specify a value if
          you
          need to move an entity to another collection. Default value is None.
@@ -593,14 +3127,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
          attributes when updating
          entities. Known values are: "ignore", "replace", and "merge". Default value is None.
         :paramtype business_attribute_update_behavior: str or
-         ~azure.analytics.purview.datamap.models.BusinessAttributeUpdateBehavior
+         ~azure.purview.datamap.models.BusinessAttributeUpdateBehavior
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -639,7 +3173,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -647,7 +3181,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -662,8 +3196,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def bulk_delete(self, *, guid: List[str], **kwargs: Any) -> _models.EntityMutationResponse:
+    @distributed_trace
+    def bulk_delete(self, *, guid: List[str], **kwargs: Any) -> _models.EntityMutationResponse:
         """Delete a list of entities in bulk identified by their GUIDs or unique
         attributes.
 
@@ -672,7 +3206,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -700,7 +3234,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -708,7 +3242,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -724,13 +3258,13 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def add_classification(  # pylint: disable=inconsistent-return-statements
+    def add_classification(  # pylint: disable=inconsistent-return-statements
         self, request: _models.ClassificationAssociateRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Associate a classification to multiple entities in bulk.
 
         :param request: The request to associate a classification to multiple entities. Required.
-        :type request: ~azure.analytics.purview.datamap.models.ClassificationAssociateRequest
+        :type request: ~azure.purview.datamap.models.ClassificationAssociateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -740,7 +3274,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def add_classification(  # pylint: disable=inconsistent-return-statements
+    def add_classification(  # pylint: disable=inconsistent-return-statements
         self, request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Associate a classification to multiple entities in bulk.
@@ -756,7 +3290,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def add_classification(  # pylint: disable=inconsistent-return-statements
+    def add_classification(  # pylint: disable=inconsistent-return-statements
         self, request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Associate a classification to multiple entities in bulk.
@@ -771,16 +3305,16 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def add_classification(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def add_classification(  # pylint: disable=inconsistent-return-statements
         self, request: Union[_models.ClassificationAssociateRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Associate a classification to multiple entities in bulk.
 
         :param request: The request to associate a classification to multiple entities. Is one of the
          following types: ClassificationAssociateRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.analytics.purview.datamap.models.ClassificationAssociateRequest or JSON
-         or IO[bytes]
+        :type request: ~azure.purview.datamap.models.ClassificationAssociateRequest or JSON or
+         IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -822,7 +3356,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -830,7 +3364,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -838,14 +3372,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def get(
+    @distributed_trace
+    def get(
         self,
         guid: str,
         *,
         min_ext_info: Optional[bool] = None,
         ignore_relationships: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasEntityWithExtInfo:
         """Get complete definition of an entity given its GUID.
 
@@ -860,7 +3394,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasEntityWithExtInfo. The AtlasEntityWithExtInfo is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasEntityWithExtInfo
+        :rtype: ~azure.purview.datamap.models.AtlasEntityWithExtInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -890,7 +3424,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -898,7 +3432,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -913,8 +3447,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def partial_update_attribute_by_guid(
+    @distributed_trace
+    def partial_update_attribute_by_guid(
         self, guid: str, body: Any, *, name: str, **kwargs: Any
     ) -> _models.EntityMutationResponse:
         """Update entity partially - create or update entity attribute identified by its
@@ -937,7 +3471,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -971,7 +3505,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -979,7 +3513,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -994,8 +3528,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete(self, guid: str, **kwargs: Any) -> _models.EntityMutationResponse:
+    @distributed_trace
+    def delete(self, guid: str, **kwargs: Any) -> _models.EntityMutationResponse:
         """Delete an entity identified by its GUID.
 
         :param guid: The globally unique identifier of the entity. Required.
@@ -1003,7 +3537,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1031,7 +3565,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1039,7 +3573,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1054,10 +3588,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_classification(
-        self, guid: str, classification_name: str, **kwargs: Any
-    ) -> _models.AtlasClassification:
+    @distributed_trace
+    def get_classification(self, guid: str, classification_name: str, **kwargs: Any) -> _models.AtlasClassification:
         """Get classification for a given entity represented by a GUID.
 
         :param guid: The globally unique identifier of the entity. Required.
@@ -1067,7 +3599,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasClassification. The AtlasClassification is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasClassification
+        :rtype: ~azure.purview.datamap.models.AtlasClassification
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1096,7 +3628,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1104,7 +3636,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1119,8 +3651,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def remove_classification(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def remove_classification(  # pylint: disable=inconsistent-return-statements
         self, guid: str, classification_name: str, **kwargs: Any
     ) -> None:
         """Delete a given classification from an existing entity represented by a GUID.
@@ -1159,7 +3691,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1167,7 +3699,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1175,8 +3707,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def get_classifications(self, guid: str, **kwargs: Any) -> _models.AtlasClassifications:
+    @distributed_trace
+    def get_classifications(self, guid: str, **kwargs: Any) -> _models.AtlasClassifications:
         """List classifications for a given entity represented by a GUID.
 
         :param guid: The globally unique identifier of the entity. Required.
@@ -1184,7 +3716,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasClassifications. The AtlasClassifications is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasClassifications
+        :rtype: ~azure.purview.datamap.models.AtlasClassifications
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1212,7 +3744,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1220,7 +3752,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1236,20 +3768,20 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def add_classifications(  # pylint: disable=inconsistent-return-statements
+    def add_classifications(  # pylint: disable=inconsistent-return-statements
         self,
         guid: str,
         classifications: List[_models.AtlasClassification],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add classifications to an existing entity represented by a GUID.
 
         :param guid: The globally unique identifier of the entity. Required.
         :type guid: str
         :param classifications: An array of classifications to be added. Required.
-        :type classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification]
+        :type classifications: list[~azure.purview.datamap.models.AtlasClassification]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1259,7 +3791,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def add_classifications(  # pylint: disable=inconsistent-return-statements
+    def add_classifications(  # pylint: disable=inconsistent-return-statements
         self, guid: str, classifications: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Add classifications to an existing entity represented by a GUID.
@@ -1276,8 +3808,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def add_classifications(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def add_classifications(  # pylint: disable=inconsistent-return-statements
         self, guid: str, classifications: Union[List[_models.AtlasClassification], IO[bytes]], **kwargs: Any
     ) -> None:
         """Add classifications to an existing entity represented by a GUID.
@@ -1286,8 +3818,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :type guid: str
         :param classifications: An array of classifications to be added. Is either a
          [AtlasClassification] type or a IO[bytes] type. Required.
-        :type classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification] or
-         IO[bytes]
+        :type classifications: list[~azure.purview.datamap.models.AtlasClassification] or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -1330,7 +3861,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1338,7 +3869,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1347,20 +3878,20 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def update_classifications(  # pylint: disable=inconsistent-return-statements
+    def update_classifications(  # pylint: disable=inconsistent-return-statements
         self,
         guid: str,
         classifications: List[_models.AtlasClassification],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Update classifications to an existing entity represented by a guid.
 
         :param guid: The globally unique identifier of the entity. Required.
         :type guid: str
         :param classifications: An array of classifications to be updated. Required.
-        :type classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification]
+        :type classifications: list[~azure.purview.datamap.models.AtlasClassification]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1370,7 +3901,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def update_classifications(  # pylint: disable=inconsistent-return-statements
+    def update_classifications(  # pylint: disable=inconsistent-return-statements
         self, guid: str, classifications: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Update classifications to an existing entity represented by a guid.
@@ -1387,8 +3918,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def update_classifications(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def update_classifications(  # pylint: disable=inconsistent-return-statements
         self, guid: str, classifications: Union[List[_models.AtlasClassification], IO[bytes]], **kwargs: Any
     ) -> None:
         """Update classifications to an existing entity represented by a guid.
@@ -1397,8 +3928,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :type guid: str
         :param classifications: An array of classifications to be updated. Is either a
          [AtlasClassification] type or a IO[bytes] type. Required.
-        :type classifications: list[~azure.analytics.purview.datamap.models.AtlasClassification] or
-         IO[bytes]
+        :type classifications: list[~azure.purview.datamap.models.AtlasClassification] or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -1441,7 +3971,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1449,7 +3979,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1457,15 +3987,15 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def get_by_unique_attributes(
+    @distributed_trace
+    def get_by_unique_attributes(
         self,
         type_name: str,
         *,
         min_ext_info: Optional[bool] = None,
         ignore_relationships: Optional[bool] = None,
         attr: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasEntityWithExtInfo:
         """Get complete definition of an entity given its type and unique attribute.
 
@@ -1496,7 +4026,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasEntityWithExtInfo. The AtlasEntityWithExtInfo is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasEntityWithExtInfo
+        :rtype: ~azure.purview.datamap.models.AtlasEntityWithExtInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1527,7 +4057,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1535,7 +4065,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1551,14 +4081,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def partial_update_by_unique_attributes(
+    def partial_update_by_unique_attributes(
         self,
         type_name: str,
         atlas_entity_with_ext_info: _models.AtlasEntityWithExtInfo,
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Update entity partially - Allow a subset of attributes to be updated on an
         entity which is identified by its type and unique attribute eg:
@@ -1580,8 +4110,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :param type_name: The name of the type. Required.
         :type type_name: str
         :param atlas_entity_with_ext_info: Atlas entity with extended information. Required.
-        :type atlas_entity_with_ext_info:
-         ~azure.analytics.purview.datamap.models.AtlasEntityWithExtInfo
+        :type atlas_entity_with_ext_info: ~azure.purview.datamap.models.AtlasEntityWithExtInfo
         :keyword attr: The qualified name of the entity. (This is only an example. qualifiedName can
          be changed to other unique attributes). Default value is None.
         :paramtype attr: str
@@ -1591,19 +4120,19 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def partial_update_by_unique_attributes(
+    def partial_update_by_unique_attributes(
         self,
         type_name: str,
         atlas_entity_with_ext_info: JSON,
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Update entity partially - Allow a subset of attributes to be updated on an
         entity which is identified by its type and unique attribute eg:
@@ -1635,19 +4164,19 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def partial_update_by_unique_attributes(
+    def partial_update_by_unique_attributes(
         self,
         type_name: str,
         atlas_entity_with_ext_info: IO[bytes],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Update entity partially - Allow a subset of attributes to be updated on an
         entity which is identified by its type and unique attribute eg:
@@ -1679,18 +4208,18 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def partial_update_by_unique_attributes(
+    @distributed_trace
+    def partial_update_by_unique_attributes(
         self,
         type_name: str,
         atlas_entity_with_ext_info: Union[_models.AtlasEntityWithExtInfo, JSON, IO[bytes]],
         *,
         attr: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Update entity partially - Allow a subset of attributes to be updated on an
         entity which is identified by its type and unique attribute eg:
@@ -1713,8 +4242,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :type type_name: str
         :param atlas_entity_with_ext_info: Atlas entity with extended information. Is one of the
          following types: AtlasEntityWithExtInfo, JSON, IO[bytes] Required.
-        :type atlas_entity_with_ext_info:
-         ~azure.analytics.purview.datamap.models.AtlasEntityWithExtInfo or JSON or IO[bytes]
+        :type atlas_entity_with_ext_info: ~azure.purview.datamap.models.AtlasEntityWithExtInfo or JSON
+         or IO[bytes]
         :keyword attr: The qualified name of the entity. (This is only an example. qualifiedName can
          be changed to other unique attributes). Default value is None.
         :paramtype attr: str
@@ -1724,7 +4253,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1763,7 +4292,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1771,7 +4300,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1786,8 +4315,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete_by_unique_attribute(
+    @distributed_trace
+    def delete_by_unique_attribute(
         self, type_name: str, *, attr: Optional[str] = None, **kwargs: Any
     ) -> _models.EntityMutationResponse:
         """Delete an entity identified by its type and unique attributes.
@@ -1811,7 +4340,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1840,7 +4369,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1848,7 +4377,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1863,8 +4392,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def remove_classification_by_unique_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
+    @distributed_trace
+    def remove_classification_by_unique_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
         self, type_name: str, classification_name: str, *, attr: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Delete a given classification from an entity identified by its type and unique
@@ -1908,7 +4437,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1916,7 +4445,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -1925,22 +4454,21 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def add_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    def add_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
         type_name: str,
         atlas_classification_array: List[_models.AtlasClassification],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add classification to the entity identified by its type and unique attributes.
 
         :param type_name: The name of the type. Required.
         :type type_name: str
         :param atlas_classification_array: An array of classification to be added. Required.
-        :type atlas_classification_array:
-         list[~azure.analytics.purview.datamap.models.AtlasClassification]
+        :type atlas_classification_array: list[~azure.purview.datamap.models.AtlasClassification]
         :keyword attr: The qualified name of the entity. (This is only an example. qualifiedName can
          be changed to other unique attributes). Default value is None.
         :paramtype attr: str
@@ -1953,14 +4481,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def add_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    def add_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
         type_name: str,
         atlas_classification_array: IO[bytes],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add classification to the entity identified by its type and unique attributes.
 
@@ -1979,14 +4507,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def add_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def add_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
         type_name: str,
         atlas_classification_array: Union[List[_models.AtlasClassification], IO[bytes]],
         *,
         attr: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add classification to the entity identified by its type and unique attributes.
 
@@ -1994,8 +4522,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :type type_name: str
         :param atlas_classification_array: An array of classification to be added. Is either a
          [AtlasClassification] type or a IO[bytes] type. Required.
-        :type atlas_classification_array:
-         list[~azure.analytics.purview.datamap.models.AtlasClassification] or IO[bytes]
+        :type atlas_classification_array: list[~azure.purview.datamap.models.AtlasClassification] or
+         IO[bytes]
         :keyword attr: The qualified name of the entity. (This is only an example. qualifiedName can
          be changed to other unique attributes). Default value is None.
         :paramtype attr: str
@@ -2042,7 +4570,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2050,7 +4578,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2059,22 +4587,21 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def update_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
+    def update_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
         type_name: str,
         atlas_classification_array: List[_models.AtlasClassification],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Update classification on an entity identified by its type and unique attributes.
 
         :param type_name: The name of the type. Required.
         :type type_name: str
         :param atlas_classification_array: An array of classification to be updated. Required.
-        :type atlas_classification_array:
-         list[~azure.analytics.purview.datamap.models.AtlasClassification]
+        :type atlas_classification_array: list[~azure.purview.datamap.models.AtlasClassification]
         :keyword attr: The qualified name of the entity. (This is only an example. qualifiedName can
          be changed to other unique attributes). Default value is None.
         :paramtype attr: str
@@ -2087,14 +4614,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def update_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
+    def update_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
         type_name: str,
         atlas_classification_array: IO[bytes],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Update classification on an entity identified by its type and unique attributes.
 
@@ -2113,14 +4640,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def update_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
+    @distributed_trace
+    def update_classifications_by_unique_attribute(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
         type_name: str,
         atlas_classification_array: Union[List[_models.AtlasClassification], IO[bytes]],
         *,
         attr: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Update classification on an entity identified by its type and unique attributes.
 
@@ -2128,8 +4655,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :type type_name: str
         :param atlas_classification_array: An array of classification to be updated. Is either a
          [AtlasClassification] type or a IO[bytes] type. Required.
-        :type atlas_classification_array:
-         list[~azure.analytics.purview.datamap.models.AtlasClassification] or IO[bytes]
+        :type atlas_classification_array: list[~azure.purview.datamap.models.AtlasClassification] or
+         IO[bytes]
         :keyword attr: The qualified name of the entity. (This is only an example. qualifiedName can
          be changed to other unique attributes). Default value is None.
         :paramtype attr: str
@@ -2176,7 +4703,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2184,7 +4711,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2193,13 +4720,13 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def bulk_set_classifications(
+    def bulk_set_classifications(
         self, entity_headers: _models.AtlasEntityHeaders, *, content_type: str = "application/json", **kwargs: Any
     ) -> List[str]:
         """Set classifications on entities in bulk.
 
         :param entity_headers: Atlas entity headers. Required.
-        :type entity_headers: ~azure.analytics.purview.datamap.models.AtlasEntityHeaders
+        :type entity_headers: ~azure.purview.datamap.models.AtlasEntityHeaders
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2211,7 +4738,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def bulk_set_classifications(
+    def bulk_set_classifications(
         self, entity_headers: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> List[str]:
         """Set classifications on entities in bulk.
@@ -2229,7 +4756,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def bulk_set_classifications(
+    def bulk_set_classifications(
         self, entity_headers: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> List[str]:
         """Set classifications on entities in bulk.
@@ -2246,16 +4773,15 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def bulk_set_classifications(
+    @distributed_trace
+    def bulk_set_classifications(
         self, entity_headers: Union[_models.AtlasEntityHeaders, JSON, IO[bytes]], **kwargs: Any
     ) -> List[str]:
         """Set classifications on entities in bulk.
 
         :param entity_headers: Atlas entity headers. Is one of the following types: AtlasEntityHeaders,
          JSON, IO[bytes] Required.
-        :type entity_headers: ~azure.analytics.purview.datamap.models.AtlasEntityHeaders or JSON or
-         IO[bytes]
+        :type entity_headers: ~azure.purview.datamap.models.AtlasEntityHeaders or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -2299,7 +4825,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2307,7 +4833,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2322,15 +4848,15 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_by_unique_attributes(
+    @distributed_trace
+    def list_by_unique_attributes(
         self,
         type_name: str,
         *,
         min_ext_info: Optional[bool] = None,
         ignore_relationships: Optional[bool] = None,
         attr_n_qualified_name: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasEntitiesWithExtInfo:
         """Bulk API to retrieve list of entities identified by its unique attributes.
         In
@@ -2368,7 +4894,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
          will have to context manage the returned stream.
         :return: AtlasEntitiesWithExtInfo. The AtlasEntitiesWithExtInfo is compatible with
          MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasEntitiesWithExtInfo
+        :rtype: ~azure.purview.datamap.models.AtlasEntitiesWithExtInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2399,7 +4925,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2407,7 +4933,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2422,8 +4948,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_header(self, guid: str, **kwargs: Any) -> _models.AtlasEntityHeader:
+    @distributed_trace
+    def get_header(self, guid: str, **kwargs: Any) -> _models.AtlasEntityHeader:
         """Get entity header given its GUID.
 
         :param guid: The globally unique identifier of the entity. Required.
@@ -2431,7 +4957,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasEntityHeader. The AtlasEntityHeader is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasEntityHeader
+        :rtype: ~azure.purview.datamap.models.AtlasEntityHeader
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2459,7 +4985,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2467,7 +4993,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2483,13 +5009,13 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def remove_business_metadata(  # pylint: disable=inconsistent-return-statements
+    def remove_business_metadata(  # pylint: disable=inconsistent-return-statements
         self,
         guid: str,
         business_metadata: Dict[str, Dict[str, Any]],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Remove business metadata from an entity.
 
@@ -2506,7 +5032,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def remove_business_metadata(  # pylint: disable=inconsistent-return-statements
+    def remove_business_metadata(  # pylint: disable=inconsistent-return-statements
         self, guid: str, business_metadata: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Remove business metadata from an entity.
@@ -2523,8 +5049,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def remove_business_metadata(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def remove_business_metadata(  # pylint: disable=inconsistent-return-statements
         self, guid: str, business_metadata: Union[Dict[str, Dict[str, Any]], IO[bytes]], **kwargs: Any
     ) -> None:
         """Remove business metadata from an entity.
@@ -2576,7 +5102,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2584,7 +5110,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2593,14 +5119,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def add_or_update_business_metadata(  # pylint: disable=inconsistent-return-statements
+    def add_or_update_business_metadata(  # pylint: disable=inconsistent-return-statements
         self,
         guid: str,
         business_metadata: Dict[str, Dict[str, Any]],
         *,
         is_overwrite: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add business metadata to an entity.
 
@@ -2621,14 +5147,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def add_or_update_business_metadata(  # pylint: disable=inconsistent-return-statements
+    def add_or_update_business_metadata(  # pylint: disable=inconsistent-return-statements
         self,
         guid: str,
         business_metadata: IO[bytes],
         *,
         is_overwrite: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add business metadata to an entity.
 
@@ -2648,14 +5174,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def add_or_update_business_metadata(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def add_or_update_business_metadata(  # pylint: disable=inconsistent-return-statements
         self,
         guid: str,
         business_metadata: Union[Dict[str, Dict[str, Any]], IO[bytes]],
         *,
         is_overwrite: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add business metadata to an entity.
 
@@ -2711,7 +5237,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2719,7 +5245,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2728,14 +5254,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def remove_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
+    def remove_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
         self,
         bm_name: str,
         guid: str,
         business_metadata_attributes: Dict[str, Any],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Delete business metadata attributes from an entity.
 
@@ -2754,14 +5280,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def remove_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
+    def remove_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
         self,
         bm_name: str,
         guid: str,
         business_metadata_attributes: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Delete business metadata attributes from an entity.
 
@@ -2779,8 +5305,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def remove_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def remove_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements
         self, bm_name: str, guid: str, business_metadata_attributes: Union[Dict[str, Any], IO[bytes]], **kwargs: Any
     ) -> None:
         """Delete business metadata attributes from an entity.
@@ -2835,7 +5361,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2843,7 +5369,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2852,14 +5378,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def add_or_update_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements,name-too-long
+    def add_or_update_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
         bm_name: str,
         guid: str,
         business_metadata_attributes: Dict[str, Any],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add or update business metadata attributes.
 
@@ -2878,14 +5404,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def add_or_update_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements,name-too-long
+    def add_or_update_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements,name-too-long
         self,
         bm_name: str,
         guid: str,
         business_metadata_attributes: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add or update business metadata attributes.
 
@@ -2903,8 +5429,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def add_or_update_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements,name-too-long
+    @distributed_trace
+    def add_or_update_business_metadata_attributes(  # pylint: disable=inconsistent-return-statements,name-too-long
         self, bm_name: str, guid: str, business_metadata_attributes: Union[Dict[str, Any], IO[bytes]], **kwargs: Any
     ) -> None:
         """Add or update business metadata attributes.
@@ -2959,7 +5485,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2967,7 +5493,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -2975,8 +5501,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def get_sample_business_metadata_template(self, **kwargs: Any) -> bytes:
+    @distributed_trace
+    def get_sample_business_metadata_template(self, **kwargs: Any) -> bytes:
         """Get the sample Template for uploading/creating bulk BusinessMetaData.
 
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
@@ -3009,7 +5535,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3017,11 +5543,11 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        await response.read()
+        response.read()
         deserialized = response.content
 
         if cls:
@@ -3029,8 +5555,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def import_business_metadata(
+    @distributed_trace
+    def import_business_metadata(
         self, body: JSON = _Unset, *, uploaded_input_stream: bytes = _Unset, **kwargs: Any
     ) -> _models.BulkImportResponse:
         """Upload the file for creating Business Metadata in BULK.
@@ -3045,7 +5571,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: BulkImportResponse. The BulkImportResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.BulkImportResponse
+        :rtype: ~azure.purview.datamap.models.BulkImportResponse
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -3091,7 +5617,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3099,7 +5625,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3115,7 +5641,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def remove_labels(  # pylint: disable=inconsistent-return-statements
+    def remove_labels(  # pylint: disable=inconsistent-return-statements
         self, guid: str, body: List[str], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete given labels to a given entity.
@@ -3133,7 +5659,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def remove_labels(  # pylint: disable=inconsistent-return-statements
+    def remove_labels(  # pylint: disable=inconsistent-return-statements
         self, guid: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete given labels to a given entity.
@@ -3150,8 +5676,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def remove_labels(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def remove_labels(  # pylint: disable=inconsistent-return-statements
         self, guid: str, body: Union[List[str], IO[bytes]], **kwargs: Any
     ) -> None:
         """Delete given labels to a given entity.
@@ -3202,7 +5728,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3210,7 +5736,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3219,7 +5745,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def set_labels(  # pylint: disable=inconsistent-return-statements
+    def set_labels(  # pylint: disable=inconsistent-return-statements
         self, guid: str, body: List[str], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Set labels to a given entity.
@@ -3237,7 +5763,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def set_labels(  # pylint: disable=inconsistent-return-statements
+    def set_labels(  # pylint: disable=inconsistent-return-statements
         self, guid: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Set labels to a given entity.
@@ -3254,8 +5780,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def set_labels(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def set_labels(  # pylint: disable=inconsistent-return-statements
         self, guid: str, body: Union[List[str], IO[bytes]], **kwargs: Any
     ) -> None:
         """Set labels to a given entity.
@@ -3307,7 +5833,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3315,7 +5841,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3324,7 +5850,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def add_label(  # pylint: disable=inconsistent-return-statements
+    def add_label(  # pylint: disable=inconsistent-return-statements
         self, guid: str, body: List[str], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Add given labels to a given entity.
@@ -3342,7 +5868,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def add_label(  # pylint: disable=inconsistent-return-statements
+    def add_label(  # pylint: disable=inconsistent-return-statements
         self, guid: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Add given labels to a given entity.
@@ -3359,8 +5885,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def add_label(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def add_label(  # pylint: disable=inconsistent-return-statements
         self, guid: str, body: Union[List[str], IO[bytes]], **kwargs: Any
     ) -> None:
         """Add given labels to a given entity.
@@ -3411,7 +5937,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3419,7 +5945,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3428,14 +5954,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def remove_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    def remove_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
         type_name: str,
         body: List[str],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Delete given labels to a given entity identified by its type and unique
         attribute.
@@ -3467,14 +5993,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def remove_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    def remove_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
         type_name: str,
         body: IO[bytes],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Delete given labels to a given entity identified by its type and unique
         attribute.
@@ -3505,8 +6031,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def remove_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def remove_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self, type_name: str, body: Union[List[str], IO[bytes]], *, attr: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Delete given labels to a given entity identified by its type and unique
@@ -3573,7 +6099,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3581,7 +6107,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3590,14 +6116,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def set_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    def set_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
         type_name: str,
         body: List[str],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Set labels to a given entity identified by its type and unique attributes.
 
@@ -3631,14 +6157,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def set_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    def set_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
         type_name: str,
         body: IO[bytes],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Set labels to a given entity identified by its type and unique attributes.
 
@@ -3671,8 +6197,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def set_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def set_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self, type_name: str, body: Union[List[str], IO[bytes]], *, attr: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Set labels to a given entity identified by its type and unique attributes.
@@ -3741,7 +6267,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3749,7 +6275,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3758,14 +6284,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def add_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    def add_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
         type_name: str,
         body: List[str],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add given labels to a given entity identified by its type and unique
         attributes.
@@ -3799,14 +6325,14 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def add_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    def add_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self,
         type_name: str,
         body: IO[bytes],
         *,
         attr: Optional[str] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Add given labels to a given entity identified by its type and unique
         attributes.
@@ -3839,8 +6365,8 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def add_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def add_labels_by_unique_attribute(  # pylint: disable=inconsistent-return-statements
         self, type_name: str, body: Union[List[str], IO[bytes]], *, attr: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Add given labels to a given entity identified by its type and unique
@@ -3909,7 +6435,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3917,7 +6443,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -3926,18 +6452,18 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def move_entities_to_collection(
+    def move_entities_to_collection(
         self,
         move_entities_request: _models.MoveEntitiesRequest,
         *,
         collection_id: str,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Move existing entities to the target collection.
 
         :param move_entities_request: Entity guids to be moved to target collection. Required.
-        :type move_entities_request: ~azure.analytics.purview.datamap.models.MoveEntitiesRequest
+        :type move_entities_request: ~azure.purview.datamap.models.MoveEntitiesRequest
         :keyword collection_id: The collection where entities will be moved to. Required.
         :paramtype collection_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3946,12 +6472,12 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def move_entities_to_collection(
+    def move_entities_to_collection(
         self, move_entities_request: JSON, *, collection_id: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EntityMutationResponse:
         """Move existing entities to the target collection.
@@ -3966,18 +6492,18 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def move_entities_to_collection(
+    def move_entities_to_collection(
         self,
         move_entities_request: IO[bytes],
         *,
         collection_id: str,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Move existing entities to the target collection.
 
@@ -3991,24 +6517,24 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def move_entities_to_collection(
+    @distributed_trace
+    def move_entities_to_collection(
         self,
         move_entities_request: Union[_models.MoveEntitiesRequest, JSON, IO[bytes]],
         *,
         collection_id: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.EntityMutationResponse:
         """Move existing entities to the target collection.
 
         :param move_entities_request: Entity guids to be moved to target collection. Is one of the
          following types: MoveEntitiesRequest, JSON, IO[bytes] Required.
-        :type move_entities_request: ~azure.analytics.purview.datamap.models.MoveEntitiesRequest or
-         JSON or IO[bytes]
+        :type move_entities_request: ~azure.purview.datamap.models.MoveEntitiesRequest or JSON or
+         IO[bytes]
         :keyword collection_id: The collection where entities will be moved to. Required.
         :paramtype collection_id: str
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
@@ -4017,7 +6543,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: EntityMutationResponse. The EntityMutationResponse is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.EntityMutationResponse
+        :rtype: ~azure.purview.datamap.models.EntityMutationResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4055,7 +6581,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4063,7 +6589,7 @@ class EntityOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4085,26 +6611,26 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.analytics.purview.datamap.aio.PurviewDataMapClient`'s
+        :class:`~azure.purview.datamap.PurviewDataMapClient`'s
         :attr:`glossary` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
-    async def list(
+    @distributed_trace
+    def list(
         self,
         *,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         sort: Optional[str] = None,
         ignore_terms_and_categories: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasGlossary]:
         """Get all glossaries. Recommend using limit/offset to get pagination result.
         Recommend using 'ignoreTermsAndCategories=true' and fetch terms/categories
@@ -4127,7 +6653,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasGlossary
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasGlossary]
+        :rtype: list[~azure.purview.datamap.models.AtlasGlossary]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4158,7 +6684,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4166,7 +6692,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4182,7 +6708,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def create(
+    def create(
         self, atlas_glossary: _models.AtlasGlossary, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossary:
         """Create a glossary.
@@ -4190,19 +6716,19 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :param atlas_glossary: Glossary definition, terms & categories can be anchored to a glossary.
          Using
          the anchor attribute when creating the Term/Category. Required.
-        :type atlas_glossary: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :type atlas_glossary: ~azure.purview.datamap.models.AtlasGlossary
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(
+    def create(
         self, atlas_glossary: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossary:
         """Create a glossary.
@@ -4217,12 +6743,12 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(
+    def create(
         self, atlas_glossary: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossary:
         """Create a glossary.
@@ -4237,12 +6763,12 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def create(
+    @distributed_trace
+    def create(
         self, atlas_glossary: Union[_models.AtlasGlossary, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasGlossary:
         """Create a glossary.
@@ -4251,15 +6777,14 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
          Using
          the anchor attribute when creating the Term/Category. Is one of the following types:
          AtlasGlossary, JSON, IO[bytes] Required.
-        :type atlas_glossary: ~azure.analytics.purview.datamap.models.AtlasGlossary or JSON or
-         IO[bytes]
+        :type atlas_glossary: ~azure.purview.datamap.models.AtlasGlossary or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4296,7 +6821,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4304,7 +6829,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4320,29 +6845,29 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def create_categories(
+    def create_categories(
         self,
         glossary_category: List[_models.AtlasGlossaryCategory],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasGlossaryCategory]:
         """Create glossary category in bulk.
 
         :param glossary_category: An array of glossary category definitions to be created. Required.
-        :type glossary_category: list[~azure.analytics.purview.datamap.models.AtlasGlossaryCategory]
+        :type glossary_category: list[~azure.purview.datamap.models.AtlasGlossaryCategory]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasGlossaryCategory
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasGlossaryCategory]
+        :rtype: list[~azure.purview.datamap.models.AtlasGlossaryCategory]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_categories(
+    def create_categories(
         self, glossary_category: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> List[_models.AtlasGlossaryCategory]:
         """Create glossary category in bulk.
@@ -4355,27 +6880,26 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasGlossaryCategory
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasGlossaryCategory]
+        :rtype: list[~azure.purview.datamap.models.AtlasGlossaryCategory]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def create_categories(
+    @distributed_trace
+    def create_categories(
         self, glossary_category: Union[List[_models.AtlasGlossaryCategory], IO[bytes]], **kwargs: Any
     ) -> List[_models.AtlasGlossaryCategory]:
         """Create glossary category in bulk.
 
         :param glossary_category: An array of glossary category definitions to be created. Is either a
          [AtlasGlossaryCategory] type or a IO[bytes] type. Required.
-        :type glossary_category: list[~azure.analytics.purview.datamap.models.AtlasGlossaryCategory] or
-         IO[bytes]
+        :type glossary_category: list[~azure.purview.datamap.models.AtlasGlossaryCategory] or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasGlossaryCategory
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasGlossaryCategory]
+        :rtype: list[~azure.purview.datamap.models.AtlasGlossaryCategory]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4412,7 +6936,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4420,7 +6944,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4436,7 +6960,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def create_category(
+    def create_category(
         self, glossary_category: _models.AtlasGlossaryCategory, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         """Create a glossary category.
@@ -4446,19 +6970,19 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
          when creating.
          Optionally, terms belonging to the category and the hierarchy
          can also be defined during creation. Required.
-        :type glossary_category: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :type glossary_category: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_category(
+    def create_category(
         self, glossary_category: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         """Create a glossary category.
@@ -4475,12 +6999,12 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_category(
+    def create_category(
         self, glossary_category: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         """Create a glossary category.
@@ -4497,12 +7021,12 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def create_category(
+    @distributed_trace
+    def create_category(
         self, glossary_category: Union[_models.AtlasGlossaryCategory, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         """Create a glossary category.
@@ -4513,15 +7037,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
          Optionally, terms belonging to the category and the hierarchy
          can also be defined during creation. Is one of the following types: AtlasGlossaryCategory,
          JSON, IO[bytes] Required.
-        :type glossary_category: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory or JSON
-         or IO[bytes]
+        :type glossary_category: ~azure.purview.datamap.models.AtlasGlossaryCategory or JSON or
+         IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4558,7 +7082,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4566,7 +7090,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4581,8 +7105,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_category(self, category_guid: str, **kwargs: Any) -> _models.AtlasGlossaryCategory:
+    @distributed_trace
+    def get_category(self, category_guid: str, **kwargs: Any) -> _models.AtlasGlossaryCategory:
         """Get specific glossary category by its GUID.
 
         :param category_guid: The globally unique identifier of the category. Required.
@@ -4590,7 +7114,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4618,7 +7142,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4626,7 +7150,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4642,32 +7166,32 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def update_category(
+    def update_category(
         self,
         category_guid: str,
         glossary_category: _models.AtlasGlossaryCategory,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryCategory:
         """Update the given glossary category by its GUID.
 
         :param category_guid: The globally unique identifier of the category. Required.
         :type category_guid: str
         :param glossary_category: The glossary category to be updated. Required.
-        :type glossary_category: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :type glossary_category: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update_category(
+    def update_category(
         self, category_guid: str, glossary_category: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         """Update the given glossary category by its GUID.
@@ -4682,12 +7206,12 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update_category(
+    def update_category(
         self, category_guid: str, glossary_category: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         """Update the given glossary category by its GUID.
@@ -4702,16 +7226,16 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def update_category(
+    @distributed_trace
+    def update_category(
         self,
         category_guid: str,
         glossary_category: Union[_models.AtlasGlossaryCategory, JSON, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryCategory:
         """Update the given glossary category by its GUID.
 
@@ -4719,15 +7243,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :type category_guid: str
         :param glossary_category: The glossary category to be updated. Is one of the following types:
          AtlasGlossaryCategory, JSON, IO[bytes] Required.
-        :type glossary_category: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory or JSON
-         or IO[bytes]
+        :type glossary_category: ~azure.purview.datamap.models.AtlasGlossaryCategory or JSON or
+         IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4765,7 +7289,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4773,7 +7297,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4788,8 +7312,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete_category(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_category(  # pylint: disable=inconsistent-return-statements
         self, category_guid: str, **kwargs: Any
     ) -> None:
         """Delete a glossary category.
@@ -4825,7 +7349,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4833,7 +7357,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4841,8 +7365,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def partial_update_category(
+    @distributed_trace
+    def partial_update_category(
         self, category_guid: str, partial_updates: Any, **kwargs: Any
     ) -> _models.AtlasGlossaryCategory:
         """Update the glossary category partially. So far we only supports partial
@@ -4860,7 +7384,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryCategory. The AtlasGlossaryCategory is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryCategory
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryCategory
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4893,7 +7417,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4901,7 +7425,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4916,15 +7440,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_related_categories(
+    @distributed_trace
+    def list_related_categories(
         self,
         category_guid: str,
         *,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         sort: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, List[_models.AtlasRelatedCategoryHeader]]:
         """Get all related categories (parent and children). Limit, offset, and sort
         parameters are currently not being enabled and won't work even they are passed.
@@ -4940,7 +7464,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: dict mapping str to list of AtlasRelatedCategoryHeader
-        :rtype: dict[str, list[~azure.analytics.purview.datamap.models.AtlasRelatedCategoryHeader]]
+        :rtype: dict[str, list[~azure.purview.datamap.models.AtlasRelatedCategoryHeader]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -4971,7 +7495,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4979,7 +7503,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -4994,15 +7518,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_category_terms(
+    @distributed_trace
+    def list_category_terms(
         self,
         category_guid: str,
         *,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         sort: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasRelatedTermHeader]:
         """Get all terms associated with the specific category.
 
@@ -5017,7 +7541,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasRelatedTermHeader
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+        :rtype: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5048,7 +7572,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5056,7 +7580,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5072,13 +7596,13 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def create_term(
+    def create_term(
         self,
         glossary_term: _models.AtlasGlossaryTerm,
         *,
         include_term_hierarchy: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryTerm:
         """Create a glossary term.
 
@@ -5086,7 +7610,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
          the time
          of creation.
          Optionally it can be categorized as well. Required.
-        :type glossary_term: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :type glossary_term: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :keyword include_term_hierarchy: Whether include term hierarchy. Default value is None.
         :paramtype include_term_hierarchy: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5095,18 +7619,18 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_term(
+    def create_term(
         self,
         glossary_term: JSON,
         *,
         include_term_hierarchy: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryTerm:
         """Create a glossary term.
 
@@ -5123,18 +7647,18 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_term(
+    def create_term(
         self,
         glossary_term: IO[bytes],
         *,
         include_term_hierarchy: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryTerm:
         """Create a glossary term.
 
@@ -5151,17 +7675,17 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def create_term(
+    @distributed_trace
+    def create_term(
         self,
         glossary_term: Union[_models.AtlasGlossaryTerm, JSON, IO[bytes]],
         *,
         include_term_hierarchy: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryTerm:
         """Create a glossary term.
 
@@ -5170,8 +7694,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
          of creation.
          Optionally it can be categorized as well. Is one of the following types: AtlasGlossaryTerm,
          JSON, IO[bytes] Required.
-        :type glossary_term: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm or JSON or
-         IO[bytes]
+        :type glossary_term: ~azure.purview.datamap.models.AtlasGlossaryTerm or JSON or IO[bytes]
         :keyword include_term_hierarchy: Whether include term hierarchy. Default value is None.
         :paramtype include_term_hierarchy: bool
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
@@ -5180,7 +7703,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5218,7 +7741,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5226,7 +7749,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5241,8 +7764,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_term(self, term_guid: str, **kwargs: Any) -> _models.AtlasGlossaryTerm:
+    @distributed_trace
+    def get_term(self, term_guid: str, **kwargs: Any) -> _models.AtlasGlossaryTerm:
         """Get a specific glossary term by its GUID.
 
         :param term_guid: The globally unique identifier for glossary term. Required.
@@ -5250,7 +7773,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5278,7 +7801,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5286,7 +7809,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5302,21 +7825,21 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def update_term(
+    def update_term(
         self,
         term_guid: str,
         glossary_term: _models.AtlasGlossaryTerm,
         *,
         include_term_hierarchy: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryTerm:
         """Update the given glossary term by its GUID.
 
         :param term_guid: The globally unique identifier for glossary term. Required.
         :type term_guid: str
         :param glossary_term: The glossary term to be updated. Required.
-        :type glossary_term: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :type glossary_term: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :keyword include_term_hierarchy: Whether include term hierarchy. Default value is None.
         :paramtype include_term_hierarchy: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5325,19 +7848,19 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update_term(
+    def update_term(
         self,
         term_guid: str,
         glossary_term: JSON,
         *,
         include_term_hierarchy: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryTerm:
         """Update the given glossary term by its GUID.
 
@@ -5353,19 +7876,19 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update_term(
+    def update_term(
         self,
         term_guid: str,
         glossary_term: IO[bytes],
         *,
         include_term_hierarchy: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryTerm:
         """Update the given glossary term by its GUID.
 
@@ -5381,18 +7904,18 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def update_term(
+    @distributed_trace
+    def update_term(
         self,
         term_guid: str,
         glossary_term: Union[_models.AtlasGlossaryTerm, JSON, IO[bytes]],
         *,
         include_term_hierarchy: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossaryTerm:
         """Update the given glossary term by its GUID.
 
@@ -5400,8 +7923,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :type term_guid: str
         :param glossary_term: The glossary term to be updated. Is one of the following types:
          AtlasGlossaryTerm, JSON, IO[bytes] Required.
-        :type glossary_term: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm or JSON or
-         IO[bytes]
+        :type glossary_term: ~azure.purview.datamap.models.AtlasGlossaryTerm or JSON or IO[bytes]
         :keyword include_term_hierarchy: Whether include term hierarchy. Default value is None.
         :paramtype include_term_hierarchy: bool
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
@@ -5410,7 +7932,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5449,7 +7971,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5457,7 +7979,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5472,10 +7994,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete_term(  # pylint: disable=inconsistent-return-statements
-        self, term_guid: str, **kwargs: Any
-    ) -> None:
+    @distributed_trace
+    def delete_term(self, term_guid: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a glossary term.
 
         :param term_guid: The globally unique identifier for glossary term. Required.
@@ -5509,7 +8029,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5517,7 +8037,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5525,8 +8045,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def partial_update_term(
+    @distributed_trace
+    def partial_update_term(
         self, term_guid: str, partial_updates: Any, *, include_term_hierarchy: Optional[bool] = None, **kwargs: Any
     ) -> _models.AtlasGlossaryTerm:
         """Update the glossary term partially. So far we only supports partial updating
@@ -5546,7 +8066,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryTerm. The AtlasGlossaryTerm is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryTerm
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryTerm
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5580,7 +8100,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5588,7 +8108,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5604,18 +8124,18 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def create_terms(
+    def create_terms(
         self,
         glossary_term: List[_models.AtlasGlossaryTerm],
         *,
         include_term_hierarchy: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasGlossaryTerm]:
         """Create glossary terms in bulk.
 
         :param glossary_term: An array of glossary term definitions to be created in bulk. Required.
-        :type glossary_term: list[~azure.analytics.purview.datamap.models.AtlasGlossaryTerm]
+        :type glossary_term: list[~azure.purview.datamap.models.AtlasGlossaryTerm]
         :keyword include_term_hierarchy: Whether include term hierarchy. Default value is None.
         :paramtype include_term_hierarchy: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5624,18 +8144,18 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasGlossaryTerm
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasGlossaryTerm]
+        :rtype: list[~azure.purview.datamap.models.AtlasGlossaryTerm]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_terms(
+    def create_terms(
         self,
         glossary_term: IO[bytes],
         *,
         include_term_hierarchy: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasGlossaryTerm]:
         """Create glossary terms in bulk.
 
@@ -5649,24 +8169,23 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasGlossaryTerm
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasGlossaryTerm]
+        :rtype: list[~azure.purview.datamap.models.AtlasGlossaryTerm]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def create_terms(
+    @distributed_trace
+    def create_terms(
         self,
         glossary_term: Union[List[_models.AtlasGlossaryTerm], IO[bytes]],
         *,
         include_term_hierarchy: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasGlossaryTerm]:
         """Create glossary terms in bulk.
 
         :param glossary_term: An array of glossary term definitions to be created in bulk. Is either a
          [AtlasGlossaryTerm] type or a IO[bytes] type. Required.
-        :type glossary_term: list[~azure.analytics.purview.datamap.models.AtlasGlossaryTerm] or
-         IO[bytes]
+        :type glossary_term: list[~azure.purview.datamap.models.AtlasGlossaryTerm] or IO[bytes]
         :keyword include_term_hierarchy: Whether include term hierarchy. Default value is None.
         :paramtype include_term_hierarchy: bool
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
@@ -5675,7 +8194,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasGlossaryTerm
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasGlossaryTerm]
+        :rtype: list[~azure.purview.datamap.models.AtlasGlossaryTerm]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5713,7 +8232,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5721,7 +8240,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5736,15 +8255,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_entities_assigned_with_term(
+    @distributed_trace
+    def list_entities_assigned_with_term(
         self,
         term_guid: str,
         *,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         sort: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasRelatedObjectId]:
         """List all related objects assigned with the specified term. Recommend using
         limit/offset to get pagination result.
@@ -5760,7 +8279,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasRelatedObjectId
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasRelatedObjectId]
+        :rtype: list[~azure.purview.datamap.models.AtlasRelatedObjectId]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -5791,7 +8310,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5799,7 +8318,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5815,13 +8334,13 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
+    def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
         self,
         term_guid: str,
         related_object_ids: List[_models.AtlasRelatedObjectId],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Assign the given term to the provided list of related objects. Recommend using
         small batches with multiple API calls.
@@ -5835,7 +8354,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :type term_guid: str
         :param related_object_ids: An array of related object IDs to which the term has to be
          associated. Required.
-        :type related_object_ids: list[~azure.analytics.purview.datamap.models.AtlasRelatedObjectId]
+        :type related_object_ids: list[~azure.purview.datamap.models.AtlasRelatedObjectId]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5845,7 +8364,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
+    def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
         self, term_guid: str, related_object_ids: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Assign the given term to the provided list of related objects. Recommend using
@@ -5869,8 +8388,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def assign_term_to_entities(  # pylint: disable=inconsistent-return-statements
         self, term_guid: str, related_object_ids: Union[List[_models.AtlasRelatedObjectId], IO[bytes]], **kwargs: Any
     ) -> None:
         """Assign the given term to the provided list of related objects. Recommend using
@@ -5885,8 +8404,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :type term_guid: str
         :param related_object_ids: An array of related object IDs to which the term has to be
          associated. Is either a [AtlasRelatedObjectId] type or a IO[bytes] type. Required.
-        :type related_object_ids: list[~azure.analytics.purview.datamap.models.AtlasRelatedObjectId] or
-         IO[bytes]
+        :type related_object_ids: list[~azure.purview.datamap.models.AtlasRelatedObjectId] or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -5929,7 +8447,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5937,7 +8455,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -5946,13 +8464,13 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
+    def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
         self,
         term_guid: str,
         related_object_ids: List[_models.AtlasRelatedObjectId],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Delete the term assignment for the given list of related objects.
 
@@ -5960,7 +8478,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :type term_guid: str
         :param related_object_ids: An array of related object IDs from which the term has to be
          dissociated. Required.
-        :type related_object_ids: list[~azure.analytics.purview.datamap.models.AtlasRelatedObjectId]
+        :type related_object_ids: list[~azure.purview.datamap.models.AtlasRelatedObjectId]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5970,7 +8488,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
+    def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
         self, term_guid: str, related_object_ids: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete the term assignment for the given list of related objects.
@@ -5988,8 +8506,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_term_assignment_from_entities(  # pylint: disable=inconsistent-return-statements
         self, term_guid: str, related_object_ids: Union[List[_models.AtlasRelatedObjectId], IO[bytes]], **kwargs: Any
     ) -> None:
         """Delete the term assignment for the given list of related objects.
@@ -5998,8 +8516,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :type term_guid: str
         :param related_object_ids: An array of related object IDs from which the term has to be
          dissociated. Is either a [AtlasRelatedObjectId] type or a IO[bytes] type. Required.
-        :type related_object_ids: list[~azure.analytics.purview.datamap.models.AtlasRelatedObjectId] or
-         IO[bytes]
+        :type related_object_ids: list[~azure.purview.datamap.models.AtlasRelatedObjectId] or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -6042,7 +8559,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6050,7 +8567,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6058,15 +8575,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def list_related_terms(
+    @distributed_trace
+    def list_related_terms(
         self,
         term_guid: str,
         *,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         sort: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Dict[str, List[_models.AtlasRelatedTermHeader]]:
         """Get all related terms for a specific term by its GUID. Limit, offset, and sort
         parameters are currently not being enabled and won't work even they are passed.
@@ -6082,7 +8599,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: dict mapping str to list of AtlasRelatedTermHeader
-        :rtype: dict[str, list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]]
+        :rtype: dict[str, list[~azure.purview.datamap.models.AtlasRelatedTermHeader]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6113,7 +8630,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6121,7 +8638,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6136,8 +8653,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get(self, glossary_guid: str, **kwargs: Any) -> _models.AtlasGlossary:
+    @distributed_trace
+    def get(self, glossary_guid: str, **kwargs: Any) -> _models.AtlasGlossary:
         """Get a specific Glossary by its GUID.
 
         :param glossary_guid: The globally unique identifier for glossary. Required.
@@ -6145,7 +8662,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6173,7 +8690,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6181,7 +8698,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6197,21 +8714,21 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def update(
+    def update(
         self,
         glossary_guid: str,
         updated_glossary: _models.AtlasGlossary,
         *,
         ignore_terms_and_categories: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossary:
         """Update the given glossary.
 
         :param glossary_guid: The globally unique identifier for glossary. Required.
         :type glossary_guid: str
         :param updated_glossary: The glossary definition to be updated. Required.
-        :type updated_glossary: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :type updated_glossary: ~azure.purview.datamap.models.AtlasGlossary
         :keyword ignore_terms_and_categories: Whether ignore terms and categories. Default value is
          None.
         :paramtype ignore_terms_and_categories: bool
@@ -6221,19 +8738,19 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update(
+    def update(
         self,
         glossary_guid: str,
         updated_glossary: JSON,
         *,
         ignore_terms_and_categories: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossary:
         """Update the given glossary.
 
@@ -6250,19 +8767,19 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update(
+    def update(
         self,
         glossary_guid: str,
         updated_glossary: IO[bytes],
         *,
         ignore_terms_and_categories: Optional[bool] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossary:
         """Update the given glossary.
 
@@ -6279,18 +8796,18 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def update(
+    @distributed_trace
+    def update(
         self,
         glossary_guid: str,
         updated_glossary: Union[_models.AtlasGlossary, JSON, IO[bytes]],
         *,
         ignore_terms_and_categories: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossary:
         """Update the given glossary.
 
@@ -6298,8 +8815,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :type glossary_guid: str
         :param updated_glossary: The glossary definition to be updated. Is one of the following types:
          AtlasGlossary, JSON, IO[bytes] Required.
-        :type updated_glossary: ~azure.analytics.purview.datamap.models.AtlasGlossary or JSON or
-         IO[bytes]
+        :type updated_glossary: ~azure.purview.datamap.models.AtlasGlossary or JSON or IO[bytes]
         :keyword ignore_terms_and_categories: Whether ignore terms and categories. Default value is
          None.
         :paramtype ignore_terms_and_categories: bool
@@ -6309,7 +8825,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6348,7 +8864,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6356,7 +8872,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6371,8 +8887,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete(self, glossary_guid: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete(self, glossary_guid: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a glossary. Will delete underlying terms/categories together. Recommend
         separate delete terms and categories.
 
@@ -6407,7 +8923,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6415,7 +8931,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6423,15 +8939,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def list_categories(
+    @distributed_trace
+    def list_categories(
         self,
         glossary_guid: str,
         *,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         sort: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasGlossaryCategory]:
         """Get the categories belonging to a specific glossary. Recommend using
         limit/offset to get pagination result.
@@ -6447,7 +8963,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasGlossaryCategory
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasGlossaryCategory]
+        :rtype: list[~azure.purview.datamap.models.AtlasGlossaryCategory]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6478,7 +8994,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6486,7 +9002,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6501,15 +9017,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_categories_headers(
+    @distributed_trace
+    def list_categories_headers(
         self,
         glossary_guid: str,
         *,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         sort: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasRelatedCategoryHeader]:
         """Get the category headers belonging to a specific glossary. Recommend using
         limit/offset to get pagination result.
@@ -6525,7 +9041,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasRelatedCategoryHeader
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasRelatedCategoryHeader]
+        :rtype: list[~azure.purview.datamap.models.AtlasRelatedCategoryHeader]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6556,7 +9072,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6564,7 +9080,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6579,8 +9095,8 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_detailed(self, glossary_guid: str, **kwargs: Any) -> _models.AtlasGlossaryExtInfo:
+    @distributed_trace
+    def get_detailed(self, glossary_guid: str, **kwargs: Any) -> _models.AtlasGlossaryExtInfo:
         """Get a specific glossary with detailed information. This API is not
         recommend.
 
@@ -6595,7 +9111,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossaryExtInfo. The AtlasGlossaryExtInfo is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossaryExtInfo
+        :rtype: ~azure.purview.datamap.models.AtlasGlossaryExtInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6623,7 +9139,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6631,7 +9147,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6646,14 +9162,14 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def partial_update(
+    @distributed_trace
+    def partial_update(
         self,
         glossary_guid: str,
         partial_updates: Any,
         *,
         ignore_terms_and_categories: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasGlossary:
         """Update the glossary partially. Some properties such as qualifiedName are not
         allowed to be updated.
@@ -6679,7 +9195,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasGlossary. The AtlasGlossary is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasGlossary
+        :rtype: ~azure.purview.datamap.models.AtlasGlossary
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6713,7 +9229,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6721,7 +9237,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6736,15 +9252,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_terms(
+    @distributed_trace
+    def list_terms(
         self,
         glossary_guid: str,
         *,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         sort: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasGlossaryTerm]:
         """Get terms belonging to a specific glossary. Recommend using limit/offset to get
         pagination result.
@@ -6760,7 +9276,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasGlossaryTerm
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasGlossaryTerm]
+        :rtype: list[~azure.purview.datamap.models.AtlasGlossaryTerm]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6791,7 +9307,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6799,7 +9315,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6814,15 +9330,15 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_term_headers(
+    @distributed_trace
+    def list_term_headers(
         self,
         glossary_guid: str,
         *,
         limit: Optional[int] = None,
         offset: Optional[int] = None,
         sort: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasRelatedTermHeader]:
         """Get term headers belonging to a specific glossary. Recommend using limit/offset
         to get pagination result.
@@ -6838,7 +9354,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasRelatedTermHeader
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasRelatedTermHeader]
+        :rtype: list[~azure.purview.datamap.models.AtlasRelatedTermHeader]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -6869,7 +9385,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -6877,7 +9393,7 @@ class GlossaryOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -6899,11 +9415,11 @@ class DiscoveryOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.analytics.purview.datamap.aio.PurviewDataMapClient`'s
+        :class:`~azure.purview.datamap.PurviewDataMapClient`'s
         :attr:`discovery` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -6911,25 +9427,25 @@ class DiscoveryOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def query(
+    def query(
         self, search_request: _models.SearchRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SearchResult:
         """Get data using search.
 
         :param search_request: An object specifying the search criteria. Required.
-        :type search_request: ~azure.analytics.purview.datamap.models.SearchRequest
+        :type search_request: ~azure.purview.datamap.models.SearchRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: SearchResult. The SearchResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.SearchResult
+        :rtype: ~azure.purview.datamap.models.SearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def query(
+    def query(
         self, search_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SearchResult:
         """Get data using search.
@@ -6942,12 +9458,12 @@ class DiscoveryOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: SearchResult. The SearchResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.SearchResult
+        :rtype: ~azure.purview.datamap.models.SearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def query(
+    def query(
         self, search_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SearchResult:
         """Get data using search.
@@ -6960,27 +9476,26 @@ class DiscoveryOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: SearchResult. The SearchResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.SearchResult
+        :rtype: ~azure.purview.datamap.models.SearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def query(
+    @distributed_trace
+    def query(
         self, search_request: Union[_models.SearchRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.SearchResult:
         """Get data using search.
 
         :param search_request: An object specifying the search criteria. Is one of the following types:
          SearchRequest, JSON, IO[bytes] Required.
-        :type search_request: ~azure.analytics.purview.datamap.models.SearchRequest or JSON or
-         IO[bytes]
+        :type search_request: ~azure.purview.datamap.models.SearchRequest or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: SearchResult. The SearchResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.SearchResult
+        :rtype: ~azure.purview.datamap.models.SearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7017,7 +9532,7 @@ class DiscoveryOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7025,7 +9540,7 @@ class DiscoveryOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7041,25 +9556,25 @@ class DiscoveryOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def suggest(
+    def suggest(
         self, suggest_request: _models.SuggestRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SuggestResult:
         """Get search suggestions by query criteria.
 
         :param suggest_request: An object specifying the suggest criteria. Required.
-        :type suggest_request: ~azure.analytics.purview.datamap.models.SuggestRequest
+        :type suggest_request: ~azure.purview.datamap.models.SuggestRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: SuggestResult. The SuggestResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.SuggestResult
+        :rtype: ~azure.purview.datamap.models.SuggestResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def suggest(
+    def suggest(
         self, suggest_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SuggestResult:
         """Get search suggestions by query criteria.
@@ -7072,12 +9587,12 @@ class DiscoveryOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: SuggestResult. The SuggestResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.SuggestResult
+        :rtype: ~azure.purview.datamap.models.SuggestResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def suggest(
+    def suggest(
         self, suggest_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SuggestResult:
         """Get search suggestions by query criteria.
@@ -7090,27 +9605,26 @@ class DiscoveryOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: SuggestResult. The SuggestResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.SuggestResult
+        :rtype: ~azure.purview.datamap.models.SuggestResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def suggest(
+    @distributed_trace
+    def suggest(
         self, suggest_request: Union[_models.SuggestRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.SuggestResult:
         """Get search suggestions by query criteria.
 
         :param suggest_request: An object specifying the suggest criteria. Is one of the following
          types: SuggestRequest, JSON, IO[bytes] Required.
-        :type suggest_request: ~azure.analytics.purview.datamap.models.SuggestRequest or JSON or
-         IO[bytes]
+        :type suggest_request: ~azure.purview.datamap.models.SuggestRequest or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: SuggestResult. The SuggestResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.SuggestResult
+        :rtype: ~azure.purview.datamap.models.SuggestResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7147,7 +9661,7 @@ class DiscoveryOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7155,7 +9669,7 @@ class DiscoveryOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7171,29 +9685,29 @@ class DiscoveryOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def auto_complete(
+    def auto_complete(
         self,
         auto_complete_request: _models.AutoCompleteRequest,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AutoCompleteResult:
         """Get auto complete options.
 
         :param auto_complete_request: An object specifying the autocomplete criteria. Required.
-        :type auto_complete_request: ~azure.analytics.purview.datamap.models.AutoCompleteRequest
+        :type auto_complete_request: ~azure.purview.datamap.models.AutoCompleteRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AutoCompleteResult. The AutoCompleteResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AutoCompleteResult
+        :rtype: ~azure.purview.datamap.models.AutoCompleteResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def auto_complete(
+    def auto_complete(
         self, auto_complete_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AutoCompleteResult:
         """Get auto complete options.
@@ -7206,12 +9720,12 @@ class DiscoveryOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AutoCompleteResult. The AutoCompleteResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AutoCompleteResult
+        :rtype: ~azure.purview.datamap.models.AutoCompleteResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def auto_complete(
+    def auto_complete(
         self, auto_complete_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AutoCompleteResult:
         """Get auto complete options.
@@ -7224,27 +9738,27 @@ class DiscoveryOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AutoCompleteResult. The AutoCompleteResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AutoCompleteResult
+        :rtype: ~azure.purview.datamap.models.AutoCompleteResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def auto_complete(
+    @distributed_trace
+    def auto_complete(
         self, auto_complete_request: Union[_models.AutoCompleteRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AutoCompleteResult:
         """Get auto complete options.
 
         :param auto_complete_request: An object specifying the autocomplete criteria. Is one of the
          following types: AutoCompleteRequest, JSON, IO[bytes] Required.
-        :type auto_complete_request: ~azure.analytics.purview.datamap.models.AutoCompleteRequest or
-         JSON or IO[bytes]
+        :type auto_complete_request: ~azure.purview.datamap.models.AutoCompleteRequest or JSON or
+         IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AutoCompleteResult. The AutoCompleteResult is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AutoCompleteResult
+        :rtype: ~azure.purview.datamap.models.AutoCompleteResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7281,7 +9795,7 @@ class DiscoveryOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7289,7 +9803,7 @@ class DiscoveryOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7311,19 +9825,19 @@ class LineageOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.analytics.purview.datamap.aio.PurviewDataMapClient`'s
+        :class:`~azure.purview.datamap.PurviewDataMapClient`'s
         :attr:`lineage` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
-    async def get(
+    @distributed_trace
+    def get(
         self, guid: str, *, direction: Union[str, _models.Direction], depth: Optional[int] = None, **kwargs: Any
     ) -> _models.AtlasLineageInfo:
         """Get lineage info of the entity specified by GUID.
@@ -7332,13 +9846,13 @@ class LineageOperations:
         :type guid: str
         :keyword direction: The direction of the lineage, which could be INPUT, OUTPUT or BOTH. Known
          values are: "BOTH", "INPUT", and "OUTPUT". Required.
-        :paramtype direction: str or ~azure.analytics.purview.datamap.models.Direction
+        :paramtype direction: str or ~azure.purview.datamap.models.Direction
         :keyword depth: The number of hops for lineage. Default value is None.
         :paramtype depth: int
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasLineageInfo. The AtlasLineageInfo is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasLineageInfo
+        :rtype: ~azure.purview.datamap.models.AtlasLineageInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7368,7 +9882,7 @@ class LineageOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7376,7 +9890,7 @@ class LineageOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7391,15 +9905,15 @@ class LineageOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_next_page(
+    @distributed_trace
+    def get_next_page(
         self,
         guid: str,
         *,
         direction: Union[str, _models.Direction],
         offset: Optional[int] = None,
         limit: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasLineageInfo:
         """Return immediate next page lineage info about entity with pagination.
 
@@ -7407,7 +9921,7 @@ class LineageOperations:
         :type guid: str
         :keyword direction: The direction of the lineage, which could be INPUT, OUTPUT or BOTH. Known
          values are: "BOTH", "INPUT", and "OUTPUT". Required.
-        :paramtype direction: str or ~azure.analytics.purview.datamap.models.Direction
+        :paramtype direction: str or ~azure.purview.datamap.models.Direction
         :keyword offset: The offset for pagination purpose. Default value is None.
         :paramtype offset: int
         :keyword limit: The page size - by default there is no paging. Default value is None.
@@ -7415,7 +9929,7 @@ class LineageOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasLineageInfo. The AtlasLineageInfo is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasLineageInfo
+        :rtype: ~azure.purview.datamap.models.AtlasLineageInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7446,7 +9960,7 @@ class LineageOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7454,7 +9968,7 @@ class LineageOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7469,15 +9983,15 @@ class LineageOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_by_unique_attribute(
+    @distributed_trace
+    def get_by_unique_attribute(
         self,
         type_name: str,
         *,
         direction: Union[str, _models.Direction],
         depth: Optional[int] = None,
         attr: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasLineageInfo:
         """Return lineage info about entity.
 
@@ -7500,7 +10014,7 @@ class LineageOperations:
         :type type_name: str
         :keyword direction: The direction of the lineage, which could be INPUT, OUTPUT or BOTH. Known
          values are: "BOTH", "INPUT", and "OUTPUT". Required.
-        :paramtype direction: str or ~azure.analytics.purview.datamap.models.Direction
+        :paramtype direction: str or ~azure.purview.datamap.models.Direction
         :keyword depth: The number of hops for lineage. Default value is None.
         :paramtype depth: int
         :keyword attr: The qualified name of the entity. (This is only an example. qualifiedName can
@@ -7509,7 +10023,7 @@ class LineageOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasLineageInfo. The AtlasLineageInfo is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasLineageInfo
+        :rtype: ~azure.purview.datamap.models.AtlasLineageInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7540,7 +10054,7 @@ class LineageOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7548,7 +10062,7 @@ class LineageOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7570,11 +10084,11 @@ class RelationshipOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.analytics.purview.datamap.aio.PurviewDataMapClient`'s
+        :class:`~azure.purview.datamap.PurviewDataMapClient`'s
         :attr:`relationship` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -7582,7 +10096,7 @@ class RelationshipOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create(
+    def create(
         self, relationship: _models.AtlasRelationship, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Create a new relationship between entities.
@@ -7590,19 +10104,19 @@ class RelationshipOperations:
         :param relationship: The AtlasRelationship object containing the information for the
          relationship to
          be created. Required.
-        :type relationship: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :type relationship: ~azure.purview.datamap.models.AtlasRelationship
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationship. The AtlasRelationship is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :rtype: ~azure.purview.datamap.models.AtlasRelationship
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(
+    def create(
         self, relationship: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Create a new relationship between entities.
@@ -7617,12 +10131,12 @@ class RelationshipOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationship. The AtlasRelationship is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :rtype: ~azure.purview.datamap.models.AtlasRelationship
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(
+    def create(
         self, relationship: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Create a new relationship between entities.
@@ -7637,12 +10151,12 @@ class RelationshipOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationship. The AtlasRelationship is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :rtype: ~azure.purview.datamap.models.AtlasRelationship
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def create(
+    @distributed_trace
+    def create(
         self, relationship: Union[_models.AtlasRelationship, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Create a new relationship between entities.
@@ -7650,15 +10164,14 @@ class RelationshipOperations:
         :param relationship: The AtlasRelationship object containing the information for the
          relationship to
          be created. Is one of the following types: AtlasRelationship, JSON, IO[bytes] Required.
-        :type relationship: ~azure.analytics.purview.datamap.models.AtlasRelationship or JSON or
-         IO[bytes]
+        :type relationship: ~azure.purview.datamap.models.AtlasRelationship or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationship. The AtlasRelationship is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :rtype: ~azure.purview.datamap.models.AtlasRelationship
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7695,7 +10208,7 @@ class RelationshipOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7703,7 +10216,7 @@ class RelationshipOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7719,7 +10232,7 @@ class RelationshipOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update(
+    def update(
         self, relationship: _models.AtlasRelationship, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Update an existing relationship between entities.
@@ -7727,19 +10240,19 @@ class RelationshipOperations:
         :param relationship: The AtlasRelationship object containing the information for the
          relationship to
          be created. Required.
-        :type relationship: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :type relationship: ~azure.purview.datamap.models.AtlasRelationship
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationship. The AtlasRelationship is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :rtype: ~azure.purview.datamap.models.AtlasRelationship
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update(
+    def update(
         self, relationship: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Update an existing relationship between entities.
@@ -7754,12 +10267,12 @@ class RelationshipOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationship. The AtlasRelationship is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :rtype: ~azure.purview.datamap.models.AtlasRelationship
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def update(
+    def update(
         self, relationship: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Update an existing relationship between entities.
@@ -7774,12 +10287,12 @@ class RelationshipOperations:
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationship. The AtlasRelationship is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :rtype: ~azure.purview.datamap.models.AtlasRelationship
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def update(
+    @distributed_trace
+    def update(
         self, relationship: Union[_models.AtlasRelationship, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasRelationship:
         """Update an existing relationship between entities.
@@ -7787,15 +10300,14 @@ class RelationshipOperations:
         :param relationship: The AtlasRelationship object containing the information for the
          relationship to
          be created. Is one of the following types: AtlasRelationship, JSON, IO[bytes] Required.
-        :type relationship: ~azure.analytics.purview.datamap.models.AtlasRelationship or JSON or
-         IO[bytes]
+        :type relationship: ~azure.purview.datamap.models.AtlasRelationship or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationship. The AtlasRelationship is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationship
+        :rtype: ~azure.purview.datamap.models.AtlasRelationship
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7832,7 +10344,7 @@ class RelationshipOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7840,7 +10352,7 @@ class RelationshipOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7855,8 +10367,8 @@ class RelationshipOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get(
+    @distributed_trace
+    def get(
         self, guid: str, *, extended_info: Optional[bool] = None, **kwargs: Any
     ) -> _models.AtlasRelationshipWithExtInfo:
         """Get relationship information between entities by its GUID.
@@ -7869,7 +10381,7 @@ class RelationshipOperations:
          will have to context manage the returned stream.
         :return: AtlasRelationshipWithExtInfo. The AtlasRelationshipWithExtInfo is compatible with
          MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationshipWithExtInfo
+        :rtype: ~azure.purview.datamap.models.AtlasRelationshipWithExtInfo
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -7898,7 +10410,7 @@ class RelationshipOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7906,7 +10418,7 @@ class RelationshipOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7921,8 +10433,8 @@ class RelationshipOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete(self, guid: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete(self, guid: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a relationship between entities by its GUID.
 
         :param guid: The globally unique identifier of the relationship. Required.
@@ -7956,7 +10468,7 @@ class RelationshipOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7964,7 +10476,7 @@ class RelationshipOperations:
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -7979,19 +10491,19 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.analytics.purview.datamap.aio.PurviewDataMapClient`'s
+        :class:`~azure.purview.datamap.PurviewDataMapClient`'s
         :attr:`type` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
-    async def get_business_metadata_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasBusinessMetadataDef:
+    @distributed_trace
+    def get_business_metadata_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasBusinessMetadataDef:
         """Get the businessMetadata definition for the given guid.
 
         :param guid: businessMetadata guid. Required.
@@ -8000,7 +10512,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
          will have to context manage the returned stream.
         :return: AtlasBusinessMetadataDef. The AtlasBusinessMetadataDef is compatible with
          MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasBusinessMetadataDef
+        :rtype: ~azure.purview.datamap.models.AtlasBusinessMetadataDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8028,7 +10540,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8036,7 +10548,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8051,8 +10563,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_business_metadata_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasBusinessMetadataDef:
+    @distributed_trace
+    def get_business_metadata_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasBusinessMetadataDef:
         """Get the businessMetadata definition by it's name (unique).
 
         :param name: businessMetadata name. Required.
@@ -8061,7 +10573,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
          will have to context manage the returned stream.
         :return: AtlasBusinessMetadataDef. The AtlasBusinessMetadataDef is compatible with
          MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasBusinessMetadataDef
+        :rtype: ~azure.purview.datamap.models.AtlasBusinessMetadataDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8089,7 +10601,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8097,7 +10609,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8112,8 +10624,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_classification_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasClassificationDef:
+    @distributed_trace
+    def get_classification_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasClassificationDef:
         """Get the classification definition for the given GUID.
 
         :param guid: The globally unique identifier of the classification. Required.
@@ -8121,7 +10633,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasClassificationDef. The AtlasClassificationDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasClassificationDef
+        :rtype: ~azure.purview.datamap.models.AtlasClassificationDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8149,7 +10661,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8157,7 +10669,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8172,8 +10684,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_classification_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasClassificationDef:
+    @distributed_trace
+    def get_classification_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasClassificationDef:
         """Get the classification definition by its name (unique).
 
         :param name: The name of the classification. Required.
@@ -8181,7 +10693,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasClassificationDef. The AtlasClassificationDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasClassificationDef
+        :rtype: ~azure.purview.datamap.models.AtlasClassificationDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8209,7 +10721,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8217,7 +10729,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8232,8 +10744,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_entity_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasEntityDef:
+    @distributed_trace
+    def get_entity_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasEntityDef:
         """Get the Entity definition for the given GUID.
 
         :param guid: The globally unique identifier of the entity. Required.
@@ -8241,7 +10753,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasEntityDef. The AtlasEntityDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasEntityDef
+        :rtype: ~azure.purview.datamap.models.AtlasEntityDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8269,7 +10781,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8277,7 +10789,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8292,8 +10804,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_entity_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasEntityDef:
+    @distributed_trace
+    def get_entity_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasEntityDef:
         """Get the entity definition by its name (unique).
 
         :param name: The name of the entity. Required.
@@ -8301,7 +10813,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasEntityDef. The AtlasEntityDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasEntityDef
+        :rtype: ~azure.purview.datamap.models.AtlasEntityDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8329,7 +10841,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8337,7 +10849,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8352,8 +10864,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_enum_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasEnumDef:
+    @distributed_trace
+    def get_enum_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasEnumDef:
         """Get the enum definition for the given GUID.
 
         :param guid: The globally unique identifier of the enum. Required.
@@ -8361,7 +10873,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasEnumDef. The AtlasEnumDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasEnumDef
+        :rtype: ~azure.purview.datamap.models.AtlasEnumDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8389,7 +10901,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8397,7 +10909,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8412,8 +10924,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_enum_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasEnumDef:
+    @distributed_trace
+    def get_enum_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasEnumDef:
         """Get the enum definition by its name (unique).
 
         :param name: The name of the enum. Required.
@@ -8421,7 +10933,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasEnumDef. The AtlasEnumDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasEnumDef
+        :rtype: ~azure.purview.datamap.models.AtlasEnumDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8449,7 +10961,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8457,7 +10969,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8472,8 +10984,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_relationship_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasRelationshipDef:
+    @distributed_trace
+    def get_relationship_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasRelationshipDef:
         """Get the relationship definition for the given GUID.
 
         :param guid: The globally unique identifier of the relationship. Required.
@@ -8481,7 +10993,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationshipDef. The AtlasRelationshipDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationshipDef
+        :rtype: ~azure.purview.datamap.models.AtlasRelationshipDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8509,7 +11021,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8517,7 +11029,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8532,8 +11044,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_relationship_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasRelationshipDef:
+    @distributed_trace
+    def get_relationship_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasRelationshipDef:
         """Get the relationship definition by its name (unique).
 
         :param name: The name of the relationship. Required.
@@ -8541,7 +11053,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasRelationshipDef. The AtlasRelationshipDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasRelationshipDef
+        :rtype: ~azure.purview.datamap.models.AtlasRelationshipDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8569,7 +11081,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8577,7 +11089,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8592,8 +11104,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_struct_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasStructDef:
+    @distributed_trace
+    def get_struct_def_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasStructDef:
         """Get the struct definition for the given GUID.
 
         :param guid: The globally unique identifier of the struct. Required.
@@ -8601,7 +11113,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasStructDef. The AtlasStructDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasStructDef
+        :rtype: ~azure.purview.datamap.models.AtlasStructDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8629,7 +11141,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8637,7 +11149,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8652,8 +11164,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_struct_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasStructDef:
+    @distributed_trace
+    def get_struct_def_by_name(self, name: str, **kwargs: Any) -> _models.AtlasStructDef:
         """Get the struct definition by its name (unique).
 
         :param name: The name of the struct. Required.
@@ -8661,7 +11173,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasStructDef. The AtlasStructDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasStructDef
+        :rtype: ~azure.purview.datamap.models.AtlasStructDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8689,7 +11201,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8697,7 +11209,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8712,8 +11224,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasTypeDef:
+    @distributed_trace
+    def get_by_guid(self, guid: str, **kwargs: Any) -> _models.AtlasTypeDef:
         """Get the type definition for the given GUID.
 
         :param guid: The globally unique identifier of the type. Required.
@@ -8721,7 +11233,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypeDef. The AtlasTypeDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypeDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypeDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8749,7 +11261,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8757,7 +11269,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8772,8 +11284,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_by_name(self, name: str, **kwargs: Any) -> _models.AtlasTypeDef:
+    @distributed_trace
+    def get_by_name(self, name: str, **kwargs: Any) -> _models.AtlasTypeDef:
         """Get the type definition by its name (unique).
 
         :param name: The name of the type. Required.
@@ -8781,7 +11293,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypeDef. The AtlasTypeDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypeDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypeDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8809,7 +11321,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8817,7 +11329,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8832,8 +11344,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete API for type identified by its name.
 
         :param name: The name of the type. Required.
@@ -8867,7 +11379,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8875,7 +11387,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8883,13 +11395,13 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def list(
+    @distributed_trace
+    def list(
         self,
         *,
         include_term_template: Optional[bool] = None,
         type: Optional[Union[str, _models.Typedef]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.AtlasTypesDef:
         """List all type definitions in bulk.
 
@@ -8900,11 +11412,11 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword type: Typedef name as search filter when get typedefs. Known values are: "enum",
          "entity", "classification", "relationship", "struct", and "term_template". Default value is
          None.
-        :paramtype type: str or ~azure.analytics.purview.datamap.models.Typedef
+        :paramtype type: str or ~azure.purview.datamap.models.Typedef
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypesDef. The AtlasTypesDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypesDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -8933,7 +11445,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8941,7 +11453,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -8957,7 +11469,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def bulk_create(
+    def bulk_create(
         self, types_def: _models.AtlasTypesDef, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         """Create all atlas type definitions in bulk, only new definitions will be
@@ -8966,19 +11478,19 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         :param types_def: A composite wrapper object with corresponding lists of the type definition.
          Required.
-        :type types_def: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :type types_def: ~azure.purview.datamap.models.AtlasTypesDef
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypesDef. The AtlasTypesDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypesDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def bulk_create(
+    def bulk_create(
         self, types_def: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         """Create all atlas type definitions in bulk, only new definitions will be
@@ -8994,12 +11506,12 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypesDef. The AtlasTypesDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypesDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def bulk_create(
+    def bulk_create(
         self, types_def: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         """Create all atlas type definitions in bulk, only new definitions will be
@@ -9015,12 +11527,12 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypesDef. The AtlasTypesDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypesDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def bulk_create(
+    @distributed_trace
+    def bulk_create(
         self, types_def: Union[_models.AtlasTypesDef, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasTypesDef:
         """Create all atlas type definitions in bulk, only new definitions will be
@@ -9029,14 +11541,14 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         :param types_def: A composite wrapper object with corresponding lists of the type definition.
          Is one of the following types: AtlasTypesDef, JSON, IO[bytes] Required.
-        :type types_def: ~azure.analytics.purview.datamap.models.AtlasTypesDef or JSON or IO[bytes]
+        :type types_def: ~azure.purview.datamap.models.AtlasTypesDef or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypesDef. The AtlasTypesDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypesDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -9073,7 +11585,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9081,7 +11593,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -9097,26 +11609,26 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def bulk_update(
+    def bulk_update(
         self, types_def: _models.AtlasTypesDef, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         """Update all types in bulk, changes detected in the type definitions would be
         persisted.
 
         :param types_def: A composite object that captures all type definition changes. Required.
-        :type types_def: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :type types_def: ~azure.purview.datamap.models.AtlasTypesDef
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypesDef. The AtlasTypesDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypesDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def bulk_update(
+    def bulk_update(
         self, types_def: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         """Update all types in bulk, changes detected in the type definitions would be
@@ -9130,12 +11642,12 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypesDef. The AtlasTypesDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypesDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def bulk_update(
+    def bulk_update(
         self, types_def: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AtlasTypesDef:
         """Update all types in bulk, changes detected in the type definitions would be
@@ -9149,12 +11661,12 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypesDef. The AtlasTypesDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypesDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def bulk_update(
+    @distributed_trace
+    def bulk_update(
         self, types_def: Union[_models.AtlasTypesDef, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.AtlasTypesDef:
         """Update all types in bulk, changes detected in the type definitions would be
@@ -9162,14 +11674,14 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         :param types_def: A composite object that captures all type definition changes. Is one of the
          following types: AtlasTypesDef, JSON, IO[bytes] Required.
-        :type types_def: ~azure.analytics.purview.datamap.models.AtlasTypesDef or JSON or IO[bytes]
+        :type types_def: ~azure.purview.datamap.models.AtlasTypesDef or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: AtlasTypesDef. The AtlasTypesDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :rtype: ~azure.purview.datamap.models.AtlasTypesDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -9206,7 +11718,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9214,7 +11726,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -9230,13 +11742,13 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def bulk_delete(  # pylint: disable=inconsistent-return-statements
+    def bulk_delete(  # pylint: disable=inconsistent-return-statements
         self, types_def: _models.AtlasTypesDef, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete API for all types in bulk.
 
         :param types_def: A composite object that captures all types to be deleted. Required.
-        :type types_def: ~azure.analytics.purview.datamap.models.AtlasTypesDef
+        :type types_def: ~azure.purview.datamap.models.AtlasTypesDef
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9246,7 +11758,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def bulk_delete(  # pylint: disable=inconsistent-return-statements
+    def bulk_delete(  # pylint: disable=inconsistent-return-statements
         self, types_def: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete API for all types in bulk.
@@ -9262,7 +11774,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def bulk_delete(  # pylint: disable=inconsistent-return-statements
+    def bulk_delete(  # pylint: disable=inconsistent-return-statements
         self, types_def: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Delete API for all types in bulk.
@@ -9277,15 +11789,15 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
-    async def bulk_delete(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def bulk_delete(  # pylint: disable=inconsistent-return-statements
         self, types_def: Union[_models.AtlasTypesDef, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Delete API for all types in bulk.
 
         :param types_def: A composite object that captures all types to be deleted. Is one of the
          following types: AtlasTypesDef, JSON, IO[bytes] Required.
-        :type types_def: ~azure.analytics.purview.datamap.models.AtlasTypesDef or JSON or IO[bytes]
+        :type types_def: ~azure.purview.datamap.models.AtlasTypesDef or JSON or IO[bytes]
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -9327,7 +11839,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9335,7 +11847,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -9343,13 +11855,13 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace_async
-    async def list_headers(
+    @distributed_trace
+    def list_headers(
         self,
         *,
         include_term_template: Optional[bool] = None,
         type: Optional[Union[str, _models.Typedef]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[_models.AtlasTypeDefHeader]:
         """List all type definitions returned as a list of minimal information header.
 
@@ -9360,11 +11872,11 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword type: Typedef name as search filter when get typedefs. Known values are: "enum",
          "entity", "classification", "relationship", "struct", and "term_template". Default value is
          None.
-        :paramtype type: str or ~azure.analytics.purview.datamap.models.Typedef
+        :paramtype type: str or ~azure.purview.datamap.models.Typedef
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: list of AtlasTypeDefHeader
-        :rtype: list[~azure.analytics.purview.datamap.models.AtlasTypeDefHeader]
+        :rtype: list[~azure.purview.datamap.models.AtlasTypeDefHeader]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -9393,7 +11905,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9401,7 +11913,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -9416,8 +11928,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_term_template_def_by_guid(self, guid: str, **kwargs: Any) -> _models.TermTemplateDef:
+    @distributed_trace
+    def get_term_template_def_by_guid(self, guid: str, **kwargs: Any) -> _models.TermTemplateDef:
         """Get the term template definition for the given GUID.
 
         :param guid: The globally unique identifier of the term template. Required.
@@ -9425,7 +11937,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TermTemplateDef. The TermTemplateDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.TermTemplateDef
+        :rtype: ~azure.purview.datamap.models.TermTemplateDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -9453,7 +11965,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9461,7 +11973,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
@@ -9476,8 +11988,8 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_term_template_def_by_name(self, name: str, **kwargs: Any) -> _models.TermTemplateDef:
+    @distributed_trace
+    def get_term_template_def_by_name(self, name: str, **kwargs: Any) -> _models.TermTemplateDef:
         """Get the term template definition by its name (unique).
 
         :param name: The unique name of the term template. Required.
@@ -9485,7 +11997,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: TermTemplateDef. The TermTemplateDef is compatible with MutableMapping
-        :rtype: ~azure.analytics.purview.datamap.models.TermTemplateDef
+        :rtype: ~azure.purview.datamap.models.TermTemplateDef
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -9513,7 +12025,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9521,7 +12033,7 @@ class TypeOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             if _stream:
-                await response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
