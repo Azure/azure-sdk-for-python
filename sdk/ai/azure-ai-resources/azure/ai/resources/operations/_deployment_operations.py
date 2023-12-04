@@ -8,11 +8,13 @@ from pathlib import Path
 import shutil
 import tempfile
 from typing import Any, List, Union, Iterable
+import uuid
 
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model as AzureMLModel, DataCollector, DeploymentCollection, Environment, BuildContext
+from azure.ai.ml.entities import ManagedOnlineDeployment, Model as AzureMLModel, DataCollector, DeploymentCollection, Environment, BuildContext
 from azure.core.tracing.decorator import distributed_trace
+from azure.mgmt.resource import ResourceManagementClient
 
 from .._utils._scoring_script_utils import create_chat_scoring_script, create_mlmodel_file
 from .._utils._registry_utils import get_registry_model
@@ -32,6 +34,7 @@ class DeploymentOperations:
         self._ml_client = ml_client
         self._connections = connections
         ops_logger.update_info(kwargs)
+        self._resource_management_client = ResourceManagementClient(self._ml_client._credential, self._ml_client.subscription_id)
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.CreateOrUpdate", ActivityType.PUBLICAPI)
@@ -53,13 +56,6 @@ class DeploymentOperations:
                 sampling_rate=1,
             )
 
-        v2_endpoint = ManagedOnlineEndpoint(
-            name=endpoint_name,
-            properties={
-                "enforce_access_to_default_secret_stores": "enabled"
-            }
-        )
-        created_endpoint = self._ml_client.begin_create_or_update(v2_endpoint).result()
         model = deployment.model
         v2_deployment = None
         temp_dir = tempfile.TemporaryDirectory()
@@ -227,18 +223,136 @@ class DeploymentOperations:
                 app_insights_enabled=deployment.app_insights_enabled,
                 data_collector=data_collector,
             )
-
         v2_deployment.tags = deployment.tags
         v2_deployment.properties = deployment.properties
-        create_deployment_poller = self._ml_client.begin_create_or_update(v2_deployment)
         shutil.rmtree(temp_dir.name)
-        created_deployment = create_deployment_poller.result()
+    
+        template = {
+            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+            "parameters": {
+                "onlineEndpointProperties": {
+                    "defaultValue": {
+                        "traffic": {},
+                        "authMode": "Key",
+                        "mirrorTraffic": {},
+                        "publicNetworkAccess": "Enabled",
+                        "properties": {
+                            "enforce_access_to_default_secret_stores": "enabled"
+                        }
+                    },
+                    "type": "Object"
+                },
+                "onlineEndpointPropertiesTrafficUpdate": {
+                    "defaultValue": {
+                        "traffic": {
+                            "parameters('onlineDeploymentName')": 100
+                        },
+                        "authMode": "Key",
+                        "mirrorTraffic": {},
+                        "publicNetworkAccess": "Enabled",
+                        "properties": {
+                            "enforce_access_to_default_secret_stores": "enabled"
+                        }
+                    },
+                },
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints",
+                    "apiVersion": "2023-04-01-Preview",
+                    "name": "[concat(parameters('workspaceName'), '/', parameters('onlineEndpointName'))]",
+                    "location": "[parameters('location')]",
+                    "identity": "[parameters('onlineEndpointIdentity')]",
+                    "properties": "[parameters('onlineEndpointProperties')]",
+                    "copy": {
+                        "name": "onlineEndpointCopy",
+                        "count": 1,
+                        "mode": "serial"
+                    }
+                },
+                {
+                    "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints/deployments",
+                    "apiVersion": "2023-04-01-Preview",
+                    "name": "[concat(parameters('workspaceName'), '/', parameters('onlineEndpointName'), '/', parameters('onlineDeploymentName'))]",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "onlineEndpointCopy",
+                    ],
+                    "tags": "parameters('onlineDeploymentTags')",
+                    "sku": {
+                        "capacity": "parameters('onlineDeploymentInstanceCount')",
+                        "name": "default"
+                    },
+                    "identity": {
+                        "type": "None"
+                    },
+                    "properties": "parameters('onlineDeploymentProperties')",
+                    "copy": {
+                        "name": "onlineDeploymentCopy",
+                        "count": 1,
+                        "mode": "serial"
+                    }
+                },
+                {
+                    "type": "Microsoft.Resources/deployments",
+                    "apiVersion": "2015-01-01",
+                    "name": "[concat('updateEndpointWithTraffic', '-', parameters('onlineEndpointName'))]",
+                    "dependsOn": [
+                        "onlineDeploymentCopy"
+                    ],
+                    "properties": {
+                        "mode": "Incremental",
+                        "parameters": {},
+                        "template": {
+                            "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                            "contentVersion": "1.0.0.0",
+                            "parameters": {},
+                            "variables": {},
+                            "resources": [
+                                {
+                                    "type": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints",
+                                    "apiVersion": "2023-04-01-Preview",
+                                    "location": "[parameters('location')]",
+                                    "name": "[concat(parameters('workspaceName'), '/', parameters('onlineEndpointName'))]",
+                                    "identity": "[parameters('onlineEndpointIdentity')]",
+                                    "properties": "[parameters('onlineEndpointPropertiesTrafficUpdate')]"
+                                }
+                            ],
+                            "outputs": {}
+                        }
+                    }
+                }
+            ]
+        }
 
-        v2_endpoint.traffic = {deployment.name: 100}
-        update_endpoint_poller = self._ml_client.begin_create_or_update(v2_endpoint)
-        updated_endpoint = update_endpoint_poller.result()
+        parameters = {
+            "workspaceName": {"value": self._ml_client.workspace_name},
+            "onlineEndpointIdentity": {"value": "SystemAssigned"},
+            "onlineEndpointName": {"value": endpoint_name},
+            "onlineDeploymentName": {"value": deployment.name},
+            "onlineDeploymentInstanceCount": {"value": deployment.instance_count},
+            "onlineDeploymentTags": {"value": deployment.tags},
+            "onlineDeploymentProperties": {"value": v2_deployment._to_rest_online_deployment().properties.as_dict()},
+            "location":{"value": "westus"},
+        }
 
-        return Deployment._from_v2_endpoint_deployment(updated_endpoint, deployment)
+        def lro_callback(raw_response, deserialized, headers):
+            return Deployment._from_v2_endpoint_deployment(
+                self._ml_client.online_endpoints.get(endpoint_name),
+                self._ml_client.online_deployments.get(deployment.name, endpoint_name)
+            )
+
+        return self._resource_management_client.deployments.begin_create_or_update(
+            self._ml_client.resource_group_name,
+            str(uuid.uuid4()),
+            {
+                "properties": {
+                    "template": template,
+                    "parameters": parameters,
+                }
+            },
+            cls=lro_callback,
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Get", ActivityType.PUBLICAPI)
