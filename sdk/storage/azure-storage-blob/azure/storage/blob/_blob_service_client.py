@@ -10,8 +10,6 @@ from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse
-
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -30,6 +28,7 @@ from ._generated import AzureBlobStorage
 from ._generated.models import StorageServiceProperties, KeyInfo
 from ._container_client import ContainerClient
 from ._blob_client import BlobClient
+from ._blob_service_client_helpers import _parse_url
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 from ._encryption import StorageEncryptionMixin
 from ._list_blobs_helper import FilteredBlobPaged
@@ -125,15 +124,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
         ) -> None:
-        try:
-            if not account_url.lower().startswith('http'):
-                account_url = "https://" + account_url
-        except AttributeError as exc:
-            raise ValueError("Account URL must be a string.") from exc
-        parsed_url = urlparse(account_url.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
-
+        parsed_url, sas_token = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
@@ -157,7 +148,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             cls, conn_str: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
-        ) -> Self:
+    ) -> Self:
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:

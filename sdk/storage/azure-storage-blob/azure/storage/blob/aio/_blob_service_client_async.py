@@ -11,6 +11,7 @@ from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError
@@ -19,6 +20,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 
+from .._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from .._blob_service_client_helpers import _parse_url
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.response_handlers import (
     parse_to_internal_user_delegation_key,
@@ -30,7 +33,6 @@ from .._shared.parser import _to_utc_datetime
 from .._shared.policies_async import ExponentialRetry
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageServiceProperties, KeyInfo
-from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
 from .._encryption import StorageEncryptionMixin
 from .._models import BlobProperties, ContainerProperties
@@ -55,7 +57,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, StorageEncryptionMixin):
+class BlobServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):
     """A client to interact with the Blob Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -124,13 +126,64 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        super(BlobServiceClient, self).__init__(
-            account_url,
-            credential=credential,
-            **kwargs)
+        parsed_url, sas_token = _parse_url(account_url=account_url)
+        _, sas_token = parse_query(parsed_url.query)
+        self._query_str, credential = self._format_query_string(sas_token, credential)
+        super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+
+        :param str hostname:
+            The hostname of the current location mode.
+        :returns: A formatted endpoint URL including current location mode hostname.
+        :rtype: str
+        """
+        return f"{self.scheme}://{hostname}/{self._query_str}"
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+    ) -> Self:
+        """Create BlobServiceClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :returns: A Blob service client.
+        :rtype: ~azure.storage.blob.BlobServiceClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_authentication.py
+                :start-after: [START auth_from_connection_string]
+                :end-before: [END auth_from_connection_string]
+                :language: python
+                :dedent: 8
+                :caption: Creating the BlobServiceClient from a connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
