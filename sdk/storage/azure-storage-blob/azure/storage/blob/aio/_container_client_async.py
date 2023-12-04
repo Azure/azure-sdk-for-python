@@ -1381,9 +1381,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             return iter([])
 
         reqs, options = _generate_delete_blobs_options(
-            query_str=self._query_str,
-            container_name=self.container_name,
-            client=self._client,
+            self._query_str,
+            self.container_name,
+            self._client,
             *blobs,
             **kwargs
         )
