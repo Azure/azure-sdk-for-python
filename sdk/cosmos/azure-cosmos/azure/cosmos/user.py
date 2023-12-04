@@ -177,7 +177,7 @@ class UserProxy:
         )
 
     @distributed_trace
-    def create_permission(self, body: Mapping[str, Any], **kwargs: Any) -> Permission:
+    def create_permission(self, body: Dict[str, Any], **kwargs: Any) -> Permission:
         """Create a permission for the user.
 
         To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
@@ -207,7 +207,7 @@ class UserProxy:
         )
 
     @distributed_trace
-    def upsert_permission(self, body: Mapping[str, Any], **kwargs: Any) -> Permission:
+    def upsert_permission(self, body: Dict[str, Any], **kwargs: Any) -> Permission:
         """Insert or update the specified permission.
 
         If the permission already exists in the container, it is replaced. If
@@ -241,7 +241,7 @@ class UserProxy:
     def replace_permission(
         self,
         permission: Union[str, Permission, Mapping[str, Any]],
-        body: Mapping[str, Any],
+        body: Dict[str, Any],
         **kwargs
     ) -> Permission:
         """Replaces the specified permission if it exists for the user.

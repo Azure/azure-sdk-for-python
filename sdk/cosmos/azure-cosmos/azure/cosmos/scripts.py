@@ -22,7 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Mapping, Sequence, Union, Optional
+from typing import Any, Dict, List, Mapping, Sequence, Union, Optional
 
 from azure.core.paging import ItemPaged
 
@@ -122,7 +122,7 @@ class ScriptsProxy:
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
-    def create_stored_procedure(self, body: Mapping[str, Any], **kwargs: Any) -> Dict[str, Any]:
+    def create_stored_procedure(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Create a new stored procedure in the container.
 
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
@@ -141,7 +141,7 @@ class ScriptsProxy:
     def replace_stored_procedure(
         self,
         sproc: Union[str, Mapping[str, Any]],
-        body: Mapping[str, Any],
+        body: Dict[str, Any],
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Replace a specified stored procedure in the container.
@@ -184,7 +184,7 @@ class ScriptsProxy:
         self,
         sproc: Union[str, Mapping[str, Any]],
         partition_key: Optional[Union[str, bool, int, float]] = None,
-        params: Optional[Sequence[Mapping[str, Any]]] = None,
+        params: Optional[List[Dict[str, Any]]] = None,
         enable_script_logging: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -278,7 +278,7 @@ class ScriptsProxy:
             trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
-    def create_trigger(self, body: Mapping[str, Any], **kwargs: Any) -> Dict[str, Any]:
+    def create_trigger(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Create a trigger in the container.
 
         To replace an existing trigger, use the :func:`ContainerProxy.scripts.replace_trigger` method.
@@ -296,7 +296,7 @@ class ScriptsProxy:
     def replace_trigger(
         self,
         trigger: Union[str, Mapping[str, Any]],
-        body: Mapping[str, Any],
+        body: Dict[str, Any],
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Replace a specified trigger in the container.
@@ -396,7 +396,7 @@ class ScriptsProxy:
             udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )
 
-    def create_user_defined_function(self, body: Mapping[str, Any], **kwargs: Any) -> Dict[str, Any]:
+    def create_user_defined_function(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
         """Create a user-defined function in the container.
 
         To replace an existing UDF, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
@@ -414,7 +414,7 @@ class ScriptsProxy:
     def replace_user_defined_function(
         self,
         udf: Union[str, Mapping[str, Any]],
-        body: Mapping[str, Any],
+        body: Dict[str, Any],
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Replace a specified user-defined function in the container.

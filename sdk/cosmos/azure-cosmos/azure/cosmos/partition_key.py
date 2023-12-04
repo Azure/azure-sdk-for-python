@@ -23,7 +23,7 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import IO, Sequence, Union, overload
+from typing import IO, Sequence, Union, overload, List
 from typing_extensions import Literal
 
 from ._cosmos_integers import UInt64, UInt128
@@ -102,7 +102,7 @@ class PartitionKey(dict):
     """
 
     @overload
-    def __init__(self, path: Sequence[str], *, kind: Literal["MultiHash"] = "MultiHash", version: int = 2) -> None:
+    def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = "MultiHash", version: int = 2) -> None:
         ...
 
     @overload
@@ -133,11 +133,11 @@ class PartitionKey(dict):
         return self["paths"][0]
 
     @path.setter
-    def path(self, value: Union[str, Sequence[str]]) -> None:
-        if isinstance(value, Sequence):
-            self["paths"] = value
-        else:
+    def path(self, value: Union[str, List[str]]) -> None:
+        if isinstance(value, str):
             self["paths"] = [value]
+        else:
+            self["paths"] = value
 
     @property
     def version(self) -> int:

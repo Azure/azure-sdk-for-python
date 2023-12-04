@@ -154,11 +154,11 @@ class DatabaseProxy(object):
         self,
         id: str,
         partition_key: PartitionKey,
-        indexing_policy: Optional[Mapping[str, Any]] = None,
+        indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[Mapping[str, Any]] = None,
+        unique_key_policy: Optional[Dict[str, Any]] = None,
         conflict_resolution_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -247,12 +247,12 @@ class DatabaseProxy(object):
         self,
         id: str,
         partition_key: PartitionKey,
-        indexing_policy: Optional[Mapping[str, Any]] = None,
+        indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[Mapping[str, Any]] = None,
-        conflict_resolution_policy: Optional[Mapping[str, Any]] = None,
+        unique_key_policy: Optional[Dict[str, Any]] = None,
+        conflict_resolution_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
@@ -457,9 +457,9 @@ class DatabaseProxy(object):
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
         partition_key: PartitionKey,
-        indexing_policy: Optional[Mapping[str, Any]] = None,
+        indexing_policy: Optional[Dict[str, Any]] = None,
         default_ttl: Optional[int] = None,
-        conflict_resolution_policy: Optional[Mapping[str, Any]] = None,
+        conflict_resolution_policy: Optional[Dict[str, Any]] = None,
         populate_query_metrics: Optional[bool] = None,
         **kwargs: Any
     ) -> ContainerProxy:
@@ -606,7 +606,7 @@ class DatabaseProxy(object):
         return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 
     @distributed_trace
-    def create_user(self, body: Mapping[str, Any], **kwargs: Any) -> UserProxy:
+    def create_user(self, body: Dict[str, Any], **kwargs: Any) -> UserProxy:
         """Create a new user in the container.
 
         To update or replace an existing user, use the
@@ -643,7 +643,7 @@ class DatabaseProxy(object):
         )
 
     @distributed_trace
-    def upsert_user(self, body: Mapping[str, Any], **kwargs: Any) -> UserProxy:
+    def upsert_user(self, body: Dict[str, Any], **kwargs: Any) -> UserProxy:
         """Insert or update the specified user.
 
         If the user already exists in the container, it is replaced. If the user
@@ -673,7 +673,7 @@ class DatabaseProxy(object):
     def replace_user(
             self,
             user: Union[str, UserProxy, Mapping[str, Any]],
-            body: Mapping[str, Any],
+            body: Dict[str, Any],
             **kwargs: Any
     ) -> UserProxy:
         """Replaces the specified user if it exists in the container.

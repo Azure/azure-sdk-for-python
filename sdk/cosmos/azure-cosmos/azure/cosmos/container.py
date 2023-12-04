@@ -446,13 +446,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook(self.client_connection.last_response_headers, items)
         return items
 
-    def __is_prefix_partitionkey(self, partition_key: Union[str, int, bool, float, Sequence[Any]]):
+    def __is_prefix_partitionkey(self, partition_key: Union[str, int, bool, float, List[Any]]):
         properties = self._get_properties()
         pk_properties = properties["partitionKey"]
         partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
         if partition_key_definition.kind != "MultiHash":
             return False
-        if isinstance(partition_key, Sequence) and len(partition_key_definition['paths']) == len(partition_key):
+        if isinstance(partition_key, list) and len(partition_key_definition['paths']) == len(partition_key):
             return False
         return True
 
@@ -460,7 +460,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def replace_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
-        body: Mapping[str, Any],
+        body: Dict[str, Any],
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -515,7 +515,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
         self,
-        body: Mapping[str, Any],
+        body: Dict[str, Any],
         populate_query_metrics: Optional[bool]=None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -570,7 +570,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
         self,
-        body: Mapping[str, Any],
+        body: Dict[str, Any],
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
