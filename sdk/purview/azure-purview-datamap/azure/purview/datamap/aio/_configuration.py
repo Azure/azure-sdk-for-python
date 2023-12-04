@@ -44,7 +44,7 @@ class PurviewDataMapClientConfiguration:  # pylint: disable=too-many-instance-at
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["user_impersonation"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://purview.azure.net/.default"])
         kwargs.setdefault("sdk_moniker", "purview-datamap/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)

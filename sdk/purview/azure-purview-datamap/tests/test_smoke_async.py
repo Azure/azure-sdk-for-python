@@ -10,12 +10,13 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 
 class TestPurviewDataMapSmokeAsync(PurviewDataMapTestAsync):
-
     @PurviewDataMapPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_basic_smoke_test(self, purviewdatamap_endpoint):
         client = self.create_async_client(endpoint=purviewdatamap_endpoint)
-        response = await client.type.list()
-        
+        response = await client.type.list(include_term_template = True)
+
         # cspell: disable-next-line
-        assert set(response.keys()) == set(['enumDefs', 'structDefs', 'classificationDefs', 'entityDefs', 'relationshipDefs','businessMetadataDefs'])
+        assert set(response.keys()) == set(
+            ["enumDefs", "structDefs", "classificationDefs", "entityDefs", "relationshipDefs", "businessMetadataDefs","termTemplateDefs"]
+        )

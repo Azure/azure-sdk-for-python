@@ -1,4 +1,4 @@
 directory: specification/purview/Azure.Analytics.Purview.DataMap
-commit: bd0708c310280e40fe2f972d03b58cde3cd02c03
+commit: 09495a6e13999028b1cf2147bdb486ac3ba80c49
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
