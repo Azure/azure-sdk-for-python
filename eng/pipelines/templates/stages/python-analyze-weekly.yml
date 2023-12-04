@@ -95,5 +95,4 @@ stages:
               arguments: >-
                 ${{ parameters.BuildTargetingString }}
                 --service="${{ parameters.ServiceDirectory }}" 
-                --toxenv=sphinx
-                --strict=true
+                --toxenv="strict-sphinx"
