@@ -2338,7 +2338,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers = self.default_headers.copy()
         initial_headers[http_constants.HttpHeaders.Accept] = runtime_constants.MediaTypes.Json
 
-        if params and not isinstance(params, Sequence):
+        if params and not isinstance(params, list):
             params = [params]
 
         path = base.GetPathFromLink(sproc_link)

@@ -22,7 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Iterable, Mapping, Optional, Sequence, Union, cast
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast
 import warnings
 
 from azure.core.tracing.decorator import distributed_trace
@@ -387,7 +387,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def query_databases(  # pylint:disable=docstring-missing-param
         self,
         query: Optional[str] = None,
-        parameters: Optional[Sequence[Mapping[str, Any]]] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
         enable_cross_partition_query: Optional[bool] = None,
         max_item_count: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,

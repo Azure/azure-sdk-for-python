@@ -336,7 +336,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def query_items(  # pylint:disable=docstring-missing-param
         self,
         query: str,
-        parameters: Optional[Sequence[Mapping[str, object]]] = None,
+        parameters: Optional[List[Dict[str, object]]] = None,
         partition_key: Optional[Union[str, float, int, bool]] = None,
         enable_cross_partition_query: Optional[bool] = None,
         max_item_count: Optional[int] = None,
@@ -875,7 +875,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def query_conflicts(
         self,
         query: str,
-        parameters: Optional[Sequence[Mapping[str, object]]] = None,
+        parameters: Optional[List[Dict[str, object]]] = None,
         enable_cross_partition_query: Optional[bool] = None,
         partition_key: Optional[Union[str, int, float, bool]] = None,
         max_item_count: Optional[int] = None,

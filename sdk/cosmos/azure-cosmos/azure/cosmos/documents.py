@@ -22,7 +22,7 @@
 """Classes and enums for documents in the Azure Cosmos database service.
 """
 
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, Optional, TYPE_CHECKING, Union
 from typing_extensions import Literal, TypedDict
 
 from ._retry_options import RetryOptions
@@ -254,13 +254,14 @@ class SSLConfiguration:
         The path of the key file for ssl connection.
     :ivar str SSLCertFile:
         The path of the cert file for ssl connection.
-    :ivar str SSLCaCerts:
+    :ivar SSLCaCerts:
         The path of the CA_BUNDLE file with certificates of trusted CAs.
+    :vartype SSLCaCerts: str or bool
     """
     def __init__(self) -> None:
         self.SSLKeyFile: Optional[str] = None
         self.SSLCertFile: Optional[str] = None
-        self.SSLCaCerts: Optional[str] = None
+        self.SSLCaCerts: Optional[Union[str, bool]] = None
 
 
 class ProxyConfiguration:

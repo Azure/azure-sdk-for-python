@@ -22,7 +22,7 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Sequence, Union, Optional, Mapping
+from typing import Any, Dict, List, Union, Optional, Mapping
 
 import warnings
 from azure.core.tracing.decorator import distributed_trace
@@ -414,7 +414,7 @@ class DatabaseProxy(object):
     def query_containers(   # pylint:disable=docstring-missing-param
         self,
         query: Optional[str] = None,
-        parameters: Optional[Sequence[Mapping[str, Any]]] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
         **kwargs: Any
@@ -559,7 +559,7 @@ class DatabaseProxy(object):
     def query_users(
         self,
         query: str,
-        parameters: Optional[Sequence[str]] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -567,7 +567,7 @@ class DatabaseProxy(object):
 
         :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: Dict[str, Any]
+        :type parameters: List[Dict[str, Any]]
         :param int max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of user properties (dicts).

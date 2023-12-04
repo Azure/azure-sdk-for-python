@@ -23,7 +23,7 @@
 
 """Create, read, update and delete users in the Azure Cosmos DB SQL API service.
 """
-from typing import Any, Dict, Mapping, Sequence, Union, Optional
+from typing import Any, Dict, List, Mapping, Union, Optional
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -111,7 +111,7 @@ class UserProxy:
     def query_permissions(
         self,
         query: str,
-        parameters: Optional[Sequence[Mapping[str, Any]]] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:

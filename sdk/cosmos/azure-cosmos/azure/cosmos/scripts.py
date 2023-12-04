@@ -22,7 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Mapping, Sequence, Union, Optional
+from typing import Any, Dict, List, Mapping, Union, Optional
 
 from azure.core.paging import ItemPaged
 
@@ -84,7 +84,7 @@ class ScriptsProxy:
     def query_stored_procedures(
         self,
         query: str,
-        parameters: Optional[Sequence[Mapping[str, Any]]] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -239,7 +239,7 @@ class ScriptsProxy:
     def query_triggers(
         self,
         query: str,
-        parameters: Optional[Sequence[Mapping[str, Any]]] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -358,7 +358,7 @@ class ScriptsProxy:
     def query_user_defined_functions(
         self,
         query: str,
-        parameters: Optional[Sequence[Mapping[str, Any]]] = None,
+        parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
