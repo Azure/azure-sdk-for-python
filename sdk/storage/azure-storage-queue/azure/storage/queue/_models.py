@@ -470,6 +470,7 @@ class QueueProperties(DictMixin):
     """The approximate number of messages contained in the queue."""
 
     def __init__(self, **kwargs: Any) -> None:
+        # The name property will always be set to a non-None value after construction.
         self.name = None #type: ignore [assignment]
         self.metadata = kwargs.get('metadata')
         self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count')
