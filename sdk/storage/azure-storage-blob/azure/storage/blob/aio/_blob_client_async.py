@@ -11,6 +11,7 @@ from typing import (  # pylint: disable=unused-import
     Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
+from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
@@ -18,19 +19,51 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from .._blob_client import StorageAccountHostsMixin
+from .._blob_client_helpers import (
+    _abort_copy_options,
+    _append_block_from_url_options,
+    _append_block_options,
+    _clear_page_options,
+    _commit_block_list_options,
+    _create_append_blob_options,
+    _create_page_blob_options,
+    _create_snapshot_options,
+    _delete_blob_options,
+    _download_blob_options,
+    _format_url,
+    _from_blob_url,
+    _get_blob_tags_options,
+    _get_block_list_result,
+    _get_page_ranges_options,
+    _parse_url,
+    _resize_blob_options,
+    _seal_append_blob_options,
+    _set_blob_metadata_options,
+    _set_blob_tags_options,
+    _set_http_headers_options,
+    _set_sequence_number_options,
+    _stage_block_from_url_options,
+    _stage_block_options,
+    _start_copy_from_url_options,
+    _upload_blob_from_url_options,
+    _upload_blob_options,
+    _upload_page_options,
+    _upload_pages_from_url_options
+)
+from .._shared.base_client import parse_connection_str
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
-from .._blob_client import BlobClient as BlobClientBase
 from .._deserialize import (
     deserialize_blob_properties,
     deserialize_pipeline_response_into_cls,
     get_page_ranges_result,
     parse_tags
 )
-from .._encryption import StorageEncryptionMixin
+from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from .._models import BlobType, BlobBlock, BlobProperties, PageRange
 from .._serialize import get_modify_conditions, get_api_version, get_access_conditions, get_version_id
 from ._download_async import StorageStreamDownloader
@@ -55,7 +88,7 @@ if TYPE_CHECKING:
     )
 
 
-class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
+class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
     """A client to interact with a specific blob, although that blob may not yet exist.
 
     :param str account_url:
@@ -130,16 +163,134 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        super(BlobClient, self).__init__(
-            account_url,
+        parsed_url, sas_token, path_snapshot = _parse_url(
+            account_url=account_url,
             container_name=container_name,
-            blob_name=blob_name,
-            snapshot=snapshot,
-            credential=credential,
-            **kwargs)
+            blob_name=blob_name)
+        self.container_name = container_name
+        self.blob_name = blob_name
+        try:
+            self.snapshot = snapshot.snapshot # type: ignore
+        except AttributeError:
+            try:
+                self.snapshot = snapshot['snapshot'] # type: ignore
+            except TypeError:
+                self.snapshot = snapshot or path_snapshot
+        self.version_id = kwargs.pop('version_id', None)
+
+        # This parameter is used for the hierarchy traversal. Give precedence to credential.
+        self._raw_credential = credential if credential else sas_token
+        self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
+        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
+
+    def _format_url(self, hostname):
+        return _format_url(
+            container_name=self.container_name,
+            scheme=self.scheme,
+            blob_name=self.blob_name,
+            query_str=self._query_str,
+            hostname=hostname
+        )
+
+    @classmethod
+    def from_blob_url(
+            cls, blob_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            **kwargs: Any
+        ) -> Self:
+        """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
+
+        :param str blob_url:
+            The full endpoint URL to the Blob, including SAS token and snapshot if used. This could be
+            either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
+        :type blob_url: str
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
+            - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]]  # pylint: disable=line-too-long
+        :param str snapshot:
+            The optional blob snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`. If specified, this will override
+            the snapshot in the url.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :returns: A Blob client.
+        :rtype: ~azure.storage.blob.BlobClient
+        """
+        account_url, container_name, blob_name, path_snapshot = _from_blob_url(blob_url=blob_url, snapshot=snapshot)
+        return cls(
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=path_snapshot, credential=credential, **kwargs
+        )
+
+    @classmethod
+    def from_connection_string(
+            cls, conn_str: str,
+            container_name: str,
+            blob_name: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
+        """Create BlobClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param container_name: The container name for the blob.
+        :type container_name: str
+        :param blob_name: The name of the blob with which to interact.
+        :type blob_name: str
+        :param str snapshot:
+            The optional blob snapshot on which to operate. This can be the snapshot ID string
+            or the response returned from :func:`create_snapshot`.
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]]  # pylint: disable=line-too-long
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :returns: A Blob client.
+        :rtype: ~azure.storage.blob.BlobClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/blob_samples_authentication.py
+                :start-after: [START auth_from_connection_string_blob]
+                :end-before: [END auth_from_connection_string_blob]
+                :language: python
+                :dedent: 8
+                :caption: Creating the BlobClient from a connection string.
+        """
+        account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
+        if 'secondary_hostname' not in kwargs:
+            kwargs['secondary_hostname'] = secondary
+        return cls(
+            account_url, container_name=container_name, blob_name=blob_name,
+            snapshot=snapshot, credential=credential, **kwargs
+        )
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
@@ -255,8 +406,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         """
-        options = self._upload_blob_from_url_options(
-            source_url=self._encode_source_url(source_url),
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _upload_blob_from_url_options(
+            source_url=source_url,
             **kwargs)
         try:
             return await self._client.block_blob.put_blob_from_url(**options)
@@ -409,11 +562,24 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 :dedent: 16
                 :caption: Upload a blob to the container.
         """
-        options = self._upload_blob_options(
-            data,
+        if self.require_encryption and not self.key_encryption_key:
+            raise ValueError("Encryption required but no key was provided.")
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _upload_blob_options(
+            data=data,
             blob_type=blob_type,
             length=length,
             metadata=metadata,
+            encryption_options={
+                'required': self.require_encryption,
+                'version': self.encryption_version,
+                'key': self.key_encryption_key,
+                'resolver': self.key_resolver_function
+            },
+            config=self._config,
+            sdk_moniker=self._sdk_moniker,
+            client=self._client,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
             return await upload_block_blob(**options)
@@ -535,10 +701,28 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 :dedent: 16
                 :caption: Download a blob.
         """
-        options = self._download_blob_options(
+        if self.require_encryption and not (self.key_encryption_key or self.key_resolver_function):
+            raise ValueError("Encryption required but no key was provided.")
+        if length is not None and offset is None:
+            raise ValueError("Offset value must not be None if length is set.")
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _download_blob_options(
+            blob_name=self.blob_name,
+            container_name=self.container_name,
+            version_id=get_version_id(self.version_id, kwargs),
             offset=offset,
             length=length,
             encoding=encoding,
+            encryption_options={
+                'required': self.require_encryption,
+                'version': self.encryption_version,
+                'key': self.key_encryption_key,
+                'resolver': self.key_resolver_function
+            },
+            config=self._config,
+            sdk_moniker=self._sdk_moniker,
+            client=self._client,
             **kwargs)
         downloader = StorageStreamDownloader(**options)
         await downloader._setup()  # pylint: disable=protected-access
@@ -616,7 +800,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 :dedent: 16
                 :caption: Delete a blob.
         """
-        options = self._delete_blob_options(delete_snapshots=delete_snapshots, **kwargs)
+        options = _delete_blob_options(
+            snapshot=self.snapshot,
+            version_id=get_version_id(self.version_id, kwargs),
+            delete_snapshots=delete_snapshots,
+            **kwargs)
         try:
             await self._client.blob.delete(**options)
         except HttpResponseError as error:
@@ -831,7 +1019,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
+        options = _set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
             return await self._client.blob.set_http_headers(**options) # type: ignore
         except HttpResponseError as error:
@@ -895,7 +1083,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             #other-client--per-operation-configuration>`_.
         :returns: Blob-updated property dict (Etag and last modified)
         """
-        options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.set_metadata(**options)  # type: ignore
         except HttpResponseError as error:
@@ -1064,8 +1254,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        options = self._create_page_blob_options(
-            size,
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _create_page_blob_options(
+            size=size,
             content_settings=content_settings,
             metadata=metadata,
             premium_page_blob_tier=premium_page_blob_tier,
@@ -1153,7 +1347,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        options = self._create_append_blob_options(
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _create_append_blob_options(
             content_settings=content_settings,
             metadata=metadata,
             **kwargs)
@@ -1236,7 +1434,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 :dedent: 12
                 :caption: Create a snapshot of the blob.
         """
-        options = self._create_snapshot_options(metadata=metadata, **kwargs)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _create_snapshot_options(metadata=metadata, **kwargs)
         try:
             return await self._client.blob.create_snapshot(**options) # type: ignore
         except HttpResponseError as error:
@@ -1427,8 +1627,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 :dedent: 16
                 :caption: Copy a blob from a URL.
         """
-        options = self._start_copy_from_url_options(
-            source_url=self._encode_source_url(source_url),
+        options = _start_copy_from_url_options(
+            source_url=source_url,
             metadata=metadata,
             incremental_copy=incremental_copy,
             **kwargs)
@@ -1462,7 +1662,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 :dedent: 16
                 :caption: Abort copying a blob from URL.
         """
-        options = self._abort_copy_options(copy_id, **kwargs)
+        options = _abort_copy_options(copy_id, **kwargs)
         try:
             await self._client.blob.abort_copy_from_url(**options)
         except HttpResponseError as error:
@@ -1633,9 +1833,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
-        options = self._stage_block_options(
-            block_id,
-            data,
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _stage_block_options(
+            block_id=block_id,
+            data=data,
             length=length,
             **kwargs)
         try:
@@ -1695,9 +1899,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             the prefix of the source_authorization string.
         :rtype: None
         """
-        options = self._stage_block_from_url_options(
-            block_id,
-            source_url=self._encode_source_url(source_url),
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _stage_block_from_url_options(
+            block_id=block_id,
+            source_url=source_url,
             source_offset=source_offset,
             source_length=source_length,
             source_content_md5=source_content_md5,
@@ -1748,7 +1954,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return self._get_block_list_result(blocks)
+        return _get_block_list_result(blocks)
 
     @distributed_trace_async
     async def commit_block_list( # type: ignore
@@ -1850,8 +2056,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._commit_block_list_options(
-            block_list,
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _commit_block_list_options(
+            block_list=block_list,
             content_settings=content_settings,
             metadata=metadata,
             **kwargs)
@@ -1945,7 +2155,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        options = self._set_blob_tags_options(tags=tags, **kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
+        options = _set_blob_tags_options(version_id=version_id, tags=tags, **kwargs)
         try:
             return await self._client.blob.set_tags(**options)
         except HttpResponseError as error:
@@ -1978,7 +2189,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
-        options = self._get_blob_tags_options(**kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
+        options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = await self._client.blob.get_tags(**options)
             return parse_tags(tags)  # pylint: disable=protected-access
@@ -2057,7 +2269,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             DeprecationWarning
         )
 
-        options = self._get_page_ranges_options(
+        options = _get_page_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_snapshot_diff=previous_snapshot_diff,
@@ -2143,7 +2356,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.PageRange]
         """
         results_per_page = kwargs.pop('results_per_page', None)
-        options = self._get_page_ranges_options(
+        options = _get_page_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_snapshot_diff=previous_snapshot,
@@ -2227,7 +2441,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
-        options = self._get_page_ranges_options(
+        options = _get_page_ranges_options(
+            snapshot=self.snapshot,
             offset=offset,
             length=length,
             prev_snapshot_url=previous_snapshot_url,
@@ -2290,8 +2505,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._set_sequence_number_options(
-            sequence_number_action, sequence_number=sequence_number, **kwargs)
+        options = _set_sequence_number_options(sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
             return await self._client.page_blob.update_sequence_number(**options) # type: ignore
         except HttpResponseError as error:
@@ -2348,7 +2562,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._resize_blob_options(size, **kwargs)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _resize_blob_options(size=size, **kwargs)
         try:
             return await self._client.page_blob.resize(**options) # type: ignore
         except HttpResponseError as error:
@@ -2443,7 +2659,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._upload_page_options(
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _upload_page_options(
             page=page,
             offset=offset,
             length=length,
@@ -2560,8 +2780,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             the prefix of the source_authorization string.
         """
 
-        options = self._upload_pages_from_url_options(
-            source_url=self._encode_source_url(source_url),
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _upload_pages_from_url_options(
+            source_url=source_url,
             offset=offset,
             length=length,
             source_offset=source_offset,
@@ -2637,7 +2861,15 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = self._clear_page_options(offset, length, **kwargs)
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _clear_page_options(
+            offset=offset,
+            length=length,
+            **kwargs
+        )
         try:
             return await self._client.page_blob.clear_pages(**options)  # type: ignore
         except HttpResponseError as error:
@@ -2726,8 +2958,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
-        options = self._append_block_options(
-            data,
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _append_block_options(
+            data=data,
             length=length,
             **kwargs
         )
@@ -2834,8 +3070,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             Authenticate as a service principal using a client secret to access a source blob. Ensure "bearer " is
             the prefix of the source_authorization string.
         """
-        options = self._append_block_from_url_options(
-            copy_source_url=self._encode_source_url(copy_source_url),
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        if kwargs.get('cpk') and self.scheme.lower() != 'https':
+            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        options = _append_block_from_url_options(
+            copy_source_url=copy_source_url,
             source_offset=source_offset,
             source_length=source_length,
             **kwargs
@@ -2888,7 +3128,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
-        options = self._seal_append_blob_options(**kwargs)
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        options = _seal_append_blob_options(**kwargs)
         try:
             return await self._client.append_blob.seal(**options) # type: ignore
         except HttpResponseError as error:
