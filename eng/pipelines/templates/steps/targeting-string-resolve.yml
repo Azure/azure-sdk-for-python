@@ -21,8 +21,5 @@ steps:
           Write-Host "Setting PULLREQUEST to $public"
           Write-Host "##vso[task.setvariable variable=PULLREQUEST]$public"
       }
-      $public = $true
-      Write-Host "Setting PULLREQUEST to $public"
-      Write-Host "##vso[task.setvariable variable=PULLREQUEST]$public"
     displayName: Check override of targeting string
     condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))
