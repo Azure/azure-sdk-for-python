@@ -40,7 +40,7 @@ pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
 class QueryExecutionContextEndToEndTests(unittest.TestCase):
-    """Routing Map Functionalities end to end Tests.
+    """Routing Map Functionalities end-to-end Tests.
     """
 
     host = test_config._test_config.host

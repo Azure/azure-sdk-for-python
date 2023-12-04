@@ -18,16 +18,18 @@
 #LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
+
 import os
 import time
 import uuid
+
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos.http_constants import StatusCodes
-from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.cosmos_client import CosmosClient
-from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import NonePartitionKeyValue
+from azure.cosmos.partition_key import PartitionKey
+
 try:
     import urllib3
     urllib3.disable_warnings()
@@ -58,30 +60,23 @@ class _test_config(object):
     THROUGHPUT_FOR_1_PARTITION = 400
 
     TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
-    TEST_DATABASE_ID_PLAIN = "COSMOS_TEST_DATABASE"
     TEST_THROUGHPUT_DATABASE_ID = "Python SDK Test Throughput Database " + str(uuid.uuid4())
-    TEST_COLLECTION_SINGLE_PARTITION_ID = "Single Partition Test Collection"
-    TEST_COLLECTION_MULTI_PARTITION_ID = "Multi Partition Test Collection"
-    TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID = "Multi Partition Test Collection With Custom PK"
+    TEST_COLLECTION_SINGLE_PARTITION_ID = "Single Partition Test Collection " + str(uuid.uuid4())
+    TEST_COLLECTION_MULTI_PARTITION_ID = "Multi Partition Test Collection " + str(uuid.uuid4())
+    TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID = ("Multi Partition Test Collection With Custom PK "
+                                                         + str(uuid.uuid4()))
 
     TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY = "id"
     TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY = "pk"
 
-    TEST_DATABASE = None
-    TEST_COLLECTION_SINGLE_PARTITION = None
-    TEST_COLLECTION_MULTI_PARTITION = None
-    TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK = None
-
-    IS_MULTIMASTER_ENABLED = False
+    IS_MULTI_MASTER_ENABLED = False
     @classmethod
     def create_database_if_not_exist(cls, client):
         # type: (CosmosClient) -> Database
-        if cls.TEST_DATABASE is not None:
-            return cls.TEST_DATABASE
         cls.try_delete_database(client)
-        cls.TEST_DATABASE = client.create_database(cls.TEST_DATABASE_ID)
-        cls.IS_MULTIMASTER_ENABLED = client.get_database_account()._EnableMultipleWritableLocations
-        return cls.TEST_DATABASE
+        test_database = client.create_database(cls.TEST_DATABASE_ID)
+        cls.IS_MULTI_MASTER_ENABLED = client.get_database_account()._EnableMultipleWritableLocations
+        return test_database
 
     @classmethod
     def try_delete_database(cls, client):
@@ -95,30 +90,33 @@ class _test_config(object):
     @classmethod
     def create_single_partition_collection_if_not_exist(cls, client):
         # type: (CosmosClient) -> Container
-        if cls.TEST_COLLECTION_SINGLE_PARTITION is None:
-            cls.TEST_COLLECTION_SINGLE_PARTITION = cls.create_collection_with_required_throughput(client,
-                    cls.THROUGHPUT_FOR_1_PARTITION, False)
-        cls.remove_all_documents(cls.TEST_COLLECTION_SINGLE_PARTITION, False)
-        return cls.TEST_COLLECTION_SINGLE_PARTITION
+        test_collection_single_partition = cls.create_collection_with_required_throughput(
+            client,
+            cls.THROUGHPUT_FOR_1_PARTITION,
+            False)
+        cls.remove_all_documents(test_collection_single_partition, False)
+        return test_collection_single_partition
 
 
     @classmethod
     def create_multi_partition_collection_if_not_exist(cls, client):
         # type: (CosmosClient) -> Container
-        if cls.TEST_COLLECTION_MULTI_PARTITION is None:
-            cls.TEST_COLLECTION_MULTI_PARTITION = cls.create_collection_with_required_throughput(client,
-                    cls.THROUGHPUT_FOR_5_PARTITIONS, False)
-        cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_PARTITION, False)
-        return cls.TEST_COLLECTION_MULTI_PARTITION
+        test_collection_multi_partition = cls.create_collection_with_required_throughput(
+            client,
+            cls.THROUGHPUT_FOR_5_PARTITIONS,
+            False)
+        cls.remove_all_documents(test_collection_multi_partition, False)
+        return test_collection_multi_partition
 
     @classmethod
     def create_multi_partition_collection_with_custom_pk_if_not_exist(cls, client):
         # type: (CosmosClient) -> Container
-        if cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK is None:
-            cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK = cls.create_collection_with_required_throughput(client,
-                    cls.THROUGHPUT_FOR_5_PARTITIONS, True)
-        cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK, True)
-        return cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK
+        test_collection_multi_partition_with_custom_pk = cls.create_collection_with_required_throughput(
+            client,
+            cls.THROUGHPUT_FOR_5_PARTITIONS,
+            True)
+        cls.remove_all_documents(test_collection_multi_partition_with_custom_pk, True)
+        return test_collection_multi_partition_with_custom_pk
 
     @classmethod
     def create_collection_with_required_throughput(cls, client, throughput, use_custom_partition_key):
@@ -158,7 +156,7 @@ class _test_config(object):
                         else:
                             partition_key = NonePartitionKeyValue
                     document_collection.delete_item(item=document, partition_key=partition_key)
-                if cls.IS_MULTIMASTER_ENABLED:
+                if cls.IS_MULTI_MASTER_ENABLED:
                     # sleep to ensure deletes are propagated for multimaster enabled accounts
                     time.sleep(2)
                 break
