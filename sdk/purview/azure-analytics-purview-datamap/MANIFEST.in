@@ -1,0 +1,8 @@
+include *.md
+include LICENSE
+include azure/analytics/purview/datamap/py.typed
+recursive-include tests *.py
+recursive-include samples *.py *.md
+include azure/__init__.py
+include azure/analytics/__init__.py
+include azure/analytics/purview/__init__.py
