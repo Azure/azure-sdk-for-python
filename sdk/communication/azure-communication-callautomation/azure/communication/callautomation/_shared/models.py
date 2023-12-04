@@ -99,7 +99,7 @@ class CommunicationUserIdentifier:
         self.properties = CommunicationUserProperties(id=id)
         self.raw_id = kwargs.get("raw_id") or id
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other):
         try:
             return self.raw_id == _communication_user_raw_id(other)
         except (AttributeError, TypeError, IndexError):
