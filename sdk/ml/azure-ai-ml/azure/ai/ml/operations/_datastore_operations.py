@@ -18,6 +18,7 @@ from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.exceptions import ValidationException
