@@ -25,6 +25,8 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024_preview
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -110,6 +112,7 @@ class DataOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
+        service_client_012024_preview: ServiceClient012024_preview,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -118,7 +121,7 @@ class DataOperations(_ScopeDependentOperations):
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
-        self._compute_operation = service_client.compute # TODO
+        self._compute_operation = service_client_012024_preview.compute
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -778,7 +781,7 @@ class DataOperations(_ScopeDependentOperations):
                 self._resource_group_name,
                 self._workspace_name,
                 ci_name,
-                [ComputeInstanceDataMount( # TODO
+                [ComputeInstanceDataMount(
                     source=uri,
                     source_type="URI",
                     mount_name=mount_name,

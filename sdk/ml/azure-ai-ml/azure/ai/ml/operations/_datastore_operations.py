@@ -14,6 +14,8 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
 from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreSecrets, NoneDatastoreCredentials
+from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -45,12 +47,13 @@ class DatastoreOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         serviceclient_2023_04_01_preview: ServiceClient042023Preview,
+        serviceclient_2024_01_01_preview: ServiceClient012024Preview,
         **kwargs: Dict
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = serviceclient_2023_04_01_preview.datastores
-        self._compute_operation = serviceclient_2023_04_01_preview.compute # TODO
+        self._compute_operation = serviceclient_2024_01_01_preview.compute
         self._credential = serviceclient_2023_04_01_preview._config.credential
         self._init_kwargs = kwargs
 
@@ -267,7 +270,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                 self._resource_group_name,
                 self._workspace_name,
                 ci_name,
-                [ComputeInstanceDataMount( # TODO
+                [ComputeInstanceDataMount(
                     source=uri,
                     source_type="URI",
                     mount_name=mount_name,
