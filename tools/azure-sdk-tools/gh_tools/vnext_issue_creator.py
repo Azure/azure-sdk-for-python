@@ -107,18 +107,19 @@ def create_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
     if check_type == "sphinx":
         merge_date = "2024-06-15" # This is a one-time event
         error_type = "docstring"
-        guide_link = "[Sphinx Info](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#sphinx-and-docstring-checker)"
+        guide_link = "[Sphinx and docstring checker](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#sphinx-and-docstring-checker)"
         title = f"{package_name} needs {error_type} updates for {check_type}"
         template = (
             f"**ACTION NEEDED:** All {check_type} errors and warnings must be fixed by **{merge_date}**. "
             f"The build will begin to fail for this library if errors are not fixed."
             f"\n\n**Library name:** {package_name}"
-            f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
+            f"\n**{check_type.capitalize()} build:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
             f"\n**How to fix:** Run the `strict-{check_type}` tox command at the library package-level and resolve "
-            f"the {error_type} errors.\n"
+            f"the {error_type} errors and warnings.\n"
             f"1) `../{package_name}>pip install \"tox<5\"`\n"
             f"2) `../{package_name}>tox run -e strict-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
-            f"See the {guide_link} for more information."
+            f"3) Once resolved, set `strict_sphinx = true` in the package's pyproject.toml file.\n\n"
+            f"See {guide_link} for more information."
         )
     else:
         merge_date = get_date_for_version_bump(today)
