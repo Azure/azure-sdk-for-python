@@ -41,7 +41,7 @@ class ModelConfiguration:
         return RestModelConfiguration(mode=self.mode, mount_path=self.mount_path)
 
     def validate(self):
-        if self.mode not in ["Copy", "Download"]:
+        if self.mode.lower() not in ["copy", "download"]:
             msg = "Mode must be either 'Copy' or 'Download'"
             err = ValidationException(
                 message=msg,
