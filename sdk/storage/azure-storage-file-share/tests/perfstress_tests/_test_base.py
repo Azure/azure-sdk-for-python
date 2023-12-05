@@ -6,7 +6,7 @@
 import os
 import uuid
 
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.storage.fileshare import ShareServiceClient as SyncShareServiceClient
 from azure.storage.fileshare.aio import ShareServiceClient as AsyncShareServiceClient

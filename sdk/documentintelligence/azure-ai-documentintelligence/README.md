@@ -371,32 +371,39 @@ Provide a container SAS URL to your Azure Storage Blob container where you're st
 
 More details on setting up a container and required file structure can be found in the [service documentation][di-build-training-set].
 
+<!-- SNIPPET:sample_manage_models.build_model -->
 
 ```python
-from azure.ai.formrecognizer import (
-    DocumentIntelligenceAdministrationClient,
-    ModelBuildMode,
+import uuid
+from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+from azure.ai.documentintelligence.models import (
+    DocumentBuildMode,
+    BuildDocumentModelRequest,
+    AzureBlobContentSource,
 )
 from azure.core.credentials import AzureKeyCredential
 
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
-container_sas_url = os.environ["CONTAINER_SAS_URL"]
+container_sas_url = os.environ["DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL"]
 
 document_model_admin_client = DocumentIntelligenceAdministrationClient(
     endpoint, AzureKeyCredential(key)
 )
 poller = document_model_admin_client.begin_build_document_model(
-    ModelBuildMode.TEMPLATE,
-    blob_container_url=container_sas_url,
-    description="my model description",
+    BuildDocumentModelRequest(
+        model_id=str(uuid.uuid4()),
+        build_mode=DocumentBuildMode.TEMPLATE,
+        azure_blob_source=AzureBlobContentSource(container_url=container_sas_url),
+        description="my model description",
+    )
 )
 model = poller.result()
 
 print(f"Model ID: {model.model_id}")
 print(f"Description: {model.description}")
-print(f"Model created on: {model.created_on}")
-print(f"Model expires on: {model.expires_on}")
+print(f"Model created on: {model.created_date_time}")
+print(f"Model expires on: {model.expiration_date_time}")
 print("Doc types the model can recognize:")
 for name, doc_type in model.doc_types.items():
     print(
@@ -408,6 +415,8 @@ for name, doc_type in model.doc_types.items():
             f"{doc_type.field_confidence[field_name]}"
         )
 ```
+
+<!-- END SNIPPET -->
 
 ### Analyze Documents Using a Custom Model
 
@@ -530,12 +539,13 @@ except ResourceNotFoundError:
 ### Add-on Capabilities
 Document Intelligence supports more sophisticated analysis capabilities. These optional features can be enabled and disabled depending on the scenario of the document extraction.
 
-The following add-on capabilities are available for 2023-07-31 (GA) and later releases:
+The following add-on capabilities are available in this SDK:
 - [barcode/QR code][addon_barcodes_sample]
 - [formula][addon_formulas_sample]
 - [font/style][addon_fonts_sample]
 - [high resolution mode][addon_highres_sample]
 - [language][addon_languages_sample]
+- [query fields][query_fields_sample]
 
 Note that some add-on capabilities will incur additional charges. See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
@@ -596,41 +606,28 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [azure_sub]: https://azure.microsoft.com/free/
-
-[python-di-src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/azure/ai/documentintelligence
-[python-di-pypi]: https://pypi.org/project/azure-ai-formrecognizer/
-[python-di-samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
-
+[python-di-product-docs]: https://learn.microsoft.com/azure/applied-ai-services/form-recognizer/overview?view=form-recog-3.0.0
 [azure_portal]: https://ms.portal.azure.com/
 [regional_endpoints]: https://azure.microsoft.com/global-infrastructure/services/?products=form-recognizer
-[FR_or_CS_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [cognitive_resource_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesFormRecognizer
 https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesDocumentIntelligence
 [cognitive_resource_cli]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
 [azure-key-credential]: https://aka.ms/azsdk/python/core/azurekeycredential
-[labeling-tool]: https://aka.ms/azsdk/formrecognizer/labelingtool
-[di-studio]: https://aka.ms/azsdk/formrecognizer/formrecognizerstudio
-[di-build-model]: https://aka.ms/azsdk/formrecognizer/buildmodel
-[di-build-training-set]: https://aka.ms/azsdk/formrecognizer/buildtrainingset
-[di-models]: https://aka.ms/azsdk/formrecognizer/models
-[di-errors]: https://aka.ms/azsdk/formrecognizer/errors
+[di-studio]: https://documentintelligence.ai.azure.com/studio
+[di-build-model]: https://aka.ms/azsdk/documentintelligence/buildmodel
+[di-build-training-set]: https://aka.ms/azsdk/documentintelligence/buildtrainingset
+[di-models]: https://aka.ms/azsdk/documentintelligence/models
+[di-errors]: https://aka.ms/azsdk/documentintelligence/errors
 
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
-[multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [cognitive_authentication_api_key]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
-[service_recognize_receipt]: https://aka.ms/azsdk/formrecognizer/receiptfieldschema
-[service_recognize_business_cards]: https://aka.ms/azsdk/formrecognizer/businesscardfieldschema
-[service_recognize_invoice]: https://aka.ms/azsdk/formrecognizer/invoicefieldschema
-[service_recognize_identity_documents]: https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
-[service_recognize_tax_documents]: https://aka.ms/azsdk/formrecognizer/taxusw2fieldschema
-[service_prebuilt_document]: https://docs.microsoft.com/azure/applied-ai-services/form-recognizer/concept-general-document#general-document-features
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/CHANGELOG.md
@@ -639,8 +636,5 @@ https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesDocumentIntellige
 [addon_formulas_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_formulas.py
 [addon_highres_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_highres.py
 [addon_languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_languages.py
+[query_fields_sample] https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_query_fields.py
 [service-rename]: https://techcommunity.microsoft.com/t5/azure-ai-services-blog/azure-form-recognizer-is-now-azure-ai-document-intelligence-with/ba-p/3875765
-
-[cla]: https://cla.microsoft.com
-[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
-[coc_contact]: mailto:opencode@microsoft.com

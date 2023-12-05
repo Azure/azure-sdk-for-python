@@ -10,7 +10,6 @@ from unittest.mock import Mock, patch
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.keyvault.certificates import (
@@ -46,15 +45,6 @@ logging_disabled = get_decorator(logging_enable=False)
 exclude_2016_10_01 = get_decorator(api_versions=[v for v in ApiVersion if v != ApiVersion.V2016_10_01])
 only_2016_10_01 = get_decorator(api_versions=[ApiVersion.V2016_10_01])
 LIST_TEST_SIZE = 7
-
-
-class RetryAfterReplacer(RecordingProcessor):
-    """Replace the retry after wait time in the replay process to 0."""
-
-    def process_response(self, response):
-        if "retry-after" in response["headers"]:
-            response["headers"]["retry-after"] = "0"
-        return response
 
 
 # used for logging tests

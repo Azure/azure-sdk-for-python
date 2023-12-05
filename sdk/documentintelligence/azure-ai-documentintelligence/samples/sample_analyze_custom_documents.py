@@ -15,9 +15,6 @@ DESCRIPTION:
     was built on. To learn how to build your own models, look at
     sample_build_model.py.
 
-    The model can be built using the training files found here:
-    https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
-
 USAGE:
     python sample_analyze_custom_documents.py
 
@@ -126,10 +123,6 @@ if __name__ == "__main__":
                 model_id = model.model_id
         analyze_custom_documents(model_id)
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:
