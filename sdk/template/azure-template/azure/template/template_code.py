@@ -8,3 +8,7 @@
 def template_main() -> bool:
     print("Package code.")
     return True
+
+def template_main1() -> bool:
+    print("Package code.")
+    return True
