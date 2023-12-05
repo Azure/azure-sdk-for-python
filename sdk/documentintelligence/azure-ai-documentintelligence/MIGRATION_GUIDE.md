@@ -90,10 +90,18 @@ Each page is treated as a separate document. Each empty page is kept as its own 
 
 ### Clients names updates
 
-|**2023-07-31**|**2023-10-31-preview**|
-|----------------|-------------|
-|DocumentAnalysisClient|DocumentIntelligenceClient|
-|DocumentModelAdministrationClient|DocumentIntelligenceAdministrationClient|
+|SDK version|Supported API version of service|
+|-|-|
+|1.0.0b1|2023-10-31-preview|
+|3.3.X(azure-ai-formrecognizer latest GA release)|2.0, 2.1, 2022-08-31, 2023-07-31 (default)|
+
+|API version|Supported clients|
+|-|-|
+|2023-10-31-preview|DocumentIntelligenceClient and DocumentIntelligenceAdministrationClient|
+|2023-07-31|DocumentAnalysisClient and DocumentModelAdministrationClient|
+|2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient|
+|2.1 | FormRecognizerClient and FormTrainingClient|
+|2.0 | FormRecognizerClient and FormTrainingClient|
 
 ### Base endpoint updates
 Updates all REST API operation paths from `{endpoint}/formrecognizer` to `{endpoint}/documentintelligence`. SDK would handle this change automatically, users would not have to do additional work to support this.
@@ -142,7 +150,7 @@ Now each currency-related field returning its own currency info to better suppor
 
 - `"prebuilt-document"` model is retired, this model is essentially `"prebuilt-layout"` with `features="keyValuePairs"` specified. _(This is only supported as an optional feature for "prebuilt-layout" and "prebuilt-invoice".)_
 
-If you wish to still use these models, please rely on the older `azure-ai-formrecognizer` library through the older service API versions.
+All prebuilt models can be seen [here][di-models]. If you wish to still use these models, please rely on the older `azure-ai-formrecognizer` library through the older service API versions.
 
 ## Additional samples
 
@@ -152,3 +160,4 @@ For additional samples please take a look at the [Document Intelligence Samples]
 [readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/README.md
 [samples_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/README.md
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
+[di-models]: https://aka.ms/azsdk/documentintelligence/models
