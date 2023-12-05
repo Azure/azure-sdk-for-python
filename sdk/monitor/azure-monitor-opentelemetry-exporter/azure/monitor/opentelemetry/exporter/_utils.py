@@ -151,7 +151,7 @@ def _create_telemetry_item(timestamp: int) -> TelemetryItem:
     return TelemetryItem(
         name="",
         instrumentation_key="",
-        tags=dict(azure_monitor_context),
+        tags=dict(azure_monitor_context), # type: ignore
         time=ns_to_iso_str(timestamp), # type: ignore
     )
 
