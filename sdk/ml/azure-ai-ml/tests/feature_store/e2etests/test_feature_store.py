@@ -8,7 +8,8 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
+from azure.ai.ml.constants._workspace import IsolationMode
+from azure.ai.ml.entities import FeatureStore, ManagedNetwork, PrivateEndpointDestination
 from azure.core.polling import LROPoller
 
 
@@ -438,6 +439,7 @@ class TestFeatureStore(AzureRecordedTestCase):
             == provisioned_materialization_identity.resource_id.lower()
         )
         assert identity_fs.offline_store.target == offline_store_target
+        assert identity_fs.online_store.target == online_store_target
         assert (
             identity_fs._feature_store_settings.online_store_connection_name
             == online_fs._feature_store_settings.online_store_connection_name
@@ -447,10 +449,33 @@ class TestFeatureStore(AzureRecordedTestCase):
             == offline_fs._feature_store_settings.offline_store_connection_name
         )
 
-        # test provision managed network
-        fs_poller = client.feature_stores.begin_provision_network(name=fs_name)
-        assert isinstance(fs_poller, LROPoller)
+        # test update and provision managed network interface
+        managed_network_fs = FeatureStore(
+            name=fs_name,
+            public_network_access="disabled",
+            managed_network=ManagedNetwork(
+                isolation_mode=IsolationMode.ALLOW_INTERNET_OUTBOUND,
+                outbound_rules=[
+                    PrivateEndpointDestination(
+                        name="sourcerulefs",
+                        service_resource_id=provisioned_offline_store_resource_id,
+                        subresource_target="dfs",
+                        spark_enabled="true",
+                    ),
+                    PrivateEndpointDestination(
+                        name="defaultkeyvault",
+                        service_resource_id=create_fs.key_vault,
+                        subresource_target="vault",
+                        spark_enabled="true",
+                    ),
+                ],
+            ),
+        )
+
+        fs_poller = client.feature_stores.begin_update(feature_store=managed_network_fs)
         fs_poller.result()
+        status_poller = client.feature_stores.begin_provision_network(feature_store_name=fs_name)
+        assert isinstance(status_poller, LROPoller)
 
         # delete test
         fs_poller = client.feature_stores.begin_delete(name=fs_name, delete_dependent_resources=True)
