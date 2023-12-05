@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout.py
+FILE: sample_analyze_layout_async.py
 
 DESCRIPTION:
     This sample demonstrates how to extract text, selection marks, and layout information from a document
@@ -18,7 +18,7 @@ DESCRIPTION:
     checkbox and its text. See sample_build_model.py for more information.
 
 USAGE:
-    python sample_analyze_layout.py
+    python sample_analyze_layout_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -26,6 +26,7 @@ USAGE:
 """
 
 import os
+import asyncio
 
 
 def get_words(page, line):
@@ -43,10 +44,11 @@ def _in_span(word, spans):
     return False
 
 
-def analyze_layout():
+async def analyze_layout():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
+            "..",
             "..",
             "./sample_forms/forms/form_selection_mark.png",
         )
@@ -54,17 +56,18 @@ def analyze_layout():
 
     # [START extract_layout]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documentintelligence import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
-        )
-    result = poller.result()
+    async with document_analysis_client:
+        with open(path_to_sample_documents, "rb") as f:
+            poller = await document_analysis_client.begin_analyze_document(
+                "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
+            )
+        result = await poller.result()
 
     if any([style.is_handwritten for style in result.styles]):
         print("Document contains handwritten content")
@@ -104,13 +107,17 @@ def analyze_layout():
     # [END extract_layout]
 
 
+async def main():
+    await analyze_layout()
+
+
 if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError
     from dotenv import find_dotenv, load_dotenv
 
     try:
         load_dotenv(find_dotenv())
-        analyze_layout()
+        asyncio.run(main())
     except HttpResponseError as error:
         # Examples of how to check an HttpResponseError
         # Check by error code:

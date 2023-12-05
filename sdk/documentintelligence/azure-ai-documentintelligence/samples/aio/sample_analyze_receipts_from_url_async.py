@@ -14,7 +14,7 @@ DESCRIPTION:
     using a pre-trained receipt model.
 
     See fields found on a receipt here:
-    https://aka.ms/azsdk/formrecognizer/receiptfieldschema
+    https://aka.ms/azsdk/documentintelligence/receiptfieldschema
 
 USAGE:
     python sample_analyze_receipts_from_url_async.py
@@ -26,7 +26,10 @@ USAGE:
 
 import os
 import asyncio
-from utils import format_price
+
+
+def format_price(price_dict):
+    return "".join([f"{p}" for p in price_dict.values()])
 
 
 async def analyze_receipts_from_url():
@@ -39,7 +42,7 @@ async def analyze_receipts_from_url():
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/receipt/contoso-receipt.png"
+    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/receipt/contoso-receipt.png"
     async with document_analysis_client:
         poller = await document_analysis_client.begin_analyze_document(
             "prebuilt-receipt", AnalyzeDocumentRequest(url_source=url)
@@ -108,10 +111,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         asyncio.run(main())
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

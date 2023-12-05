@@ -7,22 +7,22 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_custom_documents.py
+FILE: sample_copy_model_to.py
 
 DESCRIPTION:
-    This sample demonstrates how to analyze a document with a custom
-    built model. The document must be of the same type as the documents the custom model
-    was built on. To learn how to build your own models, look at
-    sample_build_model.py.
+    This sample demonstrates how to copy a custom model from a source Form Recognizer resource
+    to a target Form Recognizer resource.
 
 USAGE:
-    python sample_analyze_custom_documents.py
+    python sample_copy_model_to.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
-    3) CUSTOM_BUILT_MODEL_ID - the ID of your custom built model.
-        -OR-
+    3) DOCUMENTINTELLIGENCE_TARGET_ENDPOINT - the endpoint to your target Form Recognizer resource.
+    4) DOCUMENTINTELLIGENCE_TARGET_API_KEY - your target Form Recognizer API key
+    5) AZURE_SOURCE_MODEL_ID - the model ID from the source resource to be copied over to the target resource.
+        - OR -
        DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your training files.
        A model will be built and used to run the sample.
 """
@@ -30,60 +30,51 @@ USAGE:
 import os
 
 
-def analyze_custom_documents(custom_model_id):
-    path_to_sample_documents = os.path.abspath(
-        os.path.join(os.path.abspath(__file__), "..", "./sample_forms/forms/Form_1.jpg")
-    )
-    # [START analyze_custom_documents]
+def sample_copy_model_to(custom_model_id):
+    # [START begin_copy_document_model_to]
+    import uuid
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.documentintelligence import DocumentIntelligenceClient
+    from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+    from azure.ai.documentintelligence.models import AuthorizeCopyRequest
 
-    endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
-    key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
-    model_id = os.getenv("CUSTOM_BUILT_MODEL_ID", custom_model_id)
+    source_endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+    source_key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+    target_endpoint = os.environ["DOCUMENTINTELLIGENCE_TARGET_ENDPOINT"]
+    target_key = os.environ["DOCUMENTINTELLIGENCE_TARGET_API_KEY"]
+    source_model_id = os.getenv("AZURE_SOURCE_MODEL_ID", custom_model_id)
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-
-    # Make sure your document's type is included in the list of document types the custom model can analyze
-    with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            model_id=model_id, analyze_request=f, content_type="application/octet-stream"
+    target_client = DocumentIntelligenceAdministrationClient(
+        endpoint=target_endpoint, credential=AzureKeyCredential(target_key)
+    )
+    target_auth = target_client.authorize_model_copy(
+        AuthorizeCopyRequest(
+            model_id=str(uuid.uuid4()), # target model ID
+            description="copied model",
         )
-    result = poller.result()
+    )
+    source_client = DocumentIntelligenceAdministrationClient(
+        endpoint=source_endpoint, credential=AzureKeyCredential(source_key)
+    )
 
-    for idx, document in enumerate(result.documents):
-        print(f"--------Analyzing document #{idx + 1}--------")
-        print(f"Document has type {document.doc_type}")
-        print(f"Document has document type confidence {document.confidence}")
-        print(f"Document was analyzed with model with ID {result.model_id}")
-        for name, field in document.fields.items():
-            field_value = field.get("valueString") if field.get("valueString") else field.content
+    poller = source_client.begin_copy_model_to(
+        model_id=source_model_id,
+        copy_to_request=target_auth,
+    )
+    copied_over_model = poller.result()
+
+    print(f"Model ID: {copied_over_model.model_id}")
+    print(f"Description: {copied_over_model.description}")
+    print(f"Model created on: {copied_over_model.created_date_time}")
+    print(f"Model expires on: {copied_over_model.expiration_date_time}")
+    print("Doc types the model can recognize:")
+    for name, doc_type in copied_over_model.doc_types.items():
+        print(f"Doc Type: '{name}' which has the following fields:")
+        for field_name, field in doc_type.field_schema.items():
             print(
-                f"......found field of type '{field.type}' with value '{field_value}' and with confidence {field.confidence}"
+                f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                f"{doc_type.field_confidence[field_name]}"
             )
-
-    # iterate over tables, lines, and selection marks on each page
-    for page in result.pages:
-        print(f"\nLines found on page {page.page_number}")
-        for line in page.lines:
-            print(f"...Line '{line.content}'")
-        for word in page.words:
-            print(f"...Word '{word.content}' has a confidence of {word.confidence}")
-        if page.selection_marks:
-            print(f"\nSelection marks found on page {page.page_number}")
-            for selection_mark in page.selection_marks:
-                print(
-                    f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}"
-                )
-
-    for i, table in enumerate(result.tables):
-        print(f"\nTable {i + 1} can be found on page:")
-        for region in table.bounding_regions:
-            print(f"...{region.page_number}")
-        for cell in table.cells:
-            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
-    print("-----------------------------------")
-    # [END analyze_custom_documents]
+    # [END begin_copy_document_model_to]
 
 
 if __name__ == "__main__":
@@ -93,7 +84,7 @@ if __name__ == "__main__":
     try:
         load_dotenv(find_dotenv())
         model_id = None
-        if os.getenv("DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL") and not os.getenv("CUSTOM_BUILT_MODEL_ID"):
+        if os.getenv("DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL") and not os.getenv("AZURE_SOURCE_MODEL_ID"):
             import uuid
             from azure.core.credentials import AzureKeyCredential
             from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
@@ -121,7 +112,7 @@ if __name__ == "__main__":
                 )
                 model = document_model_admin_client.begin_build_document_model(request).result()
                 model_id = model.model_id
-        analyze_custom_documents(model_id)
+        sample_copy_model_to(model_id)
     except HttpResponseError as error:
         # Examples of how to check an HttpResponseError
         # Check by error code:

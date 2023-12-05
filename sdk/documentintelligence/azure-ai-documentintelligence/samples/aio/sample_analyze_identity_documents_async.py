@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze an identity document.
 
     See fields found on identity documents here:
-    https://aka.ms/azsdk/formrecognizer/iddocumentfieldschema
+    https://aka.ms/azsdk/documentintelligence/iddocumentfieldschema
 
 USAGE:
     python sample_analyze_identity_documents_async.py
@@ -31,6 +31,7 @@ async def analyze_identity_documents():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
+            "..",
             "..",
             "./sample_forms/id_documents/license.jpg",
         )
@@ -95,10 +96,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         asyncio.run(main())
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:
