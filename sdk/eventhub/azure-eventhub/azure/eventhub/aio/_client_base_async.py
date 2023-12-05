@@ -106,7 +106,7 @@ if TYPE_CHECKING:
             """Whether the consumer or producer is running"""
 
         @running.setter
-        def running(self, value):
+        def running(self, value: bool) -> None:
             pass
 
         def _create_handler(self, auth: Union["JWTTokenAsync", JWTTokenAuthAsync]) -> None:
@@ -449,10 +449,10 @@ class ClientBaseAsync(ClientBase):
 
 
 class ConsumerProducerMixin(_MIXIN_BASE):
-    async def __aenter__(self):
+    async def __aenter__(self) -> ConsumerProducerMixin:
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         await self.close()
 
     def _check_closed(self) -> None:

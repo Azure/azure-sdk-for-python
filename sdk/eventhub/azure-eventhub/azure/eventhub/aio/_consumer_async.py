@@ -7,7 +7,7 @@ import uuid
 import asyncio
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List
+from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List, Any
 from functools import partial
 
 from ._client_base_async import ConsumerProducerMixin
@@ -77,7 +77,7 @@ class EventHubConsumer(
         It is set to `False` by default.
     """
 
-    def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs) -> None:
+    def __init__(self, client: "EventHubConsumerClient", source: str, **kwargs: Any) -> None:
         super().__init__()
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
@@ -187,7 +187,10 @@ class EventHubConsumer(
         return event_data
 
     async def receive(
-        self, batch: Union[Optional[int], bool]=False, max_batch_size: Optional[int]=300, max_wait_time=None
+        self,
+        batch: Union[Optional[int], bool] = False,
+        max_batch_size: Optional[int]=300,
+        max_wait_time: Optional[float] = None
     ) -> None:
         await self._amqp_transport.receive_messages_async(
             self, batch, max_batch_size, max_wait_time

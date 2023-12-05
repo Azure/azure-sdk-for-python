@@ -52,7 +52,7 @@ if uamqp_installed:
         """
 
         @staticmethod
-        async def create_connection_async(**kwargs):
+        async def create_connection_async(**kwargs) -> ConnectionAsync:
             """
             Creates and returns the uamqp async Connection object.
             :keyword str host: The hostname, used by uamqp.

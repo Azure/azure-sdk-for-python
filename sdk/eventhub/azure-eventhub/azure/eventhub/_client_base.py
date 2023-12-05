@@ -50,14 +50,21 @@ if TYPE_CHECKING:
         "EventHubSharedKeyCredential",
         TokenCredential,
     ]
+    from ._consumer_client import EventHubConsumerClient
+    from ._producer_client import EventHubProducerClient
+    from ._transport._base import AmqpTransport
     try:
         from uamqp import Message as uamqp_Message
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+        from uamqp import ReceiveClient as uamqp_AMQPRecieveClient
+        from uamqp import SendClient as uamqp_AMQPSendClient
     except ImportError:
         uamqp_Message = None
         uamqp_JWTTokenAuth = None
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
+    from ._pyamqp import ReceiveClient as pyamqp_AMQPRecieveClient
+    from ._pyamqp import SendClient as pyamqp_AMQPSendClient
 
 _LOGGER = logging.getLogger(__name__)
 _Address = collections.namedtuple("_Address", "hostname path")
@@ -511,6 +518,17 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
 
 class ConsumerProducerMixin(object):
+
+    def __init__(self) -> None:
+        self._handler: Union[
+            uamqp_AMQPRecieveClient,
+            pyamqp_AMQPRecieveClient,
+            uamqp_AMQPSendClient,
+            pyamqp_AMQPSendClient]
+        self._client: Union[EventHubConsumerClient, EventHubProducerClient]
+        self._amqp_transport: "AmqpTransport"
+        self._max_message_size_on_link: Optional[int] = None
+
     def __enter__(self) -> ConsumerProducerMixin:
         return self
 
@@ -526,8 +544,12 @@ class ConsumerProducerMixin(object):
                 f"{self._name} has been closed. Please create a new one to handle event data."
             )
 
-    def _open(self):
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
+    def _open(self) -> bool:
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+
+        :return: Whether the EventHubConsumer/EventHubProducer is ready to use.
+        :rtype: bool
+        """
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:
@@ -544,12 +566,14 @@ class ConsumerProducerMixin(object):
                 self._amqp_transport.get_remote_max_message_size(self._handler)
                 or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
             )
-            self.running = True
+            self.running: bool = True
+            return True
+        return False
 
-    def _close_handler(self):
+    def _close_handler(self) -> None:
         if self._handler:
             self._handler.close()  # close the link (sharing connection) or connection (not sharing)
-        self.running: bool = False
+        self.running = False
 
     def _close_connection(self):
         self._close_handler()

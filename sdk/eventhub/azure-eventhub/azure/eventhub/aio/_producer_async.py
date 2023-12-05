@@ -72,7 +72,7 @@ class EventHubProducer(
      Default value is `True`.
     """
 
-    def __init__(self, client: EventHubProducerClient, target: str, **kwargs) -> None:
+    def __init__(self, client: EventHubProducerClient, target: str, **kwargs: Any) -> None:
         super().__init__()
         self._amqp_transport = kwargs.pop("amqp_transport")
         partition = kwargs.get("partition", None)
