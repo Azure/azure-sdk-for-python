@@ -28,6 +28,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._jobs_executions_operations import build_list_request
+from .._vendor import ContainerAppsAPIClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -63,7 +64,7 @@ class JobsExecutionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param job_name: Name of the Container Apps Job. Required.
+        :param job_name: Job Name. Required.
         :type job_name: str
         :param filter: The filter to apply on the operation. Default value is None.
         :type filter: str

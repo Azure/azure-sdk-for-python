@@ -6,13 +6,13 @@ from collections import namedtuple
 from typing import TYPE_CHECKING
 
 from ._shared import parse_key_vault_id
-from ._generated_models import JsonWebKey as _JsonWebKey
+from ._generated.models import JsonWebKey as _JsonWebKey
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, List, Optional, Union
     from datetime import datetime
-    from . import _generated_models as _models
+    from ._generated import models as _models
     from ._enums import KeyOperation, KeyRotationPolicyAction, KeyType
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
@@ -61,7 +61,7 @@ class KeyProperties(object):
 
     :param str key_id: The key ID.
     :param attributes: The key attributes.
-    :type attributes: ~azure.keyvault.keys._generated_models.KeyAttributes
+    :type attributes: ~azure.keyvault.keys._generated.models.KeyAttributes
 
     :keyword bool managed: Whether the key's lifetime is managed by Key Vault.
     :keyword tags: Application specific metadata in the form of key-value pairs.
@@ -253,6 +253,18 @@ class KeyProperties(object):
         :rtype: ~azure.keyvault.keys.KeyReleasePolicy or None
         """
         return self._release_policy
+
+    @property
+    def hsm_platform(self) -> "Optional[str]":
+        """The underlying HSM platform.
+
+        :returns: The underlying HSM platform.
+        :rtype: str or None
+        """
+        # hsm_platform was added in 7.5-preview.1
+        if self._attributes:
+            return getattr(self._attributes, "hsm_platform", None)
+        return None
 
 
 class KeyReleasePolicy(object):

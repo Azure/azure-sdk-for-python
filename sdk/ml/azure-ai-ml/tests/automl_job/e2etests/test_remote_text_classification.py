@@ -5,6 +5,7 @@
 from typing import Tuple
 
 import pytest
+import copy
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_final_job_status, get_automl_job_properties
 
@@ -25,29 +26,26 @@ class TestTextClassification(AzureRecordedTestCase):
     ) -> None:
         training_data, validation_data, target_column_name = newsgroup
 
-        properties = get_automl_job_properties()
-        if components:
-            properties["_automl_subgraph_orchestration"] = "true"
-            properties["_pipeline_id_override"] = (
-                "azureml://registries/azmlft-dev-registry01/" "components/nlp_textclassification_multiclass"
-            )
-
         job = text_classification(
             training_data=training_data,
             validation_data=validation_data,
             target_column_name=target_column_name,
             compute="gpu-cluster",
             experiment_name="DPv2-text-classification",
-            properties=properties,
+            properties=get_automl_job_properties(),
         )
 
         # use component specific model name so that the test fails if components are not run
         if components:
             job.set_training_parameters(model_name="microsoft/deberta-base")
+            job_reuse = copy.deepcopy(job)
 
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
         job.set_featurization(dataset_language="eng")
 
         created_job = client.jobs.create_or_update(job)
+        if components:
+            created_job_reuse = client.jobs.create_or_update(job_reuse)
+            assert_final_job_status(created_job_reuse, client, TextClassificationJob, JobStatus.COMPLETED)
 
         assert_final_job_status(created_job, client, TextClassificationJob, JobStatus.COMPLETED)

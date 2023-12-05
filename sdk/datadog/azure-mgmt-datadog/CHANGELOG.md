@@ -1,5 +1,15 @@
 # Release History
 
+## 2.1.0 (2023-10-23)
+
+### Features Added
+
+  - Added operation group CreationSupportedOperations
+  - Added operation group MonitoredSubscriptionsOperations
+  - Model DatadogOrganizationProperties has a new parameter cspm
+  - Model MonitorUpdateProperties has a new parameter cspm
+  - Model MonitoringTagRulesProperties has a new parameter automuting
+
 ## 2.1.0b1 (2022-11-02)
 
 ### Other Changes

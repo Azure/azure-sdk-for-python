@@ -29,14 +29,13 @@ def main():
         subscription_id="subscriptionId",
     )
 
-    response = client.deployments.begin_delete(
+    client.deployments.begin_delete(
         resource_group_name="resourceGroupName",
         account_name="accountName",
         deployment_name="deploymentName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2022-12-01/examples/DeleteDeployment.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/DeleteDeployment.json
 if __name__ == "__main__":
     main()

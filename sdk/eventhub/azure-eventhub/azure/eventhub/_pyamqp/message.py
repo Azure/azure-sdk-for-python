@@ -20,9 +20,10 @@ Header = namedtuple(
         'ttl',
         'first_acquirer',
         'delivery_count'
-    ])
+    ],
+    defaults=(None,) * 5 # type: ignore
+    )
 Header._code = 0x00000070 # type: ignore # pylint:disable=protected-access
-Header.__new__.__defaults__ = (None,) * len(Header._fields) # type: ignore
 Header._definition = ( # type: ignore # pylint:disable=protected-access
     FIELD("durable", AMQPTypes.boolean, False, None, False),
     FIELD("priority", AMQPTypes.ubyte, False, None, False),
@@ -91,9 +92,10 @@ Properties = namedtuple(
         'group_id',
         'group_sequence',
         'reply_to_group_id'
-    ])
+    ],
+    defaults=(None,) * 13 # type: ignore
+    )
 Properties._code = 0x00000073 # type: ignore # pylint:disable=protected-access
-Properties.__new__.__defaults__ = (None,) * len(Properties._fields) # type: ignore
 Properties._definition = ( # type: ignore # pylint:disable=protected-access
     FIELD("message_id", FieldDefinition.message_id, False, None, False),
     FIELD("user_id", AMQPTypes.binary, False, None, False),
@@ -177,8 +179,9 @@ Message = namedtuple(
         'sequence',
         'value',
         'footer',
-    ])
-Message.__new__.__defaults__ = (None,) * len(Message._fields) # type: ignore
+    ],
+    defaults=(None,) * 9 # type: ignore
+    )
 Message._code = 0 # type: ignore # pylint:disable=protected-access
 Message._definition = ( # type: ignore # pylint:disable=protected-access
     (0x00000070, FIELD("header", Header, False, None, False)),

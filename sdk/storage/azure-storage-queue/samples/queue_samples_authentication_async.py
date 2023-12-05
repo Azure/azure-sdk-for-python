@@ -32,6 +32,7 @@ USAGE:
 from datetime import datetime, timedelta
 import asyncio
 import os
+import sys
 
 
 class QueueAuthSamplesAsync(object):
@@ -47,6 +48,11 @@ class QueueAuthSamplesAsync(object):
     active_directory_tenant_id = os.getenv("ACTIVE_DIRECTORY_TENANT_ID")
 
     async def authentication_by_connection_string_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: authentication_by_connection_string_async")
+            sys.exit(1)
+
         # Instantiate a QueueServiceClient using a connection string
         # [START async_auth_from_connection_string]
         from azure.storage.queue.aio import QueueServiceClient
@@ -58,6 +64,11 @@ class QueueAuthSamplesAsync(object):
             properties = await queue_service.get_service_properties()
 
     async def authentication_by_shared_key_async(self):
+        if self.account_url is None or self.access_key is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: authentication_by_shared_key_async")
+            sys.exit(1)
+
         # Instantiate a QueueServiceClient using a shared access key
         # [START async_create_queue_service_client]
         from azure.storage.queue.aio import QueueServiceClient
@@ -69,6 +80,15 @@ class QueueAuthSamplesAsync(object):
             properties = await queue_service.get_service_properties()
 
     async def authentication_by_active_directory_async(self):
+        if (self.active_directory_tenant_id is None or
+            self.active_directory_application_id is None or
+            self.active_directory_application_secret is None or
+            self.account_url is None
+        ):
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: authentication_by_active_directory_async")
+            sys.exit(1)
+
         # [START async_create_queue_service_client_token]
         # Get a token credential for authentication
         from azure.identity.aio import ClientSecretCredential
@@ -88,6 +108,15 @@ class QueueAuthSamplesAsync(object):
             properties = await queue_service.get_service_properties()
 
     async def authentication_by_shared_access_signature_async(self):
+        if (self.connection_string is None or
+            self.account_name is None or
+            self.access_key is None or
+            self.account_url is None
+        ):
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: authentication_by_shared_access_signature_async")
+            sys.exit(1)
+
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue.aio import QueueServiceClient
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)

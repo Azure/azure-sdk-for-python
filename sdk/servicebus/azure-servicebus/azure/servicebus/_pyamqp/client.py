@@ -168,7 +168,8 @@ class AMQPClient(
         self._mgmt_links = {}
         self._mgmt_link_lock = threading.Lock()
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
-        self._keep_alive_interval = int(kwargs.get("keep_alive_interval", 0))
+        self._keep_alive_interval = kwargs.get("keep_alive_interval", 0)
+        self._keep_alive_interval = int(self._keep_alive_interval) if self._keep_alive_interval is not None else 0
         self._keep_alive_thread = None
 
         # Connection settings
@@ -214,12 +215,18 @@ class AMQPClient(
         self._connection_verify = kwargs.get("connection_verify")
 
     def __enter__(self):
-        """Run Client in a context manager."""
+        """Run Client in a context manager.
+
+        :return: The Client object.
+        :rtype: ~pyamqp.AMQPClient
+        """
         self.open()
         return self
 
     def __exit__(self, *args):
-        """Close and destroy Client on exiting a context manager."""
+        """Close and destroy Client on exiting a context manager.
+        :param any args: Ignored.
+        """
         self.close()
 
     def _keep_alive(self):
@@ -236,11 +243,12 @@ class AMQPClient(
         except Exception as e:  # pylint: disable=broad-except
             _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
-    def _client_ready(self):  # pylint: disable=no-self-use
+    def _client_ready(self):
         """Determine whether the client is ready to start sending and/or
         receiving messages. To be ready, the connection must be open and
         authentication complete.
 
+        :returns: True if ready, False otherwise.
         :rtype: bool
         """
         return True
@@ -376,6 +384,7 @@ class AMQPClient(
         """Whether the authentication handshake is complete during
         connection initialization.
 
+        :return: Whether the authentication handshake is complete.
         :rtype: bool
         """
         if self._cbs_authenticator and not self._cbs_authenticator.handle_token():
@@ -389,6 +398,7 @@ class AMQPClient(
         establishing the connection, session, link and authentication, and
         is not ready to process messages.
 
+        :return: Whether the handler is ready to process messages.
         :rtype: bool
         """
         if not self.auth_complete():
@@ -407,6 +417,7 @@ class AMQPClient(
         and ready to be used for further work, or `False` if it needs
         to be shut down.
 
+        :return: Whether the connection is still open and ready to be used.
         :rtype: bool
         :raises: TimeoutError if CBS authentication timeout reached.
         """
@@ -429,6 +440,7 @@ class AMQPClient(
         :keyword str node: The target node. Default node is `$management`.
         :keyword float timeout: Provide an optional timeout in seconds within which a response
          to the management request must be received.
+        :returns: The response to the management request.
         :rtype: ~pyamqp.message.Message
         """
 
@@ -563,6 +575,7 @@ class SendClient(AMQPClient):
         The Session, Link and MessageReceiver must be open and in non-errored
         states.
 
+        :return: Whether the client is ready to start receiving messages.
         :rtype: bool
         """
         # pylint: disable=protected-access
@@ -587,6 +600,7 @@ class SendClient(AMQPClient):
         Will return True if operation successful and client can remain open for
         further work.
 
+        :return: Whether the client can remain open for further work.
         :rtype: bool
         """
         self._link.update_pending_deliveries()
@@ -677,7 +691,7 @@ class SendClient(AMQPClient):
                 # This is a default handler
                 raise MessageException(
                     condition=ErrorCondition.UnknownError, description="Send failed."
-                )
+                ) from None
 
     def send_message(self, message, **kwargs):
         """
@@ -806,13 +820,14 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         The Session, Link and MessageReceiver must be open and in non-errored
         states.
 
+        :return: True if the client is ready to start receiving messages.
         :rtype: bool
         """
         # pylint: disable=protected-access
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,
-                link_credit=self._link_credit,
+                link_credit=0,  # link_credit=0 on flow frame sent before client is ready
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
@@ -832,11 +847,12 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         Will return True if operation successful and client can remain open for
         further work.
 
+        :return: Whether the client can remain open for further work.
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit == 0:
-                self._link.flow()
+            if self._link.current_link_credit <= 0:
+                self._link.flow(link_credit=self._link_credit)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
@@ -852,6 +868,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
 
         :param message: Received message.
         :type message: ~pyamqp.message.Message
+        :param frame: Received frame.
+        :type frame: tuple
         """
         self._last_activity_timestamp = time.time()
         if self._message_received_callback:
@@ -918,18 +936,20 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         available rather than waiting to achieve a specific batch size, and therefore the
         number of messages returned per call will vary up to the maximum allowed.
 
-        :param max_batch_size: The maximum number of messages that can be returned in
+        :keyword max_batch_size: The maximum number of messages that can be returned in
          one call. This value cannot be larger than the prefetch value, and if not specified,
          the prefetch value will be used.
-        :type max_batch_size: int
-        :param on_message_received: A callback to process messages as they arrive from the
+        :paramtype max_batch_size: int
+        :keyword on_message_received: A callback to process messages as they arrive from the
          service. It takes a single argument, a ~pyamqp.message.Message object.
-        :type on_message_received: callable[~pyamqp.message.Message]
-        :param timeout: The timeout in milliseconds for which to wait to receive any messages.
+        :paramtype on_message_received: callable[~pyamqp.message.Message]
+        :keyword timeout: The timeout in milliseconds for which to wait to receive any messages.
          If no messages are received in this time, an empty list will be returned. If set to
          0, the client will continue to wait until at least one message is received. The
          default is 0.
-        :type timeout: float
+        :paramtype timeout: float
+        :return: A list of messages.
+        :rtype: list[~pyamqp.message.Message]
         """
         return self._do_retryable_operation(self._receive_message_batch_impl, **kwargs)
 
@@ -938,9 +958,12 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         accepted - if you wish to add logic to accept or reject messages based on custom
         criteria, pass in a callback.
 
+        :param int or None timeout: The timeout in milliseconds for which to wait to receive any messages.
         :param on_message_received: A callback to process messages as they arrive from the
          service. It takes a single argument, a ~pyamqp.message.Message object.
         :type on_message_received: callable[~pyamqp.message.Message]
+        :return: A generator of messages.
+        :rtype: generator[~pyamqp.message.Message]
         """
         self._message_received_callback = on_message_received
         return self._message_generator(timeout=timeout)
@@ -948,6 +971,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def _message_generator(self, timeout=None):
         """Iterate over processed messages in the receive queue.
 
+        :param int or None timeout: The timeout in milliseconds for which to wait to receive any messages.
+        :return: A generator of messages.
         :rtype: generator[~pyamqp.message.Message]
         """
         self.open()

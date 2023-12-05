@@ -134,6 +134,7 @@ class LeaseContainerRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHANGE = "Change"
     RELEASE = "Release"
     BREAK = "Break"
+    BREAK_ENUM = "Break"
 
 
 class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -160,12 +161,6 @@ class LeaseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     LOCKED = "Locked"
     UNLOCKED = "Unlocked"
-
-
-class ManagementPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ManagementPolicyName."""
-
-    DEFAULT = "default"
 
 
 class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):

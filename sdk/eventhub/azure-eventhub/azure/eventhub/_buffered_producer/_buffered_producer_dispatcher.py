@@ -183,5 +183,5 @@ class BufferedProducerDispatcher:
     @property
     def total_buffered_event_count(self):
         return sum(
-            [self.get_buffered_event_count(pid) for pid in self._buffered_producers]
+            (self.get_buffered_event_count(pid) for pid in self._buffered_producers)
         )

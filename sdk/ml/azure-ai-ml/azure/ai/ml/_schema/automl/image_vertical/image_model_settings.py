@@ -86,6 +86,8 @@ class ImageModelSettingsObjectDetectionSchema(ImageModelSettingsSchema):
         allowed_values=[o.value for o in ValidationMetricType],
         casing_transform=camel_to_snake,
     )
+    log_training_metrics = fields.Str()
+    log_validation_loss = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):

@@ -35,56 +35,54 @@ from .component import Component
 class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin):
     """Command component version, used to define a Command Component or Job.
 
-    :param name: The name of the Command job or component.
-    :type name: str
-    :param version: The version of the Command job or component.
-    :type version: str
-    :param description: The description of the component.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
-    :param display_name: The display name of the component.
-    :type display_name: str
-    :param command: The command to be executed.
-    :type command: str
-    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+    :keyword name: The name of the Command job or component.
+    :paramtype name: Optional[str]
+    :keyword version: The version of the Command job or component.
+    :paramtype version: Optional[str]
+    :keyword description: The description of the component. Defaults to None.
+    :paramtype description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :paramtype tags: Optional[dict]
+    :keyword display_name: The display name of the component.
+    :paramtype display_name: Optional[str]
+    :keyword command: The command to be executed.
+    :paramtype command: Optional[str]
+    :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
         to a remote location.
-    :type code: str
-    :param environment: The environment that the job will run in.
-    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
-    :param distribution: The configuration for distributed jobs.
-    :type distribution: Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
-        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]
-    :param resources: The compute resource configuration for the command.
-    :type resources: ~azure.ai.ml.entities.JobResourceConfiguration
-    :param inputs: A mapping of input names to input data sources used in the job.
-    :type inputs: dict[str, Union[
+    :type code: Optional[str]
+    :keyword environment: The environment that the job will run in.
+    :paramtype environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+    :keyword distribution: The configuration for distributed jobs. Defaults to None.
+    :paramtype distribution: Optional[Union[~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+        ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]]
+    :keyword resources: The compute resource configuration for the command.
+    :paramtype resources: Optional[~azure.ai.ml.entities.JobResourceConfiguration]
+    :keyword inputs: A mapping of input names to input data sources used in the job. Defaults to None.
+    :paramtype inputs: Optional[dict[str, Union[
         ~azure.ai.ml.Input,
         str,
         bool,
         int,
         float,
         Enum,
-        ]
-    ]
-    :param outputs: A mapping of output names to output data sources used in the job.
-    :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
-    :param instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
-    :type instance_count: int
-    :param is_deterministic: Specifies whether the Command will return the same output given the same input.
+        ]]]
+    :keyword outputs: A mapping of output names to output data sources used in the job. Defaults to None.
+    :paramtype outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
+    :keyword instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
+    :paramtype instance_count: Optional[int]
+    :keyword is_deterministic: Specifies whether the Command will return the same output given the same input.
         Defaults to True. When True, if a Command (component) is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previous submitted job
         when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
-    :type is_deterministic: bool
-    :param additional_includes: A list of shared additional files to be included in the component.
-    :type additional_includes: list[str]
-    :param properties: The job property dictionary.
-    :type properties: dict[str, str]
+    :paramtype is_deterministic: Optional[bool]
+    :keyword additional_includes: A list of shared additional files to be included in the component. Defaults to None.
+    :paramtype additional_includes: Optional[list[str]]
+    :keyword properties: The job property dictionary. Defaults to None.
+    :paramtype properties: Optional[dict[str, str]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
         Details will be provided in the error message.
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_command_configurations.py
             :start-after: [START command_component_definition]
@@ -160,21 +158,24 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         self.instance_count = instance_count
         self.additional_includes = additional_includes or []
 
-    # region AdditionalIncludesMixin
-    def _get_origin_code_value(self) -> Union[str, os.PathLike, None]:
-        if self.code is not None and isinstance(self.code, str):
-            # directly return code given it will be validated in self._validate_additional_includes
-            return self.code
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the component content into a sorted yaml string.
 
-        # self.code won't be a Code object, or it will fail schema validation according to CodeFields
-        return None
+        :return: The ordered dict
+        :rtype: Dict
+        """
 
-    # endregion
+        obj = super()._to_ordered_dict_for_yaml_dump()
+        # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
+        if self.code and isinstance(self.code, str):
+            obj["code"] = self.code
+        return obj
 
     @property
     def instance_count(self) -> int:
         """The number of instances or nodes to be used by the compute target.
 
+        :return: The number of instances or nodes.
         :rtype: int
         """
         return self.resources.instance_count if self.resources else None
@@ -184,7 +185,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         """Sets the number of instances or nodes to be used by the compute target.
 
         :param value: The number of instances of nodes to be used by the compute target. Defaults to 1.
-        :type instance_count: int
+        :type value: int
         """
         if not value:
             return
@@ -203,7 +204,6 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         }
 
     def _to_dict(self) -> Dict:
-        """Dump the command component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
 
     @classmethod
@@ -253,10 +253,10 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     def _validate_early_available_output(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
         for name, output in self.outputs.items():
-            if output.early_available is True and output._is_control_or_primitive_type is not True:
+            if output.early_available is True and output._is_primitive_type is not True:
                 msg = (
-                    f"Early available output {name!r} requires is_control as True or output is primitive type, "
-                    f"got {output._is_control_or_primitive_type!r}."
+                    f"Early available output {name!r} requires output is primitive type, "
+                    f"got {output._is_primitive_type!r}."
                 )
                 validation_result.append_error(message=msg, yaml_path=f"outputs.{name}")
         return validation_result

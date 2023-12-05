@@ -25,7 +25,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import RecoveryServicesClientMixinABC, _convert_request, _format_url_section
+from .._vendor import RecoveryServicesClientMixinABC, _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -39,7 +39,7 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -54,7 +54,7 @@ def build_delete_request(
         "identityName": _SERIALIZER.url("identity_name", identity_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")

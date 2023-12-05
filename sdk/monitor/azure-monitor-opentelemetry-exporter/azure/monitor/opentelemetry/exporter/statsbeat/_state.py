@@ -2,8 +2,11 @@
 # Licensed under the MIT License.
 import os
 import threading
+from typing import Dict, Union
 
-_REQUESTS_MAP = {}
+from azure.monitor.opentelemetry.exporter._constants import _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL
+
+_REQUESTS_MAP: Dict[str, Union[int, Dict[int, int]]] = {}
 _REQUESTS_MAP_LOCK = threading.Lock()
 
 _STATSBEAT_STATE = {
@@ -15,7 +18,7 @@ _STATSBEAT_STATE_LOCK = threading.Lock()
 _STATSBEAT_FAILURE_COUNT_THRESHOLD = 3
 
 def is_statsbeat_enabled():
-    disabled = os.environ.get("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL")
+    disabled = os.environ.get(_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL)
     return disabled is None or disabled.lower() != "true"
 
 

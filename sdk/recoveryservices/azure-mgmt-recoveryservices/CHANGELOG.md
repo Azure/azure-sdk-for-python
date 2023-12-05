@@ -1,5 +1,13 @@
 # Release History
 
+## 2.5.0 (2023-09-05)
+
+### Features Added
+
+  - Model SecuritySettings has a new parameter multi_user_authorization
+  - Model SecuritySettings has a new parameter soft_delete_settings
+  - Model VaultProperties has a new parameter secure_score
+
 ## 2.4.0 (2023-05-20)
 
 ### Features Added

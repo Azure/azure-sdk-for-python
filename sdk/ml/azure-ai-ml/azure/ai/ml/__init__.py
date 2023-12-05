@@ -24,6 +24,9 @@ from .entities._load_functions import (
     load_data,
     load_datastore,
     load_environment,
+    load_feature_set,
+    load_feature_store,
+    load_feature_store_entity,
     load_job,
     load_model,
     load_model_package,
@@ -32,6 +35,7 @@ from .entities._load_functions import (
     load_registry,
     load_workspace,
     load_workspace_connection,
+    load_workspace_hub,
 )
 
 module_logger = logging.getLogger(__name__)
@@ -57,6 +61,9 @@ __all__ = [
     "load_compute",
     "load_data",
     "load_datastore",
+    "load_feature_set",
+    "load_feature_store",
+    "load_feature_store_entity",
     "load_model",
     "load_environment",
     "load_job",
@@ -65,6 +72,7 @@ __all__ = [
     "load_workspace",
     "load_registry",
     "load_workspace_connection",
+    "load_workspace_hub",
     "load_model_package",
 ]
 

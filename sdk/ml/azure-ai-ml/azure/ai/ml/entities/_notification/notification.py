@@ -4,24 +4,22 @@
 
 from typing import List, Optional
 
-
 from azure.ai.ml._restclient.v2023_02_01_preview.models import NotificationSetting as RestNotificationSetting
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml._utils._experimental import experimental
 
 
-@experimental
 class Notification(RestTranslatableMixin):
-    """Configuration for notification."""
+    """Configuration for notification.
 
-    def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None):
-        """
-        :keyword email_on: Send email notification to user on specified notification type.
-        :paramtype email_on: list[Literal]. Values can be [JobCompleted, JobFailed, JobCancelled]
-        :keyword emails: This is the email recipient list which has a limitation of 499 characters in
-         total concat with comma seperator.
-        :paramtype emails: list[str]
-        """
+    :param email_on: Send email notification to user on specified notification type. Accepted values are
+        "JobCompleted", "JobFailed", and "JobCancelled".
+    :type email_on: Optional[list[str]]
+    :param: The email recipient list which. Note that this parameter has a character limit of 499 which
+        includes all of the recipient strings and each comma seperator.
+    :paramtype emails: Optional[list[str]]
+    """
+
+    def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None) -> None:
         self.email_on = email_on
         self.emails = emails
 

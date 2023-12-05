@@ -23,23 +23,31 @@ When updating the codebase, please note the following guidelines for creating us
  
 ##### Completeness 
 
-- Be sure to warn of any edge cases or note special circumstances, if applicable. This can be done using an admonition in the docstring. In addition to the “tip” class we use for examples, Sphinx provides classes for other types of messages that you should feel free to use if appropriate: 
+- Be sure to warn of any edge cases or note special circumstances, if applicable. This can be done using an admonition in the docstring. Sphinx provides classes for other types of messages that you should feel free to use if appropriate: 
 
     ```markdown
     .. admonition:: Additional Note 
+
        :class: note 
+
        This is a note admonition. 
     
     .. admonition:: Warning 
+
        :class: warning 
+
        This is a warning admonition. 
     
     .. admonition:: Important 
+
        :class: danger 
+
        This is an important admonition. 
     
     .. admonition:: Information 
+
        :class: info 
+
        This is an informational admonition. 
     ```
  

@@ -3,22 +3,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-import sys
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast
+from typing_extensions import Literal
 
 from azure.core.rest import HttpResponse
 from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
-    Snapshot as GeneratedSnapshot,
     KeyValueFilter,
+    Snapshot as GeneratedConfigurationSnapshot,
+    SnapshotStatus,
 )
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
 
 PolymorphicConfigurationSetting = Union[
     "ConfigurationSetting", "SecretReferenceConfigurationSetting", "FeatureFlagConfigurationSetting"
@@ -26,26 +22,24 @@ PolymorphicConfigurationSetting = Union[
 
 
 class ConfigurationSetting(Model):
-    """A configuration value.
-    Variables are only populated by the server, and will be ignored when sending a request.
+    """A setting, defined by a unique combination of a key and label."""
 
-    :ivar value: The value of the configuration setting
-    :vartype value: str
-    :ivar etag: Entity tag (etag) of the object
-    :vartype etag: str
-    :ivar key:
-    :vartype key: str
-    :ivar label:
-    :vartype label: str
-    :ivar content_type:
-    :vartype content_type: str
-    :ivar last_modified:
-    :vartype last_modified: datetime
-    :ivar read_only:
-    :vartype read_only: bool
-    :ivar tags:
-    :vartype tags: dict[str, str]
-    """
+    value: str
+    """The value of the configuration setting."""
+    etag: str
+    """A value representing the current state of the resource."""
+    key: str
+    """The key of the configuration setting."""
+    label: str
+    """The label of the configuration setting."""
+    content_type: Optional[str]
+    """The content_type of the configuration setting."""
+    last_modified: datetime
+    """A date representing the last time the key-value was modified."""
+    read_only: bool
+    """Indicates whether the key-value is locked."""
+    tags: Dict[str, str]
+    """The tags assigned to the configuration setting."""
 
     _attribute_map = {
         "etag": {"key": "etag", "type": "str"},
@@ -61,13 +55,13 @@ class ConfigurationSetting(Model):
     kind = "Generic"
     content_type = None
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
         self.key = kwargs.get("key", None)
         self.label = kwargs.get("label", None)
         self.value = kwargs.get("value", None)
         self.etag = kwargs.get("etag", None)
-        self.content_type = kwargs.get("content_type", self.content_type)
+        self.content_type = kwargs.get("content_type", None)
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})
@@ -120,34 +114,34 @@ class ConfigurationSetting(Model):
 
 
 class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=too-many-instance-attributes
-    """A feature flag configuration value.
-    Variables are only populated by the server, and will be ignored when sending a request.
+    """A configuration setting that stores a feature flag value."""
 
-    :ivar etag: Entity tag (etag) of the object
-    :vartype etag: str
-    :param feature_id:
-    :type feature_id: str
-    :ivar value: The value of the configuration setting
-    :vartype value: str
-    :keyword enabled:
-    :paramtype enabled: bool
-    :keyword filters:
-    :paramtype filters: list[dict[str, Any]]
-    :ivar label:
-    :vartype label: str
-    :ivar display_name:
-    :vartype display_name: str
-    :ivar description:
-    :vartype description: str
-    :ivar content_type:
-    :vartype content_type: str
-    :ivar last_modified:
-    :vartype last_modified: datetime
-    :ivar read_only:
-    :vartype read_only: bool
-    :ivar tags:
-    :vartype tags: dict[str, str]
-    """
+    etag: str
+    """A value representing the current state of the resource."""
+    feature_id: str
+    """The identity of the configuration setting."""
+    key: str
+    """The key of the configuration setting."""
+    enabled: Optional[bool]
+    """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
+        If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
+    filters: Optional[List[Dict[str, Any]]]
+    """Filters that must run on the client and be evaluated as true for the feature
+        to be considered enabled."""
+    label: str
+    """The label used to group this configuration setting with others."""
+    display_name: str
+    """The name for the feature to use for display rather than the ID."""
+    description: str
+    """The description of the feature."""
+    content_type: str
+    """The content_type of the configuration setting."""
+    last_modified: datetime
+    """A date representing the last time the key-value was modified."""
+    read_only: bool
+    """Indicates whether the key-value is locked."""
+    tags: Dict[str, str]
+    """The tags assigned to the configuration setting."""
 
     _attribute_map = {
         "etag": {"key": "etag", "type": "str"},
@@ -169,8 +163,19 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         *,
         enabled: Optional[bool] = None,
         filters: Optional[List[Dict[str, Any]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
+        """
+        :param feature_id: The identity of the configuration setting.
+        :type feature_id: str
+        :keyword enabled: The value indicating whether the feature flag is enabled.
+            A feature is OFF if enabled is false. If enabled is true, then the feature is ON
+            if there are no conditions or if all conditions are satisfied.
+        :paramtype enabled: bool or None
+        :keyword filters: Filters that must run on the client and be evaluated as true for the feature
+            to be considered enabled.
+        :paramtype filters: list[dict[str, Any]] or None
+        """
         if "key" in kwargs or "value" in kwargs:
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
         self.feature_id = feature_id
@@ -185,14 +190,20 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         self.display_name = kwargs.get("display_name", None)
         self.filters = [] if filters is None else filters
         self.enabled = enabled
-        self._value = json.dumps({"enabled": self.enabled, "conditions": {"client_filters": self.filters}})
+        self._value = json.dumps(
+            {"id": self.feature_id, "enabled": self.enabled, "conditions": {"client_filters": self.filters}}
+        )
 
     @property
-    def value(self):
+    def value(self) -> str:
+        """The value of the configuration setting.
+
+        :rtype: str
+        """
         try:
             temp = json.loads(self._value)
+            temp["id"] = self.feature_id
             temp["enabled"] = self.enabled
-
             if "conditions" not in temp.keys():
                 temp["conditions"] = {}
             temp["conditions"]["client_filters"] = self.filters
@@ -202,10 +213,11 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
             return self._value
 
     @value.setter
-    def value(self, new_value):
+    def value(self, new_value: str) -> None:
         try:
             temp = json.loads(new_value)
-            self._value = new_value
+            temp["id"] = self.feature_id
+            self._value = json.dumps(temp)
             self.enabled = temp.get("enabled", None)
             self.filters = None
             conditions = temp.get("conditions", None)
@@ -257,29 +269,24 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
 
 class SecretReferenceConfigurationSetting(ConfigurationSetting):
-    """A configuration value that references a KeyVault Secret
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    """A configuration value that references a configuration setting secret."""
 
-    :ivar etag: Entity tag (etag) of the object
-    :vartype etag: str
-    :param key:
-    :type key: str
-    :param secret_id:
-    :type secret_id: str
-    :ivar label:
-    :vartype label: str
-    :ivar content_type:
-    :vartype content_type: str
-    :ivar value: The value of the configuration setting
-    :vartype value: dict[str, Any]
-    :ivar last_modified:
-    :vartype last_modified: datetime
-    :ivar read_only:
-    :vartype read_only: bool
-    :ivar tags:
-    :vartype tags: dict[str, str]
-    """
+    etag: str
+    """A value representing the current state of the resource."""
+    key: str
+    """The key of the configuration setting."""
+    secret_id: Optional[str]
+    """The identity of the configuration setting."""
+    label: str
+    """The label used to group this configuration setting with others."""
+    content_type: str
+    """The content_type of the configuration setting."""
+    last_modified: datetime
+    """A date representing the last time the key-value was modified."""
+    read_only: bool
+    """Indicates whether the key-value is locked."""
+    tags: Dict[str, str]
+    """The tags assigned to the configuration setting."""
 
     _attribute_map = {
         "etag": {"key": "etag", "type": "str"},
@@ -294,7 +301,13 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     _secret_reference_content_type = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
     kind = "SecretReference"
 
-    def __init__(self, key: str, secret_id: str, **kwargs) -> None:  # pylint: disable=super-init-not-called
+    def __init__(self, key: str, secret_id: str, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        """
+        :param key: The key of the configuration setting.
+        :type key: str
+        :param secret_id: The identity of the configuration setting.
+        :type secret_id: str
+        """
         if "value" in kwargs:
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
@@ -308,7 +321,11 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         self._value = json.dumps({"uri": secret_id})
 
     @property
-    def value(self):
+    def value(self) -> str:
+        """The value of the configuration setting.
+
+        :rtype: str
+        """
         try:
             temp = json.loads(self._value)
             temp["uri"] = self.secret_id
@@ -318,7 +335,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             return self._value
 
     @value.setter
-    def value(self, new_value):
+    def value(self, new_value: str) -> None:
         try:
             temp = json.loads(new_value)
             self._value = new_value
@@ -363,89 +380,80 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         )
 
 
-class ConfigurationSettingFilter:
-    """Enables filtering of key-values.
+class ConfigurationSettingsFilter:
+    """Enables filtering of configuration settings."""
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar key: Filters key-values by their key field. Required.
-    :vartype key: str
-    :ivar label: Filters key-values by their label field.
-    :vartype label: str
-    """
+    key: str
+    """Filters configuration settings by their key field. Required."""
+    label: Optional[str]
+    """Filters configuration settings by their label field."""
 
     def __init__(self, *, key: str, label: Optional[str] = None) -> None:
         """
-        :keyword key: Filters key-values by their key field. Required.
+        :keyword key: Filters configuration settings by their key field. Required.
         :paramtype key: str
-        :keyword label: Filters key-values by their label field.
-        :paramtype label: str
+        :keyword label: Filters configuration settings by their label field.
+        :paramtype label: str or None
         """
         self.key = key
         self.label = label
 
 
-class Snapshot:  # pylint: disable=too-many-instance-attributes
-    """Snapshot.
+class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
+    """A point-in-time snapshot of configuration settings."""
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: The name of the snapshot.
-    :vartype name: str
-    :ivar status: The current status of the snapshot. Known values are: "provisioning", "ready",
-        "archived", and "failed".
-    :vartype status: str
-    :param filters: A list of filters used to filter the key-values included in the snapshot.
-        Required.
-    :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
-    :ivar composition_type: The composition type describes how the key-values within the snapshot
+    name: Optional[str]
+    """The name of the configuration snapshot."""
+    status: Optional[Union[str, SnapshotStatus]]
+    """The current status of the snapshot. Known values are: "provisioning", "ready",
+        "archived", and "failed"."""
+    filters: List[ConfigurationSettingsFilter]
+    """A list of filters used to filter the key-values included in the configuration snapshot."""
+    composition_type: Optional[str]
+    """The composition type describes how the key-values within the configuration snapshot
         are composed. The 'key' composition type ensures there are no two key-values containing the
         same key. The 'key_label' composition type ensures there are no two key-values containing the
-        same key and label. Known values are: "key" and "key_label".
-    :vartype composition_type: str
-    :ivar created: The time that the snapshot was created.
-    :vartype created: ~datetime.datetime
-    :ivar expires: The time that the snapshot will expire.
-    :vartype expires: ~datetime.datetime
-    :ivar retention_period: The amount of time, in seconds, that a snapshot will remain in the
-        archived state before expiring. This property is only writable during the creation of a
-        snapshot. If not specified, the default lifetime of key-value revisions will be used.
-    :vartype retention_period: int
-    :ivar size: The size in bytes of the snapshot.
-    :vartype size: int
-    :ivar items_count: The amount of key-values in the snapshot.
-    :vartype items_count: int
-    :ivar tags: The tags of the snapshot.
-    :vartype tags: dict[str, str]
-    :ivar etag: A value representing the current state of the snapshot.
-    :vartype etag: str
-    """
+        same key and label. Known values are: "key" and "key_label"."""
+    created: Optional[datetime]
+    """The time that the configuration snapshot was created."""
+    expires: Optional[datetime]
+    """The time that the configuration snapshot will expire."""
+    retention_period: Optional[int]
+    """The amount of time, in seconds, that a configuration snapshot will remain in the
+        archived state before expiring. This property is only writable during the creation of a configuration
+        snapshot. If not specified, the default lifetime of key-value revisions will be used."""
+    size: Optional[int]
+    """The size in bytes of the configuration snapshot."""
+    items_count: Optional[int]
+    """The amount of key-values in the configuration snapshot."""
+    tags: Optional[Dict[str, str]]
+    """The tags of the configuration snapshot."""
+    etag: Optional[str]
+    """A value representing the current state of the configuration snapshot."""
 
     def __init__(
         self,
-        filters: List[ConfigurationSettingFilter],
+        filters: List[ConfigurationSettingsFilter],
         *,
         composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
-    ):
+    ) -> None:
         """
-        :param filters: A list of filters used to filter the key-values included in the snapshot.
+        :param filters: A list of filters used to filter the key-values included in the configuration snapshot.
             Required.
-        :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
-        :keyword composition_type: The composition type describes how the key-values within the
+        :type filters: list[~azure.appconfiguration.ConfigurationSettingsFilter]
+        :keyword composition_type: The composition type describes how the key-values within the configuration
             snapshot are composed. The 'key' composition type ensures there are no two key-values
             containing the same key. The 'key_label' composition type ensures there are no two key-values
             containing the same key and label. Known values are: "key" and "key_label".
-        :paramtype composition_type: str
-        :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
-            archived state before expiring. This property is only writable during the creation of a
+        :paramtype composition_type: str or None
+        :keyword retention_period: The amount of time, in seconds, that a configuration snapshot will remain in the
+            archived state before expiring. This property is only writable during the creation of a configuration
             snapshot. If not specified, the default lifetime of key-value revisions will be used.
-        :paramtype retention_period: int
-        :keyword tags: The tags of the snapshot.
-        :paramtype tags: dict[str, str]
+        :paramtype retention_period: int or None
+        :keyword tags: The tags of the configuration snapshot.
+        :paramtype tags: dict[str, str] or None
         """
         self.name = None
         self.status = None
@@ -460,13 +468,16 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         self.etag = None
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedSnapshot) -> "Snapshot":
+    def _from_generated(cls, generated: GeneratedConfigurationSnapshot) -> "ConfigurationSnapshot":
         if generated is None:
             return generated
 
         filters = []
-        for config_setting_filter in generated.filters:
-            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
+        if generated.filters:
+            for config_setting_filter in generated.filters:
+                filters.append(
+                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+                )
         snapshot = cls(
             filters=filters,
             composition_type=cast(Optional[Literal["key", "key_label"]], generated.composition_type),
@@ -487,14 +498,17 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
     def _from_deserialized(  # pylint:disable=unused-argument
         cls,
         response: HttpResponse,
-        deserialized: GeneratedSnapshot,
+        deserialized: GeneratedConfigurationSnapshot,
         response_headers: Dict,
-    ) -> "Snapshot":
+    ) -> "ConfigurationSnapshot":
         if deserialized is None:
             return deserialized
         filters = []
-        for config_setting_filter in deserialized.filters:
-            filters.append(ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label))
+        if deserialized.filters:
+            for config_setting_filter in deserialized.filters:
+                filters.append(
+                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+                )
         snapshot = cls(
             filters=filters,
             composition_type=cast(Optional[Literal["key", "key_label"]], deserialized.composition_type),
@@ -511,11 +525,11 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
 
         return snapshot
 
-    def _to_generated(self) -> GeneratedSnapshot:
+    def _to_generated(self) -> GeneratedConfigurationSnapshot:
         config_setting_filters = []
         for kv_filter in self.filters:
             config_setting_filters.append(KeyValueFilter(key=kv_filter.key, label=kv_filter.label))
-        return GeneratedSnapshot(
+        return GeneratedConfigurationSnapshot(
             filters=config_setting_filters,
             composition_type=self.composition_type,
             retention_period=self.retention_period,

@@ -6,16 +6,19 @@
 # pylint: disable=protected-access, too-many-lines
 
 import datetime
-from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
+from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional, Mapping
 from enum import Enum
 from collections import namedtuple
+from typing_extensions import Literal
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.v2023_02_28_preview.models import (
+from ._generated.v2023_07_31.models import (
     DocumentModelDetails as ModelDetails,
     DocumentClassifierDetails as ClassifierDetails,
+    AzureBlobFileListContentSource,
+    AzureBlobContentSource,
+    ClassifierDocumentTypeDetails as GeneratedClassifierDocumentTypeDetails,
     Error
 )
-from ._generated.models import ClassifierDocumentTypeDetails
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -173,13 +176,17 @@ class AnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Document analysis features to enable."""
 
     #: Perform OCR at a higher resolution to handle documents with fine print.
-    OCR_HIGH_RESOLUTION = "ocr.highResolution"
-    #: Enable the detection of mathematical expressions the document.
-    OCR_FORMULA = "ocr.formula"
+    OCR_HIGH_RESOLUTION = "ocrHighResolution"
+    #: Enable the detection of the text content language.
+    LANGUAGES = "languages"
+    #: Enable the detection of barcodes in the document.
+    BARCODES = "barcodes"
+    #: Enable the detection of mathematical expressions in the document.
+    FORMULAS = "formulas"
+    #: Enable the detection of general key value pairs (form fields) in the document.
+    KEY_VALUE_PAIRS = "keyValuePairs"
     #: Enable the recognition of various font styles.
-    OCR_FONT = "ocr.font"
-    #: Enable extraction of additional fields via the queryFields query parameter.
-    QUERY_FIELDS_PREMIUM = "queryFields.premium"
+    STYLE_FONT = "styleFont"
 
 
 class ModelBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2080,7 +2087,7 @@ class BoundingRegion:
 class AddressValue:  # pylint: disable=too-many-instance-attributes
     """An address field value.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *unit*, *city_district*, *state_district*, *suburb*, *house*,
         and *level*  properties.
     """
@@ -2218,7 +2225,7 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
 class CurrencyValue:
     """A currency value element.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *code*  property.
     """
 
@@ -2340,7 +2347,7 @@ class DocumentLanguage:
 class DocumentField:
     """An object representing the content and location of a document field value.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The `boolean` value_type and `bool` value
     """
 
@@ -2636,11 +2643,7 @@ class DocumentKeyValueElement:
 
 
 class DocumentKeyValuePair:
-    """An object representing a document field with distinct field label (key) and field value (may be empty).
-
-    .. versionadded:: 2023-02-28-preview
-        The *common_name*  property.
-    """
+    """An object representing a document field with distinct field label (key) and field value (may be empty)."""
 
     key: DocumentKeyValueElement
     """Field label of the key-value pair."""
@@ -2648,18 +2651,14 @@ class DocumentKeyValuePair:
     """Field value of the key-value pair."""
     confidence: float
     """Confidence of correctly extracting the key-value pair."""
-    common_name: Optional[str]
-    """Common name of the key-value pair."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.key = kwargs.get("key", None)
         self.value = kwargs.get("value", None)
         self.confidence = kwargs.get("confidence", None)
-        self.common_name = kwargs.get("common_name", None)
 
     @classmethod
     def _from_generated(cls, key_value_pair):
-        common_name = key_value_pair.common_name if hasattr(key_value_pair, "common_name") else None
         return cls(
             key=DocumentKeyValueElement._from_generated(key_value_pair.key)
             if key_value_pair.key
@@ -2668,13 +2667,12 @@ class DocumentKeyValuePair:
             if key_value_pair.value
             else None,
             confidence=key_value_pair.confidence,
-            common_name=common_name
         )
 
     def __repr__(self) -> str:
         return (
             f"DocumentKeyValuePair(key={repr(self.key)}, value={repr(self.value)}, "
-            f"confidence={self.confidence}, common_name={self.common_name})"
+            f"confidence={self.confidence})"
         )
 
     def to_dict(self) -> Dict:
@@ -2687,7 +2685,6 @@ class DocumentKeyValuePair:
             "key": self.key.to_dict() if self.key else None,
             "value": self.value.to_dict() if self.value else None,
             "confidence": self.confidence,
-            "common_name": self.common_name,
         }
 
     @classmethod
@@ -2706,7 +2703,6 @@ class DocumentKeyValuePair:
             if data.get("value")
             else None,
             confidence=data.get("confidence", None),
-            common_name=data.get("common_name", None),
         )
 
 
@@ -2716,7 +2712,7 @@ class DocumentWord:
     """
     content: str
     """Text content of the word."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the word."""
     span: DocumentSpan
     """Location of the word in the reading order concatenated content."""
@@ -2785,7 +2781,7 @@ class DocumentSelectionMark:
     state: str
     """State of the selection mark. Possible values include: "selected",
      "unselected"."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the selection mark."""
     span: DocumentSpan
     """Location of the selection mark in the reading order concatenated
@@ -2854,7 +2850,7 @@ class DocumentLine:
 
     content: str
     """Concatenated content of the contained elements in reading order."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the line."""
     spans: List[DocumentSpan]
     """Location of the line in the reading order concatenated content."""
@@ -2932,7 +2928,7 @@ class DocumentLine:
 class DocumentParagraph:
     """A paragraph object generally consisting of contiguous lines with common alignment and spacing.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The `formulaBlock` role.
     """
 
@@ -3004,74 +3000,12 @@ class DocumentParagraph:
         )
 
 
-class DocumentAnnotation:
-    """An annotation object that represents a visual annotation in the document,
-    such as checks ✓ and crosses X.
-    """
-
-    kind: str
-    """Annotation kind. Known values are: "check", "cross"."""
-    polygon: Sequence[Point]
-    """Bounding polygon of the annotation."""
-    confidence: float
-    """Confidence of correctly extracting the annotation."""
-
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.kind = kwargs.get("kind", None)
-        self.polygon = kwargs.get("polygon", None)
-        self.confidence = kwargs.get("confidence", None)
-
-    @classmethod
-    def _from_generated(cls, annotation):
-        return cls(
-            kind=annotation.kind,
-            polygon=get_polygon(annotation),
-            confidence=annotation.confidence
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentAnnotation(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence})"
-        )
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentAnnotation.
-
-        :return: Dict[str, Any]
-        :rtype: Dict[str, Any]
-        """
-        return {
-            "kind": self.kind,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
-            "confidence": self.confidence,
-        }
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "DocumentAnnotation":
-        """Converts a dict in the shape of a DocumentAnnotation to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentAnnotation.
-        :return: DocumentAnnotation
-        :rtype: DocumentAnnotation
-        """
-        return cls(
-            kind=data.get("kind", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
-            confidence=data.get("confidence", None),
-        )
-
-
 class DocumentBarcode:
     """A barcode object."""
 
-    kind: str
+    kind: Literal["QRCode", "PDF417", "UPCA", "UPCE", "Code39", "Code128", "EAN8", "EAN13",
+                  "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF", "MicroQRCode",
+                  "Aztec", "DataMatrix", "MaxiCode"]
     """Barcode kind. Known values are "QRCode", "PDF417", "UPCA", "UPCE",
      "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
      "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode"."""
@@ -3150,7 +3084,7 @@ class DocumentBarcode:
 class DocumentFormula:
     """A formula object."""
 
-    kind: str
+    kind: Literal["inline", "display"]
     """Formula kind. Known values are "inline", "display"."""
     value: str
     """LaTex expression describing the formula."""
@@ -3224,82 +3158,11 @@ class DocumentFormula:
         )
 
 
-class DocumentImage:
-    """An image object detected in the page."""
-
-    page_number: int
-    """1-based page number of the page that contains the image."""
-    polygon: Sequence[Point]
-    """Bounding polygon of the image."""
-    span: DocumentSpan
-    """Location of the image in the reading order concatenated content."""
-    confidence: float
-    """Confidence of correctly identifying the image."""
-
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        self.page_number = kwargs.get("page_number", None)
-        self.polygon = kwargs.get("polygon", None)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
-
-    @classmethod
-    def _from_generated(cls, image):
-        return cls(
-            page_number=image.page_number,
-            span=DocumentSpan._from_generated(image.span)
-            if image.span
-            else None,
-            polygon=get_polygon(image) if image.polygon else [],
-            confidence=image.confidence
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"DocumentImage(page_number={self.page_number}, polygon={self.polygon}, confidence={self.confidence}, "
-            f"span={repr(self.span)})"
-        )
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Returns a dict representation of DocumentImage.
-
-        :return: Dict[str, Any]
-        :rtype: Dict[str, Any]
-        """
-        return {
-            "page_number": self.page_number,
-            "polygon": [f.to_dict() for f in self.polygon]
-            if self.polygon
-            else [],
-            "confidence": self.confidence,
-            "span": self.span.to_dict() if self.span else None,
-        }
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "DocumentImage":
-        """Converts a dict in the shape of a DocumentImage to the model itself.
-
-        :param dict data: A dictionary in the shape of DocumentImage.
-        :return: DocumentImage
-        :rtype: DocumentImage
-        """
-        return cls(
-            page_number=data.get("page_number", None),
-            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
-            if len(data.get("polygon", [])) > 0
-            else [],
-            confidence=data.get("confidence", None),
-            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
-        )
-
-
 class DocumentPage:  # pylint: disable=too-many-instance-attributes
     """Content and layout elements extracted from a page of the input.
 
-    .. versionadded:: 2023-02-28-preview
-        The *kind*, *annotations*, *barcodes*, *formulas*, and *images* properties.
+    .. versionadded:: 2023-07-31
+        The *barcodes*, and *formulas* properties.
     """
 
     page_number: int
@@ -3317,24 +3180,17 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
      "inch"."""
     spans: List[DocumentSpan]
     """Location of the page in the reading order concatenated content."""
-    words: Optional[List[DocumentWord]]
+    words: List[DocumentWord]
     """Extracted words from the page."""
-    selection_marks: Optional[List[DocumentSelectionMark]]
+    selection_marks: List[DocumentSelectionMark]
     """Extracted selection marks from the page."""
-    lines: Optional[List[DocumentLine]]
+    lines: List[DocumentLine]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
-    kind: str
-    """Kind of document page. Known values are: "document", "sheet", "slide",
-     "image"."""
-    annotations: List[DocumentAnnotation]
-    """Extracted annotations from the page."""
     barcodes: List[DocumentBarcode]
     """Extracted barcodes from the page."""
     formulas: List[DocumentFormula]
     """Extracted formulas from the page"""
-    images: List[DocumentImage]
-    """Extracted images from the page."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.page_number = kwargs.get("page_number", None)
@@ -3346,19 +3202,13 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
         self.words = kwargs.get("words", None)
         self.selection_marks = kwargs.get("selection_marks", None)
         self.lines = kwargs.get("lines", None)
-        self.kind = kwargs.get("kind", None)
-        self.annotations = kwargs.get("annotations", None)
         self.barcodes = kwargs.get("barcodes", None)
         self.formulas = kwargs.get("formulas", None)
-        self.images = kwargs.get("images", None)
 
     @classmethod
     def _from_generated(cls, page):
-        kind = page.kind if hasattr(page, "kind") else None
-        annotations = page.annotations if hasattr(page, "annotations") else None
         barcodes = page.barcodes if hasattr(page, "barcodes") else None
         formulas = page.formulas if hasattr(page, "formulas") else None
-        images = page.images if hasattr(page, "images") else None
 
         return cls(
             page_number=page.page_number,
@@ -3380,13 +3230,6 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             if page.selection_marks
             else [],
             spans=prepare_document_spans(page.spans),
-            kind=kind,
-            annotations=[
-                DocumentAnnotation._from_generated(annotation)
-                for annotation in annotations
-            ]
-            if annotations
-            else [],
             barcodes=[
                 DocumentBarcode._from_generated(barcode)
                 for barcode in barcodes
@@ -3394,16 +3237,10 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             if barcodes
             else [],
             formulas=[
-                DocumentBarcode._from_generated(formula)
+                DocumentFormula._from_generated(formula)
                 for formula in formulas
             ]
             if formulas
-            else [],
-            images=[
-                DocumentImage._from_generated(image)
-                for image in images
-            ]
-            if images
             else [],
         )
 
@@ -3412,8 +3249,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             f"DocumentPage(page_number={self.page_number}, angle={self.angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
             f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
-            f"spans={repr(self.spans)}, kind={self.kind}, annotations={repr(self.annotations)}, "
-            f"barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)}, images={repr(self.images)})"
+            f"spans={repr(self.spans)}, barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)})"
         )
 
     def to_dict(self) -> Dict:
@@ -3440,18 +3276,11 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
             else [],
-            "kind": self.kind,
-            "annotations": [f.to_dict() for f in self.annotations]
-            if self.annotations
-            else [],
             "barcodes": [f.to_dict() for f in self.barcodes]
             if self.barcodes
             else [],
             "formulas": [f.to_dict() for f in self.formulas]
             if self.formulas
-            else [],
-            "images": [f.to_dict() for f in self.images]
-            if self.images
             else [],
         }
 
@@ -3481,18 +3310,11 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
             else [],
-            kind=data.get("kind", None),
-            annotations=[DocumentAnnotation.from_dict(v) for v in data.get("annotations")]  # type: ignore
-            if len(data.get("annotations", [])) > 0
-            else [],
             barcodes=[DocumentBarcode.from_dict(v) for v in data.get("barcodes")]  # type: ignore
             if len(data.get("barcodes", [])) > 0
             else [],
             formulas=[DocumentFormula.from_dict(v) for v in data.get("formulas")]  # type: ignore
             if len(data.get("formulas", [])) > 0
-            else [],
-            images=[DocumentImage.from_dict(v) for v in data.get("images")]  # type: ignore
-            if len(data.get("images", [])) > 0
             else [],
         )
 
@@ -3500,7 +3322,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
 class DocumentStyle:
     """An object representing observed text styles.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *similar_font_family*, *font_style*, *font_weight*, *color*, and *background_color* properties.
     """
 
@@ -3864,7 +3686,7 @@ class DocumentModelSummary:
     """A summary of document model information including the model ID,
     its description, and when the model was created.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *expires_on* property.
     """
     model_id: str
@@ -3942,6 +3764,189 @@ class DocumentModelSummary:
             expires_on=data.get("expires_on", None),
         )
 
+class BlobFileListSource:
+    """Content source for a file list in Azure Blob Storage."""
+
+    container_url: str
+    """Azure Blob Storage container URL."""
+    file_list: str
+    """Path to a JSONL file within the container specifying a subset of documents for training."""
+
+    def __init__(  # pylint: disable=unused-argument
+        self,
+        container_url: str,
+        file_list: str
+    ) -> None:
+        self.container_url = container_url
+        self.file_list = file_list
+        self._kind: Literal["azureBlobFileList"] = "azureBlobFileList"
+
+    def __repr__(self) -> str:
+        return (
+            f"BlobFileListSource(container_url={self.container_url}, file_list={self.file_list})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            container_url=model.container_url,
+            file_list=model.file_list
+        )
+
+    def _to_generated(self) -> AzureBlobFileListContentSource:
+        return AzureBlobFileListContentSource(container_url=self.container_url, file_list=self.file_list)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of BlobFileListSource.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
+        return {
+            "container_url": self.container_url,
+            "file_list": self.file_list
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "BlobFileListSource":
+        """Converts a dict in the shape of a BlobFileListSource to the model itself.
+
+        :param dict data: A dictionary in the shape of BlobFileListSource.
+        :return: BlobFileListSource
+        :rtype: BlobFileListSource
+        """
+        return cls(
+            container_url=data.get("container_url", None),
+            file_list=data.get("file_list", None),
+        )
+
+
+class BlobSource:
+    """Content source for Azure Blob Storage."""
+
+    container_url: str
+    """Azure Blob Storage container URL."""
+    prefix: Optional[str]
+    """Blob name prefix."""
+
+    def __init__(  # pylint: disable=unused-argument
+        self,
+        container_url: str,
+        *,
+        prefix: Optional[str] = None
+    ) -> None:
+        self.container_url = container_url
+        self.prefix = prefix
+        self._kind: Literal["azureBlob"] = "azureBlob"
+
+    def __repr__(self) -> str:
+        return (
+            f"BlobSource(container_url={self.container_url}, prefix={self.prefix})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            container_url=model.container_url,
+            prefix=model.prefix
+        )
+
+    def _to_generated(self) -> AzureBlobContentSource:
+        return AzureBlobContentSource(container_url=self.container_url, prefix=self.prefix)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of BlobSource.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
+        return {
+            "container_url": self.container_url,
+            "prefix": self.prefix
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "BlobSource":
+        """Converts a dict in the shape of a BlobSource to the model itself.
+
+        :param dict data: A dictionary in the shape of BlobSource.
+        :return: BlobSource
+        :rtype: BlobSource
+        """
+        return cls(
+            container_url=data.get("container_url", None),
+            prefix=data.get("prefix", None),
+        )
+
+
+class ClassifierDocumentTypeDetails:
+    """Training data source."""
+
+    source_kind: Literal["azureBlob", "azureBlobFileList"]
+    """Type of training data source, known values are: "azureBlob" and "azureBlobFileList"."""
+
+    source: Union[BlobSource, BlobFileListSource]
+    """Content source containing the training data."""
+
+    def __init__(  # pylint: disable=unused-argument
+        self,
+        source: Union[BlobSource, BlobFileListSource]
+    ) -> None:
+        self.source_kind = source._kind
+        self.source = source
+
+    def __repr__(self) -> str:
+        return (
+            f"ClassifierDocumentTypeDetails(source_kind={self.source_kind}, source={repr(self.source)})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        source = None
+        if model.azure_blob_source is not None:
+            source = BlobSource._from_generated(model.azure_blob_source)
+        elif model.azure_blob_file_list_source is not None:
+            source=BlobFileListSource._from_generated(model.azure_blob_file_list_source)
+
+        return cls(
+            source=source,
+        )
+
+    def _to_generated(self) -> GeneratedClassifierDocumentTypeDetails:
+        if self.source_kind == "azureBlobFileList":
+            return GeneratedClassifierDocumentTypeDetails(azure_blob_file_list_source=self.source._to_generated())
+        return GeneratedClassifierDocumentTypeDetails(azure_blob_source=self.source._to_generated())
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of ClassifierDocumentTypeDetails.
+
+        :return: Dict[str, Any]
+        :rtype: Dict[str, Any]
+        """
+        return {
+            "source_kind": self.source_kind,
+            "source": self.source.to_dict() if self.source else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "ClassifierDocumentTypeDetails":
+        """Converts a dict in the shape of a ClassifierDocumentTypeDetails to the model itself.
+
+        :param dict data: A dictionary in the shape of ClassifierDocumentTypeDetails.
+        :return: ClassifierDocumentTypeDetails
+        :rtype: ClassifierDocumentTypeDetails
+        """
+        source = data.get("source", None)
+        kind = data.get("source_kind", None)
+        if source is not None and kind is not None:
+            if kind == "azureBlobFileList":
+                source = BlobFileListSource.from_dict(source)
+            else:
+                source = BlobSource.from_dict(source)
+        return cls(
+            source=source,
+        )
+
 
 class DocumentClassifierDetails:
     """Document classifier information. Includes the doc types that the model can classify."""
@@ -3956,7 +3961,7 @@ class DocumentClassifierDetails:
     """Date and time (UTC) when the document classifier will expire."""
     api_version: str
     """API version used to create this document classifier."""
-    doc_types: Dict[str, ClassifierDocumentTypeDetails]
+    doc_types: Mapping[str, ClassifierDocumentTypeDetails]
     """List of document types to classify against."""
 
     def __init__(
@@ -4028,7 +4033,7 @@ class DocumentClassifierDetails:
 class DocumentModelDetails(DocumentModelSummary):
     """Document model information. Includes the doc types that the model can analyze.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The *expires_on* property.
     """
 
@@ -4254,7 +4259,7 @@ class OperationSummary:
     :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The `documentClassifierBuild` kind.
     """
     operation_id: str
@@ -4358,7 +4363,7 @@ class OperationDetails(OperationSummary):
     the model can also be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
     :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
 
-    .. versionadded:: 2023-02-28-preview
+    .. versionadded:: 2023-07-31
         The `documentClassifierBuild` kind and `DocumentClassifierDetails` result.
     """
     operation_id: str
@@ -4737,24 +4742,25 @@ class QuotaDetails:
 class ResourceDetails:
     """Details regarding the Form Recognizer resource.
 
-    .. versionadded:: 2023-02-28-preview
-        The *custom_neural_document_model_builds* property.
+    .. versionadded:: 2023-07-31
+        The *neural_document_model_quota* property.
     """
 
     custom_document_models: CustomDocumentModelsDetails
     """Details regarding the custom models under the Form Recognizer resource."""
-    custom_neural_document_model_builds: QuotaDetails
+    neural_document_model_quota: Optional[QuotaDetails]
+    """Quota details regarding the custom neural document model builds under the Form Recognizer resource."""
 
     def __init__(
         self,
         **kwargs: Any
     ) -> None:
         self.custom_document_models = kwargs.get("custom_document_models", None)
-        self.custom_neural_document_model_builds = kwargs.get("custom_neural_document_model_builds", None)
+        self.neural_document_model_quota = kwargs.get("neural_document_model_quota", None)
 
     def __repr__(self) -> str:
         return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)}, " \
-               f"custom_neural_document_model_builds={repr(self.custom_neural_document_model_builds)})"
+               f"neural_document_model_quota={repr(self.neural_document_model_quota)})"
 
     @classmethod
     def _from_generated(cls, info):
@@ -4763,7 +4769,7 @@ class ResourceDetails:
         return cls(
             custom_document_models=CustomDocumentModelsDetails._from_generated(info.custom_document_models)
             if info.custom_document_models else None,
-            custom_neural_document_model_builds=QuotaDetails._from_generated(custom_neural_builds)
+            neural_document_model_quota=QuotaDetails._from_generated(custom_neural_builds)
             if custom_neural_builds else None,
         )
 
@@ -4777,8 +4783,8 @@ class ResourceDetails:
                 "custom_document_models": self.custom_document_models.to_dict()
                 if self.custom_document_models
                 else None,
-                "custom_neural_document_model_builds": self.custom_neural_document_model_builds.to_dict()
-                if self.custom_neural_document_model_builds
+                "neural_document_model_quota": self.neural_document_model_quota.to_dict()
+                if self.neural_document_model_quota
                 else None,
             }
 
@@ -4794,9 +4800,9 @@ class ResourceDetails:
             custom_document_models=CustomDocumentModelsDetails.from_dict(
                 data.get("custom_document_models")  # type: ignore
             ) if data.get("custom_document_models") else None,
-            custom_neural_document_model_builds=QuotaDetails.from_dict(
-                data.get("custom_neural_document_model_builds")  # type: ignore
-            ) if data.get("custom_neural_document_model_builds") else None,
+            neural_document_model_quota=QuotaDetails.from_dict(
+                data.get("neural_document_model_quota")  # type: ignore
+            ) if data.get("neural_document_model_quota") else None,
         )
 
 

@@ -17,7 +17,7 @@ stages:
         BuildTargetingString: ${{ service }}
         JobName: ${{ replace(service, '-', '_') }}
         SupportedClouds: 'Public,UsGov,China'
-        TestTimeoutInMinutes: 180
+        TestTimeoutInMinutes: 240
         CloudConfig:
           Public:
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)

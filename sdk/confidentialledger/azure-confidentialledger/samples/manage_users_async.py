@@ -56,7 +56,7 @@ async def main():
     # i.e. https://<ledger id>.confidential-ledger.azure.com
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
-    identity_service_client = ConfidentialLedgerCertificateClient()
+    identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
         ledger_certificate = await identity_service_client.get_ledger_identity(
             ledger_id

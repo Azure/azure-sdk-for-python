@@ -31,20 +31,23 @@ from utilities import get_authority, get_credential
 class SetGetImageAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
+        self.endpoint = os.environ["CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"]
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority, is_async=True)
 
     async def set_get_oci_image(self):
         repository_name = "sample-oci-image-async"
-        layer = BytesIO(b"Sample layer")
-        config = BytesIO(json.dumps(
-            {
-                "sample config": "content",
-            }).encode())
+        sample_layer = BytesIO(b"Sample layer")
+        config = BytesIO(
+            json.dumps(
+                {
+                    "sample config": "content",
+                }
+            ).encode()
+        )
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
-            layer_digest, layer_size = await client.upload_blob(repository_name, layer)
+            layer_digest, layer_size = await client.upload_blob(repository_name, sample_layer)
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
             config_digest, config_size = await client.upload_blob(repository_name, config)
@@ -110,7 +113,7 @@ class SetGetImageAsync(object):
                 await client.delete_blob(repository_name, layer["digest"])
             # Delete the config
             await client.delete_blob(repository_name, received_manifest["config"]["digest"])
-            
+
             # Delete the image
             await client.delete_manifest(repository_name, get_manifest_result.digest)
 
@@ -118,8 +121,8 @@ class SetGetImageAsync(object):
         repository_name = "sample-docker-image"
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
-            layer = BytesIO(b"Sample layer")
-            layer_digest, layer_size = await client.upload_blob(repository_name, layer)
+            sample_layer = BytesIO(b"Sample layer")
+            layer_digest, layer_size = await client.upload_blob(repository_name, sample_layer)
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
             config = BytesIO(json.dumps({"sample config": "content"}).encode())
@@ -130,20 +133,22 @@ class SetGetImageAsync(object):
                 "config": {
                     "digest": config_digest,
                     "mediaType": "application/vnd.docker.container.image.v1+json",
-                    "size": config_size
+                    "size": config_size,
                 },
                 "layers": [
                     {
                         "digest": layer_digest,
                         "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
-                        "size": layer_size
+                        "size": layer_size,
                     }
                 ],
                 "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-                "schemaVersion": 2
+                "schemaVersion": 2,
             }
             # Set the image with one custom media type
-            await client.set_manifest(repository_name, docker_manifest, tag="sample", media_type=docker_manifest["mediaType"])
+            await client.set_manifest(
+                repository_name, docker_manifest, tag="sample", media_type=str(docker_manifest["mediaType"])
+            )
 
             # Get the image
             get_manifest_result = await client.get_manifest(repository_name, "sample")
@@ -151,7 +156,7 @@ class SetGetImageAsync(object):
             print(received_manifest)
             received_manifest_media_type = get_manifest_result.media_type
             print(received_manifest_media_type)
-            
+
             # Delete the image
             client.delete_manifest(repository_name, get_manifest_result.digest)
 

@@ -28,20 +28,66 @@ import logging
 import re
 import time
 import uuid
-from typing import TypeVar
+from typing import Union, Optional, cast
 
 from azure.core.pipeline import PipelineContext, PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.pipeline.transport import (
+    HttpRequest as LegacyHttpRequest,
+    HttpResponse as LegacyHttpResponse,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+)
+from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
 
 
 _LOGGER = logging.getLogger(__name__)
 
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+HTTPResponseType = Union[LegacyHttpResponse, HttpResponse]
+AllHttpResponseType = Union[
+    LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse
+]  # Sync or async
 
 
-class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):  # pylint: disable=name-too-long
+class _SansIOARMAutoResourceProviderRegistrationPolicy:
+    @staticmethod
+    def _check_rp_not_registered_err(response: PipelineResponse[HTTPRequestType, AllHttpResponseType]) -> Optional[str]:
+        try:
+            response_as_json = json.loads(response.http_response.text())
+            if response_as_json["error"]["code"] == "MissingSubscriptionRegistration":
+                # While "match" can in theory be None, if we saw "MissingSubscriptionRegistration" it won't happen
+                match = cast(re.Match, re.match(r".*'(.*)'", response_as_json["error"]["message"]))
+                return match.group(1)
+        except Exception:  # pylint: disable=broad-except
+            pass
+        return None
+
+    @staticmethod
+    def _extract_subscription_url(url: str) -> str:
+        """Extract the first part of the URL, just after subscription:
+        https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/
+
+        :param str url: The URL to extract the subscription ID from
+        :return: The subscription ID
+        :rtype: str
+        """
+        match = re.match(r".*/subscriptions/[a-f0-9-]+/", url, re.IGNORECASE)
+        if not match:
+            raise ValueError("Unable to extract subscription ID from URL")
+        return match.group(0)
+
+    @staticmethod
+    def _build_next_request(
+        initial_request: PipelineRequest[HTTPRequestType], method: str, url: str
+    ) -> PipelineRequest[HTTPRequestType]:
+        request = HttpRequest(method, url)
+        context = PipelineContext(initial_request.context.transport, **initial_request.context.options)
+        return PipelineRequest(request, context)
+
+
+class ARMAutoResourceProviderRegistrationPolicy(
+    _SansIOARMAutoResourceProviderRegistrationPolicy, HTTPPolicy[HTTPRequestType, HTTPResponseType]
+):  # pylint: disable=name-too-long
     """Auto register an ARM resource provider if not done yet."""
 
     def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
@@ -60,38 +106,7 @@ class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):  # pylint: disable=
                 response = self.next.send(request)
         return response
 
-    @staticmethod
-    def _check_rp_not_registered_err(response):
-        try:
-            response = json.loads(response.http_response.text())
-            if response["error"]["code"] == "MissingSubscriptionRegistration":
-                match = re.match(r".*'(.*)'", response["error"]["message"])
-                return match.group(1)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        return None
-
-    @staticmethod
-    def _extract_subscription_url(url):
-        """Extract the first part of the URL, just after subscription:
-        https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/
-
-        :param str url: The URL to extract the subscription ID from
-        :return: The subscription ID
-        :rtype: str
-        """
-        match = re.match(r".*/subscriptions/[a-f0-9-]+/", url, re.IGNORECASE)
-        if not match:
-            raise ValueError("Unable to extract subscription ID from URL")
-        return match.group(0)
-
-    @staticmethod
-    def _build_next_request(initial_request, method, url):
-        request = HttpRequest(method, url)
-        context = PipelineContext(initial_request.context.transport, **initial_request.context.options)
-        return PipelineRequest(request, context)
-
-    def _register_rp(self, initial_request, url_prefix, rp_name):
+    def _register_rp(self, initial_request: PipelineRequest[HTTPRequestType], url_prefix: str, rp_name: str) -> bool:
         """Synchronously register the RP is paremeter.
 
         Return False if we have a reason to believe this didn't work

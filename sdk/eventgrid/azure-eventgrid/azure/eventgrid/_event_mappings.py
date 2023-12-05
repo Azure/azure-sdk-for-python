@@ -96,6 +96,48 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'
 
+    AcsRouterJobCancelledEventName = 'Microsoft.Communication.RouterJobCancelled'
+
+    AcsRouterJobClassificationFailedEventName = 'Microsoft.Communication.RouterJobClassificationFailed'
+
+    AcsRouterJobClassifiedEventName = 'Microsoft.Communication.RouterJobClassified'
+
+    AcsRouterJobClosedEventName = 'Microsoft.Communication.RouterJobClosed'
+
+    AcsRouterJobCompletedEventName = 'Microsoft.Communication.RouterJobCompleted'
+
+    AcsRouterJobDeletedEventName = 'Microsoft.Communication.RouterJobDeleted'
+
+    AcsRouterJobExceptionTriggeredEventName = 'Microsoft.Communication.RouterJobExceptionTriggered'
+
+    AcsRouterJobQueuedEventName = 'Microsoft.Communication.RouterJobQueued'
+
+    AcsRouterJobReceivedEventName = 'Microsoft.Communication.RouterJobReceived'
+
+    AcsRouterJobSchedulingFailedEventName = 'Microsoft.Communication.RouterJobSchedulingFailed'
+
+    AcsRouterJobUnassignedEventName = 'Microsoft.Communication.RouterJobUnassigned'
+
+    AcsRouterJobWaitingForActivationEventName = 'Microsoft.Communication.RouterJobWaitingForActivation'
+
+    AcsRouterJobWorkerSelectorsExpiredEventName = 'Microsoft.Communication.RouterJobWorkerSelectorsExpired'
+
+    AcsRouterWorkerDeletedEventName = 'Microsoft.Communication.RouterWorkerDeleted'
+
+    AcsRouterWorkerDeregisteredEventName = 'Microsoft.Communication.RouterWorkerDeregistered'
+
+    AcsRouterWorkerOfferAcceptedEventName = 'Microsoft.Communication.RouterWorkerOfferAccepted'
+
+    AcsRouterWorkerOfferDeclinedEventName = 'Microsoft.Communication.RouterWorkerOfferDeclined'
+
+    AcsRouterWorkerOfferExpiredEventName = 'Microsoft.Communication.RouterWorkerOfferExpired'
+
+    AcsRouterWorkerOfferIssuedEventName = 'Microsoft.Communication.RouterWorkerOfferIssued'
+
+    AcsRouterWorkerOfferRevokedEventName = 'Microsoft.Communication.RouterWorkerOfferRevoked'
+
+    AcsRouterWorkerRegisteredEventName = 'Microsoft.Communication.RouterWorkerRegistered'
+
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
 
     AcsSmsReceivedEventName = 'Microsoft.Communication.SMSReceived'
@@ -158,6 +200,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AppConfigurationKeyValueModifiedEventName = 'Microsoft.AppConfiguration.KeyValueModified'
 
+    AppConfigurationSnapshotCreatedEventName = 'Microsoft.AppConfiguration.SnapshotCreated'
+
+    AppConfigurationSnapshotModifiedEventName = 'Microsoft.AppConfiguration.SnapshotModified'
+
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
     ContainerRegistryChartPushedEventName = 'Microsoft.ContainerRegistry.ChartPushed'
@@ -184,16 +230,22 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DataBoxOrderCompletedEventName = 'Microsoft.DataBox.OrderCompleted'
 
+    EventGridMQTTClientCreatedOrUpdatedEventName = 'Microsoft.EventGrid.MQTTClientCreatedOrUpdated'
+
+    EventGridMQTTClientDeletedEventName = 'Microsoft.EventGrid.MQTTClientDeleted'
+
+    EventGridMQTTClientSessionConnectedEventName = 'Microsoft.EventGrid.MQTTClientSessionConnected'
+
+    EventGridMQTTClientSessionDisconnectedEventName = 'Microsoft.EventGrid.MQTTClientSessionDisconnected'
+
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
-    # spell-checker:ignore Dicom
     HealthcareDicomImageCreatedEventName = 'Microsoft.HealthcareApis.DicomImageCreated'
 
     HealthcareDicomImageDeletedEventName = 'Microsoft.HealthcareApis.DicomImageDeleted'
 
     HealthcareDicomImageUpdatedEventName = 'Microsoft.HealthcareApis.DicomImageUpdated'
 
-    # spell-checker:ignore Fhir
     HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
 
     HealthcareFhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
@@ -250,7 +302,6 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MediaJobCancelingEventName = 'Microsoft.Media.JobCanceling'
 
-    # spell-checker:ignore Errored
     MediaJobErroredEventName = 'Microsoft.Media.JobErrored'
 
     MediaJobFinishedEventName = 'Microsoft.Media.JobFinished'
@@ -322,6 +373,14 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ResourceDeleteFailureName = 'Microsoft.Resources.ResourceDeleteFailure'
 
     ResourceDeleteSuccessName = 'Microsoft.Resources.ResourceDeleteSuccess'
+
+    ResourceNotificationsHealthResourcesAnnotatedEventName = 'Microsoft.ResourceNotifications.HealthResources.ResourceAnnotated'
+
+    ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventName = 'Microsoft.ResourceNotifications.HealthResources.AvailabilityStatusChanged'
+
+    ResourceNotificationsResourceManagementCreatedOrUpdatedEventName = 'Microsoft.ResourceNotifications.Resources.CreatedOrUpdated'
+
+    ResourceNotificationsResourceManagementDeletedEventName = 'Microsoft.ResourceNotifications.Resources.Deleted'
 
     ResourceWriteCancelName = 'Microsoft.Resources.ResourceWriteCancel'
 

@@ -72,7 +72,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         *,
         api_version: Optional[str] = None,
         audience: str = DEFAULT_AUDIENCE,
-        **kwargs
+        **kwargs: Any,
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
@@ -100,9 +100,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         if api_version and api_version not in SUPPORTED_API_VERSIONS:
             supported_versions = "\n".join(SUPPORTED_API_VERSIONS)
-            raise ValueError(
-                f"Unsupported API version '{api_version}'. Please select from:\n{supported_versions}"
-            )
+            raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{supported_versions}")
         if api_version is not None:
             kwargs["api_version"] = api_version
         defaultScope = [audience + "/.default"]
@@ -111,7 +109,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._endpoint = endpoint
         self._credential = credential
         super(ContainerRegistryClient, self).__init__(
-            endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs)
+            endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs
+        )
 
     async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
         tag_props = await self.get_tag_properties(repository, tag)
@@ -166,7 +165,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def prepare_request(next_link=None):
             # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters: Dict[str, Any] = {}
             header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
                 "accept", accept, "str"
             )
@@ -184,7 +183,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 if last is not None:
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
@@ -199,7 +198,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             else:
                 url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._config.url",
@@ -291,7 +290,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def prepare_request(next_link=None):
             # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters: Dict[str, Any] = {}
             header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
                 "accept", accept, "str"
             )
@@ -310,7 +309,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 if last is not None:
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
@@ -329,7 +328,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             else:
                 url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
@@ -430,7 +429,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository, tag_or_digest, **kwargs
         )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            manifest_properties.manifest, # type: ignore
+            manifest_properties.manifest,  # type: ignore[arg-type] # The property "manifest" is required in response
             repository_name=repository,
             registry=self._endpoint,
         )
@@ -457,12 +456,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             async for tag in client.list_tag_properties("my_repository"):
                 tag_properties = await client.get_tag_properties("my_repository", tag.name)
         """
-        tag_properties = await self._client.container_registry.get_tag_properties(
-            repository, tag, **kwargs
-        )
+        tag_properties = await self._client.container_registry.get_tag_properties(repository, tag, **kwargs)
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            tag_properties.tag, # type: ignore
-            repository=repository,
+            tag_properties.tag,  # type: ignore[arg-type] # The property "tag" is required in response
+            repository_name=repository,
         )
 
     @distributed_trace
@@ -497,7 +494,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactTagProperties._from_generated(o, repository=repository)  # pylint: disable=protected-access
+                ArtifactTagProperties._from_generated(o, repository_name=repository)  # pylint: disable=protected-access
                 for o in objs
             ],
         )
@@ -508,7 +505,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def prepare_request(next_link=None):
             # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters: Dict[str, Any] = {}
             header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
                 "accept", accept, "str"
             )
@@ -527,7 +524,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 if last is not None:
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
@@ -550,7 +547,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             else:
                 url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
@@ -596,11 +593,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    def update_repository_properties(
-        self,
-        repository: str,
-        properties: RepositoryProperties,
-        **kwargs
+    async def update_repository_properties(
+        self, repository: str, properties: RepositoryProperties, **kwargs: Any
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
@@ -615,7 +609,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
 
     @overload
-    def update_repository_properties(
+    async def update_repository_properties(
         self,
         repository: str,
         *,
@@ -623,7 +617,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any,
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
@@ -662,11 +656,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     async def update_manifest_properties(
-        self,
-        repository: str,
-        tag_or_digest: str,
-        properties: ArtifactManifestProperties,
-        **kwargs
+        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -710,7 +700,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any,
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -765,24 +755,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
         manifest_properties = await self._client.container_registry.update_manifest_properties(
-            repository,
-            tag_or_digest,
-            value=properties._to_generated(),  # pylint: disable=protected-access
-            **kwargs
+            repository, tag_or_digest, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            manifest_properties.manifest, # type: ignore
+            manifest_properties.manifest,  # type: ignore[arg-type] # The property "manifest" is required in response
             repository_name=repository,
             registry=self._endpoint,
         )
 
     @overload
     async def update_tag_properties(
-        self,
-        repository: str,
-        tag: str,
-        properties: ArtifactTagProperties,
-        **kwargs
+        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -823,7 +806,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any,
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -858,9 +841,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
 
     @distributed_trace_async
-    async def update_tag_properties(
-        self, *args: Union[str, ArtifactTagProperties], **kwargs
-    ) -> ArtifactTagProperties:
+    async def update_tag_properties(self, *args: Union[str, ArtifactTagProperties], **kwargs) -> ArtifactTagProperties:
         repository = str(args[0])
         tag = str(args[1])
         properties = None
@@ -878,8 +859,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            tag_attributes.tag, # type: ignore
-            repository=repository
+            tag_attributes.tag,  # type: ignore[arg-type] # The property "tag" is required in response
+            repository_name=repository,
         )
 
     @distributed_trace_async
@@ -890,7 +871,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         *,
         tag: Optional[str] = None,
         media_type: str = OCI_IMAGE_MANIFEST,
-        **kwargs
+        **kwargs,
     ) -> str:
         """Set a manifest for an artifact.
 
@@ -924,13 +905,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 payload=data,
                 content_type=media_type,
                 cls=_return_response_headers,
-                **kwargs
+                **kwargs,
             )
-            digest = response_headers['Docker-Content-Digest']
+            digest = response_headers["Docker-Content-Digest"]
             if not _validate_digest(data, digest):
-                raise DigestValidationError(
-                    "The server-computed digest does not match the client-computed digest."
-                )
+                raise DigestValidationError("The server-computed digest does not match the client-computed digest.")
         except Exception as e:
             if repository is None or manifest is None:
                 raise ValueError("The parameter repository and manifest cannot be None.") from e
@@ -960,15 +939,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 reference=tag_or_digest,
                 accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
                 cls=_return_response,
-                **kwargs
-            )
+                **kwargs,
+            ),
         )
         manifest_size = _get_manifest_size(response.http_response.headers)
         # This check is to address part of the service threat model. If a manifest does not have a proper
         # content length or is too big, it indicates a malicious or faulty service and should not be trusted.
         if manifest_size > MAX_MANIFEST_SIZE:
             raise ValueError("Manifest size is bigger than max allowed size of 4MB.")
-        media_type = response.http_response.headers['Content-Type']
+        media_type = response.http_response.headers["Content-Type"]
         manifest_bytes = await response.http_response.read()
         manifest_json = response.http_response.json()
         manifest_digest = _compute_digest(manifest_bytes)
@@ -977,11 +956,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 raise DigestValidationError(
                     "The content of retrieved manifest digest does not match the requested digest."
                 )
-        digest = response.http_response.headers['Docker-Content-Digest']
+        digest = response.http_response.headers["Docker-Content-Digest"]
         if manifest_digest != digest:
-            raise DigestValidationError(
-                "The server-computed digest does not match the client-computed digest."
-            )
+            raise DigestValidationError("The server-computed digest does not match the client-computed digest.")
 
         return GetManifestResult(digest=digest, manifest=manifest_json, media_type=media_type)
 
@@ -1003,29 +980,24 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 Dict[str, str],
                 await self._client.container_registry_blob.start_upload(
                     repository, cls=_return_response_headers, **kwargs
-                )
+                ),
             )
             digest, location, blob_size = await self._upload_blob_chunk(
-                start_upload_response_headers['Location'], data, **kwargs
+                start_upload_response_headers["Location"], data, **kwargs
             )
             complete_upload_response_headers = cast(
                 Dict[str, str],
                 await self._client.container_registry_blob.complete_upload(
-                    digest=digest,
-                    next_link=location,
-                    cls=_return_response_headers,
-                    **kwargs
-                )
+                    digest=digest, next_link=location, cls=_return_response_headers, **kwargs
+                ),
             )
             if digest != complete_upload_response_headers["Docker-Content-Digest"]:
-                raise DigestValidationError(
-                    "The server-computed digest does not match the client-computed digest."
-                )
+                raise DigestValidationError("The server-computed digest does not match the client-computed digest.")
         except Exception as e:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.") from e
             raise
-        return complete_upload_response_headers['Docker-Content-Digest'], blob_size
+        return complete_upload_response_headers["Docker-Content-Digest"], blob_size
 
     async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
         hasher = hashlib.sha256()
@@ -1037,13 +1009,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 response_headers = cast(
                     Dict[str, str],
                     await self._client.container_registry_blob.upload_chunk(
-                        location,
-                        buffer_stream,
-                        cls=_return_response_headers,
-                        **kwargs
-                    )
+                        location, buffer_stream, cls=_return_response_headers, **kwargs
+                    ),
                 )
-                location = response_headers['Location']
+                location = response_headers["Location"]
                 hasher.update(buffer)
                 buffer = data.read(DEFAULT_CHUNK_SIZE)
                 blob_size += len(buffer)
@@ -1068,12 +1037,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         first_chunk, headers = cast(
             Tuple[PipelineResponse, Dict[str, str]],
             await self._client.container_registry_blob.get_chunk(
-                repository,
-                digest,
-                range_header=f"bytes=0-{end_range}",
-                cls=_return_response_and_headers,
-                **kwargs
-            )
+                repository, digest, range_header=f"bytes=0-{end_range}", cls=_return_response_and_headers, **kwargs
+            ),
         )
         blob_size = _get_blob_size(headers)
         return AsyncDownloadBlobStream(
@@ -1084,11 +1049,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 name=repository,
                 digest=digest,
                 cls=_return_response_and_headers,
-                **kwargs
+                **kwargs,
             ),
             blob_size=blob_size,
             downloaded=int(headers["Content-Length"]),
-            chunk_size=DEFAULT_CHUNK_SIZE
+            chunk_size=DEFAULT_CHUNK_SIZE,
         )
 
     @distributed_trace_async

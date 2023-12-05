@@ -11,6 +11,7 @@ from ._skus_operations import SkusOperations
 from ._storage_accounts_operations import StorageAccountsOperations
 from ._usages_operations import UsagesOperations
 from ._blob_containers_operations import BlobContainersOperations
+from ._management_policies_operations import ManagementPoliciesOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -22,6 +23,7 @@ __all__ = [
     "StorageAccountsOperations",
     "UsagesOperations",
     "BlobContainersOperations",
+    "ManagementPoliciesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

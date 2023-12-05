@@ -973,6 +973,19 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
      enclaves. Known values are: "Default" and "VBS".
     :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar use_free_limit: Whether or not the database uses free monthly limits. Allowed on one
+     database in a subscription.
+    :vartype use_free_limit: bool
+    :ivar free_limit_exhaustion_behavior: Specifies the behavior when monthly free limits are
+     exhausted for the free database.
+
+     AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of
+     the month.
+
+     BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+     overage will be billed. Known values are: "AutoPause" and "BillOverUsage".
+    :vartype free_limit_exhaustion_behavior: str or
+     ~azure.mgmt.sql.models.FreeLimitExhaustionBehavior
     :ivar source_resource_id: The resource identifier of the source associated with the create
      operation of this database.
 
@@ -1024,6 +1037,9 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar availability_zone: Specifies the availability zone the database is pinned to. Known
      values are: "NoPreference", "1", "2", and "3".
     :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
+    :ivar encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
+     database encryption protector AKV key.
+    :vartype encryption_protector_auto_rotation: bool
     """
 
     _validation = {
@@ -1103,10 +1119,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
         "encryption_protector": {"key": "properties.encryptionProtector", "type": "str"},
         "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "use_free_limit": {"key": "properties.useFreeLimit", "type": "bool"},
+        "free_limit_exhaustion_behavior": {"key": "properties.freeLimitExhaustionBehavior", "type": "str"},
         "source_resource_id": {"key": "properties.sourceResourceId", "type": "str"},
         "manual_cutover": {"key": "properties.manualCutover", "type": "bool"},
         "perform_cutover": {"key": "properties.performCutover", "type": "bool"},
         "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
+        "encryption_protector_auto_rotation": {"key": "properties.encryptionProtectorAutoRotation", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1143,10 +1162,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
         encryption_protector: Optional[str] = None,
         preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        use_free_limit: Optional[bool] = None,
+        free_limit_exhaustion_behavior: Optional[Union[str, "_models.FreeLimitExhaustionBehavior"]] = None,
         source_resource_id: Optional[str] = None,
         manual_cutover: Optional[bool] = None,
         perform_cutover: Optional[bool] = None,
         availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
+        encryption_protector_auto_rotation: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1283,6 +1305,19 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
          enclaves. Known values are: "Default" and "VBS".
         :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword use_free_limit: Whether or not the database uses free monthly limits. Allowed on one
+         database in a subscription.
+        :paramtype use_free_limit: bool
+        :keyword free_limit_exhaustion_behavior: Specifies the behavior when monthly free limits are
+         exhausted for the free database.
+
+         AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of
+         the month.
+
+         BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+         overage will be billed. Known values are: "AutoPause" and "BillOverUsage".
+        :paramtype free_limit_exhaustion_behavior: str or
+         ~azure.mgmt.sql.models.FreeLimitExhaustionBehavior
         :keyword source_resource_id: The resource identifier of the source associated with the create
          operation of this database.
 
@@ -1334,6 +1369,9 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword availability_zone: Specifies the availability zone the database is pinned to. Known
          values are: "NoPreference", "1", "2", and "3".
         :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
+        :keyword encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
+         database encryption protector AKV key.
+        :paramtype encryption_protector_auto_rotation: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -1381,10 +1419,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.keys = keys
         self.encryption_protector = encryption_protector
         self.preferred_enclave_type = preferred_enclave_type
+        self.use_free_limit = use_free_limit
+        self.free_limit_exhaustion_behavior = free_limit_exhaustion_behavior
         self.source_resource_id = source_resource_id
         self.manual_cutover = manual_cutover
         self.perform_cutover = perform_cutover
         self.availability_zone = availability_zone
+        self.encryption_protector_auto_rotation = encryption_protector_auto_rotation
 
 
 class DatabaseAdvancedThreatProtection(ProxyResource):
@@ -2950,6 +2991,19 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
     :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
      enclaves. Known values are: "Default" and "VBS".
     :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar use_free_limit: Whether or not the database uses free monthly limits. Allowed on one
+     database in a subscription.
+    :vartype use_free_limit: bool
+    :ivar free_limit_exhaustion_behavior: Specifies the behavior when monthly free limits are
+     exhausted for the free database.
+
+     AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of
+     the month.
+
+     BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+     overage will be billed. Known values are: "AutoPause" and "BillOverUsage".
+    :vartype free_limit_exhaustion_behavior: str or
+     ~azure.mgmt.sql.models.FreeLimitExhaustionBehavior
     :ivar manual_cutover: Whether or not customer controlled manual cutover needs to be done during
      Update Database operation to Hyperscale tier.
 
@@ -2974,6 +3028,9 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
      When performCutover is specified, the scaling operation will trigger cutover and perform
      role-change to Hyperscale database.
     :vartype perform_cutover: bool
+    :ivar encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
+     database encryption protector AKV key.
+    :vartype encryption_protector_auto_rotation: bool
     """
 
     _validation = {
@@ -3041,8 +3098,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
         "encryption_protector": {"key": "properties.encryptionProtector", "type": "str"},
         "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "use_free_limit": {"key": "properties.useFreeLimit", "type": "bool"},
+        "free_limit_exhaustion_behavior": {"key": "properties.freeLimitExhaustionBehavior", "type": "str"},
         "manual_cutover": {"key": "properties.manualCutover", "type": "bool"},
         "perform_cutover": {"key": "properties.performCutover", "type": "bool"},
+        "encryption_protector_auto_rotation": {"key": "properties.encryptionProtectorAutoRotation", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3078,8 +3138,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
         encryption_protector: Optional[str] = None,
         preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        use_free_limit: Optional[bool] = None,
+        free_limit_exhaustion_behavior: Optional[Union[str, "_models.FreeLimitExhaustionBehavior"]] = None,
         manual_cutover: Optional[bool] = None,
         perform_cutover: Optional[bool] = None,
+        encryption_protector_auto_rotation: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3199,6 +3262,19 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
          enclaves. Known values are: "Default" and "VBS".
         :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword use_free_limit: Whether or not the database uses free monthly limits. Allowed on one
+         database in a subscription.
+        :paramtype use_free_limit: bool
+        :keyword free_limit_exhaustion_behavior: Specifies the behavior when monthly free limits are
+         exhausted for the free database.
+
+         AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of
+         the month.
+
+         BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+         overage will be billed. Known values are: "AutoPause" and "BillOverUsage".
+        :paramtype free_limit_exhaustion_behavior: str or
+         ~azure.mgmt.sql.models.FreeLimitExhaustionBehavior
         :keyword manual_cutover: Whether or not customer controlled manual cutover needs to be done
          during Update Database operation to Hyperscale tier.
 
@@ -3223,6 +3299,9 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
          When performCutover is specified, the scaling operation will trigger cutover and perform
          role-change to Hyperscale database.
         :paramtype perform_cutover: bool
+        :keyword encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
+         database encryption protector AKV key.
+        :paramtype encryption_protector_auto_rotation: bool
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -3269,8 +3348,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         self.keys = keys
         self.encryption_protector = encryption_protector
         self.preferred_enclave_type = preferred_enclave_type
+        self.use_free_limit = use_free_limit
+        self.free_limit_exhaustion_behavior = free_limit_exhaustion_behavior
         self.manual_cutover = manual_cutover
         self.perform_cutover = perform_cutover
+        self.encryption_protector_auto_rotation = encryption_protector_auto_rotation
 
 
 class DatabaseUsage(ProxyResource):
@@ -6334,22 +6416,32 @@ class FailoverGroupReadOnlyEndpoint(_serialization.Model):
     :ivar failover_policy: Failover policy of the read-only endpoint for the failover group. Known
      values are: "Disabled" and "Enabled".
     :vartype failover_policy: str or ~azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy
+    :ivar target_server: The target partner server where the read-only endpoint points to.
+    :vartype target_server: str
     """
 
     _attribute_map = {
         "failover_policy": {"key": "failoverPolicy", "type": "str"},
+        "target_server": {"key": "targetServer", "type": "str"},
     }
 
     def __init__(
-        self, *, failover_policy: Optional[Union[str, "_models.ReadOnlyEndpointFailoverPolicy"]] = None, **kwargs: Any
+        self,
+        *,
+        failover_policy: Optional[Union[str, "_models.ReadOnlyEndpointFailoverPolicy"]] = None,
+        target_server: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword failover_policy: Failover policy of the read-only endpoint for the failover group.
          Known values are: "Disabled" and "Enabled".
         :paramtype failover_policy: str or ~azure.mgmt.sql.models.ReadOnlyEndpointFailoverPolicy
+        :keyword target_server: The target partner server where the read-only endpoint points to.
+        :paramtype target_server: str
         """
         super().__init__(**kwargs)
         self.failover_policy = failover_policy
+        self.target_server = target_server
 
 
 class FailoverGroupReadWriteEndpoint(_serialization.Model):
@@ -6412,6 +6504,8 @@ class FailoverGroupUpdate(_serialization.Model):
     :vartype read_only_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
     :ivar databases: List of databases in the failover group.
     :vartype databases: list[str]
+    :ivar partner_servers: List of partner server information for the failover group.
+    :vartype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
     """
 
     _attribute_map = {
@@ -6419,6 +6513,7 @@ class FailoverGroupUpdate(_serialization.Model):
         "read_write_endpoint": {"key": "properties.readWriteEndpoint", "type": "FailoverGroupReadWriteEndpoint"},
         "read_only_endpoint": {"key": "properties.readOnlyEndpoint", "type": "FailoverGroupReadOnlyEndpoint"},
         "databases": {"key": "properties.databases", "type": "[str]"},
+        "partner_servers": {"key": "properties.partnerServers", "type": "[PartnerInfo]"},
     }
 
     def __init__(
@@ -6428,6 +6523,7 @@ class FailoverGroupUpdate(_serialization.Model):
         read_write_endpoint: Optional["_models.FailoverGroupReadWriteEndpoint"] = None,
         read_only_endpoint: Optional["_models.FailoverGroupReadOnlyEndpoint"] = None,
         databases: Optional[List[str]] = None,
+        partner_servers: Optional[List["_models.PartnerInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6439,12 +6535,15 @@ class FailoverGroupUpdate(_serialization.Model):
         :paramtype read_only_endpoint: ~azure.mgmt.sql.models.FailoverGroupReadOnlyEndpoint
         :keyword databases: List of databases in the failover group.
         :paramtype databases: list[str]
+        :keyword partner_servers: List of partner server information for the failover group.
+        :paramtype partner_servers: list[~azure.mgmt.sql.models.PartnerInfo]
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.read_write_endpoint = read_write_endpoint
         self.read_only_endpoint = read_only_endpoint
         self.databases = databases
+        self.partner_servers = partner_servers
 
 
 class ResourceWithWritableName(_serialization.Model):
@@ -7249,7 +7348,7 @@ class InstanceFailoverGroupReadWriteEndpoint(_serialization.Model):
         self.failover_with_data_loss_grace_period_minutes = failover_with_data_loss_grace_period_minutes
 
 
-class InstancePool(TrackedResource):
+class InstancePool(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """An Azure SQL instance pool.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7276,6 +7375,11 @@ class InstancePool(TrackedResource):
      license is included) and 'BasePrice' (without SQL license price). Known values are:
      "LicenseIncluded" and "BasePrice".
     :vartype license_type: str or ~azure.mgmt.sql.models.InstancePoolLicenseType
+    :ivar dns_zone: The Dns Zone that the managed instance pool is in.
+    :vartype dns_zone: str
+    :ivar maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+     managed instance.
+    :vartype maintenance_configuration_id: str
     """
 
     _validation = {
@@ -7283,6 +7387,7 @@ class InstancePool(TrackedResource):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "location": {"required": True},
+        "dns_zone": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7295,6 +7400,8 @@ class InstancePool(TrackedResource):
         "subnet_id": {"key": "properties.subnetId", "type": "str"},
         "v_cores": {"key": "properties.vCores", "type": "int"},
         "license_type": {"key": "properties.licenseType", "type": "str"},
+        "dns_zone": {"key": "properties.dnsZone", "type": "str"},
+        "maintenance_configuration_id": {"key": "properties.maintenanceConfigurationId", "type": "str"},
     }
 
     def __init__(
@@ -7306,6 +7413,7 @@ class InstancePool(TrackedResource):
         subnet_id: Optional[str] = None,
         v_cores: Optional[int] = None,
         license_type: Optional[Union[str, "_models.InstancePoolLicenseType"]] = None,
+        maintenance_configuration_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7323,12 +7431,17 @@ class InstancePool(TrackedResource):
          license is included) and 'BasePrice' (without SQL license price). Known values are:
          "LicenseIncluded" and "BasePrice".
         :paramtype license_type: str or ~azure.mgmt.sql.models.InstancePoolLicenseType
+        :keyword maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+         managed instance.
+        :paramtype maintenance_configuration_id: str
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.subnet_id = subnet_id
         self.v_cores = v_cores
         self.license_type = license_type
+        self.dns_zone = None
+        self.maintenance_configuration_id = maintenance_configuration_id
 
 
 class InstancePoolEditionCapability(_serialization.Model):
@@ -7449,21 +7562,77 @@ class InstancePoolListResult(_serialization.Model):
 class InstancePoolUpdate(_serialization.Model):
     """An update to an Instance pool.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar sku: The name and tier of the SKU.
+    :vartype sku: ~azure.mgmt.sql.models.Sku
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar subnet_id: Resource ID of the subnet to place this instance pool in.
+    :vartype subnet_id: str
+    :ivar v_cores: Count of vCores belonging to this instance pool.
+    :vartype v_cores: int
+    :ivar license_type: The license type. Possible values are 'LicenseIncluded' (price for SQL
+     license is included) and 'BasePrice' (without SQL license price). Known values are:
+     "LicenseIncluded" and "BasePrice".
+    :vartype license_type: str or ~azure.mgmt.sql.models.InstancePoolLicenseType
+    :ivar dns_zone: The Dns Zone that the managed instance pool is in.
+    :vartype dns_zone: str
+    :ivar maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+     managed instance.
+    :vartype maintenance_configuration_id: str
     """
 
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
+    _validation = {
+        "dns_zone": {"readonly": True},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    _attribute_map = {
+        "sku": {"key": "sku", "type": "Sku"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "subnet_id": {"key": "properties.subnetId", "type": "str"},
+        "v_cores": {"key": "properties.vCores", "type": "int"},
+        "license_type": {"key": "properties.licenseType", "type": "str"},
+        "dns_zone": {"key": "properties.dnsZone", "type": "str"},
+        "maintenance_configuration_id": {"key": "properties.maintenanceConfigurationId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        sku: Optional["_models.Sku"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        subnet_id: Optional[str] = None,
+        v_cores: Optional[int] = None,
+        license_type: Optional[Union[str, "_models.InstancePoolLicenseType"]] = None,
+        maintenance_configuration_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
+        :keyword sku: The name and tier of the SKU.
+        :paramtype sku: ~azure.mgmt.sql.models.Sku
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword subnet_id: Resource ID of the subnet to place this instance pool in.
+        :paramtype subnet_id: str
+        :keyword v_cores: Count of vCores belonging to this instance pool.
+        :paramtype v_cores: int
+        :keyword license_type: The license type. Possible values are 'LicenseIncluded' (price for SQL
+         license is included) and 'BasePrice' (without SQL license price). Known values are:
+         "LicenseIncluded" and "BasePrice".
+        :paramtype license_type: str or ~azure.mgmt.sql.models.InstancePoolLicenseType
+        :keyword maintenance_configuration_id: Specifies maintenance configuration id to apply to this
+         managed instance.
+        :paramtype maintenance_configuration_id: str
         """
         super().__init__(**kwargs)
+        self.sku = sku
         self.tags = tags
+        self.subnet_id = subnet_id
+        self.v_cores = v_cores
+        self.license_type = license_type
+        self.dns_zone = None
+        self.maintenance_configuration_id = maintenance_configuration_id
 
 
 class InstancePoolVcoresCapability(_serialization.Model):
@@ -8012,6 +8181,78 @@ class JobListResult(_serialization.Model):
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Job]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class JobPrivateEndpoint(ProxyResource):
+    """A job agent private endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar target_server_azure_resource_id: ARM resource id of the server the private endpoint will
+     target.
+    :vartype target_server_azure_resource_id: str
+    :ivar private_endpoint_id: Private endpoint id of the private endpoint.
+    :vartype private_endpoint_id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "private_endpoint_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "target_server_azure_resource_id": {"key": "properties.targetServerAzureResourceId", "type": "str"},
+        "private_endpoint_id": {"key": "properties.privateEndpointId", "type": "str"},
+    }
+
+    def __init__(self, *, target_server_azure_resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword target_server_azure_resource_id: ARM resource id of the server the private endpoint
+         will target.
+        :paramtype target_server_azure_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.target_server_azure_resource_id = target_server_azure_resource_id
+        self.private_endpoint_id = None
+
+
+class JobPrivateEndpointListResult(_serialization.Model):
+    """A list of job agent private endpoints.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.JobPrivateEndpoint]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[JobPrivateEndpoint]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
@@ -14361,6 +14602,8 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype type: str
     :ivar private_endpoint: Private endpoint which the connection belongs to.
     :vartype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :ivar group_ids: Group IDs.
+    :vartype group_ids: list[str]
     :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
     :vartype private_link_service_connection_state:
@@ -14374,6 +14617,7 @@ class PrivateEndpointConnection(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "group_ids": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -14382,6 +14626,7 @@ class PrivateEndpointConnection(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpointProperty"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
             "type": "PrivateLinkServiceConnectionStateProperty",
@@ -14406,6 +14651,7 @@ class PrivateEndpointConnection(ProxyResource):
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
+        self.group_ids = None
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
@@ -16716,6 +16962,10 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
      are: "Enabled" and "Disabled".
     :vartype restrict_outbound_network_access: str or
      ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+    :ivar is_i_pv6_enabled: Whether or not to enable IPv6 support for this server.  Value is
+     optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled" and
+     "Disabled".
+    :vartype is_i_pv6_enabled: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar external_governance_status: Status of external governance. Known values are: "Enabled"
      and "Disabled".
     :vartype external_governance_status: str or ~azure.mgmt.sql.models.ExternalGovernanceStatus
@@ -16759,6 +17009,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "key_id": {"key": "properties.keyId", "type": "str"},
         "administrators": {"key": "properties.administrators", "type": "ServerExternalAdministrator"},
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
+        "is_i_pv6_enabled": {"key": "properties.isIPv6Enabled", "type": "str"},
         "external_governance_status": {"key": "properties.externalGovernanceStatus", "type": "str"},
     }
 
@@ -16778,6 +17029,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         key_id: Optional[str] = None,
         administrators: Optional["_models.ServerExternalAdministrator"] = None,
         restrict_outbound_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
+        is_i_pv6_enabled: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -16817,6 +17069,10 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
          values are: "Enabled" and "Disabled".
         :paramtype restrict_outbound_network_access: str or
          ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+        :keyword is_i_pv6_enabled: Whether or not to enable IPv6 support for this server.  Value is
+         optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype is_i_pv6_enabled: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
@@ -16835,6 +17091,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.key_id = key_id
         self.administrators = administrators
         self.restrict_outbound_network_access = restrict_outbound_network_access
+        self.is_i_pv6_enabled = is_i_pv6_enabled
         self.external_governance_status = None
 
 
@@ -18606,6 +18863,10 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
      are: "Enabled" and "Disabled".
     :vartype restrict_outbound_network_access: str or
      ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+    :ivar is_i_pv6_enabled: Whether or not to enable IPv6 support for this server.  Value is
+     optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled" and
+     "Disabled".
+    :vartype is_i_pv6_enabled: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
     :ivar external_governance_status: Status of external governance. Known values are: "Enabled"
      and "Disabled".
     :vartype external_governance_status: str or ~azure.mgmt.sql.models.ExternalGovernanceStatus
@@ -18639,6 +18900,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         "key_id": {"key": "properties.keyId", "type": "str"},
         "administrators": {"key": "properties.administrators", "type": "ServerExternalAdministrator"},
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
+        "is_i_pv6_enabled": {"key": "properties.isIPv6Enabled", "type": "str"},
         "external_governance_status": {"key": "properties.externalGovernanceStatus", "type": "str"},
     }
 
@@ -18657,6 +18919,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         key_id: Optional[str] = None,
         administrators: Optional["_models.ServerExternalAdministrator"] = None,
         restrict_outbound_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
+        is_i_pv6_enabled: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18694,6 +18957,10 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
          values are: "Enabled" and "Disabled".
         :paramtype restrict_outbound_network_access: str or
          ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+        :keyword is_i_pv6_enabled: Whether or not to enable IPv6 support for this server.  Value is
+         optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype is_i_pv6_enabled: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -18712,6 +18979,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         self.key_id = key_id
         self.administrators = administrators
         self.restrict_outbound_network_access = restrict_outbound_network_access
+        self.is_i_pv6_enabled = is_i_pv6_enabled
         self.external_governance_status = None
 
 

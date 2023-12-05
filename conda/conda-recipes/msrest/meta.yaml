@@ -1,0 +1,47 @@
+{% set name = "msrest" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('MSREST_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - certifi >=2017.4.17
+    - isodate
+    - pip
+    - python
+    - requests-oauthlib >=0.5.0
+    - requests
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - certifi >=2017.4.17
+    - isodate
+    - python
+    - requests-oauthlib >=0.5.0
+    - requests
+
+test:
+  imports:
+    - msrest
+
+about:
+  home: "https://github.com/Azure/msrest-for-python"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "AutoRest swagger generator Python client runtime."
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

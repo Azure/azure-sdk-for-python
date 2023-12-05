@@ -18,15 +18,30 @@ class UTC(datetime.tzinfo):
     """Time Zone info for handling UTC"""
 
     def utcoffset(self, dt):
-        """UTF offset for UTC is 0."""
+        """UTF offset for UTC is 0.
+
+        :param datetime.datetime dt: Ignored.
+        :return: The UTC offset of UTC
+        :rtype: datetime.timedelta
+        """
         return datetime.timedelta(0)
 
     def tzname(self, dt):
-        """Timestamp representation."""
+        """Timestamp representation.
+
+        :param datetime.datetime dt: Ignored.
+        :return: The timestamp representation of UTC
+        :rtype: str
+        """
         return "Z"
 
     def dst(self, dt):
-        """No daylight saving for UTC."""
+        """No daylight saving for UTC.
+
+        :param datetime.datetime dt: Ignored.
+        :return: The daylight saving time of UTC
+        :rtype: datetime.timedelta
+        """
         return datetime.timedelta(hours=1)
 
 
@@ -58,6 +73,7 @@ def generate_sas_token(audience, policy, key, expiry=None):
     :param str policy:
     :param str key:
     :param int expiry: abs expiry time
+    :return: A sas token
     :rtype: str
     """
     if not expiry:
@@ -102,9 +118,9 @@ def normalized_data_body(data, **kwargs):
     return [encode_str(data, encoding)]
 
 
-def normalized_sequence_body(sequence):
+def normalized_sequence_body(sequence): # pylint:disable=inconsistent-return-statements
     # A helper method to normalize input into AMQP Sequence Body format
-    if isinstance(sequence, list) and all([isinstance(b, list) for b in sequence]):
+    if isinstance(sequence, list) and all((isinstance(b, list) for b in sequence)):
         return sequence
     if isinstance(sequence, list):
         return [sequence]

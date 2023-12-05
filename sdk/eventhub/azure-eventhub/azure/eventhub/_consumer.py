@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union, c
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
 from ._utils import create_properties, event_position_selector
-from ._transport._pyamqp_transport import PyamqpTransport
 from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
@@ -21,6 +20,7 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
+    from ._transport._base import AmqpTransport
     from ._pyamqp import types
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
@@ -95,7 +95,7 @@ class EventHubConsumer(
         self.stop = False  # used by event processor
         self.handler_ready = False
 
-        self._amqp_transport = kwargs.pop("amqp_transport")
+        self._amqp_transport: "AmqpTransport" = kwargs.pop("amqp_transport")
         self._on_event_received: Callable[[EventData], None] = kwargs[
             "on_event_received"
         ]
@@ -183,13 +183,17 @@ class EventHubConsumer(
         # pylint:disable=protected-access
         message = self._message_buffer.popleft()
         event_data = EventData._from_message(message)
-        if self._amqp_transport != PyamqpTransport:
-            event_data._uamqp_message == message    # pylint: disable=pointless-statement
+        if self._amqp_transport.KIND == "uamqp":
+            event_data._uamqp_message = message
         self._last_received_event = event_data
         return event_data
 
     def _open(self) -> bool:
-        """Open the EventHubConsumer/EventHubProducer using the supplied connection."""
+        """Open the EventHubConsumer/EventHubProducer using the supplied connection.
+
+        :return: Whether the ReceiveClient is open
+        :rtype: bool
+        """
         # pylint: disable=protected-access
         if not self.running:
             if self._handler:
@@ -245,7 +249,7 @@ class EventHubConsumer(
                             self._name,
                             last_exception,
                         )
-                        raise last_exception
+                        raise last_exception from None
         if (
             len(self._message_buffer) >= max_batch_size
             or (self._message_buffer and not max_wait_time)

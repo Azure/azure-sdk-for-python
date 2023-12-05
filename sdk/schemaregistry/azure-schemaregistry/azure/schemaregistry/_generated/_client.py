@@ -14,7 +14,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AzureSchemaRegistryConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import SchemaGroupsOperations, SchemaOperations
+from .operations import SchemaOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -25,8 +25,6 @@ class AzureSchemaRegistry:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Schema Registry is as a central schema repository, with support for versioning,
     management, compatibility checking, and RBAC.
 
-    :ivar schema_groups: SchemaGroupsOperations operations
-    :vartype schema_groups: azure.schemaregistry._generated.operations.SchemaGroupsOperations
     :ivar schema: SchemaOperations operations
     :vartype schema: azure.schemaregistry._generated.operations.SchemaOperations
     :param endpoint: The Schema Registry service endpoint, for example
@@ -34,7 +32,7 @@ class AzureSchemaRegistry:  # pylint: disable=client-accepts-api-version-keyword
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-10". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-07-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -42,23 +40,19 @@ class AzureSchemaRegistry:  # pylint: disable=client-accepts-api-version-keyword
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "https://{endpoint}"
         self._config = AzureSchemaRegistryConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.schema_groups = SchemaGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schema = SchemaOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `azure.schemaregistry._generated.rest`.
-        Use these helper methods to create the request you pass to this method.
-
-        >>> from azure.schemaregistry._generated.rest import schema_groups
-        >>> request = schema_groups.build_list_request(**kwargs)
-        <HttpRequest [GET], url: '/$schemaGroups'>
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
@@ -79,15 +73,12 @@ class AzureSchemaRegistry:  # pylint: disable=client-accepts-api-version-keyword
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureSchemaRegistry
+    def __enter__(self) -> "AzureSchemaRegistry":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

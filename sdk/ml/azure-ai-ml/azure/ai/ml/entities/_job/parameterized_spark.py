@@ -25,21 +25,21 @@ class ParameterizedSpark(SparkJobEntryMixin):
     :param entry: The file or class entry point.
     :type entry: dict[str, str]
     :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: list[str]
+    :type py_files: Optional[list[str]]
     :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: list[str]
+    :type jars: Optional[list[str]]
     :param files: The list of files to be placed in the working directory of each executor.
-    :type files: list[str]
+    :type files: Optional[list[str]]
     :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: list[str]
+    :type archives: Optional[list[str]]
     :param conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: dict[str, str]
+    :type conf: Optional[dict[str, str]]
     :param environment: The Azure ML environment to run the job in.
-    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
+    :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :param args: The arguments for the job.
-    :type args: str
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict[str, Any]
+    :type args: Optional[str]
+    :keyword kwargs: A dictionary of additional configuration parameters.
+    :paramtype kwargs: dict
     """
 
     def __init__(
@@ -54,7 +54,7 @@ class ParameterizedSpark(SparkJobEntryMixin):
         environment: Optional[Union[str, Environment]] = None,
         args: Optional[str] = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(**kwargs)
         self.code = code
         self.entry = entry
@@ -67,11 +67,21 @@ class ParameterizedSpark(SparkJobEntryMixin):
         self.args = args
 
     @property
-    def environment(self):
+    def environment(self) -> Optional[Union[str, Environment]]:
+        """The Azure ML environment to run the Spark component or job in.
+
+        :return: The Azure ML environment to run the Spark component or job in.
+        :rtype: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+        """
         if isinstance(self._environment, Environment) and self._environment.image is None:
             return Environment(conda_file=self._environment.conda_file, image=DUMMY_IMAGE)
         return self._environment
 
     @environment.setter
-    def environment(self, value):
+    def environment(self, value: Optional[Union[str, Environment]]) -> None:
+        """Sets the Azure ML environment to run the Spark component or job in.
+
+        :param value: The Azure ML environment to run the Spark component or job in.
+        :type value: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+        """
         self._environment = value

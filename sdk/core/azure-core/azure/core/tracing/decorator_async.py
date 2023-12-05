@@ -51,7 +51,7 @@ def distributed_trace_async(  # pylint:disable=function-redefined
 
 def distributed_trace_async(  # pylint:disable=function-redefined
     __func: Optional[Callable[P, Awaitable[T]]] = None, **kwargs: Any
-):
+) -> Any:
     """Decorator to apply to function to get traced automatically.
 
     Span will use the func name or "name_of_span".

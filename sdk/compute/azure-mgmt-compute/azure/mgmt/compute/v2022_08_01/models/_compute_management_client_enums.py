@@ -27,10 +27,8 @@ class AvailabilitySetSkuTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
-    :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-    storage. ReadOnly for Premium storage**.
+    """Specifies the caching requirements.  Possible values are:  **None**  **ReadOnly**
+    **ReadWrite**  Default: **None for Standard storage. ReadOnly for Premium storage**.
     """
 
     NONE = "None"
@@ -106,9 +104,8 @@ class DiskControllerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Generation 2 (https://docs.microsoft.com/en-us/azure/virtual-machines/generation-2), please
     check the HyperVGenerations capability returned as part of VM sku capabilities in the response
     of Microsoft.Compute SKUs api for the region contains V2
-    (https://docs.microsoft.com/rest/api/compute/resourceskus/list) . :code:`<br>` For more
-    information about Disk Controller Types supported please refer to
-    https://aka.ms/azure-diskcontrollertypes.
+    (https://docs.microsoft.com/rest/api/compute/resourceskus/list) .  For more information about
+    Disk Controller Types supported please refer to https://aka.ms/azure-diskcontrollertypes.
     """
 
     SCSI = "SCSI"
@@ -116,12 +113,12 @@ class DiskControllerTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
-    are::code:`<br>`:code:`<br>` **Attach** \u2013 This value is used when you are using a
-    specialized disk to create the virtual machine.:code:`<br>`:code:`<br>` **FromImage** \u2013
-    This value is used when you are using an image to create the virtual machine. If you are using
-    a platform image, you also use the imageReference element described above. If you are using a
-    marketplace image, you  also use the plan element previously described.
+    """Specifies how the virtual machine should be created. Possible values are: **Attach** \u2013
+    This value is used when you are using a specialized disk to create the virtual machine.
+    **FromImage** \u2013 This value is used when you are using an image to create the virtual
+    machine. If you are using a platform image, you also use the imageReference element described
+    above. If you are using a marketplace image, you  also use the plan element previously
+    described.
     """
 
     FROM_IMAGE = "FromImage"
@@ -131,10 +128,9 @@ class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DiskDeleteOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the behavior of the managed disk when the VM gets deleted i.e whether the managed
-    disk is deleted or detached. Supported values::code:`<br>`:code:`<br>` **Delete** If this value
-    is used, the managed disk is deleted when VM gets deleted.:code:`<br>`:code:`<br>` **Detach**
-    If this value is used, the managed disk is retained after VM gets
-    deleted.:code:`<br>`:code:`<br>` Minimum api-version: 2021-03-01.
+    disk is deleted or detached. Supported values: **Delete** If this value is used, the managed
+    disk is deleted when VM gets deleted. **Detach** If this value is used, the managed disk is
+    retained after VM gets deleted. Minimum api-version: 2021-03-01.
     """
 
     DELETE = "Delete"
@@ -144,13 +140,13 @@ class DiskDeleteOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DiskDetachOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the detach behavior to be used while detaching a disk or which is already in the
     process of detachment from the virtual machine. Supported values: **ForceDetach**.
-    :code:`<br>`:code:`<br>` detachOption: **ForceDetach** is applicable only for managed data
-    disks. If a previous detachment attempt of the data disk did not complete due to an unexpected
-    failure from the virtual machine and the disk is still not released then use force-detach as a
-    last resort option to detach the disk forcibly from the VM. All writes might not have been
-    flushed when using this detach behavior. :code:`<br>`:code:`<br>` This feature is still in
-    preview mode and is not supported for VirtualMachineScaleSet. To force-detach a data disk
-    update toBeDetached to 'true' along with setting detachOption: 'ForceDetach'.
+    detachOption: **ForceDetach** is applicable only for managed data disks. If a previous
+    detachment attempt of the data disk did not complete due to an unexpected failure from the
+    virtual machine and the disk is still not released then use force-detach as a last resort
+    option to detach the disk forcibly from the VM. All writes might not have been flushed when
+    using this detach behavior.  This feature is still in preview mode and is not supported for
+    VirtualMachineScaleSet. To force-detach a data disk update toBeDetached to 'true' along with
+    setting detachOption: 'ForceDetach'.
     """
 
     FORCE_DETACH = "ForceDetach"
@@ -306,8 +302,7 @@ class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the type of the OS that is included in the disk if creating
-    a VM from user-image or a specialized VHD. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`:code:`<br>` **Windows** :code:`<br>`:code:`<br>` **Linux**.
+    a VM from user-image or a specialized VHD.  Possible values are:  **Windows**  **Linux**.
     """
 
     WINDOWS = "Windows"
@@ -375,9 +370,7 @@ class PatchOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the protocol of WinRM listener. :code:`<br>`:code:`<br>` Possible values are:
-    :code:`<br>`\ **http** :code:`<br>`:code:`<br>` **https**.
-    """
+    """Specifies the protocol of WinRM listener. Possible values are: **http** **https**."""
 
     HTTP = "Http"
     HTTPS = "Https"
@@ -466,10 +459,9 @@ class RollingUpgradeStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the EncryptionType of the managed disk. :code:`<br>` It is set to
-    DiskWithVMGuestState for encryption of the managed disk along with VMGuestState blob, and
-    VMGuestStateOnly for encryption of just the VMGuestState blob. :code:`<br>`:code:`<br>` NOTE:
-    It can be set for only Confidential VMs.
+    """Specifies the EncryptionType of the managed disk.  It is set to DiskWithVMGuestState for
+    encryption of the managed disk along with VMGuestState blob, and VMGuestStateOnly for
+    encryption of just the VMGuestState blob.  NOTE: It can be set for only Confidential VMs.
     """
 
     VM_GUEST_STATE_ONLY = "VMGuestStateOnly"
@@ -478,8 +470,7 @@ class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
-    enable UefiSettings. :code:`<br>`:code:`<br>` Default: UefiSettings will not be enabled unless
-    this property is set.
+    enable UefiSettings. Default: UefiSettings will not be enabled unless this property is set.
     """
 
     TRUSTED_LAUNCH = "TrustedLaunch"
@@ -562,8 +553,8 @@ class VirtualMachineEvictionPolicyTypes(str, Enum, metaclass=CaseInsensitiveEnum
 
 class VirtualMachinePriorityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the priority for a standalone virtual machine or the virtual machines in the scale
-    set. :code:`<br>`:code:`<br>` 'Low' enum will be deprecated in the future, please use 'Spot' as
-    the enum to deploy Azure Spot VM/VMSS.
+    set.  'Low' enum will be deprecated in the future, please use 'Spot' as the enum to deploy
+    Azure Spot VM/VMSS.
     """
 
     REGULAR = "Regular"
@@ -587,18 +578,17 @@ class VirtualMachineScaleSetSkuScaleType(str, Enum, metaclass=CaseInsensitiveEnu
 
 
 class VirtualMachineSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the size of the virtual machine. :code:`<br>`:code:`<br>` The enum data type is
-    currently deprecated and will be removed by December 23rd 2023. :code:`<br>`:code:`<br>`
-    Recommended way to get the list of available sizes is using these APIs:
-    :code:`<br>`:code:`<br>` `List all available virtual machine sizes in an availability set
-    <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_
-    :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
-    <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_ :code:`<br>`:code:`<br>`
-    `List all available virtual machine sizes for resizing
+    """Specifies the size of the virtual machine.  The enum data type is currently deprecated and will
+    be removed by December 23rd 2023.  Recommended way to get the list of available sizes is using
+    these APIs:  `List all available virtual machine sizes in an availability set
+    <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_  `List all
+    available virtual machine sizes in a region
+    <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_  `List all available virtual
+    machine sizes for resizing
     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
     information about virtual machine sizes, see `Sizes for virtual machines
-    <https://docs.microsoft.com/azure/virtual-machines/sizes>`_. :code:`<br>`:code:`<br>` The
-    available VM sizes depend on region and availability set.
+    <https://docs.microsoft.com/azure/virtual-machines/sizes>`_.  The available VM sizes depend on
+    region and availability set.
     """
 
     BASIC_A0 = "Basic_A0"

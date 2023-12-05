@@ -38,7 +38,7 @@ def build_get_request(resource_group_name: str, operation_id: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

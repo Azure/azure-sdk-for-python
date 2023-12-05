@@ -31,27 +31,27 @@ class ParallelComponent(
 ):  # pylint: disable=too-many-instance-attributes
     """Parallel component version, used to define a parallel component.
 
-    :param name: Name of the component.
+    :param name: Name of the component. Defaults to None
     :type name: str
-    :param version: Version of the component.
+    :param version: Version of the component. Defaults to None
     :type version: str
-    :param description: Description of the component.
+    :param description: Description of the component. Defaults to None
     :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
     :type tags: dict
-    :param display_name: Display name of the component.
+    :param display_name: Display name of the component. Defaults to None
     :type display_name: str
-    :param retry_settings: parallel component run failed retry
+    :param retry_settings: parallel component run failed retry. Defaults to None
     :type retry_settings: BatchRetrySettings
-    :param logging_level: A string of the logging level name
+    :param logging_level: A string of the logging level name. Defaults to None
     :type logging_level: str
-    :param max_concurrency_per_instance: The max parallellism that each compute instance has.
+    :param max_concurrency_per_instance: The max parallellism that each compute instance has. Defaults to None
     :type max_concurrency_per_instance: int
-    :param error_threshold: The number of item processing failures should be ignored.
+    :param error_threshold: The number of item processing failures should be ignored. Defaults to None
     :type error_threshold: int
-    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored.
+    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored. Defaults to None
     :type mini_batch_error_threshold: int
-    :param task: The parallel task.
+    :param task: The parallel task. Defaults to None
     :type task: ParallelTask
     :param mini_batch_size: For FileDataset input, this field is the number of files a user script can process
         in one run() call. For TabularDataset input, this field is the approximate size of data the user script
@@ -59,25 +59,25 @@ class ParallelComponent(
         (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.) This value could be set
         through PipelineParameter.
     :type mini_batch_size: str
-    :param partition_keys:  The keys used to partition dataset into mini-batches.
+    :param partition_keys:  The keys used to partition dataset into mini-batches. Defaults to None
         If specified, the data with the same key will be partitioned into the same mini-batch.
         If both partition_keys and mini_batch_size are specified, partition_keys will take effect.
         The input(s) must be partitioned dataset(s),
         and the partition_keys must be a subset of the keys of every input dataset for this to work.
     :type partition_keys: list
-    :param input_data: The input data.
+    :param input_data: The input data. Defaults to None
     :type input_data: str
-    :param resources: Compute Resource configuration for the component.
+    :param resources: Compute Resource configuration for the component. Defaults to None
     :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
-    :param inputs: Inputs of the component.
+    :param inputs: Inputs of the component. Defaults to None
     :type inputs: dict
-    :param outputs: Outputs of the component.
+    :param outputs: Outputs of the component. Defaults to None
     :type outputs: dict
     :param code: promoted property from task.code
     :type code: str
-    :param instance_count: promoted property from resources.instance_count
+    :param instance_count: promoted property from resources.instance_count. Defaults to None
     :type instance_count: int
-    :param is_deterministic: Whether the parallel component is deterministic.
+    :param is_deterministic: Whether the parallel component is deterministic. Defaults to True
     :type is_deterministic: bool
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if ParallelComponent cannot be successfully validated.
         Details will be provided in the error message.
@@ -180,6 +180,11 @@ class ParallelComponent(
 
     @instance_count.setter
     def instance_count(self, value: int):
+        """Set the value of the promoted property resources.instance_count.
+
+        :param value: The value to set for resources.instance_count.
+        :type value: int
+        """
         if not value:
             return
         if not self.resources:
@@ -199,12 +204,30 @@ class ParallelComponent(
 
     @code.setter
     def code(self, value: str):
+        """Set the value of the promoted property task.code.
+
+        :param value: The value to set for task.code.
+        :type value: str
+        """
         if not value:
             return
         if not self.task:
             self.task = ParallelTask(code=value)
         else:
             self.task.code = value
+
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the component content into a sorted yaml string.
+
+        :return: The ordered dict
+        :rtype: Dict
+        """
+
+        obj = super()._to_ordered_dict_for_yaml_dump()
+        # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
+        if self.code and isinstance(self.code, str):
+            obj["task"]["code"] = self.code
+        return obj
 
     @property
     def environment(self) -> str:
@@ -218,6 +241,11 @@ class ParallelComponent(
 
     @environment.setter
     def environment(self, value: str):
+        """Set the value of the promoted property task.environment.
+
+        :param value: The value to set for task.environment.
+        :type value: str
+        """
         if not value:
             return
         if not self.task:

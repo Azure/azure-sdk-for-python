@@ -79,22 +79,30 @@ service = TableServiceClient(endpoint="https://<my_account_name>.table.core.wind
 ```
 
 ##### Creating the client from a connection string
-Depending on your use case and authorization method, you may prefer to initialize a client instance with a connection string instead of providing the account URL and credential separately. To do this, pass the
-connection string to the client's `from_connection_string` class method. The connection string can be found in your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or with the following Azure CLI command:
+Depending on your use case and authorization method, you may prefer to initialize a client instance with a connection string instead of providing the account URL and credential separately. To do this, pass the connection string to the client's `from_connection_string` class method. If the connection string does not specify a fully qualified endpoint URL (`"TableEndpoint"`), or URL suffix (`"EndpointSuffix"`), the endpoint will be assumed to be an Azure Storage account, and the URL automatically formatted accordingly. 
+
+For Tables Storage, the connection string can be found in your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or with the following Azure CLI command:
 
 ```bash
 az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```
 
+For Tables Cosmos, the connection string can be found in your cosmos account in the [Azure Portal][azure_portal_account_url] under the "Connection Strings" section or with the following Azure CLI command:
+
+```bash
+az cosmosdb list-connection-strings -g MyResourceGroup -n MyCosmosAccount
+```
+
+Create a client from a connection string:
+
 ```python
 from azure.data.tables import TableServiceClient
-connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=core.windows.net"
+connection_string = "AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=<endpoint_suffix>"
 service = TableServiceClient.from_connection_string(conn_str=connection_string)
 ```
 
 ##### Creating the client from a SAS token
-To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()`
-   functions to create a sas token for the account or table:
+To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()` functions to create a sas token for the account or table:
 
 ```python
 from datetime import datetime, timedelta

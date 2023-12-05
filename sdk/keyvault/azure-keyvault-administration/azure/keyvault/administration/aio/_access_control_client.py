@@ -31,7 +31,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
-    :paramtype api_version: ~azure.keyvault.administration.ApiVersion
+    :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
     """

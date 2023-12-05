@@ -11,12 +11,11 @@ is also mentioned in the sample. Please take a look at the commented code.
 
 # Declare OpenTelemetry as enabled tracing plugin for Azure SDKs
 from azure.core.settings import settings
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 
-settings.tracing_implementation = OpenTelemetrySpan
+settings.tracing_implementation = "opentelemetry"
 
 # In the below example, we use a simple console exporter, uncomment these lines to use
-# the OpenTelemetry exporter for Azure MonitorOpenTelemetry exporter for Azure Monitor.
+# the OpenTelemetry exporter for Azure Monitor.
 # Example of a trace exporter for Azure Monitor, but you can use anything OpenTelemetry supports.
 
 # from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter

@@ -1,5 +1,7 @@
 from typing import Callable, Union
 
+from azure.ai.ml.entities._monitoring.thresholds import NumericalDriftMetrics, CategoricalDriftMetrics
+
 from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
 
@@ -35,7 +37,7 @@ from azure.ai.ml._utils.utils import snake_to_camel
 
 @pytest.mark.timeout(600)
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.core_sdk_test
+@pytest.mark.production_experiences_test
 class TestMonitorSchedule(AzureRecordedTestCase):
     def test_data_drift_schedule_create(
         self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]
@@ -58,6 +60,7 @@ class TestMonitorSchedule(AzureRecordedTestCase):
     @pytest.mark.skipif(
         condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
     )
+    @pytest.mark.skip(reason="Endpoint does not exist anymore")
     def test_out_of_box_schedule(self, client: MLClient):
         test_path = "tests/test_configs/monitoring/yaml_configs/out_of_the_box.yaml"
         endpoint_name = "iris-endpoint"
@@ -97,33 +100,13 @@ class TestMonitorSchedule(AzureRecordedTestCase):
             if signal.type == MonitorSignalType.DATA_DRIFT:
                 check_default_datasets(signal, model_inputs_name, model_inputs_version, model_inputs_type, True)
 
-                assert signal.metric_thresholds == [
-                    DataDriftMetricThreshold(
-                        applicable_feature_type=MonitorFeatureType.NUMERICAL,
-                        threshold=0.1,
-                        metric_name=MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
-                    ),
-                    DataDriftMetricThreshold(
-                        applicable_feature_type=MonitorFeatureType.CATEGORICAL,
-                        threshold=0.1,
-                        metric_name=MonitorMetricName.JENSEN_SHANNON_DISTANCE,
-                    ),
-                ]
+                assert signal.metric_thresholds.numerical.normalized_wasserstein_distance == 0.1
+                assert signal.metric_thresholds.categorical.jensen_shannon_distance == 0.1
             elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
                 check_default_datasets(signal, model_outputs_name, model_outputs_version, model_outputs_type, False)
 
-                assert signal.metric_thresholds == [
-                    PredictionDriftMetricThreshold(
-                        applicable_feature_type=MonitorFeatureType.NUMERICAL,
-                        threshold=0.1,
-                        metric_name=MonitorMetricName.NORMALIZED_WASSERSTEIN_DISTANCE,
-                    ),
-                    PredictionDriftMetricThreshold(
-                        applicable_feature_type=MonitorFeatureType.CATEGORICAL,
-                        threshold=0.1,
-                        metric_name=MonitorMetricName.JENSEN_SHANNON_DISTANCE,
-                    ),
-                ]
+                assert signal.metric_thresholds.numerical.normalized_wasserstein_distance == 0.1
+                assert signal.metric_thresholds.categorical.jensen_shannon_distance == 0.1
             elif signal.type == MonitorSignalType.DATA_QUALITY:
                 check_default_datasets(signal, model_inputs_name, model_inputs_version, model_inputs_type, True)
 
@@ -164,6 +147,7 @@ class TestMonitorSchedule(AzureRecordedTestCase):
     @pytest.mark.skipif(
         condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
     )
+    @pytest.mark.skip(reason="Endpoint does not exist anymore")
     def test_default_target_baseline_dataset(self, client: MLClient):
         test_path = "tests/test_configs/monitoring/yaml_configs/no_target_baseline_data.yaml"
         endpoint_name = "iris-endpoint"
@@ -229,21 +213,21 @@ def check_default_datasets(
     dataset_type: str,
     is_model_inputs: bool,
 ):
-    assert dataset_name in signal.target_dataset.dataset.input_dataset.path
-    assert dataset_version in signal.target_dataset.dataset.input_dataset.path
+    assert dataset_name in signal.production_data.input_data.path
+    assert dataset_version in signal.production_data.input_data.path
     if is_model_inputs:
-        assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_INPUTS
+        assert signal.production_data.data_context == MonitorDatasetContext.MODEL_INPUTS
     else:
-        assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_OUTPUTS
-    assert signal.target_dataset.dataset.input_dataset.type == dataset_type
+        assert signal.production_data.data_context == MonitorDatasetContext.MODEL_OUTPUTS
+    assert signal.production_data.input_data.type == dataset_type
 
-    assert dataset_name in signal.baseline_dataset.input_dataset.path
-    assert dataset_version in signal.target_dataset.dataset.input_dataset.path
+    assert dataset_name in signal.reference_data.input_data.path
+    assert dataset_version in signal.production_data.input_data.path
     if is_model_inputs:
-        assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_INPUTS
+        assert signal.production_data.data_context == MonitorDatasetContext.MODEL_INPUTS
     else:
-        assert signal.target_dataset.dataset.dataset_context == MonitorDatasetContext.MODEL_OUTPUTS
-    assert signal.baseline_dataset.input_dataset.type == dataset_type
+        assert signal.production_data.data_context == MonitorDatasetContext.MODEL_OUTPUTS
+    assert signal.reference_data.input_data.type == dataset_type
 
 
 def create_and_assert_basic_schedule_fields(
@@ -254,20 +238,20 @@ def create_and_assert_basic_schedule_fields(
     params_override = [
         {"name": schedule_name},
         {
-            "create_monitor.monitoring_signals.testSignal.target_dataset.dataset.input_dataset.path": f"azureml:{data_with_2_versions}:1"
+            "create_monitor.monitoring_signals.testSignal.production_data.input_data.path": f"azureml:{data_with_2_versions}:1"
         },
-        {"create_monitor.monitoring_signals.testSignal.target_dataset.dataset.input_dataset.type": "uri_folder"},
+        {"create_monitor.monitoring_signals.testSignal.production_data.input_data.type": "uri_folder"},
         {
-            "create_monitor.monitoring_signals.testSignal.baseline_dataset.input_dataset.path": f"azureml:{data_with_2_versions}:2"
+            "create_monitor.monitoring_signals.testSignal.reference_data.input_data.path": f"azureml:{data_with_2_versions}:2"
         },
-        {"create_monitor.monitoring_signals.testSignal.baseline_dataset.input_dataset.type": "uri_folder"},
+        {"create_monitor.monitoring_signals.testSignal.reference_data.input_data.type": "uri_folder"},
     ]
 
     schedule = load_schedule(test_path, params_override=params_override)
     # not testing monitoring target expansion right now
     schedule.create_monitor.monitoring_target = None
     # bug in service when deserializing lookback_period is not supported yet
-    schedule.create_monitor.monitoring_signals["testSignal"].target_dataset.lookback_period = None
+    schedule.create_monitor.monitoring_signals["testSignal"].production_data.data_window_size = None
 
     created_schedule = client.schedules.begin_create_or_update(schedule).result()
 
@@ -275,9 +259,9 @@ def create_and_assert_basic_schedule_fields(
     assert isinstance(created_schedule, MonitorSchedule)
 
     data_drift_signal = created_schedule.create_monitor.monitoring_signals["testSignal"]
-    assert data_drift_signal.target_dataset
-    assert is_ARM_id_for_resource(data_drift_signal.target_dataset.dataset.input_dataset.path, AzureMLResourceType.DATA)
-    assert data_drift_signal.baseline_dataset
-    assert is_ARM_id_for_resource(data_drift_signal.baseline_dataset.input_dataset.path, AzureMLResourceType.DATA)
+    assert data_drift_signal.production_data
+    assert is_ARM_id_for_resource(data_drift_signal.production_data.input_data.path, AzureMLResourceType.DATA)
+    assert data_drift_signal.reference_data
+    assert is_ARM_id_for_resource(data_drift_signal.reference_data.input_data.path, AzureMLResourceType.DATA)
 
     return created_schedule

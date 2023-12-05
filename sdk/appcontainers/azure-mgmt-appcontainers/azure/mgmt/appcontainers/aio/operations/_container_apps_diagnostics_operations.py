@@ -35,6 +35,7 @@ from ...operations._container_apps_diagnostics_operations import (
     build_list_detectors_request,
     build_list_revisions_request,
 )
+from .._vendor import ContainerAppsAPIClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

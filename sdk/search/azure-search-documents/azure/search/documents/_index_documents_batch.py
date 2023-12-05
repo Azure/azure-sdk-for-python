@@ -3,16 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, List, Dict, Any
+from typing import Union, List, Dict, Any, Tuple, cast
 from threading import Lock
 
 from ._generated.models import IndexAction
 
 
-def _flatten_args(args: Union[List[Dict], List[List[Dict]]]) -> List[Dict]:
+def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]) -> List[Dict]:
     if len(args) == 1 and isinstance(args[0], (list, tuple)):
-        return args[0]
-    return args
+        return cast(List[Dict], args[0])
+    return cast(List[Dict], args)
 
 
 class IndexDocumentsBatch:
@@ -40,9 +40,9 @@ class IndexDocumentsBatch:
 
         :param documents: Documents to upload to an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: Dict or List[Dict]
+        :type documents: dict or list[dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "upload")
 
@@ -61,9 +61,9 @@ class IndexDocumentsBatch:
 
         :param documents: Documents to delete from an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: Dict or List[Dict]
+        :type documents: dict or list[dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "delete")
 
@@ -79,9 +79,9 @@ class IndexDocumentsBatch:
 
         :param documents: Documents to merge into an Azure search index. May be
          a single list of documents, or documents as individual parameters.
-        :type documents: Dict or List[Dict]
+        :type documents: dict or list[dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "merge")
 
@@ -99,9 +99,9 @@ class IndexDocumentsBatch:
         :param documents: Documents to merge or upload into an Azure search
          index. May be a single list of documents, or documents as individual
          parameters.
-        :type documents: Dict or List[Dict]
+        :type documents: dict or list[dict]
         :return: the added actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), "mergeOrUpload")
 
@@ -109,7 +109,7 @@ class IndexDocumentsBatch:
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions to index.
 
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         return list(self._actions)
 
@@ -117,7 +117,7 @@ class IndexDocumentsBatch:
         """Get the list of currently configured index actions and clear it.
 
         :return: the current actions
-        :rtype: List[IndexAction]
+        :rtype: list[IndexAction]
         """
         with self._lock:
             result = list(self._actions)
@@ -129,7 +129,7 @@ class IndexDocumentsBatch:
         """Enqueue a list of index actions to index.
 
         :param new_actions: the actions to enqueue
-        :type new_actions: IndexAction or List[IndexAction]
+        :type new_actions: IndexAction or list[IndexAction]
         """
         if isinstance(new_actions, IndexAction):
             with self._lock:

@@ -18,28 +18,35 @@ if TYPE_CHECKING:
 
 
 class Resource(_serialization.Model):
-    """The core properties of ARM resources.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -48,32 +55,40 @@ class Resource(_serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than
-    required location and tags.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -88,13 +103,16 @@ class CustomCertificate(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
@@ -145,7 +163,6 @@ class CustomCertificate(ProxyResource):
         :paramtype key_vault_secret_version: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.provisioning_state = None
         self.key_vault_base_uri = key_vault_base_uri
         self.key_vault_secret_name = key_vault_secret_name
@@ -194,13 +211,16 @@ class CustomDomain(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
@@ -239,7 +259,6 @@ class CustomDomain(ProxyResource):
         :paramtype custom_certificate: ~azure.mgmt.webpubsub.models.ResourceReference
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.provisioning_state = None
         self.domain_name = domain_name
         self.custom_certificate = custom_certificate
@@ -688,6 +707,34 @@ class EventNameFilter(EventListenerFilter):
         self.user_event_pattern = user_event_pattern
 
 
+class IPRule(_serialization.Model):
+    """An IP rule.
+
+    :ivar value: An IP or CIDR or ServiceTag.
+    :vartype value: str
+    :ivar action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
+    :vartype action: str or ~azure.mgmt.webpubsub.models.ACLAction
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "str"},
+        "action": {"key": "action", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[str] = None, action: Optional[Union[str, "_models.ACLAction"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: An IP or CIDR or ServiceTag.
+        :paramtype value: str
+        :keyword action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
+        :paramtype action: str or ~azure.mgmt.webpubsub.models.ACLAction
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.action = action
+
+
 class LiveTraceCategory(_serialization.Model):
     """Live trace category configuration of a Microsoft.SignalRService resource.
 
@@ -994,8 +1041,9 @@ class NameAvailabilityParameters(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: The resource type. Can be "Microsoft.SignalRService/SignalR" or
-     "Microsoft.SignalRService/webPubSub". Required.
+    :ivar type: The resource type. Can be "Microsoft.SignalRService/SignalR",
+     "Microsoft.SignalRService/WebPubSub", "Microsoft.SignalRService/SignalR/replicas" or
+     "Microsoft.SignalRService/WebPubSub/replicas". Required.
     :vartype type: str
     :ivar name: The resource name to validate. e.g."my-resource-name". Required.
     :vartype name: str
@@ -1013,8 +1061,9 @@ class NameAvailabilityParameters(_serialization.Model):
 
     def __init__(self, *, type: str, name: str, **kwargs: Any) -> None:
         """
-        :keyword type: The resource type. Can be "Microsoft.SignalRService/SignalR" or
-         "Microsoft.SignalRService/webPubSub". Required.
+        :keyword type: The resource type. Can be "Microsoft.SignalRService/SignalR",
+         "Microsoft.SignalRService/WebPubSub", "Microsoft.SignalRService/SignalR/replicas" or
+         "Microsoft.SignalRService/WebPubSub/replicas". Required.
         :paramtype type: str
         :keyword name: The resource name to validate. e.g."my-resource-name". Required.
         :paramtype name: str
@@ -1286,13 +1335,16 @@ class PrivateEndpointConnection(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
@@ -1346,7 +1398,6 @@ class PrivateEndpointConnection(ProxyResource):
          ~azure.mgmt.webpubsub.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.provisioning_state = None
         self.private_endpoint = private_endpoint
         self.group_ids = None
@@ -1394,12 +1445,17 @@ class PrivateLinkResource(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
     :ivar group_id: Group Id of the private link resource.
     :vartype group_id: str
     :ivar required_members: Required members of the private link resource.
@@ -1416,12 +1472,14 @@ class PrivateLinkResource(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "group_id": {"key": "properties.groupId", "type": "str"},
         "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
@@ -1556,6 +1614,184 @@ class RegenerateKeyParameters(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.key_type = key_type
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class Replica(TrackedResource):
+    """A class represent a replica resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar sku: The billing information of the resource.
+    :vartype sku: ~azure.mgmt.webpubsub.models.ResourceSku
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.webpubsub.models.ProvisioningState
+    :ivar region_endpoint_enabled: Enable or disable the regional endpoint. Default to "Enabled".
+     When it's Disabled, new connections will not be routed to this endpoint, however existing
+     connections will not be affected.
+    :vartype region_endpoint_enabled: str
+    :ivar resource_stopped: Stop or start the resource.  Default to "false".
+     When it's true, the data plane of the resource is shutdown.
+     When it's false, the data plane of the resource is started.
+    :vartype resource_stopped: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "region_endpoint_enabled": {"key": "properties.regionEndpointEnabled", "type": "str"},
+        "resource_stopped": {"key": "properties.resourceStopped", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        sku: Optional["_models.ResourceSku"] = None,
+        region_endpoint_enabled: str = "Enabled",
+        resource_stopped: str = "false",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword sku: The billing information of the resource.
+        :paramtype sku: ~azure.mgmt.webpubsub.models.ResourceSku
+        :keyword region_endpoint_enabled: Enable or disable the regional endpoint. Default to
+         "Enabled".
+         When it's Disabled, new connections will not be routed to this endpoint, however existing
+         connections will not be affected.
+        :paramtype region_endpoint_enabled: str
+        :keyword resource_stopped: Stop or start the resource.  Default to "false".
+         When it's true, the data plane of the resource is shutdown.
+         When it's false, the data plane of the resource is started.
+        :paramtype resource_stopped: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.sku = sku
+        self.provisioning_state = None
+        self.region_endpoint_enabled = region_endpoint_enabled
+        self.resource_stopped = resource_stopped
+
+
+class ReplicaList(_serialization.Model):
+    """ReplicaList.
+
+    :ivar value: List of the replica.
+    :vartype value: list[~azure.mgmt.webpubsub.models.Replica]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Replica]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Replica"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of the replica.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.Replica]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class ResourceLogCategory(_serialization.Model):
@@ -1825,13 +2061,16 @@ class SharedPrivateLinkResource(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
     :ivar group_id: The group id from the provider of resource the shared private link resource is
      for.
@@ -1891,7 +2130,6 @@ class SharedPrivateLinkResource(ProxyResource):
         :paramtype request_message: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.group_id = group_id
         self.private_link_resource_id = private_link_resource_id
         self.provisioning_state = None
@@ -2223,52 +2461,6 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
-    :vartype type: str
-    :ivar location: The GEO location of the resource. e.g. West US | East US | North Central US |
-     South Central US.
-    :vartype location: str
-    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
-         | South Central US.
-        :paramtype location: str
-        :keyword tags: Tags of the service which is a list of key value pairs that describe the
-         resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.location = location
-        self.tags = tags
-
-
 class UpstreamAuthSettings(_serialization.Model):
     """Upstream auth settings. If not set, no auth is used for upstream messages.
 
@@ -2336,13 +2528,16 @@ class WebPubSubHub(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
     :ivar properties: Properties of a hub. Required.
     :vartype properties: ~azure.mgmt.webpubsub.models.WebPubSubHubProperties
@@ -2370,7 +2565,6 @@ class WebPubSubHub(ProxyResource):
         :paramtype properties: ~azure.mgmt.webpubsub.models.WebPubSubHubProperties
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.properties = properties
 
 
@@ -2512,12 +2706,19 @@ class WebPubSubNetworkACLs(_serialization.Model):
     :vartype public_network: ~azure.mgmt.webpubsub.models.NetworkACL
     :ivar private_endpoints: ACLs for requests from private endpoints.
     :vartype private_endpoints: list[~azure.mgmt.webpubsub.models.PrivateEndpointACL]
+    :ivar ip_rules: IP rules for filtering public traffic.
+    :vartype ip_rules: list[~azure.mgmt.webpubsub.models.IPRule]
     """
+
+    _validation = {
+        "ip_rules": {"max_items": 30, "min_items": 0},
+    }
 
     _attribute_map = {
         "default_action": {"key": "defaultAction", "type": "str"},
         "public_network": {"key": "publicNetwork", "type": "NetworkACL"},
         "private_endpoints": {"key": "privateEndpoints", "type": "[PrivateEndpointACL]"},
+        "ip_rules": {"key": "ipRules", "type": "[IPRule]"},
     }
 
     def __init__(
@@ -2526,6 +2727,7 @@ class WebPubSubNetworkACLs(_serialization.Model):
         default_action: Optional[Union[str, "_models.ACLAction"]] = None,
         public_network: Optional["_models.NetworkACL"] = None,
         private_endpoints: Optional[List["_models.PrivateEndpointACL"]] = None,
+        ip_rules: Optional[List["_models.IPRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2535,11 +2737,14 @@ class WebPubSubNetworkACLs(_serialization.Model):
         :paramtype public_network: ~azure.mgmt.webpubsub.models.NetworkACL
         :keyword private_endpoints: ACLs for requests from private endpoints.
         :paramtype private_endpoints: list[~azure.mgmt.webpubsub.models.PrivateEndpointACL]
+        :keyword ip_rules: IP rules for filtering public traffic.
+        :paramtype ip_rules: list[~azure.mgmt.webpubsub.models.IPRule]
         """
         super().__init__(**kwargs)
         self.default_action = default_action
         self.public_network = public_network
         self.private_endpoints = private_endpoints
+        self.ip_rules = ip_rules
 
 
 class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -2547,23 +2752,29 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The GEO location of the resource. e.g. West US | East US | North Central US |
-     South Central US.
-    :vartype location: str
-    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar sku: The billing information of the resource.
     :vartype sku: ~azure.mgmt.webpubsub.models.ResourceSku
+    :ivar kind: The kind of the service. Known values are: "WebPubSub" and "SocketIO".
+    :vartype kind: str or ~azure.mgmt.webpubsub.models.ServiceKind
     :ivar identity: A class represent managed identities used for request and response.
     :vartype identity: ~azure.mgmt.webpubsub.models.ManagedIdentity
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.webpubsub.models.ProvisioningState
@@ -2611,6 +2822,16 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
      Enable or disable aad auth
      When set as true, connection with AuthType=aad won't work.
     :vartype disable_aad_auth: bool
+    :ivar region_endpoint_enabled: Enable or disable the regional endpoint. Default to "Enabled".
+     When it's Disabled, new connections will not be routed to this endpoint, however existing
+     connections will not be affected.
+     This property is replica specific. Disable the regional endpoint without replica is not
+     allowed.
+    :vartype region_endpoint_enabled: str
+    :ivar resource_stopped: Stop or start the resource.  Default to "false".
+     When it's true, the data plane of the resource is shutdown.
+     When it's false, the data plane of the resource is started.
+    :vartype resource_stopped: str
     """
 
     _validation = {
@@ -2618,6 +2839,7 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "provisioning_state": {"readonly": True},
         "external_ip": {"readonly": True},
         "host_name": {"readonly": True},
@@ -2633,11 +2855,12 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "sku": {"key": "sku", "type": "ResourceSku"},
-        "identity": {"key": "identity", "type": "ManagedIdentity"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
+        "kind": {"key": "kind", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "external_ip": {"key": "properties.externalIP", "type": "str"},
         "host_name": {"key": "properties.hostName", "type": "str"},
@@ -2663,14 +2886,17 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
         "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
         "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
         "disable_aad_auth": {"key": "properties.disableAadAuth", "type": "bool"},
+        "region_endpoint_enabled": {"key": "properties.regionEndpointEnabled", "type": "str"},
+        "resource_stopped": {"key": "properties.resourceStopped", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        location: Optional[str] = None,
+        location: str,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.ResourceSku"] = None,
+        kind: Optional[Union[str, "_models.ServiceKind"]] = None,
         identity: Optional["_models.ManagedIdentity"] = None,
         tls: Optional["_models.WebPubSubTlsSettings"] = None,
         live_trace_configuration: Optional["_models.LiveTraceConfiguration"] = None,
@@ -2679,17 +2905,19 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
         public_network_access: str = "Enabled",
         disable_local_auth: bool = False,
         disable_aad_auth: bool = False,
+        region_endpoint_enabled: str = "Enabled",
+        resource_stopped: str = "false",
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
-         | South Central US.
-        :paramtype location: str
-        :keyword tags: Tags of the service which is a list of key value pairs that describe the
-         resource.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: The billing information of the resource.
         :paramtype sku: ~azure.mgmt.webpubsub.models.ResourceSku
+        :keyword kind: The kind of the service. Known values are: "WebPubSub" and "SocketIO".
+        :paramtype kind: str or ~azure.mgmt.webpubsub.models.ServiceKind
         :keyword identity: A class represent managed identities used for request and response.
         :paramtype identity: ~azure.mgmt.webpubsub.models.ManagedIdentity
         :keyword tls: TLS settings for the resource.
@@ -2715,11 +2943,22 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
          Enable or disable aad auth
          When set as true, connection with AuthType=aad won't work.
         :paramtype disable_aad_auth: bool
+        :keyword region_endpoint_enabled: Enable or disable the regional endpoint. Default to
+         "Enabled".
+         When it's Disabled, new connections will not be routed to this endpoint, however existing
+         connections will not be affected.
+         This property is replica specific. Disable the regional endpoint without replica is not
+         allowed.
+        :paramtype region_endpoint_enabled: str
+        :keyword resource_stopped: Stop or start the resource.  Default to "false".
+         When it's true, the data plane of the resource is shutdown.
+         When it's false, the data plane of the resource is started.
+        :paramtype resource_stopped: str
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
+        self.kind = kind
         self.identity = identity
-        self.system_data = None
         self.provisioning_state = None
         self.external_ip = None
         self.host_name = None
@@ -2736,6 +2975,8 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
         self.public_network_access = public_network_access
         self.disable_local_auth = disable_local_auth
         self.disable_aad_auth = disable_aad_auth
+        self.region_endpoint_enabled = region_endpoint_enabled
+        self.resource_stopped = resource_stopped
 
 
 class WebPubSubResourceList(_serialization.Model):
@@ -2776,7 +3017,8 @@ class WebPubSubResourceList(_serialization.Model):
 class WebPubSubTlsSettings(_serialization.Model):
     """TLS settings for the resource.
 
-    :ivar client_cert_enabled: Request client certificate during TLS handshake if enabled.
+    :ivar client_cert_enabled: Request client certificate during TLS handshake if enabled. Not
+     supported for free tier. Any input will be ignored for free tier.
     :vartype client_cert_enabled: bool
     """
 
@@ -2784,9 +3026,10 @@ class WebPubSubTlsSettings(_serialization.Model):
         "client_cert_enabled": {"key": "clientCertEnabled", "type": "bool"},
     }
 
-    def __init__(self, *, client_cert_enabled: bool = True, **kwargs: Any) -> None:
+    def __init__(self, *, client_cert_enabled: bool = False, **kwargs: Any) -> None:
         """
-        :keyword client_cert_enabled: Request client certificate during TLS handshake if enabled.
+        :keyword client_cert_enabled: Request client certificate during TLS handshake if enabled. Not
+         supported for free tier. Any input will be ignored for free tier.
         :paramtype client_cert_enabled: bool
         """
         super().__init__(**kwargs)

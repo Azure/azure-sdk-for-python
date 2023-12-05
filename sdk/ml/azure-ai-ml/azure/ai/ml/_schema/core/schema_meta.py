@@ -25,6 +25,7 @@ class PatchedBaseSchema(Schema):
         ordered = True
 
     @post_dump
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def remove_none(self, data, **kwargs):
         """Prevents from dumping attributes that are None, thus making the dump more compact."""
         return OrderedDict((key, value) for key, value in data.items() if value is not None)

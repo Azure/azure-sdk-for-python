@@ -1,5 +1,38 @@
 # Release History
 
+## 4.0.0 (2023-07-21)
+
+### Features Added
+
+  - Added operation RoleAssignmentScheduleRequestsOperations.validate
+  - Added operation RoleEligibilityScheduleRequestsOperations.validate
+  - Model AlertConfiguration has a new parameter alert_definition
+  - Model AlertConfigurationProperties has a new parameter alert_definition
+  - Model AlertOperationResult has a new parameter created_date_time
+  - Model AlertOperationResult has a new parameter last_action_date_time
+  - Model AlertOperationResult has a new parameter resource_location
+  - Model AlertOperationResult has a new parameter status_detail
+  - Model AzureRolesAssignedOutsidePimAlertConfigurationProperties has a new parameter alert_definition
+  - Model DenyAssignment has a new parameter condition
+  - Model DenyAssignment has a new parameter condition_version
+  - Model DenyAssignment has a new parameter created_by
+  - Model DenyAssignment has a new parameter created_on
+  - Model DenyAssignment has a new parameter updated_by
+  - Model DenyAssignment has a new parameter updated_on
+  - Model DuplicateRoleCreatedAlertConfigurationProperties has a new parameter alert_definition
+  - Model Permission has a new parameter condition
+  - Model Permission has a new parameter condition_version
+  - Model RoleDefinition has a new parameter created_by
+  - Model RoleDefinition has a new parameter created_on
+  - Model RoleDefinition has a new parameter updated_by
+  - Model RoleDefinition has a new parameter updated_on
+  - Model TooManyOwnersAssignedToResourceAlertConfigurationProperties has a new parameter alert_definition
+  - Model TooManyPermanentOwnersAssignedToResourceAlertConfigurationProperties has a new parameter alert_definition
+
+### Breaking Changes
+
+  - Removed operation AlertOperationOperations.list_for_scope
+
 ## 3.1.0b1 (2023-02-15)
 
 ### Features Added

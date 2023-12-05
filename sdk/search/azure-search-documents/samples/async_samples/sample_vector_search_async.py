@@ -26,25 +26,27 @@ import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.models import VectorizedQuery
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 
 def get_embeddings(text: str):
     # There are a few ways to get embeddings. This is just one example.
     import openai
+
     open_ai_endpoint = os.getenv("OpenAIEndpoint")
     open_ai_key = os.getenv("OpenAIKey")
 
-    openai.api_version = "2022-12-01"
-    openai.api_base = open_ai_endpoint
-    openai.api_type = "azure"
-    openai.api_key = open_ai_key
-    model_id = "text-embedding-ada-002"
-    embedding = openai.Embedding.create(input=text, deployment_id=model_id)["data"][0]["embedding"]
-    return embedding
+    client = openai.AzureOpenAI(
+        azure_endpoint=open_ai_endpoint,
+        api_key=open_ai_key,
+        api_version="2023-09-01-preview",
+    )
+    embedding = client.embeddings.create(input=[text], model="text-embedding-ada-002")
+    return embedding.data[0].embedding
 
 
 def get_hotel_index(name: str):
@@ -55,7 +57,8 @@ def get_hotel_index(name: str):
         SimpleField,
         SearchableField,
         VectorSearch,
-        VectorSearchAlgorithmConfiguration,
+        VectorSearchProfile,
+        HnswAlgorithmConfiguration,
     )
 
     fields = [
@@ -67,14 +70,15 @@ def get_hotel_index(name: str):
             type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
             searchable=True,
             vector_search_dimensions=1536,
-            vector_search_configuration="my-vector-config",
+            vector_search_profile_name="my-vector-config",
         ),
         SearchableField(
             name="category", type=SearchFieldDataType.String, sortable=True, filterable=True, facetable=True
         ),
     ]
     vector_search = VectorSearch(
-        algorithm_configurations=[VectorSearchAlgorithmConfiguration(name="my-vector-config", kind="hnsw")]
+        profiles=[VectorSearchProfile(name="my-vector-config", algorithm_configuration_name="my-algorithms-config")],
+        algorithms=[HnswAlgorithmConfiguration(name="my-vector-config")],
     )
     return SearchIndex(name=name, fields=fields, vector_search=vector_search)
 
@@ -129,13 +133,12 @@ async def single_vector_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+    vector_query = VectorizedQuery(vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
             search_text="",
-            vector=get_embeddings(query),
-            top_k=3,
-            vector_fields="descriptionVector",
+            vector_queries=[vector_query],
             select=["hotelId", "hotelName"],
         )
 
@@ -149,13 +152,11 @@ async def single_vector_search_with_filter():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+    vector_query = VectorizedQuery(vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
-            search_text="",
-            vector=get_embeddings(query),
-            top_k=3,
-            vector_fields="descriptionVector",
+            vector_queries=[vector_query],
             filter="category eq 'Luxury'",
             select=["hotelId", "hotelName"],
         )
@@ -170,13 +171,12 @@ async def simple_hybrid_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+    vector_query = VectorizedQuery(vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
             search_text=query,
-            vector=get_embeddings(query),
-            top_k=3,
-            vector_fields="descriptionVector",
+            vector_queries=[vector_query],
             select=["hotelId", "hotelName"],
         )
         print(await results.get_answers())
@@ -185,17 +185,19 @@ async def simple_hybrid_search():
     # [END simple_hybrid_search]
 
 
-if __name__ == "__main__":
+async def main():
     credential = AzureKeyCredential(key)
     index_client = SearchIndexClient(service_endpoint, credential)
     index = get_hotel_index(index_name)
     index_client.create_index(index)
     client = SearchClient(service_endpoint, index_name, credential)
     hotel_docs = get_hotel_documents()
-    client.upload_documents(documents=hotel_docs)
-    
-    single_vector_search()
-    single_vector_search_with_filter()
-    asyncio.run(single_vector_search())
-    asyncio.run(single_vector_search_with_filter())
-    asyncio.run(simple_hybrid_search())
+    await client.upload_documents(documents=hotel_docs)
+
+    await single_vector_search()
+    await single_vector_search_with_filter()
+    await simple_hybrid_search()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

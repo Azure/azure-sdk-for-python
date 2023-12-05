@@ -3,7 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.search.documents.indexes.models import SearchIndex, RegexFlags, PatternAnalyzer, PatternTokenizer
+from azure.search.documents.indexes.models import (
+    SearchIndex,
+    RegexFlags,
+    PatternAnalyzer,
+    PatternTokenizer,
+)
 from azure.search.documents.indexes._generated.models import (
     PatternAnalyzer as _PatternAnalyzer,
     PatternTokenizer as _PatternTokenizer,

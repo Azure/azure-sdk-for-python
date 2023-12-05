@@ -31,13 +31,13 @@ def main():
 
     response = client.script_cmdlets.list(
         resource_group_name="group1",
-        private_cloud_name="{privateCloudName}",
-        script_package_name="{scriptPackageName}",
+        private_cloud_name="cloud1",
+        script_package_name="package@1.0.2",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2022-05-01/examples/ScriptCmdlets_List.json
+# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-03-01/examples/ScriptCmdlets_List.json
 if __name__ == "__main__":
     main()

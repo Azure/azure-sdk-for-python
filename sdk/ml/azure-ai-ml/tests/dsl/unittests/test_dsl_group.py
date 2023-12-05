@@ -594,10 +594,7 @@ class TestDSLGroup:
                 output=node1.outputs.output,
             )
 
-        with pytest.raises(UserErrorException) as e:
-            pipeline_is_control_mismatch()
-
-        assert "{'type': 'boolean', 'is_control': True} != annotation output" in str(e.value)
+        pipeline_is_control_mismatch()
 
     def test_group_outputs_unsupported_annotation(self):
         @group

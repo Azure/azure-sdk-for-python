@@ -48,7 +48,7 @@ class AadClient(AadClientBase):
         return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_by_jwt_assertion(self, scopes: Iterable[str], assertion: str, **kwargs) -> AccessToken:
-        request = self._get_jwt_assertion_request(scopes, assertion)
+        request = self._get_jwt_assertion_request(scopes, assertion, **kwargs)
         return await self._run_pipeline(request, stream=False, **kwargs)
 
     async def obtain_token_by_refresh_token(self, scopes: Iterable[str], refresh_token: str, **kwargs) -> AccessToken:
@@ -79,6 +79,7 @@ class AadClient(AadClientBase):
         # tenant_id is already part of `request` at this point
         kwargs.pop("tenant_id", None)
         kwargs.pop("claims", None)
+        enable_cae = kwargs.pop("enable_cae", False)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
-        return self._process_response(response, now)
+        return self._process_response(response, now, enable_cae=enable_cae, **kwargs)

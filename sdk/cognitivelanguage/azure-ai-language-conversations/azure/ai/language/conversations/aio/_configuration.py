@@ -18,7 +18,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ConversationAnalysisClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class ConversationAnalysisClientConfiguration(  # pylint: disable=too-many-instance-attributes,name-too-long
+    Configuration
+):
     """Configuration for ConversationAnalysisClient.
 
     Note that all parameters used to create this instance are saved as instance

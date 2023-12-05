@@ -7,4 +7,4 @@ extends:
     Prefix: python
     CIConventionOptions: ''
     UPConventionOptions: '--variablegroups 58 76 56 93'
-    TestsConventionOptions: '--variablegroups 64'
+    TestsConventionOptions: '--variablegroups 58 64'

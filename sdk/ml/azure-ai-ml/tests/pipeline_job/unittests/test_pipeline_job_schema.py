@@ -31,8 +31,9 @@ from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
-    validate_pipeline_input_key_contains_allowed_characters,
+    validate_pipeline_input_key_characters,
 )
+from azure.ai.ml.entities._credentials import UserIdentityConfiguration
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 from azure.ai.ml.entities._job.job_service import (
     JobService,
@@ -55,10 +56,10 @@ class TestPipelineJobSchema:
     def test_validate_pipeline_job_keys(self):
         def validator(key, assert_valid=True):
             if assert_valid:
-                validate_pipeline_input_key_contains_allowed_characters(key)
+                validate_pipeline_input_key_characters(key)
                 return
             with pytest.raises(Exception):
-                validate_pipeline_input_key_contains_allowed_characters(key)
+                validate_pipeline_input_key_characters(key)
 
         validator("a.vsd2..", assert_valid=False)
         validator("a..b", assert_valid=False)
@@ -649,6 +650,11 @@ class TestPipelineJobSchema:
         component_dict = load_yaml("./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml")
         self.assert_inline_component(hello_world_component, component_dict)
 
+    def test_pipeline_job_inline_component_file_parallel_with_user_identity(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_file_parallel.yml"
+        job = load_job(test_path)
+        assert isinstance(job.jobs["hello_world_inline_paralleljob"].identity, UserIdentityConfiguration)
+
     @classmethod
     def assert_settings_field(
         cls,
@@ -776,7 +782,7 @@ class TestPipelineJobSchema:
     @pytest.mark.parametrize(
         "test_path,expected_inputs",
         [
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_sweep_job_with_input_bindings.yml",
                 {
                     "hello_world": {
@@ -793,8 +799,9 @@ class TestPipelineJobSchema:
                         "test2": {"job_input_type": "literal", "value": "${{parent.inputs.job_data_path}}"},
                     },
                 },
+                id="pipeline_job_with_sweep_job_with_input_bindings",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_command_job_with_input_bindings.yml",
                 {
                     "hello_world": {
@@ -819,19 +826,21 @@ class TestPipelineJobSchema:
                         },
                     },
                 },
+                id="pipeline_job_with_command_job_with_input_bindings",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_parallel_job_with_input_bindings.yml",
                 {
                     "hello_world": {
-                        "test1": {
+                        "job_data_path": {
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.job_data_path}}",
                         }
                     },
                 },
+                id="pipeline_job_with_parallel_job_with_input_bindings",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_spark_job_with_input_bindings.yml",
                 {
                     "hello_world": {
@@ -845,6 +854,7 @@ class TestPipelineJobSchema:
                         },
                     }
                 },
+                id="pipeline_job_with_spark_job_with_input_bindings",
             ),
         ],
     )
@@ -869,14 +879,12 @@ class TestPipelineJobSchema:
             assert "Failed to find top level definition for input binding" in str(e.value)
 
         # Check that all inputs are present and are of type Input or are literals
-        for index, input_name in enumerate(yaml_obj["inputs"].keys()):
+        for input_name, input_yaml in yaml_obj["inputs"].items():
             job_obj_input = job.inputs.get(input_name, None)
-            assert job_obj_input is not None
+            assert job_obj_input is not None, f"Input {input_name} not found in loaded job"
             assert isinstance(job_obj_input, PipelineInput)
             job_obj_input = job_obj_input._to_job_input()
-            if index == 0:
-                assert isinstance(job_obj_input, Input)
-            elif index == 1:
+            if isinstance(input_yaml, dict):
                 assert isinstance(job_obj_input, Input)
             else:
                 assert isinstance(job_obj_input, int)

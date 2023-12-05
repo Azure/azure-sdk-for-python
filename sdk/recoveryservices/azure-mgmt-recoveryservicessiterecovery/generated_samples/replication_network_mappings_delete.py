@@ -31,14 +31,13 @@ def main():
         resource_name="srce2avaultbvtaC27",
     )
 
-    response = client.replication_network_mappings.begin_delete(
+    client.replication_network_mappings.begin_delete(
         fabric_name="b0cef6e9a4437b81803d0b55ada4f700ab66caae59c35d62723a1589c0cd13ac",
         network_name="e2267b5c-2650-49bd-ab3f-d66aae694c06",
         network_mapping_name="corpe2amap",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/ReplicationNetworkMappings_Delete.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/ReplicationNetworkMappings_Delete.json
 if __name__ == "__main__":
     main()

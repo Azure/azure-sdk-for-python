@@ -96,7 +96,6 @@ Properties = namedtuple(
     defaults=(None,) * 13 # type: ignore
     )
 Properties._code = 0x00000073 # type: ignore # pylint:disable=protected-access
-Properties.__new__.__defaults__ = (None,) * len(Properties._fields) # type: ignore
 Properties._definition = ( # type: ignore # pylint:disable=protected-access
     FIELD("message_id", FieldDefinition.message_id, False, None, False),
     FIELD("user_id", AMQPTypes.binary, False, None, False),

@@ -84,7 +84,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
 
     async def _set_state(self, new_state):
         # type: (SessionState) -> None
-        """Update the session state."""
+        """Update the session state.
+        :param ~pyamqp.constants.SessionState new_state: The new state to transition to.
+        """
         if new_state is None:
             return
         previous_state = self.state
@@ -138,7 +140,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.next_incoming_id = frame[1]  # next_outgoing_id
         self.remote_incoming_window = frame[2]  # incoming_window
         self.remote_outgoing_window = frame[3]  # outgoing_window
-        self.remote_properties = frame[7]  # properties
+        self.remote_properties = frame[7] # incoming map of properties about the session
         if self.state == SessionState.BEGIN_SENT:
             self.remote_channel = frame[0]  # remote_channel
             await self._set_state(SessionState.MAPPED)

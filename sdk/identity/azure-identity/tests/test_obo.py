@@ -100,7 +100,10 @@ def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.headers["User-Agent"].startswith(USER_AGENT)
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
@@ -193,7 +196,10 @@ def test_no_scopes():
 def test_policies_configurable():
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(), on_exception=lambda _: False)
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         if "/oauth2/v2.0/token" not in parsed.path:

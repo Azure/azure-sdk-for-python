@@ -13,16 +13,16 @@ from devtools_testutils import (
     recorded_by_proxy,
 )
 
-API_VERSION = "2021-02-01"
+TEST_API_VERSION = "2021-02-01"
 
 def raw_requst_check(request):
-    assert request.http_request.query["api-version"] == API_VERSION
+    assert request.http_request.query["api-version"] == TEST_API_VERSION
 
 class TestMgmtNetworkApiVersion(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
             NetworkManagementClient,
-            api_version=API_VERSION,
+            api_version=TEST_API_VERSION,
         )
 
     @RandomNameResourceGroupPreparer(location="eastus")

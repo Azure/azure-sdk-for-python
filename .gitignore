@@ -54,6 +54,12 @@ _azci_*.log
 .tmp_whl_dir
 .logs
 .proxy
+conda/output/
+conda/assembly/
+conda/assembled/
+conda/downloaded/
+conda/conda-env/
+scenario_*.txt
 
 # tox environment folders
 .tox/

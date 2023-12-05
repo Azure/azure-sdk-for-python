@@ -26,15 +26,15 @@
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import (
-    Any,
-    Optional,
-    AsyncIterator as AsyncIteratorType,
-    TYPE_CHECKING,
-    overload,
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, Type, Mapping
+from types import TracebackType
+from urllib3.exceptions import (
+    ProtocolError,
+    NewConnectionError,
+    ConnectTimeoutError,
 )
+
 import trio
-import urllib3
 
 import requests
 
@@ -110,7 +110,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                     self.iter_content_func,
                 )
             except AttributeError:  # trio < 0.12.1
-                chunk = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
+                chunk = await trio.run_sync_in_worker_thread(  # type: ignore # pylint: disable=no-member
                     _iterate_response_content,
                     self.iter_content_func,
                 )
@@ -168,15 +168,20 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
     async def __aenter__(self):
         return super(TrioRequestsTransport, self).__enter__()
 
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
-        return super(TrioRequestsTransport, self).__exit__()
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        return super(TrioRequestsTransport, self).__exit__(exc_type, exc_value, traceback)
 
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await trio.sleep(duration)
 
     @overload  # type: ignore
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: HttpRequest, **kwargs: Any
+        self, request: HttpRequest, *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
@@ -185,14 +190,12 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     @overload
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: "RestHttpRequest", **kwargs: Any
+        self, request: "RestHttpRequest", *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send an `azure.core.rest` request using this HTTP sender.
 
@@ -201,12 +204,12 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.rest.AsyncHttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    async def send(self, request, **kwargs: Any):  # pylint:disable=invalid-overridden-method
+    async def send(
+        self, request, *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+    ):  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -214,8 +217,6 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
@@ -237,12 +238,13 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
                         timeout=kwargs.pop("connection_timeout", self.connection_config.timeout),
                         cert=kwargs.pop("connection_cert", self.connection_config.cert),
                         allow_redirects=False,
+                        proxies=proxies,
                         **kwargs
                     ),
                     limiter=trio_limiter,
                 )
             except AttributeError:  # trio < 0.12.1
-                response = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
+                response = await trio.run_sync_in_worker_thread(  # type: ignore # pylint: disable=no-member
                     functools.partial(
                         self.session.request,
                         request.method,
@@ -254,18 +256,22 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
                         timeout=kwargs.pop("connection_timeout", self.connection_config.timeout),
                         cert=kwargs.pop("connection_cert", self.connection_config.cert),
                         allow_redirects=False,
+                        proxies=proxies,
                         **kwargs
                     ),
                     limiter=trio_limiter,
                 )
             response.raw.enforce_content_length = True
 
-        except urllib3.exceptions.NewConnectionError as err:
+        except (
+            NewConnectionError,
+            ConnectTimeoutError,
+        ) as err:
             error = ServiceRequestError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
-            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+            if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)

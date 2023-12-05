@@ -7,4 +7,5 @@
 # --------------------------------------------------------------------------
 
 from ._container_registry_management_client import ContainerRegistryManagementClient
-__all__ = ['ContainerRegistryManagementClient']
+
+__all__ = ["ContainerRegistryManagementClient"]

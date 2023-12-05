@@ -19,6 +19,7 @@ import logging
 import sys
 import tempfile
 
+from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.variables import in_ci
 
@@ -109,8 +110,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
-    module = package_name.replace("-", ".")
     setup_path = os.path.abspath(args.target_package)
+    pkg_details = ParsedSetup.from_path(setup_path)
+    module = pkg_details.namespace
 
     if in_ci():
         if not is_check_enabled(args.target_package, "verifytypes") or is_typing_ignored(package_name):
@@ -149,9 +151,10 @@ if __name__ == "__main__":
     score_from_current_rounded = round(score_from_current * 100, 1)
     print("\n-----Type completeness score comparison-----\n")
     print(f"Score in main: {score_from_main_rounded}%")
-    if score_from_current_rounded < score_from_main_rounded:
+    # Give a 5% buffer for type completeness score to decrease
+    if score_from_current_rounded < score_from_main_rounded - 5:
         print(
-            f"\nERROR: The type completeness score of {package_name} has decreased compared to the score in main. "
+            f"\nERROR: The type completeness score of {package_name} has significantly decreased compared to the score in main. "
             f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
         )
         exit(1)

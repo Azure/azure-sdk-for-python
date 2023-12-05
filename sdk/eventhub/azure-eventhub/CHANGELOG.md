@@ -1,6 +1,6 @@
 # Release History
 
-## 5.11.4 (Unreleased)
+## 5.11.6 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,22 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 5.11.5 (2023-11-13)
+
+### Bugs Fixed
+
+- Fixed a pyAMQP error where events split across multiple TransferFrames were depleting the link credit by more than 1 credit per message. ([#32767](https://github.com/Azure/azure-sdk-for-python/pull/32767))
+
+## 5.11.4 (2023-08-08)
+
+### Features Added
+
+- A new float keyword argument `socket_timeout` has been added to the sync and async `EventHubConsumerClient` and `EventHubProducerClient`.
+
+### Bugs Fixed
+
+- Fixed bug [#31258](https://github.com/Azure/azure-sdk-for-python/issues/31258) where async `BlobCheckpointStore` was reprocessing old events after an error.
 
 ## 5.11.3 (2023-07-12)
 

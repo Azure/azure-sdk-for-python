@@ -3,6 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-VERSION = "11.4.0b7"  # type: str
+VERSION = "11.5.0b1"  # type: str
 
 SDK_MONIKER = "search-documents/{}".format(VERSION)  # type: str

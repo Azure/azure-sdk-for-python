@@ -31,14 +31,13 @@ def main():
         resource_name="vault1",
     )
 
-    response = client.replication_storage_classification_mappings.begin_delete(
+    client.replication_storage_classification_mappings.begin_delete(
         fabric_name="2a48e3770ac08aa2be8bfbd94fcfb1cbf2dcc487b78fb9d3bd778304441b06a0",
         storage_classification_name="8891569e-aaef-4a46-a4a0-78c14f2d7b09",
         storage_classification_mapping_name="testStorageMapping",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/ReplicationStorageClassificationMappings_Delete.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/ReplicationStorageClassificationMappings_Delete.json
 if __name__ == "__main__":
     main()

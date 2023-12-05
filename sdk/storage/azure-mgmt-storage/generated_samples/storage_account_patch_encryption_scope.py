@@ -31,7 +31,7 @@ def main():
 
     response = client.encryption_scopes.patch(
         resource_group_name="resource-group-name",
-        account_name="{storage-account-name}",
+        account_name="accountname",
         encryption_scope_name="{encryption-scope-name}",
         encryption_scope={
             "properties": {
@@ -43,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/StorageAccountPatchEncryptionScope.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/StorageAccountPatchEncryptionScope.json
 if __name__ == "__main__":
     main()

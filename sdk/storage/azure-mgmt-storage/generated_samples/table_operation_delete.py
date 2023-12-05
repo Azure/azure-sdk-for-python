@@ -29,14 +29,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.table.delete(
+    client.table.delete(
         resource_group_name="res3376",
         account_name="sto328",
         table_name="table6185",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/TableOperationDelete.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/TableOperationDelete.json
 if __name__ == "__main__":
     main()

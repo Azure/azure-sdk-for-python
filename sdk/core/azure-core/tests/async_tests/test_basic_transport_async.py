@@ -68,13 +68,8 @@ class RestMockResponse(RestAsyncHttpResponse):
         # the impl takes in a lot more kwargs. It's not public and is a
         # helper implementation shared across our azure core transport responses
         self._content = body
-
-    def body(self):
-        return self._content
-
-    @property
-    def content(self):
-        return self._content
+        self._is_closed = True
+        self._is_stream_consumed = True
 
 
 MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
@@ -978,16 +973,17 @@ class MockAiohttpResponse:
         self.content = MockAiohttpContent()
 
     def read(self):
-        request_info = aiohttp.RequestInfo("http://example.org", "GET", {})
+        request_info = aiohttp.RequestInfo("http://example.org", "GET", {}, "http://example.org")
         raise aiohttp.client_exceptions.ClientResponseError(request_info, None)
 
 
 class MockAiohttpContent:
     async def read(self, block_size):
-        request_info = aiohttp.RequestInfo("http://example.org", "GET", {})
+        request_info = aiohttp.RequestInfo("http://example.org", "GET", {}, "http://example.org")
         raise aiohttp.client_exceptions.ClientResponseError(request_info, None)
 
 
+@pytest.mark.asyncio
 async def test_aiohttp_errors():
     request = HttpRequest("GET", "http://example.org")
     response = AioHttpTransportResponse(request, MockAiohttpResponse())

@@ -10,6 +10,36 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionOnExistingTargetTable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action on existing target table. If not specified, 'FailOnNonEmptyTable' action is used."""
+
+    FAIL_ON_NON_EMPTY_TABLE = "FailOnNonEmptyTable"
+    """Same existing tables on target database will be Failed."""
+    DROP_AND_RECREATE_TABLE = "DropAndRecreateTable"
+    """Same existing tables on target database will be dropped and recreated."""
+    MERGE_WITH_EXISTING_DATA = "MergeWithExistingData"
+    """Same existing tables on target database will be Merged together."""
+
+
+class ActivityOnInactiveMarkAs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status result of the activity when the state is set to Inactive. This is an optional property
+    and if not provided when the activity is inactive, the status will be Succeeded by default.
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    SKIPPED = "Skipped"
+
+
+class ActivityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Activity state. This is an optional property and if not provided, the state will be Active by
+    default.
+    """
+
+    ACTIVE = "Active"
+    INACTIVE = "Inactive"
+
+
 class AmazonRdsForOraclePartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AmazonRdsForOraclePartitionOption."""
 
@@ -152,6 +182,12 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESTORE = "Restore"
 
 
+class CredentialReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Credential reference type."""
+
+    CREDENTIAL_REFERENCE = "CredentialReference"
+
+
 class DataFlowComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Compute type of the cluster which will execute data flow job."""
 
@@ -247,8 +283,8 @@ class DynamicsSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPSERT = "Upsert"
 
 
-class Enum9(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum9."""
+class Enum13(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum13."""
 
     APPENDBLOCK = "appendblock"
 
@@ -709,7 +745,7 @@ class SalesforceSinkWriteBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SalesforceSourceReadBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The read behavior for the operation. Default is Query."""
+    """The Salesforce read behavior for the operation."""
 
     QUERY = "Query"
     QUERY_ALL = "QueryAll"
@@ -869,6 +905,14 @@ class SparkThriftTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     BINARY = "Binary"
     SASL = "SASL"
     HTTP = "HTTP "
+
+
+class SqlAlwaysEncryptedAkvAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sql always encrypted AKV authentication type. Type: string."""
+
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
 class SqlConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

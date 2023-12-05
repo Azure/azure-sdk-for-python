@@ -15,7 +15,7 @@ class TestSearchClient(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_search_client(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key)
+        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
         self._test_get_search_simple(client)
         self._test_get_search_simple_with_top(client)
         self._test_get_search_filter(client)
@@ -45,7 +45,10 @@ class TestSearchClient(AzureRecordedTestCase):
         select = ["hotelName", "category", "description"]
         results = list(
             client.search(
-                search_text="WiFi", filter="category eq 'Budget'", select=",".join(select), order_by="hotelName desc"
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=",".join(select),
+                order_by="hotelName desc",
             )
         )
         assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
@@ -64,7 +67,12 @@ class TestSearchClient(AzureRecordedTestCase):
     def _test_get_search_filter_array(self, client):
         select = ["hotelName", "category", "description"]
         results = list(
-            client.search(search_text="WiFi", filter="category eq 'Budget'", select=select, order_by="hotelName desc")
+            client.search(
+                search_text="WiFi",
+                filter="category eq 'Budget'",
+                select=select,
+                order_by="hotelName desc",
+            )
         )
         assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
         expected = {

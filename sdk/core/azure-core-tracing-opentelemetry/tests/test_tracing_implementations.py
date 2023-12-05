@@ -13,7 +13,14 @@ import requests
 
 
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-from azure.core.tracing import SpanKind
+from azure.core.tracing import SpanKind, AbstractSpan
+from azure.core import __version__ as core_version
+
+
+@pytest.mark.skipif(int(core_version.split(".")[1]) < 30, reason="Test requires an azure-core with runtime-checkable")
+def test_structural_subtyping():
+    # assert issubclass(OpenTelemetrySpan, AbstractSpan)
+    assert isinstance(OpenTelemetrySpan(), AbstractSpan)
 
 
 class TestOpentelemetryWrapper:

@@ -18,6 +18,7 @@ import logging
 import os
 import uuid
 from datetime import datetime
+from typing import Dict, Iterable, Tuple
 from uuid import uuid4
 
 from marshmallow import ValidationError
@@ -58,11 +59,11 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
     :type activity_info: str
     """
 
-    def __init__(self, logger, activity_info):
+    def __init__(self, logger: logging.Logger, activity_info: str):
         """Initialize a new instance of the class.
 
         :param logger: The activity logger.
-        :type logger: logger
+        :type logger: logging.Logger
         :param activity_info: The info to write to the logger.
         :type activity_info: str
         """
@@ -70,17 +71,23 @@ class ActivityLoggerAdapter(logging.LoggerAdapter):
         super(ActivityLoggerAdapter, self).__init__(logger, None)
 
     @property
-    def activity_info(self):
-        """Return current activity info."""
+    def activity_info(self) -> str:
+        """Return current activity info.
+
+        :return: The info to write to the logger
+        :rtype: str
+        """
         return self._activity_info
 
-    def process(self, msg, kwargs):
+    def process(self, msg: str, kwargs: Dict) -> Tuple[str, Dict]:
         """Process the log message.
 
         :param msg: The log message.
         :type msg: str
         :param kwargs: The arguments with properties.
         :type kwargs: dict
+        :return: A tuple of the processed msg and kwargs
+        :rtype: Tuple[str, Dict]
         """
         if "extra" not in kwargs:
             kwargs["extra"] = {}
@@ -105,6 +112,8 @@ def error_preprocess(activityLogger, exception):
     :type activityLogger: ActivityLoggerAdapter
     :param exception: The raised exception to be preprocessed.
     :type exception: BaseException
+    :return: The provided exception
+    :rtype: Exception
     """
 
     if isinstance(exception, HttpResponseError):
@@ -149,7 +158,7 @@ def log_activity(
     activity_name,
     activity_type=ActivityType.INTERNALCALL,
     custom_dimensions=None,
-):
+) -> Iterable[ActivityLoggerAdapter]:
     """Log an activity.
 
     An activity is a logical block of code that consumers want to monitor.
@@ -165,6 +174,8 @@ def log_activity(
     :type activity_type: str
     :param custom_dimensions: The custom properties of the activity.
     :type custom_dimensions: dict
+    :return: An activity logger
+    :rtype: Iterable[ActivityLoggerAdapter]
     """
     activity_info = {
         "activity_id": str(uuid.uuid4()),
@@ -232,6 +243,7 @@ def log_activity(
             return  # pylint: disable=lost-exception
 
 
+# pylint: disable-next=docstring-missing-rtype
 def monitor_with_activity(
     logger,
     activity_name,
@@ -267,6 +279,7 @@ def monitor_with_activity(
     return monitor
 
 
+# pylint: disable-next=docstring-missing-rtype
 def monitor_with_telemetry_mixin(
     logger,
     activity_name,

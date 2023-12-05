@@ -25,6 +25,9 @@ DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY = "data_collector.collections.model_outp
 SPARK_INSTANCE_TYPE_KEY = "compute.spark.resources.instance_type"
 SPARK_RUNTIME_VERSION = "compute.spark.resources.runtime_version"
 
+COMPUTE_AML_TYPE = "AmlToken"
+COMPUTE_MANAGED_IDENTITY_TYPE = "ManagedIdentity"
+
 DEFAULT_DATA_DRIFT_SIGNAL_NAME = "data-drift-signal"
 DEFAULT_PREDICTION_DRIFT_SIGNAL_NAME = "prediction-drift-signal"
 DEFAULT_DATA_QUALITY_SIGNAL_NAME = "data-quality-signal"
@@ -38,6 +41,7 @@ class MonitorSignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MODEL_PERFORMANCE = "model_performance"
     FEATURE_ATTRIBUTION_DRIFT = "feature_attribution_drift"
     CUSTOM = "custom"
+    GENERATION_SAFETY_QUALITY = "generation_safety_quality"
 
 
 @experimental
@@ -82,3 +86,36 @@ class MonitorDatasetContext(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEST = "test"
     VALIDATION = "validation"
     GROUND_TRUTH_DATA = "ground_truth"
+
+
+class MonitorTargetTasks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    CLASSIFICATION = "Classification"
+    REGRESSION = "Regression"
+    QUESTION_ANSWERING = "QuestionAnswering"
+
+
+class MonitorInputDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    #: An input data with a fixed window size.
+    STATIC = "Static"
+    #: An input data which trailing relatively to the monitor's current run.
+    TRAILING = "Trailing"
+    #: An input data with tabular format which doesn't require preprocessing.
+    FIXED = "Fixed"
+
+
+class FADColumnNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    PREDICTION = "prediction"
+    PREDICTION_PROBABILITY = "prediction_probability"
+    CORRELATION_ID = "correlation_id"
+
+
+class MonitorFeatureDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    NUMERICAL = "numerical"
+    CATEGORICAL = "categorical"
+
+
+class NumericalMetricThresholds(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    JENSEN_SHANNON_DISTANCE = "jensen_shannon_distance"
+    NORMALIZED_WASSERSTEIN_DISTANCE = "normalized_wasserstein_distance"
+    POPULATION_STABILITY_INDEX = "population_stability_index"
+    TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST = "two_sample_kolmogorov_smirnov_test"

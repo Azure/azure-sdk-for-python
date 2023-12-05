@@ -14,24 +14,38 @@ module_logger = logging.getLogger(__name__)
 
 
 class CodeConfiguration(DictMixin):
-    """CodeConfiguration.
+    """Code configuration for a scoring job.
 
-    :param code: Code entity, defaults to None
-    :type code: Union[Code, str, None], optional
-    :param scoring_script: defaults to None
-    :type scoring_script: str, optional
+    :param code: The code directory containing the scoring script. The code can be an Code object, an ARM resource ID
+        of an existing code asset, a local path, or "http:", "https:", or "azureml:" url pointing to a remote location.
+    :type code: Optional[Union[~azure.ai.ml.entities.Code, str]]
+    :param scoring_script: The scoring script file path relative to the code directory.
+    :type scoring_script: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START code_configuration]
+            :end-before: [END code_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Creating a CodeConfiguration for a BatchDeployment.
     """
 
     def __init__(
         self,
         code: Optional[str] = None,
         scoring_script: Optional[str] = None,
-    ):
+    ) -> None:
         self.code = code
         self._scoring_script = scoring_script
 
     @property
     def scoring_script(self) -> str:
+        """The scoring script file path relative to the code directory.
+
+        :rtype: str
+        """
         return self._scoring_script
 
     def _to_rest_code_configuration(self) -> RestCodeConfiguration:

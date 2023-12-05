@@ -10,12 +10,9 @@ import shlex
 import subprocess
 import sys
 
-from devtools_testutils.config import PROXY_URL
 from devtools_testutils.proxy_startup import (
     ascend_to_root,
-    check_proxy_availability,
     prepare_local_tool,
-    stop_test_proxy,
 )
 
 
@@ -43,7 +40,9 @@ TOOL_ENV_VAR = "PROXY_PID"
 #
 # - In addition to "push", you can also use the "restore" or "reset" verbs in the same command format.
 #
+#   * locate: prints the location of the library's locally cached recordings.
 #   * push: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
+#   * show: prints the contents of the provided `assets.json` file.
 #   * restore: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
 #   * reset: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 #
@@ -51,35 +50,11 @@ TOOL_ENV_VAR = "PROXY_PID"
 # https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md.
 
 
-def start_test_proxy() -> str:
-    """Starts the test proxy and returns when the tool is ready to receive requests, returning the tool's local name."""
-    repo_root = ascend_to_root(os.getcwd())
-    tool_name = prepare_local_tool(repo_root)
-
-    # always start the proxy with these two defaults set
-    passenv = {
-        "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(
-            repo_root, "eng", "common", "testproxy", "dotnet-devcert.pfx"
-        ),
-        "ASPNETCORE_Kestrel__Certificates__Default__Password": "password",
-    }
-    # if they are already set, override with what is in os.environ
-    passenv.update(os.environ)
-
-    proc = subprocess.Popen(
-        shlex.split(f'{tool_name} start --storage-location="{repo_root}" -- --urls "{PROXY_URL}"'),
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.STDOUT,
-        env=passenv,
-    )
-    os.environ[TOOL_ENV_VAR] = str(proc.pid)
-    check_proxy_availability()
-    return tool_name
-
-
 # Prepare command arguments
 parser = argparse.ArgumentParser(description="Script for managing recording assets with Docker.")
-parser.add_argument("verb", help='The action verb for managing recordings: "push", "restore", or "reset".')
+parser.add_argument(
+    "verb", help='The action verb for managing recordings: "locate", "push", "show", "restore", or "reset".'
+)
 parser.add_argument(
     "-p",
     "--path",
@@ -89,21 +64,18 @@ parser.add_argument(
 args = parser.parse_args()
 
 if args.verb and args.path:
-    try:
-        normalized_path = args.path.replace("\\", "/")
+    normalized_path = args.path.replace("\\", "/")
 
-        print("\nStarting the test proxy...")
-        tool_name = start_test_proxy()
+    repo_root = ascend_to_root(os.getcwd())
+    tool_name = prepare_local_tool(repo_root)
 
-        print(f"\nUpdating recordings with {args.verb.lower()} operation...")
-        subprocess.run(
-            shlex.split(
-                f"{tool_name} {args.verb.lower()} -a {normalized_path}"
-            ),
-            stdout=sys.stdout,
-            stderr=sys.stderr,
-        )
-
-    finally:
-        print("\nStopping the test proxy...")
-        stop_test_proxy()
+    config_commands = {"locate", "show"}
+    if args.verb in config_commands:
+        command = f"{tool_name} config {args.verb.lower()} -a {normalized_path}"
+    else:
+        command = f"{tool_name} {args.verb.lower()} -a {normalized_path}"
+    subprocess.run(
+        shlex.split(command),
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+    )

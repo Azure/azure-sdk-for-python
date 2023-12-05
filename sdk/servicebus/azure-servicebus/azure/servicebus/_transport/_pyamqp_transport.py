@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-
+# pylint: disable=too-many-lines
 import functools
 import time
 import datetime
@@ -190,7 +190,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def build_message(**kwargs: Any) -> "Message":
         """
         Creates a pyamqp.Message with given arguments.
-        :rtype: pyamqp.Message
+        :return: Message
+        :rtype: ~pyamqp.message.Message
         """
         return Message(**kwargs)
 
@@ -198,7 +199,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def build_batch_message(data: List) -> List[List]:
         """
         Creates a List representing a pyamqp.BatchMessage with given arguments.
-        :rtype: List[List]
+        :param list data: The data to be sent in the message.
+        :return: List representing a pyamqp.BatchMessage.
+        :rtype: list[list]
         """
         message = cast(List, [None] * 9)
         message[5] = data
@@ -210,8 +213,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> str:  # pylint: disable=unused-argument
         """
         Gets delivery tag of a Message.
-        :param message: Message to get delivery_tag from for uamqp.Message.
-        :param frame: Frame to get delivery_tag from for pyamqp.Message.
+        :param any _: Ignored.
+        :param ~pyamqp.performatives.TransferFrame frame: Frame to get delivery_tag from for pyamqp.Message.
+        :return: Delivery tag of the message.
         :rtype: str
         """
         return frame[2] if frame else None
@@ -222,8 +226,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> str:  # pylint: disable=unused-argument
         """
         Gets delivery id of a Message.
-        :param message: Message to get delivery_id from for uamqp.Message.
-        :param frame: Message to get delivery_id from for pyamqp.Message.
+        :param any _: Ignored.
+        :param ~pyamqp.performatives.TransferFrame frame: Message to get delivery_id from for pyamqp.Message.
+        :return: Delivery id of the message.
         :rtype: str
         """
         return frame[1] if frame else None
@@ -232,8 +237,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def to_outgoing_amqp_message(annotated_message: "AmqpAnnotatedMessage") -> "Message":
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
-        :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
-        :rtype: pyamqp.Message
+        :param ~azure.servicebus.amqp.AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+        :return: Outgoing amqp message.
+        :rtype: ~pyamqp.message.Message
         """
         message_header = None
         ttl_set = False
@@ -327,7 +333,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def encode_message(message: "ServiceBusMessage") -> bytes:
         """
         Encodes the outgoing pyamqp.Message of the message.
-        :param ServiceBusMessage message: Message.
+        :param ~azure.servicebus.ServiceBusMessage message: Message.
+        :return: Encoded message.
         :rtype: bytes
         """
         output = bytearray()
@@ -341,10 +348,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> "Message":
         """
         Adds the given key/value to the application properties of the message.
-        :param pyamqp.Message message: Message.
+        :param ~pyamqp.message.Message message: Message.
         :param str key: Key to set in application properties.
-        :param str Value: Value to set for key in application properties.
-        :rtype: pyamqp.Message
+        :param str value: Value to set for key in application properties.
+        :return: Message with updated application properties.
+        :rtype: ~pyamqp.message.Message
         """
         if not message.application_properties:
             message = message._replace(application_properties={})
@@ -355,7 +363,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def get_batch_message_encoded_size(message: List[bytes]) -> int:
         """
         Gets the batch message encoded size given an underlying Message.
-        :param List message: Message to get encoded size of.
+        :param list[bytes] message: Message to get encoded size of.
+        :return: Batch message encoded size.
         :rtype: int
         """
         return utils.get_message_encoded_size(BatchMessage(*message))
@@ -364,7 +373,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def get_message_encoded_size(message: "Message") -> int:
         """
         Gets the message encoded size given an underlying Message.
-        :param pyamqp.Message: Message to get encoded size of.
+        :param ~pyamqp.message.Message message: Message to get encoded size of.
+        :return: Message encoded size.
         :rtype: int
         """
         return utils.get_message_encoded_size(message)
@@ -373,7 +383,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def get_remote_max_message_size(handler: "AMQPClient") -> int:
         """
         Returns max peer message size.
-        :param AMQPClient handler: Client to get remote max message size on link from.
+        :param ~pyamqp.AMQPClient handler: Client to get remote max message size on link from.
+        :return: Remote max message size.
         :rtype: int
         """
         return handler._link.remote_max_message_size  # pylint: disable=protected-access
@@ -382,7 +393,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def get_handler_link_name(handler: "AMQPClient") -> str:
         """
         Returns link name.
-        :param AMQPClient handler: Client to get name of link from.
+        :param ~pyamqp.AMQPClient handler: Client to get name of link from.
+        :return: Handler link name.
         :rtype: str
         """
         # pylint: disable=protected-access
@@ -394,8 +406,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> "_ServiceBusErrorPolicy":
         """
         Creates the error retry policy.
-        :param Configuration config: Configuration.
+        :param ~azure.servicebus.common._configuration.Configuration config: Configuration.
         :keyword bool is_session: Is session enabled.
+        :return: Retry policy.
+        :rtype: _ServiceBusErrorPolicy
         """
         # TODO: What's the retry overlap between servicebus and pyamqp?
         return _ServiceBusErrorPolicy(
@@ -417,6 +431,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param str host: The hostname used by pyamqp.
         :param JWTTokenAuth auth: The auth used by pyamqp.
         :param bool network_trace: Debug setting.
+        :return: Connection
+        :rtype: ~pyamqp.Connection
         """
         return Connection(
             endpoint=host,
@@ -429,7 +445,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def close_connection(connection: "Connection") -> None:
         """
         Closes existing connection.
-        :param Connection connection: uamqp or pyamqp Connection.
+        :param ~pyamqp.Connection Connection connection: uamqp or pyamqp Connection.
         """
         connection.close()
 
@@ -439,13 +455,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) ->"SendClient":
         """
         Creates and returns the pyamqp SendClient.
-        :keyword ~azure.servicebus._configuration.Configuration config: The configuration. Required.
+        :param ~azure.servicebus._configuration.Configuration config: The configuration. Required.
 
         :keyword str target: Required. The target.
-        :keyword JWTTokenAuth auth: Required.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
         :keyword retry_policy: Required.
         :keyword str client_name: Required.
-        :keyword properties: Required.
+        :keyword dict properties: Required.
+        :return: SendClient
+        :rtype: ~pyamqp.SendClient
         """
 
         target = kwargs.pop("target")
@@ -472,12 +490,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:    # pylint: disable=unused-argument
         """
         Handles sending of service bus messages.
-        :param ~azure.servicebus._servicebus_sender.ServiceBusSender sender: The sender with handler
+        :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
          to send messages.
-        :param Message message: Message to send.
-        :param logger: Logger.
+        :param ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch message: Message to send.
+        :param logging.Logger logger: Logger.
         :param int timeout: Timeout time.
-        :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param Exception or None last_exception: Exception to raise if message timed out. Only used by uamqp transport.
         """
         # pylint: disable=protected-access
         sender._open()
@@ -486,8 +504,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 sender._handler.send_message(BatchMessage(*message._message), timeout=timeout) # pylint:disable=protected-access
             else:   # Message
                 sender._handler.send_message(message._message, timeout=timeout) # pylint:disable=protected-access
-        except TimeoutError:
-            raise OperationTimeoutError(message="Send operation timed out")
+        except TimeoutError as exc:
+            raise OperationTimeoutError(message="Send operation timed out") from exc
         except MessageException as e:
             raise PyamqpTransport.create_servicebus_exception(logger, e)
 
@@ -497,8 +515,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:  # pylint: disable=unused-argument
         """
         Add ServiceBusMessage to the data body of the BatchMessage.
-        :param sb_message_batch: ServiceBusMessageBatch to add data to.
-        :param outgoing_sb_message: Transformed ServiceBusMessage for sending.
+        :param ~azure.servicebus.ServiceBusMessageBatch sb_message_batch: ServiceBusMessageBatch to add data to.
+        :param ~azure.servicebus.ServiceBusMessage outgoing_sb_message: Transformed ServiceBusMessage for sending.
         :rtype: None
         """
         # pylint: disable=protected-access
@@ -511,8 +529,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates and returns the Source.
 
-        :param Source source: Required.
-        :param str or None session_id: Required.
+        :param ~pyamqp.endpoints.Source source: Required.
+        :param str or None session_filter: Required.
+        :return: Source
+        :rtype: ~pyamqp.endpoints.Source
         """
         filter_map = {SESSION_FILTER: session_filter}
         source = Source(address=source, filters=filter_map) # type: ignore[call-arg]
@@ -524,7 +544,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> "ReceiveClient":
         """
         Creates and returns the receive client.
-        :param Configuration config: The configuration.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
 
         :keyword str source: Required. The source.
         :keyword str offset: Required.
@@ -541,6 +561,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword desired_capabilities: Required.
         :keyword streaming_receive: Required.
         :keyword timeout: Required.
+        :return: ReceiveClient
+        :rtype: ~pyamqp.ReceiveClient
         """
         config = receiver._config   # pylint: disable=protected-access
         source = kwargs.pop("source")
@@ -595,7 +617,13 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
     ) -> Iterator["ServiceBusReceivedMessage"]:
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
-        and per-iter argument passing that requires the former."""
+        and per-iter argument passing that requires the former.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
+        :param int or None max_wait_time: The maximum wait time in seconds for which
+        the iterator will attempt to receive.
+        :return: The iterator for the next received message.
+        :rtype: iterator[~azure.servicebus.ServiceBusReceivedMessage]
+        """
         while True:
             try:
                 # pylint: disable=protected-access
@@ -612,6 +640,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> "ServiceBusReceivedMessage":
         """
         Used to iterate through received messages.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
+        :param int or None wait_time: The maximum wait time in seconds for which the iterator will attempt to receive
+        :return: The next received message.
+        :rtype: ~azure.servicebus.ServiceBusReceivedMessage
         """
         # pylint: disable=protected-access
         try:
@@ -634,19 +666,29 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._receive_context.clear()
 
     @staticmethod
-    def enhanced_message_received(
+    def enhanced_message_received(  # pylint: disable=arguments-differ
         receiver: "ServiceBusReceiver",
         frame: "AttachFrame",
         message: "Message"
     ) -> None:
-        """
-        Receiver enhanced_message_received callback.
+        """Callback run on receipt of every message.
+
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
+        :param ~pyamqp.performatives.AttachFrame frame: The attach frame.
+        :param ~pyamqp.message.Message message: The received message.
         """
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
             receiver._handler._received_messages.put((frame, message))
         else:
+            # If receive_message or receive iterator is not being called, release message passed to callback.
             receiver._handler.settle_messages(frame[1], 'released')
 
     @staticmethod
@@ -657,6 +699,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> "ServiceBusReceivedMessage":
         """
         Build ServiceBusReceivedMessage.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
+        :param type message_type: The type of message to build.
+        :param ~pyamqp.message.Message received: The received message.
+        :return: The built ServiceBusReceivedMessage.
+        :rtype: ~azure.servicebus.ServiceBusReceivedMessage
         """
         # pylint: disable=protected-access
         message = message_type(
@@ -675,6 +722,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> float:  # pylint: disable=unused-argument
         """
         Gets the current time.
+        :param ~pyamqp.ReceiveClient handler: Client with link to get current time.
+        :return: The current time.
+        :rtype: float
         """
         return time.time()
 
@@ -699,35 +749,42 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
-        if settle_operation == MESSAGE_COMPLETE:
-            return handler.settle_messages(message._delivery_id, 'accepted')
-        if settle_operation == MESSAGE_ABANDON:
-            return handler.settle_messages(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=False
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return handler.settle_messages(
-                message._delivery_id,
-                'rejected',
-                error=AMQPError(
-                    condition=DEADLETTERNAME,
-                    description=dead_letter_error_description,
-                    info={
-                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                    }
+        try:
+            if settle_operation == MESSAGE_COMPLETE:
+                return handler.settle_messages(message._delivery_id, 'accepted')
+            if settle_operation == MESSAGE_ABANDON:
+                return handler.settle_messages(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=False
                 )
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return handler.settle_messages(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=True
-            )
+            if settle_operation == MESSAGE_DEAD_LETTER:
+                return handler.settle_messages(
+                    message._delivery_id,
+                    'rejected',
+                    error=AMQPError(
+                        condition=DEADLETTERNAME,
+                        description=dead_letter_error_description,
+                        info={
+                            RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                            RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                        }
+                    )
+                )
+            if settle_operation == MESSAGE_DEFER:
+                return handler.settle_messages(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=True
+                )
+        except AttributeError as ae:
+            raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except AMQPConnectionError as e:
+            raise RuntimeError("Connection lost during settle operation.") from e
+
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
@@ -740,12 +797,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> List["ServiceBusReceivedMessage"]:
         """
         Parses peek/deferred op messages into ServiceBusReceivedMessage.
-        :param Message message: Message to parse.
-        :param ServiceBusReceivedMessage message_type: Parse messages to return.
-        :keyword ServiceBusReceiver receiver: Required.
+        :param ~pyamqp.message.Message message: Message to parse.
+        :param ~azure.servicebus.ServiceBusReceivedMessage message_type: Parse messages to return.
+        :keyword ~azure.servicebus.ServiceBusReceiver receiver: Required.
         :keyword bool is_peeked_message: Optional. For peeked messages.
         :keyword bool is_deferred_message: Optional. For deferred messages.
-        :keyword ServiceBusReceiveMode receive_mode: Optional.
+        :keyword ~azure.servicebus.ServiceBusReceiveMode receive_mode: Optional.
+        :return: List of service bus received messages.
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
         """
         parsed = []
         for m in message.value[b"messages"]:
@@ -759,7 +818,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def get_message_value(message: "Message") -> Any:
-        """Get body of type value from message."""
+        """Get body of type value from message.
+        :param ~pyamqp.message.Message message: Message to get value from.
+        :return: Message value.
+        :rtype: any
+        """
         return message.value
 
     @staticmethod
@@ -773,12 +836,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-        :param get_token: The callback function used for getting and refreshing
+        :param callable get_token: The callback function used for getting and refreshing
          tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
-        :param Configuration config: EH config.
+        :param ~azure.servicebus.common._configuration.Configuration config: EH config.
 
         :keyword bool update_token: Whether to update token. If not updating token, then pass 300 to refresh_window.
+
+        :return: JWTTokenAuth.
+        :rtype: ~pyamqp.authentication.JWTTokenAuth
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
         update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
@@ -808,10 +874,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         :param message: The message to send in the management request.
         :paramtype message: Any
-        :param Dict[bytes, str] application_properties: App props.
+        :param dict[bytes, str] application_properties: App props.
         :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
         :param str reply_to: Reply to.
-        :rtype: pyamqp.Message
+        :rtype: ~pyamqp.message.Message
         """
         return Message( # type: ignore # TODO: fix mypy error
             value=message,
@@ -835,13 +901,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> "ServiceBusReceivedMessage":
         """
         Send mgmt request.
-        :param AMQPClient mgmt_client: Client to send request with.
-        :param Message mgmt_msg: Message.
+        :param ~pyamqp.AMQPClient mgmt_client: Client to send request with.
+        :param ~pyamqp.message.Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
         :keyword bytes operation_type: Op type.
         :keyword bytes node: Mgmt target.
         :keyword int timeout: Timeout.
-        :keyword Callable callback: Callback to process request response.
+        :keyword callable callback: Callback to process request response.
+        :return: ServiceBusReceivedMessage
+        :rtype: ~azure.servicebus.ServiceBusReceivedMessage
         """
         status, description, response = mgmt_client.mgmt_request(
             mgmt_msg,

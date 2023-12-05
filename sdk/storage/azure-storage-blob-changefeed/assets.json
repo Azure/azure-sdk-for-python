@@ -1,0 +1,6 @@
+{
+  "AssetsRepo": "Azure/azure-sdk-assets",
+  "AssetsRepoPrefixPath": "python",
+  "TagPrefix": "python/storage/azure-storage-blob-changefeed",
+  "Tag": "python/storage/azure-storage-blob-changefeed_d18aae2a48"
+}

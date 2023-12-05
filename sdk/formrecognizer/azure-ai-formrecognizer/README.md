@@ -1,13 +1,14 @@
 # Azure Form Recognizer client library for Python
 
-Azure Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
+Azure Document Intelligence ([previously known as Form Recognizer][service-rename]) is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
 - Document - Analyze key-value pairs in addition to general layout from documents.
-- Read - Read page information and detected languages from documents.
+- Read - Read page information from documents.
 - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 - Classifiers - Build custom classification models that combine layout and language features to accurately detect and identify documents you process within your application.
+- Add-on capabilities - Extract barcodes/QR codes, formulas, font/style, etc. or enable high resolution mode for large documents with optional parameters.
 
 [Source code][python-fr-src]
 | [Package (PyPI)][python-fr-pypi]
@@ -30,35 +31,35 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
-> Note: This version of the client library defaults to the `2023-02-28-preview` version of the service.
+> Note: This version of the client library defaults to the `2023-07-31` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.3.0bX - Latest beta release | 2.0, 2.1, 2022-08-31, 2023-02-28-preview (default)
-|3.2.X - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
+|3.3.X - Latest GA release | 2.0, 2.1, 2022-08-31, 2023-07-31 (default)
+|3.2.X | 2.0, 2.1, 2022-08-31 (default)
 |3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
 > Note: Starting with version `3.2.X`, a new set of clients were introduced to leverage the newest features
-> of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
+> of the Document Intelligence service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version `3.1.X` or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
 |-|-
-|2023-02-28-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2023-07-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
 #### Create a Cognitive Services or Form Recognizer resource
 
-Form Recognizer supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
+Document Intelligence supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Document Intelligence access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
 
 You can create either resource using: 
 
@@ -68,7 +69,7 @@ You can create either resource using:
 Below is an example of how you can create a Form Recognizer resource using the CLI:
 
 ```PowerShell
-# Create a new resource group to hold the form recognizer resource
+# Create a new resource group to hold the Form Recognizer resource
 # if using an existing resource group, skip this step
 az group create --name <your-resource-name> --location <location>
 ```
@@ -88,7 +89,7 @@ For more information about creating the resource or how to get the location and 
 
 ### Authenticate the client
 
-In order to interact with the Form Recognizer service, you will need to create an instance of a client.
+In order to interact with the Document Intelligence service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
 #### Get the endpoint
@@ -98,7 +99,7 @@ You can find the endpoint for your Form Recognizer resource using the
 or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
-# Get the endpoint for the form recognizer resource
+# Get the endpoint for the Form Recognizer resource
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
@@ -147,7 +148,7 @@ with the Azure SDK, please install the `azure-identity` package:
 
 ```pip install azure-identity```
 
-You will also need to [register a new AAD application and grant access][register_aad_app] to Form Recognizer by assigning the `"Cognitive Services User"` role to your service principal.
+You will also need to [register a new AAD application and grant access][register_aad_app] to Document Intelligence by assigning the `"Cognitive Services User"` role to your service principal.
 
 Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
@@ -192,7 +193,7 @@ More information about analyzing documents, including supported features, locale
 - Copying a custom model from one Form Recognizer resource to another.
 - Build and manage a custom classification model to classify the documents you process within your application.
 
-Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
+Please note that models can also be built using a graphical user interface such as [Document Intelligence Studio][fr-studio].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
@@ -209,7 +210,7 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 ## Examples
 
-The following section provides several code snippets covering some of the most common Form Recognizer tasks, including:
+The following section provides several code snippets covering some of the most common Document Intelligence tasks, including:
 
 * [Extract Layout](#extract-layout "Extract Layout")
 * [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
@@ -218,6 +219,7 @@ The following section provides several code snippets covering some of the most c
 * [Analyze Documents Using a Custom Model](#analyze-documents-using-a-custom-model "Analyze Documents Using a Custom Model")
 * [Manage Your Models](#manage-your-models "Manage Your Models")
 * [Classify Documents][classify_sample]
+* [Add-on capabilities](#add-on-capabilities "Add-on Capabilities")
 
 ### Extract Layout
 
@@ -316,7 +318,7 @@ print("----------------------------------------")
 
 ### Using the General Document Model
 
-Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
+Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Document Intelligence service.
 Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
 
 ```python
@@ -428,7 +430,7 @@ print("----------------------------------------")
 
 ### Using Prebuilt Models
 
-Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Form Recognizer service.
+Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Document Intelligence service.
 
 For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_document` method:
 
@@ -674,12 +676,24 @@ except ResourceNotFoundError:
     print("Successfully deleted model with id {}".format(custom_model.model_id))
 ```
 
+### Add-on Capabilities
+Document Intelligence supports more sophisticated analysis capabilities. These optional features can be enabled and disabled depending on the scenario of the document extraction.
+
+The following add-on capabilities are available for 2023-07-31 (GA) and later releases:
+- [barcode/QR code][addon_barcodes_sample]
+- [formula][addon_formulas_sample]
+- [font/style][addon_fonts_sample]
+- [high resolution mode][addon_highres_sample]
+- [language][addon_languages_sample]
+
+Note that some add-on capabilities will incur additional charges. See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
+
 ## Troubleshooting
 
 ### General
 
 Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
-Error codes and messages raised by the Form Recognizer service can be found in the [service documentation][fr-errors].
+Error codes and messages raised by the Document Intelligence service can be found in the [service documentation][fr-errors].
 
 ### Logging
 
@@ -707,7 +721,7 @@ See the [Sample README][sample_readme] for several code snippets illustrating co
 
 ### Additional documentation
 
-For more extensive documentation on Azure Cognitive Services Form Recognizer, see the [Form Recognizer documentation][python-fr-product-docs] on docs.microsoft.com.
+For more extensive documentation on Azure AI Document Intelligence, see the [Document Intelligence documentation][python-fr-product-docs] on docs.microsoft.com.
 
 ## Contributing
 
@@ -761,7 +775,13 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 [migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md
-[classify_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_classify_document.py
+[classify_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_classify_document.py
+[service-rename]: https://techcommunity.microsoft.com/t5/azure-ai-services-blog/azure-form-recognizer-is-now-azure-ai-document-intelligence-with/ba-p/3875765
+[addon_barcodes_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_barcodes.py
+[addon_fonts_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_fonts.py
+[addon_formulas_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_formulas.py
+[addon_highres_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_highres.py
+[addon_languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_analyze_addon_languages.py
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

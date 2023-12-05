@@ -96,6 +96,7 @@ class PremiumPageBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     P4 = 'P4'  #: P4 Tier
     P6 = 'P6'  #: P6 Tier
     P10 = 'P10'  #: P10 Tier
+    P15 = 'P15'  #: P15 Tier
     P20 = 'P20'  #: P20 Tier
     P30 = 'P30'  #: P30 Tier
     P40 = 'P40'  #: P40 Tier

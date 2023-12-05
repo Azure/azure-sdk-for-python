@@ -21,7 +21,7 @@ ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
 
 # Fake values
 TEST_ID = "00000000-0000-0000-0000-000000000000"
-TEST_RESOURCE_ID = "/subscriptions/fake-subscription/resourceGroups/fake-resource"
+TEST_RESOURCE_ID = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fake-resource"
 TEST_TABLE_NAME = "test-table"
 
 

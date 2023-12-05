@@ -20,7 +20,7 @@ from ._models import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List
+    from typing import Any, Dict
 
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
@@ -31,26 +31,19 @@ class SearchField(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword name: Required. The name of the field, which must be unique within the fields collection
-     of the index or parent field.
-    :paramtype name: str
-    :keyword type: Required. The data type of the field. Possible values include: "Edm.String",
-     "Edm.Int32", "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset",
-     "Edm.GeographyPoint", "Edm.ComplexType".
-    :paramtype type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
-    :keyword key: A value indicating whether the field uniquely identifies documents in the index.
+    :ivar name: The name of the field, which must be unique within the fields collection of the
+     index or parent field. Required.
+    :vartype name: str
+    :ivar type: The data type of the field. Required. Known values are: "Edm.String", "Edm.Int32",
+     "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset", "Edm.GeographyPoint",
+     "Edm.ComplexType", and "Edm.Single".
+    :vartype type: str or ~search_service_client.models.SearchFieldDataType
+    :ivar key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
      type Edm.String. Key fields can be used to look up documents directly and update or delete
      specific documents. Default is false for simple fields and null for complex fields.
-    :paramtype key: bool
-    :keyword hidden: A value indicating whether the field can be returned in a search result.
-     You can enable this option if you want to use a field (for example, margin) as a filter,
-     sorting, or scoring mechanism but do not want the field to be visible to the end user. This
-     property must be False for key fields, and it must be null for complex fields. This property can
-     be changed on existing fields. Enabling this property does not cause any increase in index
-     storage requirements. Default is False for simple fields and null for complex fields.
-    :paramtype hidden: bool
-    :keyword searchable: A value indicating whether the field is full-text searchable. This means it
+    :vartype key: bool
+    :ivar searchable: A value indicating whether the field is full-text searchable. This means it
      will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
      value like "sunny day", internally it will be split into the individual tokens "sunny" and
      "day". This enables full-text searches for these terms. Fields of type Edm.String or
@@ -59,15 +52,15 @@ class SearchField(_serialization.Model):
      consume extra space in your index since Azure Cognitive Search will store an additional
      tokenized version of the field value for full-text searches. If you want to save space in your
      index and you don't need a field to be included in searches, set searchable to false.
-    :paramtype searchable: bool
-    :keyword filterable: A value indicating whether to enable the field to be referenced in $filter
+    :vartype searchable: bool
+    :ivar filterable: A value indicating whether to enable the field to be referenced in $filter
      queries. filterable differs from searchable in how strings are handled. Fields of type
      Edm.String or Collection(Edm.String) that are filterable do not undergo word-breaking, so
      comparisons are for exact matches only. For example, if you set such a field f to "sunny day",
      $filter=f eq 'sunny' will find no matches, but $filter=f eq 'sunny day' will. This property
      must be null for complex fields. Default is true for simple fields and null for complex fields.
-    :paramtype filterable: bool
-    :keyword sortable: A value indicating whether to enable the field to be referenced in $orderby
+    :vartype filterable: bool
+    :ivar sortable: A value indicating whether to enable the field to be referenced in $orderby
      expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
      users will want to sort by fields in the documents. A simple field can be sortable only if it
      is single-valued (it has a single value in the scope of the parent document). Simple collection
@@ -77,66 +70,20 @@ class SearchField(_serialization.Model):
      cannot be sortable and the sortable property must be null for such fields. The default for
      sortable is true for single-valued simple fields, false for multi-valued simple fields, and
      null for complex fields.
-    :paramtype sortable: bool
-    :keyword facetable: A value indicating whether to enable the field to be referenced in facet
+    :vartype sortable: bool
+    :ivar facetable: A value indicating whether to enable the field to be referenced in facet
      queries. Typically used in a presentation of search results that includes hit count by category
      (for example, search for digital cameras and see hits by brand, by megapixels, by price, and so
      on). This property must be null for complex fields. Fields of type Edm.GeographyPoint or
      Collection(Edm.GeographyPoint) cannot be facetable. Default is true for all other simple
      fields.
-    :paramtype facetable: bool
-    :keyword analyzer_name: The name of the analyzer to use for the field. This option can be used only
+    :vartype facetable: bool
+    :ivar analyzer_name: The name of the analyzer to use for the field. This option can be used only
      with searchable fields and it can't be set together with either searchAnalyzer or
      indexAnalyzer. Once the analyzer is chosen, it cannot be changed for the field. Must be null
-     for complex fields. Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene",
-     "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-
-     Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft",
-     "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene",
-     "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft",
-     "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene",
-     "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene",
-     "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene",
-     "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft",
-     "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft",
-     "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-
-     PT.microsoft", "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft",
-     "ru.lucene", "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft",
-     "es.microsoft", "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft",
-     "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
-     "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
-     "simple", "stop", "whitespace".
-    :paramtype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :keyword search_analyzer_name: The name of the analyzer used at search time for the field. This option
-     can be used only with searchable fields. It must be set together with indexAnalyzer and it
-     cannot be set together with the analyzer option. This property cannot be set to the name of a
-     language analyzer; use the analyzer property instead if you need a language analyzer. This
-     analyzer can be updated on an existing field. Must be null for complex fields. Possible values
-     include: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
-     "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene", "zh-
-     Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft", "cs.lucene", "da.microsoft",
-     "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft", "en.lucene", "et.microsoft",
-     "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene", "gl.lucene", "de.microsoft",
-     "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft", "he.microsoft", "hi.microsoft",
-     "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft", "id.microsoft", "id.lucene",
-     "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft", "ja.lucene", "kn.microsoft",
-     "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene", "lt.microsoft", "ml.microsoft",
-     "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene", "fa.lucene", "pl.microsoft",
-     "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft", "pt-PT.lucene",
-     "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene", "sr-
-     cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
-     "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
-     "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
-     "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
-     "whitespace".
-    :paramtype search_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :keyword index_analyzer_name: The name of the analyzer used at indexing time for the field. This
-     option can be used only with searchable fields. It must be set together with searchAnalyzer and
-     it cannot be set together with the analyzer option.  This property cannot be set to the name of
-     a language analyzer; use the analyzer property instead if you need a language analyzer. Once
-     the analyzer is chosen, it cannot be changed for the field. Must be null for complex fields.
-     Possible values include: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene",
-     "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-
-     Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft",
+     for complex fields. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft",
+     "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
+     "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft",
      "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft",
      "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene",
      "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft",
@@ -145,30 +92,73 @@ class SearchField(_serialization.Model):
      "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene",
      "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene",
      "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
-     "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene", "sr-
-     cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
+     "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
+     "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
      "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
-     "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
+     "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :paramtype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :keyword normalizer_name: The name of the normalizer to use for the field. This option can be used
-     only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
-     chosen, it cannot be changed for the field. Must be null for complex fields. Possible values
-     include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
-    :paramtype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
-    :keyword synonym_map_names: A list of the names of synonym maps to associate with this field. This
+    :vartype analyzer_name: str or ~search_service_client.models.LexicalAnalyzerName
+    :ivar search_analyzer_name: The name of the analyzer used at search time for the field. This option
+     can be used only with searchable fields. It must be set together with indexAnalyzer and it
+     cannot be set together with the analyzer option. This property cannot be set to the name of a
+     language analyzer; use the analyzer property instead if you need a language analyzer. This
+     analyzer can be updated on an existing field. Must be null for complex fields. Known values
+     are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
+     "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
+     "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft", "cs.lucene",
+     "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft", "en.lucene",
+     "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene", "gl.lucene",
+     "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft", "he.microsoft",
+     "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft", "id.microsoft",
+     "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft", "ja.lucene",
+     "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene", "lt.microsoft",
+     "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene", "fa.lucene",
+     "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
+     "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
+     "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
+     "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
+     "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
+     "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
+     "whitespace".
+    :vartype search_analyzer_name: str or ~search_service_client.models.LexicalAnalyzerName
+    :ivar index_analyzer_name: The name of the analyzer used at indexing time for the field. This option
+     can be used only with searchable fields. It must be set together with searchAnalyzer and it
+     cannot be set together with the analyzer option.  This property cannot be set to the name of a
+     language analyzer; use the analyzer property instead if you need a language analyzer. Once the
+     analyzer is chosen, it cannot be changed for the field. Must be null for complex fields. Known
+     values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene",
+     "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
+     "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft",
+     "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft",
+     "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene",
+     "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft",
+     "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft",
+     "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft",
+     "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene",
+     "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene",
+     "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
+     "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
+     "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
+     "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
+     "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
+     "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
+     "whitespace".
+    :vartype index_analyzer_name: str or ~search_service_client.models.LexicalAnalyzerName
+    :ivar vector_search_dimensions: The dimensionality of the vector field.
+    :vartype vector_search_dimensions: int
+    :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
+     to use when searching the vector field.
+    :vartype vector_search_profile_name: str
+    :ivar synonym_map_names: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
      expanded at query-time using the rules in the synonym map. This attribute can be changed on
      existing fields. Must be null or an empty collection for complex fields.
-    :paramtype synonym_map_names: list[str]
-    :keyword fields: A list of sub-fields if this is a field of type Edm.ComplexType or
+    :vartype synonym_map_names: list[str]
+    :ivar fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
-    :paramtype fields: list[~azure.search.documents.models.SearchField]
-    :keyword int vector_search_dimensions: The dimensionality of the vector field.
-    :keyword str vector_search_configuration: The name of the vector search algorithm configuration
-     that specifies the algorithm and optional parameters for searching the vector field.
+    :vartype fields: list[~search_service_client.models.SearchField]
     """
 
     _validation = {
@@ -188,11 +178,13 @@ class SearchField(_serialization.Model):
         "analyzer_name": {"key": "analyzerName", "type": "str"},
         "search_analyzer_name": {"key": "searchAnalyzerName", "type": "str"},
         "index_analyzer_name": {"key": "indexAnalyzerName", "type": "str"},
-        "normalizer_name": {"key": "normalizerName", "type": "str"},
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
         "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
-        "vector_search_configuration": {"key": "vectorSearchConfiguration", "type": "str"},
+        "vector_search_profile_name": {
+            "key": "vectorSearchProfile",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -212,9 +204,9 @@ class SearchField(_serialization.Model):
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
-        self.vector_search_configuration = kwargs.get("vector_search_configuration", None)
+        self.vector_search_profile_name = kwargs.get("vector_search_profile_name", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchField:
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
         retrievable = not self.hidden if self.hidden is not None else None
         return _SearchField(
@@ -232,8 +224,8 @@ class SearchField(_serialization.Model):
             normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
-            dimensions=self.vector_search_dimensions,
-            vector_search_configuration=self.vector_search_configuration,
+            vector_search_dimensions=self.vector_search_dimensions,
+            vector_search_profile_name=self.vector_search_profile_name,
         )
 
     @classmethod
@@ -262,8 +254,8 @@ class SearchField(_serialization.Model):
             normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
-            vector_search_dimensions=search_field.dimensions,
-            vector_search_configuration=search_field.vector_search_configuration,
+            vector_search_dimensions=search_field.vector_search_dimensions,
+            vector_search_profile_name=search_field.vector_search_profile_name,
         )
 
 
@@ -488,32 +480,29 @@ class SearchIndex(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :keyword name: Required. The name of the index.
-    :paramtype name: str
-    :keyword fields: Required. The fields of the index.
-    :paramtype fields: list[~azure.search.documents.indexes.models.SearchField]
-    :keyword scoring_profiles: The scoring profiles for the index.
-    :paramtype scoring_profiles: list[~azure.search.documents.indexes.models.ScoringProfile]
-    :keyword default_scoring_profile: The name of the scoring profile to use if none is specified in
+    :ivar name: Required. The name of the index.
+    :vartype name: str
+    :ivar fields: Required. The fields of the index.
+    :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
+    :ivar scoring_profiles: The scoring profiles for the index.
+    :vartype scoring_profiles: list[~azure.search.documents.indexes.models.ScoringProfile]
+    :ivar default_scoring_profile: The name of the scoring profile to use if none is specified in
      the query. If this property is not set and no scoring profile is specified in the query, then
      default scoring (tf-idf) will be used.
-    :paramtype default_scoring_profile: str
-    :keyword cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
-    :paramtype cors_options: ~azure.search.documents.indexes.models.CorsOptions
-    :keyword suggesters: The suggesters for the index.
-    :paramtype suggesters: list[~azure.search.documents.indexes.models.SearchSuggester]
-    :keyword analyzers: The analyzers for the index.
-    :paramtype analyzers: list[~azure.search.documents.indexes.models.LexicalAnalyzer]
-    :keyword tokenizers: The tokenizers for the index.
-    :paramtype tokenizers: list[~azure.search.documents.indexes.models.LexicalTokenizer]
-    :keyword token_filters: The token filters for the index.
-    :paramtype token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
-    :keyword char_filters: The character filters for the index.
-    :paramtype char_filters: list[~azure.search.documents.indexes.models.CharFilter]
-    :keyword normalizers: The normalizers for the index.
-    :paramtype normalizers:
-     list[~azure.search.documents.indexes.models.LexicalNormalizer]
-    :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
+    :vartype default_scoring_profile: str
+    :ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
+    :vartype cors_options: ~azure.search.documents.indexes.models.CorsOptions
+    :ivar suggesters: The suggesters for the index.
+    :vartype suggesters: list[~azure.search.documents.indexes.models.SearchSuggester]
+    :ivar analyzers: The analyzers for the index.
+    :vartype analyzers: list[~azure.search.documents.indexes.models.LexicalAnalyzer]
+    :ivar tokenizers: The tokenizers for the index.
+    :vartype tokenizers: list[~azure.search.documents.indexes.models.LexicalTokenizer]
+    :ivar token_filters: The token filters for the index.
+    :vartype token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
+    :ivar char_filters: The character filters for the index.
+    :vartype char_filters: list[~azure.search.documents.indexes.models.CharFilter]
+    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
      Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
@@ -521,16 +510,18 @@ class SearchIndex(_serialization.Model):
      needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
      customer-managed keys is not available for free search services, and is only available for paid
      services created on or after January 1, 2019.
-    :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
-    :keyword similarity: The type of similarity algorithm to be used when scoring and ranking the
+    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :ivar similarity: The type of similarity algorithm to be used when scoring and ranking the
      documents matching a search query. The similarity algorithm can only be defined at index
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
-    :paramtype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
-    :keyword semantic_settings: Defines parameters for a search index that influence semantic capabilities.
-    :paramtype semantic_settings: ~azure.search.documents.indexes.models.SemanticSettings
-    :keyword e_tag: The ETag of the index.
-    :paramtype e_tag: str
+    :vartype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
+    :ivar semantic_search: Defines parameters for a search index that influence semantic capabilities.
+    :vartype semantic_search: ~azure.search.documents.indexes.models.SemanticSearch
+    :ivar vector_search: Defines parameters for a search index that influence scoring in a vector space.
+    :vartype vector_search: ~azure.search.documents.indexes.models.VectorSearch
+    :ivar e_tag: The ETag of the index.
+    :vartype e_tag: str
     """
 
     _validation = {
@@ -549,13 +540,12 @@ class SearchIndex(_serialization.Model):
         "tokenizers": {"key": "tokenizers", "type": "[LexicalTokenizer]"},
         "token_filters": {"key": "tokenFilters", "type": "[TokenFilter]"},
         "char_filters": {"key": "charFilters", "type": "[CharFilter]"},
-        "normalizers": {"key": "normalizers", "type": "[LexicalNormalizer]"},
         "encryption_key": {
             "key": "encryptionKey",
             "type": "SearchResourceEncryptionKey",
         },
         "similarity": {"key": "similarity", "type": "SimilarityAlgorithm"},
-        "semantic_settings": {"key": "semantic", "type": "SemanticSettings"},
+        "semantic_search": {"key": "semantic", "type": "SemanticSearch"},
         "vector_search": {"key": "vectorSearch", "type": "VectorSearch"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
     }
@@ -575,11 +565,11 @@ class SearchIndex(_serialization.Model):
         self.normalizers = kwargs.get("normalizers", None)
         self.encryption_key = kwargs.get("encryption_key", None)
         self.similarity = kwargs.get("similarity", None)
-        self.semantic_settings = kwargs.get("semantic_settings", None)
+        self.semantic_search = kwargs.get("semantic_search", None)
         self.vector_search = kwargs.get("vector_search", None)
         self.e_tag = kwargs.get("e_tag", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchIndex:
         if self.analyzers:
             analyzers = [pack_analyzer(x) for x in self.analyzers]  # type: ignore  # mypy: ignore
         else:
@@ -594,7 +584,7 @@ class SearchIndex(_serialization.Model):
         if self.fields:
             fields = [pack_search_field(x) for x in self.fields]
         else:
-            fields = None
+            fields = []
         return _SearchIndex(
             name=self.name,
             fields=fields,
@@ -610,15 +600,13 @@ class SearchIndex(_serialization.Model):
             # pylint:disable=protected-access
             encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
-            semantic_settings=self.semantic_settings,
+            semantic_search=self.semantic_search,
             e_tag=self.e_tag,
             vector_search=self.vector_search,
         )
 
     @classmethod
-    def _from_generated(cls, search_index):
-        if not search_index:
-            return None
+    def _from_generated(cls, search_index) -> "SearchIndex":
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
@@ -655,19 +643,18 @@ class SearchIndex(_serialization.Model):
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
-            semantic_settings=search_index.semantic_settings,
+            semantic_search=search_index.semantic_search,
             e_tag=search_index.e_tag,
             vector_search=search_index.vector_search,
         )
 
 
-def pack_search_field(search_field):
-    # type: (SearchField) -> _SearchField
-    if not search_field:
-        return None
+def pack_search_field(search_field: SearchField) -> _SearchField:
     if isinstance(search_field, dict):
         name = search_field.get("name")
+        assert name is not None  # Hint for mypy
         field_type = search_field.get("type")
+        assert field_type is not None  # Hint for mypy
         key = search_field.get("key")
         hidden = search_field.get("hidden")
         searchable = search_field.get("searchable")
@@ -681,6 +668,8 @@ def pack_search_field(search_field):
         synonym_map_names = search_field.get("synonym_map_names")
         fields = search_field.get("fields")
         fields = [pack_search_field(x) for x in fields] if fields else None
+        vector_search_dimensions = search_field.get("vector_search_dimensions")
+        vector_search_profile_name = search_field.get("vector_search_profile_name")
         return _SearchField(
             name=name,
             type=field_type,
@@ -696,5 +685,7 @@ def pack_search_field(search_field):
             normalizer=normalizer,
             synonym_maps=synonym_map_names,
             fields=fields,
+            vector_search_dimensions=vector_search_dimensions,
+            vector_search_profile_name=vector_search_profile_name,
         )
     return search_field._to_generated()  # pylint:disable=protected-access

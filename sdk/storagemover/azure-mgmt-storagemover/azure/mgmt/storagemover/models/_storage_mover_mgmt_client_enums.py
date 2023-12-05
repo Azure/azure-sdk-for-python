@@ -43,11 +43,19 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Credentials type."""
+
+    AZURE_KEY_VAULT_SMB = "AzureKeyVaultSmb"
+
+
 class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Endpoint resource type."""
 
     AZURE_STORAGE_BLOB_CONTAINER = "AzureStorageBlobContainer"
     NFS_MOUNT = "NfsMount"
+    AZURE_STORAGE_SMB_FILE_SHARE = "AzureStorageSmbFileShare"
+    SMB_MOUNT = "SmbMount"
 
 
 class JobRunScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

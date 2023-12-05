@@ -16,17 +16,21 @@ from azure.core.exceptions import HttpResponseError
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import cosmos_decorator_async
+
 # ------------------------------------------------------------------------------
+
 
 class TestTableServicePropertiesCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async
     @recorded_by_proxy_async
     async def test_too_many_cors_rules_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
+        tsc = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
         cors = []
         for i in range(0, 6):
-            cors.append(TableCorsRule(['www.xyz.com'], ['GET']))
+            cors.append(TableCorsRule(["www.xyz.com"], ["GET"]))
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -36,9 +40,12 @@ class TestTableServicePropertiesCosmosAsync(AzureRecordedTestCase, AsyncTableTes
     @recorded_by_proxy_async
     async def test_retention_too_long_async(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
-        tsc = TableServiceClient(self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key)
-        minute_metrics = TableMetrics(enabled=True, include_apis=True,
-                                 retention_policy=TableRetentionPolicy(enabled=True, days=366))
+        tsc = TableServiceClient(
+            self.account_url(tables_cosmos_account_name, "cosmos"), credential=tables_primary_cosmos_account_key
+        )
+        minute_metrics = TableMetrics(
+            enabled=True, include_apis=True, retention_policy=TableRetentionPolicy(enabled=True, days=366)
+        )
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -46,7 +53,9 @@ class TestTableServicePropertiesCosmosAsync(AzureRecordedTestCase, AsyncTableTes
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_client_with_url_ends_with_table_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    async def test_client_with_url_ends_with_table_name(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key
+    ):
         url = self.account_url(tables_cosmos_account_name, "table")
         table_name = self.get_resource_name("mytable")
         invalid_url = url + "/" + table_name
@@ -79,7 +88,6 @@ class TestTableServicePropertiesCosmosAsync(AzureRecordedTestCase, AsyncTableTes
 
 
 class TestTableUnitTest(AsyncTableTestCase):
-
     @pytest.mark.asyncio
     async def test_retention_no_days_async(self):
         # Assert

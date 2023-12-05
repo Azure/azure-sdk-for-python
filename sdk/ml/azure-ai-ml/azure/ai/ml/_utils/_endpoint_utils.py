@@ -10,7 +10,7 @@ import logging
 import time
 from concurrent.futures import Future
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
@@ -19,6 +19,7 @@ from azure.ai.ml.entities import BatchDeployment
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.model_batch_deployment import ModelBatchDeployment
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import DataVersion, UriFileJobOutput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.core.exceptions import (
@@ -26,6 +27,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ServiceRequestTimeoutError,
     map_error,
 )
 from azure.core.polling import LROPoller
@@ -122,7 +124,9 @@ def validate_response(response: HttpResponse) -> None:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
+            408: ServiceRequestTimeoutError,
             409: ResourceExistsError,
+            424: HttpResponseError,
         }
         map_error(status_code=response.status_code, response=response, error_map=error_map)
         raise HttpResponseError(response=response, message=failure_msg, error_format=ARMErrorFormat)
@@ -209,3 +213,10 @@ def validate_scoring_script(deployment):
             message=f"Failed to open scoring script {err.filename}.",
             no_personal_data_message="Failed to open scoring script.",
         ) from err
+
+
+def convert_v1_dataset_to_v2(output_data_set: DataVersion, file_name: str) -> Dict[str, Any]:
+    v2_dataset = UriFileJobOutput(
+        uri=f"azureml://datastores/{output_data_set.datastore_id}/paths/{output_data_set.path}/{file_name}"
+    ).serialize()
+    return {"output_name": v2_dataset}

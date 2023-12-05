@@ -31,7 +31,11 @@ class Scope(InternalBaseNode):
 
     @property
     def adla_account_name(self) -> str:
-        """The ADLA account name to use for the scope job."""
+        """The ADLA account name to use for the scope job.
+
+        :return: ADLA account name
+        :rtype: str
+        """
         return self._adla_account_name
 
     @adla_account_name.setter
@@ -40,7 +44,11 @@ class Scope(InternalBaseNode):
 
     @property
     def scope_param(self) -> str:
-        """nebula command used when submit the scope job."""
+        """nebula command used when submit the scope job.
+
+        :return: The nebula command
+        :rtype: str
+        """
         return self._scope_param
 
     @scope_param.setter
@@ -49,7 +57,11 @@ class Scope(InternalBaseNode):
 
     @property
     def custom_job_name_suffix(self) -> str:
-        """Optional string to append to scope job name."""
+        """Optional string to append to scope job name.
+
+        :return: The custom suffix
+        :rtype: str
+        """
         return self._custom_job_name_suffix
 
     @custom_job_name_suffix.setter
@@ -61,6 +73,9 @@ class Scope(InternalBaseNode):
         """scope job priority.
 
         If set priority in scope_param, will override this setting.
+
+        :return: The job priority
+        :rtype: int
         """
         return self._priority
 
@@ -70,7 +85,11 @@ class Scope(InternalBaseNode):
 
     @property
     def auto_token(self) -> int:
-        """A predictor for estimating the peak resource usage of scope job."""
+        """A predictor for estimating the peak resource usage of scope job.
+
+        :return: auto token
+        :rtype: int
+        """
         return self._auto_token
 
     @auto_token.setter
@@ -79,7 +98,11 @@ class Scope(InternalBaseNode):
 
     @property
     def tokens(self) -> int:
-        """Standard token allocation in integer."""
+        """Standard token allocation.
+
+        :return: The token allocation
+        :rtype: int
+        """
         return self._tokens
 
     @tokens.setter
@@ -88,7 +111,11 @@ class Scope(InternalBaseNode):
 
     @property
     def vcp(self) -> float:
-        """Standard VC percent allocation; should be a float between 0 and 1."""
+        """Standard VC percent allocation; should be a float between 0 and 1.
+
+        :return: The VC allocation
+        :rtype: float
+        """
         return self._vcp
 
     @vcp.setter

@@ -565,8 +565,8 @@ class BlobPropertiesInternal(_serialization.Model):  # pylint: disable=too-many-
     :vartype access_tier: str or ~azure.storage.blob.models.AccessTier
     :ivar access_tier_inferred:
     :vartype access_tier_inferred: bool
-    :ivar archive_status: Known values are: "rehydrate-pending-to-hot" and
-     "rehydrate-pending-to-cool".
+    :ivar archive_status: Known values are: "rehydrate-pending-to-hot",
+     "rehydrate-pending-to-cool", and "rehydrate-pending-to-cold".
     :vartype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :ivar customer_provided_key_sha256:
     :vartype customer_provided_key_sha256: str
@@ -747,8 +747,8 @@ class BlobPropertiesInternal(_serialization.Model):  # pylint: disable=too-many-
         :paramtype access_tier: str or ~azure.storage.blob.models.AccessTier
         :keyword access_tier_inferred:
         :paramtype access_tier_inferred: bool
-        :keyword archive_status: Known values are: "rehydrate-pending-to-hot" and
-         "rehydrate-pending-to-cool".
+        :keyword archive_status: Known values are: "rehydrate-pending-to-hot",
+         "rehydrate-pending-to-cool", and "rehydrate-pending-to-cold".
         :paramtype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
         :keyword customer_provided_key_sha256:
         :paramtype customer_provided_key_sha256: str

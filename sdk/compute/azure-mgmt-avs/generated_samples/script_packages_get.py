@@ -31,12 +31,12 @@ def main():
 
     response = client.script_packages.get(
         resource_group_name="group1",
-        private_cloud_name="{privateCloudName}",
-        script_package_name="{scriptPackageName}",
+        private_cloud_name="cloud1",
+        script_package_name="Microsoft.AVS.Management@3.0.48",
     )
     print(response)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2022-05-01/examples/ScriptPackages_Get.json
+# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-03-01/examples/ScriptPackages_Get.json
 if __name__ == "__main__":
     main()

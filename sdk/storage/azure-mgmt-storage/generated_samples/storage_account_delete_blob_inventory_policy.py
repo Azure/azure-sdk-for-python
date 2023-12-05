@@ -29,14 +29,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.blob_inventory_policies.delete(
+    client.blob_inventory_policies.delete(
         resource_group_name="res6977",
         account_name="sto2527",
         blob_inventory_policy_name="default",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/StorageAccountDeleteBlobInventoryPolicy.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/StorageAccountDeleteBlobInventoryPolicy.json
 if __name__ == "__main__":
     main()

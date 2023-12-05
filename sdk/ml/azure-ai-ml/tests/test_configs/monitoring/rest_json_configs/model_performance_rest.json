@@ -10,38 +10,20 @@
                         "signalType": "ModelPerformanceSignalBase",
                         "lookbackPeriod": "P60D",
                         "mode": "Enabled",
-                        "targetData": {
-                            "dataContext": "test",
-                            "asset": {
-                                "jobInputType": "mltable",
-                                "uri": "Direct:1"
-                            }
-                        },
+                        "targetData": {"dataContext": "test", "asset": {"jobInputType": "mltable", "uri": "Direct:1"}},
                         "baselineData": {
                             "dataContext": "test",
-                            "asset": {
-                                "jobInputType": "mltable",
-                                "uri": "Direct:1"
-                            }
+                            "asset": {"jobInputType": "mltable", "uri": "Direct:1"},
                         },
                         "metricThreshold": {
                             "modelType": "Regression",
                             "metric": "RootMeanSquaredError",
-                            "threshold": {
-                                "value": 0.5
-                            }
+                            "threshold": {"value": 0.5},
                         },
-                        "dataSegment": {
-                            "feature": "foo",
-                            "values": [
-                                "a",
-                                "b",
-                                "c"
-                            ]
-                        }
+                        "dataSegment": {"feature": "foo", "values": ["a", "b", "c"]},
                     }
-                }
-            }
+                },
+            },
         },
         "trigger": {
             "triggerType": "Recurrence",
@@ -49,28 +31,16 @@
             "frequency": "week",
             "interval": 1,
             "schedule": {
-                "hours": [
-                    22, 20
-                ],
-                "minutes": [
-                    0, 0
-                ],
-                "weekDays": [
-                    "monday",
-                    "tuesday",
-                    "wednesday",
-                    "thursday",
-                    "friday"
-                ]
-            }
+                "hours": [22, 20],
+                "minutes": [0, 0],
+                "weekDays": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+            },
         },
-        "properties": {
-            "prop1": "value"
-        },
+        "properties": {"prop1": "value"},
         "tags": {
             "tag1": "tag",
             "compute.spark.resources.instance_type": "standard_e8s_v3",
-            "compute.spark.resources.runtime_version": "3.2"
-        }
+            "compute.spark.resources.runtime_version": "3.2",
+        },
     }
 }

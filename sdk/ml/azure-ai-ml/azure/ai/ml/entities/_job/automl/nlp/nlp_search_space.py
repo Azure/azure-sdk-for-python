@@ -14,7 +14,45 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class NlpSearchSpace(RestTranslatableMixin):
-    """Search space for AutoML NLP tasks."""
+    """Search space for AutoML NLP tasks.
+
+    :param gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
+        pass. This must be a positive integer., defaults to None
+    :type gradient_accumulation_steps: Optional[Union[int, SweepDistribution]]
+    :param learning_rate: initial learning rate. Must be a float in (0, 1), defaults to None
+    :type learning_rate: Optional[Union[float, SweepDistribution]]
+    :param learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
+        'cosine_with_restarts', 'polynomial', 'constant', and 'constant_with_warmup', defaults to None
+    :type learning_rate_scheduler: Optional[Union[str, SweepDistribution]]
+    :param model_name: the model name to use during training. Must choose from 'bert-base-cased',
+        'bert-base-uncased', 'bert-base-multilingual-cased', 'bert-base-german-cased', 'bert-large-cased',
+        'bert-large-uncased', 'distilbert-base-cased', 'distilbert-base-uncased', 'roberta-base', 'roberta-large',
+        'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased',
+        defaults to None
+    :type model_name: Optional[Union[str, SweepDistribution]]
+    :param number_of_epochs: the number of epochs to train with. Must be a positive integer, defaults to None
+    :type number_of_epochs: Optional[Union[int, SweepDistribution]]
+    :param training_batch_size: the batch size during training. Must be a positive integer, defaults to None
+    :type training_batch_size: Optional[Union[int, SweepDistribution]]
+    :param validation_batch_size: the batch size during validation. Must be a positive integer, defaults to None
+    :type validation_batch_size: Optional[Union[int, SweepDistribution]]
+    :param warmup_ratio: ratio of total training steps used for a linear warmup from 0 to learning_rate.
+            Must be a float in [0, 1], defaults to None
+    :type warmup_ratio: Optional[Union[float, SweepDistribution]]
+    :param weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
+            the range [0, 1], defaults to None
+    :type weight_decay: Optional[Union[float, SweepDistribution]]
+
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.nlp_search_space]
+                :end-before: [END automl.nlp_search_space]
+                :language: python
+                :dedent: 8
+                :caption: creating an nlp search space
+    """
 
     def __init__(
         self,

@@ -4,15 +4,22 @@
 # ------------------------------------
 import pytest
 
-from azure.identity.aio import DefaultAzureCredential, CertificateCredential, ClientSecretCredential
+from azure.identity.aio import (
+    DefaultAzureCredential,
+    CertificateCredential,
+    ClientSecretCredential,
+    AzureCliCredential,
+    AzurePowerShellCredential,
+    AzureDeveloperCliCredential,
+)
 
 from helpers import get_token_payload_contents
 
 ARM_SCOPE = "https://management.azure.com/.default"
 
 
-async def get_token(credential):
-    token = await credential.get_token(ARM_SCOPE)
+async def get_token(credential, **kwargs):
+    token = await credential.get_token(ARM_SCOPE, **kwargs)
     assert token
     assert token.token
     assert token.expires_on
@@ -39,7 +46,7 @@ async def test_certificate_credential(certificate_fixture, request):
     credential = CertificateCredential(
         tenant_id, client_id, certificate_data=cert["cert_with_password_bytes"], password=cert["password"]
     )
-    token = await get_token(credential)
+    token = await get_token(credential, enable_cae=True)
     parsed_payload = get_token_payload_contents(token.token)
     assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
 
@@ -51,7 +58,7 @@ async def test_client_secret_credential(live_service_principal):
         live_service_principal["client_id"],
         live_service_principal["client_secret"],
     )
-    token = await get_token(credential)
+    token = await get_token(credential, enable_cae=True)
     parsed_payload = get_token_payload_contents(token.token)
     assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
 
@@ -59,4 +66,22 @@ async def test_client_secret_credential(live_service_principal):
 @pytest.mark.asyncio
 async def test_default_credential(live_service_principal):
     credential = DefaultAzureCredential()
+    await get_token(credential)
+
+
+@pytest.mark.manual
+async def test_cli_credential():
+    credential = AzureCliCredential()
+    await get_token(credential)
+
+
+@pytest.mark.manual
+async def test_dev_cli_credential():
+    credential = AzureDeveloperCliCredential()
+    await get_token(credential)
+
+
+@pytest.mark.manual
+async def test_powershell_credential():
+    credential = AzurePowerShellCredential()
     await get_token(credential)

@@ -57,3 +57,4 @@ def add_sanitizers(test_proxy):
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_body_key_sanitizer(json_path="$..primaryKey", value="primaryKey")
     add_body_key_sanitizer(json_path="$..secondaryKey", value="secondaryKey")
+    add_body_key_sanitizer(json_path="$..key", value="key")

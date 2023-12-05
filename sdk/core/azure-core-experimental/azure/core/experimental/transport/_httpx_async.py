@@ -26,12 +26,13 @@
 from typing import Any, AsyncIterator, ContextManager, Optional, Union
 
 import httpx
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.configuration import ConnectionConfiguration
+from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
-from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 
 
 class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
@@ -95,12 +96,14 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpXTransportResponse, *_, **kwargs) -> None:
+    def __init__(
+        self, pipeline: Pipeline, response: AsyncHttpXTransportResponse, *, decompress: bool = True, **kwargs
+    ) -> None:
         self.pipeline = pipeline
         self.response = response
-        decompress = kwargs.pop("decompress", True)
+        should_decompress = decompress
 
-        if decompress:
+        if should_decompress:
             self.iter_content_func = self.response.internal_response.aiter_bytes()
         else:
             self.iter_content_func = self.response.internal_response.aiter_raw()
@@ -117,23 +120,43 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
         except StopAsyncIteration:
             self.response.internal_response.close()
             raise
+        except httpx.DecodingError as ex:
+            if len(ex.args) > 1:
+                raise DecodeError(ex.args[0]) from ex
+            raise DecodeError("Failed to decode.") from ex
 
 
 class AsyncHttpXTransport(AsyncHttpTransport):
     """Implements a basic async httpx HTTP sender
 
     :keyword httpx.AsyncClient client: HTTPX client to use instead of the default one
+    :keyword bool client_owner: Decide if the client provided by user is owned by this transport. Default to True.
+    :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.client = kwargs.get("client", None)
+    def __init__(
+        self,
+        *,
+        client: Optional[httpx.AsyncClient] = None,
+        client_owner: bool = True,
+        use_env_settings: bool = True,
+        **kwargs: Any
+    ) -> None:
+        self.client = client
+        self.connection_config = ConnectionConfiguration(**kwargs)
+        self._client_owner = client_owner
+        self._use_env_settings = use_env_settings
 
     async def open(self) -> None:
         if self.client is None:
-            self.client = httpx.AsyncClient()
+            self.client = httpx.AsyncClient(
+                trust_env=self._use_env_settings,
+                verify=self.connection_config.verify,
+                cert=self.connection_config.cert,
+            )
 
     async def close(self) -> None:
-        if self.client:
+        if self._client_owner and self.client:
             await self.client.aclose()
             self.client = None
 
@@ -153,13 +176,14 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         :return: The response object.
         :rtype: ~azure.core.experimental.transport.AsyncHttpXTransportResponse
         """
+        await self.open()
         stream_response = kwargs.pop("stream", False)
         parameters = {
             "method": request.method,
             "url": request.url,
             "headers": request.headers.items(),
             "data": request.data,
-            "content": request.content,
+            "content": request.content if hasattr(request, "content") else None,
             "files": request.files,
             **kwargs,
         }
@@ -167,10 +191,10 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         stream_ctx: Optional[ContextManager] = None
 
         try:
-            if stream_response:
+            if stream_response and self.client:
                 req = self.client.build_request(**parameters)
                 response = await self.client.send(req, stream=stream_response)
-            else:
+            elif self.client:
                 response = await self.client.request(**parameters)
         except (
             httpx.ReadTimeout,

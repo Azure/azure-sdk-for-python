@@ -129,6 +129,8 @@ from ._models_py3 import JobExecution
 from ._models_py3 import JobExecutionListResult
 from ._models_py3 import JobExecutionTarget
 from ._models_py3 import JobListResult
+from ._models_py3 import JobPrivateEndpoint
+from ._models_py3 import JobPrivateEndpointListResult
 from ._models_py3 import JobSchedule
 from ._models_py3 import JobStep
 from ._models_py3 import JobStepAction
@@ -460,6 +462,7 @@ from ._sql_management_client_enums import ElasticPoolState
 from ._sql_management_client_enums import EncryptionProtectorName
 from ._sql_management_client_enums import ExternalGovernanceStatus
 from ._sql_management_client_enums import FailoverGroupReplicationRole
+from ._sql_management_client_enums import FreeLimitExhaustionBehavior
 from ._sql_management_client_enums import GeoBackupPolicyName
 from ._sql_management_client_enums import GeoBackupPolicyState
 from ._sql_management_client_enums import IdentityType
@@ -694,6 +697,8 @@ __all__ = [
     "JobExecutionListResult",
     "JobExecutionTarget",
     "JobListResult",
+    "JobPrivateEndpoint",
+    "JobPrivateEndpointListResult",
     "JobSchedule",
     "JobStep",
     "JobStepAction",
@@ -1024,6 +1029,7 @@ __all__ = [
     "EncryptionProtectorName",
     "ExternalGovernanceStatus",
     "FailoverGroupReplicationRole",
+    "FreeLimitExhaustionBehavior",
     "GeoBackupPolicyName",
     "GeoBackupPolicyState",
     "IdentityType",

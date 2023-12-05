@@ -23,7 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from typing import Optional, Type
+from types import TracebackType
 from ._requests_basic import RequestsTransport
 from ._base_async import AsyncHttpTransport
 
@@ -45,5 +46,10 @@ class RequestsAsyncTransportBase(RequestsTransport, AsyncHttpTransport):  # type
     async def __aenter__(self):
         return super(RequestsAsyncTransportBase, self).__enter__()
 
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
-        return super(RequestsAsyncTransportBase, self).__exit__()
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ):
+        return super(RequestsAsyncTransportBase, self).__exit__(exc_type, exc_value, traceback)

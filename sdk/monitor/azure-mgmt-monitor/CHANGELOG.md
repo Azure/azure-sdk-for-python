@@ -1,5 +1,11 @@
 # Release History
 
+## 6.0.2 (2023-08-22)
+
+### Bugs Fixed
+
+  - Encode `{}` even if skip_quoto is True  #31346
+
 ## 6.0.1 (2023-05-04)
 
 ### Other Changes

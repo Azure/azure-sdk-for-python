@@ -29,6 +29,7 @@ from ...operations._managed_environment_diagnostics_operations import (
     build_get_detector_request,
     build_list_detectors_request,
 )
+from .._vendor import ContainerAppsAPIClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]

@@ -1,0 +1,59 @@
+{% set name = "azure-security-attestation" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('ATTESTATION_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - cryptography
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - python
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+
+test:
+  imports:
+    - azure.security.attestation
+    - azure.security.attestation.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/attestation/azure-security-attestation"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Attestation Client Library for Python"
+  description: |
+    The Microsoft Azure Attestation (MAA) service is a unified solution for remotely verifying the 
+    trustworthiness of a platform and integrity of the binaries running inside it. The service 
+    supports attestation of the platforms backed by Trusted Platform Modules (TPMs) alongside the 
+    ability to attest to the state of Trusted Execution Environments (TEEs) such as Intel(tm) 
+    Software Guard Extensions (SGX) enclaves and Virtualization-based Security (VBS) enclaves.
+    Please see https://aka.ms/azsdk/conda/releases/attestation for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

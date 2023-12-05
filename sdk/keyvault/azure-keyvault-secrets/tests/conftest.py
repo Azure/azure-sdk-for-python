@@ -31,10 +31,10 @@ from devtools_testutils import is_live, test_proxy, add_oauth_response_sanitizer
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    azure_keyvault_url = os.getenv("azure_keyvault_url", "https://vaultname.vault.azure.net")
+    azure_keyvault_url = os.getenv("AZURE_KEYVAULT_URL", "https://vaultname.vault.azure.net")
     azure_keyvault_url = azure_keyvault_url.rstrip("/")
-    keyvault_tenant_id = os.getenv("keyvault_tenant_id", "keyvault_tenant_id")
-    keyvault_subscription_id = os.getenv("keyvault_subscription_id", "keyvault_subscription_id")
+    keyvault_tenant_id = os.getenv("KEYVAULT_TENANT_ID", "keyvault_tenant_id")
+    keyvault_subscription_id = os.getenv("KEYVAULT_SUBSCRIPTION_ID", "keyvault_subscription_id")
 
     add_general_regex_sanitizer(regex=azure_keyvault_url, value="https://vaultname.vault.azure.net")
     add_general_regex_sanitizer(regex=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")

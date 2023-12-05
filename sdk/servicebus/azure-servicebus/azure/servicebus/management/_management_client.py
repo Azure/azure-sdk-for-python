@@ -5,6 +5,7 @@
 # pylint:disable=protected-access
 # pylint:disable=specify-parameter-names-in-call
 # pylint:disable=too-many-lines
+# pylint:disable=client-method-missing-tracing-decorator
 import functools
 import datetime
 from copy import deepcopy
@@ -21,7 +22,7 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy,
     BearerTokenCredentialPolicy,
 )
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.transport import RequestsTransport # pylint:disable=no-name-in-module,non-abstract-transport-import
 
 from ._generated.models import (
     QueueDescriptionFeed,
@@ -145,7 +146,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     def __exit__(self, *exc_details):
         self._impl.__exit__(*exc_details)
 
-    def _build_pipeline(self, **kwargs):  # pylint: disable=no-self-use
+    def _build_pipeline(self, **kwargs):
         transport = kwargs.get("transport")
         policies = kwargs.get("policies")
         credential_policy = (
@@ -220,7 +221,10 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return element
 
     def _create_forward_to_header_tokens(self, entity, kwargs):
-        """forward_to requires providing a bearer token in headers for the referenced entity."""
+        """forward_to requires providing a bearer token in headers for the referenced entity.
+        :param any entity: The entity to be created.
+        :param any kwargs: The keyword arguments to be appended to the request.
+        """
         kwargs["headers"] = kwargs.get("headers", {})
 
         def _populate_header_within_kwargs(uri, header):
@@ -279,6 +283,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """Get the properties of a queue.
 
         :param str queue_name: The name of the queue.
+        :return: The properties of the queue.
         :rtype: ~azure.servicebus.management.QueueProperties
         """
         entry_ele = self._get_entity_element(queue_name, **kwargs)
@@ -296,6 +301,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """Get the runtime information of a queue.
 
         :param str queue_name: The name of the queue.
+        :return: The runtime information of the queue.
         :rtype: ~azure.servicebus.management.QueueRuntimeProperties
         """
         entry_ele = self._get_entity_element(queue_name, **kwargs)
@@ -552,6 +558,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """Get the properties of a topic.
 
         :param str topic_name: The name of the topic.
+        :return: The properties of the topic.
         :rtype: ~azure.servicebus.management.TopicProperties
         """
         entry_ele = self._get_entity_element(topic_name, **kwargs)
@@ -569,6 +576,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         """Get a the runtime information of a topic.
 
         :param str topic_name: The name of the topic.
+        :return: The runtime info of the topic.
         :rtype: ~azure.servicebus.management.TopicRuntimeProperties
         """
         entry_ele = self._get_entity_element(topic_name, **kwargs)
@@ -795,6 +803,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: name of the subscription.
+        :return: An instance of SubscriptionProperties
         :rtype: ~azure.servicebus.management.SubscriptionProperties
         """
         entry_ele = self._get_subscription_element(
@@ -819,6 +828,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
 
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: name of the subscription.
+        :return: An instance of SubscriptionRuntimeProperties
         :rtype: ~azure.servicebus.management.SubscriptionRuntimeProperties
         """
         entry_ele = self._get_subscription_element(
@@ -1076,6 +1086,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str subscription_name: The subscription that
          owns the rule.
         :param str rule_name: Name of the rule.
+        :return: The properties of the specified rule.
         :rtype: ~azure.servicebus.management.RuleProperties
         """
         entry_ele = self._get_rule_element(
@@ -1231,7 +1242,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         :param str topic_name: The topic that owns the subscription.
         :param str subscription_name: The subscription that
          owns the rules.
-        :returns: An iterable (auto-paging) response of RuleProperties.
+        :return: An iterable (auto-paging) response of RuleProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.servicebus.management.RuleProperties]
         """
         _validate_topic_and_subscription_types(topic_name, subscription_name)
@@ -1239,6 +1250,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         def entry_to_rule(ele, entry):
             """
             `ele` will be removed after https://github.com/Azure/autorest/issues/3535 is released.
+
+            :param any ele: The xml element.
+            :param any entry: The xml entry.
+            :return: The entry.
+            :rtype: ~azure.core.paging.ItemPaged
             """
             rule = entry.content.rule_description
             rule_description = RuleProperties._from_internal_entity(entry.title, rule)
@@ -1260,6 +1276,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     def get_namespace_properties(self, **kwargs: Any) -> NamespaceProperties:
         """Get the namespace properties
 
+        :return: The namespace properties.
         :rtype: ~azure.servicebus.management.NamespaceProperties
         """
         entry_el = self._impl.namespace.get(**kwargs)  # type: ignore

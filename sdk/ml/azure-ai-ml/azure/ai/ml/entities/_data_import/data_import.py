@@ -7,9 +7,9 @@
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DataImport as RestDataImport
-from azure.ai.ml._restclient.v2023_04_01_preview.models import DatabaseSource as RestDatabaseSource
-from azure.ai.ml._restclient.v2023_04_01_preview.models import FileSystemSource as RestFileSystemSource
+from azure.ai.ml._restclient.v2023_06_01_preview.models import DataImport as RestDataImport
+from azure.ai.ml._restclient.v2023_06_01_preview.models import DatabaseSource as RestDatabaseSource
+from azure.ai.ml._restclient.v2023_06_01_preview.models import FileSystemSource as RestFileSystemSource
 from azure.ai.ml._schema import DataImportSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes

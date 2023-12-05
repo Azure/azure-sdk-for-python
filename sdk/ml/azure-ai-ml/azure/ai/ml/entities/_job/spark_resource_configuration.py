@@ -14,13 +14,12 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
     """Compute resource configuration for Spark component or job.
 
-    :param instance_type: The type of VM to be used by the compute target.
-    :type instance_type: str
-    :param runtime_version: The Spark runtime version.
-    :type runtime_version: str
+    :keyword instance_type: The type of VM to be used by the compute target.
+    :paramtype instance_type: Optional[str]
+    :keyword runtime_version: The Spark runtime version.
+    :paramtype runtime_version: Optional[str]
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_resource_configuration]
@@ -56,6 +55,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         return SparkResourceConfiguration(instance_type=obj.instance_type, runtime_version=obj.runtime_version)
 
     def _validate(self):
+        # TODO: below logic is duplicated to SparkResourceConfigurationSchema, maybe make SparkJob schema validatable
         if self.instance_type is None or self.instance_type == "":
             msg = "Instance type must be specified for SparkResourceConfiguration"
             raise ValidationException(

@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/NfsV3AccountCreate.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/NfsV3AccountCreate.json
 if __name__ == "__main__":
     main()

@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import Any
+from typing import Any, Optional
 
 from azure.core.credentials import AccessToken
 from .chained import ChainedTokenCredential
@@ -17,7 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AzureApplicationCredential(ChainedTokenCredential):
-    """A credential for Azure Active Directory applications.
+    """A credential for Microsoft Entra applications.
 
     This credential is designed for applications deployed to Azure (:class:`~azure.identity.DefaultAzureCredential` is
     better suited to local development). It authenticates service principals and managed identities.
@@ -40,11 +40,11 @@ class AzureApplicationCredential(ChainedTokenCredential):
     for more information about creating and managing service principals.
 
     When this environment configuration is incomplete, the credential will attempt to authenticate a managed identity.
-    See `Azure Active Directory documentation
-    <https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for an overview of
-    managed identities.
+    See `Microsoft Entra ID documentation
+    <https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for an overview
+    of managed identities.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud, which is the default when no value is given for this keyword argument or
         environment variable AZURE_AUTHORITY_HOST. :class:`~azure.identity.AzureAuthorityHosts` defines authorities for
         other clouds. Authority configuration applies only to service principal authentication.
@@ -63,7 +63,9 @@ class AzureApplicationCredential(ChainedTokenCredential):
             ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs),
         )
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -71,16 +73,20 @@ class AzureApplicationCredential(ChainedTokenCredential):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
             `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            token = self._successful_credential.get_token(*scopes, **kwargs)
+            token = self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
             _LOGGER.info(
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )
             return token
 
-        return super(AzureApplicationCredential, self).get_token(*scopes, **kwargs)
+        return super(AzureApplicationCredential, self).get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)

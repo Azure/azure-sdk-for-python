@@ -9,15 +9,17 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
-from azure.ai.ml import MLClient, dsl, load_component, load_job
+from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
 from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import DataTransfer, Spark
+from azure.ai.ml.entities._component.flow import FlowComponent
 from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
@@ -2101,6 +2103,25 @@ class TestPipelineJobEntity:
         rest_obj = pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
 
+    def test_pipeline_with_duplicate_output(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_component.yml"
+        comp_func = load_component(source=component_path)
+
+        @pipeline(default_compute="cpu-cluster")
+        def pipeline_with_duplicate_output(dataset: Input, str_param: str):
+            component = comp_func(
+                component_in_number=str_param,
+                component_in_path=dataset,
+            )
+            return {
+                "output1": component.outputs.component_out_path,
+                "output2": component.outputs.component_out_path,
+            }
+
+        pipeline_job = pipeline_with_duplicate_output(str_param=1, dataset=Input(path=component_path))
+        assert "output1" in pipeline_job.outputs
+        assert "output2" in pipeline_job.outputs
+
     def test_get_predecessors_for_pipeline_job(self) -> None:
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
         pipeline: PipelineJob = load_job(source=test_path)
@@ -2108,3 +2129,68 @@ class TestPipelineJobEntity:
         assert get_predecessors(pipeline.jobs["hello_world_component_1"]) == []
         assert get_predecessors(pipeline.jobs["hello_world_component_2"]) == []
         assert get_predecessors(pipeline.jobs["merge_component_outputs"]) == []
+
+    def test_pipeline_job_with_flow(self) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+
+        assert isinstance(pipeline.jobs["anonymous_parallel_flow"].component, FlowComponent)
+        assert pipeline.jobs["anonymous_parallel_flow"].component.additional_includes == [
+            "../additional_includes/convert_to_dict.py",
+            "../additional_includes/fetch_text_content_from_url.py",
+            "../additional_includes/summarize_text_content.jinja2",
+        ]
+
+        assert isinstance(pipeline.jobs["anonymous_parallel_flow_from_run"].component, FlowComponent)
+
+        dummy_component_arm_id = (
+            "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.MachineLearningServices/"
+            "workspaces/xxx/components/xxx/versions/xxx"
+        )
+        # mock component resolution
+        for _, node in pipeline.jobs.items():
+            node._component = dummy_component_arm_id
+
+        pipeline_job_rest_object = pipeline._to_rest_object()
+        assert pipeline_job_rest_object.properties.jobs == {
+            "anonymous_parallel_flow": {
+                "_source": "YAML.COMPONENT",
+                "componentId": dummy_component_arm_id,
+                "inputs": {
+                    "connections.summarize_text_content.connection": {
+                        "job_input_type": "literal",
+                        "value": "azure_open_ai_connection",
+                    },
+                    "connections.summarize_text_content.deployment_name": {
+                        "job_input_type": "literal",
+                        "value": "text-davinci-003",
+                    },
+                    "data": {"job_input_type": "literal", "value": "${{parent.inputs.web_classification_input}}"},
+                    "url": {"job_input_type": "literal", "value": "${data.url}"},
+                },
+                "name": "anonymous_parallel_flow",
+                "outputs": {"flow_outputs": {"type": "literal", "value": "${{parent.outputs.output_data}}"}},
+                "type": "parallel",
+            },
+            "anonymous_parallel_flow_from_run": {
+                "_source": "YAML.COMPONENT",
+                "componentId": dummy_component_arm_id,
+                "inputs": {
+                    "data": {"job_input_type": "literal", "value": "${{parent.inputs.basic_input}}"},
+                    "text": {"job_input_type": "literal", "value": "${data.text}"},
+                },
+                "name": "anonymous_parallel_flow_from_run",
+                "type": "parallel",
+            },
+        }
+
+    def test_pipeline_job_with_data_binding_expression_on_spark_resource(self, mock_machinelearning_client):
+        test_path = "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_with_data_binding_expression.yml"
+        pipeline_job: PipelineJob = load_job(source=test_path)
+        assert mock_machinelearning_client.jobs.validate(pipeline_job).passed
+
+        pipeline_job_rest_object = pipeline_job._to_rest_object()
+        assert pipeline_job_rest_object.properties.jobs["count_by_row"]["resources"] == {
+            "instance_type": "${{parent.inputs.instance_type}}",
+            "runtime_version": "3.2.0",
+        }

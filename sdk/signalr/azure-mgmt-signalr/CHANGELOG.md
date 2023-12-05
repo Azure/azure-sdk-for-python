@@ -1,5 +1,31 @@
 # Release History
 
+## 2.0.0b2 (2023-10-23)
+
+### Features Added
+
+  - Model Replica has a new parameter region_endpoint_enabled
+  - Model Replica has a new parameter resource_stopped
+  - Model SignalRNetworkACLs has a new parameter ip_rules
+  - Model SignalRResource has a new parameter region_endpoint_enabled
+  - Model SignalRResource has a new parameter resource_stopped
+
+## 2.0.0b1 (2023-09-15)
+
+### Features Added
+
+  - Added operation SignalROperations.list_replica_skus
+  - Added operation group SignalRReplicasOperations
+  - Model PrivateLinkResource has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
+### Breaking Changes
+
+  - Parameter location of model SignalRResource is now required
+  - Parameter location of model TrackedResource is now required
+
 ## 1.2.0 (2023-03-20)
 
 ### Features Added

@@ -29,11 +29,10 @@ def main():
         subscription_id="11111111-2222-3333-4444-555555555555",
     )
 
-    response = client.appliances.begin_delete(
+    client.appliances.begin_delete(
         resource_group_name="testresourcegroup",
         resource_name="appliance01",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/resourceconnector/resource-manager/Microsoft.ResourceConnector/stable/2022-10-27/examples/AppliancesDelete.json

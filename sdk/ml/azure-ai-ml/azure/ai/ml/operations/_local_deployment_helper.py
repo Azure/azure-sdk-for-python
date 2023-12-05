@@ -6,9 +6,10 @@
 
 import json
 import logging
+import os
 import shutil
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -110,7 +111,8 @@ class _LocalDeploymentHelper(object):
         :type deployment_name: str
         :param lines: Number of most recent lines from container logs.
         :type lines: int
-        :return: str
+        :return: The deployment logs
+        :rtype: str
         """
         return self._docker_client.logs(endpoint_name=endpoint_name, deployment_name=deployment_name, lines=lines)
 
@@ -121,7 +123,8 @@ class _LocalDeploymentHelper(object):
         :type endpoint_name: str
         :param deployment_name: Name of deployment.
         :type deployment_name: str
-        :return OnlineDeployment:
+        :return: The deployment
+        :rtype: OnlineDeployment
         """
         container = self._docker_client.get_endpoint_container(
             endpoint_name=endpoint_name,
@@ -133,7 +136,11 @@ class _LocalDeploymentHelper(object):
         return _convert_container_to_deployment(container=container)
 
     def list(self) -> Iterable[OnlineDeployment]:
-        """List all local endpoints."""
+        """List all local endpoints.
+
+        :return: The OnlineDeployments
+        :rtype: Iterable[OnlineDeployment]
+        """
         containers = self._docker_client.list_containers()
         deployments = []
         for container in containers:
@@ -305,7 +312,8 @@ def _convert_container_to_deployment(container: "docker.models.containers.Contai
 
     :param container: Container for a local deployment.
     :type container: docker.models.containers.Container
-    :returns OnlineDeployment entity:
+    :return: The OnlineDeployment entity
+    :rtype: OnlineDeployment
     """
     deployment_json = get_deployment_json_from_container(container=container)
     provisioning_state = get_status_from_container(container=container)
@@ -322,13 +330,15 @@ def _convert_container_to_deployment(container: "docker.models.containers.Contai
     )
 
 
-def _write_conda_file(conda_contents: str, directory_path: str, conda_file_name: str):
+def _write_conda_file(conda_contents: str, directory_path: Union[str, os.PathLike], conda_file_name: str):
     """Writes out conda file to provided directory.
 
     :param conda_contents: contents of conda yaml file provided by user
     :type conda_contents: str
     :param directory_path: directory on user's local system to write conda file
     :type directory_path: str
+    :param conda_file_name: The filename to write to
+    :type conda_file_name: str
     """
     conda_file_path = f"{directory_path}/{conda_file_name}"
     p = Path(conda_file_path)
@@ -340,7 +350,8 @@ def _convert_json_to_deployment(deployment_json: dict, **kwargs) -> OnlineDeploy
 
     :param deployment_json: dictionary representation of OnlineDeployment entity.
     :type deployment_json: dict
-    :returns OnlineDeployment entity:
+    :returns: The OnlineDeployment entity
+    :rtype: OnlineDeployment
     """
     params_override = []
     for k, v in kwargs.items():

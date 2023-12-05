@@ -17,7 +17,7 @@ module_logger = logging.getLogger(__name__)
 class BaseProperty(dict):
     """Base class for entity classes to be used as value of JobResourceConfiguration.properties."""
 
-    def __init__(self, **kwargs: Any):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__()
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -46,7 +46,6 @@ class BaseProperty(dict):
         return False
 
     def as_dict(self) -> Dict[str, Any]:
-        """Return a dict representation of the object."""
         return self._to_dict(self)
 
     @classmethod
@@ -85,31 +84,30 @@ class Properties(BaseProperty):
 
 
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
-    """Class for job resource, inherited and extended functionalities from ResourceConfiguration.
+    """Job resource configuration class, inherited and extended functionalities from ResourceConfiguration.
 
-    :param locations: A list of locations where the job can run.
-    :type locations: list[str]
-    :param instance_count: The number of instances or nodes used by the compute target.
-    :type instance_count: int
-    :param instance_type: The type of VM to be used, as supported by the compute target.
-    :type instance_type: str
-    :param properties: A dictionary of properties for the job.
-    :type properties: dict[str, Any]
-    :param docker_args: Extra arguments to pass to the Docker run command. This would override any
-     parameters that have already been set by the system, or in this section. This parameter is only
-     supported for Azure ML compute types.
-    :type docker_args: str
-    :param shm_size: The size of the docker container's shared memory block. This should be in the
-     format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
-     b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
-    :type shm_size: str
-    :param max_instance_count: The maximum number of instances or nodes used by the compute target.
-    :type max_instance_count: int
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict[str, Any]
+    :keyword locations: A list of locations where the job can run.
+    :paramtype locations: Optional[list[str]]
+    :keyword instance_count: The number of instances or nodes used by the compute target.
+    :paramtype instance_count: Optional[int]
+    :keyword instance_type: The type of VM to be used, as supported by the compute target.
+    :paramtype instance_type: Optional[str]
+    :keyword properties: A dictionary of properties for the job.
+    :paramtype properties: Optional[dict[str, Any]]
+    :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
+        parameters that have already been set by the system, or in this section. This parameter is only
+        supported for Azure ML compute types.
+    :paramtype docker_args: Optional[str]
+    :keyword shm_size: The size of the docker container's shared memory block. This should be in the
+        format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
+        b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
+    :paramtype shm_size: Optional[str]
+    :keyword max_instance_count: The maximum number of instances or nodes used by the compute target.
+    :paramtype max_instance_count: Optional[int]
+    :keyword kwargs: A dictionary of additional configuration parameters.
+    :paramtype kwargs: dict
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_resource_configuration]

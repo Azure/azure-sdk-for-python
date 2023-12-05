@@ -1,5 +1,7 @@
+import os.path
 import re
-import time
+import shutil
+import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -7,8 +9,6 @@ from typing import Callable
 
 import pydash
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
@@ -25,6 +25,8 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
+from azure.core.exceptions import HttpResponseError
+from azure.core.paging import ItemPaged
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -399,6 +401,21 @@ class TestComponent(AzureRecordedTestCase):
             component_name,
             path="./tests/test_configs/components/basic_component_code_local_path.yml",
         )
+        assert component_resource.name == component_name
+        # make sure code is created
+        assert component_resource.code
+        assert is_ARM_id_for_resource(component_resource.code)
+
+    def test_command_component_with_pathlike_as_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        component_name = randstr("component_name")
+
+        component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
+        from pathlib import Path
+
+        component.name = component_name
+        component.code = Path(component.code)
+
+        component_resource = client.components.create_or_update(component)
         assert component_resource.name == component_name
         # make sure code is created
         assert component_resource.code
@@ -815,7 +832,7 @@ class TestComponent(AzureRecordedTestCase):
         )
         # Assert binding on compute not changed after resolve dependencies
         client.components._resolve_dependencies_for_pipeline_component_jobs(
-            component, resolver=client.components._orchestrators.get_asset_arm_id, resolve_inputs=False
+            component, resolver=client.components._orchestrators.get_asset_arm_id
         )
         assert component.jobs["component_a_job"].compute == "${{parent.inputs.node_compute}}"
         # Assert E2E
@@ -1079,3 +1096,149 @@ class TestComponent(AzureRecordedTestCase):
             keys_to_omit=["creation_context"]
         ) != new_component._get_component_hash(keys_to_omit=["creation_context"])
         assert new_component.version == new_version
+
+    # TODO: code hash will normalize code name to 000000000000000000000, which
+    #  is not compatible with mock_component_hash
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.parametrize(
+        "component_path",
+        [
+            pytest.param("./tests/test_configs/components/helloworld_component.yml", id="command"),
+            pytest.param(
+                "./tests/test_configs/components/helloworld_components_with_env/helloworld_component_env_inline.yml",
+                id="command_with_env_inline",
+            ),
+            pytest.param(
+                "./tests/test_configs/components/helloworld_components_with_env/helloworld_component_env_path_1.yml",
+                id="command_with_env_path",
+            ),
+            pytest.param("./tests/test_configs/dsl_pipeline/basic_component/component.yml", id="command_with_code"),
+            pytest.param("./tests/test_configs/components/helloworld_parallel.yml", id="parallel_with_code"),
+            pytest.param(
+                "./tests/test_configs/dsl_pipeline/parallel_component_with_tabular_input/tabular_input_e2e.yml",
+                id="parallel_with_env_and_code",
+            ),
+        ],
+    )
+    def test_component_download(self, client: MLClient, randstr, component_path: str, request):
+        save_dir = Path(f"./tests/test_configs/components/downloaded", request.node.callspec.id)
+        temp_component_name = randstr("component_name")
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            download_path = Path(temp_dir)
+            component = load_component(component_path)
+
+            component.name = temp_component_name
+            created_component = client.components.create_or_update(
+                component,
+            )
+            client.components.download(
+                component.name,
+                version=component.version,
+                download_path=download_path,
+            )
+
+            spec_path = download_path.joinpath("component_spec.yaml")
+            downloaded_component = load_component(spec_path)
+            downloaded_component.name += "_recreated"
+            recreated_component = client.components.create_or_update(downloaded_component)
+
+            # normalize component name
+            spec_path.write_text(spec_path.read_text().replace(temp_component_name, "random_component_name"))
+            if save_dir.is_dir():
+                try:
+                    for file in save_dir.glob("**/*"):
+                        if file.is_file():
+                            assert file.read_text() == download_path.joinpath(file.relative_to(save_dir)).read_text(), (
+                                f"downloaded component is not the same as last snapshot. "
+                                f"Please check if changes under {download_path} are expected."
+                            )
+                except AssertionError:
+                    # replace saved snapshot with downloaded one if not matched
+                    shutil.rmtree(save_dir, ignore_errors=True)
+                    shutil.copytree(download_path, save_dir)
+            else:
+                shutil.copytree(download_path, save_dir)
+
+            # compare created component and recreated component after we updated the saved snapshot (if applicable)
+            omit_fields = [
+                "id",
+                "name",
+                "creation_context",
+            ]
+            assert omit_with_wildcard(recreated_component._to_dict(), *omit_fields) == omit_with_wildcard(
+                created_component._to_dict(), *omit_fields
+            )
+
+    @pytest.mark.parametrize(
+        "params_override,expected_attrs",
+        [
+            pytest.param(
+                {
+                    "version": "2",
+                    "description": "test load component from flow",
+                },
+                {
+                    "version": "2",
+                    "description": "test load component from flow",
+                },
+                id="basic",
+            ),
+            pytest.param(
+                {
+                    "azureml": {
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+                        "is_deterministic": False,
+                    }
+                },
+                {
+                    "environment": "r:.+/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33",
+                    "is_deterministic": False,
+                },
+                id="with_environment",
+            ),
+        ],
+    )
+    def test_load_component_from_flow(self, client: MLClient, randstr, params_override: dict, expected_attrs: dict):
+        target_path: str = "./tests/test_configs/flows/basic/flow.dag.yaml"
+        component = load_component(
+            target_path,
+            params_override=[
+                {
+                    "name": randstr("component_name"),
+                },
+                params_override,
+            ],
+        )
+
+        created_component = client.components.create_or_update(component)
+
+        for attr, expected_value in expected_attrs.items():
+            if isinstance(expected_value, str) and expected_value.startswith("r:"):
+                expected_regex = re.compile(expected_value[2:])
+                assert expected_regex.match(getattr(created_component, attr)), f"attribute {attr} is not as expected"
+            else:
+                assert getattr(created_component, attr) == expected_value, f"attribute {attr} is not as expected"
+
+        assert component._get_origin_code_value() == created_component._get_origin_code_value()
+
+    def test_load_component_from_flow_in_registry(self, registry_client: MLClient, randstr):
+        target_path: str = "./tests/test_configs/flows/runs/with_environment.yml"
+        component = load_component(
+            target_path,
+            params_override=[
+                {
+                    "name": randstr("component_name"),
+                    "version": "1",
+                    "description": "test load component from flow",
+                }
+            ],
+        )
+
+        created_component = registry_client.components.create_or_update(component, version="2")
+
+        assert created_component.name == component.name
+        assert created_component.version == "2"
+
+        assert component._get_origin_code_value() == created_component._get_origin_code_value()
+        assert component.environment == created_component.task.environment

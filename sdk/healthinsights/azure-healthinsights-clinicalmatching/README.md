@@ -1,6 +1,6 @@
 # Azure Cognitive Services Health Insights Clinical Matching client library for Python
 
-[Health Insights](https://review.learn.microsoft.com/azure/azure-health-insights/?branch=release-azure-health-insights) is an Azure Applied AI Service built with the Azure Cognitive Services Framework, that leverages multiple Cognitive Services, Healthcare API services and other Azure resources.
+[Health Insights][health_insights] is an Azure Applied AI Service built with the Azure Cognitive Services Framework, that leverages multiple Cognitive Services, Healthcare API services and other Azure resources.
 The [Clinical Matching model][clinical_matching_docs] receives patients data and clinical trials protocols, and provides relevant clinical trials based on eligibility criteria.
 
 [Source code][hi_source_code] | [Package (PyPI)][hi_pypi] | [API reference documentation][clinical_matching_api_documentation] | [Product documentation][product_docs] | [Samples][hi_samples]
@@ -223,6 +223,7 @@ additional questions or comments.
 [azure_sub]: https://azure.microsoft.com/free/
 [azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
 [azure_cli]: https://learn.microsoft.com/cli/azure/
+[health_insights]: https://learn.microsoft.com/azure/azure-health-insights/overview?branch=main
 [clinical_matching_docs]: https://learn.microsoft.com/azure/azure-health-insights/trial-matcher/overview
 [hi_pypi]: https://pypi.org/project/azure-healthinsights-clinicalmatching/
 [hi_pypi]: https://pypi.org/

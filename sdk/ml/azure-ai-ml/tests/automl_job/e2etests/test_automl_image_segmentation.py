@@ -78,13 +78,6 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
 
-        properties = get_automl_job_properties()
-        if components:
-            properties["_automl_subgraph_orchestration"] = "true"
-            properties[
-                "_pipeline_id_override"
-            ] = "azureml://registries/azmlft-dev-registry01/components/image_instance_segmentation_pipeline"
-
         # Make generic segmentation job
         image_instance_segmentation_job = automl.image_instance_segmentation(
             compute="gpu-cluster",
@@ -93,77 +86,91 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
             validation_data=validation_data,
             target_column_name="label",
             primary_metric="MeanAveragePrecision",
-            properties=properties,
+            properties=get_automl_job_properties(),
         )
 
-        # Configure regular sweep job
         image_instance_segmentation_job_sweep = copy.deepcopy(image_instance_segmentation_job)
         image_instance_segmentation_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
-        image_instance_segmentation_job_sweep.extend_search_space(
-            [
-                SearchSpace(
-                    model_name=Choice(["maskrcnn_resnet50_fpn"]),
-                    learning_rate=Uniform(0.0001, 0.001),
-                    optimizer=Choice(["sgd", "adam", "adamw"]),
-                    min_size=Choice([600, 800]),
-                    number_of_epochs=Choice([1]),
-                ),
-            ]
-        )
-        image_instance_segmentation_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
-        image_instance_segmentation_job_sweep.set_sweep(
-            sampling_algorithm="Random",
-            early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
-        )
+        image_instance_segmentation_job_sweep.set_limits(max_trials=2, max_concurrent_trials=2)
 
-        # Configure AutoMode job
-        image_instance_segmentation_job_automode = copy.deepcopy(image_instance_segmentation_job)
-        # TODO: after shipping the AutoMode feature, do not set flag and call `set_limits()` instead of changing
-        # the limits object directly.
-        image_instance_segmentation_job_automode.properties["enable_automode"] = True
-        image_instance_segmentation_job_automode.limits.max_trials = 2
-        image_instance_segmentation_job_automode.limits.max_concurrent_trials = 2
-
-        # Configure Finetune Sweep Job
         if components:
-            image_instance_segmentation_job_finetune_sweep = copy.deepcopy(image_instance_segmentation_job)
-            image_instance_segmentation_job_finetune_sweep.set_training_parameters(
-                early_stopping=True, evaluation_frequency=1
-            )
-            image_instance_segmentation_job_finetune_sweep.extend_search_space(
+            # Configure component Sweep Job
+            image_instance_segmentation_job_sweep.extend_search_space(
                 [
                     SearchSpace(
                         model_name=Choice(["mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco"]),
-                        learning_rate=Uniform(0.0001, 0.001),
-                        optimizer=Choice(["sgd", "adamw_hf", "adamw"]),
+                        number_of_epochs=Choice([1]),
+                        gradient_accumulation_step=Choice([1]),
+                        learning_rate=Choice([0.005]),
+                    ),
+                    SearchSpace(
+                        model_name=Choice(["maskrcnn_resnet50_fpn"]),
+                        learning_rate=Choice([0.001]),
+                        optimizer=Choice(["sgd"]),
+                        min_size=Choice([600]),
                         number_of_epochs=Choice([1]),
                     ),
                 ]
             )
-            image_instance_segmentation_job_finetune_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
-            image_instance_segmentation_job_finetune_sweep.set_sweep(
+            image_instance_segmentation_job_sweep.set_sweep(
+                sampling_algorithm="Grid",
+                early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
+            )
+            image_instance_segmentation_job_individual = copy.deepcopy(image_instance_segmentation_job)
+            image_instance_segmentation_job_individual.set_training_parameters(
+                model_name="mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco", number_of_epochs=1
+            )
+            image_instance_segmentation_job_reuse = copy.deepcopy(image_instance_segmentation_job_individual)
+        else:
+            # Configure runtime sweep job search space
+            image_instance_segmentation_job_sweep.extend_search_space(
+                [
+                    SearchSpace(
+                        model_name=Choice(["maskrcnn_resnet50_fpn"]),
+                        learning_rate=Uniform(0.0001, 0.001),
+                        optimizer=Choice(["sgd", "adam", "adamw"]),
+                        min_size=Choice([600, 800]),
+                        number_of_epochs=Choice([1]),
+                    ),
+                ]
+            )
+            image_instance_segmentation_job_sweep.set_sweep(
                 sampling_algorithm="Random",
                 early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
             )
-            # Trigger finetune sweep
-            submitted_finetune_sweep = client.jobs.create_or_update(image_instance_segmentation_job_finetune_sweep)
 
-        # Trigger regular sweep and then AutoMode job
+            # Configure AutoMode job
+            image_instance_segmentation_job_automode = copy.deepcopy(image_instance_segmentation_job)
+            image_instance_segmentation_job_automode.set_limits(max_trials=2, max_concurrent_trials=2)
+
+        # Trigger sweep job and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_instance_segmentation_job_sweep)
-        submitted_job_automode = client.jobs.create_or_update(image_instance_segmentation_job_automode)
-
-        # Assert completion of finetune sweep job
         if components:
-            assert_final_job_status(
-                submitted_finetune_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+            submitted_job_individual_components = client.jobs.create_or_update(
+                image_instance_segmentation_job_individual
             )
+            submitted_job_components_reuse = client.jobs.create_or_update(image_instance_segmentation_job_reuse)
+        else:
+            submitted_job_automode = client.jobs.create_or_update(image_instance_segmentation_job_automode)
 
-        # Assert completion of regular sweep job
+        # Assert completion of sweep job
         assert_final_job_status(
             submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
         )
 
-        # Assert completion of Automode job
-        assert_final_job_status(
-            submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
-        )
+        if components:
+            assert_final_job_status(
+                submitted_job_individual_components,
+                client,
+                ImageInstanceSegmentationJob,
+                JobStatus.COMPLETED,
+                deadline=3600,
+            )
+            assert_final_job_status(
+                submitted_job_components_reuse, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+            )
+        else:
+            # Assert completion of Automode job
+            assert_final_job_status(
+                submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+            )

@@ -49,6 +49,7 @@ class PrivateLinkResourcesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
     async def list_by_private_link_scope(
@@ -78,7 +79,9 @@ class PrivateLinkResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-04-02-preview")
+        )
         cls: ClsType[_models.PrivateLinkResourceListResult] = kwargs.pop("cls", None)
 
         request = build_list_by_private_link_scope_request(
@@ -145,7 +148,9 @@ class PrivateLinkResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-04-02-preview"))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._api_version or "2022-04-02-preview")
+        )
         cls: ClsType[_models.PrivateLinkResource] = kwargs.pop("cls", None)
 
         request = build_get_request(

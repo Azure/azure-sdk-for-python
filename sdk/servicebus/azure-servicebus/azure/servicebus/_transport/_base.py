@@ -50,7 +50,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def build_batch_message(data):
         """
         Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
-        :rtype: uamqp.BatchMessage or pyamqp.BatchMessage
+        :param list[~azure.servicebus.ServiceBusMessage] data: List of messages to batch.
+        :rtype: ~uamqp.BatchMessage or ~pyamqp.message.BatchMessage
         """
 
     @staticmethod
@@ -59,7 +60,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
         :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
-        :rtype: uamqp.Message or pyamqp.Message
+        :rtype: ~uamqp.Message or ~pyamqp.message.Message
         """
 
     @staticmethod
@@ -76,10 +77,10 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def update_message_app_properties(message, key, value):
         """
         Adds the given key/value to the application properties of the message.
-        :param uamqp.Message or pyamqp.Message message: Message.
+        :param ~uamqp.Message or ~pyamqp.message.Message message: Message.
         :param str key: Key to set in application properties.
-        :param str Value: Value to set for key in application properties.
-        :rtype: uamqp.Message or pyamqp.Message
+        :param str value: Value to set for key in application properties.
+        :rtype: ~uamqp.Message or ~pyamqp.message.Message
         """
 
     @staticmethod
@@ -87,7 +88,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def get_message_encoded_size(message):
         """
         Gets the message encoded size given an underlying Message.
-        :param uamqp.Message or pyamqp.Message message: Message to get encoded size of.
+        :param ~uamqp.Message or list message: Message to get encoded size of.
         :rtype: int
         """
 
@@ -96,7 +97,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def get_remote_max_message_size(handler):
         """
         Returns max peer message size.
-        :param AMQPClient handler: Client to get remote max message size on link from.
+        :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient handler: Client to get remote max message size on link from.
         :rtype: int
         """
 
@@ -105,7 +106,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def get_handler_link_name(handler):
         """
         Returns link name.
-        :param AMQPClient handler: Client to get name of link from.
+        :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient handler: Client to get name of link from.
         :rtype: str
         """
 
@@ -133,7 +134,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def close_connection(connection):
         """
         Closes existing connection.
-        :param connection: uamqp or pyamqp Connection.
+        :param ~uamqp.Connection or ~pyamqp.Connection connection: uamqp or pyamqp Connection.
         """
 
     @staticmethod
@@ -162,12 +163,12 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Handles sending of service bus messages.
         :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
-            to send messages.
+         to send messages.
         :param message: ServiceBusMessage with uamqp.Message to be sent.
-        :paramtype message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
+        :type message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
         :param int timeout: Timeout time.
-        :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param logger: Logger.
+        :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param logging.Logger logger: Logger.
         """
 
     @staticmethod
@@ -175,8 +176,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def add_batch(sb_message_batch, outgoing_sb_message):
         """
         Add ServiceBusMessage to the data body of the BatchMessage.
-        :param sb_message_batch: ServiceBusMessageBatch to add data to.
-        :param outgoing_sb_message: Transformed ServiceBusMessage for sending.
+        :param ~azure.servicebus.ServiceBusMessageBatch sb_message_batch: ServiceBusMessageBatch to add data to.
+        :param ~azure.servicebus.ServiceBusMessage outgoing_sb_message: Transformed ServiceBusMessage for sending.
         :rtype: None
         """
 
@@ -187,7 +188,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         Creates and returns the Source.
 
         :param Source source: Required.
-        :param str or None session_id: Required.
+        :param str session_filter: Required.
         """
 
     @staticmethod
@@ -195,8 +196,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def create_receive_client(receiver, **kwargs):
         """
         Creates and returns the receive client.
-        :param ~azure.servicebus._common._configuration.Configuration config:
-            The configuration.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
 
         :keyword str source: Required. The source.
         :keyword str offset: Required.
@@ -220,7 +220,10 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         receiver, max_wait_time=None
     ):
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
-        and per-iter argument passing that requires the former."""
+        and per-iter argument passing that requires the former.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
+        :param int or None max_wait_time: The maximum wait time in seconds for the batch to be received.
+        """
 
     @staticmethod
     @abstractmethod
@@ -229,6 +232,23 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     ):
         """
         Used to iterate through received messages.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
+        :param int or None wait_time: The maximum wait time in seconds for the batch to be received.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def enhanced_message_received(*args, **kwargs) -> None:  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+        """
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
+        :param ~pyamqp.performatives.AttachFrame frame: Required if pyamqp.
+        :param ~uamqp.Message or ~pyamqp.message.Message message: The received message.
         """
 
     @staticmethod
@@ -236,6 +256,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def build_received_message(receiver, message_type, received):
         """
         Build ServiceBusReceivedMessage.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
+        :param type message_type: The message type.
+        :param ~azure.servicebus.ServiceBusReceivedMessage received: The received message.
         """
 
     @staticmethod
@@ -243,6 +266,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     def get_current_time(handler):
         """
         Gets the current time.
+        :param ~uamqp.AMQPClient or ~pyamqp.AMQPClient handler: The handler.
         """
 
     @staticmethod
@@ -252,6 +276,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     ):
         """
         Resets the link credit on the link.
+        :param ~uamqp.SendClient or ~pyamqp.SendClient handler: The handler.
+        :param int link_credit: The link credit.
         """
 
     @staticmethod
@@ -265,6 +291,11 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     ) -> None:
         """
         Settles message.
+        :param ~uamqp.ReceiveClient or ~pyamqp.ReceiveClient handler: The handler.
+        :param ~uamqp.Message or ~pyamqp.message.Message message: Message to settle.
+        :param callable settle_operation: The operation to settle message.
+        :param str or None dead_letter_reason: Optional. Dead letter reason.
+        :param str or None dead_letter_error_description: Optional. Dead letter error description.
         """
 
     @staticmethod
@@ -283,7 +314,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def get_message_value(message):
-        """Get body of type value from message."""
+        """Get body of type value from message.
+        :param Message message: Message to get value from.
+        """
 
     @staticmethod
     @abstractmethod
@@ -293,7 +326,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-        :param get_token: The callback function used for getting and refreshing
+        :param callable get_token: The callback function used for getting and refreshing
          tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
         :param ~azure.servicebus._configuration.Configuration config: EH config.

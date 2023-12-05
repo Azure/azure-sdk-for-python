@@ -29,14 +29,13 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.container_apps_revisions.deactivate_revision(
+    client.container_apps_revisions.deactivate_revision(
         resource_group_name="rg",
         container_app_name="testcontainerApp0",
         revision_name="testcontainerApp0-pjxhsye",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2022-11-01-preview/examples/Revisions_Deactivate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/Revisions_Deactivate.json
 if __name__ == "__main__":
     main()

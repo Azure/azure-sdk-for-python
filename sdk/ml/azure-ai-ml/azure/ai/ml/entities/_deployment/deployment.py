@@ -34,27 +34,27 @@ class Deployment(Resource, RestTranslatableMixin):
     :param name: Name of the deployment resource, defaults to None
     :type name: typing.Optional[str]
     :keyword endpoint_name: Name of the Endpoint resource, defaults to None
-    :type endpoint_name: typing.Optional[str]
+    :paramtype endpoint_name: typing.Optional[str]
     :keyword description: Description of the deployment resource, defaults to None
-    :type description: typing.Optional[str]
+    :paramtype description: typing.Optional[str]
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
-    :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
     :keyword properties: The asset property dictionary, defaults to None
-    :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
     :keyword model: The Model entity, defaults to None
-    :type model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+    :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
     :keyword code_configuration: Code Configuration, defaults to None
-    :type code_configuration: typing.Optional[CodeConfiguration]
+    :paramtype code_configuration: typing.Optional[CodeConfiguration]
     :keyword environment: The Environment entity, defaults to None
-    :type environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+    :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
     :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
-    :type environment_variables: typing.Optional[typing.Dict[str, str]]
+    :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
     :keyword code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
         , defaults to None
-    :type code_path: typing.Optional[typing.Union[str, PathLike]]
+    :paramtype code_path: typing.Optional[typing.Union[str, PathLike]]
     :keyword scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
         , defaults to None
-    :type scoring_script: typing.Optional[typing.Union[str, PathLike]]
+    :paramtype scoring_script: typing.Optional[typing.Union[str, PathLike]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
         Exception details will be provided in the error message.
     """
@@ -82,27 +82,27 @@ class Deployment(Resource, RestTranslatableMixin):
         :param name: Name of the deployment resource, defaults to None
         :type name: typing.Optional[str]
         :keyword endpoint_name: Name of the Endpoint resource, defaults to None
-        :type endpoint_name: typing.Optional[str]
+        :paramtype endpoint_name: typing.Optional[str]
         :keyword description: Description of the deployment resource, defaults to None
-        :type description: typing.Optional[str]
+        :paramtype description: typing.Optional[str]
         :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
-        :type tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
         :keyword properties: The asset property dictionary, defaults to None
-        :type properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
         :keyword model: The Model entity, defaults to None
-        :type model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+        :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
         :keyword code_configuration: Code Configuration, defaults to None
-        :type code_configuration: typing.Optional[CodeConfiguration]
+        :paramtype code_configuration: typing.Optional[CodeConfiguration]
         :keyword environment: The Environment entity, defaults to None
-        :type environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+        :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
         :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
-        :type environment_variables: typing.Optional[typing.Dict[str, str]]
+        :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
         :keyword code_path: Folder path to local code assets. Equivalent to code_configuration.code.path
             , defaults to None
-        :type code_path: typing.Optional[typing.Union[str, PathLike]]
+        :paramtype code_path: typing.Optional[typing.Union[str, PathLike]]
         :keyword scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script
             , defaults to None
-        :type scoring_script: typing.Optional[typing.Union[str, PathLike]]
+        :paramtype scoring_script: typing.Optional[typing.Union[str, PathLike]]
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
             Exception details will be provided in the error message.
         """
@@ -133,10 +133,20 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @property
     def type(self) -> str:
+        """
+        Type of deployment.
+
+        :rtype: str
+        """
         return self._type
 
     @property
     def code_path(self) -> Union[str, PathLike]:
+        """
+        The code directory containing the scoring script.
+
+        :rtype: Union[str, PathLike]
+        """
         return self.code_configuration.code if self.code_configuration and self.code_configuration.code else None
 
     @code_path.setter
@@ -148,6 +158,11 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @property
     def scoring_script(self) -> Union[str, PathLike]:
+        """
+        The scoring script file path relative to the code directory.
+
+        :rtype: Union[str, PathLike]
+        """
         return self.code_configuration.scoring_script if self.code_configuration else None
 
     @scoring_script.setter

@@ -1,6 +1,6 @@
 {
     "chosen_version": "2022-01-15-preview",
-    "total_api_version_list": ["2022-01-01-preview", "2022-01-15-preview"],
+    "total_api_version_list": ["2022-01-15-preview"],
     "client": {
         "name": "SourceControlConfigurationClient",
         "filename": "_source_control_configuration_client",
@@ -8,7 +8,7 @@
         "host_value": "\"https://management.azure.com\"",
         "parameterized_host_template": null,
         "azure_arm": true,
-        "has_lro_operations": true,
+        "has_lro_operations": false,
         "client_side_validation": false,
         "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"SourceControlConfigurationClientConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
         "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"SourceControlConfigurationClientConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
@@ -108,12 +108,6 @@
         "cluster_extension_type": "ClusterExtensionTypeOperations",
         "cluster_extension_types": "ClusterExtensionTypesOperations",
         "extension_type_versions": "ExtensionTypeVersionsOperations",
-        "location_extension_types": "LocationExtensionTypesOperations",
-        "extensions": "ExtensionsOperations",
-        "operation_status": "OperationStatusOperations",
-        "flux_configurations": "FluxConfigurationsOperations",
-        "flux_config_operation_status": "FluxConfigOperationStatusOperations",
-        "source_control_configurations": "SourceControlConfigurationsOperations",
-        "operations": "Operations"
+        "location_extension_types": "LocationExtensionTypesOperations"
     }
 }

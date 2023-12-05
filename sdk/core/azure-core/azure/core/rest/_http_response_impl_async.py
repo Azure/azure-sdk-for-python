@@ -23,7 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, AsyncIterator
+from typing import Any, AsyncIterator, Optional, Type
+from types import TracebackType
 from ._rest_py3 import AsyncHttpResponse as _AsyncHttpResponse
 from ._http_response_impl import (
     _HttpResponseBaseImpl,
@@ -126,7 +127,12 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
             self._is_closed = True
             await self._internal_response.close()
 
-    async def __aexit__(self, *args) -> None:
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         await self.close()
 
     def __repr__(self) -> str:

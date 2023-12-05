@@ -84,6 +84,13 @@ class AutoProtectionOfDataDisk(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
 
 
+class ChurnOptionSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A value indicating the churn option selected by user."""
+
+    NORMAL = "Normal"
+    HIGH = "High"
+
+
 class DataSyncStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The data sync option."""
 
@@ -386,6 +393,14 @@ class RpInMageRecoveryPointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LATEST_TIME = "LatestTime"
     LATEST_TAG = "LatestTag"
     CUSTOM = "Custom"
+
+
+class SecurityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The target VM security type."""
+
+    NONE = "None"
+    TRUSTED_LAUNCH = "TrustedLaunch"
+    CONFIDENTIAL_VM = "ConfidentialVM"
 
 
 class SetMultiVmSyncStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

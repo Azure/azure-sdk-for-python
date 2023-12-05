@@ -29,6 +29,9 @@
 /sdk/ @lmazuel
 
 # Core
+# PRLabel: %Core.Http
+/sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
+
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
 /sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
@@ -40,11 +43,14 @@
 # Service team
 ####
 
+# PRLabel: %AI
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
+
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
 # PRLabel: %Azure.Identity
-/sdk/identity/                                                       @pvaneck @schaabs @xiangyan99
+/sdk/identity/                                                       @pvaneck @xiangyan99 @Azure/azure-sdk-write-identity
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/                                                       @annatisch @kashifkhan @swathipil @l0lawrence
@@ -57,12 +63,6 @@
 
 # PRLabel: %App Configuration Provider
 /sdk/appconfiguration/azure-appconfiguration-provider/               @mametcal @albertofori @avanigupta @mrm9084
-
-# PRLabel: %Monitor - ApplicationInsights
-/sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
-
-# PRLabel: %Monitor - LogAnalytics
-/sdk/loganalytics/azure-loganalytics/                                @azmonapplicationinsights @pvaneck
 
 # PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation/                         @anilba06 @Azure/azure-sdk-write-attestation @gkostal
@@ -106,23 +106,38 @@
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @lynshi
 
+# PRLabel: %Content Safety
+/sdk/contentsafety/                                                  @mengaims @JieZhou000
+
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp
 
 # PRLabel: %Load Testing
-/sdk/loadtestservice/azure-developer-loadtesting/                    @msyyc @iscai-msft
+/sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
 
-# PRLabel: %Monitor - LogAnalytics
+# PRLabel: %Monitor
+/sdk/loganalytics/azure-loganalytics/                                @azmonapplicationinsights @pvaneck
+
+# PRLabel: %Monitor
 /sdk/loganalytics/                                                   @pvaneck
+
+# PRLabel: %Monitor
+/sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+
+# PRLabel: %Monitor
+/sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+
+# PRLabel: %Monitor
+/sdk/monitor/*                                                       @pvaneck
+
+# PRLabel: %Monitor - ApplicationInsights
+/sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
+
+# PRLabel: %Monitor - Distro
+/sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss
 
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lmazuel @lzchen @hectorhdzg @jeremydvoss
-
-# PRLabel: %Monitor - Query
-/sdk/monitor/azure-monitor-query/                                    @pvaneck
-
-# PRLabel: %Monitor - Ingestion
-/sdk/monitor/azure-monitor-ingestion/                                @pvaneck
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -137,15 +152,15 @@
 /sdk/containerservice/                                               @zqingqing1
 
 # PRLabel: %Cosmos
-/sdk/cosmos/                                                         @kushagraThapar @simorenoh @simplynaveen20 @xinlian12 @annatisch @bambriz
+/sdk/cosmos/                                                         @kushagraThapar @simorenoh @xinlian12 @annatisch @bambriz
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @gahl-levy @bambriz
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz
 
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
-/sdk/datadatamigration/                                              @vchske
+/sdk/datamigration/                                                  @vchske
 
 # PRLabel: %Device Provisioning
 /sdk/iothub/azure-iot-deviceprovisioning                             @c-ryan-k @digimaun
@@ -163,10 +178,10 @@
 /sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
-/sdk/machinelearningcompute/                                         @shutchings
+/sdk/machinelearning/                                                @shutchings
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
+/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
 
 # PRLabel: %ML-Data
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_data/                                          @sogansky @MayankKumar91 @code-vicar @pritamDas9191
@@ -248,8 +263,8 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @mingweihe @seanyao1
 
 # PRLabel: %ML-WorkspaceConnections
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections/              @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections/              @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
 
 # PRLabel: %ML-ImportJob
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py                     @xiongrenyi
@@ -266,7 +281,7 @@
 /sdk/remoterendering/                                                @FlorianBorn71
 
 # PRLabel: %Open AI
-/sdk/openai                                                          @kristapratico @glecaros
+/sdk/openai/                                                         @kristapratico @glecaros
 
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc
@@ -284,7 +299,7 @@
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
 
 # PRLabel: %SQL
-/sql/sql/                                                            @jaredmoo
+/sdk/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
@@ -318,7 +333,7 @@
 /sdk/personalizer/                                                   @sharathmalladi
 
 # PRLabel: %Graph
-/sdk/graphrbac/                                                      @msyyc @Wzb123456789
+/sdk/graphrbac/                                                      @msyyc @ChenxiJiang333
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
@@ -424,9 +439,6 @@
 
 # ServiceLabel: %Bot Service %Service Attention
 #/<NotInRepo>/          @sgellock
-
-# ServiceLabel: %Client
-#/<NotInRepo>/          @simorenoh @gahl-levy @bambriz
 
 # ServiceLabel: %Cloud Shell %Service Attention
 #/<NotInRepo>/          @maertendMSFT
@@ -660,31 +672,16 @@
 #/<NotInRepo>/          @kpiteira
 
 # ServiceLabel: %Monitor %Service Attention
-#/<NotInRepo>/          @SameergMS @dadunl
-
-# ServiceLabel: %Monitor - Autoscale %Service Attention
-#/<NotInRepo>/          @AzMonEssential
-
-# ServiceLabel: %Monitor - ActivityLogs %Service Attention
-#/<NotInRepo>/          @AzMonEssential
-
-# ServiceLabel: %Monitor - Metrics %Service Attention
-#/<NotInRepo>/          @AzMonEssential
-
-# ServiceLabel: %Monitor - Diagnostic Settings %Service Attention
-#/<NotInRepo>/          @AzMonEssential
-
-# ServiceLabel: %Monitor - Alerts %Service Attention
-#/<NotInRepo>/          @AzmonAlerts
-
-# ServiceLabel: %Monitor - ActionGroups %Service Attention
-#/<NotInRepo>/          @AzmonActionG
-
-# ServiceLabel: %Monitor - LogAnalytics %Service Attention
-#/<NotInRepo>/          @AzmonLogA
+#/<NotInRepo>/          @SameergMS @dadunl @AzMonEssential @AzmonAlerts @AzmonActionG @AzmonLogA
 
 # ServiceLabel: %Monitor - ApplicationInsights %Service Attention
 #/<NotInRepo>/          @azmonapplicationinsights
+
+# ServiceLabel: %Monitor - Distro %Service Attention
+#/<NotInRepo>/          @lzchen @jeremydvoss
+
+# ServiceLabel: %Monitor - Exporter %Service Attention
+#/<NotInRepo>/          @lzchen @jeremydvoss
 
 # ServiceLabel: %MySQL %Service Attention
 #/<NotInRepo>/          @ambhatna @savjani
@@ -947,12 +944,8 @@
 # ServiceLabel: %Consumption - RIandShowBack %Service Attention
 #/<NotInRepo>/          @ccmshowbackdevs
 
-# ServiceLabel: %Monitor - Exporter %Service Attention
-#/<NotInRepo>/          @lzchen @jeremydvoss
-
-
 # Management Plane
-/**/*mgmt*/                                                          @Wzb123456789 @msyyc
+/**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
 
 
 ###########
@@ -963,3 +956,5 @@
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+
+/pylintrc                                                            @l0lawrence

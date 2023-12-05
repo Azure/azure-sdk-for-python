@@ -7,6 +7,7 @@
 from threading import Lock, Condition, Timer, TIMEOUT_MAX, Event
 from datetime import timedelta
 from typing import Any
+
 from .utils import get_current_utc_as_int
 from .utils import create_access_token
 
@@ -37,9 +38,7 @@ class CommunicationTokenCredential(object):
         self._token_refresher = kwargs.pop("token_refresher", None)
         self._proactive_refresh = kwargs.pop("proactive_refresh", False)
         if self._proactive_refresh and self._token_refresher is None:
-            raise ValueError(
-                "When 'proactive_refresh' is True, 'token_refresher' must not be None."
-            )
+            raise ValueError("When 'proactive_refresh' is True, 'token_refresher' must not be None.")
         self._timer = None
         self._lock = Condition(Lock())
         self._some_thread_refreshing = False
@@ -53,9 +52,7 @@ class CommunicationTokenCredential(object):
         :rtype: ~azure.core.credentials.AccessToken
         """
         if self._proactive_refresh and self._is_closed.is_set():
-            raise RuntimeError(
-                "An instance of CommunicationTokenCredential cannot be reused once it has been closed."
-            )
+            raise RuntimeError("An instance of CommunicationTokenCredential cannot be reused once it has been closed.")
 
         if not self._token_refresher or not self._is_token_expiring_soon(self._token):
             return self._token
@@ -79,9 +76,7 @@ class CommunicationTokenCredential(object):
             try:
                 new_token = self._token_refresher()
                 if not self._is_token_valid(new_token):
-                    raise ValueError(
-                        "The token returned from the token_refresher is expired."
-                    )
+                    raise ValueError("The token returned from the token_refresher is expired.")
                 with self._lock:
                     self._token = new_token
                     self._some_thread_refreshing = False
@@ -108,12 +103,7 @@ class CommunicationTokenCredential(object):
             timespan = token_ttl // 2
         else:
             # Schedule the next refresh for when it gets in to the soon-to-expire window.
-            timespan = (
-                token_ttl
-                - timedelta(
-                    minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES
-                ).total_seconds()
-            )
+            timespan = token_ttl - timedelta(minutes=self._DEFAULT_AUTOREFRESH_INTERVAL_MINUTES).total_seconds()
         if timespan <= TIMEOUT_MAX:
             self._timer = Timer(timespan, self._update_token_and_reschedule)
             self._timer.daemon = True

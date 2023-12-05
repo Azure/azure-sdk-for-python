@@ -97,10 +97,10 @@ class AsyncTableTestCase(TableTestCase):
 
         partition, row = self._create_pk_rk(pk, rk)
         properties = {
-            "PartitionKey": partition + u"1",
-            "RowKey": row + u"1",
+            "PartitionKey": partition + "1",
+            "RowKey": row + "1",
             "age": 49,
-            "sex": u"female",
+            "sex": "female",
             "married": False,
             "deceased": True,
             "optional": None,

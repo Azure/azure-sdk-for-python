@@ -7,9 +7,9 @@
 import logging
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJob as RestSweepJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TrialComponent
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SweepJob as RestSweepJob
+from azure.ai.ml._restclient.v2023_08_01_preview.models import TrialComponent
 from azure.ai.ml._schema._sweep.sweep_job import SweepJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
@@ -36,6 +36,7 @@ from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 # from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
@@ -70,56 +71,54 @@ module_logger = logging.getLogger(__name__)
 class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     """Sweep job for hyperparameter tuning.
 
-    :param name: Name of the job.
-    :type name: str
-    :param display_name: Display name of the job.
-    :type display_name: str
-    :param description: Description of the job.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided,
+    :keyword name: Name of the job.
+    :paramtype name: str
+    :keyword display_name: Display name of the job.
+    :paramtype display_name: str
+    :keyword description: Description of the job.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword experiment_name:  Name of the experiment the job will be created under, if None is provided,
         job will be created under experiment 'Default'.
-    :type experiment_name: str
-    :param identity: Identity that the training job will use while running on compute.
-    :type identity: Union[
-        ~azure.ai.ml.ManagedIdentityConfiguration,
-        ~azure.ai.ml.AmlTokenConfiguration,
+    :paramtype experiment_name: str
+    :keyword identity: Identity that the training job will use while running on compute.
+    :paramtype identity: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
         ~azure.ai.ml.UserIdentityConfiguration]
-    :param inputs: Inputs to the command.
-    :type inputs: dict
-    :param outputs: Mapping of output data bindings used in the job.
-    :type outputs: dict[str, ~azure.ai.ml.Output]
-    :param sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`.
+    :keyword inputs: Inputs to the command.
+    :paramtype inputs: dict
+    :keyword outputs: Mapping of output data bindings used in the job.
+    :paramtype outputs: dict[str, ~azure.ai.ml.Output]
+    :keyword sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`.
         Defaults to "random".
-    :type sampling_algorithm: str
-    :param search_space: Dictionary of the hyperparameter search space. The key is the name of the
+    :paramtype sampling_algorithm: str
+    :keyword search_space: Dictionary of the hyperparameter search space. The key is the name of the
         hyperparameter and the value is the parameter expression.
-    :type search_space: Dict
-    :param objective: Metric to optimize for.
-    :type objective: Objective
-    :param compute: The compute target the job runs on.
-    :type compute: str
-    :param trial: The job configuration for each trial. Each trial will be provided with a different combination
+    :paramtype search_space: Dict
+    :keyword objective: Metric to optimize for.
+    :paramtype objective: Objective
+    :keyword compute: The compute target the job runs on.
+    :paramtype compute: str
+    :keyword trial: The job configuration for each trial. Each trial will be provided with a different combination
         of hyperparameter values that the system samples from the search_space.
-    :type trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
-    :param early_termination: The early termination policy to use. A trial job is canceled
+    :paramtype trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
+    :keyword early_termination: The early termination policy to use. A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
-    :type early_termination:  Union[
-    ~azure.mgmt.machinelearningservices.models.BanditPolicy,
-    ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-    ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
-    :param limits: Limits for the sweep job.
-    :type limits: ~azure.ai.ml.entities.SweepJobLimits
-    :param queue_settings: Queue settings for the job.
-    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype early_termination:  Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
+        ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+    :keyword limits: Limits for the sweep job.
+    :paramtype limits: ~azure.ai.ml.entities.SweepJobLimits
+    :keyword queue_settings: Queue settings for the job.
+    :paramtype queue_settings: ~azure.ai.ml.entities.QueueSettings
+    :param resources: Compute Resource configuration for the job.
+    :type resources: ~azure.ai.ml.entities.ResourceConfiguration
+    :keyword kwargs: A dictionary of additional configuration parameters.
+    :paramtype kwargs: dict
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
@@ -157,6 +156,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         trial: Optional[Union[CommandJob, CommandComponent]] = None,
         early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
         queue_settings: Optional[QueueSettings] = None,
+        resources: Optional[Union[dict, JobResourceConfiguration]] = None,
         **kwargs: Any,
     ) -> None:
         """Sweep job for hyperparameter tuning.
@@ -206,6 +206,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         :type limits: ~azure.ai.ml.entities.SweepJobLimits
         :param queue_settings: Queue settings for the job.
         :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+        :param resources: Compute Resource configuration for the job.
+        :type resources: ~azure.ai.ml.entities.ResourceConfiguration
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -234,6 +236,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             early_termination=early_termination,
             search_space=search_space,
             queue_settings=queue_settings,
+            resources=resources,
         )
 
     def _to_dict(self) -> Dict:
@@ -274,6 +277,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             outputs=to_rest_data_outputs(self.outputs),
             identity=self.identity._to_job_rest_object() if self.identity else None,
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
+            resources=self.resources._to_rest_object() if self.resources else None,
         )
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name
@@ -335,6 +339,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             if properties.identity
             else None,
             queue_settings=properties.queue_settings,
+            resources=properties.resources if hasattr(properties, "resources") else None,
         )
 
     def _override_missing_properties_from_trial(self):

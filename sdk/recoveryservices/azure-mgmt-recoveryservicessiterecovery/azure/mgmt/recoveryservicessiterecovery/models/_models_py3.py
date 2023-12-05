@@ -46,7 +46,7 @@ class AddDisksProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"A2A": "A2AAddDisksInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -81,8 +81,8 @@ class A2AAddDisksInput(AddDisksProviderSpecificInput):
         *,
         vm_disks: Optional[List["_models.A2AVmDiskInputDetails"]] = None,
         vm_managed_disks: Optional[List["_models.A2AVmManagedDiskInputDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vm_disks: The list of vm disk details.
         :paramtype vm_disks:
@@ -129,7 +129,7 @@ class ApplyRecoveryPointProviderSpecificInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -152,7 +152,7 @@ class A2AApplyRecoveryPointInput(ApplyRecoveryPointProviderSpecificInput):
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "A2A"
@@ -187,7 +187,7 @@ class ReplicationProviderSpecificContainerCreationInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -210,7 +210,7 @@ class A2AContainerCreationInput(ReplicationProviderSpecificContainerCreationInpu
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "A2A"
@@ -238,7 +238,7 @@ class ReplicationProviderSpecificContainerMappingInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"A2A": "A2AContainerMappingInput", "VMwareCbt": "VMwareCbtContainerMappingInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -282,8 +282,8 @@ class A2AContainerMappingInput(ReplicationProviderSpecificContainerMappingInput)
         automation_account_authentication_type: Optional[
             Union[str, "_models.AutomationAccountAuthenticationType"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword agent_auto_update_status: A value indicating whether the auto update is enabled. Known
          values are: "Disabled" and "Enabled".
@@ -325,7 +325,7 @@ class CreateProtectionIntentProviderSpecificDetails(_serialization.Model):
 
     _subtype_map = {"instance_type": {"A2A": "A2ACreateProtectionIntentInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -489,8 +489,8 @@ class A2ACreateProtectionIntentInput(
             Union[str, "_models.AutomationAccountAuthenticationType"]
         ] = None,
         automation_account_arm_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_object_id: The fabric specific object Id of the virtual machine. Required.
         :paramtype fabric_object_id: str
@@ -602,7 +602,7 @@ class A2ACrossClusterMigrationApplyRecoveryPointInput(ApplyRecoveryPointProvider
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "A2ACrossClusterMigration"
@@ -625,7 +625,7 @@ class A2ACrossClusterMigrationContainerCreationInput(ReplicationProviderSpecific
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "A2ACrossClusterMigration"
@@ -664,7 +664,7 @@ class EnableProtectionProviderSpecificInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -694,8 +694,8 @@ class A2ACrossClusterMigrationEnableProtectionInput(EnableProtectionProviderSpec
     }
 
     def __init__(
-        self, *, fabric_object_id: Optional[str] = None, recovery_container_id: Optional[str] = None, **kwargs
-    ):
+        self, *, fabric_object_id: Optional[str] = None, recovery_container_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_object_id: The fabric specific object Id of the virtual machine.
         :paramtype fabric_object_id: str
@@ -745,7 +745,7 @@ class PolicyProviderSpecificInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -768,7 +768,7 @@ class A2ACrossClusterMigrationPolicyCreationInput(PolicyProviderSpecificInput):
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "A2ACrossClusterMigration"
@@ -813,7 +813,7 @@ class ReplicationProviderSpecificSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -866,8 +866,8 @@ class A2ACrossClusterMigrationReplicationDetails(ReplicationProviderSpecificSett
         vm_protection_state: Optional[str] = None,
         vm_protection_state_description: Optional[str] = None,
         lifecycle_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_object_id: The fabric specific object Id of the virtual machine.
         :paramtype fabric_object_id: str
@@ -991,8 +991,8 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput):  # pylint
         recovery_subnet_name: Optional[str] = None,
         recovery_virtual_machine_scale_set_id: Optional[str] = None,
         recovery_capacity_reservation_group_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_object_id: The fabric specific object Id of the virtual machine. Required.
         :paramtype fabric_object_id: str
@@ -1093,7 +1093,7 @@ class EventProviderSpecificDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -1143,8 +1143,8 @@ class A2AEventDetails(EventProviderSpecificDetails):
         fabric_location: Optional[str] = None,
         remote_fabric_name: Optional[str] = None,
         remote_fabric_location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword protected_item_name: The protected item arm name.
         :paramtype protected_item_name: str
@@ -1190,8 +1190,8 @@ class A2AExtendedLocationDetails(_serialization.Model):
         *,
         primary_extended_location: Optional["_models.ExtendedLocation"] = None,
         recovery_extended_location: Optional["_models.ExtendedLocation"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_extended_location: The primary ExtendedLocation.
         :paramtype primary_extended_location:
@@ -1203,6 +1203,116 @@ class A2AExtendedLocationDetails(_serialization.Model):
         super().__init__(**kwargs)
         self.primary_extended_location = primary_extended_location
         self.recovery_extended_location = recovery_extended_location
+
+
+class A2AFabricSpecificLocationDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """ExtendedLocation details data.
+
+    :ivar initial_primary_zone: The initial source zone info.
+    :vartype initial_primary_zone: str
+    :ivar initial_recovery_zone: The initial target zone info.
+    :vartype initial_recovery_zone: str
+    :ivar initial_primary_extended_location: The initial primary ExtendedLocation.
+    :vartype initial_primary_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+    :ivar initial_recovery_extended_location: The initial recovery ExtendedLocation.
+    :vartype initial_recovery_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+    :ivar initial_primary_fabric_location: Initial primary fabric location info.
+    :vartype initial_primary_fabric_location: str
+    :ivar initial_recovery_fabric_location: The initial recovery fabric location info.
+    :vartype initial_recovery_fabric_location: str
+    :ivar primary_zone: Source zone info.
+    :vartype primary_zone: str
+    :ivar recovery_zone: The target zone info.
+    :vartype recovery_zone: str
+    :ivar primary_extended_location: The primary ExtendedLocation.
+    :vartype primary_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+    :ivar recovery_extended_location: The recovery ExtendedLocation.
+    :vartype recovery_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+    :ivar primary_fabric_location: Primary fabric location info.
+    :vartype primary_fabric_location: str
+    :ivar recovery_fabric_location: The recovery fabric location info.
+    :vartype recovery_fabric_location: str
+    """
+
+    _attribute_map = {
+        "initial_primary_zone": {"key": "initialPrimaryZone", "type": "str"},
+        "initial_recovery_zone": {"key": "initialRecoveryZone", "type": "str"},
+        "initial_primary_extended_location": {"key": "initialPrimaryExtendedLocation", "type": "ExtendedLocation"},
+        "initial_recovery_extended_location": {"key": "initialRecoveryExtendedLocation", "type": "ExtendedLocation"},
+        "initial_primary_fabric_location": {"key": "initialPrimaryFabricLocation", "type": "str"},
+        "initial_recovery_fabric_location": {"key": "initialRecoveryFabricLocation", "type": "str"},
+        "primary_zone": {"key": "primaryZone", "type": "str"},
+        "recovery_zone": {"key": "recoveryZone", "type": "str"},
+        "primary_extended_location": {"key": "primaryExtendedLocation", "type": "ExtendedLocation"},
+        "recovery_extended_location": {"key": "recoveryExtendedLocation", "type": "ExtendedLocation"},
+        "primary_fabric_location": {"key": "primaryFabricLocation", "type": "str"},
+        "recovery_fabric_location": {"key": "recoveryFabricLocation", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        initial_primary_zone: Optional[str] = None,
+        initial_recovery_zone: Optional[str] = None,
+        initial_primary_extended_location: Optional["_models.ExtendedLocation"] = None,
+        initial_recovery_extended_location: Optional["_models.ExtendedLocation"] = None,
+        initial_primary_fabric_location: Optional[str] = None,
+        initial_recovery_fabric_location: Optional[str] = None,
+        primary_zone: Optional[str] = None,
+        recovery_zone: Optional[str] = None,
+        primary_extended_location: Optional["_models.ExtendedLocation"] = None,
+        recovery_extended_location: Optional["_models.ExtendedLocation"] = None,
+        primary_fabric_location: Optional[str] = None,
+        recovery_fabric_location: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword initial_primary_zone: The initial source zone info.
+        :paramtype initial_primary_zone: str
+        :keyword initial_recovery_zone: The initial target zone info.
+        :paramtype initial_recovery_zone: str
+        :keyword initial_primary_extended_location: The initial primary ExtendedLocation.
+        :paramtype initial_primary_extended_location:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+        :keyword initial_recovery_extended_location: The initial recovery ExtendedLocation.
+        :paramtype initial_recovery_extended_location:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+        :keyword initial_primary_fabric_location: Initial primary fabric location info.
+        :paramtype initial_primary_fabric_location: str
+        :keyword initial_recovery_fabric_location: The initial recovery fabric location info.
+        :paramtype initial_recovery_fabric_location: str
+        :keyword primary_zone: Source zone info.
+        :paramtype primary_zone: str
+        :keyword recovery_zone: The target zone info.
+        :paramtype recovery_zone: str
+        :keyword primary_extended_location: The primary ExtendedLocation.
+        :paramtype primary_extended_location:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+        :keyword recovery_extended_location: The recovery ExtendedLocation.
+        :paramtype recovery_extended_location:
+         ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
+        :keyword primary_fabric_location: Primary fabric location info.
+        :paramtype primary_fabric_location: str
+        :keyword recovery_fabric_location: The recovery fabric location info.
+        :paramtype recovery_fabric_location: str
+        """
+        super().__init__(**kwargs)
+        self.initial_primary_zone = initial_primary_zone
+        self.initial_recovery_zone = initial_recovery_zone
+        self.initial_primary_extended_location = initial_primary_extended_location
+        self.initial_recovery_extended_location = initial_recovery_extended_location
+        self.initial_primary_fabric_location = initial_primary_fabric_location
+        self.initial_recovery_fabric_location = initial_recovery_fabric_location
+        self.primary_zone = primary_zone
+        self.recovery_zone = recovery_zone
+        self.primary_extended_location = primary_extended_location
+        self.recovery_extended_location = recovery_extended_location
+        self.primary_fabric_location = primary_fabric_location
+        self.recovery_fabric_location = recovery_fabric_location
 
 
 class A2APolicyCreationInput(PolicyProviderSpecificInput):
@@ -1246,8 +1356,8 @@ class A2APolicyCreationInput(PolicyProviderSpecificInput):
         recovery_point_history: Optional[int] = None,
         crash_consistent_frequency_in_minutes: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_history: The duration in minutes until which the recovery points need
          to be stored.
@@ -1310,7 +1420,7 @@ class PolicyProviderSpecificDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -1358,8 +1468,8 @@ class A2APolicyDetails(PolicyProviderSpecificDetails):
         app_consistent_frequency_in_minutes: Optional[int] = None,
         multi_vm_sync_status: Optional[str] = None,
         crash_consistent_frequency_in_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
         :paramtype recovery_point_threshold_in_minutes: int
@@ -1492,8 +1602,8 @@ class A2AProtectedDiskDetails(_serialization.Model):  # pylint: disable=too-many
         kek_key_vault_arm_id: Optional[str] = None,
         failover_disk_name: Optional[str] = None,
         tfo_disk_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_uri: The disk uri.
         :paramtype disk_uri: str
@@ -1702,8 +1812,8 @@ class A2AProtectedManagedDiskDetails(_serialization.Model):  # pylint: disable=t
         kek_key_vault_arm_id: Optional[str] = None,
         failover_disk_name: Optional[str] = None,
         tfo_disk_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The managed disk Arm id.
         :paramtype disk_id: str
@@ -1827,7 +1937,7 @@ class ProtectionContainerMappingProviderSpecificDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -1879,8 +1989,8 @@ class A2AProtectionContainerMappingDetails(ProtectionContainerMappingProviderSpe
         ] = None,
         schedule_name: Optional[str] = None,
         job_schedule_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword agent_auto_update_status: A value indicating whether the auto update is enabled. Known
          values are: "Disabled" and "Enabled".
@@ -1943,8 +2053,8 @@ class A2AProtectionIntentDiskInputDetails(_serialization.Model):
         disk_uri: str,
         recovery_azure_storage_account_custom_input: Optional["_models.StorageAccountCustomDetails"] = None,
         primary_staging_storage_account_custom_input: Optional["_models.StorageAccountCustomDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_uri: The disk Uri. Required.
         :paramtype disk_uri: str
@@ -2019,8 +2129,8 @@ class A2AProtectionIntentManagedDiskInputDetails(_serialization.Model):
         recovery_target_disk_account_type: Optional[str] = None,
         recovery_disk_encryption_set_id: Optional[str] = None,
         disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk Id. Required.
         :paramtype disk_id: str
@@ -2082,7 +2192,7 @@ class ProviderSpecificRecoveryPointDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -2118,8 +2228,8 @@ class A2ARecoveryPointDetails(ProviderSpecificRecoveryPointDetails):
         *,
         recovery_point_sync_type: Optional[Union[str, "_models.RecoveryPointSyncType"]] = None,
         disks: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_sync_type: A value indicating whether the recovery point is multi VM
          consistent. Known values are: "MultiVmSyncRecoveryPoint" and "PerVmRecoveryPoint".
@@ -2156,7 +2266,7 @@ class RemoveDisksProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"A2A": "A2ARemoveDisksInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -2186,8 +2296,12 @@ class A2ARemoveDisksInput(RemoveDisksProviderSpecificInput):
     }
 
     def __init__(
-        self, *, vm_disks_uris: Optional[List[str]] = None, vm_managed_disks_ids: Optional[List[str]] = None, **kwargs
-    ):
+        self,
+        *,
+        vm_disks_uris: Optional[List[str]] = None,
+        vm_managed_disks_ids: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vm_disks_uris: The list of vm disk vhd URIs.
         :paramtype vm_disks_uris: list[str]
@@ -2338,6 +2452,10 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):  # pylint: dis
     :vartype recovery_virtual_machine_scale_set_id: str
     :ivar recovery_capacity_reservation_group_id: The recovery capacity reservation group Id.
     :vartype recovery_capacity_reservation_group_id: str
+    :ivar churn_option_selected: A value indicating the churn option selected by user. Known values
+     are: "Normal" and "High".
+    :vartype churn_option_selected: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.ChurnOptionSelected
     """
 
     _validation = {
@@ -2349,6 +2467,7 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):  # pylint: dis
         "agent_certificate_expiry_date": {"readonly": True},
         "vm_encryption_type": {"readonly": True},
         "recovery_azure_generation": {"readonly": True},
+        "churn_option_selected": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2409,6 +2528,7 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):  # pylint: dis
         "auto_protection_of_data_disk": {"key": "autoProtectionOfDataDisk", "type": "str"},
         "recovery_virtual_machine_scale_set_id": {"key": "recoveryVirtualMachineScaleSetId", "type": "str"},
         "recovery_capacity_reservation_group_id": {"key": "recoveryCapacityReservationGroupId", "type": "str"},
+        "churn_option_selected": {"key": "churnOptionSelected", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2460,8 +2580,8 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):  # pylint: dis
         auto_protection_of_data_disk: Optional[Union[str, "_models.AutoProtectionOfDataDisk"]] = None,
         recovery_virtual_machine_scale_set_id: Optional[str] = None,
         recovery_capacity_reservation_group_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_object_id: The fabric specific object Id of the virtual machine.
         :paramtype fabric_object_id: str
@@ -2632,6 +2752,7 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings):  # pylint: dis
         self.auto_protection_of_data_disk = auto_protection_of_data_disk
         self.recovery_virtual_machine_scale_set_id = recovery_virtual_machine_scale_set_id
         self.recovery_capacity_reservation_group_id = recovery_capacity_reservation_group_id
+        self.churn_option_selected = None
 
 
 class ReplicationProtectionIntentProviderSpecificSettings(_serialization.Model):
@@ -2656,7 +2777,7 @@ class ReplicationProtectionIntentProviderSpecificSettings(_serialization.Model):
 
     _subtype_map = {"instance_type": {"A2A": "A2AReplicationIntentDetails"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -2801,8 +2922,8 @@ class A2AReplicationIntentDetails(
         automation_account_authentication_type: Optional[
             Union[str, "_models.AutomationAccountAuthenticationType"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_object_id: The fabric specific object Id of the virtual machine.
         :paramtype fabric_object_id: str
@@ -2924,7 +3045,7 @@ class ReverseReplicationProviderSpecificInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -2974,8 +3095,8 @@ class A2AReprotectInput(ReverseReplicationProviderSpecificInput):
         recovery_cloud_service_id: Optional[str] = None,
         recovery_availability_set_id: Optional[str] = None,
         policy_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_container_id: The recovery container Id.
         :paramtype recovery_container_id: str
@@ -3023,7 +3144,7 @@ class SwitchProtectionProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"A2A": "A2ASwitchProtectionInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -3103,8 +3224,8 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput):  # pylint
         recovery_virtual_machine_scale_set_id: Optional[str] = None,
         recovery_capacity_reservation_group_id: Optional[str] = None,
         disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_container_id: The recovery container Id.
         :paramtype recovery_container_id: str
@@ -3184,7 +3305,7 @@ class TestFailoverProviderSpecificInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -3216,8 +3337,12 @@ class A2ATestFailoverInput(TestFailoverProviderSpecificInput):
     }
 
     def __init__(
-        self, *, recovery_point_id: Optional[str] = None, cloud_service_creation_option: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        recovery_point_id: Optional[str] = None,
+        cloud_service_creation_option: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_id: The recovery point id to be passed to test failover to a particular
          recovery point. In case of latest recovery point, null should be passed.
@@ -3264,7 +3389,7 @@ class UnplannedFailoverProviderSpecificInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -3296,8 +3421,12 @@ class A2AUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
     }
 
     def __init__(
-        self, *, recovery_point_id: Optional[str] = None, cloud_service_creation_option: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        recovery_point_id: Optional[str] = None,
+        cloud_service_creation_option: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_id: The recovery point id to be passed to failover to a particular
          recovery point. In case of latest recovery point, null should be passed.
@@ -3333,8 +3462,8 @@ class A2AUnprotectedDiskDetails(_serialization.Model):
         *,
         disk_lun_id: Optional[int] = None,
         disk_auto_protection_status: Optional[Union[str, "_models.AutoProtectionOfDataDisk"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_lun_id: The source lun Id for the data disk.
         :paramtype disk_lun_id: int
@@ -3372,7 +3501,7 @@ class ReplicationProviderSpecificUpdateContainerMappingInput(_serialization.Mode
         "instance_type": {"A2A": "A2AUpdateContainerMappingInput", "InMageRcm": "InMageRcmUpdateContainerMappingInput"}
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -3416,8 +3545,8 @@ class A2AUpdateContainerMappingInput(ReplicationProviderSpecificUpdateContainerM
         automation_account_authentication_type: Optional[
             Union[str, "_models.AutomationAccountAuthenticationType"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword agent_auto_update_status: A value indicating whether the auto update is enabled. Known
          values are: "Disabled" and "Enabled".
@@ -3467,7 +3596,7 @@ class UpdateReplicationProtectedItemProviderInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -3531,8 +3660,8 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
         recovery_proximity_placement_group_id: Optional[str] = None,
         recovery_virtual_machine_scale_set_id: Optional[str] = None,
         recovery_capacity_reservation_group_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_cloud_service_id: The target cloud service ARM Id (for V1).
         :paramtype recovery_cloud_service_id: str
@@ -3600,8 +3729,8 @@ class A2AVmDiskInputDetails(_serialization.Model):
         disk_uri: str,
         recovery_azure_storage_account_id: str,
         primary_staging_azure_storage_account_id: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_uri: The disk Uri. Required.
         :paramtype disk_uri: str
@@ -3669,8 +3798,8 @@ class A2AVmManagedDiskInputDetails(_serialization.Model):
         recovery_target_disk_account_type: Optional[str] = None,
         recovery_disk_encryption_set_id: Optional[str] = None,
         disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk Id. Required.
         :paramtype disk_id: str
@@ -3738,8 +3867,8 @@ class A2AVmManagedDiskUpdateDetails(_serialization.Model):
         disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
         failover_disk_name: Optional[str] = None,
         tfo_disk_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk Id.
         :paramtype disk_id: str
@@ -3778,7 +3907,7 @@ class A2AZoneDetails(_serialization.Model):
         "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(self, *, source: Optional[str] = None, target: Optional[str] = None, **kwargs):
+    def __init__(self, *, source: Optional[str] = None, target: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword source: Source zone info.
         :paramtype source: str
@@ -3801,7 +3930,7 @@ class AddDisksInput(_serialization.Model):
         "properties": {"key": "properties", "type": "AddDisksInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.AddDisksInputProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.AddDisksInputProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Add disks input properties.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.AddDisksInputProperties
@@ -3830,7 +3959,7 @@ class AddDisksInputProperties(_serialization.Model):
         "provider_specific_details": {"key": "providerSpecificDetails", "type": "AddDisksProviderSpecificInput"},
     }
 
-    def __init__(self, *, provider_specific_details: "_models.AddDisksProviderSpecificInput", **kwargs):
+    def __init__(self, *, provider_specific_details: "_models.AddDisksProviderSpecificInput", **kwargs: Any) -> None:
         """
         :keyword provider_specific_details: The ReplicationProviderInput. For HyperVReplicaAzure
          provider, it will be AzureEnableProtectionInput object. For San provider, it will be
@@ -3860,7 +3989,7 @@ class AddRecoveryServicesProviderInput(_serialization.Model):
         "properties": {"key": "properties", "type": "AddRecoveryServicesProviderInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.AddRecoveryServicesProviderInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.AddRecoveryServicesProviderInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: The properties of an add provider request. Required.
         :paramtype properties:
@@ -3922,8 +4051,8 @@ class AddRecoveryServicesProviderInputProperties(_serialization.Model):
         machine_id: Optional[str] = None,
         bios_id: Optional[str] = None,
         data_plane_authentication_identity_input: Optional["_models.IdentityProviderInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword machine_name: The name of the machine where the provider is getting added. Required.
         :paramtype machine_name: str
@@ -3965,7 +4094,7 @@ class AddVCenterRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "AddVCenterRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.AddVCenterRequestProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.AddVCenterRequestProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The properties of an add vCenter request.
         :paramtype properties:
@@ -4006,8 +4135,8 @@ class AddVCenterRequestProperties(_serialization.Model):
         process_server_id: Optional[str] = None,
         port: Optional[str] = None,
         run_as_account_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The friendly name of the vCenter.
         :paramtype friendly_name: str
@@ -4061,7 +4190,7 @@ class AgentDetails(_serialization.Model):
         "disks": {"key": "disks", "type": "[AgentDiskDetails]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.agent_id = None
@@ -4104,7 +4233,7 @@ class AgentDiskDetails(_serialization.Model):
         "lun_id": {"key": "lunId", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.disk_id = None
@@ -4142,7 +4271,7 @@ class Resource(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -4186,8 +4315,8 @@ class Alert(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.AlertProperties"] = None, **kwargs
-    ):
+        self, *, location: Optional[str] = None, properties: Optional["_models.AlertProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -4212,7 +4341,9 @@ class AlertCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Alert"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Alert"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of alerts.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Alert]
@@ -4247,8 +4378,8 @@ class AlertProperties(_serialization.Model):
         send_to_owners: Optional[str] = None,
         custom_email_addresses: Optional[List[str]] = None,
         locale: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword send_to_owners: A value indicating whether to send email to subscription
          administrator.
@@ -4279,8 +4410,12 @@ class ApplianceCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ReplicationAppliance"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ReplicationAppliance"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The appliance details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ReplicationAppliance]
@@ -4290,6 +4425,58 @@ class ApplianceCollection(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class ApplianceMonitoringDetails(_serialization.Model):
+    """Appliance details of the migration item.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar cpu_details: The appliance CPU details.
+    :vartype cpu_details: ~azure.mgmt.recoveryservicessiterecovery.models.ApplianceResourceDetails
+    :ivar ram_details: The appliance RAM details.
+    :vartype ram_details: ~azure.mgmt.recoveryservicessiterecovery.models.ApplianceResourceDetails
+    :ivar datastore_snapshot: The appliance datastore snapshot details.
+    :vartype datastore_snapshot:
+     list[~azure.mgmt.recoveryservicessiterecovery.models.DataStoreUtilizationDetails]
+    :ivar disks_replication_details: The disk replication details.
+    :vartype disks_replication_details:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ApplianceResourceDetails
+    :ivar esxi_nfc_buffer: The ESXi NFC buffer details.
+    :vartype esxi_nfc_buffer:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ApplianceResourceDetails
+    :ivar network_bandwidth: The appliance network bandwidth details.
+    :vartype network_bandwidth:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ApplianceResourceDetails
+    """
+
+    _validation = {
+        "cpu_details": {"readonly": True},
+        "ram_details": {"readonly": True},
+        "datastore_snapshot": {"readonly": True},
+        "disks_replication_details": {"readonly": True},
+        "esxi_nfc_buffer": {"readonly": True},
+        "network_bandwidth": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "cpu_details": {"key": "cpuDetails", "type": "ApplianceResourceDetails"},
+        "ram_details": {"key": "ramDetails", "type": "ApplianceResourceDetails"},
+        "datastore_snapshot": {"key": "datastoreSnapshot", "type": "[DataStoreUtilizationDetails]"},
+        "disks_replication_details": {"key": "disksReplicationDetails", "type": "ApplianceResourceDetails"},
+        "esxi_nfc_buffer": {"key": "esxiNfcBuffer", "type": "ApplianceResourceDetails"},
+        "network_bandwidth": {"key": "networkBandwidth", "type": "ApplianceResourceDetails"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.cpu_details = None
+        self.ram_details = None
+        self.datastore_snapshot = None
+        self.disks_replication_details = None
+        self.esxi_nfc_buffer = None
+        self.network_bandwidth = None
 
 
 class ApplianceQueryParameter(_serialization.Model):
@@ -4303,13 +4490,53 @@ class ApplianceQueryParameter(_serialization.Model):
         "provider_type": {"key": "providerType", "type": "str"},
     }
 
-    def __init__(self, *, provider_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, provider_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword provider_type: The providerType to be used for fetching appliance details.
         :paramtype provider_type: str
         """
         super().__init__(**kwargs)
         self.provider_type = provider_type
+
+
+class ApplianceResourceDetails(_serialization.Model):
+    """Details of the appliance resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar capacity: A value indicating the total capacity of appliance resource.
+    :vartype capacity: int
+    :ivar process_utilization: A value indicating the utilization percentage by gateway agent on
+     appliance.
+    :vartype process_utilization: float
+    :ivar total_utilization: A value indicating the total utilization percentage for all processes
+     on the appliance.
+    :vartype total_utilization: float
+    :ivar status: A value indicating the status of appliance resource.
+    :vartype status: str
+    """
+
+    _validation = {
+        "capacity": {"readonly": True},
+        "process_utilization": {"readonly": True},
+        "total_utilization": {"readonly": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "capacity": {"key": "capacity", "type": "int"},
+        "process_utilization": {"key": "processUtilization", "type": "float"},
+        "total_utilization": {"key": "totalUtilization", "type": "float"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.capacity = None
+        self.process_utilization = None
+        self.total_utilization = None
+        self.status = None
 
 
 class ApplianceSpecificDetails(_serialization.Model):
@@ -4334,7 +4561,7 @@ class ApplianceSpecificDetails(_serialization.Model):
 
     _subtype_map = {"instance_type": {"InMageRcm": "InMageRcmApplianceSpecificDetails"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -4358,7 +4585,7 @@ class ApplyRecoveryPointInput(_serialization.Model):
         "properties": {"key": "properties", "type": "ApplyRecoveryPointInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.ApplyRecoveryPointInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.ApplyRecoveryPointInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: The input properties to apply recovery point. Required.
         :paramtype properties:
@@ -4397,8 +4624,8 @@ class ApplyRecoveryPointInputProperties(_serialization.Model):
         *,
         provider_specific_details: "_models.ApplyRecoveryPointProviderSpecificInput",
         recovery_point_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_id: The recovery point Id.
         :paramtype recovery_point_id: str
@@ -4448,7 +4675,7 @@ class JobDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, *, affected_object_details: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, affected_object_details: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword affected_object_details: The affected object properties like source server, source
          cloud, target server, target cloud etc. based on the workflow object details.
@@ -4481,7 +4708,7 @@ class AsrJobDetails(JobDetails):
         "affected_object_details": {"key": "affectedObjectDetails", "type": "{str}"},
     }
 
-    def __init__(self, *, affected_object_details: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, affected_object_details: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword affected_object_details: The affected object properties like source server, source
          cloud, target server, target cloud etc. based on the workflow object details.
@@ -4554,8 +4781,8 @@ class ASRTask(_serialization.Model):  # pylint: disable=too-many-instance-attrib
         custom_details: Optional["_models.TaskTypeDetails"] = None,
         group_task_custom_details: Optional["_models.GroupTaskDetails"] = None,
         errors: Optional[List["_models.JobErrorDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword task_id: The Id.
         :paramtype task_id: str
@@ -4633,7 +4860,7 @@ class TaskTypeDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -4695,8 +4922,8 @@ class AutomationRunbookTaskDetails(TaskTypeDetails):
         job_id: Optional[str] = None,
         job_output: Optional[str] = None,
         is_primary_side_script: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The recovery plan task name.
         :paramtype name: str
@@ -4758,7 +4985,7 @@ class FabricSpecificCreationInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -4784,7 +5011,7 @@ class AzureFabricCreationInput(FabricSpecificCreationInput):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: The Location.
         :paramtype location: str
@@ -4826,7 +5053,7 @@ class FabricSpecificDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -4848,6 +5075,9 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
     :ivar extended_locations: The ExtendedLocations.
     :vartype extended_locations:
      list[~azure.mgmt.recoveryservicessiterecovery.models.A2AExtendedLocationDetails]
+    :ivar location_details: The location details.
+    :vartype location_details:
+     list[~azure.mgmt.recoveryservicessiterecovery.models.A2AFabricSpecificLocationDetails]
     """
 
     _validation = {
@@ -4860,6 +5090,7 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
         "container_ids": {"key": "containerIds", "type": "[str]"},
         "zones": {"key": "zones", "type": "[A2AZoneDetails]"},
         "extended_locations": {"key": "extendedLocations", "type": "[A2AExtendedLocationDetails]"},
+        "location_details": {"key": "locationDetails", "type": "[A2AFabricSpecificLocationDetails]"},
     }
 
     def __init__(
@@ -4869,8 +5100,9 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
         container_ids: Optional[List[str]] = None,
         zones: Optional[List["_models.A2AZoneDetails"]] = None,
         extended_locations: Optional[List["_models.A2AExtendedLocationDetails"]] = None,
-        **kwargs
-    ):
+        location_details: Optional[List["_models.A2AFabricSpecificLocationDetails"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The Location for the Azure fabric.
         :paramtype location: str
@@ -4881,6 +5113,9 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
         :keyword extended_locations: The ExtendedLocations.
         :paramtype extended_locations:
          list[~azure.mgmt.recoveryservicessiterecovery.models.A2AExtendedLocationDetails]
+        :keyword location_details: The location details.
+        :paramtype location_details:
+         list[~azure.mgmt.recoveryservicessiterecovery.models.A2AFabricSpecificLocationDetails]
         """
         super().__init__(**kwargs)
         self.instance_type: str = "Azure"
@@ -4888,6 +5123,7 @@ class AzureFabricSpecificDetails(FabricSpecificDetails):
         self.container_ids = container_ids
         self.zones = zones
         self.extended_locations = extended_locations
+        self.location_details = location_details
 
 
 class FabricSpecificCreateNetworkMappingInput(_serialization.Model):
@@ -4919,7 +5155,7 @@ class FabricSpecificCreateNetworkMappingInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -4946,7 +5182,7 @@ class AzureToAzureCreateNetworkMappingInput(FabricSpecificCreateNetworkMappingIn
         "primary_network_id": {"key": "primaryNetworkId", "type": "str"},
     }
 
-    def __init__(self, *, primary_network_id: str, **kwargs):
+    def __init__(self, *, primary_network_id: str, **kwargs: Any) -> None:
         """
         :keyword primary_network_id: The primary azure vnet Id. Required.
         :paramtype primary_network_id: str
@@ -4985,7 +5221,7 @@ class NetworkMappingFabricSpecificSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -5015,8 +5251,12 @@ class AzureToAzureNetworkMappingSettings(NetworkMappingFabricSpecificSettings):
     }
 
     def __init__(
-        self, *, primary_fabric_location: Optional[str] = None, recovery_fabric_location: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        primary_fabric_location: Optional[str] = None,
+        recovery_fabric_location: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_fabric_location: The primary fabric location.
         :paramtype primary_fabric_location: str
@@ -5058,7 +5298,7 @@ class FabricSpecificUpdateNetworkMappingInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -5084,7 +5324,7 @@ class AzureToAzureUpdateNetworkMappingInput(FabricSpecificUpdateNetworkMappingIn
         "primary_network_id": {"key": "primaryNetworkId", "type": "str"},
     }
 
-    def __init__(self, *, primary_network_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, primary_network_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword primary_network_id: The primary azure vnet Id.
         :paramtype primary_network_id: str
@@ -5113,8 +5353,8 @@ class AzureToAzureVmSyncedConfigDetails(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         input_endpoints: Optional[List["_models.InputEndpoint"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: The Azure VM tags.
         :paramtype tags: dict[str, str]
@@ -5177,8 +5417,8 @@ class AzureVmDiskDetails(_serialization.Model):
         lun_id: Optional[str] = None,
         disk_encryption_set_id: Optional[str] = None,
         custom_target_disk_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vhd_type: VHD type.
         :paramtype vhd_type: str
@@ -5228,7 +5468,7 @@ class ComputeSizeErrorDetails(_serialization.Model):
         "severity": {"key": "severity", "type": "str"},
     }
 
-    def __init__(self, *, message: Optional[str] = None, severity: Optional[str] = None, **kwargs):
+    def __init__(self, *, message: Optional[str] = None, severity: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword message: The error message.
         :paramtype message: str
@@ -5268,7 +5508,7 @@ class ConfigurationSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -5286,7 +5526,9 @@ class ConfigureAlertRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "ConfigureAlertRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ConfigureAlertRequestProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.ConfigureAlertRequestProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties of a configure alert request.
         :paramtype properties:
@@ -5319,8 +5561,8 @@ class ConfigureAlertRequestProperties(_serialization.Model):
         send_to_owners: Optional[str] = None,
         custom_email_addresses: Optional[List[str]] = None,
         locale: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword send_to_owners: A value indicating whether to send email to subscription
          administrator.
@@ -5357,7 +5599,7 @@ class ConsistencyCheckTaskDetails(TaskTypeDetails):
         "vm_details": {"key": "vmDetails", "type": "[InconsistentVmDetails]"},
     }
 
-    def __init__(self, *, vm_details: Optional[List["_models.InconsistentVmDetails"]] = None, **kwargs):
+    def __init__(self, *, vm_details: Optional[List["_models.InconsistentVmDetails"]] = None, **kwargs: Any) -> None:
         """
         :keyword vm_details: The list of inconsistent Vm details.
         :paramtype vm_details:
@@ -5386,7 +5628,7 @@ class CreateNetworkMappingInput(_serialization.Model):
         "properties": {"key": "properties", "type": "CreateNetworkMappingInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.CreateNetworkMappingInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.CreateNetworkMappingInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Input properties for creating network mapping. Required.
         :paramtype properties:
@@ -5426,8 +5668,8 @@ class CreateNetworkMappingInputProperties(_serialization.Model):
         recovery_network_id: str,
         recovery_fabric_name: Optional[str] = None,
         fabric_specific_details: Optional["_models.FabricSpecificCreateNetworkMappingInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_fabric_name: Recovery fabric Name.
         :paramtype recovery_fabric_name: str
@@ -5455,7 +5697,7 @@ class CreatePolicyInput(_serialization.Model):
         "properties": {"key": "properties", "type": "CreatePolicyInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.CreatePolicyInputProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.CreatePolicyInputProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Policy creation properties.
         :paramtype properties:
@@ -5477,7 +5719,9 @@ class CreatePolicyInputProperties(_serialization.Model):
         "provider_specific_input": {"key": "providerSpecificInput", "type": "PolicyProviderSpecificInput"},
     }
 
-    def __init__(self, *, provider_specific_input: Optional["_models.PolicyProviderSpecificInput"] = None, **kwargs):
+    def __init__(
+        self, *, provider_specific_input: Optional["_models.PolicyProviderSpecificInput"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_input: The ReplicationProviderSettings.
         :paramtype provider_specific_input:
@@ -5499,7 +5743,9 @@ class CreateProtectionContainerInput(_serialization.Model):
         "properties": {"key": "properties", "type": "CreateProtectionContainerInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.CreateProtectionContainerInputProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.CreateProtectionContainerInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Create protection container input properties.
         :paramtype properties:
@@ -5528,8 +5774,8 @@ class CreateProtectionContainerInputProperties(_serialization.Model):
         self,
         *,
         provider_specific_input: Optional[List["_models.ReplicationProviderSpecificContainerCreationInput"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_input: Provider specific inputs for container creation.
         :paramtype provider_specific_input:
@@ -5552,8 +5798,8 @@ class CreateProtectionContainerMappingInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, properties: Optional["_models.CreateProtectionContainerMappingInputProperties"] = None, **kwargs
-    ):
+        self, *, properties: Optional["_models.CreateProtectionContainerMappingInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Configure protection input properties.
         :paramtype properties:
@@ -5590,8 +5836,8 @@ class CreateProtectionContainerMappingInputProperties(_serialization.Model):
         target_protection_container_id: Optional[str] = None,
         policy_id: Optional[str] = None,
         provider_specific_input: Optional["_models.ReplicationProviderSpecificContainerMappingInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_protection_container_id: The target unique protection container name.
         :paramtype target_protection_container_id: str
@@ -5619,7 +5865,9 @@ class CreateProtectionIntentInput(_serialization.Model):
         "properties": {"key": "properties", "type": "CreateProtectionIntentProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.CreateProtectionIntentProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.CreateProtectionIntentProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Create protection intent input properties.
         :paramtype properties:
@@ -5649,8 +5897,8 @@ class CreateProtectionIntentProperties(_serialization.Model):
         self,
         *,
         provider_specific_details: Optional["_models.CreateProtectionIntentProviderSpecificDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_details: The ReplicationProviderInput. For A2A provider, it will be
          A2ACreateProtectionIntentInput object.
@@ -5679,7 +5927,7 @@ class CreateRecoveryPlanInput(_serialization.Model):
         "properties": {"key": "properties", "type": "CreateRecoveryPlanInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.CreateRecoveryPlanInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.CreateRecoveryPlanInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Recovery plan creation properties. Required.
         :paramtype properties:
@@ -5731,8 +5979,8 @@ class CreateRecoveryPlanInputProperties(_serialization.Model):
         groups: List["_models.RecoveryPlanGroup"],
         failover_deployment_model: Optional[Union[str, "_models.FailoverDeploymentModel"]] = None,
         provider_specific_input: Optional[List["_models.RecoveryPlanProviderSpecificInput"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_fabric_id: The primary fabric Id. Required.
         :paramtype primary_fabric_id: str
@@ -5785,7 +6033,7 @@ class CriticalJobHistoryDetails(_serialization.Model):
         "job_status": {"key": "jobStatus", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.job_name = None
@@ -5819,7 +6067,7 @@ class CurrentJobDetails(_serialization.Model):
         "start_time": {"key": "startTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.job_name = None
@@ -5850,8 +6098,8 @@ class CurrentScenarioDetails(_serialization.Model):
         scenario_name: Optional[str] = None,
         job_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scenario_name: Scenario name.
         :paramtype scenario_name: str
@@ -5897,8 +6145,8 @@ class DataStore(_serialization.Model):
         capacity: Optional[str] = None,
         free_space: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword symbolic_name: The symbolic name of data store.
         :paramtype symbolic_name: str
@@ -5919,6 +6167,40 @@ class DataStore(_serialization.Model):
         self.type = type
 
 
+class DataStoreUtilizationDetails(_serialization.Model):
+    """Details of the appliance resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar total_snapshots_supported: The total count of snapshots supported by the datastore.
+    :vartype total_snapshots_supported: int
+    :ivar total_snapshots_created: The total snapshots created for server migration in the
+     datastore.
+    :vartype total_snapshots_created: int
+    :ivar data_store_name: The datastore name.
+    :vartype data_store_name: str
+    """
+
+    _validation = {
+        "total_snapshots_supported": {"readonly": True},
+        "total_snapshots_created": {"readonly": True},
+        "data_store_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "total_snapshots_supported": {"key": "totalSnapshotsSupported", "type": "int"},
+        "total_snapshots_created": {"key": "totalSnapshotsCreated", "type": "int"},
+        "data_store_name": {"key": "dataStoreName", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.total_snapshots_supported = None
+        self.total_snapshots_created = None
+        self.data_store_name = None
+
+
 class DisableProtectionInput(_serialization.Model):
     """Disable protection input.
 
@@ -5937,7 +6219,7 @@ class DisableProtectionInput(_serialization.Model):
         "properties": {"key": "properties", "type": "DisableProtectionInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.DisableProtectionInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.DisableProtectionInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Disable protection input properties. Required.
         :paramtype properties:
@@ -5972,8 +6254,8 @@ class DisableProtectionInputProperties(_serialization.Model):
         *,
         disable_protection_reason: Optional[Union[str, "_models.DisableProtectionReason"]] = None,
         replication_provider_input: Optional["_models.DisableProtectionProviderSpecificInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disable_protection_reason: Disable protection reason. It can have values
          NotSpecified/MigrationComplete. Known values are: "NotSpecified" and "MigrationComplete".
@@ -6010,7 +6292,7 @@ class DisableProtectionProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"InMage": "InMageDisableProtectionProviderSpecificInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -6028,7 +6310,9 @@ class DiscoverProtectableItemRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "DiscoverProtectableItemRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.DiscoverProtectableItemRequestProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.DiscoverProtectableItemRequestProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties of a discover protectable item request.
         :paramtype properties:
@@ -6061,8 +6345,8 @@ class DiscoverProtectableItemRequestProperties(_serialization.Model):
         friendly_name: Optional[str] = None,
         ip_address: Optional[str] = None,
         os_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The friendly name of the physical machine.
         :paramtype friendly_name: str
@@ -6104,8 +6388,8 @@ class DiskDetails(_serialization.Model):
         vhd_type: Optional[str] = None,
         vhd_id: Optional[str] = None,
         vhd_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword max_size_mb: The hard disk max size in MB.
         :paramtype max_size_mb: int
@@ -6144,8 +6428,8 @@ class DiskEncryptionInfo(_serialization.Model):
         *,
         disk_encryption_key_info: Optional["_models.DiskEncryptionKeyInfo"] = None,
         key_encryption_key_info: Optional["_models.KeyEncryptionKeyInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_encryption_key_info: The recovery KeyVault reference for secret.
         :paramtype disk_encryption_key_info:
@@ -6174,8 +6458,8 @@ class DiskEncryptionKeyInfo(_serialization.Model):
     }
 
     def __init__(
-        self, *, secret_identifier: Optional[str] = None, key_vault_resource_arm_id: Optional[str] = None, **kwargs
-    ):
+        self, *, secret_identifier: Optional[str] = None, key_vault_resource_arm_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword secret_identifier: The secret url / identifier.
         :paramtype secret_identifier: str
@@ -6201,7 +6485,7 @@ class DiskVolumeDetails(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, label: Optional[str] = None, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, label: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword label: The volume label.
         :paramtype label: str
@@ -6214,7 +6498,9 @@ class DiskVolumeDetails(_serialization.Model):
 
 
 class Display(_serialization.Model):
-    """Contains the localized display information for this particular operation / action. These value will be used by several clients for (1) custom role definitions for RBAC; (2) complex query filters for the event service; and (3) audit history / records for management operations.
+    """Contains the localized display information for this particular operation / action. These value
+    will be used by several clients for (1) custom role definitions for RBAC; (2) complex query
+    filters for the event service; and (3) audit history / records for management operations.
 
     :ivar provider: The provider. The localized friendly form of the resource provider name - it is
      expected to also include the publisher/company responsible. It should use Title Casing and
@@ -6256,8 +6542,8 @@ class Display(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: The provider. The localized friendly form of the resource provider name - it
          is expected to also include the publisher/company responsible. It should use Title Casing and
@@ -6342,7 +6628,7 @@ class DraDetails(_serialization.Model):
         "reverse_protected_item_count": {"key": "reverseProtectedItemCount", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -6374,7 +6660,7 @@ class EnableMigrationInput(_serialization.Model):
         "properties": {"key": "properties", "type": "EnableMigrationInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.EnableMigrationInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.EnableMigrationInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Enable migration input properties. Required.
         :paramtype properties:
@@ -6407,8 +6693,12 @@ class EnableMigrationInputProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, policy_id: str, provider_specific_details: "_models.EnableMigrationProviderSpecificInput", **kwargs
-    ):
+        self,
+        *,
+        policy_id: str,
+        provider_specific_details: "_models.EnableMigrationProviderSpecificInput",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_id: The policy Id. Required.
         :paramtype policy_id: str
@@ -6443,7 +6733,7 @@ class EnableMigrationProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"VMwareCbt": "VMwareCbtEnableMigrationInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -6461,7 +6751,9 @@ class EnableProtectionInput(_serialization.Model):
         "properties": {"key": "properties", "type": "EnableProtectionInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.EnableProtectionInputProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.EnableProtectionInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Enable protection input properties.
         :paramtype properties:
@@ -6500,8 +6792,8 @@ class EnableProtectionInputProperties(_serialization.Model):
         policy_id: Optional[str] = None,
         protectable_item_id: Optional[str] = None,
         provider_specific_details: Optional["_models.EnableProtectionProviderSpecificInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_id: The Policy Id.
         :paramtype policy_id: str
@@ -6542,8 +6834,8 @@ class EncryptionDetails(_serialization.Model):
         kek_state: Optional[str] = None,
         kek_cert_thumbprint: Optional[str] = None,
         kek_cert_expiry_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kek_state: The key encryption key state for the Vmm.
         :paramtype kek_state: str
@@ -6590,8 +6882,8 @@ class Event(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.EventProperties"] = None, **kwargs
-    ):
+        self, *, location: Optional[str] = None, properties: Optional["_models.EventProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -6616,7 +6908,9 @@ class EventCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Event"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Event"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of events.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Event]
@@ -6688,8 +6982,8 @@ class EventProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         provider_specific_details: Optional["_models.EventProviderSpecificDetails"] = None,
         event_specific_details: Optional["_models.EventSpecificDetails"] = None,
         health_errors: Optional[List["_models.HealthError"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_code: The Id of the monitoring event.
         :paramtype event_code: str
@@ -6777,8 +7071,8 @@ class EventQueryParameter(_serialization.Model):
         affected_object_correlation_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_code: The source id of the events to be queried.
         :paramtype event_code: str
@@ -6832,7 +7126,7 @@ class EventSpecificDetails(_serialization.Model):
 
     _subtype_map = {"instance_type": {"JobStatus": "JobStatusEventDetails"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -6860,7 +7154,7 @@ class ProtectionProfileCustomDetails(_serialization.Model):
 
     _subtype_map = {"resource_type": {"Existing": "ExistingProtectionProfile", "New": "NewProtectionProfile"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type: Optional[str] = None
@@ -6888,7 +7182,7 @@ class ExistingProtectionProfile(ProtectionProfileCustomDetails):
         "protection_profile_id": {"key": "protectionProfileId", "type": "str"},
     }
 
-    def __init__(self, *, protection_profile_id: str, **kwargs):
+    def __init__(self, *, protection_profile_id: str, **kwargs: Any) -> None:
         """
         :keyword protection_profile_id: The protection profile Arm Id. Throw error, if resource does
          not exists. Required.
@@ -6921,7 +7215,7 @@ class RecoveryAvailabilitySetCustomDetails(_serialization.Model):
 
     _subtype_map = {"resource_type": {"Existing": "ExistingRecoveryAvailabilitySet"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type: Optional[str] = None
@@ -6948,7 +7242,7 @@ class ExistingRecoveryAvailabilitySet(RecoveryAvailabilitySetCustomDetails):
         "recovery_availability_set_id": {"key": "recoveryAvailabilitySetId", "type": "str"},
     }
 
-    def __init__(self, *, recovery_availability_set_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, recovery_availability_set_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword recovery_availability_set_id: The recovery availability set Id. Will throw error, if
          resource does not exist.
@@ -6981,7 +7275,7 @@ class RecoveryProximityPlacementGroupCustomDetails(_serialization.Model):
 
     _subtype_map = {"resource_type": {"Existing": "ExistingRecoveryProximityPlacementGroup"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type: Optional[str] = None
@@ -7008,7 +7302,7 @@ class ExistingRecoveryProximityPlacementGroup(RecoveryProximityPlacementGroupCus
         "recovery_proximity_placement_group_id": {"key": "recoveryProximityPlacementGroupId", "type": "str"},
     }
 
-    def __init__(self, *, recovery_proximity_placement_group_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, recovery_proximity_placement_group_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword recovery_proximity_placement_group_id: The recovery proximity placement group Id. Will
          throw error, if resource does not exist.
@@ -7041,7 +7335,7 @@ class RecoveryResourceGroupCustomDetails(_serialization.Model):
 
     _subtype_map = {"resource_type": {"Existing": "ExistingRecoveryResourceGroup"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type: Optional[str] = None
@@ -7067,7 +7361,7 @@ class ExistingRecoveryResourceGroup(RecoveryResourceGroupCustomDetails):
         "recovery_resource_group_id": {"key": "recoveryResourceGroupId", "type": "str"},
     }
 
-    def __init__(self, *, recovery_resource_group_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, recovery_resource_group_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword recovery_resource_group_id: The recovery resource group Id. Valid for V2 scenarios.
         :paramtype recovery_resource_group_id: str
@@ -7099,7 +7393,7 @@ class RecoveryVirtualNetworkCustomDetails(_serialization.Model):
 
     _subtype_map = {"resource_type": {"Existing": "ExistingRecoveryVirtualNetwork", "New": "NewRecoveryVirtualNetwork"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type: Optional[str] = None
@@ -7130,7 +7424,9 @@ class ExistingRecoveryVirtualNetwork(RecoveryVirtualNetworkCustomDetails):
         "recovery_subnet_name": {"key": "recoverySubnetName", "type": "str"},
     }
 
-    def __init__(self, *, recovery_virtual_network_id: str, recovery_subnet_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, recovery_virtual_network_id: str, recovery_subnet_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_virtual_network_id: The recovery virtual network Id. Will throw error, if
          resource does not exist. Required.
@@ -7166,7 +7462,7 @@ class StorageAccountCustomDetails(_serialization.Model):
 
     _subtype_map = {"resource_type": {"Existing": "ExistingStorageAccount"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type: Optional[str] = None
@@ -7194,7 +7490,7 @@ class ExistingStorageAccount(StorageAccountCustomDetails):
         "azure_storage_account_id": {"key": "azureStorageAccountId", "type": "str"},
     }
 
-    def __init__(self, *, azure_storage_account_id: str, **kwargs):
+    def __init__(self, *, azure_storage_account_id: str, **kwargs: Any) -> None:
         """
         :keyword azure_storage_account_id: The storage account Arm Id. Throw error, if resource does
          not exists. Required.
@@ -7239,8 +7535,8 @@ class ExportJobDetails(JobDetails):
         affected_object_details: Optional[Dict[str, str]] = None,
         blob_uri: Optional[str] = None,
         sas_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword affected_object_details: The affected object properties like source server, source
          cloud, target server, target cloud etc. based on the workflow object details.
@@ -7277,7 +7573,7 @@ class ExtendedLocation(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: Union[str, "_models.ExtendedLocationType"], **kwargs):
+    def __init__(self, *, name: str, type: Union[str, "_models.ExtendedLocationType"], **kwargs: Any) -> None:
         """
         :keyword name: The name of the extended location. Required.
         :paramtype name: str
@@ -7321,8 +7617,8 @@ class Fabric(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.FabricProperties"] = None, **kwargs
-    ):
+        self, *, location: Optional[str] = None, properties: Optional["_models.FabricProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -7347,7 +7643,9 @@ class FabricCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Fabric"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Fabric"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The fabric details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Fabric]
@@ -7371,7 +7669,7 @@ class FabricCreationInput(_serialization.Model):
         "properties": {"key": "properties", "type": "FabricCreationInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.FabricCreationInputProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.FabricCreationInputProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Fabric creation input.
         :paramtype properties:
@@ -7393,7 +7691,9 @@ class FabricCreationInputProperties(_serialization.Model):
         "custom_details": {"key": "customDetails", "type": "FabricSpecificCreationInput"},
     }
 
-    def __init__(self, *, custom_details: Optional["_models.FabricSpecificCreationInput"] = None, **kwargs):
+    def __init__(
+        self, *, custom_details: Optional["_models.FabricSpecificCreationInput"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword custom_details: Fabric provider specific creation input.
         :paramtype custom_details:
@@ -7448,8 +7748,8 @@ class FabricProperties(_serialization.Model):
         custom_details: Optional["_models.FabricSpecificDetails"] = None,
         health_error_details: Optional[List["_models.HealthError"]] = None,
         health: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: Friendly name of the fabric.
         :paramtype friendly_name: str
@@ -7489,6 +7789,11 @@ class FabricQueryParameter(_serialization.Model):
     :ivar zone_to_zone_mappings: A value indicating whether the zone to zone mappings are to be
      returned.
     :vartype zone_to_zone_mappings: str
+    :ivar extended_location_mappings: A value indicating whether the Extended Location mappings are
+     to be returned.
+    :vartype extended_location_mappings: str
+    :ivar location_details: A value indicating whether the location details are to be returned.
+    :vartype location_details: str
     :ivar fetch_agent_details: A value indicating whether the agent details are to be fetched.
     :vartype fetch_agent_details: str
     :ivar bios_id: The BIOS Id to be used for fetching agent details.
@@ -7503,6 +7808,8 @@ class FabricQueryParameter(_serialization.Model):
 
     _attribute_map = {
         "zone_to_zone_mappings": {"key": "zoneToZoneMappings", "type": "str"},
+        "extended_location_mappings": {"key": "extendedLocationMappings", "type": "str"},
+        "location_details": {"key": "locationDetails", "type": "str"},
         "fetch_agent_details": {"key": "fetchAgentDetails", "type": "str"},
         "bios_id": {"key": "biosId", "type": "str"},
         "fqdn": {"key": "fqdn", "type": "str"},
@@ -7514,17 +7821,24 @@ class FabricQueryParameter(_serialization.Model):
         self,
         *,
         zone_to_zone_mappings: Optional[str] = None,
+        extended_location_mappings: Optional[str] = None,
+        location_details: Optional[str] = None,
         fetch_agent_details: Optional[str] = None,
         bios_id: Optional[str] = None,
         fqdn: Optional[str] = None,
         discovery_type: Optional[str] = None,
         os_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword zone_to_zone_mappings: A value indicating whether the zone to zone mappings are to be
          returned.
         :paramtype zone_to_zone_mappings: str
+        :keyword extended_location_mappings: A value indicating whether the Extended Location mappings
+         are to be returned.
+        :paramtype extended_location_mappings: str
+        :keyword location_details: A value indicating whether the location details are to be returned.
+        :paramtype location_details: str
         :keyword fetch_agent_details: A value indicating whether the agent details are to be fetched.
         :paramtype fetch_agent_details: str
         :keyword bios_id: The BIOS Id to be used for fetching agent details.
@@ -7539,6 +7853,8 @@ class FabricQueryParameter(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.zone_to_zone_mappings = zone_to_zone_mappings
+        self.extended_location_mappings = extended_location_mappings
+        self.location_details = location_details
         self.fetch_agent_details = fetch_agent_details
         self.bios_id = bios_id
         self.fqdn = fqdn
@@ -7547,7 +7863,8 @@ class FabricQueryParameter(_serialization.Model):
 
 
 class JobTaskDetails(TaskTypeDetails):
-    """This class represents a task which is actually a workflow so that one can navigate to its individual drill down.
+    """This class represents a task which is actually a workflow so that one can navigate to its
+    individual drill down.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FabricReplicationGroupTaskDetails, VirtualMachineTaskDetails
@@ -7576,7 +7893,7 @@ class JobTaskDetails(TaskTypeDetails):
         }
     }
 
-    def __init__(self, *, job_task: Optional["_models.JobEntity"] = None, **kwargs):
+    def __init__(self, *, job_task: Optional["_models.JobEntity"] = None, **kwargs: Any) -> None:
         """
         :keyword job_task: The job entity.
         :paramtype job_task: ~azure.mgmt.recoveryservicessiterecovery.models.JobEntity
@@ -7618,8 +7935,8 @@ class FabricReplicationGroupTaskDetails(JobTaskDetails):
         job_task: Optional["_models.JobEntity"] = None,
         skipped_reason: Optional[str] = None,
         skipped_reason_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword job_task: The job entity.
         :paramtype job_task: ~azure.mgmt.recoveryservicessiterecovery.models.JobEntity
@@ -7665,8 +7982,8 @@ class FailoverJobDetails(JobDetails):
         *,
         affected_object_details: Optional[Dict[str, str]] = None,
         protected_item_details: Optional[List["_models.FailoverReplicationProtectedItemDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword affected_object_details: The affected object properties like source server, source
          cloud, target server, target cloud etc. based on the workflow object details.
@@ -7692,7 +8009,9 @@ class FailoverProcessServerRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "FailoverProcessServerRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.FailoverProcessServerRequestProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.FailoverProcessServerRequestProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties of the PS Failover request.
         :paramtype properties:
@@ -7733,8 +8052,8 @@ class FailoverProcessServerRequestProperties(_serialization.Model):
         target_process_server_id: Optional[str] = None,
         vms_to_migrate: Optional[List[str]] = None,
         update_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: The container identifier.
         :paramtype container_name: str
@@ -7802,8 +8121,8 @@ class FailoverReplicationProtectedItemDetails(_serialization.Model):
         subnet: Optional[str] = None,
         recovery_point_id: Optional[str] = None,
         recovery_point_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name.
         :paramtype name: str
@@ -7836,8 +8155,68 @@ class FailoverReplicationProtectedItemDetails(_serialization.Model):
         self.recovery_point_time = recovery_point_time
 
 
+class GatewayOperationDetails(_serialization.Model):
+    """Details of the gateway operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar state: A value indicating the state of gateway operation.
+    :vartype state: str
+    :ivar progress_percentage: A value indicating the progress percentage of gateway operation.
+    :vartype progress_percentage: int
+    :ivar time_elapsed: A value indicating the time elapsed for the operation in milliseconds.
+    :vartype time_elapsed: int
+    :ivar time_remaining: A value indicating the time remaining for the operation in milliseconds.
+    :vartype time_remaining: int
+    :ivar upload_speed: A value indicating the upload speed in bytes per second.
+    :vartype upload_speed: int
+    :ivar host_name: A value indicating the ESXi host name.
+    :vartype host_name: str
+    :ivar data_stores: A value indicating the datastore collection.
+    :vartype data_stores: list[str]
+    :ivar vmware_read_throughput: A value indicating the VMware read throughput in bytes per
+     second.
+    :vartype vmware_read_throughput: int
+    """
+
+    _validation = {
+        "state": {"readonly": True},
+        "progress_percentage": {"readonly": True},
+        "time_elapsed": {"readonly": True},
+        "time_remaining": {"readonly": True},
+        "upload_speed": {"readonly": True},
+        "host_name": {"readonly": True},
+        "data_stores": {"readonly": True},
+        "vmware_read_throughput": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "progress_percentage": {"key": "progressPercentage", "type": "int"},
+        "time_elapsed": {"key": "timeElapsed", "type": "int"},
+        "time_remaining": {"key": "timeRemaining", "type": "int"},
+        "upload_speed": {"key": "uploadSpeed", "type": "int"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "data_stores": {"key": "dataStores", "type": "[str]"},
+        "vmware_read_throughput": {"key": "vmwareReadThroughput", "type": "int"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.state = None
+        self.progress_percentage = None
+        self.time_elapsed = None
+        self.time_remaining = None
+        self.upload_speed = None
+        self.host_name = None
+        self.data_stores = None
+        self.vmware_read_throughput = None
+
+
 class GroupTaskDetails(_serialization.Model):
-    """This class represents the group task details when parent child relationship exists in the drill down.
+    """This class represents the group task details when parent child relationship exists in the drill
+    down.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     InlineWorkflowTaskDetails, RecoveryPlanGroupTaskDetails
@@ -7866,7 +8245,7 @@ class GroupTaskDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, *, child_tasks: Optional[List["_models.ASRTask"]] = None, **kwargs):
+    def __init__(self, *, child_tasks: Optional[List["_models.ASRTask"]] = None, **kwargs: Any) -> None:
         """
         :keyword child_tasks: The child tasks.
         :paramtype child_tasks: list[~azure.mgmt.recoveryservicessiterecovery.models.ASRTask]
@@ -7954,8 +8333,8 @@ class HealthError(_serialization.Model):  # pylint: disable=too-many-instance-at
         entity_id: Optional[str] = None,
         error_id: Optional[str] = None,
         customer_resolvability: Optional[Union[str, "_models.HealthErrorCustomerResolvability"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword inner_health_errors: The inner health errors. HealthError having a list of HealthError
          as child errors is problematic. InnerHealthError is used because this will prevent an infinite
@@ -8058,8 +8437,8 @@ class HealthErrorSummary(_serialization.Model):
         affected_resource_type: Optional[str] = None,
         affected_resource_subtype: Optional[str] = None,
         affected_resource_correlation_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword summary_code: The code of the health error.
         :paramtype summary_code: str
@@ -8117,7 +8496,7 @@ class HyperVHostDetails(_serialization.Model):
         "mars_agent_version": {"key": "marsAgentVersion", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -8161,8 +8540,8 @@ class HyperVReplica2012EventDetails(EventProviderSpecificDetails):
         fabric_name: Optional[str] = None,
         remote_container_name: Optional[str] = None,
         remote_fabric_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: The container friendly name.
         :paramtype container_name: str
@@ -8217,8 +8596,8 @@ class HyperVReplica2012R2EventDetails(EventProviderSpecificDetails):
         fabric_name: Optional[str] = None,
         remote_container_name: Optional[str] = None,
         remote_fabric_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: The container friendly name.
         :paramtype container_name: str
@@ -8265,8 +8644,8 @@ class HyperVReplicaAzureApplyRecoveryPointInput(ApplyRecoveryPointProviderSpecif
         *,
         primary_kek_certificate_pfx: Optional[str] = None,
         secondary_kek_certificate_pfx: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_kek_certificate_pfx: The primary kek certificate pfx.
         :paramtype primary_kek_certificate_pfx: str
@@ -8307,8 +8686,8 @@ class HyperVReplicaAzureDiskInputDetails(_serialization.Model):
         log_storage_account_id: Optional[str] = None,
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The DiskId.
         :paramtype disk_id: str
@@ -8475,8 +8854,8 @@ class HyperVReplicaAzureEnableProtectionInput(
         seed_managed_disk_tags: Optional[Dict[str, str]] = None,
         target_managed_disk_tags: Optional[Dict[str, str]] = None,
         target_nic_tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hv_host_vm_id: The Hyper-V host VM Id.
         :paramtype hv_host_vm_id: str
@@ -8610,8 +8989,8 @@ class HyperVReplicaAzureEventDetails(EventProviderSpecificDetails):
         container_name: Optional[str] = None,
         fabric_name: Optional[str] = None,
         remote_container_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: The container friendly name.
         :paramtype container_name: str
@@ -8656,7 +9035,7 @@ class PlannedFailoverProviderSpecificFailoverInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -8694,8 +9073,8 @@ class HyperVReplicaAzureFailbackProviderInput(PlannedFailoverProviderSpecificFai
         data_sync_option: Optional[str] = None,
         recovery_vm_creation_option: Optional[str] = None,
         provider_id_for_alternate_recovery: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_sync_option: Data sync option.
         :paramtype data_sync_option: str
@@ -8738,8 +9117,8 @@ class HyperVReplicaAzureManagedDiskDetails(_serialization.Model):
         seed_managed_disk_id: Optional[str] = None,
         replica_disk_type: Optional[str] = None,
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk Id.
         :paramtype disk_id: str
@@ -8771,6 +9150,8 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(PlannedFailoverProviderSpec
     :ivar recovery_point_id: The recovery point id to be passed to failover to a particular
      recovery point. In case of latest recovery point, null should be passed.
     :vartype recovery_point_id: str
+    :ivar os_upgrade_version: A value indicating the inplace OS Upgrade version.
+    :vartype os_upgrade_version: str
     """
 
     _validation = {
@@ -8782,6 +9163,7 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(PlannedFailoverProviderSpec
         "primary_kek_certificate_pfx": {"key": "primaryKekCertificatePfx", "type": "str"},
         "secondary_kek_certificate_pfx": {"key": "secondaryKekCertificatePfx", "type": "str"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "os_upgrade_version": {"key": "osUpgradeVersion", "type": "str"},
     }
 
     def __init__(
@@ -8790,8 +9172,9 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(PlannedFailoverProviderSpec
         primary_kek_certificate_pfx: Optional[str] = None,
         secondary_kek_certificate_pfx: Optional[str] = None,
         recovery_point_id: Optional[str] = None,
-        **kwargs
-    ):
+        os_upgrade_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_kek_certificate_pfx: Primary kek certificate pfx.
         :paramtype primary_kek_certificate_pfx: str
@@ -8800,12 +9183,15 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(PlannedFailoverProviderSpec
         :keyword recovery_point_id: The recovery point id to be passed to failover to a particular
          recovery point. In case of latest recovery point, null should be passed.
         :paramtype recovery_point_id: str
+        :keyword os_upgrade_version: A value indicating the inplace OS Upgrade version.
+        :paramtype os_upgrade_version: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "HyperVReplicaAzure"
         self.primary_kek_certificate_pfx = primary_kek_certificate_pfx
         self.secondary_kek_certificate_pfx = secondary_kek_certificate_pfx
         self.recovery_point_id = recovery_point_id
+        self.os_upgrade_version = os_upgrade_version
 
 
 class HyperVReplicaAzurePolicyDetails(PolicyProviderSpecificDetails):
@@ -8859,8 +9245,8 @@ class HyperVReplicaAzurePolicyDetails(PolicyProviderSpecificDetails):
         online_replication_start_time: Optional[str] = None,
         encryption: Optional[str] = None,
         active_storage_account_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_history_duration_in_hours: The duration (in hours) to which point the
          recovery history needs to be maintained.
@@ -8936,8 +9322,8 @@ class HyperVReplicaAzurePolicyInput(PolicyProviderSpecificInput):
         replication_interval: Optional[int] = None,
         online_replication_start_time: Optional[str] = None,
         storage_accounts: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_history_duration: The duration (in hours) to which point the recovery
          history needs to be maintained.
@@ -9048,6 +9434,10 @@ class HyperVReplicaAzureReplicationDetails(
     :ivar protected_managed_disks: The list of protected managed disks.
     :vartype protected_managed_disks:
      list[~azure.mgmt.recoveryservicessiterecovery.models.HyperVReplicaAzureManagedDiskDetails]
+    :ivar all_available_os_upgrade_configurations: A value indicating all available inplace OS
+     Upgrade configurations.
+    :vartype all_available_os_upgrade_configurations:
+     list[~azure.mgmt.recoveryservicessiterecovery.models.OSUpgradeSupportedVersions]
     """
 
     _validation = {
@@ -9090,6 +9480,10 @@ class HyperVReplicaAzureReplicationDetails(
         "target_managed_disk_tags": {"key": "targetManagedDiskTags", "type": "{str}"},
         "target_nic_tags": {"key": "targetNicTags", "type": "{str}"},
         "protected_managed_disks": {"key": "protectedManagedDisks", "type": "[HyperVReplicaAzureManagedDiskDetails]"},
+        "all_available_os_upgrade_configurations": {
+            "key": "allAvailableOSUpgradeConfigurations",
+            "type": "[OSUpgradeSupportedVersions]",
+        },
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -9127,8 +9521,9 @@ class HyperVReplicaAzureReplicationDetails(
         target_managed_disk_tags: Optional[Dict[str, str]] = None,
         target_nic_tags: Optional[Dict[str, str]] = None,
         protected_managed_disks: Optional[List["_models.HyperVReplicaAzureManagedDiskDetails"]] = None,
-        **kwargs
-    ):
+        all_available_os_upgrade_configurations: Optional[List["_models.OSUpgradeSupportedVersions"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword azure_vm_disk_details: Azure VM Disk details.
         :paramtype azure_vm_disk_details:
@@ -9202,6 +9597,10 @@ class HyperVReplicaAzureReplicationDetails(
         :keyword protected_managed_disks: The list of protected managed disks.
         :paramtype protected_managed_disks:
          list[~azure.mgmt.recoveryservicessiterecovery.models.HyperVReplicaAzureManagedDiskDetails]
+        :keyword all_available_os_upgrade_configurations: A value indicating all available inplace OS
+         Upgrade configurations.
+        :paramtype all_available_os_upgrade_configurations:
+         list[~azure.mgmt.recoveryservicessiterecovery.models.OSUpgradeSupportedVersions]
         """
         super().__init__(**kwargs)
         self.instance_type: str = "HyperVReplicaAzure"
@@ -9238,6 +9637,7 @@ class HyperVReplicaAzureReplicationDetails(
         self.target_managed_disk_tags = target_managed_disk_tags
         self.target_nic_tags = target_nic_tags
         self.protected_managed_disks = protected_managed_disks
+        self.all_available_os_upgrade_configurations = all_available_os_upgrade_configurations
 
 
 class HyperVReplicaAzureReprotectInput(ReverseReplicationProviderSpecificInput):
@@ -9284,8 +9684,8 @@ class HyperVReplicaAzureReprotectInput(ReverseReplicationProviderSpecificInput):
         v_hd_id: Optional[str] = None,
         storage_account_id: Optional[str] = None,
         log_storage_account_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hv_host_vm_id: The Hyper-V host Vm Id.
         :paramtype hv_host_vm_id: str
@@ -9324,6 +9724,8 @@ class HyperVReplicaAzureTestFailoverInput(TestFailoverProviderSpecificInput):
     :ivar recovery_point_id: The recovery point id to be passed to test failover to a particular
      recovery point. In case of latest recovery point, null should be passed.
     :vartype recovery_point_id: str
+    :ivar os_upgrade_version: A value indicating the inplace OS Upgrade version.
+    :vartype os_upgrade_version: str
     """
 
     _validation = {
@@ -9335,6 +9737,7 @@ class HyperVReplicaAzureTestFailoverInput(TestFailoverProviderSpecificInput):
         "primary_kek_certificate_pfx": {"key": "primaryKekCertificatePfx", "type": "str"},
         "secondary_kek_certificate_pfx": {"key": "secondaryKekCertificatePfx", "type": "str"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "os_upgrade_version": {"key": "osUpgradeVersion", "type": "str"},
     }
 
     def __init__(
@@ -9343,8 +9746,9 @@ class HyperVReplicaAzureTestFailoverInput(TestFailoverProviderSpecificInput):
         primary_kek_certificate_pfx: Optional[str] = None,
         secondary_kek_certificate_pfx: Optional[str] = None,
         recovery_point_id: Optional[str] = None,
-        **kwargs
-    ):
+        os_upgrade_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_kek_certificate_pfx: Primary kek certificate pfx.
         :paramtype primary_kek_certificate_pfx: str
@@ -9353,12 +9757,15 @@ class HyperVReplicaAzureTestFailoverInput(TestFailoverProviderSpecificInput):
         :keyword recovery_point_id: The recovery point id to be passed to test failover to a particular
          recovery point. In case of latest recovery point, null should be passed.
         :paramtype recovery_point_id: str
+        :keyword os_upgrade_version: A value indicating the inplace OS Upgrade version.
+        :paramtype os_upgrade_version: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "HyperVReplicaAzure"
         self.primary_kek_certificate_pfx = primary_kek_certificate_pfx
         self.secondary_kek_certificate_pfx = secondary_kek_certificate_pfx
         self.recovery_point_id = recovery_point_id
+        self.os_upgrade_version = os_upgrade_version
 
 
 class HyperVReplicaAzureUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
@@ -9394,8 +9801,8 @@ class HyperVReplicaAzureUnplannedFailoverInput(UnplannedFailoverProviderSpecific
         primary_kek_certificate_pfx: Optional[str] = None,
         secondary_kek_certificate_pfx: Optional[str] = None,
         recovery_point_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_kek_certificate_pfx: Primary kek certificate pfx.
         :paramtype primary_kek_certificate_pfx: str
@@ -9484,8 +9891,8 @@ class HyperVReplicaAzureUpdateReplicationProtectedItemInput(
         target_nic_tags: Optional[Dict[str, str]] = None,
         sql_server_license_type: Optional[Union[str, "_models.SqlServerLicenseType"]] = None,
         vm_disks: Optional[List["_models.UpdateDiskInput"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_azure_v1_resource_group_id: The recovery Azure resource group Id for classic
          deployment.
@@ -9567,8 +9974,8 @@ class HyperVReplicaBaseEventDetails(EventProviderSpecificDetails):
         fabric_name: Optional[str] = None,
         remote_container_name: Optional[str] = None,
         remote_fabric_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_name: The container friendly name.
         :paramtype container_name: str
@@ -9652,8 +10059,8 @@ class HyperVReplicaBasePolicyDetails(PolicyProviderSpecificDetails):  # pylint: 
         replication_port: Optional[int] = None,
         allowed_authentication_type: Optional[int] = None,
         replica_deletion_option: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_points: A value indicating the number of recovery points.
         :paramtype recovery_points: int
@@ -9741,8 +10148,8 @@ class HyperVReplicaBaseReplicationDetails(ReplicationProviderSpecificSettings):
         vm_protection_state_description: Optional[str] = None,
         initial_replication_details: Optional["_models.InitialReplicationDetails"] = None,
         v_m_disk_details: Optional[List["_models.DiskDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_replicated_time: The Last replication time.
         :paramtype last_replicated_time: ~datetime.datetime
@@ -9840,8 +10247,8 @@ class HyperVReplicaBluePolicyDetails(PolicyProviderSpecificDetails):  # pylint: 
         replication_port: Optional[int] = None,
         allowed_authentication_type: Optional[int] = None,
         replica_deletion_option: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword replication_frequency_in_seconds: A value indicating the replication interval.
         :paramtype replication_frequency_in_seconds: int
@@ -9952,8 +10359,8 @@ class HyperVReplicaPolicyInput(PolicyProviderSpecificInput):  # pylint: disable=
         replication_port: Optional[int] = None,
         allowed_authentication_type: Optional[int] = None,
         replica_deletion: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_points: A value indicating the number of recovery points.
         :paramtype recovery_points: int
@@ -10059,8 +10466,8 @@ class HyperVReplicaBluePolicyInput(HyperVReplicaPolicyInput):  # pylint: disable
         allowed_authentication_type: Optional[int] = None,
         replica_deletion: Optional[str] = None,
         replication_frequency_in_seconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_points: A value indicating the number of recovery points.
         :paramtype recovery_points: int
@@ -10152,8 +10559,8 @@ class HyperVReplicaBlueReplicationDetails(ReplicationProviderSpecificSettings):
         vm_protection_state_description: Optional[str] = None,
         initial_replication_details: Optional["_models.InitialReplicationDetails"] = None,
         v_m_disk_details: Optional[List["_models.DiskDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_replicated_time: The Last replication time.
         :paramtype last_replicated_time: ~datetime.datetime
@@ -10247,8 +10654,8 @@ class HyperVReplicaPolicyDetails(PolicyProviderSpecificDetails):  # pylint: disa
         replication_port: Optional[int] = None,
         allowed_authentication_type: Optional[int] = None,
         replica_deletion_option: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_points: A value indicating the number of recovery points.
         :paramtype recovery_points: int
@@ -10336,8 +10743,8 @@ class HyperVReplicaReplicationDetails(ReplicationProviderSpecificSettings):
         vm_protection_state_description: Optional[str] = None,
         initial_replication_details: Optional["_models.InitialReplicationDetails"] = None,
         v_m_disk_details: Optional[List["_models.DiskDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_replicated_time: The Last replication time.
         :paramtype last_replicated_time: ~datetime.datetime
@@ -10386,7 +10793,7 @@ class HyperVSiteDetails(FabricSpecificDetails):
         "hyper_v_hosts": {"key": "hyperVHosts", "type": "[HyperVHostDetails]"},
     }
 
-    def __init__(self, *, hyper_v_hosts: Optional[List["_models.HyperVHostDetails"]] = None, **kwargs):
+    def __init__(self, *, hyper_v_hosts: Optional[List["_models.HyperVHostDetails"]] = None, **kwargs: Any) -> None:
         """
         :keyword hyper_v_hosts: The list of Hyper-V hosts associated with the fabric.
         :paramtype hyper_v_hosts:
@@ -10462,8 +10869,8 @@ class HyperVVirtualMachineDetails(ConfigurationSettings):
         has_fibre_channel_adapter: Optional[Union[str, "_models.PresenceStatus"]] = None,
         has_shared_vhd: Optional[Union[str, "_models.PresenceStatus"]] = None,
         hyper_v_host_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_item_id: The source id of the object.
         :paramtype source_item_id: str
@@ -10538,8 +10945,8 @@ class IdentityProviderDetails(_serialization.Model):
         object_id: Optional[str] = None,
         audience: Optional[str] = None,
         aad_authority: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tenant_id: The tenant Id for the service principal with which the on-premise
          management/data plane components would communicate with our Azure services.
@@ -10603,8 +11010,8 @@ class IdentityProviderInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, tenant_id: str, application_id: str, object_id: str, audience: str, aad_authority: str, **kwargs
-    ):
+        self, *, tenant_id: str, application_id: str, object_id: str, audience: str, aad_authority: str, **kwargs: Any
+    ) -> None:
         """
         :keyword tenant_id: The tenant Id for the service principal with which the on-premise
          management/data plane components would communicate with our Azure services. Required.
@@ -10631,7 +11038,8 @@ class IdentityProviderInput(_serialization.Model):
 
 
 class InconsistentVmDetails(_serialization.Model):
-    """This class stores the monitoring details for consistency check of inconsistent Protected Entity.
+    """This class stores the monitoring details for consistency check of inconsistent Protected
+    Entity.
 
     :ivar vm_name: The Vm name.
     :vartype vm_name: str
@@ -10657,8 +11065,8 @@ class InconsistentVmDetails(_serialization.Model):
         cloud_name: Optional[str] = None,
         details: Optional[List[str]] = None,
         error_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vm_name: The Vm name.
         :paramtype vm_name: str
@@ -10696,8 +11104,8 @@ class InitialReplicationDetails(_serialization.Model):
         *,
         initial_replication_type: Optional[str] = None,
         initial_replication_progress_percentage: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword initial_replication_type: Initial replication type.
         :paramtype initial_replication_type: str
@@ -10737,8 +11145,8 @@ class InlineWorkflowTaskDetails(GroupTaskDetails):
         *,
         child_tasks: Optional[List["_models.ASRTask"]] = None,
         workflow_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword child_tasks: The child tasks.
         :paramtype child_tasks: list[~azure.mgmt.recoveryservicessiterecovery.models.ASRTask]
@@ -10778,8 +11186,8 @@ class InMageAgentDetails(_serialization.Model):
         agent_update_status: Optional[str] = None,
         post_update_reboot_status: Optional[str] = None,
         agent_expiry_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword agent_version: The agent version.
         :paramtype agent_version: str
@@ -10815,7 +11223,7 @@ class InMageAzureV2ApplyRecoveryPointInput(ApplyRecoveryPointProviderSpecificInp
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageAzureV2"
@@ -10849,8 +11257,8 @@ class InMageAzureV2DiskInputDetails(_serialization.Model):
         log_storage_account_id: Optional[str] = None,
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The DiskId.
         :paramtype disk_id: str
@@ -11004,8 +11412,8 @@ class InMageAzureV2EnableProtectionInput(
         seed_managed_disk_tags: Optional[Dict[str, str]] = None,
         target_managed_disk_tags: Optional[Dict[str, str]] = None,
         target_nic_tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword master_target_id: The Master target Id.
         :paramtype master_target_id: str
@@ -11148,8 +11556,8 @@ class InMageAzureV2EventDetails(EventProviderSpecificDetails):
         details: Optional[str] = None,
         summary: Optional[str] = None,
         site_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_type: InMage Event type. Takes one of the values of
          InMageDataContract.InMageMonitoringEventType.
@@ -11209,8 +11617,8 @@ class InMageAzureV2ManagedDiskDetails(_serialization.Model):
         replica_disk_type: Optional[str] = None,
         disk_encryption_set_id: Optional[str] = None,
         target_disk_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk id.
         :paramtype disk_id: str
@@ -11273,8 +11681,8 @@ class InMageAzureV2PolicyDetails(PolicyProviderSpecificDetails):
         recovery_point_history: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
         multi_vm_sync_status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword crash_consistent_frequency_in_minutes: The crash consistent snapshot frequency in
          minutes.
@@ -11343,8 +11751,8 @@ class InMageAzureV2PolicyInput(PolicyProviderSpecificInput):
         recovery_point_history: Optional[int] = None,
         crash_consistent_frequency_in_minutes: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
         :paramtype recovery_point_threshold_in_minutes: int
@@ -11474,8 +11882,8 @@ class InMageAzureV2ProtectedDiskDetails(_serialization.Model):  # pylint: disabl
         progress_health: Optional[str] = None,
         progress_status: Optional[str] = None,
         seconds_to_take_switch_provider: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk id.
         :paramtype disk_id: str
@@ -11571,7 +11979,7 @@ class InMageAzureV2RecoveryPointDetails(ProviderSpecificRecoveryPointDetails):
         "is_multi_vm_sync_point": {"key": "isMultiVmSyncPoint", "type": "str"},
     }
 
-    def __init__(self, *, is_multi_vm_sync_point: Optional[str] = None, **kwargs):
+    def __init__(self, *, is_multi_vm_sync_point: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword is_multi_vm_sync_point: A value indicating whether the recovery point is multi VM
          consistent.
@@ -11743,11 +12151,20 @@ class InMageAzureV2ReplicationDetails(
     :ivar switch_provider_details: The switch provider blocking error information.
     :vartype switch_provider_details:
      ~azure.mgmt.recoveryservicessiterecovery.models.InMageAzureV2SwitchProviderDetails
+    :ivar supported_os_versions: A value indicating the inplace OS Upgrade version.
+    :vartype supported_os_versions: list[str]
+    :ivar all_available_os_upgrade_configurations: A value indicating all available inplace OS
+     Upgrade configurations.
+    :vartype all_available_os_upgrade_configurations:
+     list[~azure.mgmt.recoveryservicessiterecovery.models.OSUpgradeSupportedVersions]
+    :ivar os_name: The name of the OS on the VM.
+    :vartype os_name: str
     """
 
     _validation = {
         "instance_type": {"required": True},
         "last_recovery_point_received": {"readonly": True},
+        "os_name": {"readonly": True},
     }
 
     _attribute_map = {
@@ -11822,6 +12239,12 @@ class InMageAzureV2ReplicationDetails(
             "type": "[InMageAzureV2SwitchProviderBlockingErrorDetails]",
         },
         "switch_provider_details": {"key": "switchProviderDetails", "type": "InMageAzureV2SwitchProviderDetails"},
+        "supported_os_versions": {"key": "supportedOSVersions", "type": "[str]"},
+        "all_available_os_upgrade_configurations": {
+            "key": "allAvailableOSUpgradeConfigurations",
+            "type": "[OSUpgradeSupportedVersions]",
+        },
+        "os_name": {"key": "osName", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -11895,8 +12318,10 @@ class InMageAzureV2ReplicationDetails(
             List["_models.InMageAzureV2SwitchProviderBlockingErrorDetails"]
         ] = None,
         switch_provider_details: Optional["_models.InMageAzureV2SwitchProviderDetails"] = None,
-        **kwargs
-    ):
+        supported_os_versions: Optional[List[str]] = None,
+        all_available_os_upgrade_configurations: Optional[List["_models.OSUpgradeSupportedVersions"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword infrastructure_vm_id: The infrastructure VM Id.
         :paramtype infrastructure_vm_id: str
@@ -12048,6 +12473,12 @@ class InMageAzureV2ReplicationDetails(
         :keyword switch_provider_details: The switch provider blocking error information.
         :paramtype switch_provider_details:
          ~azure.mgmt.recoveryservicessiterecovery.models.InMageAzureV2SwitchProviderDetails
+        :keyword supported_os_versions: A value indicating the inplace OS Upgrade version.
+        :paramtype supported_os_versions: list[str]
+        :keyword all_available_os_upgrade_configurations: A value indicating all available inplace OS
+         Upgrade configurations.
+        :paramtype all_available_os_upgrade_configurations:
+         list[~azure.mgmt.recoveryservicessiterecovery.models.OSUpgradeSupportedVersions]
         """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageAzureV2"
@@ -12118,6 +12549,9 @@ class InMageAzureV2ReplicationDetails(
         self.target_nic_tags = target_nic_tags
         self.switch_provider_blocking_error_details = switch_provider_blocking_error_details
         self.switch_provider_details = switch_provider_details
+        self.supported_os_versions = supported_os_versions
+        self.all_available_os_upgrade_configurations = all_available_os_upgrade_configurations
+        self.os_name = None
 
 
 class InMageAzureV2ReprotectInput(ReverseReplicationProviderSpecificInput):
@@ -12168,8 +12602,8 @@ class InMageAzureV2ReprotectInput(ReverseReplicationProviderSpecificInput):
         policy_id: Optional[str] = None,
         log_storage_account_id: Optional[str] = None,
         disks_to_include: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword master_target_id: The Master target Id.
         :paramtype master_target_id: str
@@ -12234,7 +12668,7 @@ class InMageAzureV2SwitchProviderBlockingErrorDetails(_serialization.Model):
         "error_tags": {"key": "errorTags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error_code = None
@@ -12274,7 +12708,7 @@ class InMageAzureV2SwitchProviderDetails(_serialization.Model):
         "target_appliance_id": {"key": "targetApplianceId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.target_vault_id = None
@@ -12305,7 +12739,7 @@ class SwitchProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"InMageAzureV2": "InMageAzureV2SwitchProviderInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -12340,7 +12774,7 @@ class InMageAzureV2SwitchProviderInput(SwitchProviderSpecificInput):
         "target_appliance_id": {"key": "targetApplianceID", "type": "str"},
     }
 
-    def __init__(self, *, target_vault_id: str, target_fabric_id: str, target_appliance_id: str, **kwargs):
+    def __init__(self, *, target_vault_id: str, target_fabric_id: str, target_appliance_id: str, **kwargs: Any) -> None:
         """
         :keyword target_vault_id: The target vault Id. Required.
         :paramtype target_vault_id: str
@@ -12366,6 +12800,8 @@ class InMageAzureV2TestFailoverInput(TestFailoverProviderSpecificInput):
     :ivar recovery_point_id: The recovery point id to be passed to test failover to a particular
      recovery point. In case of latest recovery point, null should be passed.
     :vartype recovery_point_id: str
+    :ivar os_upgrade_version: A value indicating the inplace OS Upgrade version.
+    :vartype os_upgrade_version: str
     """
 
     _validation = {
@@ -12375,17 +12811,23 @@ class InMageAzureV2TestFailoverInput(TestFailoverProviderSpecificInput):
     _attribute_map = {
         "instance_type": {"key": "instanceType", "type": "str"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "os_upgrade_version": {"key": "osUpgradeVersion", "type": "str"},
     }
 
-    def __init__(self, *, recovery_point_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, recovery_point_id: Optional[str] = None, os_upgrade_version: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_id: The recovery point id to be passed to test failover to a particular
          recovery point. In case of latest recovery point, null should be passed.
         :paramtype recovery_point_id: str
+        :keyword os_upgrade_version: A value indicating the inplace OS Upgrade version.
+        :paramtype os_upgrade_version: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageAzureV2"
         self.recovery_point_id = recovery_point_id
+        self.os_upgrade_version = os_upgrade_version
 
 
 class InMageAzureV2UnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
@@ -12398,6 +12840,8 @@ class InMageAzureV2UnplannedFailoverInput(UnplannedFailoverProviderSpecificInput
     :ivar recovery_point_id: The recovery point id to be passed to failover to a particular
      recovery point. In case of latest recovery point, null should be passed.
     :vartype recovery_point_id: str
+    :ivar os_upgrade_version: A value indicating the inplace OS Upgrade version.
+    :vartype os_upgrade_version: str
     """
 
     _validation = {
@@ -12407,17 +12851,23 @@ class InMageAzureV2UnplannedFailoverInput(UnplannedFailoverProviderSpecificInput
     _attribute_map = {
         "instance_type": {"key": "instanceType", "type": "str"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
+        "os_upgrade_version": {"key": "osUpgradeVersion", "type": "str"},
     }
 
-    def __init__(self, *, recovery_point_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, recovery_point_id: Optional[str] = None, os_upgrade_version: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_id: The recovery point id to be passed to failover to a particular
          recovery point. In case of latest recovery point, null should be passed.
         :paramtype recovery_point_id: str
+        :keyword os_upgrade_version: A value indicating the inplace OS Upgrade version.
+        :paramtype os_upgrade_version: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageAzureV2"
         self.recovery_point_id = recovery_point_id
+        self.os_upgrade_version = os_upgrade_version
 
 
 class InMageAzureV2UpdateReplicationProtectedItemInput(
@@ -12487,8 +12937,8 @@ class InMageAzureV2UpdateReplicationProtectedItemInput(
         target_nic_tags: Optional[Dict[str, str]] = None,
         sql_server_license_type: Optional[Union[str, "_models.SqlServerLicenseType"]] = None,
         vm_disks: Optional[List["_models.UpdateDiskInput"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_azure_v1_resource_group_id: The recovery Azure resource group Id for classic
          deployment.
@@ -12567,8 +13017,8 @@ class InMageBasePolicyDetails(PolicyProviderSpecificDetails):
         recovery_point_history: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
         multi_vm_sync_status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
         :paramtype recovery_point_threshold_in_minutes: int
@@ -12609,7 +13059,7 @@ class InMageDisableProtectionProviderSpecificInput(DisableProtectionProviderSpec
         "replica_vm_deletion_status": {"key": "replicaVmDeletionStatus", "type": "str"},
     }
 
-    def __init__(self, *, replica_vm_deletion_status: Optional[str] = None, **kwargs):
+    def __init__(self, *, replica_vm_deletion_status: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword replica_vm_deletion_status: A value indicating whether the replica VM should be
          destroyed or retained. Values from Delete and Retain.
@@ -12655,8 +13105,8 @@ class InMageDiskDetails(_serialization.Model):
         disk_type: Optional[str] = None,
         disk_configuration: Optional[str] = None,
         volume_list: Optional[List["_models.DiskVolumeDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk Id.
         :paramtype disk_id: str
@@ -12701,8 +13151,8 @@ class InMageDiskExclusionInput(_serialization.Model):
         *,
         volume_options: Optional[List["_models.InMageVolumeExclusionOptions"]] = None,
         disk_signature_options: Optional[List["_models.InMageDiskSignatureExclusionOptions"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword volume_options: The volume label based option for disk exclusion.
         :paramtype volume_options:
@@ -12717,7 +13167,8 @@ class InMageDiskExclusionInput(_serialization.Model):
 
 
 class InMageDiskSignatureExclusionOptions(_serialization.Model):
-    """Guest disk signature based disk exclusion option when doing enable protection of virtual machine in InMage provider.
+    """Guest disk signature based disk exclusion option when doing enable protection of virtual
+    machine in InMage provider.
 
     :ivar disk_signature: The guest signature of disk to be excluded from replication.
     :vartype disk_signature: str
@@ -12727,7 +13178,7 @@ class InMageDiskSignatureExclusionOptions(_serialization.Model):
         "disk_signature": {"key": "diskSignature", "type": "str"},
     }
 
-    def __init__(self, *, disk_signature: Optional[str] = None, **kwargs):
+    def __init__(self, *, disk_signature: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword disk_signature: The guest signature of disk to be excluded from replication.
         :paramtype disk_signature: str
@@ -12804,8 +13255,8 @@ class InMageEnableProtectionInput(
         datastore_name: Optional[str] = None,
         disk_exclusion_input: Optional["_models.InMageDiskExclusionInput"] = None,
         disks_to_include: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vm_friendly_name: The VM Name.
         :paramtype vm_friendly_name: str
@@ -12880,7 +13331,7 @@ class InMageFabricSwitchProviderBlockingErrorDetails(_serialization.Model):
         "error_tags": {"key": "errorTags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error_code = None
@@ -12928,8 +13379,8 @@ class InMagePolicyDetails(PolicyProviderSpecificDetails):
         recovery_point_history: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
         multi_vm_sync_status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
         :paramtype recovery_point_threshold_in_minutes: int
@@ -12989,8 +13440,8 @@ class InMagePolicyInput(PolicyProviderSpecificInput):
         recovery_point_threshold_in_minutes: Optional[int] = None,
         recovery_point_history: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
         :paramtype recovery_point_threshold_in_minutes: int
@@ -13112,8 +13563,8 @@ class InMageProtectedDiskDetails(_serialization.Model):  # pylint: disable=too-m
         resync_start_time: Optional[datetime.datetime] = None,
         progress_health: Optional[str] = None,
         progress_status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk id.
         :paramtype disk_id: str
@@ -13222,7 +13673,7 @@ class InMageRcmAgentUpgradeBlockingErrorDetails(_serialization.Model):
         "error_tags": {"key": "errorTags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error_code = None
@@ -13295,7 +13746,7 @@ class InMageRcmApplianceDetails(_serialization.Model):  # pylint: disable=too-ma
         },
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -13335,7 +13786,7 @@ class InMageRcmApplianceSpecificDetails(ApplianceSpecificDetails):
         "appliances": {"key": "appliances", "type": "[InMageRcmApplianceDetails]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
@@ -13363,7 +13814,7 @@ class InMageRcmApplyRecoveryPointInput(ApplyRecoveryPointProviderSpecificInput):
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
     }
 
-    def __init__(self, *, recovery_point_id: str, **kwargs):
+    def __init__(self, *, recovery_point_id: str, **kwargs: Any) -> None:
         """
         :keyword recovery_point_id: The recovery point Id. Required.
         :paramtype recovery_point_id: str
@@ -13434,7 +13885,7 @@ class InMageRcmDiscoveredProtectedVmDetails(_serialization.Model):  # pylint: di
         "last_discovery_time_in_utc": {"key": "lastDiscoveryTimeInUtc", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.v_center_id = None
@@ -13487,8 +13938,8 @@ class InMageRcmDiskInput(_serialization.Model):
         log_storage_account_id: str,
         disk_type: Union[str, "_models.DiskAccountType"],
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk Id. Required.
         :paramtype disk_id: str
@@ -13538,8 +13989,8 @@ class InMageRcmDisksDefaultInput(_serialization.Model):
         log_storage_account_id: str,
         disk_type: Union[str, "_models.DiskAccountType"],
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_storage_account_id: The log storage account ARM Id. Required.
         :paramtype log_storage_account_id: str
@@ -13656,8 +14107,8 @@ class InMageRcmEnableProtectionInput(
         target_boot_diagnostics_storage_account_id: Optional[str] = None,
         run_as_account_id: Optional[str] = None,
         multi_vm_group_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_discovery_machine_id: The ARM Id of discovered machine. Required.
         :paramtype fabric_discovery_machine_id: str
@@ -13773,7 +14224,7 @@ class InMageRcmEventDetails(EventProviderSpecificDetails):
         "component_display_name": {"key": "componentDisplayName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
@@ -13824,8 +14275,8 @@ class InMageRcmFabricCreationInput(FabricSpecificCreationInput):
         vmware_site_id: str,
         physical_site_id: str,
         source_agent_identity: "_models.IdentityProviderInput",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vmware_site_id: The ARM Id of the VMware site. Required.
         :paramtype vmware_site_id: str
@@ -13930,7 +14381,9 @@ class InMageRcmFabricSpecificDetails(FabricSpecificDetails):  # pylint: disable=
         "agent_details": {"key": "agentDetails", "type": "[AgentDetails]"},
     }
 
-    def __init__(self, *, source_agent_identity_details: Optional["_models.IdentityProviderDetails"] = None, **kwargs):
+    def __init__(
+        self, *, source_agent_identity_details: Optional["_models.IdentityProviderDetails"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword source_agent_identity_details: The source agent identity details.
         :paramtype source_agent_identity_details:
@@ -13993,7 +14446,7 @@ class InMageRcmFabricSwitchProviderBlockingErrorDetails(_serialization.Model):
         "error_tags": {"key": "errorTags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error_code = None
@@ -14067,7 +14520,7 @@ class InMageRcmFailbackDiscoveredProtectedVmDetails(
         "last_discovery_time_in_utc": {"key": "lastDiscoveryTimeInUtc", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.v_center_id = None
@@ -14123,7 +14576,7 @@ class InMageRcmFailbackEventDetails(EventProviderSpecificDetails):
         "component_display_name": {"key": "componentDisplayName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcmFailback"
@@ -14185,7 +14638,7 @@ class InMageRcmFailbackMobilityAgentDetails(_serialization.Model):
         "is_upgradeable": {"key": "isUpgradeable", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.version = None
@@ -14228,7 +14681,7 @@ class InMageRcmFailbackNicDetails(_serialization.Model):
         "source_ip_address": {"key": "sourceIpAddress", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.mac_address = None
@@ -14260,7 +14713,9 @@ class InMageRcmFailbackPlannedFailoverProviderInput(PlannedFailoverProviderSpeci
         "recovery_point_type": {"key": "recoveryPointType", "type": "str"},
     }
 
-    def __init__(self, *, recovery_point_type: Union[str, "_models.InMageRcmFailbackRecoveryPointType"], **kwargs):
+    def __init__(
+        self, *, recovery_point_type: Union[str, "_models.InMageRcmFailbackRecoveryPointType"], **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_type: The recovery point type. Required. Known values are:
          "ApplicationConsistent" and "CrashConsistent".
@@ -14301,8 +14756,8 @@ class InMageRcmFailbackPolicyCreationInput(PolicyProviderSpecificInput):
         *,
         crash_consistent_frequency_in_minutes: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword crash_consistent_frequency_in_minutes: The crash consistent snapshot frequency (in
          minutes).
@@ -14346,8 +14801,8 @@ class InMageRcmFailbackPolicyDetails(PolicyProviderSpecificDetails):
         *,
         app_consistent_frequency_in_minutes: Optional[int] = None,
         crash_consistent_frequency_in_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword app_consistent_frequency_in_minutes: The app consistent snapshot frequency in minutes.
         :paramtype app_consistent_frequency_in_minutes: int
@@ -14424,8 +14879,8 @@ class InMageRcmFailbackProtectedDiskDetails(_serialization.Model):  # pylint: di
         *,
         ir_details: Optional["_models.InMageRcmFailbackSyncDetails"] = None,
         resync_details: Optional["_models.InMageRcmFailbackSyncDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword ir_details: The initial replication details.
         :paramtype ir_details:
@@ -14610,8 +15065,8 @@ class InMageRcmFailbackReplicationDetails(
         mobility_agent_details: Optional["_models.InMageRcmFailbackMobilityAgentDetails"] = None,
         vm_nics: Optional[List["_models.InMageRcmFailbackNicDetails"]] = None,
         discovered_vm_details: Optional["_models.InMageRcmFailbackDiscoveredProtectedVmDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword protected_disks: The list of protected disks.
         :paramtype protected_disks:
@@ -14687,7 +15142,9 @@ class InMageRcmFailbackReprotectInput(ReverseReplicationProviderSpecificInput):
         "policy_id": {"key": "policyId", "type": "str"},
     }
 
-    def __init__(self, *, process_server_id: str, policy_id: str, run_as_account_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, process_server_id: str, policy_id: str, run_as_account_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword process_server_id: The process server Id. Required.
         :paramtype process_server_id: str
@@ -14753,7 +15210,7 @@ class InMageRcmFailbackSyncDetails(_serialization.Model):
         "progress_percentage": {"key": "progressPercentage", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.progress_health = None
@@ -14803,7 +15260,7 @@ class InMageRcmLastAgentUpgradeErrorDetails(_serialization.Model):
         "error_tags": {"key": "errorTags", "type": "{str}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error_code = None
@@ -14869,7 +15326,7 @@ class InMageRcmMobilityAgentDetails(_serialization.Model):
         "is_upgradeable": {"key": "isUpgradeable", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.version = None
@@ -14957,8 +15414,8 @@ class InMageRcmNicDetails(_serialization.Model):  # pylint: disable=too-many-ins
         test_subnet_name: Optional[str] = None,
         test_ip_address: Optional[str] = None,
         test_ip_address_type: Optional[Union[str, "_models.EthernetAddressType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_primary_nic: A value indicating whether this is the primary NIC.
         :paramtype is_primary_nic: str
@@ -15044,8 +15501,8 @@ class InMageRcmNicInput(_serialization.Model):
         target_static_ip_address: Optional[str] = None,
         test_subnet_name: Optional[str] = None,
         test_static_ip_address: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword nic_id: The NIC Id. Required.
         :paramtype nic_id: str
@@ -15111,8 +15568,8 @@ class InMageRcmPolicyCreationInput(PolicyProviderSpecificInput):
         crash_consistent_frequency_in_minutes: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
         enable_multi_vm_sync: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_history_in_minutes: The duration in minutes until which the recovery
          points need to be stored.
@@ -15172,8 +15629,8 @@ class InMageRcmPolicyDetails(PolicyProviderSpecificDetails):
         app_consistent_frequency_in_minutes: Optional[int] = None,
         crash_consistent_frequency_in_minutes: Optional[int] = None,
         enable_multi_vm_sync: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_history_in_minutes: The duration in minutes until which the recovery
          points need to be stored.
@@ -15272,8 +15729,8 @@ class InMageRcmProtectedDiskDetails(_serialization.Model):  # pylint: disable=to
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         ir_details: Optional["_models.InMageRcmSyncDetails"] = None,
         resync_details: Optional["_models.InMageRcmSyncDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_type: The disk type. Known values are: "Standard_LRS", "Premium_LRS", and
          "StandardSSD_LRS".
@@ -15325,7 +15782,7 @@ class InMageRcmProtectionContainerMappingDetails(ProtectionContainerMappingProvi
         "enable_agent_auto_upgrade": {"key": "enableAgentAutoUpgrade", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
@@ -15356,7 +15813,7 @@ class InMageRcmRecoveryPointDetails(ProviderSpecificRecoveryPointDetails):
         "is_multi_vm_sync_point": {"key": "isMultiVmSyncPoint", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "InMageRcm"
@@ -15627,8 +16084,8 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings):  # pylin
         ] = None,
         vm_nics: Optional[List["_models.InMageRcmNicDetails"]] = None,
         discovered_vm_details: Optional["_models.InMageRcmDiscoveredProtectedVmDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword license_type: License Type of the VM to be used.
         :paramtype license_type: str
@@ -15766,8 +16223,8 @@ class InMageRcmReprotectInput(ReverseReplicationProviderSpecificInput):
         datastore_name: str,
         log_storage_account_id: str,
         policy_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword reprotect_agent_id: The reprotect agent Id. Required.
         :paramtype reprotect_agent_id: str
@@ -15836,7 +16293,7 @@ class InMageRcmSyncDetails(_serialization.Model):
         "progress_percentage": {"key": "progressPercentage", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.progress_health = None
@@ -15873,7 +16330,9 @@ class InMageRcmTestFailoverInput(TestFailoverProviderSpecificInput):
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
     }
 
-    def __init__(self, *, network_id: Optional[str] = None, recovery_point_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, network_id: Optional[str] = None, recovery_point_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword network_id: The test network Id.
         :paramtype network_id: str
@@ -15912,7 +16371,7 @@ class InMageRcmUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
     }
 
-    def __init__(self, *, perform_shutdown: str, recovery_point_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, perform_shutdown: str, recovery_point_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword perform_shutdown: A value indicating whether VM is to be shutdown. Required.
         :paramtype perform_shutdown: str
@@ -15948,7 +16407,7 @@ class UpdateApplianceForReplicationProtectedItemProviderSpecificInput(_serializa
 
     _subtype_map = {"instance_type": {"InMageRcm": "InMageRcmUpdateApplianceForReplicationProtectedItemInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -15976,7 +16435,7 @@ class InMageRcmUpdateApplianceForReplicationProtectedItemInput(
         "run_as_account_id": {"key": "runAsAccountId", "type": "str"},
     }
 
-    def __init__(self, *, run_as_account_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, run_as_account_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword run_as_account_id: The run as account Id.
         :paramtype run_as_account_id: str
@@ -16008,7 +16467,7 @@ class InMageRcmUpdateContainerMappingInput(ReplicationProviderSpecificUpdateCont
         "enable_agent_auto_upgrade": {"key": "enableAgentAutoUpgrade", "type": "str"},
     }
 
-    def __init__(self, *, enable_agent_auto_upgrade: str, **kwargs):
+    def __init__(self, *, enable_agent_auto_upgrade: str, **kwargs: Any) -> None:
         """
         :keyword enable_agent_auto_upgrade: A value indicating whether agent auto upgrade has to be
          enabled. Required.
@@ -16087,8 +16546,8 @@ class InMageRcmUpdateReplicationProtectedItemInput(
         test_network_id: Optional[str] = None,
         vm_nics: Optional[List["_models.InMageRcmNicInput"]] = None,
         license_type: Optional[Union[str, "_models.LicenseType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_vm_name: The target VM name.
         :paramtype target_vm_name: str
@@ -16320,8 +16779,8 @@ class InMageReplicationDetails(ReplicationProviderSpecificSettings):  # pylint: 
         is_additional_stats_available: Optional[bool] = None,
         total_data_transferred: Optional[int] = None,
         total_progress_health: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword active_site_type: The active location of the VM. If the VM is being protected from
          Azure, this field will take values from { Azure, OnPrem }. If the VM is being protected between
@@ -16515,8 +16974,8 @@ class InMageReprotectInput(ReverseReplicationProviderSpecificInput):
         datastore_name: Optional[str] = None,
         disk_exclusion_input: Optional["_models.InMageDiskExclusionInput"] = None,
         disks_to_include: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword master_target_id: The Master Target Id. Required.
         :paramtype master_target_id: str
@@ -16581,8 +17040,8 @@ class InMageTestFailoverInput(TestFailoverProviderSpecificInput):
         *,
         recovery_point_type: Optional[Union[str, "_models.RecoveryPointType"]] = None,
         recovery_point_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_type: The recovery point type. Values from LatestTime, LatestTag or
          Custom. In the case of custom, the recovery point provided by RecoveryPointId will be used. In
@@ -16633,8 +17092,8 @@ class InMageUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
         *,
         recovery_point_type: Optional[Union[str, "_models.RecoveryPointType"]] = None,
         recovery_point_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_type: The recovery point type. Values from LatestTime, LatestTag or
          Custom. In the case of custom, the recovery point provided by RecoveryPointId will be used. In
@@ -16653,7 +17112,8 @@ class InMageUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput):
 
 
 class InMageVolumeExclusionOptions(_serialization.Model):
-    """Guest disk signature based disk exclusion option when doing enable protection of virtual machine in InMage provider.
+    """Guest disk signature based disk exclusion option when doing enable protection of virtual
+    machine in InMage provider.
 
     :ivar volume_label: The volume label. The disk having any volume with this label will be
      excluded from replication.
@@ -16670,8 +17130,8 @@ class InMageVolumeExclusionOptions(_serialization.Model):
     }
 
     def __init__(
-        self, *, volume_label: Optional[str] = None, only_exclude_if_single_volume: Optional[str] = None, **kwargs
-    ):
+        self, *, volume_label: Optional[str] = None, only_exclude_if_single_volume: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword volume_label: The volume label. The disk having any volume with this label will be
          excluded from replication.
@@ -16687,7 +17147,11 @@ class InMageVolumeExclusionOptions(_serialization.Model):
 
 
 class InnerHealthError(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """Implements InnerHealthError class. HealthError object has a list of InnerHealthErrors as child errors. InnerHealthError is used because this will prevent an infinite loop of structures when Hydra tries to auto-generate the contract. We are exposing the related health errors as inner health errors and all API consumers can utilize this in the same fashion as Exception -&gt; InnerException.
+    """Implements InnerHealthError class. HealthError object has a list of InnerHealthErrors as child
+    errors. InnerHealthError is used because this will prevent an infinite loop of structures when
+    Hydra tries to auto-generate the contract. We are exposing the related health errors as inner
+    health errors and all API consumers can utilize this in the same fashion as Exception -&gt;
+    InnerException.
 
     :ivar error_source: Source of error.
     :vartype error_source: str
@@ -16755,8 +17219,8 @@ class InnerHealthError(_serialization.Model):  # pylint: disable=too-many-instan
         entity_id: Optional[str] = None,
         error_id: Optional[str] = None,
         customer_resolvability: Optional[Union[str, "_models.HealthErrorCustomerResolvability"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error_source: Source of error.
         :paramtype error_source: str
@@ -16833,8 +17297,8 @@ class InputEndpoint(_serialization.Model):
         private_port: Optional[int] = None,
         public_port: Optional[int] = None,
         protocol: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword endpoint_name:
         :paramtype endpoint_name: str
@@ -16923,8 +17387,8 @@ class IPConfigDetails(_serialization.Model):  # pylint: disable=too-many-instanc
         tfo_static_ip_address: Optional[str] = None,
         tfo_public_ip_address_id: Optional[str] = None,
         tfo_lb_backend_address_pool_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -17030,8 +17494,8 @@ class IPConfigInputDetails(_serialization.Model):  # pylint: disable=too-many-in
         tfo_static_ip_address: Optional[str] = None,
         tfo_public_ip_address_id: Optional[str] = None,
         tfo_lb_backend_address_pool_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword ip_config_name:
         :paramtype ip_config_name: str
@@ -17102,8 +17566,8 @@ class Job(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.JobProperties"] = None, **kwargs
-    ):
+        self, *, location: Optional[str] = None, properties: Optional["_models.JobProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -17128,7 +17592,9 @@ class JobCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Job"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Job"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of jobs.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Job]
@@ -17175,8 +17641,8 @@ class JobEntity(_serialization.Model):
         target_object_name: Optional[str] = None,
         target_instance_type: Optional[str] = None,
         job_scenario_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword job_id: The job id.
         :paramtype job_id: str
@@ -17231,8 +17697,8 @@ class JobErrorDetails(_serialization.Model):
         error_level: Optional[str] = None,
         creation_time: Optional[datetime.datetime] = None,
         task_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword service_error_details: The Service error details.
         :paramtype service_error_details: ~azure.mgmt.recoveryservicessiterecovery.models.ServiceError
@@ -17324,8 +17790,8 @@ class JobProperties(_serialization.Model):  # pylint: disable=too-many-instance-
         target_object_name: Optional[str] = None,
         target_instance_type: Optional[str] = None,
         custom_details: Optional["_models.JobDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword activity_id: The activity id.
         :paramtype activity_id: str
@@ -17421,8 +17887,8 @@ class JobQueryParameter(_serialization.Model):
         job_output_type: Optional[Union[str, "_models.ExportJobOutputSerializationType"]] = None,
         job_name: Optional[str] = None,
         timezone_offset: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_time: Date time to get jobs from.
         :paramtype start_time: str
@@ -17490,8 +17956,8 @@ class JobStatusEventDetails(EventSpecificDetails):
         job_friendly_name: Optional[str] = None,
         job_status: Optional[str] = None,
         affected_object_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword job_id: Job arm id for the event.
         :paramtype job_id: str
@@ -17525,8 +17991,8 @@ class KeyEncryptionKeyInfo(_serialization.Model):
     }
 
     def __init__(
-        self, *, key_identifier: Optional[str] = None, key_vault_resource_arm_id: Optional[str] = None, **kwargs
-    ):
+        self, *, key_identifier: Optional[str] = None, key_vault_resource_arm_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword key_identifier: The key URL / identifier.
         :paramtype key_identifier: str
@@ -17574,8 +18040,8 @@ class LogicalNetwork(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.LogicalNetworkProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -17601,8 +18067,8 @@ class LogicalNetworkCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LogicalNetwork"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.LogicalNetwork"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The Logical Networks list details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.LogicalNetwork]
@@ -17644,8 +18110,8 @@ class LogicalNetworkProperties(_serialization.Model):
         network_virtualization_status: Optional[str] = None,
         logical_network_usage: Optional[str] = None,
         logical_network_definitions_status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The Friendly Name.
         :paramtype friendly_name: str
@@ -17698,8 +18164,8 @@ class ManualActionTaskDetails(TaskTypeDetails):
         name: Optional[str] = None,
         instructions: Optional[str] = None,
         observation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name.
         :paramtype name: str
@@ -17765,7 +18231,7 @@ class MarsAgentDetails(_serialization.Model):
         "health_errors": {"key": "healthErrors", "type": "[HealthError]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -17864,8 +18330,8 @@ class MasterTargetServer(_serialization.Model):  # pylint: disable=too-many-inst
         mars_agent_expiry_date: Optional[datetime.datetime] = None,
         agent_version_details: Optional["_models.VersionDetails"] = None,
         mars_agent_version_details: Optional["_models.VersionDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The server Id.
         :paramtype id: str
@@ -17945,7 +18411,7 @@ class MigrateInput(_serialization.Model):
         "properties": {"key": "properties", "type": "MigrateInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.MigrateInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.MigrateInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Migrate input properties. Required.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.MigrateInputProperties
@@ -17972,7 +18438,7 @@ class MigrateInputProperties(_serialization.Model):
         "provider_specific_details": {"key": "providerSpecificDetails", "type": "MigrateProviderSpecificInput"},
     }
 
-    def __init__(self, *, provider_specific_details: "_models.MigrateProviderSpecificInput", **kwargs):
+    def __init__(self, *, provider_specific_details: "_models.MigrateProviderSpecificInput", **kwargs: Any) -> None:
         """
         :keyword provider_specific_details: The provider specific details. Required.
         :paramtype provider_specific_details:
@@ -18004,7 +18470,7 @@ class MigrateProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"VMwareCbt": "VMwareCbtMigrateInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -18046,8 +18512,8 @@ class MigrationItem(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.MigrationItemProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -18073,8 +18539,8 @@ class MigrationItemCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.MigrationItem"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.MigrationItem"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of migration items.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.MigrationItem]
@@ -18193,8 +18659,8 @@ class MigrationItemProperties(_serialization.Model):  # pylint: disable=too-many
     }
 
     def __init__(
-        self, *, provider_specific_details: Optional["_models.MigrationProviderSpecificSettings"] = None, **kwargs
-    ):
+        self, *, provider_specific_details: Optional["_models.MigrationProviderSpecificSettings"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_details: The migration provider custom settings.
         :paramtype provider_specific_details:
@@ -18246,8 +18712,8 @@ class MigrationItemsQueryParameter(_serialization.Model):
         source_fabric_name: Optional[str] = None,
         source_container_name: Optional[str] = None,
         instance_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_fabric_name: The source fabric name filter.
         :paramtype source_fabric_name: str
@@ -18284,7 +18750,7 @@ class MigrationProviderSpecificSettings(_serialization.Model):
 
     _subtype_map = {"instance_type": {"VMwareCbt": "VMwareCbtMigrationDetails"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -18327,8 +18793,8 @@ class MigrationRecoveryPoint(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.MigrationRecoveryPointProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -18359,8 +18825,8 @@ class MigrationRecoveryPointCollection(_serialization.Model):
         *,
         value: Optional[List["_models.MigrationRecoveryPoint"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The migration recovery point details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.MigrationRecoveryPoint]
@@ -18395,7 +18861,7 @@ class MigrationRecoveryPointProperties(_serialization.Model):
         "recovery_point_type": {"key": "recoveryPointType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.recovery_point_time = None
@@ -18425,8 +18891,8 @@ class MobilityServiceUpdate(_serialization.Model):
         version: Optional[str] = None,
         reboot_status: Optional[str] = None,
         os_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: The version of the latest update.
         :paramtype version: str
@@ -18473,8 +18939,8 @@ class Network(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.NetworkProperties"] = None, **kwargs
-    ):
+        self, *, location: Optional[str] = None, properties: Optional["_models.NetworkProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -18499,7 +18965,9 @@ class NetworkCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Network"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Network"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The Networks list details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Network]
@@ -18512,7 +18980,11 @@ class NetworkCollection(_serialization.Model):
 
 
 class NetworkMapping(Resource):
-    """Network Mapping model. Ideally it should have been possible to inherit this class from prev version in InheritedModels as long as there is no difference in structure or method signature. Since there were no base Models for certain fields and methods viz NetworkMappingProperties and Load with required return type, the class has been introduced in its entirety with references to base models to facilitate extensions in subsequent versions.
+    """Network Mapping model. Ideally it should have been possible to inherit this class from prev
+    version in InheritedModels as long as there is no difference in structure or method signature.
+    Since there were no base Models for certain fields and methods viz NetworkMappingProperties and
+    Load with required return type, the class has been introduced in its entirety with references
+    to base models to facilitate extensions in subsequent versions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -18547,8 +19019,8 @@ class NetworkMapping(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.NetworkMappingProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -18560,7 +19032,10 @@ class NetworkMapping(Resource):
 
 
 class NetworkMappingCollection(_serialization.Model):
-    """List of network mappings. As with NetworkMapping, it should be possible to reuse a prev version of this class. It doesn't seem likely this class could be anything more than a slightly bespoke collection of NetworkMapping. Hence it makes sense to override Load with Base.NetworkMapping instead of existing CurrentVersion.NetworkMapping.
+    """List of network mappings. As with NetworkMapping, it should be possible to reuse a prev version
+    of this class. It doesn't seem likely this class could be anything more than a slightly bespoke
+    collection of NetworkMapping. Hence it makes sense to override Load with Base.NetworkMapping
+    instead of existing CurrentVersion.NetworkMapping.
 
     :ivar value: The Network Mappings list.
     :vartype value: list[~azure.mgmt.recoveryservicessiterecovery.models.NetworkMapping]
@@ -18574,8 +19049,8 @@ class NetworkMappingCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NetworkMapping"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.NetworkMapping"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The Network Mappings list.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.NetworkMapping]
@@ -18635,8 +19110,8 @@ class NetworkMappingProperties(_serialization.Model):
         recovery_fabric_arm_id: Optional[str] = None,
         recovery_fabric_friendly_name: Optional[str] = None,
         fabric_specific_settings: Optional["_models.NetworkMappingFabricSpecificSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword state: The pairing state for network mapping.
         :paramtype state: str
@@ -18697,8 +19172,8 @@ class NetworkProperties(_serialization.Model):
         subnets: Optional[List["_models.Subnet"]] = None,
         friendly_name: Optional[str] = None,
         network_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_type: The Fabric Type.
         :paramtype fabric_type: str
@@ -18762,8 +19237,8 @@ class NewProtectionProfile(ProtectionProfileCustomDetails):
         recovery_point_history: Optional[int] = None,
         crash_consistent_frequency_in_minutes: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy_name: The protection profile input. Required.
         :paramtype policy_name: str
@@ -18823,8 +19298,8 @@ class NewRecoveryVirtualNetwork(RecoveryVirtualNetworkCustomDetails):
         *,
         recovery_virtual_network_resource_group_name: Optional[str] = None,
         recovery_virtual_network_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_virtual_network_resource_group_name: The name of the resource group to be
          used to create the recovery virtual network. If absent, target network would be created in the
@@ -18879,8 +19354,8 @@ class OperationsDiscovery(_serialization.Model):
         display: Optional["_models.Display"] = None,
         origin: Optional[str] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the API. The name of the operation being performed on this particular
          object. It should match the action name that appears in RBAC / the event service. Examples of
@@ -18926,8 +19401,12 @@ class OperationsDiscoveryCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OperationsDiscovery"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.OperationsDiscovery"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The ClientDiscovery details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.OperationsDiscovery]
@@ -18974,8 +19453,8 @@ class OSDetails(_serialization.Model):
         o_s_version: Optional[str] = None,
         o_s_major_version: Optional[str] = None,
         o_s_minor_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_type: VM Disk details.
         :paramtype os_type: str
@@ -19022,8 +19501,8 @@ class OSDiskDetails(_serialization.Model):
         os_vhd_id: Optional[str] = None,
         os_type: Optional[str] = None,
         vhd_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_vhd_id: The id of the disk containing the OS.
         :paramtype os_vhd_id: str
@@ -19036,6 +19515,34 @@ class OSDiskDetails(_serialization.Model):
         self.os_vhd_id = os_vhd_id
         self.os_type = os_type
         self.vhd_name = vhd_name
+
+
+class OSUpgradeSupportedVersions(_serialization.Model):
+    """Supported OS upgrade versions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar supported_source_os_version: The source OS version name.
+    :vartype supported_source_os_version: str
+    :ivar supported_target_os_versions: The target OS version names.
+    :vartype supported_target_os_versions: list[str]
+    """
+
+    _validation = {
+        "supported_source_os_version": {"readonly": True},
+        "supported_target_os_versions": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "supported_source_os_version": {"key": "supportedSourceOsVersion", "type": "str"},
+        "supported_target_os_versions": {"key": "supportedTargetOsVersions", "type": "[str]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.supported_source_os_version = None
+        self.supported_target_os_versions = None
 
 
 class OSVersionWrapper(_serialization.Model):
@@ -19052,7 +19559,7 @@ class OSVersionWrapper(_serialization.Model):
         "service_pack": {"key": "servicePack", "type": "str"},
     }
 
-    def __init__(self, *, version: Optional[str] = None, service_pack: Optional[str] = None, **kwargs):
+    def __init__(self, *, version: Optional[str] = None, service_pack: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword version: The version.
         :paramtype version: str
@@ -19082,7 +19589,7 @@ class PauseReplicationInput(_serialization.Model):
         "properties": {"key": "properties", "type": "PauseReplicationInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.PauseReplicationInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.PauseReplicationInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Pause replication input properties. Required.
         :paramtype properties:
@@ -19109,7 +19616,7 @@ class PauseReplicationInputProperties(_serialization.Model):
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, *, instance_type: str, **kwargs):
+    def __init__(self, *, instance_type: str, **kwargs: Any) -> None:
         """
         :keyword instance_type: The class type. Required.
         :paramtype instance_type: str
@@ -19130,7 +19637,7 @@ class PlannedFailoverInput(_serialization.Model):
         "properties": {"key": "properties", "type": "PlannedFailoverInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.PlannedFailoverInputProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.PlannedFailoverInputProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Planned failover input properties.
         :paramtype properties:
@@ -19163,8 +19670,8 @@ class PlannedFailoverInputProperties(_serialization.Model):
         *,
         failover_direction: Optional[str] = None,
         provider_specific_details: Optional["_models.PlannedFailoverProviderSpecificFailoverInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failover_direction: Failover direction.
         :paramtype failover_direction: str
@@ -19209,8 +19716,8 @@ class Policy(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.PolicyProperties"] = None, **kwargs
-    ):
+        self, *, location: Optional[str] = None, properties: Optional["_models.PolicyProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -19235,7 +19742,9 @@ class PolicyCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Policy"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Policy"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The policy details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.Policy]
@@ -19267,8 +19776,8 @@ class PolicyProperties(_serialization.Model):
         *,
         friendly_name: Optional[str] = None,
         provider_specific_details: Optional["_models.PolicyProviderSpecificDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The FriendlyName.
         :paramtype friendly_name: str
@@ -19445,8 +19954,8 @@ class ProcessServer(_serialization.Model):  # pylint: disable=too-many-instance-
         health_errors: Optional[List["_models.HealthError"]] = None,
         agent_expiry_date: Optional[datetime.datetime] = None,
         agent_version_details: Optional["_models.VersionDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The Process Server's friendly name.
         :paramtype friendly_name: str
@@ -19690,7 +20199,7 @@ class ProcessServerDetails(_serialization.Model):  # pylint: disable=too-many-in
         "historic_health": {"key": "historicHealth", "type": "str"},
     }
 
-    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -19760,8 +20269,8 @@ class ProtectableItem(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.ProtectableItemProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -19788,8 +20297,8 @@ class ProtectableItemCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ProtectableItem"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.ProtectableItem"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The Protectable item details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ProtectableItem]
@@ -19841,8 +20350,8 @@ class ProtectableItemProperties(_serialization.Model):
         protection_readiness_errors: Optional[List[str]] = None,
         supported_replication_providers: Optional[List[str]] = None,
         custom_details: Optional["_models.ConfigurationSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The name.
         :paramtype friendly_name: str
@@ -19882,7 +20391,7 @@ class ProtectableItemQueryParameter(_serialization.Model):
         "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(self, *, state: Optional[str] = None, **kwargs):
+    def __init__(self, *, state: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword state: State of the Protectable item query filter.
         :paramtype state: str
@@ -19936,8 +20445,8 @@ class ProtectedItemsQueryParameter(_serialization.Model):
         instance_type: Optional[str] = None,
         multi_vm_group_create_option: Optional[Union[str, "_models.MultiVmGroupCreateOption"]] = None,
         process_server_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_fabric_name: The source fabric name filter.
         :paramtype source_fabric_name: str
@@ -20006,8 +20515,8 @@ class ProtectionContainer(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.ProtectionContainerProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -20034,8 +20543,12 @@ class ProtectionContainerCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ProtectionContainer"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ProtectionContainer"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The Protection Container details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.ProtectionContainer]
@@ -20064,7 +20577,7 @@ class ProtectionContainerFabricSpecificDetails(_serialization.Model):
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type = None
@@ -20107,8 +20620,8 @@ class ProtectionContainerMapping(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.ProtectionContainerMappingProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -20140,8 +20653,8 @@ class ProtectionContainerMappingCollection(_serialization.Model):
         *,
         value: Optional[List["_models.ProtectionContainerMapping"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of container mappings.
         :paramtype value:
@@ -20214,8 +20727,8 @@ class ProtectionContainerMappingProperties(_serialization.Model):  # pylint: dis
         source_fabric_friendly_name: Optional[str] = None,
         target_fabric_friendly_name: Optional[str] = None,
         policy_friendly_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_protection_container_id: Paired protection container ARM ID.
         :paramtype target_protection_container_id: str
@@ -20297,8 +20810,8 @@ class ProtectionContainerProperties(_serialization.Model):
         pairing_status: Optional[str] = None,
         role: Optional[str] = None,
         fabric_specific_details: Optional["_models.ProtectionContainerFabricSpecificDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_friendly_name: Fabric friendly name.
         :paramtype fabric_friendly_name: str
@@ -20357,8 +20870,8 @@ class ProviderError(_serialization.Model):
         error_id: Optional[str] = None,
         possible_causes: Optional[str] = None,
         recommended_action: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error_code: The Error code.
         :paramtype error_code: int
@@ -20429,7 +20942,7 @@ class PushInstallerDetails(_serialization.Model):
         "health_errors": {"key": "healthErrors", "type": "[HealthError]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -20497,7 +21010,7 @@ class RcmProxyDetails(_serialization.Model):
         "health_errors": {"key": "healthErrors", "type": "[HealthError]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -20544,8 +21057,12 @@ class RecoveryPlan(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.RecoveryPlanProperties"] = None, **kwargs
-    ):
+        self,
+        *,
+        location: Optional[str] = None,
+        properties: Optional["_models.RecoveryPlanProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -20578,7 +21095,7 @@ class RecoveryPlanProviderSpecificDetails(_serialization.Model):
 
     _subtype_map = {"instance_type": {"A2A": "RecoveryPlanA2ADetails"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -20622,8 +21139,8 @@ class RecoveryPlanA2ADetails(RecoveryPlanProviderSpecificDetails):
         recovery_zone: Optional[str] = None,
         primary_extended_location: Optional["_models.ExtendedLocation"] = None,
         recovery_extended_location: Optional["_models.ExtendedLocation"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_zone: The primary zone.
         :paramtype primary_zone: str
@@ -20679,7 +21196,7 @@ class RecoveryPlanProviderSpecificFailoverInput(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -20724,8 +21241,8 @@ class RecoveryPlanA2AFailoverInput(RecoveryPlanProviderSpecificFailoverInput):
         recovery_point_type: Union[str, "_models.A2ARpRecoveryPointType"],
         cloud_service_creation_option: Optional[str] = None,
         multi_vm_sync_point_option: Optional[Union[str, "_models.MultiVmSyncPointOption"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_type: The recovery point type. Required. Known values are: "Latest",
          "LatestApplicationConsistent", "LatestCrashConsistent", and "LatestProcessed".
@@ -20769,7 +21286,7 @@ class RecoveryPlanProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"A2A": "RecoveryPlanA2AInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -20813,8 +21330,8 @@ class RecoveryPlanA2AInput(RecoveryPlanProviderSpecificInput):
         recovery_zone: Optional[str] = None,
         primary_extended_location: Optional["_models.ExtendedLocation"] = None,
         recovery_extended_location: Optional["_models.ExtendedLocation"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_zone: The primary zone.
         :paramtype primary_zone: str
@@ -20874,8 +21391,8 @@ class RecoveryPlanAction(_serialization.Model):
         failover_types: List[Union[str, "_models.ReplicationProtectedItemOperation"]],
         failover_directions: List[Union[str, "_models.PossibleOperationsDirections"]],
         custom_details: "_models.RecoveryPlanActionDetails",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action_name: The action name. Required.
         :paramtype action_name: str
@@ -20926,7 +21443,7 @@ class RecoveryPlanActionDetails(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -20968,8 +21485,8 @@ class RecoveryPlanAutomationRunbookActionDetails(RecoveryPlanActionDetails):
         fabric_location: Union[str, "_models.RecoveryPlanActionLocation"],
         runbook_id: Optional[str] = None,
         timeout: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword runbook_id: The runbook ARM Id.
         :paramtype runbook_id: str
@@ -21002,8 +21519,8 @@ class RecoveryPlanCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RecoveryPlan"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.RecoveryPlan"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of recovery plans.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlan]
@@ -21053,8 +21570,8 @@ class RecoveryPlanGroup(_serialization.Model):
         replication_protected_items: Optional[List["_models.RecoveryPlanProtectedItem"]] = None,
         start_group_actions: Optional[List["_models.RecoveryPlanAction"]] = None,
         end_group_actions: Optional[List["_models.RecoveryPlanAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_type: The group type. Required. Known values are: "Shutdown", "Boot", and
          "Failover".
@@ -21118,8 +21635,8 @@ class RecoveryPlanGroupTaskDetails(GroupTaskDetails):
         name: Optional[str] = None,
         group_id: Optional[str] = None,
         rp_group_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword child_tasks: The child tasks.
         :paramtype child_tasks: list[~azure.mgmt.recoveryservicessiterecovery.models.ASRTask]
@@ -21171,8 +21688,8 @@ class RecoveryPlanHyperVReplicaAzureFailbackInput(RecoveryPlanProviderSpecificFa
         *,
         data_sync_option: Union[str, "_models.DataSyncStatus"],
         recovery_vm_creation_option: Union[str, "_models.AlternateLocationRecoveryOption"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_sync_option: The data sync option. Required. Known values are: "ForDownTime" and
          "ForSynchronization".
@@ -21223,8 +21740,8 @@ class RecoveryPlanHyperVReplicaAzureFailoverInput(RecoveryPlanProviderSpecificFa
         primary_kek_certificate_pfx: Optional[str] = None,
         secondary_kek_certificate_pfx: Optional[str] = None,
         recovery_point_type: Optional[Union[str, "_models.HyperVReplicaAzureRpRecoveryPointType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_kek_certificate_pfx: The primary KEK certificate PFX.
         :paramtype primary_kek_certificate_pfx: str
@@ -21274,8 +21791,8 @@ class RecoveryPlanInMageAzureV2FailoverInput(RecoveryPlanProviderSpecificFailove
         *,
         recovery_point_type: Union[str, "_models.InMageV2RpRecoveryPointType"],
         use_multi_vm_sync_point: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_type: The recovery point type. Required. Known values are: "Latest",
          "LatestApplicationConsistent", "LatestCrashConsistent", and "LatestProcessed".
@@ -21314,7 +21831,7 @@ class RecoveryPlanInMageFailoverInput(RecoveryPlanProviderSpecificFailoverInput)
         "recovery_point_type": {"key": "recoveryPointType", "type": "str"},
     }
 
-    def __init__(self, *, recovery_point_type: Union[str, "_models.RpInMageRecoveryPointType"], **kwargs):
+    def __init__(self, *, recovery_point_type: Union[str, "_models.RpInMageRecoveryPointType"], **kwargs: Any) -> None:
         """
         :keyword recovery_point_type: The recovery point type. Required. Known values are:
          "LatestTime", "LatestTag", and "Custom".
@@ -21358,8 +21875,8 @@ class RecoveryPlanInMageRcmFailbackFailoverInput(RecoveryPlanProviderSpecificFai
         *,
         recovery_point_type: Union[str, "_models.InMageRcmFailbackRecoveryPointType"],
         use_multi_vm_sync_point: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_type: The recovery point type. Required. Known values are:
          "ApplicationConsistent" and "CrashConsistent".
@@ -21407,8 +21924,8 @@ class RecoveryPlanInMageRcmFailoverInput(RecoveryPlanProviderSpecificFailoverInp
         *,
         recovery_point_type: Union[str, "_models.RecoveryPlanPointType"],
         use_multi_vm_sync_point: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_type: The recovery point type. Required. Known values are: "Latest",
          "LatestApplicationConsistent", "LatestCrashConsistent", and "LatestProcessed".
@@ -21445,7 +21962,7 @@ class RecoveryPlanManualActionDetails(RecoveryPlanActionDetails):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, **kwargs):
+    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword description: The manual action description.
         :paramtype description: str
@@ -21473,7 +21990,7 @@ class RecoveryPlanPlannedFailoverInput(_serialization.Model):
         "properties": {"key": "properties", "type": "RecoveryPlanPlannedFailoverInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.RecoveryPlanPlannedFailoverInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.RecoveryPlanPlannedFailoverInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: The recovery plan planned failover input properties. Required.
         :paramtype properties:
@@ -21514,8 +22031,8 @@ class RecoveryPlanPlannedFailoverInputProperties(_serialization.Model):
         *,
         failover_direction: Union[str, "_models.PossibleOperationsDirections"],
         provider_specific_details: Optional[List["_models.RecoveryPlanProviderSpecificFailoverInput"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failover_direction: The failover direction. Required. Known values are:
          "PrimaryToRecovery" and "RecoveryToPrimary".
@@ -21610,8 +22127,8 @@ class RecoveryPlanProperties(_serialization.Model):  # pylint: disable=too-many-
         current_scenario_status_description: Optional[str] = None,
         groups: Optional[List["_models.RecoveryPlanGroup"]] = None,
         provider_specific_details: Optional[List["_models.RecoveryPlanProviderSpecificDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The friendly name.
         :paramtype friendly_name: str
@@ -21686,8 +22203,8 @@ class RecoveryPlanProtectedItem(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         virtual_machine_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The ARM Id of the recovery plan protected item.
         :paramtype id: str
@@ -21736,8 +22253,8 @@ class RecoveryPlanScriptActionDetails(RecoveryPlanActionDetails):
         path: str,
         fabric_location: Union[str, "_models.RecoveryPlanActionLocation"],
         timeout: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: The script path. Required.
         :paramtype path: str
@@ -21791,8 +22308,8 @@ class RecoveryPlanShutdownGroupTaskDetails(RecoveryPlanGroupTaskDetails):
         name: Optional[str] = None,
         group_id: Optional[str] = None,
         rp_group_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword child_tasks: The child tasks.
         :paramtype child_tasks: list[~azure.mgmt.recoveryservicessiterecovery.models.ASRTask]
@@ -21825,7 +22342,7 @@ class RecoveryPlanTestFailoverCleanupInput(_serialization.Model):
         "properties": {"key": "properties", "type": "RecoveryPlanTestFailoverCleanupInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.RecoveryPlanTestFailoverCleanupInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.RecoveryPlanTestFailoverCleanupInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: The recovery plan test failover cleanup input properties. Required.
         :paramtype properties:
@@ -21850,7 +22367,7 @@ class RecoveryPlanTestFailoverCleanupInputProperties(_serialization.Model):
         "comments": {"key": "comments", "type": "str"},
     }
 
-    def __init__(self, *, comments: Optional[str] = None, **kwargs):
+    def __init__(self, *, comments: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword comments: The test failover cleanup comments.
         :paramtype comments: str
@@ -21877,7 +22394,7 @@ class RecoveryPlanTestFailoverInput(_serialization.Model):
         "properties": {"key": "properties", "type": "RecoveryPlanTestFailoverInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.RecoveryPlanTestFailoverInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.RecoveryPlanTestFailoverInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: The recovery plan test failover input properties. Required.
         :paramtype properties:
@@ -21927,8 +22444,8 @@ class RecoveryPlanTestFailoverInputProperties(_serialization.Model):
         network_type: str,
         network_id: Optional[str] = None,
         provider_specific_details: Optional[List["_models.RecoveryPlanProviderSpecificFailoverInput"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failover_direction: The failover direction. Required. Known values are:
          "PrimaryToRecovery" and "RecoveryToPrimary".
@@ -21967,7 +22484,7 @@ class RecoveryPlanUnplannedFailoverInput(_serialization.Model):
         "properties": {"key": "properties", "type": "RecoveryPlanUnplannedFailoverInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.RecoveryPlanUnplannedFailoverInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.RecoveryPlanUnplannedFailoverInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: The recovery plan unplanned failover input properties. Required.
         :paramtype properties:
@@ -22015,8 +22532,8 @@ class RecoveryPlanUnplannedFailoverInputProperties(_serialization.Model):
         failover_direction: Union[str, "_models.PossibleOperationsDirections"],
         source_site_operations: Union[str, "_models.SourceSiteOperations"],
         provider_specific_details: Optional[List["_models.RecoveryPlanProviderSpecificFailoverInput"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failover_direction: The failover direction. Required. Known values are:
          "PrimaryToRecovery" and "RecoveryToPrimary".
@@ -22072,8 +22589,8 @@ class RecoveryPoint(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.RecoveryPointProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -22099,8 +22616,8 @@ class RecoveryPointCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RecoveryPoint"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.RecoveryPoint"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The recovery point details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPoint]
@@ -22136,8 +22653,8 @@ class RecoveryPointProperties(_serialization.Model):
         recovery_point_time: Optional[datetime.datetime] = None,
         recovery_point_type: Optional[str] = None,
         provider_specific_details: Optional["_models.ProviderSpecificRecoveryPointDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_time: The recovery point time.
         :paramtype recovery_point_time: ~datetime.datetime
@@ -22190,8 +22707,8 @@ class RecoveryServicesProvider(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.RecoveryServicesProviderProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -22222,8 +22739,8 @@ class RecoveryServicesProviderCollection(_serialization.Model):
         *,
         value: Optional[List["_models.RecoveryServicesProvider"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The Servers details.
         :paramtype value:
@@ -22336,8 +22853,8 @@ class RecoveryServicesProviderProperties(_serialization.Model):  # pylint: disab
         resource_access_identity_details: Optional["_models.IdentityProviderDetails"] = None,
         data_plane_authentication_identity_details: Optional["_models.IdentityProviderDetails"] = None,
         provider_version_details: Optional["_models.VersionDetails"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword fabric_type: Type of the site.
         :paramtype fabric_type: str
@@ -22420,7 +22937,7 @@ class RemoveDisksInput(_serialization.Model):
         "properties": {"key": "properties", "type": "RemoveDisksInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.RemoveDisksInputProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.RemoveDisksInputProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Remove disk input properties.
         :paramtype properties:
@@ -22445,8 +22962,8 @@ class RemoveDisksInputProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, provider_specific_details: Optional["_models.RemoveDisksProviderSpecificInput"] = None, **kwargs
-    ):
+        self, *, provider_specific_details: Optional["_models.RemoveDisksProviderSpecificInput"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_details: The ReplicationProviderInput. For HyperVReplicaAzure
          provider, it will be AzureEnableProtectionInput object. For San provider, it will be
@@ -22471,8 +22988,8 @@ class RemoveProtectionContainerMappingInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, properties: Optional["_models.RemoveProtectionContainerMappingInputProperties"] = None, **kwargs
-    ):
+        self, *, properties: Optional["_models.RemoveProtectionContainerMappingInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Configure protection input properties.
         :paramtype properties:
@@ -22501,8 +23018,8 @@ class RemoveProtectionContainerMappingInputProperties(_serialization.Model):
         self,
         *,
         provider_specific_input: Optional["_models.ReplicationProviderContainerUnmappingInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_input: Provider specific input for unpairing.
         :paramtype provider_specific_input:
@@ -22524,7 +23041,9 @@ class RenewCertificateInput(_serialization.Model):
         "properties": {"key": "properties", "type": "RenewCertificateInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.RenewCertificateInputProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.RenewCertificateInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Renew certificate input properties.
         :paramtype properties:
@@ -22545,7 +23064,7 @@ class RenewCertificateInputProperties(_serialization.Model):
         "renew_certificate_type": {"key": "renewCertificateType", "type": "str"},
     }
 
-    def __init__(self, *, renew_certificate_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, renew_certificate_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword renew_certificate_type: Renew certificate type.
         :paramtype renew_certificate_type: str
@@ -22604,7 +23123,7 @@ class ReplicationAgentDetails(_serialization.Model):
         "health_errors": {"key": "healthErrors", "type": "[HealthError]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -22630,7 +23149,7 @@ class ReplicationAppliance(_serialization.Model):
         "properties": {"key": "properties", "type": "ReplicationApplianceProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ReplicationApplianceProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ReplicationApplianceProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Appliance related data.
         :paramtype properties:
@@ -22652,7 +23171,9 @@ class ReplicationApplianceProperties(_serialization.Model):
         "provider_specific_details": {"key": "providerSpecificDetails", "type": "ApplianceSpecificDetails"},
     }
 
-    def __init__(self, *, provider_specific_details: Optional["_models.ApplianceSpecificDetails"] = None, **kwargs):
+    def __init__(
+        self, *, provider_specific_details: Optional["_models.ApplianceSpecificDetails"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_details: Provider specific settings.
         :paramtype provider_specific_details:
@@ -22692,7 +23213,7 @@ class ReplicationEligibilityResults(_serialization.Model):
         "properties": {"key": "properties", "type": "ReplicationEligibilityResultsProperties"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -22713,7 +23234,7 @@ class ReplicationEligibilityResultsCollection(_serialization.Model):
         "value": {"key": "value", "type": "[ReplicationEligibilityResults]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ReplicationEligibilityResults"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ReplicationEligibilityResults"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The replication eligibility results details.
         :paramtype value:
@@ -22759,8 +23280,8 @@ class ReplicationEligibilityResultsErrorInfo(_serialization.Model):
         message: Optional[str] = None,
         possible_causes: Optional[str] = None,
         recommended_action: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -22800,7 +23321,9 @@ class ReplicationEligibilityResultsProperties(_serialization.Model):
         "errors": {"key": "errors", "type": "[ReplicationEligibilityResultsErrorInfo]"},
     }
 
-    def __init__(self, *, errors: Optional[List["_models.ReplicationEligibilityResultsErrorInfo"]] = None, **kwargs):
+    def __init__(
+        self, *, errors: Optional[List["_models.ReplicationEligibilityResultsErrorInfo"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword errors: The error details.
         :paramtype errors:
@@ -22828,7 +23351,7 @@ class ReplicationGroupDetails(ConfigurationSettings):
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "ReplicationGroupDetails"
@@ -22871,8 +23394,8 @@ class ReplicationProtectedItem(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.ReplicationProtectedItemProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -22903,8 +23426,8 @@ class ReplicationProtectedItemCollection(_serialization.Model):
         *,
         value: Optional[List["_models.ReplicationProtectedItem"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The Replication protected item details.
         :paramtype value:
@@ -23057,8 +23580,8 @@ class ReplicationProtectedItemProperties(_serialization.Model):  # pylint: disab
         provider_specific_details: Optional["_models.ReplicationProviderSpecificSettings"] = None,
         recovery_container_id: Optional[str] = None,
         event_correlation_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The name.
         :paramtype friendly_name: str
@@ -23198,8 +23721,8 @@ class ReplicationProtectionIntent(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.ReplicationProtectionIntentProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -23231,8 +23754,8 @@ class ReplicationProtectionIntentCollection(_serialization.Model):
         *,
         value: Optional[List["_models.ReplicationProtectionIntent"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The Replication protection intent details.
         :paramtype value:
@@ -23289,8 +23812,8 @@ class ReplicationProtectionIntentProperties(_serialization.Model):
         *,
         friendly_name: Optional[str] = None,
         provider_specific_details: Optional["_models.ReplicationProtectionIntentProviderSpecificSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The name.
         :paramtype friendly_name: str
@@ -23318,7 +23841,7 @@ class ReplicationProviderContainerUnmappingInput(_serialization.Model):
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, *, instance_type: Optional[str] = None, **kwargs):
+    def __init__(self, *, instance_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword instance_type: The class type.
         :paramtype instance_type: str
@@ -23393,7 +23916,7 @@ class ReprotectAgentDetails(_serialization.Model):  # pylint: disable=too-many-i
         "last_discovery_in_utc": {"key": "lastDiscoveryInUtc", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -23422,7 +23945,7 @@ class ResolveHealthError(_serialization.Model):
         "health_error_id": {"key": "healthErrorId", "type": "str"},
     }
 
-    def __init__(self, *, health_error_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, health_error_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword health_error_id: Health error id.
         :paramtype health_error_id: str
@@ -23443,7 +23966,7 @@ class ResolveHealthInput(_serialization.Model):
         "properties": {"key": "properties", "type": "ResolveHealthInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ResolveHealthInputProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ResolveHealthInputProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Disable resolve health input properties.
         :paramtype properties:
@@ -23465,7 +23988,7 @@ class ResolveHealthInputProperties(_serialization.Model):
         "health_errors": {"key": "healthErrors", "type": "[ResolveHealthError]"},
     }
 
-    def __init__(self, *, health_errors: Optional[List["_models.ResolveHealthError"]] = None, **kwargs):
+    def __init__(self, *, health_errors: Optional[List["_models.ResolveHealthError"]] = None, **kwargs: Any) -> None:
         """
         :keyword health_errors: Health errors.
         :paramtype health_errors:
@@ -23498,8 +24021,8 @@ class ResourceHealthSummary(_serialization.Model):
         resource_count: Optional[int] = None,
         issues: Optional[List["_models.HealthErrorSummary"]] = None,
         categorized_resource_counts: Optional[Dict[str, int]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_count: The count of total resources under the container.
         :paramtype resource_count: int
@@ -23525,7 +24048,7 @@ class ResumeJobParams(_serialization.Model):
         "properties": {"key": "properties", "type": "ResumeJobParamsProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ResumeJobParamsProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.ResumeJobParamsProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Resume job properties.
         :paramtype properties:
@@ -23546,7 +24069,7 @@ class ResumeJobParamsProperties(_serialization.Model):
         "comments": {"key": "comments", "type": "str"},
     }
 
-    def __init__(self, *, comments: Optional[str] = None, **kwargs):
+    def __init__(self, *, comments: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword comments: Resume job comments.
         :paramtype comments: str
@@ -23573,7 +24096,7 @@ class ResumeReplicationInput(_serialization.Model):
         "properties": {"key": "properties", "type": "ResumeReplicationInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.ResumeReplicationInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.ResumeReplicationInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Resume replication input properties. Required.
         :paramtype properties:
@@ -23604,7 +24127,9 @@ class ResumeReplicationInputProperties(_serialization.Model):
         },
     }
 
-    def __init__(self, *, provider_specific_details: "_models.ResumeReplicationProviderSpecificInput", **kwargs):
+    def __init__(
+        self, *, provider_specific_details: "_models.ResumeReplicationProviderSpecificInput", **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_details: The provider specific input for resume replication.
          Required.
@@ -23637,7 +24162,7 @@ class ResumeReplicationProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"VMwareCbt": "VMwareCbtResumeReplicationInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -23660,7 +24185,7 @@ class ResyncInput(_serialization.Model):
         "properties": {"key": "properties", "type": "ResyncInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.ResyncInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.ResyncInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Resync input properties. Required.
         :paramtype properties: ~azure.mgmt.recoveryservicessiterecovery.models.ResyncInputProperties
@@ -23687,7 +24212,7 @@ class ResyncInputProperties(_serialization.Model):
         "provider_specific_details": {"key": "providerSpecificDetails", "type": "ResyncProviderSpecificInput"},
     }
 
-    def __init__(self, *, provider_specific_details: "_models.ResyncProviderSpecificInput", **kwargs):
+    def __init__(self, *, provider_specific_details: "_models.ResyncProviderSpecificInput", **kwargs: Any) -> None:
         """
         :keyword provider_specific_details: The provider specific details. Required.
         :paramtype provider_specific_details:
@@ -23719,7 +24244,7 @@ class ResyncProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"VMwareCbt": "VMwareCbtResyncInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -23752,8 +24277,8 @@ class RetentionVolume(_serialization.Model):
         capacity_in_bytes: Optional[int] = None,
         free_space_in_bytes: Optional[int] = None,
         threshold_percentage: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword volume_name: The volume name.
         :paramtype volume_name: str
@@ -23783,7 +24308,9 @@ class ReverseReplicationInput(_serialization.Model):
         "properties": {"key": "properties", "type": "ReverseReplicationInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.ReverseReplicationInputProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.ReverseReplicationInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Reverse replication properties.
         :paramtype properties:
@@ -23816,8 +24343,8 @@ class ReverseReplicationInputProperties(_serialization.Model):
         *,
         failover_direction: Optional[str] = None,
         provider_specific_details: Optional["_models.ReverseReplicationProviderSpecificInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failover_direction: Failover direction.
         :paramtype failover_direction: str
@@ -23861,8 +24388,8 @@ class RoleAssignment(_serialization.Model):
         scope: Optional[str] = None,
         principal_id: Optional[str] = None,
         role_definition_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The ARM Id of the role assignment.
         :paramtype id: str
@@ -23897,7 +24424,7 @@ class RunAsAccount(_serialization.Model):
         "account_name": {"key": "accountName", "type": "str"},
     }
 
-    def __init__(self, *, account_id: Optional[str] = None, account_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, account_id: Optional[str] = None, account_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword account_id: The CS RunAs account Id.
         :paramtype account_id: str
@@ -23945,8 +24472,8 @@ class ScriptActionTaskDetails(TaskTypeDetails):
         path: Optional[str] = None,
         output: Optional[str] = None,
         is_primary_side_script: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name.
         :paramtype name: str
@@ -23996,8 +24523,8 @@ class ServiceError(_serialization.Model):
         possible_causes: Optional[str] = None,
         recommended_action: Optional[str] = None,
         activity_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -24055,8 +24582,8 @@ class StorageClassification(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.StorageClassificationProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -24087,8 +24614,8 @@ class StorageClassificationCollection(_serialization.Model):
         *,
         value: Optional[List["_models.StorageClassification"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The storage details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.StorageClassification]
@@ -24137,8 +24664,8 @@ class StorageClassificationMapping(Resource):
         *,
         location: Optional[str] = None,
         properties: Optional["_models.StorageClassificationMappingProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -24170,8 +24697,8 @@ class StorageClassificationMappingCollection(_serialization.Model):
         *,
         value: Optional[List["_models.StorageClassificationMapping"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The storage details.
         :paramtype value:
@@ -24196,7 +24723,7 @@ class StorageClassificationMappingInput(_serialization.Model):
         "properties": {"key": "properties", "type": "StorageMappingInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.StorageMappingInputProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.StorageMappingInputProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Storage mapping input properties.
         :paramtype properties:
@@ -24217,7 +24744,7 @@ class StorageClassificationMappingProperties(_serialization.Model):
         "target_storage_classification_id": {"key": "targetStorageClassificationId", "type": "str"},
     }
 
-    def __init__(self, *, target_storage_classification_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, target_storage_classification_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword target_storage_classification_id: Target storage object Id.
         :paramtype target_storage_classification_id: str
@@ -24237,7 +24764,7 @@ class StorageClassificationProperties(_serialization.Model):
         "friendly_name": {"key": "friendlyName", "type": "str"},
     }
 
-    def __init__(self, *, friendly_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, friendly_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword friendly_name: Friendly name of the Storage classification.
         :paramtype friendly_name: str
@@ -24257,7 +24784,7 @@ class StorageMappingInputProperties(_serialization.Model):
         "target_storage_classification_id": {"key": "targetStorageClassificationId", "type": "str"},
     }
 
-    def __init__(self, *, target_storage_classification_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, target_storage_classification_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword target_storage_classification_id: The ID of the storage object.
         :paramtype target_storage_classification_id: str
@@ -24289,8 +24816,8 @@ class Subnet(_serialization.Model):
         name: Optional[str] = None,
         friendly_name: Optional[str] = None,
         address_list: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The subnet name.
         :paramtype name: str
@@ -24337,8 +24864,12 @@ class SupportedOperatingSystems(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.SupportedOSProperties"] = None, **kwargs
-    ):
+        self,
+        *,
+        location: Optional[str] = None,
+        properties: Optional["_models.SupportedOSProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -24372,8 +24903,8 @@ class SupportedOSDetails(_serialization.Model):
         os_name: Optional[str] = None,
         os_type: Optional[str] = None,
         os_versions: Optional[List["_models.OSVersionWrapper"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_name: The name.
         :paramtype os_name: str
@@ -24400,7 +24931,9 @@ class SupportedOSProperties(_serialization.Model):
         "supported_os_list": {"key": "supportedOsList", "type": "[SupportedOSProperty]"},
     }
 
-    def __init__(self, *, supported_os_list: Optional[List["_models.SupportedOSProperty"]] = None, **kwargs):
+    def __init__(
+        self, *, supported_os_list: Optional[List["_models.SupportedOSProperty"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword supported_os_list: The supported operating systems property list.
         :paramtype supported_os_list:
@@ -24429,8 +24962,8 @@ class SupportedOSProperty(_serialization.Model):
         *,
         instance_type: Optional[str] = None,
         supported_os: Optional[List["_models.SupportedOSDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword instance_type: The replication provider type.
         :paramtype instance_type: str
@@ -24455,7 +24988,9 @@ class SwitchProtectionInput(_serialization.Model):
         "properties": {"key": "properties", "type": "SwitchProtectionInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.SwitchProtectionInputProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.SwitchProtectionInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Switch protection properties.
         :paramtype properties:
@@ -24488,8 +25023,8 @@ class SwitchProtectionInputProperties(_serialization.Model):
         *,
         replication_protected_item_name: Optional[str] = None,
         provider_specific_details: Optional["_models.SwitchProtectionProviderSpecificInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword replication_protected_item_name: The unique replication protected item name.
         :paramtype replication_protected_item_name: str
@@ -24532,8 +25067,8 @@ class SwitchProtectionJobDetails(JobDetails):
         *,
         affected_object_details: Optional[Dict[str, str]] = None,
         new_replication_protected_item_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword affected_object_details: The affected object properties like source server, source
          cloud, target server, target cloud etc. based on the workflow object details.
@@ -24558,7 +25093,7 @@ class SwitchProviderInput(_serialization.Model):
         "properties": {"key": "properties", "type": "SwitchProviderInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.SwitchProviderInputProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.SwitchProviderInputProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Switch provider input properties.
         :paramtype properties:
@@ -24588,8 +25123,8 @@ class SwitchProviderInputProperties(_serialization.Model):
         *,
         target_instance_type: Optional[str] = None,
         provider_specific_details: Optional["_models.SwitchProviderSpecificInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_instance_type: Target provider type.
         :paramtype target_instance_type: str
@@ -24630,8 +25165,8 @@ class TargetComputeSize(_serialization.Model):
         name: Optional[str] = None,
         type: Optional[str] = None,
         properties: Optional["_models.TargetComputeSizeProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The Id.
         :paramtype id: str
@@ -24665,8 +25200,12 @@ class TargetComputeSizeCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.TargetComputeSize"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.TargetComputeSize"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of target compute sizes.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.TargetComputeSize]
@@ -24735,8 +25274,8 @@ class TargetComputeSizeProperties(_serialization.Model):
         errors: Optional[List["_models.ComputeSizeErrorDetails"]] = None,
         high_iops_supported: Optional[str] = None,
         hyper_v_generations: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Target compute size name.
         :paramtype name: str
@@ -24791,7 +25330,7 @@ class TestFailoverCleanupInput(_serialization.Model):
         "properties": {"key": "properties", "type": "TestFailoverCleanupInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.TestFailoverCleanupInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.TestFailoverCleanupInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Test failover cleanup input properties. Required.
         :paramtype properties:
@@ -24816,7 +25355,7 @@ class TestFailoverCleanupInputProperties(_serialization.Model):
         "comments": {"key": "comments", "type": "str"},
     }
 
-    def __init__(self, *, comments: Optional[str] = None, **kwargs):
+    def __init__(self, *, comments: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword comments: Test failover cleanup comments.
         :paramtype comments: str
@@ -24843,7 +25382,7 @@ class TestFailoverInput(_serialization.Model):
         "properties": {"key": "properties", "type": "TestFailoverInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.TestFailoverInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.TestFailoverInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Test failover input properties. Required.
         :paramtype properties:
@@ -24881,8 +25420,8 @@ class TestFailoverInputProperties(_serialization.Model):
         network_type: Optional[str] = None,
         network_id: Optional[str] = None,
         provider_specific_details: Optional["_models.TestFailoverProviderSpecificInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failover_direction: Test failover direction.
         :paramtype failover_direction: str
@@ -24952,8 +25491,8 @@ class TestFailoverJobDetails(JobDetails):
         network_friendly_name: Optional[str] = None,
         network_type: Optional[str] = None,
         protected_item_details: Optional[List["_models.FailoverReplicationProtectedItemDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword affected_object_details: The affected object properties like source server, source
          cloud, target server, target cloud etc. based on the workflow object details.
@@ -25000,7 +25539,7 @@ class TestMigrateCleanupInput(_serialization.Model):
         "properties": {"key": "properties", "type": "TestMigrateCleanupInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.TestMigrateCleanupInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.TestMigrateCleanupInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Test migrate cleanup input properties. Required.
         :paramtype properties:
@@ -25025,7 +25564,7 @@ class TestMigrateCleanupInputProperties(_serialization.Model):
         "comments": {"key": "comments", "type": "str"},
     }
 
-    def __init__(self, *, comments: Optional[str] = None, **kwargs):
+    def __init__(self, *, comments: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword comments: Test migrate cleanup comments.
         :paramtype comments: str
@@ -25051,7 +25590,7 @@ class TestMigrateInput(_serialization.Model):
         "properties": {"key": "properties", "type": "TestMigrateInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.TestMigrateInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.TestMigrateInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Test migrate input properties. Required.
         :paramtype properties:
@@ -25079,7 +25618,7 @@ class TestMigrateInputProperties(_serialization.Model):
         "provider_specific_details": {"key": "providerSpecificDetails", "type": "TestMigrateProviderSpecificInput"},
     }
 
-    def __init__(self, *, provider_specific_details: "_models.TestMigrateProviderSpecificInput", **kwargs):
+    def __init__(self, *, provider_specific_details: "_models.TestMigrateProviderSpecificInput", **kwargs: Any) -> None:
         """
         :keyword provider_specific_details: The provider specific details. Required.
         :paramtype provider_specific_details:
@@ -25111,7 +25650,7 @@ class TestMigrateProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"VMwareCbt": "VMwareCbtTestMigrateInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -25135,7 +25674,7 @@ class UnplannedFailoverInput(_serialization.Model):
         "properties": {"key": "properties", "type": "UnplannedFailoverInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.UnplannedFailoverInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.UnplannedFailoverInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Unplanned failover input properties. Required.
         :paramtype properties:
@@ -25172,8 +25711,8 @@ class UnplannedFailoverInputProperties(_serialization.Model):
         failover_direction: Optional[str] = None,
         source_site_operations: Optional[str] = None,
         provider_specific_details: Optional["_models.UnplannedFailoverProviderSpecificInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failover_direction: Failover direction.
         :paramtype failover_direction: str
@@ -25207,7 +25746,9 @@ class UpdateApplianceForReplicationProtectedItemInput(_serialization.Model):
         "properties": {"key": "properties", "type": "UpdateApplianceForReplicationProtectedItemInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.UpdateApplianceForReplicationProtectedItemInputProperties", **kwargs):
+    def __init__(
+        self, *, properties: "_models.UpdateApplianceForReplicationProtectedItemInputProperties", **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Update appliance replication protected item properties. Required.
         :paramtype properties:
@@ -25248,8 +25789,8 @@ class UpdateApplianceForReplicationProtectedItemInputProperties(_serialization.M
         *,
         target_appliance_id: str,
         provider_specific_details: "_models.UpdateApplianceForReplicationProtectedItemProviderSpecificInput",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_appliance_id: The target appliance Id. Required.
         :paramtype target_appliance_id: str
@@ -25283,7 +25824,7 @@ class UpdateDiskInput(_serialization.Model):
         "target_disk_name": {"key": "targetDiskName", "type": "str"},
     }
 
-    def __init__(self, *, disk_id: str, target_disk_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, disk_id: str, target_disk_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword disk_id: The disk Id. Required.
         :paramtype disk_id: str
@@ -25307,7 +25848,9 @@ class UpdateMigrationItemInput(_serialization.Model):
         "properties": {"key": "properties", "type": "UpdateMigrationItemInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.UpdateMigrationItemInputProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.UpdateMigrationItemInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Update migration item input properties.
         :paramtype properties:
@@ -25339,7 +25882,9 @@ class UpdateMigrationItemInputProperties(_serialization.Model):
         },
     }
 
-    def __init__(self, *, provider_specific_details: "_models.UpdateMigrationItemProviderSpecificInput", **kwargs):
+    def __init__(
+        self, *, provider_specific_details: "_models.UpdateMigrationItemProviderSpecificInput", **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_details: The provider specific input to update migration item.
          Required.
@@ -25372,7 +25917,7 @@ class UpdateMigrationItemProviderSpecificInput(_serialization.Model):
 
     _subtype_map = {"instance_type": {"VMwareCbt": "VMwareCbtUpdateMigrationItemInput"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: Optional[str] = None
@@ -25390,7 +25935,9 @@ class UpdateMobilityServiceRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "UpdateMobilityServiceRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.UpdateMobilityServiceRequestProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.UpdateMobilityServiceRequestProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties of the update mobility service request.
         :paramtype properties:
@@ -25411,7 +25958,7 @@ class UpdateMobilityServiceRequestProperties(_serialization.Model):
         "run_as_account_id": {"key": "runAsAccountId", "type": "str"},
     }
 
-    def __init__(self, *, run_as_account_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, run_as_account_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword run_as_account_id: The CS run as account Id.
         :paramtype run_as_account_id: str
@@ -25432,7 +25979,9 @@ class UpdateNetworkMappingInput(_serialization.Model):
         "properties": {"key": "properties", "type": "UpdateNetworkMappingInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.UpdateNetworkMappingInputProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.UpdateNetworkMappingInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The input properties needed to update network mapping.
         :paramtype properties:
@@ -25466,8 +26015,8 @@ class UpdateNetworkMappingInputProperties(_serialization.Model):
         recovery_fabric_name: Optional[str] = None,
         recovery_network_id: Optional[str] = None,
         fabric_specific_details: Optional["_models.FabricSpecificUpdateNetworkMappingInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_fabric_name: Recovery fabric name.
         :paramtype recovery_fabric_name: str
@@ -25495,7 +26044,7 @@ class UpdatePolicyInput(_serialization.Model):
         "properties": {"key": "properties", "type": "UpdatePolicyInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.UpdatePolicyInputProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.UpdatePolicyInputProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The ReplicationProviderSettings.
         :paramtype properties:
@@ -25518,8 +26067,8 @@ class UpdatePolicyInputProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, replication_provider_settings: Optional["_models.PolicyProviderSpecificInput"] = None, **kwargs
-    ):
+        self, *, replication_provider_settings: Optional["_models.PolicyProviderSpecificInput"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword replication_provider_settings: The ReplicationProviderSettings.
         :paramtype replication_provider_settings:
@@ -25542,8 +26091,8 @@ class UpdateProtectionContainerMappingInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, properties: Optional["_models.UpdateProtectionContainerMappingInputProperties"] = None, **kwargs
-    ):
+        self, *, properties: Optional["_models.UpdateProtectionContainerMappingInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Update protection container mapping input properties.
         :paramtype properties:
@@ -25573,8 +26122,8 @@ class UpdateProtectionContainerMappingInputProperties(_serialization.Model):
         self,
         *,
         provider_specific_input: Optional["_models.ReplicationProviderSpecificUpdateContainerMappingInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider_specific_input: Provider specific input for updating protection container
          mapping.
@@ -25597,7 +26146,9 @@ class UpdateRecoveryPlanInput(_serialization.Model):
         "properties": {"key": "properties", "type": "UpdateRecoveryPlanInputProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.UpdateRecoveryPlanInputProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.UpdateRecoveryPlanInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Recovery plan update properties.
         :paramtype properties:
@@ -25618,7 +26169,7 @@ class UpdateRecoveryPlanInputProperties(_serialization.Model):
         "groups": {"key": "groups", "type": "[RecoveryPlanGroup]"},
     }
 
-    def __init__(self, *, groups: Optional[List["_models.RecoveryPlanGroup"]] = None, **kwargs):
+    def __init__(self, *, groups: Optional[List["_models.RecoveryPlanGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword groups: The recovery plan groups.
         :paramtype groups: list[~azure.mgmt.recoveryservicessiterecovery.models.RecoveryPlanGroup]
@@ -25640,8 +26191,8 @@ class UpdateReplicationProtectedItemInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, properties: Optional["_models.UpdateReplicationProtectedItemInputProperties"] = None, **kwargs
-    ):
+        self, *, properties: Optional["_models.UpdateReplicationProtectedItemInputProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Update replication protected item properties.
         :paramtype properties:
@@ -25710,8 +26261,8 @@ class UpdateReplicationProtectedItemInputProperties(_serialization.Model):
         license_type: Optional[Union[str, "_models.LicenseType"]] = None,
         recovery_availability_set_id: Optional[str] = None,
         provider_specific_details: Optional["_models.UpdateReplicationProtectedItemProviderInput"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_azure_vm_name: Target Azure VM name given by the user.
         :paramtype recovery_azure_vm_name: str
@@ -25764,7 +26315,7 @@ class UpdateVCenterRequest(_serialization.Model):
         "properties": {"key": "properties", "type": "UpdateVCenterRequestProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.UpdateVCenterRequestProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.UpdateVCenterRequestProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The update VCenter Request Properties.
         :paramtype properties:
@@ -25805,8 +26356,8 @@ class UpdateVCenterRequestProperties(_serialization.Model):
         process_server_id: Optional[str] = None,
         port: Optional[str] = None,
         run_as_account_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: The friendly name of the vCenter.
         :paramtype friendly_name: str
@@ -25859,8 +26410,12 @@ class VaultHealthDetails(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.VaultHealthProperties"] = None, **kwargs
-    ):
+        self,
+        *,
+        location: Optional[str] = None,
+        properties: Optional["_models.VaultHealthProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -25901,8 +26456,8 @@ class VaultHealthProperties(_serialization.Model):
         protected_items_health: Optional["_models.ResourceHealthSummary"] = None,
         fabrics_health: Optional["_models.ResourceHealthSummary"] = None,
         containers_health: Optional["_models.ResourceHealthSummary"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vault_errors: The list of errors on the vault.
         :paramtype vault_errors: list[~azure.mgmt.recoveryservicessiterecovery.models.HealthError]
@@ -25956,8 +26511,12 @@ class VaultSetting(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.VaultSettingProperties"] = None, **kwargs
-    ):
+        self,
+        *,
+        location: Optional[str] = None,
+        properties: Optional["_models.VaultSettingProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -25983,8 +26542,8 @@ class VaultSettingCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.VaultSetting"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.VaultSetting"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of vault setting.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.VaultSetting]
@@ -26014,7 +26573,7 @@ class VaultSettingCreationInput(_serialization.Model):
         "properties": {"key": "properties", "type": "VaultSettingCreationInputProperties"},
     }
 
-    def __init__(self, *, properties: "_models.VaultSettingCreationInputProperties", **kwargs):
+    def __init__(self, *, properties: "_models.VaultSettingCreationInputProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Vault setting creation input properties. Required.
         :paramtype properties:
@@ -26043,8 +26602,8 @@ class VaultSettingCreationInputProperties(_serialization.Model):
         *,
         migration_solution_id: Optional[str] = None,
         vmware_to_azure_provider_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword migration_solution_id: The migration solution Id.
         :paramtype migration_solution_id: str
@@ -26075,8 +26634,8 @@ class VaultSettingProperties(_serialization.Model):
         *,
         migration_solution_id: Optional[str] = None,
         vmware_to_azure_provider_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword migration_solution_id: The migration solution ARM Id.
         :paramtype migration_solution_id: str
@@ -26120,8 +26679,8 @@ class VCenter(Resource):
     }
 
     def __init__(
-        self, *, location: Optional[str] = None, properties: Optional["_models.VCenterProperties"] = None, **kwargs
-    ):
+        self, *, location: Optional[str] = None, properties: Optional["_models.VCenterProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource Location.
         :paramtype location: str
@@ -26146,7 +26705,9 @@ class VCenterCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VCenter"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.VCenter"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The vCenter details.
         :paramtype value: list[~azure.mgmt.recoveryservicessiterecovery.models.VCenter]
@@ -26213,8 +26774,8 @@ class VCenterProperties(_serialization.Model):  # pylint: disable=too-many-insta
         run_as_account_id: Optional[str] = None,
         fabric_arm_resource_name: Optional[str] = None,
         health_errors: Optional[List["_models.HealthError"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: Friendly name of the vCenter.
         :paramtype friendly_name: str
@@ -26277,8 +26838,8 @@ class VersionDetails(_serialization.Model):
         version: Optional[str] = None,
         expiry_date: Optional[datetime.datetime] = None,
         status: Optional[Union[str, "_models.AgentVersionStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword version: The agent version.
         :paramtype version: str
@@ -26326,8 +26887,8 @@ class VirtualMachineTaskDetails(JobTaskDetails):
         job_task: Optional["_models.JobEntity"] = None,
         skipped_reason: Optional[str] = None,
         skipped_reason_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword job_task: The job entity.
         :paramtype job_task: ~azure.mgmt.recoveryservicessiterecovery.models.JobEntity
@@ -26359,7 +26920,7 @@ class VmmDetails(FabricSpecificDetails):
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VMM"
@@ -26382,7 +26943,7 @@ class VmmToAzureCreateNetworkMappingInput(FabricSpecificCreateNetworkMappingInpu
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VmmToAzure"
@@ -26405,7 +26966,7 @@ class VmmToAzureNetworkMappingSettings(NetworkMappingFabricSpecificSettings):
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VmmToAzure"
@@ -26428,7 +26989,7 @@ class VmmToAzureUpdateNetworkMappingInput(FabricSpecificUpdateNetworkMappingInpu
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VmmToAzure"
@@ -26451,7 +27012,7 @@ class VmmToVmmCreateNetworkMappingInput(FabricSpecificCreateNetworkMappingInput)
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VmmToVmm"
@@ -26474,7 +27035,7 @@ class VmmToVmmNetworkMappingSettings(NetworkMappingFabricSpecificSettings):
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VmmToVmm"
@@ -26497,7 +27058,7 @@ class VmmToVmmUpdateNetworkMappingInput(FabricSpecificUpdateNetworkMappingInput)
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VmmToVmm"
@@ -26563,8 +27124,8 @@ class VmmVirtualMachineDetails(HyperVVirtualMachineDetails):
         has_fibre_channel_adapter: Optional[Union[str, "_models.PresenceStatus"]] = None,
         has_shared_vhd: Optional[Union[str, "_models.PresenceStatus"]] = None,
         hyper_v_host_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_item_id: The source id of the object.
         :paramtype source_item_id: str
@@ -26699,8 +27260,8 @@ class VMNicDetails(_serialization.Model):  # pylint: disable=too-many-instance-a
         tfo_recovery_nic_resource_group_name: Optional[str] = None,
         tfo_reuse_existing_nic: bool = False,
         target_nic_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword nic_id: The nic Id.
         :paramtype nic_id: str
@@ -26843,8 +27404,8 @@ class VMNicInputDetails(_serialization.Model):  # pylint: disable=too-many-insta
         tfo_nic_resource_group_name: Optional[str] = None,
         tfo_reuse_existing_nic: Optional[bool] = None,
         target_nic_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword nic_id: The nic Id.
         :paramtype nic_id: str
@@ -26926,8 +27487,8 @@ class VmNicUpdatesTaskDetails(TaskTypeDetails):
     }
 
     def __init__(
-        self, *, vm_id: Optional[str] = None, nic_id: Optional[str] = None, name: Optional[str] = None, **kwargs
-    ):
+        self, *, vm_id: Optional[str] = None, nic_id: Optional[str] = None, name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword vm_id: Virtual machine Id.
         :paramtype vm_id: str
@@ -26960,7 +27521,7 @@ class VMwareCbtContainerCreationInput(ReplicationProviderSpecificContainerCreati
         "instance_type": {"key": "instanceType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
@@ -27013,8 +27574,8 @@ class VMwareCbtContainerMappingInput(ReplicationProviderSpecificContainerMapping
         key_vault_uri: Optional[str] = None,
         storage_account_sas_secret_name: Optional[str] = None,
         service_bus_connection_string_secret_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_vault_id: The target key vault ARM Id.
         :paramtype key_vault_id: str
@@ -27086,8 +27647,8 @@ class VMwareCbtDiskInput(_serialization.Model):
         log_storage_account_sas_secret_name: str,
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk Id. Required.
         :paramtype disk_id: str
@@ -27161,6 +27722,11 @@ class VMwareCbtEnableMigrationInput(
     :vartype target_availability_zone: str
     :ivar target_proximity_placement_group_id: The target proximity placement group ARM Id.
     :vartype target_proximity_placement_group_id: str
+    :ivar confidential_vm_key_vault_id: The confidential VM key vault Id for ADE installation.
+    :vartype confidential_vm_key_vault_id: str
+    :ivar target_vm_security_profile: The target VM security profile.
+    :vartype target_vm_security_profile:
+     ~azure.mgmt.recoveryservicessiterecovery.models.VMwareCbtSecurityProfileProperties
     :ivar target_boot_diagnostics_storage_account_id: The target boot diagnostics storage account
      ARM Id.
     :vartype target_boot_diagnostics_storage_account_id: str
@@ -27205,6 +27771,8 @@ class VMwareCbtEnableMigrationInput(
         "target_availability_set_id": {"key": "targetAvailabilitySetId", "type": "str"},
         "target_availability_zone": {"key": "targetAvailabilityZone", "type": "str"},
         "target_proximity_placement_group_id": {"key": "targetProximityPlacementGroupId", "type": "str"},
+        "confidential_vm_key_vault_id": {"key": "confidentialVmKeyVaultId", "type": "str"},
+        "target_vm_security_profile": {"key": "targetVmSecurityProfile", "type": "VMwareCbtSecurityProfileProperties"},
         "target_boot_diagnostics_storage_account_id": {"key": "targetBootDiagnosticsStorageAccountId", "type": "str"},
         "perform_auto_resync": {"key": "performAutoResync", "type": "str"},
         "target_vm_tags": {"key": "targetVmTags", "type": "{str}"},
@@ -27233,14 +27801,16 @@ class VMwareCbtEnableMigrationInput(
         target_availability_set_id: Optional[str] = None,
         target_availability_zone: Optional[str] = None,
         target_proximity_placement_group_id: Optional[str] = None,
+        confidential_vm_key_vault_id: Optional[str] = None,
+        target_vm_security_profile: Optional["_models.VMwareCbtSecurityProfileProperties"] = None,
         target_boot_diagnostics_storage_account_id: Optional[str] = None,
         perform_auto_resync: Optional[str] = None,
         target_vm_tags: Optional[Dict[str, str]] = None,
         seed_disk_tags: Optional[Dict[str, str]] = None,
         target_disk_tags: Optional[Dict[str, str]] = None,
         target_nic_tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vmware_machine_id: The ARM Id of the VM discovered in VMware. Required.
         :paramtype vmware_machine_id: str
@@ -27281,6 +27851,11 @@ class VMwareCbtEnableMigrationInput(
         :paramtype target_availability_zone: str
         :keyword target_proximity_placement_group_id: The target proximity placement group ARM Id.
         :paramtype target_proximity_placement_group_id: str
+        :keyword confidential_vm_key_vault_id: The confidential VM key vault Id for ADE installation.
+        :paramtype confidential_vm_key_vault_id: str
+        :keyword target_vm_security_profile: The target VM security profile.
+        :paramtype target_vm_security_profile:
+         ~azure.mgmt.recoveryservicessiterecovery.models.VMwareCbtSecurityProfileProperties
         :keyword target_boot_diagnostics_storage_account_id: The target boot diagnostics storage
          account ARM Id.
         :paramtype target_boot_diagnostics_storage_account_id: str
@@ -27314,6 +27889,8 @@ class VMwareCbtEnableMigrationInput(
         self.target_availability_set_id = target_availability_set_id
         self.target_availability_zone = target_availability_zone
         self.target_proximity_placement_group_id = target_proximity_placement_group_id
+        self.confidential_vm_key_vault_id = confidential_vm_key_vault_id
+        self.target_vm_security_profile = target_vm_security_profile
         self.target_boot_diagnostics_storage_account_id = target_boot_diagnostics_storage_account_id
         self.perform_auto_resync = perform_auto_resync
         self.target_vm_tags = target_vm_tags
@@ -27345,7 +27922,7 @@ class VMwareCbtEventDetails(EventProviderSpecificDetails):
         "migration_item_name": {"key": "migrationItemName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
@@ -27361,6 +27938,8 @@ class VMwareCbtMigrateInput(MigrateProviderSpecificInput):
     :vartype instance_type: str
     :ivar perform_shutdown: A value indicating whether VM is to be shutdown. Required.
     :vartype perform_shutdown: str
+    :ivar os_upgrade_version: A value indicating the inplace OS Upgrade version.
+    :vartype os_upgrade_version: str
     """
 
     _validation = {
@@ -27371,16 +27950,20 @@ class VMwareCbtMigrateInput(MigrateProviderSpecificInput):
     _attribute_map = {
         "instance_type": {"key": "instanceType", "type": "str"},
         "perform_shutdown": {"key": "performShutdown", "type": "str"},
+        "os_upgrade_version": {"key": "osUpgradeVersion", "type": "str"},
     }
 
-    def __init__(self, *, perform_shutdown: str, **kwargs):
+    def __init__(self, *, perform_shutdown: str, os_upgrade_version: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword perform_shutdown: A value indicating whether VM is to be shutdown. Required.
         :paramtype perform_shutdown: str
+        :keyword os_upgrade_version: A value indicating the inplace OS Upgrade version.
+        :paramtype os_upgrade_version: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
         self.perform_shutdown = perform_shutdown
+        self.os_upgrade_version = os_upgrade_version
 
 
 class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: disable=too-many-instance-attributes
@@ -27396,6 +27979,8 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
     :vartype vmware_machine_id: str
     :ivar os_type: The type of the OS on the VM.
     :vartype os_type: str
+    :ivar os_name: The name of the OS on the VM.
+    :vartype os_name: str
     :ivar firmware_type: The firmware type.
     :vartype firmware_type: str
     :ivar target_generation: The target generation.
@@ -27425,6 +28010,11 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
     :vartype target_availability_zone: str
     :ivar target_proximity_placement_group_id: The target proximity placement group Id.
     :vartype target_proximity_placement_group_id: str
+    :ivar confidential_vm_key_vault_id: The confidential VM key vault Id for ADE installation.
+    :vartype confidential_vm_key_vault_id: str
+    :ivar target_vm_security_profile: The target VM security profile.
+    :vartype target_vm_security_profile:
+     ~azure.mgmt.recoveryservicessiterecovery.models.VMwareCbtSecurityProfileProperties
     :ivar target_boot_diagnostics_storage_account_id: The target boot diagnostics storage account
      ARM Id.
     :vartype target_boot_diagnostics_storage_account_id: str
@@ -27455,12 +28045,19 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
     :vartype resync_progress_percentage: int
     :ivar resume_progress_percentage: The resume progress percentage.
     :vartype resume_progress_percentage: int
+    :ivar delta_sync_progress_percentage: The delta sync progress percentage.
+    :vartype delta_sync_progress_percentage: int
+    :ivar is_check_sum_resync_cycle: A value indicating whether checksum resync cycle is in
+     progress.
+    :vartype is_check_sum_resync_cycle: str
     :ivar initial_seeding_retry_count: The initial seeding retry count.
     :vartype initial_seeding_retry_count: int
     :ivar resync_retry_count: The resync retry count.
     :vartype resync_retry_count: int
     :ivar resume_retry_count: The resume retry count.
     :vartype resume_retry_count: int
+    :ivar delta_sync_retry_count: The delta sync retry count.
+    :vartype delta_sync_retry_count: int
     :ivar resync_required: A value indicating whether resync is required.
     :vartype resync_required: str
     :ivar resync_state: The resync state. Known values are: "None", "PreparedForResynchronization",
@@ -27472,12 +28069,23 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
     :vartype seed_disk_tags: dict[str, str]
     :ivar target_disk_tags: The tags for the target disks.
     :vartype target_disk_tags: dict[str, str]
+    :ivar supported_os_versions: A value indicating the inplace OS Upgrade version.
+    :vartype supported_os_versions: list[str]
+    :ivar appliance_monitoring_details: A value indicating the appliance monitoring details.
+    :vartype appliance_monitoring_details:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ApplianceMonitoringDetails
+    :ivar gateway_operation_details: A value indicating the gateway operation details.
+    :vartype gateway_operation_details:
+     ~azure.mgmt.recoveryservicessiterecovery.models.GatewayOperationDetails
+    :ivar operation_name: A value indicating the SRS operation name.
+    :vartype operation_name: str
     """
 
     _validation = {
         "instance_type": {"required": True},
         "vmware_machine_id": {"readonly": True},
         "os_type": {"readonly": True},
+        "os_name": {"readonly": True},
         "firmware_type": {"readonly": True},
         "target_generation": {"readonly": True},
         "data_mover_run_as_account_id": {"readonly": True},
@@ -27491,17 +28099,24 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
         "migration_progress_percentage": {"readonly": True},
         "resync_progress_percentage": {"readonly": True},
         "resume_progress_percentage": {"readonly": True},
+        "delta_sync_progress_percentage": {"readonly": True},
+        "is_check_sum_resync_cycle": {"readonly": True},
         "initial_seeding_retry_count": {"readonly": True},
         "resync_retry_count": {"readonly": True},
         "resume_retry_count": {"readonly": True},
+        "delta_sync_retry_count": {"readonly": True},
         "resync_required": {"readonly": True},
         "resync_state": {"readonly": True},
+        "appliance_monitoring_details": {"readonly": True},
+        "gateway_operation_details": {"readonly": True},
+        "operation_name": {"readonly": True},
     }
 
     _attribute_map = {
         "instance_type": {"key": "instanceType", "type": "str"},
         "vmware_machine_id": {"key": "vmwareMachineId", "type": "str"},
         "os_type": {"key": "osType", "type": "str"},
+        "os_name": {"key": "osName", "type": "str"},
         "firmware_type": {"key": "firmwareType", "type": "str"},
         "target_generation": {"key": "targetGeneration", "type": "str"},
         "license_type": {"key": "licenseType", "type": "str"},
@@ -27516,6 +28131,8 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
         "target_availability_set_id": {"key": "targetAvailabilitySetId", "type": "str"},
         "target_availability_zone": {"key": "targetAvailabilityZone", "type": "str"},
         "target_proximity_placement_group_id": {"key": "targetProximityPlacementGroupId", "type": "str"},
+        "confidential_vm_key_vault_id": {"key": "confidentialVmKeyVaultId", "type": "str"},
+        "target_vm_security_profile": {"key": "targetVmSecurityProfile", "type": "VMwareCbtSecurityProfileProperties"},
         "target_boot_diagnostics_storage_account_id": {"key": "targetBootDiagnosticsStorageAccountId", "type": "str"},
         "target_vm_tags": {"key": "targetVmTags", "type": "{str}"},
         "protected_disks": {"key": "protectedDisks", "type": "[VMwareCbtProtectedDiskDetails]"},
@@ -27530,14 +28147,21 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
         "migration_progress_percentage": {"key": "migrationProgressPercentage", "type": "int"},
         "resync_progress_percentage": {"key": "resyncProgressPercentage", "type": "int"},
         "resume_progress_percentage": {"key": "resumeProgressPercentage", "type": "int"},
+        "delta_sync_progress_percentage": {"key": "deltaSyncProgressPercentage", "type": "int"},
+        "is_check_sum_resync_cycle": {"key": "isCheckSumResyncCycle", "type": "str"},
         "initial_seeding_retry_count": {"key": "initialSeedingRetryCount", "type": "int"},
         "resync_retry_count": {"key": "resyncRetryCount", "type": "int"},
         "resume_retry_count": {"key": "resumeRetryCount", "type": "int"},
+        "delta_sync_retry_count": {"key": "deltaSyncRetryCount", "type": "int"},
         "resync_required": {"key": "resyncRequired", "type": "str"},
         "resync_state": {"key": "resyncState", "type": "str"},
         "perform_auto_resync": {"key": "performAutoResync", "type": "str"},
         "seed_disk_tags": {"key": "seedDiskTags", "type": "{str}"},
         "target_disk_tags": {"key": "targetDiskTags", "type": "{str}"},
+        "supported_os_versions": {"key": "supportedOSVersions", "type": "[str]"},
+        "appliance_monitoring_details": {"key": "applianceMonitoringDetails", "type": "ApplianceMonitoringDetails"},
+        "gateway_operation_details": {"key": "gatewayOperationDetails", "type": "GatewayOperationDetails"},
+        "operation_name": {"key": "operationName", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -27551,6 +28175,8 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
         target_availability_set_id: Optional[str] = None,
         target_availability_zone: Optional[str] = None,
         target_proximity_placement_group_id: Optional[str] = None,
+        confidential_vm_key_vault_id: Optional[str] = None,
+        target_vm_security_profile: Optional["_models.VMwareCbtSecurityProfileProperties"] = None,
         target_boot_diagnostics_storage_account_id: Optional[str] = None,
         target_vm_tags: Optional[Dict[str, str]] = None,
         protected_disks: Optional[List["_models.VMwareCbtProtectedDiskDetails"]] = None,
@@ -27561,8 +28187,9 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
         perform_auto_resync: Optional[str] = None,
         seed_disk_tags: Optional[Dict[str, str]] = None,
         target_disk_tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        supported_os_versions: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword license_type: License Type of the VM to be used.
         :paramtype license_type: str
@@ -27580,6 +28207,11 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
         :paramtype target_availability_zone: str
         :keyword target_proximity_placement_group_id: The target proximity placement group Id.
         :paramtype target_proximity_placement_group_id: str
+        :keyword confidential_vm_key_vault_id: The confidential VM key vault Id for ADE installation.
+        :paramtype confidential_vm_key_vault_id: str
+        :keyword target_vm_security_profile: The target VM security profile.
+        :paramtype target_vm_security_profile:
+         ~azure.mgmt.recoveryservicessiterecovery.models.VMwareCbtSecurityProfileProperties
         :keyword target_boot_diagnostics_storage_account_id: The target boot diagnostics storage
          account ARM Id.
         :paramtype target_boot_diagnostics_storage_account_id: str
@@ -27602,11 +28234,14 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
         :paramtype seed_disk_tags: dict[str, str]
         :keyword target_disk_tags: The tags for the target disks.
         :paramtype target_disk_tags: dict[str, str]
+        :keyword supported_os_versions: A value indicating the inplace OS Upgrade version.
+        :paramtype supported_os_versions: list[str]
         """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
         self.vmware_machine_id = None
         self.os_type = None
+        self.os_name = None
         self.firmware_type = None
         self.target_generation = None
         self.license_type = license_type
@@ -27621,6 +28256,8 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
         self.target_availability_set_id = target_availability_set_id
         self.target_availability_zone = target_availability_zone
         self.target_proximity_placement_group_id = target_proximity_placement_group_id
+        self.confidential_vm_key_vault_id = confidential_vm_key_vault_id
+        self.target_vm_security_profile = target_vm_security_profile
         self.target_boot_diagnostics_storage_account_id = target_boot_diagnostics_storage_account_id
         self.target_vm_tags = target_vm_tags
         self.protected_disks = protected_disks
@@ -27635,14 +28272,21 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings):  # pylint: d
         self.migration_progress_percentage = None
         self.resync_progress_percentage = None
         self.resume_progress_percentage = None
+        self.delta_sync_progress_percentage = None
+        self.is_check_sum_resync_cycle = None
         self.initial_seeding_retry_count = None
         self.resync_retry_count = None
         self.resume_retry_count = None
+        self.delta_sync_retry_count = None
         self.resync_required = None
         self.resync_state = None
         self.perform_auto_resync = perform_auto_resync
         self.seed_disk_tags = seed_disk_tags
         self.target_disk_tags = target_disk_tags
+        self.supported_os_versions = supported_os_versions
+        self.appliance_monitoring_details = None
+        self.gateway_operation_details = None
+        self.operation_name = None
 
 
 class VMwareCbtNicDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -27722,8 +28366,8 @@ class VMwareCbtNicDetails(_serialization.Model):  # pylint: disable=too-many-ins
         test_ip_address_type: Optional[Union[str, "_models.EthernetAddressType"]] = None,
         target_nic_name: Optional[str] = None,
         is_selected_for_migration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_primary_nic: A value indicating whether this is the primary NIC.
         :paramtype is_primary_nic: str
@@ -27818,8 +28462,8 @@ class VMwareCbtNicInput(_serialization.Model):
         target_nic_name: Optional[str] = None,
         test_subnet_name: Optional[str] = None,
         test_static_ip_address: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword nic_id: The NIC Id. Required.
         :paramtype nic_id: str
@@ -27884,8 +28528,8 @@ class VMwareCbtPolicyCreationInput(PolicyProviderSpecificInput):
         recovery_point_history_in_minutes: Optional[int] = None,
         crash_consistent_frequency_in_minutes: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_history_in_minutes: The duration in minutes until which the recovery
          points need to be stored.
@@ -27938,8 +28582,8 @@ class VmwareCbtPolicyDetails(PolicyProviderSpecificDetails):
         recovery_point_history_in_minutes: Optional[int] = None,
         app_consistent_frequency_in_minutes: Optional[int] = None,
         crash_consistent_frequency_in_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_history_in_minutes: The duration in minutes until which the recovery
          points need to be stored.
@@ -27992,6 +28636,9 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):  # pylint: disable=to
     :vartype target_blob_uri: str
     :ivar target_disk_name: The name for the target managed disk.
     :vartype target_disk_name: str
+    :ivar gateway_operation_details: A value indicating the gateway operation details.
+    :vartype gateway_operation_details:
+     ~azure.mgmt.recoveryservicessiterecovery.models.GatewayOperationDetails
     """
 
     _validation = {
@@ -28007,6 +28654,7 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):  # pylint: disable=to
         "seed_blob_uri": {"readonly": True},
         "target_managed_disk_id": {"readonly": True},
         "target_blob_uri": {"readonly": True},
+        "gateway_operation_details": {"readonly": True},
     }
 
     _attribute_map = {
@@ -28024,6 +28672,7 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):  # pylint: disable=to
         "target_managed_disk_id": {"key": "targetManagedDiskId", "type": "str"},
         "target_blob_uri": {"key": "targetBlobUri", "type": "str"},
         "target_disk_name": {"key": "targetDiskName", "type": "str"},
+        "gateway_operation_details": {"key": "gatewayOperationDetails", "type": "GatewayOperationDetails"},
     }
 
     def __init__(
@@ -28031,8 +28680,8 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):  # pylint: disable=to
         *,
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         target_disk_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_type: The disk type. Known values are: "Standard_LRS", "Premium_LRS", and
          "StandardSSD_LRS".
@@ -28055,6 +28704,7 @@ class VMwareCbtProtectedDiskDetails(_serialization.Model):  # pylint: disable=to
         self.target_managed_disk_id = None
         self.target_blob_uri = None
         self.target_disk_name = target_disk_name
+        self.gateway_operation_details = None
 
 
 class VMwareCbtProtectionContainerMappingDetails(ProtectionContainerMappingProviderSpecificDetails):
@@ -28081,6 +28731,8 @@ class VMwareCbtProtectionContainerMappingDetails(ProtectionContainerMappingProvi
     :vartype target_location: str
     :ivar role_size_to_nic_count_map: The role size to NIC count map.
     :vartype role_size_to_nic_count_map: dict[str, int]
+    :ivar excluded_skus: The SKUs to be excluded.
+    :vartype excluded_skus: list[str]
     """
 
     _validation = {
@@ -28103,10 +28755,14 @@ class VMwareCbtProtectionContainerMappingDetails(ProtectionContainerMappingProvi
         "service_bus_connection_string_secret_name": {"key": "serviceBusConnectionStringSecretName", "type": "str"},
         "target_location": {"key": "targetLocation", "type": "str"},
         "role_size_to_nic_count_map": {"key": "roleSizeToNicCountMap", "type": "{int}"},
+        "excluded_skus": {"key": "excludedSkus", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
-        """ """
+    def __init__(self, *, excluded_skus: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword excluded_skus: The SKUs to be excluded.
+        :paramtype excluded_skus: list[str]
+        """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
         self.key_vault_id = None
@@ -28116,6 +28772,7 @@ class VMwareCbtProtectionContainerMappingDetails(ProtectionContainerMappingProvi
         self.service_bus_connection_string_secret_name = None
         self.target_location = None
         self.role_size_to_nic_count_map = None
+        self.excluded_skus = excluded_skus
 
 
 class VMwareCbtResumeReplicationInput(ResumeReplicationProviderSpecificInput):
@@ -28138,7 +28795,7 @@ class VMwareCbtResumeReplicationInput(ResumeReplicationProviderSpecificInput):
         "delete_migration_resources": {"key": "deleteMigrationResources", "type": "str"},
     }
 
-    def __init__(self, *, delete_migration_resources: Optional[str] = None, **kwargs):
+    def __init__(self, *, delete_migration_resources: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword delete_migration_resources: A value indicating whether Migration resources to be
          deleted.
@@ -28170,7 +28827,7 @@ class VMwareCbtResyncInput(ResyncProviderSpecificInput):
         "skip_cbt_reset": {"key": "skipCbtReset", "type": "str"},
     }
 
-    def __init__(self, *, skip_cbt_reset: str, **kwargs):
+    def __init__(self, *, skip_cbt_reset: str, **kwargs: Any) -> None:
         """
         :keyword skip_cbt_reset: A value indicating whether CBT is to be reset. Required.
         :paramtype skip_cbt_reset: str
@@ -28178,6 +28835,73 @@ class VMwareCbtResyncInput(ResyncProviderSpecificInput):
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
         self.skip_cbt_reset = skip_cbt_reset
+
+
+class VMwareCbtSecurityProfileProperties(_serialization.Model):
+    """VMwareCbt security profile input.
+
+    :ivar target_vm_security_type: The target VM security type. Known values are: "None",
+     "TrustedLaunch", and "ConfidentialVM".
+    :vartype target_vm_security_type: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.SecurityType
+    :ivar is_target_vm_secure_boot_enabled: A value indicating whether secure boot to be enabled.
+    :vartype is_target_vm_secure_boot_enabled: str
+    :ivar is_target_vm_tpm_enabled: A value indicating whether trusted platform module to be
+     enabled.
+    :vartype is_target_vm_tpm_enabled: str
+    :ivar is_target_vm_integrity_monitoring_enabled: A value indicating whether integrity
+     monitoring to be enabled.
+    :vartype is_target_vm_integrity_monitoring_enabled: str
+    :ivar is_target_vm_confidential_encryption_enabled: A value indicating whether confidential
+     compute encryption to be enabled.
+    :vartype is_target_vm_confidential_encryption_enabled: str
+    """
+
+    _attribute_map = {
+        "target_vm_security_type": {"key": "targetVmSecurityType", "type": "str"},
+        "is_target_vm_secure_boot_enabled": {"key": "isTargetVmSecureBootEnabled", "type": "str"},
+        "is_target_vm_tpm_enabled": {"key": "isTargetVmTpmEnabled", "type": "str"},
+        "is_target_vm_integrity_monitoring_enabled": {"key": "isTargetVmIntegrityMonitoringEnabled", "type": "str"},
+        "is_target_vm_confidential_encryption_enabled": {
+            "key": "isTargetVmConfidentialEncryptionEnabled",
+            "type": "str",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        target_vm_security_type: Optional[Union[str, "_models.SecurityType"]] = None,
+        is_target_vm_secure_boot_enabled: Optional[str] = None,
+        is_target_vm_tpm_enabled: Optional[str] = None,
+        is_target_vm_integrity_monitoring_enabled: Optional[str] = None,
+        is_target_vm_confidential_encryption_enabled: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_vm_security_type: The target VM security type. Known values are: "None",
+         "TrustedLaunch", and "ConfidentialVM".
+        :paramtype target_vm_security_type: str or
+         ~azure.mgmt.recoveryservicessiterecovery.models.SecurityType
+        :keyword is_target_vm_secure_boot_enabled: A value indicating whether secure boot to be
+         enabled.
+        :paramtype is_target_vm_secure_boot_enabled: str
+        :keyword is_target_vm_tpm_enabled: A value indicating whether trusted platform module to be
+         enabled.
+        :paramtype is_target_vm_tpm_enabled: str
+        :keyword is_target_vm_integrity_monitoring_enabled: A value indicating whether integrity
+         monitoring to be enabled.
+        :paramtype is_target_vm_integrity_monitoring_enabled: str
+        :keyword is_target_vm_confidential_encryption_enabled: A value indicating whether confidential
+         compute encryption to be enabled.
+        :paramtype is_target_vm_confidential_encryption_enabled: str
+        """
+        super().__init__(**kwargs)
+        self.target_vm_security_type = target_vm_security_type
+        self.is_target_vm_secure_boot_enabled = is_target_vm_secure_boot_enabled
+        self.is_target_vm_tpm_enabled = is_target_vm_tpm_enabled
+        self.is_target_vm_integrity_monitoring_enabled = is_target_vm_integrity_monitoring_enabled
+        self.is_target_vm_confidential_encryption_enabled = is_target_vm_confidential_encryption_enabled
 
 
 class VMwareCbtTestMigrateInput(TestMigrateProviderSpecificInput):
@@ -28193,6 +28917,8 @@ class VMwareCbtTestMigrateInput(TestMigrateProviderSpecificInput):
     :vartype network_id: str
     :ivar vm_nics: The list of NIC details.
     :vartype vm_nics: list[~azure.mgmt.recoveryservicessiterecovery.models.VMwareCbtNicInput]
+    :ivar os_upgrade_version: A value indicating the inplace OS Upgrade version.
+    :vartype os_upgrade_version: str
     """
 
     _validation = {
@@ -28206,6 +28932,7 @@ class VMwareCbtTestMigrateInput(TestMigrateProviderSpecificInput):
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
         "network_id": {"key": "networkId", "type": "str"},
         "vm_nics": {"key": "vmNics", "type": "[VMwareCbtNicInput]"},
+        "os_upgrade_version": {"key": "osUpgradeVersion", "type": "str"},
     }
 
     def __init__(
@@ -28214,8 +28941,9 @@ class VMwareCbtTestMigrateInput(TestMigrateProviderSpecificInput):
         recovery_point_id: str,
         network_id: str,
         vm_nics: Optional[List["_models.VMwareCbtNicInput"]] = None,
-        **kwargs
-    ):
+        os_upgrade_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword recovery_point_id: The recovery point Id. Required.
         :paramtype recovery_point_id: str
@@ -28223,12 +28951,15 @@ class VMwareCbtTestMigrateInput(TestMigrateProviderSpecificInput):
         :paramtype network_id: str
         :keyword vm_nics: The list of NIC details.
         :paramtype vm_nics: list[~azure.mgmt.recoveryservicessiterecovery.models.VMwareCbtNicInput]
+        :keyword os_upgrade_version: A value indicating the inplace OS Upgrade version.
+        :paramtype os_upgrade_version: str
         """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareCbt"
         self.recovery_point_id = recovery_point_id
         self.network_id = network_id
         self.vm_nics = vm_nics
+        self.os_upgrade_version = os_upgrade_version
 
 
 class VMwareCbtUpdateDiskInput(_serialization.Model):
@@ -28255,8 +28986,8 @@ class VMwareCbtUpdateDiskInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, disk_id: str, target_disk_name: Optional[str] = None, is_os_disk: Optional[str] = None, **kwargs
-    ):
+        self, *, disk_id: str, target_disk_name: Optional[str] = None, is_os_disk: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword disk_id: The disk Id. Required.
         :paramtype disk_id: str
@@ -28366,8 +29097,8 @@ class VMwareCbtUpdateMigrationItemInput(
         target_vm_tags: Optional[Dict[str, str]] = None,
         target_disk_tags: Optional[Dict[str, str]] = None,
         target_nic_tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_vm_name: The target VM name.
         :paramtype target_vm_name: str
@@ -28589,8 +29320,8 @@ class VMwareDetails(FabricSpecificDetails):  # pylint: disable=too-many-instance
         switch_provider_blocking_error_details: Optional[
             List["_models.InMageFabricSwitchProviderBlockingErrorDetails"]
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword process_servers: The list of Process Servers associated with the fabric.
         :paramtype process_servers: list[~azure.mgmt.recoveryservicessiterecovery.models.ProcessServer]
@@ -28733,8 +29464,8 @@ class VMwareV2FabricCreationInput(FabricSpecificCreationInput):
         migration_solution_id: str,
         vmware_site_id: Optional[str] = None,
         physical_site_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vmware_site_id: The ARM Id of the VMware site.
         :paramtype vmware_site_id: str
@@ -28798,7 +29529,7 @@ class VMwareV2FabricSpecificDetails(FabricSpecificDetails):
         "process_servers": {"key": "processServers", "type": "[ProcessServerDetails]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instance_type: str = "VMwareV2"
@@ -28873,8 +29604,8 @@ class VMwareVirtualMachineDetails(ConfigurationSettings):  # pylint: disable=too
         discovery_type: Optional[str] = None,
         disk_details: Optional[List["_models.InMageDiskDetails"]] = None,
         validation_errors: Optional[List["_models.HealthError"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword agent_generated_id: The ID generated by the InMage agent after it gets installed on
          guest. This is the ID to be used during InMage CreateProtection.

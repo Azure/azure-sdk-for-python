@@ -7,9 +7,10 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_workspace
-from azure.ai.ml.entities._workspace.workspace import Workspace, ManagedNetwork
+from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._workspace.networking import (
     FqdnDestination,
+    ManagedNetwork,
     PrivateEndpointDestination,
     ServiceTagDestination,
 )
@@ -57,7 +58,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
 
         # test list outbound rules
-        rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
+        rules = client.workspace_outbound_rules.list(workspace_name=wps_name)
         rules_dict = {}
         for rule in rules:
             rules_dict[rule.name] = rule
@@ -81,7 +82,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert rules_dict["pytorch"].category == OutboundRuleCategory.USER_DEFINED
         assert rules_dict["pytorch"].destination == "*.pytorch.org"
 
-        # test adding outbound rules with workspace update
+        # test adding outbound rules with workspace update from yaml
         params_override = [
             {"name": wps_name},
         ]
@@ -97,19 +98,19 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
 
         # test show rules added
         # FQDN rule
-        rule = client._workspace_outbound_rules.get(client.resource_group_name, wps_name, "added-fqdnrule")
+        rule = client.workspace_outbound_rules.get(workspace_name=wps_name, outbound_rule_name="added-fqdnrule")
         assert isinstance(rule, FqdnDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
         assert rule.destination == "test.com"
         # ServiceTag rule
-        rule = client._workspace_outbound_rules.get(client.resource_group_name, wps_name, "added-servicetagrule")
+        rule = client.workspace_outbound_rules.get(workspace_name=wps_name, outbound_rule_name="added-servicetagrule")
         assert isinstance(rule, ServiceTagDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
         assert rule.service_tag == "DataFactory"
         assert rule.protocol == "TCP"
         assert rule.port_ranges == "80, 8080-8089"
         # PrivateEndpoint rule
-        rule = client._workspace_outbound_rules.get(client.resource_group_name, wps_name, "added-perule")
+        rule = client.workspace_outbound_rules.get(workspace_name=wps_name, outbound_rule_name="added-perule")
         assert isinstance(rule, PrivateEndpointDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
         assert "storageAccounts/mvnetteststorage2" in rule.service_resource_id
@@ -117,27 +118,51 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert rule.spark_enabled == True
 
         # assert update did not remove existing outbound rules
-        rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
+        rules = client.workspace_outbound_rules.list(workspace_name=wps_name)
         rule_names = [rule.name for rule in rules]
         assert "pytorch" in rule_names
         assert "my-service" in rule_names
         assert "my-storage" in rule_names
 
+        # test outbound rules create with outbound rule operation
+        fqdn_rule = FqdnDestination(name="anotherfqdn", destination="google.com")
+        rule_poller = client.workspace_outbound_rules.begin_create(workspace_name=wps_name, rule=fqdn_rule)
+        assert isinstance(rule_poller, LROPoller)
+        rule = rule_poller.result()
+        assert isinstance(rule, FqdnDestination)
+        assert rule.category == OutboundRuleCategory.USER_DEFINED
+        assert rule.destination == "google.com"
+
+        # test outbound rules update with outbound rule operation
+        fqdn_rule = FqdnDestination(name="anotherfqdn", destination="adifffqdn.com")
+        rule_poller = client.workspace_outbound_rules.begin_create(workspace_name=wps_name, rule=fqdn_rule)
+        assert isinstance(rule_poller, LROPoller)
+        rule = rule_poller.result()
+        assert isinstance(rule, FqdnDestination)
+        assert rule.category == OutboundRuleCategory.USER_DEFINED
+        assert rule.destination == "adifffqdn.com"
+
         # test remove outbound rule
-        rule_poller = client._workspace_outbound_rules.begin_remove(client.resource_group_name, wps_name, "pytorch")
+        rule_poller = client.workspace_outbound_rules.begin_remove(
+            workspace_name=wps_name, outbound_rule_name="pytorch"
+        )
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
-        rule_poller = client._workspace_outbound_rules.begin_remove(client.resource_group_name, wps_name, "my-service")
+        rule_poller = client.workspace_outbound_rules.begin_remove(
+            workspace_name=wps_name, outbound_rule_name="my-service"
+        )
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
-        rule_poller = client._workspace_outbound_rules.begin_remove(client.resource_group_name, wps_name, "my-storage")
+        rule_poller = client.workspace_outbound_rules.begin_remove(
+            workspace_name=wps_name, outbound_rule_name="my-storage"
+        )
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
         # assert remove worked removed the outbound rules
-        rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
+        rules = client.workspace_outbound_rules.list(workspace_name=wps_name)
         rule_names = [rule.name for rule in rules]
         assert "pytorch" not in rule_names
         assert "my-service" not in rule_names
@@ -170,7 +195,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
             {"display_name": wps_display_name},
         ]
         wps = load_workspace(None, params_override=params_override)
-        wps.managed_network = ManagedNetwork(IsolationMode.ALLOW_INTERNET_OUTBOUND)
+        wps.managed_network = ManagedNetwork(isolation_mode=IsolationMode.ALLOW_INTERNET_OUTBOUND)
 
         # test creation
         workspace_poller = client.workspaces.begin_create(workspace=wps)

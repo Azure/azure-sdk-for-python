@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
-from typing import Sequence, Any
+from typing import Optional, Sequence, Any
 
 from opentelemetry._logs.severity import SeverityNumber
 from opentelemetry.semconv.trace import SpanAttributes
@@ -9,9 +9,14 @@ from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk._logs.export import LogExporter, LogExportResult
 
 from azure.monitor.opentelemetry.exporter import _utils
+from azure.monitor.opentelemetry.exporter._constants import (
+    _EXCEPTION_ENVELOPE_NAME,
+    _MESSAGE_ENVELOPE_NAME,
+)
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MessageData,
     MonitorBase,
+    TelemetryEventData,
     TelemetryExceptionData,
     TelemetryExceptionDetails,
     TelemetryItem,
@@ -28,6 +33,7 @@ _DEFAULT_TRACE_ID = 0
 
 __all__ = ["AzureMonitorLogExporter"]
 
+_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE = "APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE"
 
 class AzureMonitorLogExporter(BaseExporter, LogExporter):
     """Azure Monitor Log exporter for OpenTelemetry."""
@@ -56,15 +62,15 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
 
         Called when the SDK is shut down.
         """
-        self.storage.close()
+        if self.storage:
+            self.storage.close()
 
     def _log_to_envelope(self, log_data: LogData) -> TelemetryItem:
-        if not log_data:
-            return None
         envelope = _convert_log_to_envelope(log_data)
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
     def from_connection_string(
         cls, conn_str: str, **kwargs: Any
@@ -84,31 +90,54 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         return cls(connection_string=conn_str, **kwargs)
 
 
+def _log_data_is_event(log_data: LogData):
+    log_record = log_data.log_record
+    is_event = False
+    if log_record.attributes:
+        is_event = log_record.attributes.get(_APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE, False) # type: ignore
+    return is_event is True
+
 # pylint: disable=protected-access
 def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     log_record = log_data.log_record
-    envelope = _utils._create_telemetry_item(log_record.timestamp)
-    envelope.tags.update(_utils._populate_part_a_fields(log_record.resource))
-    envelope.tags["ai.operation.id"] = "{:032x}".format(
+    time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
+    envelope = _utils._create_telemetry_item(time_stamp)
+    envelope.tags.update(_utils._populate_part_a_fields(log_record.resource)) # type: ignore
+    envelope.tags["ai.operation.id"] = "{:032x}".format( # type: ignore
         log_record.trace_id or _DEFAULT_TRACE_ID
     )
-    envelope.tags["ai.operation.parentId"] = "{:016x}".format(
+    envelope.tags["ai.operation.parentId"] = "{:016x}".format( # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
     )
     properties = _utils._filter_custom_properties(
         log_record.attributes,
-        lambda key, val: not _is_opentelemetry_standard_attribute(key)
+        lambda key, val: not _is_ignored_attribute(key)
     )
-    exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
-    exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
-    # pylint: disable=line-too-long
-    stack_trace = log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
+    exc_type = exc_message = stack_trace = None
+    if log_record.attributes:
+        exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
+        exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
+        # pylint: disable=line-too-long
+        stack_trace = log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
     severity_level = _get_severity_level(log_record.severity_number)
 
+    if not log_record.body:
+        log_record.body = "n/a"
+
+    # Event telemetry
+    if _log_data_is_event(log_data):
+        envelope.name = 'Microsoft.ApplicationInsights.Event'
+        data = TelemetryEventData(
+            name=str(log_record.body)[:32768],
+            properties=properties,
+        )
+        envelope.data = MonitorBase(base_data=data, base_type="EventData")
     # Exception telemetry
-    if exc_type is not None or exc_message is not None:
-        envelope.name = "Microsoft.ApplicationInsights.Exception"
+    elif exc_type is not None or exc_message is not None:
+        envelope.name = _EXCEPTION_ENVELOPE_NAME
         has_full_stack = stack_trace is not None
+        if not exc_type:
+            exc_type = "Exception"
         if not exc_message:
             exc_message = "Exception"
         exc_details = TelemetryExceptionDetails(
@@ -117,7 +146,7 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             has_full_stack=has_full_stack,
             stack=str(stack_trace)[:32768],
         )
-        data = TelemetryExceptionData(
+        data = TelemetryExceptionData( # type: ignore
             severity_level=severity_level,
             properties=properties,
             exceptions=[exc_details],
@@ -125,10 +154,10 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
         # pylint: disable=line-too-long
         envelope.data = MonitorBase(base_data=data, base_type="ExceptionData")
     else:  # Message telemetry
-        envelope.name = "Microsoft.ApplicationInsights.Message"
+        envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
-        data = MessageData(
+        data = MessageData( # type: ignore
             message=str(log_record.body)[:32768],
             severity_level=severity_level,
             properties=properties,
@@ -141,32 +170,28 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
 def _get_log_export_result(result: ExportResult) -> LogExportResult:
     if result == ExportResult.SUCCESS:
         return LogExportResult.SUCCESS
-    if result in (
-        ExportResult.FAILED_RETRYABLE,
-        ExportResult.FAILED_NOT_RETRYABLE,
-    ):
-        return LogExportResult.FAILURE
-    return None
+    return LogExportResult.FAILURE
 
 
 # pylint: disable=line-too-long
-# Common schema: https://github.com/microsoft/common-schema/blob/main/Mappings/AzureMonitor-AI.md#messageseveritylevel
+# Common schema: https://github.com/microsoft/common-schema/blob/main/v4.0/Mappings/AzureMonitor-AI.md#exceptionseveritylevel
 # SeverityNumber specs: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
-def _get_severity_level(severity_number: SeverityNumber):
-    if severity_number.value < 9:
+def _get_severity_level(severity_number: Optional[SeverityNumber]):
+    if severity_number is None or severity_number.value < 9:
         return 0
     return int((severity_number.value - 1) / 4 - 1)
 
 
-def _is_opentelemetry_standard_attribute(key: str) -> bool:
-    return key in _EXCEPTION_ATTRS
+def _is_ignored_attribute(key: str) -> bool:
+    return key in _IGNORED_ATTRS
 
 
-_EXCEPTION_ATTRS = frozenset(
+_IGNORED_ATTRS = frozenset(
     (
         SpanAttributes.EXCEPTION_TYPE,
         SpanAttributes.EXCEPTION_MESSAGE,
         SpanAttributes.EXCEPTION_STACKTRACE,
         SpanAttributes.EXCEPTION_ESCAPED,
+        _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     )
 )

@@ -56,7 +56,7 @@ def main():
     # i.e. https://<ledger id>.confidential-ledger.azure.com
     ledger_id = ledger_endpoint.replace("https://", "").split(".")[0]
 
-    identity_service_client = ConfidentialLedgerCertificateClient()
+    identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     ledger_certificate = identity_service_client.get_ledger_identity(ledger_id)
 
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
@@ -82,7 +82,7 @@ def main():
         # Write a ledger entry and wait for the transaction to be committed.
         try:
             entry_contents = "Hello world!"
-            post_poller = ledger_client.begin_create_ledger_entry(
+            post_poller = ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
                 {"contents": entry_contents}
             )
             post_entry_result = post_poller.result()
@@ -92,7 +92,7 @@ def main():
             )
         except HttpResponseError as e:
             if e.response != None:
-                print("Request failed: {}".format(e.response.json()))
+                print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
             else:
                 print("No response found")
             raise
@@ -109,12 +109,12 @@ def main():
                 "For more information about receipts, please see "
                 "https://microsoft.github.io/CCF/main/audit/receipts.html#receipts"
             )
-            get_receipt_poller = ledger_client.begin_get_receipt(transaction_id)
+            get_receipt_poller = ledger_client.begin_get_receipt(transaction_id)  # type: ignore[attr-defined]
             get_receipt_result = get_receipt_poller.result()
             print(f"Receipt for transaction id {transaction_id}: {get_receipt_result}")
         except HttpResponseError as e:
             if e.response != None:
-                print("Request failed: {}".format(e.response.json()))
+                print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
             else:
                 print("No response found")
             raise

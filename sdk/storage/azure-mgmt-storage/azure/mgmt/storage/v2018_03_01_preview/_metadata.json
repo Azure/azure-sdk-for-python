@@ -109,6 +109,7 @@
         "skus": "SkusOperations",
         "storage_accounts": "StorageAccountsOperations",
         "usages": "UsagesOperations",
-        "blob_containers": "BlobContainersOperations"
+        "blob_containers": "BlobContainersOperations",
+        "management_policies": "ManagementPoliciesOperations"
     }
 }

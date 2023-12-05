@@ -230,7 +230,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
-            raise TypeError("Unsupported credential: {}".format(credential))
+            raise TypeError("Unsupported credential: {}".format(type(credential)))
 
         config = kwargs.get("_configuration") or create_configuration(**kwargs)
         if kwargs.get("_pipeline"):

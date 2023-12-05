@@ -10,6 +10,9 @@ from azure.identity import (
     ClientSecretCredential,
     DeviceCodeCredential,
     UsernamePasswordCredential,
+    AzureCliCredential,
+    AzurePowerShellCredential,
+    AzureDeveloperCliCredential,
 )
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 
@@ -18,8 +21,8 @@ from helpers import get_token_payload_contents
 ARM_SCOPE = "https://management.azure.com/.default"
 
 
-def get_token(credential):
-    token = credential.get_token(ARM_SCOPE)
+def get_token(credential, **kwargs):
+    token = credential.get_token(ARM_SCOPE, **kwargs)
     assert token
     assert token.token
     assert token.expires_on
@@ -45,7 +48,7 @@ def test_certificate_credential(certificate_fixture, request):
     credential = CertificateCredential(
         tenant_id, client_id, certificate_data=cert["cert_with_password_bytes"], password=cert["password"]
     )
-    token = get_token(credential)
+    token = get_token(credential, enable_cae=True)
     parsed_payload = get_token_payload_contents(token.token)
     assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
 
@@ -56,7 +59,7 @@ def test_client_secret_credential(live_service_principal):
         live_service_principal["client_id"],
         live_service_principal["client_secret"],
     )
-    token = get_token(credential)
+    token = get_token(credential, enable_cae=True)
     parsed_payload = get_token_payload_contents(token.token)
     assert "xms_cc" in parsed_payload and "CP1" in parsed_payload["xms_cc"]
 
@@ -73,6 +76,24 @@ def test_username_password_auth(live_user_details):
         password=live_user_details["password"],
         tenant_id=live_user_details["tenant"],
     )
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_cli_credential():
+    credential = AzureCliCredential()
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_dev_cli_credential():
+    credential = AzureDeveloperCliCredential()
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_powershell_credential():
+    credential = AzurePowerShellCredential()
     get_token(credential)
 
 

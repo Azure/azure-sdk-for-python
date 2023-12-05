@@ -1,10 +1,9 @@
-from dataclasses import field
 from functools import partial
 from pathlib import Path
 from typing import Callable, Union
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 from mock import mock
 from pytest_mock import MockFixture
 from test_utilities.utils import (
@@ -394,3 +393,27 @@ class TestDSLPipelineWithSpecificNodes(AzureRecordedTestCase):
             "component_in_group.number": {"job_input_type": "literal", "value": "1.0"},
             "component_in_group.sub1.integer": {"job_input_type": "literal", "value": "1"},
         }
+
+    @pytest.mark.skipif(not is_live(), reason="Met some problem in recording")
+    def test_dsl_pipeline_component_with_static_local_data_input(self, client: MLClient) -> None:
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        input_data_path = "./tests/test_configs/data/"
+
+        @dsl.pipeline()
+        def pipeline_no_arg():
+            component_func = load_component(source=path)
+            component_func(
+                component_in_path=Input(
+                    path=input_data_path,
+                    type=AssetTypes.URI_FOLDER,
+                ),
+                component_in_number=1,
+            )
+
+        @dsl.pipeline
+        def pipeline_func():
+            pipeline_no_arg()
+
+        pipeline_job: PipelineJob = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        client.jobs.create_or_update(pipeline_job)

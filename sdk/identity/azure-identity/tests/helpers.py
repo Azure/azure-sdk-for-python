@@ -14,6 +14,7 @@ except ImportError:  # python < 3.3
 
 
 FAKE_CLIENT_ID = "fake-client-id"
+INVALID_CHARACTERS = "|\\`;{&' "
 
 
 def build_id_token(
@@ -45,7 +46,7 @@ def id_token_claims(iss, sub, aud, exp=None, iat=None, **claims):
     )
 
 
-def build_aad_response(  # simulate a response from AAD
+def build_aad_response(  # simulate a response from Microsoft Entra ID
     uid=None,
     utid=None,  # If present, they will form client_info
     access_token=None,
@@ -58,7 +59,7 @@ def build_aad_response(  # simulate a response from AAD
     **kwargs
 ):
     response = {}
-    if uid and utid:  # Mimic the AAD behavior for "client_info=1" request
+    if uid and utid:  # Mimic the Microsoft Entra ID behavior for "client_info=1" request
         response["client_info"] = base64.b64encode(json.dumps({"uid": uid, "utid": utid}).encode()).decode("utf-8")
     if error:
         response["error"] = error
@@ -190,6 +191,12 @@ def validating_transport(requests, responses):
 def msal_validating_transport(requests, responses, **kwargs):
     """a validating transport with default responses to MSAL's discovery requests"""
     return validating_transport([Request()] * 2 + requests, [get_discovery_response(**kwargs)] * 2 + responses)
+
+
+def new_msal_validating_transport(requests, responses, **kwargs):
+    """a transport with default responses to MSAL's discovery requests without validation"""
+    """msal made some optimizations to make less calls to discovery endpoint"""
+    return validating_transport([Request()] + requests, [get_discovery_response(**kwargs)] + responses)
 
 
 def urlsafeb64_decode(s):

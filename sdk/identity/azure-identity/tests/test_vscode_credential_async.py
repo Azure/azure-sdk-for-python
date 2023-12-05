@@ -26,6 +26,7 @@ def get_credential(user_settings=None, **kwargs):
         return VisualStudioCodeCredential(**kwargs)
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_tenant_id():
     def get_transport(expected_tenant):
@@ -59,6 +60,7 @@ async def test_tenant_id():
     assert transport.send.call_count == 1
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_tenant_id_validation():
     """The credential should raise ValueError when given an invalid tenant_id"""
 
@@ -72,6 +74,7 @@ def test_tenant_id_validation():
             get_credential(tenant_id=tenant)
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
@@ -81,11 +84,15 @@ async def test_no_scopes():
         await credential.get_token()
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_policies_configurable():
     policy = mock.Mock(spec_set=SansIOHTTPPolicy, on_request=mock.Mock())
 
-    async def send(*_, **__):
+    async def send(*_, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         return mock_response(json_payload=build_aad_response(access_token="**"))
 
     credential = get_credential(policies=[policy], transport=mock.Mock(send=send))
@@ -95,6 +102,7 @@ async def test_policies_configurable():
     assert policy.on_request.called
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_user_agent():
     transport = async_validating_transport(
@@ -106,6 +114,7 @@ async def test_user_agent():
         await credential.get_token("scope")
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
 async def test_request_url(authority):
@@ -138,6 +147,7 @@ async def test_request_url(authority):
     assert token.token == access_token
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_credential_unavailable_error():
     credential = get_credential()
@@ -146,6 +156,7 @@ async def test_credential_unavailable_error():
             await credential.get_token("scope")
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_redeem_token():
     expected_token = AccessToken("token", 42)
@@ -160,7 +171,7 @@ async def test_redeem_token():
         credential = get_credential(_client=mock_client)
         token = await credential.get_token("scope")
         assert token is expected_token
-        token_by_refresh_token.assert_called_with(("scope",), expected_value)
+        token_by_refresh_token.assert_called_with(("scope",), expected_value, claims=None, tenant_id=None)
 
 
 @pytest.mark.asyncio
@@ -181,6 +192,7 @@ async def test_cache_refresh_token():
         assert mock_get_credentials.call_count == 1
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_no_obtain_token_if_cached():
     expected_token = AccessToken("token", time.time() + 3600)
@@ -203,6 +215,7 @@ async def test_no_obtain_token_if_cached():
     assert token.expires_on == expected_token.expires_on
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_adfs():
     """The credential should raise CredentialUnavailableError when configured for ADFS"""
@@ -213,6 +226,7 @@ async def test_adfs():
     assert "adfs" in ex.value.message.lower()
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_custom_cloud_no_authority():
     """The credential is unavailable when VS Code is configured to use a cloud with no known authority"""
@@ -223,6 +237,7 @@ async def test_custom_cloud_no_authority():
         await credential.get_token("scope")
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     "cloud,authority",
@@ -251,6 +266,7 @@ async def test_reads_cloud_settings(cloud, authority):
     assert transport.send.call_count == 1
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_no_user_settings():
     """the credential should default to Public Cloud and "organizations" tenant when it can't read VS Code settings"""
@@ -267,6 +283,7 @@ async def test_no_user_settings():
     assert transport.send.call_count == 1
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_multitenant_authentication():
     first_tenant = "first-tenant"
@@ -274,7 +291,10 @@ async def test_multitenant_authentication():
     second_tenant = "second-tenant"
     second_token = first_token * 2
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         assert tenant in (first_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
@@ -300,12 +320,16 @@ async def test_multitenant_authentication():
     assert token.token == first_token
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.asyncio
 async def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
         token = expected_token if tenant == expected_tenant else expected_token * 2

@@ -101,7 +101,7 @@ class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ServiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the service, it can be SignalR or RawWebSockets."""
+    """The kind of the service."""
 
     SIGNAL_R = "SignalR"
     RAW_WEB_SOCKETS = "RawWebSockets"

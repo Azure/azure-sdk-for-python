@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.cloud_links.begin_delete(
+    client.cloud_links.begin_delete(
         resource_group_name="group1",
         private_cloud_name="cloud1",
         cloud_link_name="cloudLink1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2022-05-01/examples/CloudLinks_Delete.json
+# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-03-01/examples/CloudLinks_Delete.json
 if __name__ == "__main__":
     main()

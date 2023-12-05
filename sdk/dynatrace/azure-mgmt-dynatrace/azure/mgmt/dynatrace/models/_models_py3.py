@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -31,7 +31,7 @@ class AccountInfo(_serialization.Model):
         "region_id": {"key": "regionId", "type": "str"},
     }
 
-    def __init__(self, *, account_id: Optional[str] = None, region_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, account_id: Optional[str] = None, region_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword account_id: Account Id of the account this environment is linked to.
         :paramtype account_id: str
@@ -41,39 +41,6 @@ class AccountInfo(_serialization.Model):
         super().__init__(**kwargs)
         self.account_id = account_id
         self.region_id = region_id
-
-
-class AccountInfoSecure(_serialization.Model):
-    """Dynatrace account API Key.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar account_id: Account Id of the account this environment is linked to.
-    :vartype account_id: str
-    :ivar api_key: API Key of the user account.
-    :vartype api_key: str
-    :ivar region_id: Region in which the account is created.
-    :vartype region_id: str
-    """
-
-    _validation = {
-        "account_id": {"readonly": True},
-        "api_key": {"readonly": True},
-        "region_id": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "account_id": {"key": "accountId", "type": "str"},
-        "api_key": {"key": "apiKey", "type": "str"},
-        "region_id": {"key": "regionId", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.account_id = None
-        self.api_key = None
-        self.region_id = None
 
 
 class AppServiceInfo(_serialization.Model):
@@ -130,8 +97,8 @@ class AppServiceInfo(_serialization.Model):
         log_module: Optional[Union[str, "_models.LogModule"]] = None,
         host_group: Optional[str] = None,
         host_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: App service resource ID.
         :paramtype resource_id: str
@@ -186,8 +153,8 @@ class AppServiceListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AppServiceInfo"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.AppServiceInfo"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The items on this page.
         :paramtype value: list[~azure.mgmt.dynatrace.models.AppServiceInfo]
@@ -227,8 +194,8 @@ class DynatraceEnvironmentProperties(_serialization.Model):
         account_info: Optional["_models.AccountInfo"] = None,
         environment_info: Optional["_models.EnvironmentInfo"] = None,
         single_sign_on_properties: Optional["_models.DynatraceSingleSignOnProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_id: User id.
         :paramtype user_id: str
@@ -286,8 +253,8 @@ class DynatraceSingleSignOnProperties(_serialization.Model):
         enterprise_app_id: Optional[str] = None,
         single_sign_on_url: Optional[str] = None,
         aad_domains: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword single_sign_on_state: State of Single Sign On. Known values are: "Initial", "Enable",
          "Disable", and "Existing".
@@ -334,7 +301,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -343,7 +310,8 @@ class Resource(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -369,7 +337,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -431,8 +399,8 @@ class DynatraceSingleSignOnResource(ProxyResource):
         enterprise_app_id: Optional[str] = None,
         single_sign_on_url: Optional[str] = None,
         aad_domains: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword single_sign_on_state: State of Single Sign On. Known values are: "Initial", "Enable",
          "Disable", and "Existing".
@@ -474,8 +442,8 @@ class DynatraceSingleSignOnResourceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.DynatraceSingleSignOnResource"], next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: List["_models.DynatraceSingleSignOnResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The items on this page. Required.
         :paramtype value: list[~azure.mgmt.dynatrace.models.DynatraceSingleSignOnResource]
@@ -514,8 +482,8 @@ class EnvironmentInfo(_serialization.Model):
         ingestion_key: Optional[str] = None,
         logs_ingestion_endpoint: Optional[str] = None,
         landing_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword environment_id: Id of the environment created.
         :paramtype environment_id: str
@@ -554,7 +522,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -594,7 +562,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -605,7 +573,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.dynatrace.models.ErrorDetail
@@ -615,7 +584,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.dynatrace.models.ErrorDetail
@@ -625,7 +594,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class FilteringTag(_serialization.Model):
-    """The definition of a filtering tag. Filtering tags are used for capturing resources and include/exclude them from being monitored.
+    """The definition of a filtering tag. Filtering tags are used for capturing resources and
+    include/exclude them from being monitored.
 
     :ivar name: The name (also known as the key) of the tag.
     :vartype name: str
@@ -648,8 +618,8 @@ class FilteringTag(_serialization.Model):
         name: Optional[str] = None,
         value: Optional[str] = None,
         action: Optional[Union[str, "_models.TagAction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name (also known as the key) of the tag.
         :paramtype name: str
@@ -701,8 +671,8 @@ class IdentityProperties(_serialization.Model):
         *,
         type: Union[str, "_models.ManagedIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of managed identity assigned to this resource. Required. Known values
          are: "SystemAssigned", "UserAssigned", and "SystemAndUserAssigned".
@@ -737,8 +707,8 @@ class LinkableEnvironmentListResponse(_serialization.Model):
         *,
         value: Optional[List["_models.LinkableEnvironmentResponse"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of environments for which user is an admin.
         :paramtype value: list[~azure.mgmt.dynatrace.models.LinkableEnvironmentResponse]
@@ -753,13 +723,21 @@ class LinkableEnvironmentListResponse(_serialization.Model):
 class LinkableEnvironmentRequest(_serialization.Model):
     """Request for getting all the linkable environments for a user.
 
-    :ivar tenant_id: Tenant Id of the user in which they want to link the environment.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar tenant_id: Tenant Id of the user in which they want to link the environment. Required.
     :vartype tenant_id: str
-    :ivar user_principal: user principal id of the user.
+    :ivar user_principal: user principal id of the user. Required.
     :vartype user_principal: str
-    :ivar region: Azure region in which we want to link the environment.
+    :ivar region: Azure region in which we want to link the environment. Required.
     :vartype region: str
     """
+
+    _validation = {
+        "tenant_id": {"required": True},
+        "user_principal": {"required": True},
+        "region": {"required": True},
+    }
 
     _attribute_map = {
         "tenant_id": {"key": "tenantId", "type": "str"},
@@ -767,20 +745,13 @@ class LinkableEnvironmentRequest(_serialization.Model):
         "region": {"key": "region", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tenant_id: Optional[str] = None,
-        user_principal: Optional[str] = None,
-        region: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tenant_id: str, user_principal: str, region: str, **kwargs: Any) -> None:
         """
-        :keyword tenant_id: Tenant Id of the user in which they want to link the environment.
+        :keyword tenant_id: Tenant Id of the user in which they want to link the environment. Required.
         :paramtype tenant_id: str
-        :keyword user_principal: user principal id of the user.
+        :keyword user_principal: user principal id of the user. Required.
         :paramtype user_principal: str
-        :keyword region: Azure region in which we want to link the environment.
+        :keyword region: Azure region in which we want to link the environment. Required.
         :paramtype region: str
         """
         super().__init__(**kwargs)
@@ -812,8 +783,8 @@ class LinkableEnvironmentResponse(_serialization.Model):
         environment_id: Optional[str] = None,
         environment_name: Optional[str] = None,
         plan_data: Optional["_models.PlanData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword environment_id: environment id for which user is an admin.
         :paramtype environment_id: str
@@ -862,8 +833,8 @@ class LogRules(_serialization.Model):
         send_subscription_logs: Optional[Union[str, "_models.SendSubscriptionLogsStatus"]] = None,
         send_activity_logs: Optional[Union[str, "_models.SendActivityLogsStatus"]] = None,
         filtering_tags: Optional[List["_models.FilteringTag"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
          Known values are: "Enabled" and "Disabled".
@@ -889,9 +860,81 @@ class LogRules(_serialization.Model):
         self.filtering_tags = filtering_tags
 
 
+class MarketplaceSaaSResourceDetailsRequest(_serialization.Model):
+    """Request for getting Marketplace SaaS resource details for a tenant Id.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar tenant_id: Tenant Id. Required.
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        "tenant_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "tenant_id": {"key": "tenantId", "type": "str"},
+    }
+
+    def __init__(self, *, tenant_id: str, **kwargs: Any) -> None:
+        """
+        :keyword tenant_id: Tenant Id. Required.
+        :paramtype tenant_id: str
+        """
+        super().__init__(**kwargs)
+        self.tenant_id = tenant_id
+
+
+class MarketplaceSaaSResourceDetailsResponse(_serialization.Model):
+    """Marketplace SaaS resource details linked to the given tenant Id.
+
+    :ivar marketplace_saa_s_resource_id: Id of the Marketplace SaaS Resource.
+    :vartype marketplace_saa_s_resource_id: str
+    :ivar plan_id: Id of the plan.
+    :vartype plan_id: str
+    :ivar marketplace_subscription_status: Marketplace subscription status. Known values are:
+     "Active" and "Suspended".
+    :vartype marketplace_subscription_status: str or
+     ~azure.mgmt.dynatrace.models.MarketplaceSubscriptionStatus
+    """
+
+    _attribute_map = {
+        "marketplace_saa_s_resource_id": {"key": "marketplaceSaaSResourceId", "type": "str"},
+        "plan_id": {"key": "planId", "type": "str"},
+        "marketplace_subscription_status": {"key": "marketplaceSubscriptionStatus", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        marketplace_saa_s_resource_id: Optional[str] = None,
+        plan_id: Optional[str] = None,
+        marketplace_subscription_status: Optional[Union[str, "_models.MarketplaceSubscriptionStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword marketplace_saa_s_resource_id: Id of the Marketplace SaaS Resource.
+        :paramtype marketplace_saa_s_resource_id: str
+        :keyword plan_id: Id of the plan.
+        :paramtype plan_id: str
+        :keyword marketplace_subscription_status: Marketplace subscription status. Known values are:
+         "Active" and "Suspended".
+        :paramtype marketplace_subscription_status: str or
+         ~azure.mgmt.dynatrace.models.MarketplaceSubscriptionStatus
+        """
+        super().__init__(**kwargs)
+        self.marketplace_saa_s_resource_id = marketplace_saa_s_resource_id
+        self.plan_id = plan_id
+        self.marketplace_subscription_status = marketplace_subscription_status
+
+
 class MetricRules(_serialization.Model):
     """Set of rules for sending metrics for the Monitor resource.
 
+    :ivar sending_metrics: Flag specifying if metrics from Azure resources should be sent for the
+     Monitor resource. Known values are: "Enabled" and "Disabled".
+    :vartype sending_metrics: str or ~azure.mgmt.dynatrace.models.SendingMetricsStatus
     :ivar filtering_tags: List of filtering tags to be used for capturing metrics. If empty, all
      resources will be captured. If only Exclude action is specified, the rules will apply to the
      list of all available resources. If Include actions are specified, the rules will only include
@@ -900,11 +943,21 @@ class MetricRules(_serialization.Model):
     """
 
     _attribute_map = {
+        "sending_metrics": {"key": "sendingMetrics", "type": "str"},
         "filtering_tags": {"key": "filteringTags", "type": "[FilteringTag]"},
     }
 
-    def __init__(self, *, filtering_tags: Optional[List["_models.FilteringTag"]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        sending_metrics: Optional[Union[str, "_models.SendingMetricsStatus"]] = None,
+        filtering_tags: Optional[List["_models.FilteringTag"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
+        :keyword sending_metrics: Flag specifying if metrics from Azure resources should be sent for
+         the Monitor resource. Known values are: "Enabled" and "Disabled".
+        :paramtype sending_metrics: str or ~azure.mgmt.dynatrace.models.SendingMetricsStatus
         :keyword filtering_tags: List of filtering tags to be used for capturing metrics. If empty, all
          resources will be captured. If only Exclude action is specified, the rules will apply to the
          list of all available resources. If Include actions are specified, the rules will only include
@@ -912,7 +965,28 @@ class MetricRules(_serialization.Model):
         :paramtype filtering_tags: list[~azure.mgmt.dynatrace.models.FilteringTag]
         """
         super().__init__(**kwargs)
+        self.sending_metrics = sending_metrics
         self.filtering_tags = filtering_tags
+
+
+class MetricsStatusResponse(_serialization.Model):
+    """Response of get metrics status operation.
+
+    :ivar azure_resource_ids: Azure resource IDs.
+    :vartype azure_resource_ids: list[str]
+    """
+
+    _attribute_map = {
+        "azure_resource_ids": {"key": "azureResourceIds", "type": "[str]"},
+    }
+
+    def __init__(self, *, azure_resource_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword azure_resource_ids: Azure resource IDs.
+        :paramtype azure_resource_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.azure_resource_ids = azure_resource_ids
 
 
 class MonitoredResource(_serialization.Model):
@@ -950,8 +1024,8 @@ class MonitoredResource(_serialization.Model):
         reason_for_metrics_status: Optional[str] = None,
         sending_logs: Optional[Union[str, "_models.SendingLogsStatus"]] = None,
         reason_for_logs_status: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The ARM id of the resource.
         :paramtype id: str
@@ -991,8 +1065,12 @@ class MonitoredResourceListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.MonitoredResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.MonitoredResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The items on this page.
         :paramtype value: list[~azure.mgmt.dynatrace.models.MonitoredResource]
@@ -1005,7 +1083,8 @@ class MonitoredResourceListResponse(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1040,7 +1119,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1142,8 +1221,8 @@ class MonitorResource(TrackedResource):  # pylint: disable=too-many-instance-att
         dynatrace_environment_properties: Optional["_models.DynatraceEnvironmentProperties"] = None,
         user_info: Optional["_models.UserInfo"] = None,
         plan_data: Optional["_models.PlanData"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1198,7 +1277,9 @@ class MonitorResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.MonitorResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.MonitorResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The items on this page. Required.
         :paramtype value: list[~azure.mgmt.dynatrace.models.MonitorResource]
@@ -1215,68 +1296,19 @@ class MonitorResourceUpdate(_serialization.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar monitoring_status: Status of the monitor. Known values are: "Enabled" and "Disabled".
-    :vartype monitoring_status: str or ~azure.mgmt.dynatrace.models.MonitoringStatus
-    :ivar marketplace_subscription_status: Marketplace subscription status. Known values are:
-     "Active" and "Suspended".
-    :vartype marketplace_subscription_status: str or
-     ~azure.mgmt.dynatrace.models.MarketplaceSubscriptionStatus
-    :ivar dynatrace_environment_properties: Properties of the Dynatrace environment.
-    :vartype dynatrace_environment_properties:
-     ~azure.mgmt.dynatrace.models.DynatraceEnvironmentProperties
-    :ivar user_info: User info.
-    :vartype user_info: ~azure.mgmt.dynatrace.models.UserInfo
-    :ivar plan_data: Billing plan information.
-    :vartype plan_data: ~azure.mgmt.dynatrace.models.PlanData
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
-        "monitoring_status": {"key": "monitoringStatus", "type": "str"},
-        "marketplace_subscription_status": {"key": "marketplaceSubscriptionStatus", "type": "str"},
-        "dynatrace_environment_properties": {
-            "key": "dynatraceEnvironmentProperties",
-            "type": "DynatraceEnvironmentProperties",
-        },
-        "user_info": {"key": "userInfo", "type": "UserInfo"},
-        "plan_data": {"key": "planData", "type": "PlanData"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        monitoring_status: Optional[Union[str, "_models.MonitoringStatus"]] = None,
-        marketplace_subscription_status: Optional[Union[str, "_models.MarketplaceSubscriptionStatus"]] = None,
-        dynatrace_environment_properties: Optional["_models.DynatraceEnvironmentProperties"] = None,
-        user_info: Optional["_models.UserInfo"] = None,
-        plan_data: Optional["_models.PlanData"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword monitoring_status: Status of the monitor. Known values are: "Enabled" and "Disabled".
-        :paramtype monitoring_status: str or ~azure.mgmt.dynatrace.models.MonitoringStatus
-        :keyword marketplace_subscription_status: Marketplace subscription status. Known values are:
-         "Active" and "Suspended".
-        :paramtype marketplace_subscription_status: str or
-         ~azure.mgmt.dynatrace.models.MarketplaceSubscriptionStatus
-        :keyword dynatrace_environment_properties: Properties of the Dynatrace environment.
-        :paramtype dynatrace_environment_properties:
-         ~azure.mgmt.dynatrace.models.DynatraceEnvironmentProperties
-        :keyword user_info: User info.
-        :paramtype user_info: ~azure.mgmt.dynatrace.models.UserInfo
-        :keyword plan_data: Billing plan information.
-        :paramtype plan_data: ~azure.mgmt.dynatrace.models.PlanData
         """
         super().__init__(**kwargs)
         self.tags = tags
-        self.monitoring_status = monitoring_status
-        self.marketplace_subscription_status = marketplace_subscription_status
-        self.dynatrace_environment_properties = dynatrace_environment_properties
-        self.user_info = user_info
-        self.plan_data = plan_data
 
 
 class Operation(_serialization.Model):
@@ -1316,7 +1348,7 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.dynatrace.models.OperationDisplay
@@ -1362,7 +1394,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -1372,7 +1404,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1392,7 +1425,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1426,8 +1459,8 @@ class PlanData(_serialization.Model):
         billing_cycle: Optional[str] = None,
         plan_details: Optional[str] = None,
         effective_date: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword usage_type: different usage type like PAYG/COMMITTED. this could be enum.
         :paramtype usage_type: str
@@ -1448,17 +1481,23 @@ class PlanData(_serialization.Model):
 class SSODetailsRequest(_serialization.Model):
     """Request for getting sso details for a user.
 
-    :ivar user_principal: user principal id of the user.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar user_principal: user principal id of the user. Required.
     :vartype user_principal: str
     """
+
+    _validation = {
+        "user_principal": {"required": True},
+    }
 
     _attribute_map = {
         "user_principal": {"key": "userPrincipal", "type": "str"},
     }
 
-    def __init__(self, *, user_principal: Optional[str] = None, **kwargs):
+    def __init__(self, *, user_principal: str, **kwargs: Any) -> None:
         """
-        :keyword user_principal: user principal id of the user.
+        :keyword user_principal: user principal id of the user. Required.
         :paramtype user_principal: str
         """
         super().__init__(**kwargs)
@@ -1497,8 +1536,8 @@ class SSODetailsResponse(_serialization.Model):
         single_sign_on_url: Optional[str] = None,
         aad_domains: Optional[List[str]] = None,
         admin_users: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_sso_enabled: Whether the SSO is enabled for this resource or not. Known values are:
          "Enabled" and "Disabled".
@@ -1557,8 +1596,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1632,8 +1671,8 @@ class TagRule(ProxyResource):
         *,
         log_rules: Optional["_models.LogRules"] = None,
         metric_rules: Optional["_models.MetricRules"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_rules: Set of rules for sending logs for the Monitor resource.
         :paramtype log_rules: ~azure.mgmt.dynatrace.models.LogRules
@@ -1667,7 +1706,7 @@ class TagRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.TagRule"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.TagRule"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The items on this page. Required.
         :paramtype value: list[~azure.mgmt.dynatrace.models.TagRule]
@@ -1677,38 +1716,6 @@ class TagRuleListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class TagRuleUpdate(_serialization.Model):
-    """The updatable properties of the TagRule.
-
-    :ivar log_rules: Set of rules for sending logs for the Monitor resource.
-    :vartype log_rules: ~azure.mgmt.dynatrace.models.LogRules
-    :ivar metric_rules: Set of rules for sending metrics for the Monitor resource.
-    :vartype metric_rules: ~azure.mgmt.dynatrace.models.MetricRules
-    """
-
-    _attribute_map = {
-        "log_rules": {"key": "logRules", "type": "LogRules"},
-        "metric_rules": {"key": "metricRules", "type": "MetricRules"},
-    }
-
-    def __init__(
-        self,
-        *,
-        log_rules: Optional["_models.LogRules"] = None,
-        metric_rules: Optional["_models.MetricRules"] = None,
-        **kwargs
-    ):
-        """
-        :keyword log_rules: Set of rules for sending logs for the Monitor resource.
-        :paramtype log_rules: ~azure.mgmt.dynatrace.models.LogRules
-        :keyword metric_rules: Set of rules for sending metrics for the Monitor resource.
-        :paramtype metric_rules: ~azure.mgmt.dynatrace.models.MetricRules
-        """
-        super().__init__(**kwargs)
-        self.log_rules = log_rules
-        self.metric_rules = metric_rules
 
 
 class UserAssignedIdentity(_serialization.Model):
@@ -1732,7 +1739,7 @@ class UserAssignedIdentity(_serialization.Model):
         "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(self, *, client_id: str, principal_id: str, **kwargs):
+    def __init__(self, *, client_id: str, principal_id: str, **kwargs: Any) -> None:
         """
         :keyword client_id: The active directory client identifier for this principal. Required.
         :paramtype client_id: str
@@ -1780,8 +1787,8 @@ class UserInfo(_serialization.Model):
         email_address: Optional[str] = None,
         phone_number: Optional[str] = None,
         country: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword first_name: First Name of the user.
         :paramtype first_name: str
@@ -1817,7 +1824,9 @@ class VMExtensionPayload(_serialization.Model):
         "environment_id": {"key": "environmentId", "type": "str"},
     }
 
-    def __init__(self, *, ingestion_key: Optional[str] = None, environment_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, ingestion_key: Optional[str] = None, environment_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword ingestion_key: Ingestion key of the environment.
         :paramtype ingestion_key: str
@@ -1843,7 +1852,9 @@ class VMHostsListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VMInfo"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.VMInfo"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The items on this page.
         :paramtype value: list[~azure.mgmt.dynatrace.models.VMInfo]
@@ -1909,8 +1920,8 @@ class VMInfo(_serialization.Model):
         log_module: Optional[Union[str, "_models.LogModule"]] = None,
         host_group: Optional[str] = None,
         host_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: Azure VM resource ID.
         :paramtype resource_id: str

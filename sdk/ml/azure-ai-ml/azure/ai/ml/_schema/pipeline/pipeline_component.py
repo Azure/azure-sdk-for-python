@@ -123,6 +123,7 @@ def PipelineJobsField():
     return pipeline_job_field
 
 
+# pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 def _post_load_pipeline_jobs(context, data: dict) -> dict:
     """Silently convert Job in pipeline jobs to node."""
     from azure.ai.ml.entities._builders import parse_inputs_outputs
@@ -236,6 +237,7 @@ class _AnonymousPipelineComponentSchema(AnonymousAssetSchema, PipelineComponentS
 
 
 class PipelineComponentFileRefField(FileRefField):
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _serialize(self, value, attr, obj, **kwargs):
         """FileRefField does not support serialize.
 
