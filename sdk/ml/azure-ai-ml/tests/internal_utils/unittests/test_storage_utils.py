@@ -28,7 +28,7 @@ def mock_datastore_operations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config_no_progress,
         serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
-        serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,mock_aml_services_2024_01_01
+        serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
     )
 
 
