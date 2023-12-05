@@ -359,7 +359,7 @@ def _convert_json_to_deployment(deployment_json: dict, **kwargs: Any) -> OnlineD
     return OnlineDeployment._load(data=deployment_json, params_override=params_override)
 
 
-def _get_stubbed_endpoint_metadata(endpoint_name: str) -> dict:
+def _get_stubbed_endpoint_metadata(endpoint_name: str) -> str:
     return json.dumps({"name": endpoint_name})
 
 

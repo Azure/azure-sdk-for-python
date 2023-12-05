@@ -143,10 +143,10 @@ def get_execution_service_response(
 
         (url, encodedBody) = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
         body = urllib.parse.unquote_plus(encodedBody)
-        body = json.loads(body)
-        response = requests_pipeline.post(url, json=body, headers={"Authorization": "Bearer " + token})
+        body_dict: Dict = json.loads(body)
+        response = requests_pipeline.post(url, json=body_dict, headers={"Authorization": "Bearer " + token})
         response.raise_for_status()
-        return (response.content, body.get("SnapshotId", None))
+        return (response.content, body_dict.get("SnapshotId", None))
     except AzureError as err:
         raise SystemExit(err) from err
     except Exception as e:
