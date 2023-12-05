@@ -32,6 +32,7 @@ from .base_polling import (
     OperationFailed,
     _SansIOLROBasePolling,
     _raise_if_bad_http_status_and_method,
+    update_api_version_of_status_link,
 )
 from ._async_poller import AsyncPollingMethod
 from ..pipeline._tools import is_rest
@@ -43,7 +44,6 @@ from ..pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
 from ..rest import HttpRequest, AsyncHttpResponse
-from ..utils import parse_status_link
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
 AsyncHttpResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
@@ -153,7 +153,7 @@ class AsyncLROBasePolling(
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
-        status_link, request_params = parse_status_link(status_link, self._lro_options)
+        status_link, request_params = update_api_version_of_status_link(status_link, self._lro_options)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()

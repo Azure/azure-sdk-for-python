@@ -39,6 +39,7 @@ from typing import (
     cast,
     Union,
 )
+import urllib.parse
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
 from ..pipeline.policies._utils import get_retry_after
@@ -53,7 +54,6 @@ from ..pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
 )
 from ..rest import HttpRequest, HttpResponse, AsyncHttpResponse
-from ..utils import parse_status_link
 
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
 HttpResponseType = Union[LegacyHttpResponse, HttpResponse]  # Sync only
@@ -77,6 +77,30 @@ HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
 _FAILED = frozenset(["canceled", "failed"])
 _SUCCEEDED = frozenset(["succeeded"])
+
+
+def update_api_version_of_status_link(
+    status_link: str, lro_options: Optional[Dict[str, Any]] = None
+) -> Tuple[str, Dict[str, Any]]:
+    """Handle status link.
+
+    :param status_link: Lro status link.
+    :type status_link: str
+    :param lro_options: Options for LRO.
+    :type lro_options: dict[str, Any]
+    :return: Parsed status link and parsed query parameters.
+    :rtype: Tuple[str, Dict[str, Any]]
+    """
+    request_params: Dict[str, Any] = {}
+    if lro_options and "api_version" in lro_options:
+        parsed_status_link = urllib.parse.urlparse(status_link)
+        request_params = {
+            key.lower(): [urllib.parse.quote(v) for v in value]
+            for key, value in urllib.parse.parse_qs(parsed_status_link.query).items()
+        }
+        request_params["api-version"] = lro_options["api_version"]
+        status_link = urllib.parse.urljoin(status_link, parsed_status_link.path)
+    return status_link, request_params
 
 
 def _get_content(response: AllHttpResponseType) -> bytes:
@@ -819,7 +843,7 @@ class LROBasePolling(
         """
         if self._path_format_arguments:
             status_link = self._client.format_url(status_link, **self._path_format_arguments)
-        status_link, request_params = parse_status_link(status_link, self._lro_options)
+        status_link, request_params = update_api_version_of_status_link(status_link, self._lro_options)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()

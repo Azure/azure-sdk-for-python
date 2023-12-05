@@ -30,6 +30,7 @@ building on top of `azure-core`.
 
 """
 from ._connection_string_parser import parse_connection_string
-from ._utils import case_insensitive_dict, CaseInsensitiveDict, parse_status_link
+from ._utils import case_insensitive_dict, CaseInsensitiveDict
 
-__all__ = ["parse_connection_string", "case_insensitive_dict", "CaseInsensitiveDict", "parse_status_link"]
+
+__all__ = ["parse_connection_string", "case_insensitive_dict", "CaseInsensitiveDict"]

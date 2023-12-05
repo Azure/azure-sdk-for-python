@@ -17,7 +17,6 @@ from typing import (
     Dict,
 )
 from datetime import timezone
-import urllib.parse
 
 TZ_UTC = timezone.utc
 
@@ -162,25 +161,3 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
-
-
-def parse_status_link(status_link: str, lro_options: Optional[Dict[str, Any]] = None) -> Tuple[str, Dict[str, Any]]:
-    """Handle status link.
-
-    :param status_link: Lro status link.
-    :type status_link: str
-    :param lro_options: Options for LRO.
-    :type lro_options: dict[str, Any]
-    :return: Parsed status link and parsed query parameters.
-    :rtype: Tuple[str, Dict[str, Any]]
-    """
-    request_params: Dict[str, Any] = {}
-    if lro_options and "api_version" in lro_options:
-        parsed_status_link = urllib.parse.urlparse(status_link)
-        request_params = {
-            key.lower(): [urllib.parse.quote(v) for v in value]
-            for key, value in urllib.parse.parse_qs(parsed_status_link.query).items()
-        }
-        request_params["api-version"] = lro_options["api_version"]
-        status_link = urllib.parse.urljoin(status_link, parsed_status_link.path)
-    return status_link, request_params
