@@ -37,6 +37,7 @@ setup(
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
     url='https://github.com/Azure/azure-sdk-for-python',
+    keywords="azure, azure sdk",
     author='Microsoft Corporation',
     author_email='azuresdkengsysadmins@microsoft.com',
 

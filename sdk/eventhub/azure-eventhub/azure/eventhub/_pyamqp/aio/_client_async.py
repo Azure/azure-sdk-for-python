@@ -134,7 +134,16 @@ class AMQPClientAsync(AMQPClientSync):
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
     :paramtype connection_verify: str
+    :keyword float socket_timeout: The maximum time in seconds that the underlying socket in the transport should
+     wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
+     and 1 for transport type AmqpOverWebsocket.
     """
+
+    def __init__(self, hostname, **kwargs):
+        self._mgmt_link_lock_async = asyncio.Lock()
+        super().__init__(hostname,**kwargs)
+
+
     async def _keep_alive_async(self):
         start_time = time.time()
         try:
@@ -147,7 +156,8 @@ class AMQPClientAsync(AMQPClientSync):
                         self.__class__.__name__,
                         extra=self._network_trace_params
                     )
-                    await asyncio.shield(self._connection.work_async())
+                    await asyncio.shield(self._connection.listen(wait=self._socket_timeout,
+                        batch=self._link.current_link_credit))
                     start_time = current_time
                 await asyncio.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
@@ -159,19 +169,25 @@ class AMQPClientAsync(AMQPClientSync):
             )
 
     async def __aenter__(self):
-        """Run Client in an async context manager."""
+        """Run Client in an async context manager.
+        :return: The Client object.
+        :rtype: ~pyamqp.AMQPClient
+        """
         await self.open_async()
         return self
 
     async def __aexit__(self, *args):
-        """Close and destroy Client on exiting an async context manager."""
+        """Close and destroy Client on exiting an async context manager.
+        :param any args: Ignored.
+        """
         await self.close_async()
 
-    async def _client_ready_async(self):  # pylint: disable=no-self-use
+    async def _client_ready_async(self):
         """Determine whether the client is ready to start sending and/or
         receiving messages. To be ready, the connection must be open and
         authentication complete.
 
+        :return: Whether or not the client is ready for operation.
         :rtype: bool
         """
         return True
@@ -244,7 +260,8 @@ class AMQPClientAsync(AMQPClientSync):
                 network_trace=self._network_trace,
                 transport_type=self._transport_type,
                 http_proxy=self._http_proxy,
-                custom_endpoint_address=self._custom_endpoint_address
+                custom_endpoint_address=self._custom_endpoint_address,
+                socket_timeout=self._socket_timeout,
             )
             await self._connection.open()
         if not self._session:
@@ -263,10 +280,9 @@ class AMQPClientAsync(AMQPClientSync):
         self._network_trace_params["amqpConnection"] = self._connection._container_id
         self._network_trace_params["amqpSession"] = self._session.name
         self._shutdown = False
-        # TODO: Looks like this is broken - should re-enable later and test
-        # correct empty frame behaviour
-        # if self._keep_alive_interval:
-        #    self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
+
+        if self._keep_alive_interval:
+            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
 
     async def close_async(self):
         """Close the client asynchronously. This includes closing the Session
@@ -277,9 +293,6 @@ class AMQPClientAsync(AMQPClientSync):
         self._shutdown = True
         if not self._session:
             return  # already closed.
-        if self._keep_alive_thread:
-            await self._keep_alive_thread
-            self._keep_alive_thread = None
         await self._close_link_async()
         if self._cbs_authenticator:
             await self._cbs_authenticator.close()
@@ -289,6 +302,9 @@ class AMQPClientAsync(AMQPClientSync):
         if not self._external_connection:
             await self._connection.close()
             self._connection = None
+        if self._keep_alive_thread:
+            await self._keep_alive_thread
+            self._keep_alive_thread = None
         self._network_trace_params["amqpConnection"] = None
         self._network_trace_params["amqpSession"] = None
 
@@ -296,6 +312,7 @@ class AMQPClientAsync(AMQPClientSync):
         """Whether the authentication handshake is complete during
         connection initialization.
 
+        :return: Whether the authentication handshake is complete.
         :rtype: bool
         """
         if self._cbs_authenticator and not await self._cbs_authenticator.handle_token():
@@ -309,6 +326,7 @@ class AMQPClientAsync(AMQPClientSync):
         establishing the connection, session, link and authentication, and
         is not ready to process messages.
 
+        :return: Whether the client is ready to process messages.
         :rtype: bool
         """
         if not await self.auth_complete_async():
@@ -327,6 +345,7 @@ class AMQPClientAsync(AMQPClientSync):
         and ready to be used for further work, or `False` if it needs
         to be shut down.
 
+        :return: Whether the connection is still open and ready for work.
         :rtype: bool
         :raises: TimeoutError if CBS authentication timeout reached.
         """
@@ -350,6 +369,7 @@ class AMQPClientAsync(AMQPClientSync):
         :keyword str node: The target node. Default node is `$management`.
         :keyword float timeout: Provide an optional timeout in seconds within which a response
          to the management request must be received.
+        :return: The response to the management request.
         :rtype: ~pyamqp.message.Message
         """
 
@@ -360,15 +380,16 @@ class AMQPClientAsync(AMQPClientSync):
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop('timeout', 0)
-        try:
-            mgmt_link = self._mgmt_links[node]
-        except KeyError:
-            mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-            self._mgmt_links[node] = mgmt_link
-            await mgmt_link.open()
+        async with self._mgmt_link_lock_async:
+            try:
+                mgmt_link = self._mgmt_links[node]
+            except KeyError:
+                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                self._mgmt_links[node] = mgmt_link
+                await mgmt_link.open()
 
-            while not await mgmt_link.ready():
-                await self._connection.listen(wait=False)
+        while not await mgmt_link.ready():
+            await self._connection.listen(wait=False)
 
         operation_type = operation_type or b'empty'
         status, description, response = await mgmt_link.execute(
@@ -481,6 +502,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         The Session, Link and MessageReceiver must be open and in non-errored
         states.
 
+        :return: Whether or not the client is ready to start sending messages.
         :rtype: bool
         """
         # pylint: disable=protected-access
@@ -504,6 +526,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         Will return True if operation successful and client can remain open for
         further work.
 
+        :return: Whether or not the client should remain open for further work.
         :rtype: bool
         """
         await self._link.update_pending_deliveries()
@@ -585,12 +608,11 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
                 raise message_delivery.error  # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
-                raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.")
+                raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.") from None
 
     async def send_message_async(self, message, **kwargs):
         """
-        :param ~pyamqp.message.Message message:
-        :param int timeout: timeout in seconds
+        :param ~pyamqp.message.Message message: The message to send.
         """
         await self._do_retryable_operation_async(self._send_message_impl_async, message=message, **kwargs)
 
@@ -695,6 +717,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         The Session, Link and MessageReceiver must be open and in non-errored
         states.
 
+        :return: Whether the client is ready to start receiving messages.
         :rtype: bool
         """
         # pylint: disable=protected-access
@@ -721,10 +744,12 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         Will return True if operation successful and client can remain open for
         further work.
 
+        :return: Whether the client can remain open for further work.
         :rtype: bool
         """
         try:
-            await self._link.flow()
+            if self._link.current_link_credit <= 0:
+                await self._link.flow()
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
@@ -738,9 +763,11 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         Additionally if the client is retrieving messages for a batch
         or iterator, the message will be added to an internal queue.
 
+        :param tuple frame: Received frame.
         :param message: Received message.
         :type message: ~pyamqp.message.Message
         """
+        self._last_activity_timestamp = time.time()
         if self._message_received_callback:
             await self._message_received_callback(message)
         if not self._streaming_receive:
@@ -828,6 +855,53 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             self._receive_message_batch_impl_async,
             **kwargs
         )
+
+    async def receive_messages_iter_async(self, timeout=None, on_message_received=None):
+        """Receive messages by generator. Messages returned in the generator have already been
+        accepted - if you wish to add logic to accept or reject messages based on custom
+        criteria, pass in a callback.
+
+        :param on_message_received: A callback to process messages as they arrive from the
+         service. It takes a single argument, a ~pyamqp.message.Message object.
+        :type on_message_received: callable[~pyamqp.message.Message]
+        :param float timeout: Timeout in seconds for which to wait to receive any messages.
+        :return: A generator of messages.
+        :rtype: generator[~pyamqp.message.Message]
+        """
+        self._message_received_callback = on_message_received
+        return self._message_generator_async(timeout=timeout)
+
+    async def _message_generator_async(self, timeout=None):
+        """Iterate over processed messages in the receive queue.
+
+        :param float timeout: Timeout in seconds for which to wait to receive any messages.
+        :return: A generator of messages.
+        :rtype: generator[~pyamqp.message.Message]
+        """
+        self.open()
+        receiving = True
+        message = None
+        self._last_activity_timestamp = time.time()
+        self._timeout_reached = False
+        self._timeout = timeout if timeout else self._timeout
+        try:
+            while receiving and not self._timeout_reached:
+                if self._timeout > 0:
+                    if time.time() - self._last_activity_timestamp >= self._timeout:
+                        self._timeout_reached = True
+
+                if not self._timeout_reached:
+                    receiving = await self.do_work_async()
+
+                while not self._received_messages.empty():
+                    message = self._received_messages.get()
+                    self._last_activity_timestamp = time.time()
+                    self._received_messages.task_done()
+                    yield message
+
+        finally:
+            if self._shutdown:
+                await self.close_async()
 
     @overload
     async def settle_messages_async(

@@ -1,6 +1,6 @@
 # Release History
 
-## 0.16.1 (Unreleased)
+## 0.18.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,144 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 0.18.0 (2023-10-30)
+
+### Bugs Fixed
+
+  - Fix runNotebook sessionId from int to string #25210
+  - Fix placeholder links causing 404s #26143
+
+### Other Changes
+
+  - Sync expression Support From DataFactory To Synapse #25054
+
+## 0.17.0 (2023-07-28)
+
+### Features Added
+
+  - Added operation group RunNotebookOperations
+  - Model Activity has a new parameter on_inactive_mark_as
+  - Model Activity has a new parameter state
+  - Model AmazonRdsForSqlServerLinkedService has a new parameter always_encrypted_settings
+  - Model AmazonRdsForSqlServerSource has a new parameter isolation_level
+  - Model AppendVariableActivity has a new parameter on_inactive_mark_as
+  - Model AppendVariableActivity has a new parameter state
+  - Model AzureBatchLinkedService has a new parameter credential
+  - Model AzureBlobFSLinkedService has a new parameter credential
+  - Model AzureBlobStorageLinkedService has a new parameter credential
+  - Model AzureDataExplorerCommandActivity has a new parameter on_inactive_mark_as
+  - Model AzureDataExplorerCommandActivity has a new parameter state
+  - Model AzureDataExplorerLinkedService has a new parameter credential
+  - Model AzureDataLakeStoreLinkedService has a new parameter credential
+  - Model AzureDatabricksDeltaLakeLinkedService has a new parameter credential
+  - Model AzureDatabricksLinkedService has a new parameter credential
+  - Model AzureFunctionActivity has a new parameter on_inactive_mark_as
+  - Model AzureFunctionActivity has a new parameter state
+  - Model AzureFunctionLinkedService has a new parameter authentication
+  - Model AzureFunctionLinkedService has a new parameter credential
+  - Model AzureFunctionLinkedService has a new parameter resource_id
+  - Model AzureKeyVaultLinkedService has a new parameter credential
+  - Model AzureMLBatchExecutionActivity has a new parameter on_inactive_mark_as
+  - Model AzureMLBatchExecutionActivity has a new parameter state
+  - Model AzureMLExecutePipelineActivity has a new parameter on_inactive_mark_as
+  - Model AzureMLExecutePipelineActivity has a new parameter state
+  - Model AzureMLLinkedService has a new parameter authentication
+  - Model AzureMLServiceLinkedService has a new parameter authentication
+  - Model AzureMLUpdateResourceActivity has a new parameter on_inactive_mark_as
+  - Model AzureMLUpdateResourceActivity has a new parameter state
+  - Model AzureSqlDWLinkedService has a new parameter credential
+  - Model AzureSqlDatabaseLinkedService has a new parameter always_encrypted_settings
+  - Model AzureSqlDatabaseLinkedService has a new parameter credential
+  - Model AzureSqlMILinkedService has a new parameter always_encrypted_settings
+  - Model AzureSqlMILinkedService has a new parameter credential
+  - Model AzureSqlSource has a new parameter isolation_level
+  - Model ControlActivity has a new parameter on_inactive_mark_as
+  - Model ControlActivity has a new parameter state
+  - Model CopyActivity has a new parameter on_inactive_mark_as
+  - Model CopyActivity has a new parameter state
+  - Model CosmosDbLinkedService has a new parameter credential
+  - Model CustomActivity has a new parameter on_inactive_mark_as
+  - Model CustomActivity has a new parameter state
+  - Model DataLakeAnalyticsUSQLActivity has a new parameter on_inactive_mark_as
+  - Model DataLakeAnalyticsUSQLActivity has a new parameter state
+  - Model DatabricksNotebookActivity has a new parameter on_inactive_mark_as
+  - Model DatabricksNotebookActivity has a new parameter state
+  - Model DatabricksSparkJarActivity has a new parameter on_inactive_mark_as
+  - Model DatabricksSparkJarActivity has a new parameter state
+  - Model DatabricksSparkPythonActivity has a new parameter on_inactive_mark_as
+  - Model DatabricksSparkPythonActivity has a new parameter state
+  - Model DeleteActivity has a new parameter on_inactive_mark_as
+  - Model DeleteActivity has a new parameter state
+  - Model DynamicsLinkedService has a new parameter credential
+  - Model ExecuteDataFlowActivity has a new parameter on_inactive_mark_as
+  - Model ExecuteDataFlowActivity has a new parameter state
+  - Model ExecutePipelineActivity has a new parameter on_inactive_mark_as
+  - Model ExecutePipelineActivity has a new parameter state
+  - Model ExecuteSSISPackageActivity has a new parameter on_inactive_mark_as
+  - Model ExecuteSSISPackageActivity has a new parameter state
+  - Model ExecutionActivity has a new parameter on_inactive_mark_as
+  - Model ExecutionActivity has a new parameter state
+  - Model FailActivity has a new parameter on_inactive_mark_as
+  - Model FailActivity has a new parameter state
+  - Model FilterActivity has a new parameter on_inactive_mark_as
+  - Model FilterActivity has a new parameter state
+  - Model ForEachActivity has a new parameter on_inactive_mark_as
+  - Model ForEachActivity has a new parameter state
+  - Model GetMetadataActivity has a new parameter on_inactive_mark_as
+  - Model GetMetadataActivity has a new parameter state
+  - Model HDInsightHiveActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightHiveActivity has a new parameter state
+  - Model HDInsightMapReduceActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightMapReduceActivity has a new parameter state
+  - Model HDInsightOnDemandLinkedService has a new parameter credential
+  - Model HDInsightPigActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightPigActivity has a new parameter state
+  - Model HDInsightSparkActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightSparkActivity has a new parameter state
+  - Model HDInsightStreamingActivity has a new parameter on_inactive_mark_as
+  - Model HDInsightStreamingActivity has a new parameter state
+  - Model IfConditionActivity has a new parameter on_inactive_mark_as
+  - Model IfConditionActivity has a new parameter state
+  - Model LinkConnectionTargetDatabaseTypeProperties has a new parameter action_on_existing_target_table
+  - Model LookupActivity has a new parameter on_inactive_mark_as
+  - Model LookupActivity has a new parameter state
+  - Model MongoDbAtlasLinkedService has a new parameter driver_version
+  - Model RestServiceLinkedService has a new parameter credential
+  - Model ScriptActivity has a new parameter on_inactive_mark_as
+  - Model ScriptActivity has a new parameter state
+  - Model SetVariableActivity has a new parameter on_inactive_mark_as
+  - Model SetVariableActivity has a new parameter policy
+  - Model SetVariableActivity has a new parameter state
+  - Model SqlDWSource has a new parameter isolation_level
+  - Model SqlMISource has a new parameter isolation_level
+  - Model SqlPoolStoredProcedureActivity has a new parameter on_inactive_mark_as
+  - Model SqlPoolStoredProcedureActivity has a new parameter state
+  - Model SqlServerLinkedService has a new parameter always_encrypted_settings
+  - Model SqlServerSource has a new parameter isolation_level
+  - Model SqlServerStoredProcedureActivity has a new parameter on_inactive_mark_as
+  - Model SqlServerStoredProcedureActivity has a new parameter state
+  - Model SwitchActivity has a new parameter on_inactive_mark_as
+  - Model SwitchActivity has a new parameter state
+  - Model SynapseNotebookActivity has a new parameter configuration_type
+  - Model SynapseNotebookActivity has a new parameter on_inactive_mark_as
+  - Model SynapseNotebookActivity has a new parameter spark_config
+  - Model SynapseNotebookActivity has a new parameter state
+  - Model SynapseNotebookActivity has a new parameter target_spark_configuration
+  - Model SynapseSparkJobDefinitionActivity has a new parameter on_inactive_mark_as
+  - Model SynapseSparkJobDefinitionActivity has a new parameter state
+  - Model UntilActivity has a new parameter on_inactive_mark_as
+  - Model UntilActivity has a new parameter state
+  - Model ValidationActivity has a new parameter on_inactive_mark_as
+  - Model ValidationActivity has a new parameter state
+  - Model WaitActivity has a new parameter on_inactive_mark_as
+  - Model WaitActivity has a new parameter state
+  - Model WebActivity has a new parameter on_inactive_mark_as
+  - Model WebActivity has a new parameter state
+  - Model WebActivityAuthentication has a new parameter credential
+  - Model WebActivityAuthentication has a new parameter user_tenant
+  - Model WebHookActivity has a new parameter on_inactive_mark_as
+  - Model WebHookActivity has a new parameter state
 
 ## 0.16.0 (2023-05-12)
 

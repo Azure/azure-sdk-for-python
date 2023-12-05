@@ -61,9 +61,9 @@ class SourceControlConfigurationClient:  # pylint: disable=client-accepts-api-ve
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.source_control_configurations = SourceControlConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01"
         )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2021-03-01")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

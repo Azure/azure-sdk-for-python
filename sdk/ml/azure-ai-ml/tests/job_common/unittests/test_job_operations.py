@@ -5,7 +5,6 @@ from unittest.mock import Mock, patch
 
 import jwt
 import pytest
-import vcr
 import yaml
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
@@ -35,12 +34,14 @@ from .test_vcr_utils import before_record_cb, vcr_header_filters
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2023_04_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
+        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
     )
 
 
@@ -79,11 +80,14 @@ def mock_workspace_operation(
     mock_workspace_scope: OperationScope,
     mock_machinelearning_client: Mock,
     mock_aml_services_2022_10_01: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         mock_workspace_scope,
         service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -103,6 +107,7 @@ def mock_job_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2023_02_01_preview: Mock,
+    mock_aml_services_2023_08_01_preview: Mock,
     mock_aml_services_run_history: Mock,
     mock_machinelearning_client: Mock,
     mock_code_operation: Mock,
@@ -124,6 +129,7 @@ def mock_job_operation(
         all_operations=mock_machinelearning_client._operation_container,
         credential=Mock(spec_set=DefaultAzureCredential),
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
+        service_client_08_2023_preview=mock_aml_services_2023_08_01_preview,
     )
 
 

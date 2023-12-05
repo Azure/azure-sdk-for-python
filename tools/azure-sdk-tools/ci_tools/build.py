@@ -1,4 +1,4 @@
-import argparse, sys, os, logging, pdb
+import argparse, sys, os, logging, glob, shutil
 
 from subprocess import run
 
@@ -106,7 +106,12 @@ def build() -> None:
         target_dir = repo_root
 
     targeted_packages = discover_targeted_packages(
-        args.glob_string, target_dir, args.package_filter_string, filter_type="Build", compatibility_filter=True, include_inactive=args.inactive
+        args.glob_string,
+        target_dir,
+        args.package_filter_string,
+        filter_type="Build",
+        compatibility_filter=True,
+        include_inactive=args.inactive,
     )
     artifact_directory = get_artifact_directory(args.distribution_directory)
 
@@ -119,6 +124,19 @@ def build() -> None:
         str_to_bool(args.apiview_closure),
         build_id,
     )
+
+
+def cleanup_build_artifacts(build_folder):
+    # clean up egginfo
+    results = glob.glob(os.path.join(build_folder, "*.egg-info"))
+
+    if results:
+        shutil.rmtree(results[0])
+
+    # clean up build results
+    build_path = os.path.join(build_folder, "build")
+    if os.path.exists(build_path):
+        shutil.rmtree(build_path)
 
 
 def build_packages(
@@ -159,17 +177,20 @@ def create_package(
     """
 
     dist = get_artifact_directory(dest_folder)
+    setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
-    if not os.path.isdir(setup_directory_or_file):
-        setup_directory_or_file = os.path.dirname(setup_directory_or_file)
+    if setup_parsed.ext_modules:
+        run_logged(
+            [sys.executable, "-m", "cibuildwheel", "--output-dir", dist], prefix="cibuildwheel", cwd=setup_parsed.folder
+        )
 
     if enable_wheel:
         run_logged(
-            [sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_directory_or_file
+            [sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_parsed.folder
         )
     if enable_sdist:
         run_logged(
-            [sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist],
+            [sys.executable, "setup.py", "sdist", "-d", dist],
             prefix="create_sdist",
-            cwd=setup_directory_or_file,
+            cwd=setup_parsed.folder,
         )

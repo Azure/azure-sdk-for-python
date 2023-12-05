@@ -150,9 +150,10 @@ class AppleRegistration(_serialization.Model):
 class AppLogsConfiguration(_serialization.Model):
     """Configuration of application logs.
 
-    :ivar destination: Logs destination.
+    :ivar destination: Logs destination, can be 'log-analytics', 'azure-monitor' or 'none'.
     :vartype destination: str
-    :ivar log_analytics_configuration: Log Analytics configuration.
+    :ivar log_analytics_configuration: Log Analytics configuration, must only be provided when
+     destination is configured as 'log-analytics'.
     :vartype log_analytics_configuration:
      ~azure.mgmt.appcontainers.models.LogAnalyticsConfiguration
     """
@@ -170,9 +171,10 @@ class AppLogsConfiguration(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword destination: Logs destination.
+        :keyword destination: Logs destination, can be 'log-analytics', 'azure-monitor' or 'none'.
         :paramtype destination: str
-        :keyword log_analytics_configuration: Log Analytics configuration.
+        :keyword log_analytics_configuration: Log Analytics configuration, must only be provided when
+         destination is configured as 'log-analytics'.
         :paramtype log_analytics_configuration:
          ~azure.mgmt.appcontainers.models.LogAnalyticsConfiguration
         """
@@ -878,6 +880,8 @@ class AzureCredentials(_serialization.Model):
     :vartype client_secret: str
     :ivar tenant_id: Tenant Id.
     :vartype tenant_id: str
+    :ivar kind: Kind of auth github does for deploying the template.
+    :vartype kind: str
     :ivar subscription_id: Subscription Id.
     :vartype subscription_id: str
     """
@@ -886,6 +890,7 @@ class AzureCredentials(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
         "client_secret": {"key": "clientSecret", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
         "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
@@ -895,6 +900,7 @@ class AzureCredentials(_serialization.Model):
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         tenant_id: Optional[str] = None,
+        kind: Optional[str] = None,
         subscription_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -905,6 +911,8 @@ class AzureCredentials(_serialization.Model):
         :paramtype client_secret: str
         :keyword tenant_id: Tenant Id.
         :paramtype tenant_id: str
+        :keyword kind: Kind of auth github does for deploying the template.
+        :paramtype kind: str
         :keyword subscription_id: Subscription Id.
         :paramtype subscription_id: str
         """
@@ -912,6 +920,7 @@ class AzureCredentials(_serialization.Model):
         self.client_id = client_id
         self.client_secret = client_secret
         self.tenant_id = tenant_id
+        self.kind = kind
         self.subscription_id = subscription_id
 
 
@@ -1573,6 +1582,8 @@ class Configuration(_serialization.Model):
     :vartype dapr: ~azure.mgmt.appcontainers.models.Dapr
     :ivar max_inactive_revisions: Optional. Max inactive revisions a Container App can have.
     :vartype max_inactive_revisions: int
+    :ivar service: Container App to be a dev Container App Service.
+    :vartype service: ~azure.mgmt.appcontainers.models.Service
     """
 
     _attribute_map = {
@@ -1582,6 +1593,7 @@ class Configuration(_serialization.Model):
         "registries": {"key": "registries", "type": "[RegistryCredentials]"},
         "dapr": {"key": "dapr", "type": "Dapr"},
         "max_inactive_revisions": {"key": "maxInactiveRevisions", "type": "int"},
+        "service": {"key": "service", "type": "Service"},
     }
 
     def __init__(
@@ -1593,6 +1605,7 @@ class Configuration(_serialization.Model):
         registries: Optional[List["_models.RegistryCredentials"]] = None,
         dapr: Optional["_models.Dapr"] = None,
         max_inactive_revisions: Optional[int] = None,
+        service: Optional["_models.Service"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1617,6 +1630,8 @@ class Configuration(_serialization.Model):
         :paramtype dapr: ~azure.mgmt.appcontainers.models.Dapr
         :keyword max_inactive_revisions: Optional. Max inactive revisions a Container App can have.
         :paramtype max_inactive_revisions: int
+        :keyword service: Container App to be a dev Container App Service.
+        :paramtype service: ~azure.mgmt.appcontainers.models.Service
         """
         super().__init__(**kwargs)
         self.secrets = secrets
@@ -1625,6 +1640,7 @@ class Configuration(_serialization.Model):
         self.registries = registries
         self.dapr = dapr
         self.max_inactive_revisions = max_inactive_revisions
+        self.service = service
 
 
 class ConnectedEnvironment(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -4340,6 +4356,8 @@ class GithubActionConfiguration(_serialization.Model):
     :vartype azure_credentials: ~azure.mgmt.appcontainers.models.AzureCredentials
     :ivar context_path: Context path.
     :vartype context_path: str
+    :ivar github_personal_access_token: One time Github PAT to configure github environment.
+    :vartype github_personal_access_token: str
     :ivar image: Image name.
     :vartype image: str
     :ivar publish_type: Code or Image.
@@ -4356,6 +4374,7 @@ class GithubActionConfiguration(_serialization.Model):
         "registry_info": {"key": "registryInfo", "type": "RegistryInfo"},
         "azure_credentials": {"key": "azureCredentials", "type": "AzureCredentials"},
         "context_path": {"key": "contextPath", "type": "str"},
+        "github_personal_access_token": {"key": "githubPersonalAccessToken", "type": "str"},
         "image": {"key": "image", "type": "str"},
         "publish_type": {"key": "publishType", "type": "str"},
         "os": {"key": "os", "type": "str"},
@@ -4369,6 +4388,7 @@ class GithubActionConfiguration(_serialization.Model):
         registry_info: Optional["_models.RegistryInfo"] = None,
         azure_credentials: Optional["_models.AzureCredentials"] = None,
         context_path: Optional[str] = None,
+        github_personal_access_token: Optional[str] = None,
         image: Optional[str] = None,
         publish_type: Optional[str] = None,
         os: Optional[str] = None,
@@ -4383,6 +4403,8 @@ class GithubActionConfiguration(_serialization.Model):
         :paramtype azure_credentials: ~azure.mgmt.appcontainers.models.AzureCredentials
         :keyword context_path: Context path.
         :paramtype context_path: str
+        :keyword github_personal_access_token: One time Github PAT to configure github environment.
+        :paramtype github_personal_access_token: str
         :keyword image: Image name.
         :paramtype image: str
         :keyword publish_type: Code or Image.
@@ -4398,6 +4420,7 @@ class GithubActionConfiguration(_serialization.Model):
         self.registry_info = registry_info
         self.azure_credentials = azure_credentials
         self.context_path = context_path
+        self.github_personal_access_token = github_personal_access_token
         self.image = image
         self.publish_type = publish_type
         self.os = os
@@ -5077,7 +5100,7 @@ class JobConfiguration(_serialization.Model):
 
     :ivar secrets: Collection of secrets used by a Container Apps Job.
     :vartype secrets: list[~azure.mgmt.appcontainers.models.Secret]
-    :ivar trigger_type: Trigger type of the job. Known values are: "Scheduled", "Event", and
+    :ivar trigger_type: Trigger type of the job. Known values are: "Schedule", "Event", and
      "Manual".
     :vartype trigger_type: str or ~azure.mgmt.appcontainers.models.TriggerType
     :ivar replica_timeout: Maximum number of seconds a replica is allowed to run. Required.
@@ -5092,6 +5115,9 @@ class JobConfiguration(_serialization.Model):
      cronjobs. Properties completions and parallelism would be set to 1 by default.
     :vartype schedule_trigger_config:
      ~azure.mgmt.appcontainers.models.JobConfigurationScheduleTriggerConfig
+    :ivar event_trigger_config: Trigger configuration of an event driven job.
+    :vartype event_trigger_config:
+     ~azure.mgmt.appcontainers.models.JobConfigurationEventTriggerConfig
     :ivar registries: Collection of private container registry credentials used by a Container apps
      job.
     :vartype registries: list[~azure.mgmt.appcontainers.models.RegistryCredentials]
@@ -5109,6 +5135,7 @@ class JobConfiguration(_serialization.Model):
         "replica_retry_limit": {"key": "replicaRetryLimit", "type": "int"},
         "manual_trigger_config": {"key": "manualTriggerConfig", "type": "JobConfigurationManualTriggerConfig"},
         "schedule_trigger_config": {"key": "scheduleTriggerConfig", "type": "JobConfigurationScheduleTriggerConfig"},
+        "event_trigger_config": {"key": "eventTriggerConfig", "type": "JobConfigurationEventTriggerConfig"},
         "registries": {"key": "registries", "type": "[RegistryCredentials]"},
     }
 
@@ -5121,13 +5148,14 @@ class JobConfiguration(_serialization.Model):
         replica_retry_limit: Optional[int] = None,
         manual_trigger_config: Optional["_models.JobConfigurationManualTriggerConfig"] = None,
         schedule_trigger_config: Optional["_models.JobConfigurationScheduleTriggerConfig"] = None,
+        event_trigger_config: Optional["_models.JobConfigurationEventTriggerConfig"] = None,
         registries: Optional[List["_models.RegistryCredentials"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword secrets: Collection of secrets used by a Container Apps Job.
         :paramtype secrets: list[~azure.mgmt.appcontainers.models.Secret]
-        :keyword trigger_type: Trigger type of the job. Known values are: "Scheduled", "Event", and
+        :keyword trigger_type: Trigger type of the job. Known values are: "Schedule", "Event", and
          "Manual".
         :paramtype trigger_type: str or ~azure.mgmt.appcontainers.models.TriggerType
         :keyword replica_timeout: Maximum number of seconds a replica is allowed to run. Required.
@@ -5142,6 +5170,9 @@ class JobConfiguration(_serialization.Model):
          cronjobs. Properties completions and parallelism would be set to 1 by default.
         :paramtype schedule_trigger_config:
          ~azure.mgmt.appcontainers.models.JobConfigurationScheduleTriggerConfig
+        :keyword event_trigger_config: Trigger configuration of an event driven job.
+        :paramtype event_trigger_config:
+         ~azure.mgmt.appcontainers.models.JobConfigurationEventTriggerConfig
         :keyword registries: Collection of private container registry credentials used by a Container
          apps job.
         :paramtype registries: list[~azure.mgmt.appcontainers.models.RegistryCredentials]
@@ -5153,7 +5184,49 @@ class JobConfiguration(_serialization.Model):
         self.replica_retry_limit = replica_retry_limit
         self.manual_trigger_config = manual_trigger_config
         self.schedule_trigger_config = schedule_trigger_config
+        self.event_trigger_config = event_trigger_config
         self.registries = registries
+
+
+class JobConfigurationEventTriggerConfig(_serialization.Model):
+    """Trigger configuration of an event driven job.
+
+    :ivar replica_completion_count: Minimum number of successful replica completions before overall
+     job completion.
+    :vartype replica_completion_count: int
+    :ivar parallelism: Number of parallel replicas of a job that can run at a given time.
+    :vartype parallelism: int
+    :ivar scale: Scaling configurations for event driven jobs.
+    :vartype scale: ~azure.mgmt.appcontainers.models.JobScale
+    """
+
+    _attribute_map = {
+        "replica_completion_count": {"key": "replicaCompletionCount", "type": "int"},
+        "parallelism": {"key": "parallelism", "type": "int"},
+        "scale": {"key": "scale", "type": "JobScale"},
+    }
+
+    def __init__(
+        self,
+        *,
+        replica_completion_count: Optional[int] = None,
+        parallelism: Optional[int] = None,
+        scale: Optional["_models.JobScale"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword replica_completion_count: Minimum number of successful replica completions before
+         overall job completion.
+        :paramtype replica_completion_count: int
+        :keyword parallelism: Number of parallel replicas of a job that can run at a given time.
+        :paramtype parallelism: int
+        :keyword scale: Scaling configurations for event driven jobs.
+        :paramtype scale: ~azure.mgmt.appcontainers.models.JobScale
+        """
+        super().__init__(**kwargs)
+        self.replica_completion_count = replica_completion_count
+        self.parallelism = parallelism
+        self.scale = scale
 
 
 class JobConfigurationManualTriggerConfig(_serialization.Model):
@@ -5238,7 +5311,7 @@ class JobConfigurationScheduleTriggerConfig(_serialization.Model):
 
 
 class JobExecution(_serialization.Model):
-    """Container Apps Jobs execution.
+    """Container Apps Job execution.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5253,7 +5326,7 @@ class JobExecution(_serialization.Model):
     :vartype status: str or ~azure.mgmt.appcontainers.models.JobExecutionRunningState
     :ivar start_time: Job execution start time.
     :vartype start_time: ~datetime.datetime
-    :ivar end_time: Job execution start time.
+    :ivar end_time: Job execution end time.
     :vartype end_time: ~datetime.datetime
     :ivar template: Job's execution container.
     :vartype template: ~azure.mgmt.appcontainers.models.JobExecutionTemplate
@@ -5293,7 +5366,7 @@ class JobExecution(_serialization.Model):
         :paramtype type: str
         :keyword start_time: Job execution start time.
         :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Job execution start time.
+        :keyword end_time: Job execution end time.
         :paramtype end_time: ~datetime.datetime
         :keyword template: Job's execution container.
         :paramtype template: ~azure.mgmt.appcontainers.models.JobExecutionTemplate
@@ -5552,6 +5625,104 @@ class JobPatchPropertiesProperties(_serialization.Model):
         self.event_stream_endpoint = event_stream_endpoint
 
 
+class JobScale(_serialization.Model):
+    """Scaling configurations for event driven jobs.
+
+    :ivar polling_interval: Interval to check each event source in seconds. Defaults to 30s.
+    :vartype polling_interval: int
+    :ivar min_executions: Minimum number of job executions that are created for a trigger, default
+     0.
+    :vartype min_executions: int
+    :ivar max_executions: Maximum number of job executions that are created for a trigger, default
+     100.
+    :vartype max_executions: int
+    :ivar rules: Scaling rules.
+    :vartype rules: list[~azure.mgmt.appcontainers.models.JobScaleRule]
+    """
+
+    _attribute_map = {
+        "polling_interval": {"key": "pollingInterval", "type": "int"},
+        "min_executions": {"key": "minExecutions", "type": "int"},
+        "max_executions": {"key": "maxExecutions", "type": "int"},
+        "rules": {"key": "rules", "type": "[JobScaleRule]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        polling_interval: Optional[int] = None,
+        min_executions: int = 0,
+        max_executions: int = 100,
+        rules: Optional[List["_models.JobScaleRule"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword polling_interval: Interval to check each event source in seconds. Defaults to 30s.
+        :paramtype polling_interval: int
+        :keyword min_executions: Minimum number of job executions that are created for a trigger,
+         default 0.
+        :paramtype min_executions: int
+        :keyword max_executions: Maximum number of job executions that are created for a trigger,
+         default 100.
+        :paramtype max_executions: int
+        :keyword rules: Scaling rules.
+        :paramtype rules: list[~azure.mgmt.appcontainers.models.JobScaleRule]
+        """
+        super().__init__(**kwargs)
+        self.polling_interval = polling_interval
+        self.min_executions = min_executions
+        self.max_executions = max_executions
+        self.rules = rules
+
+
+class JobScaleRule(_serialization.Model):
+    """Scaling rule.
+
+    :ivar name: Scale Rule Name.
+    :vartype name: str
+    :ivar type: Type of the scale rule
+     eg: azure-servicebus, redis etc.
+    :vartype type: str
+    :ivar metadata: Metadata properties to describe the scale rule.
+    :vartype metadata: JSON
+    :ivar auth: Authentication secrets for the scale rule.
+    :vartype auth: list[~azure.mgmt.appcontainers.models.ScaleRuleAuth]
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "metadata": {"key": "metadata", "type": "object"},
+        "auth": {"key": "auth", "type": "[ScaleRuleAuth]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        metadata: Optional[JSON] = None,
+        auth: Optional[List["_models.ScaleRuleAuth"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Scale Rule Name.
+        :paramtype name: str
+        :keyword type: Type of the scale rule
+         eg: azure-servicebus, redis etc.
+        :paramtype type: str
+        :keyword metadata: Metadata properties to describe the scale rule.
+        :paramtype metadata: JSON
+        :keyword auth: Authentication secrets for the scale rule.
+        :paramtype auth: list[~azure.mgmt.appcontainers.models.ScaleRuleAuth]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+        self.metadata = metadata
+        self.auth = auth
+
+
 class JobsCollection(_serialization.Model):
     """Container Apps Jobs collection ARM resource.
 
@@ -5707,7 +5878,8 @@ class KedaConfiguration(_serialization.Model):
 
 
 class LogAnalyticsConfiguration(_serialization.Model):
-    """Log analytics configuration.
+    """Log Analytics configuration, must only be provided when destination is configured as
+    'log-analytics'.
 
     :ivar customer_id: Log analytics customer id.
     :vartype customer_id: str
@@ -6075,6 +6247,9 @@ class ManagedEnvironment(TrackedResource):  # pylint: disable=too-many-instance-
      the Managed Environment to host infrastructure resources. If a subnet ID is provided, this
      resource group will be created in the same subscription as the subnet.
     :vartype infrastructure_resource_group: str
+    :ivar peer_authentication: Peer authentication settings for the Managed Environment.
+    :vartype peer_authentication:
+     ~azure.mgmt.appcontainers.models.ManagedEnvironmentPropertiesPeerAuthentication
     """
 
     _validation = {
@@ -6116,6 +6291,10 @@ class ManagedEnvironment(TrackedResource):  # pylint: disable=too-many-instance-
         "keda_configuration": {"key": "properties.kedaConfiguration", "type": "KedaConfiguration"},
         "dapr_configuration": {"key": "properties.daprConfiguration", "type": "DaprConfiguration"},
         "infrastructure_resource_group": {"key": "properties.infrastructureResourceGroup", "type": "str"},
+        "peer_authentication": {
+            "key": "properties.peerAuthentication",
+            "type": "ManagedEnvironmentPropertiesPeerAuthentication",
+        },
     }
 
     def __init__(
@@ -6134,6 +6313,7 @@ class ManagedEnvironment(TrackedResource):  # pylint: disable=too-many-instance-
         keda_configuration: Optional["_models.KedaConfiguration"] = None,
         dapr_configuration: Optional["_models.DaprConfiguration"] = None,
         infrastructure_resource_group: Optional[str] = None,
+        peer_authentication: Optional["_models.ManagedEnvironmentPropertiesPeerAuthentication"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6170,6 +6350,9 @@ class ManagedEnvironment(TrackedResource):  # pylint: disable=too-many-instance-
          the Managed Environment to host infrastructure resources. If a subnet ID is provided, this
          resource group will be created in the same subscription as the subnet.
         :paramtype infrastructure_resource_group: str
+        :keyword peer_authentication: Peer authentication settings for the Managed Environment.
+        :paramtype peer_authentication:
+         ~azure.mgmt.appcontainers.models.ManagedEnvironmentPropertiesPeerAuthentication
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.kind = kind
@@ -6188,6 +6371,27 @@ class ManagedEnvironment(TrackedResource):  # pylint: disable=too-many-instance-
         self.keda_configuration = keda_configuration
         self.dapr_configuration = dapr_configuration
         self.infrastructure_resource_group = infrastructure_resource_group
+        self.peer_authentication = peer_authentication
+
+
+class ManagedEnvironmentPropertiesPeerAuthentication(_serialization.Model):
+    """Peer authentication settings for the Managed Environment.
+
+    :ivar mtls: Mutual TLS authentication settings for the Managed Environment.
+    :vartype mtls: ~azure.mgmt.appcontainers.models.Mtls
+    """
+
+    _attribute_map = {
+        "mtls": {"key": "mtls", "type": "Mtls"},
+    }
+
+    def __init__(self, *, mtls: Optional["_models.Mtls"] = None, **kwargs: Any) -> None:
+        """
+        :keyword mtls: Mutual TLS authentication settings for the Managed Environment.
+        :paramtype mtls: ~azure.mgmt.appcontainers.models.Mtls
+        """
+        super().__init__(**kwargs)
+        self.mtls = mtls
 
 
 class ManagedEnvironmentsCollection(_serialization.Model):
@@ -6377,6 +6581,26 @@ class ManagedServiceIdentity(_serialization.Model):
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
+
+
+class Mtls(_serialization.Model):
+    """Configuration properties for mutual TLS authentication.
+
+    :ivar enabled: Boolean indicating whether the mutual TLS authentication is enabled.
+    :vartype enabled: bool
+    """
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+    }
+
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword enabled: Boolean indicating whether the mutual TLS authentication is enabled.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
 
 
 class Nonce(_serialization.Model):
@@ -6811,8 +7035,15 @@ class Replica(ProxyResource):
     :vartype system_data: ~azure.mgmt.appcontainers.models.SystemData
     :ivar created_time: Timestamp describing when the pod was created by controller.
     :vartype created_time: ~datetime.datetime
+    :ivar running_state: Current running state of the replica. Known values are: "Running",
+     "NotRunning", and "Unknown".
+    :vartype running_state: str or ~azure.mgmt.appcontainers.models.ContainerAppReplicaRunningState
+    :ivar running_state_details: The details of replica current running state.
+    :vartype running_state_details: str
     :ivar containers: The containers collection under a replica.
     :vartype containers: list[~azure.mgmt.appcontainers.models.ReplicaContainer]
+    :ivar init_containers: The init containers collection under a replica.
+    :vartype init_containers: list[~azure.mgmt.appcontainers.models.ReplicaContainer]
     """
 
     _validation = {
@@ -6821,6 +7052,8 @@ class Replica(ProxyResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "created_time": {"readonly": True},
+        "running_state": {"readonly": True},
+        "running_state_details": {"readonly": True},
     }
 
     _attribute_map = {
@@ -6829,17 +7062,31 @@ class Replica(ProxyResource):
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
+        "running_state": {"key": "properties.runningState", "type": "str"},
+        "running_state_details": {"key": "properties.runningStateDetails", "type": "str"},
         "containers": {"key": "properties.containers", "type": "[ReplicaContainer]"},
+        "init_containers": {"key": "properties.initContainers", "type": "[ReplicaContainer]"},
     }
 
-    def __init__(self, *, containers: Optional[List["_models.ReplicaContainer"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        containers: Optional[List["_models.ReplicaContainer"]] = None,
+        init_containers: Optional[List["_models.ReplicaContainer"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword containers: The containers collection under a replica.
         :paramtype containers: list[~azure.mgmt.appcontainers.models.ReplicaContainer]
+        :keyword init_containers: The init containers collection under a replica.
+        :paramtype init_containers: list[~azure.mgmt.appcontainers.models.ReplicaContainer]
         """
         super().__init__(**kwargs)
         self.created_time = None
+        self.running_state = None
+        self.running_state_details = None
         self.containers = containers
+        self.init_containers = init_containers
 
 
 class ReplicaCollection(_serialization.Model):
@@ -6883,6 +7130,12 @@ class ReplicaContainer(_serialization.Model):
     :vartype started: bool
     :ivar restart_count: The container restart count.
     :vartype restart_count: int
+    :ivar running_state: Current running state of the container. Known values are: "Running",
+     "Terminated", and "Waiting".
+    :vartype running_state: str or
+     ~azure.mgmt.appcontainers.models.ContainerAppContainerRunningState
+    :ivar running_state_details: The details of container current running state.
+    :vartype running_state_details: str
     :ivar log_stream_endpoint: Log Stream endpoint.
     :vartype log_stream_endpoint: str
     :ivar exec_endpoint: Container exec endpoint.
@@ -6890,6 +7143,8 @@ class ReplicaContainer(_serialization.Model):
     """
 
     _validation = {
+        "running_state": {"readonly": True},
+        "running_state_details": {"readonly": True},
         "log_stream_endpoint": {"readonly": True},
         "exec_endpoint": {"readonly": True},
     }
@@ -6900,6 +7155,8 @@ class ReplicaContainer(_serialization.Model):
         "ready": {"key": "ready", "type": "bool"},
         "started": {"key": "started", "type": "bool"},
         "restart_count": {"key": "restartCount", "type": "int"},
+        "running_state": {"key": "runningState", "type": "str"},
+        "running_state_details": {"key": "runningStateDetails", "type": "str"},
         "log_stream_endpoint": {"key": "logStreamEndpoint", "type": "str"},
         "exec_endpoint": {"key": "execEndpoint", "type": "str"},
     }
@@ -6932,6 +7189,8 @@ class ReplicaContainer(_serialization.Model):
         self.ready = ready
         self.started = started
         self.restart_count = restart_count
+        self.running_state = None
+        self.running_state_details = None
         self.log_stream_endpoint = None
         self.exec_endpoint = None
 
@@ -6978,6 +7237,9 @@ class Revision(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar provisioning_state: Current provisioning State of the revision. Known values are:
      "Provisioning", "Provisioned", "Failed", "Deprovisioning", and "Deprovisioned".
     :vartype provisioning_state: str or ~azure.mgmt.appcontainers.models.RevisionProvisioningState
+    :ivar running_state: Current running state of the revision. Known values are: "Running",
+     "Processing", "Stopped", "Degraded", "Failed", and "Unknown".
+    :vartype running_state: str or ~azure.mgmt.appcontainers.models.RevisionRunningState
     """
 
     _validation = {
@@ -6995,6 +7257,7 @@ class Revision(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "provisioning_error": {"readonly": True},
         "health_state": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "running_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -7012,6 +7275,7 @@ class Revision(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "provisioning_error": {"key": "properties.provisioningError", "type": "str"},
         "health_state": {"key": "properties.healthState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "running_state": {"key": "properties.runningState", "type": "str"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -7027,6 +7291,7 @@ class Revision(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.provisioning_error = None
         self.health_state = None
         self.provisioning_state = None
+        self.running_state = None
 
 
 class RevisionCollection(_serialization.Model):
@@ -7156,9 +7421,9 @@ class ScaleRule(_serialization.Model):
 
 
 class ScaleRuleAuth(_serialization.Model):
-    """Auth Secrets for Container App Scale Rule.
+    """Auth Secrets for Scale Rule.
 
-    :ivar secret_ref: Name of the Container App secret from which to pull the auth params.
+    :ivar secret_ref: Name of the secret from which to pull the auth params.
     :vartype secret_ref: str
     :ivar trigger_parameter: Trigger Parameter that uses the secret.
     :vartype trigger_parameter: str
@@ -7173,7 +7438,7 @@ class ScaleRuleAuth(_serialization.Model):
         self, *, secret_ref: Optional[str] = None, trigger_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword secret_ref: Name of the Container App secret from which to pull the auth params.
+        :keyword secret_ref: Name of the secret from which to pull the auth params.
         :paramtype secret_ref: str
         :keyword trigger_parameter: Trigger Parameter that uses the secret.
         :paramtype trigger_parameter: str
@@ -7285,6 +7550,58 @@ class SecretVolumeItem(_serialization.Model):
         super().__init__(**kwargs)
         self.secret_ref = secret_ref
         self.path = path
+
+
+class Service(_serialization.Model):
+    """Container App to be a dev service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Dev ContainerApp service type. Required.
+    :vartype type: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, type: str, **kwargs: Any) -> None:
+        """
+        :keyword type: Dev ContainerApp service type. Required.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.type = type
+
+
+class ServiceBind(_serialization.Model):
+    """Configuration to bind a ContainerApp to a dev ContainerApp Service.
+
+    :ivar service_id: Resource id of the target service.
+    :vartype service_id: str
+    :ivar name: Name of the service bind.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "service_id": {"key": "serviceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, service_id: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword service_id: Resource id of the target service.
+        :paramtype service_id: str
+        :keyword name: Name of the service bind.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.service_id = service_id
+        self.name = name
 
 
 class SourceControl(ProxyResource):
@@ -7503,6 +7820,12 @@ class Template(_serialization.Model):
 
     :ivar revision_suffix: User friendly suffix that is appended to the revision name.
     :vartype revision_suffix: str
+    :ivar termination_grace_period_seconds: Optional duration in seconds the Container App Instance
+     needs to terminate gracefully. Value must be non-negative integer. The value zero indicates
+     stop immediately via the kill signal (no opportunity to shut down). If this value is nil, the
+     default grace period will be used instead. Set this value longer than the expected cleanup time
+     for your process. Defaults to 30 seconds.
+    :vartype termination_grace_period_seconds: int
     :ivar init_containers: List of specialized containers that run before app containers.
     :vartype init_containers: list[~azure.mgmt.appcontainers.models.InitContainer]
     :ivar containers: List of container definitions for the Container App.
@@ -7511,29 +7834,41 @@ class Template(_serialization.Model):
     :vartype scale: ~azure.mgmt.appcontainers.models.Scale
     :ivar volumes: List of volume definitions for the Container App.
     :vartype volumes: list[~azure.mgmt.appcontainers.models.Volume]
+    :ivar service_binds: List of container app services bound to the app.
+    :vartype service_binds: list[~azure.mgmt.appcontainers.models.ServiceBind]
     """
 
     _attribute_map = {
         "revision_suffix": {"key": "revisionSuffix", "type": "str"},
+        "termination_grace_period_seconds": {"key": "terminationGracePeriodSeconds", "type": "int"},
         "init_containers": {"key": "initContainers", "type": "[InitContainer]"},
         "containers": {"key": "containers", "type": "[Container]"},
         "scale": {"key": "scale", "type": "Scale"},
         "volumes": {"key": "volumes", "type": "[Volume]"},
+        "service_binds": {"key": "serviceBinds", "type": "[ServiceBind]"},
     }
 
     def __init__(
         self,
         *,
         revision_suffix: Optional[str] = None,
+        termination_grace_period_seconds: Optional[int] = None,
         init_containers: Optional[List["_models.InitContainer"]] = None,
         containers: Optional[List["_models.Container"]] = None,
         scale: Optional["_models.Scale"] = None,
         volumes: Optional[List["_models.Volume"]] = None,
+        service_binds: Optional[List["_models.ServiceBind"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword revision_suffix: User friendly suffix that is appended to the revision name.
         :paramtype revision_suffix: str
+        :keyword termination_grace_period_seconds: Optional duration in seconds the Container App
+         Instance needs to terminate gracefully. Value must be non-negative integer. The value zero
+         indicates stop immediately via the kill signal (no opportunity to shut down). If this value is
+         nil, the default grace period will be used instead. Set this value longer than the expected
+         cleanup time for your process. Defaults to 30 seconds.
+        :paramtype termination_grace_period_seconds: int
         :keyword init_containers: List of specialized containers that run before app containers.
         :paramtype init_containers: list[~azure.mgmt.appcontainers.models.InitContainer]
         :keyword containers: List of container definitions for the Container App.
@@ -7542,13 +7877,17 @@ class Template(_serialization.Model):
         :paramtype scale: ~azure.mgmt.appcontainers.models.Scale
         :keyword volumes: List of volume definitions for the Container App.
         :paramtype volumes: list[~azure.mgmt.appcontainers.models.Volume]
+        :keyword service_binds: List of container app services bound to the app.
+        :paramtype service_binds: list[~azure.mgmt.appcontainers.models.ServiceBind]
         """
         super().__init__(**kwargs)
         self.revision_suffix = revision_suffix
+        self.termination_grace_period_seconds = termination_grace_period_seconds
         self.init_containers = init_containers
         self.containers = containers
         self.scale = scale
         self.volumes = volumes
+        self.service_binds = service_binds
 
 
 class TrafficWeight(_serialization.Model):
@@ -7776,6 +8115,9 @@ class Volume(_serialization.Model):
     :ivar secrets: List of secrets to be added in volume. If no secrets are provided, all secrets
      in collection will be added to volume.
     :vartype secrets: list[~azure.mgmt.appcontainers.models.SecretVolumeItem]
+    :ivar mount_options: Mount options used while mounting the AzureFile. Must be a comma-separated
+     string.
+    :vartype mount_options: str
     """
 
     _attribute_map = {
@@ -7783,6 +8125,7 @@ class Volume(_serialization.Model):
         "storage_type": {"key": "storageType", "type": "str"},
         "storage_name": {"key": "storageName", "type": "str"},
         "secrets": {"key": "secrets", "type": "[SecretVolumeItem]"},
+        "mount_options": {"key": "mountOptions", "type": "str"},
     }
 
     def __init__(
@@ -7792,6 +8135,7 @@ class Volume(_serialization.Model):
         storage_type: Optional[Union[str, "_models.StorageType"]] = None,
         storage_name: Optional[str] = None,
         secrets: Optional[List["_models.SecretVolumeItem"]] = None,
+        mount_options: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7805,12 +8149,16 @@ class Volume(_serialization.Model):
         :keyword secrets: List of secrets to be added in volume. If no secrets are provided, all
          secrets in collection will be added to volume.
         :paramtype secrets: list[~azure.mgmt.appcontainers.models.SecretVolumeItem]
+        :keyword mount_options: Mount options used while mounting the AzureFile. Must be a
+         comma-separated string.
+        :paramtype mount_options: str
         """
         super().__init__(**kwargs)
         self.name = name
         self.storage_type = storage_type
         self.storage_name = storage_name
         self.secrets = secrets
+        self.mount_options = mount_options
 
 
 class VolumeMount(_serialization.Model):
@@ -7821,24 +8169,39 @@ class VolumeMount(_serialization.Model):
     :ivar mount_path: Path within the container at which the volume should be mounted.Must not
      contain ':'.
     :vartype mount_path: str
+    :ivar sub_path: Path within the volume from which the container's volume should be mounted.
+     Defaults to "" (volume's root).
+    :vartype sub_path: str
     """
 
     _attribute_map = {
         "volume_name": {"key": "volumeName", "type": "str"},
         "mount_path": {"key": "mountPath", "type": "str"},
+        "sub_path": {"key": "subPath", "type": "str"},
     }
 
-    def __init__(self, *, volume_name: Optional[str] = None, mount_path: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        volume_name: Optional[str] = None,
+        mount_path: Optional[str] = None,
+        sub_path: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword volume_name: This must match the Name of a Volume.
         :paramtype volume_name: str
         :keyword mount_path: Path within the container at which the volume should be mounted.Must not
          contain ':'.
         :paramtype mount_path: str
+        :keyword sub_path: Path within the volume from which the container's volume should be mounted.
+         Defaults to "" (volume's root).
+        :paramtype sub_path: str
         """
         super().__init__(**kwargs)
         self.volume_name = volume_name
         self.mount_path = mount_path
+        self.sub_path = sub_path
 
 
 class WorkloadProfile(_serialization.Model):

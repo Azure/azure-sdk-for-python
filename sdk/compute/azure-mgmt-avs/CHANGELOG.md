@@ -1,5 +1,23 @@
 # Release History
 
+## 8.0.0 (2023-08-25)
+
+### Features Added
+
+  - Model ErrorResponse has a new parameter error
+  - Model PrivateCloud has a new parameter extended_network_blocks
+  - Model PrivateCloudProperties has a new parameter extended_network_blocks
+  - Model PrivateCloudUpdate has a new parameter extended_network_blocks
+  - Model PrivateCloudUpdateProperties has a new parameter extended_network_blocks
+
+### Breaking Changes
+
+  - Model ErrorResponse no longer has parameter additional_info
+  - Model ErrorResponse no longer has parameter code
+  - Model ErrorResponse no longer has parameter details
+  - Model ErrorResponse no longer has parameter message
+  - Model ErrorResponse no longer has parameter target
+
 ## 7.2.0b1 (2022-12-29)
 
 ### Other Changes

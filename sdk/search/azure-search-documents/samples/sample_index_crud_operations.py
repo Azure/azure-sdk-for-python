@@ -20,9 +20,10 @@ USAGE:
 
 
 import os
+from typing import List
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes import SearchIndexClient
@@ -36,11 +37,10 @@ from azure.search.documents.indexes.models import (
     SearchableField,
 )
 
-client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
 
 def create_index():
     # [START create_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
@@ -56,7 +56,7 @@ def create_index():
         ),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-    scoring_profiles = []
+    scoring_profiles: List[ScoringProfile] = []
     index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
     result = client.create_index(index)
@@ -65,6 +65,7 @@ def create_index():
 
 def get_index():
     # [START get_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     result = client.get_index(name)
     # [END get_index]
@@ -72,6 +73,7 @@ def get_index():
 
 def update_index():
     # [START update_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
@@ -100,6 +102,7 @@ def update_index():
 
 def delete_index():
     # [START delete_index]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     client.delete_index(name)
     # [END delete_index]

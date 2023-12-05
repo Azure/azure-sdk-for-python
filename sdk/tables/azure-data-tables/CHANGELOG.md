@@ -1,16 +1,30 @@
 # Release History
 
-## 12.4.4 (Unreleased)
+## 12.4.5 (Unreleased)
 
 ### Features Added
-* Enabled to specify resource type `container` in account SAS access.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+* Fixed issue in serializing EntityProperty tuples where a value of None could be serialized as the string "None".
 
 ### Other Changes
-* Bumped minimum dependency on `azure-core` to `>=1.27.1`. ([#28918](https://github.com/Azure/azure-sdk-for-python/issues/28918))
+* Refactored batching code to use latest Core models and improve typing.
+* Added a public type `EntityMetadata`, it is used in `TableEntity`'s metadata.
+
+## 12.4.4 (2023-09-14)
+
+### Features Added
+* Enabled to specify resource type `container` in account SAS access.
+
+### Bugs Fixed
+* Fixed a bug when submitting transactions with an empty operation list. ([#31471](https://github.com/Azure/azure-sdk-for-python/issues/31471))
+* Fixed a bug when decoding response body in string type. Thanks @kldtz for the contribution! ([#31265](https://github.com/Azure/azure-sdk-for-python/pull/31265))
+* Fixed a bug when retrieving an entity with partition key and/or row key in empty string, the empty string values were disappeared in result. ([#31920](https://github.com/Azure/azure-sdk-for-python/issues/31920))
+
+### Other Changes
+* Bumped minimum dependency on `azure-core` to `>=1.29.4`. ([#28918](https://github.com/Azure/azure-sdk-for-python/issues/28918) [#31471](https://github.com/Azure/azure-sdk-for-python/issues/31471))
 
 ## 12.4.3 (2023-06-13)
 

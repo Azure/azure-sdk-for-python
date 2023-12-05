@@ -22,11 +22,9 @@ import pytest
 import azure.mgmt.keyvault.aio
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
-from _aio_testcase import AzureMgmtAsyncTestCase
-
 AZURE_LOCATION = 'eastus'
 
-class TestMgmtKeyVault(AzureMgmtAsyncTestCase):
+class TestMgmtKeyVault(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_aio_client(

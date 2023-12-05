@@ -43,7 +43,11 @@ def main():
                 "enableStreamingIngest": True,
                 "languageExtensions": {
                     "value": [
-                        {"languageExtensionImageName": "Python3_10_8", "languageExtensionName": "PYTHON"},
+                        {
+                            "languageExtensionCustomImageName": "customImage8",
+                            "languageExtensionImageName": "Python_Custom_Image",
+                            "languageExtensionName": "PYTHON",
+                        },
                         {"languageExtensionImageName": "R", "languageExtensionName": "R"},
                     ]
                 },
@@ -56,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-05-02/examples/KustoClustersCreateOrUpdate.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-08-15/examples/KustoClustersCreateOrUpdate.json
 if __name__ == "__main__":
     main()

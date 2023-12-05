@@ -21,8 +21,8 @@ class ManagedIdentityCredential:
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
-    the keyword arguments. See `Azure Active Directory documentation
-    <https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for more
+    the keyword arguments. See `Microsoft Entra ID documentation
+    <https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for more
     information about configuring managed identity for applications.
 
     :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of an Azure
@@ -108,7 +108,9 @@ class ManagedIdentityCredential:
         self.__exit__()
 
     @log_get_token("ManagedIdentityCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -116,6 +118,9 @@ class ManagedIdentityCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+
+        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str tenant_id: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -129,4 +134,4 @@ class ManagedIdentityCredential:
                 "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
                 "troubleshoot this issue."
             )
-        return self._credential.get_token(*scopes, **kwargs)
+        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)

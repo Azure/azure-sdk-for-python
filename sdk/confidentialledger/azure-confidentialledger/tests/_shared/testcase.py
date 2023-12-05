@@ -49,9 +49,16 @@ class ConfidentialLedgerTestCase(AzureRecordedTestCase):
         """teardown any state that was previously setup with a call to
         setup_class.
         """
-        os.remove(cls.user_certificate_path)
+        try:
+            os.remove(cls.user_certificate_path)
+        except FileNotFoundError:
+            pass
+
         if cls.network_certificate_path:
-            os.remove(cls.network_certificate_path)
+            try:
+                os.remove(cls.network_certificate_path)
+            except FileNotFoundError:
+                pass
 
     def set_ledger_identity(self, confidentialledger_id: str) -> str:
         """Retrieves the Confidential Ledger's TLS certificate, saving it to the object's network

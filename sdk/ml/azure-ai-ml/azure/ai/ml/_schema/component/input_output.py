@@ -4,14 +4,14 @@
 
 # pylint: disable=unused-argument
 
-from marshmallow import fields, INCLUDE, pre_dump
+from marshmallow import INCLUDE, fields, pre_dump
 
-from azure.ai.ml._schema.core.fields import DumpableEnumField, ExperimentalField, UnionField, NestedField
+from azure.ai.ml._schema.core.fields import DumpableEnumField, ExperimentalField, NestedField, UnionField
+from azure.ai.ml._schema.core.intellectual_property import ProtectionLevelSchema
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes
-from azure.ai.ml._schema.core.intellectual_property import ProtectionLevelSchema
 
 # Here we use an adhoc way to collect all class constant attributes by checking if it's upper letter
 # because making those constants enum will fail in string serialization in marshmallow
@@ -96,18 +96,16 @@ class PrimitiveOutputSchema(OutputPortSchema):
         allowed_values=SUPPORTED_PARAM_TYPES,
         required=True,
     )
-    # hide is_control and early_available in spec
+    # hide early_available in spec
     if is_private_preview_enabled():
-        is_control = fields.Bool()
         early_available = fields.Bool()
 
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _serialize(self, obj, *, many: bool = False):
         """Override to add private preview hidden fields"""
         from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe  # pylint: disable=protected-access
 
         ret = super()._serialize(obj, many=many)  # pylint: disable=no-member
-        if has_attr_safe(obj, "is_control") and obj.is_control is not None and "is_control" not in ret:
-            ret["is_control"] = obj.is_control
         if has_attr_safe(obj, "early_available") and obj.early_available is not None and "early_available" not in ret:
             ret["early_available"] = obj.early_available
         return ret

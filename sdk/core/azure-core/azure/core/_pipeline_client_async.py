@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from __future__ import annotations
 import logging
 import collections.abc
 from typing import (
@@ -34,8 +34,10 @@ from typing import (
     Generator,
     Generic,
     Optional,
+    Type,
     cast,
 )
+from types import TracebackType
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -108,8 +110,13 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
         self._response = await self
         return self._response
 
-    async def __aexit__(self, *args) -> None:
-        await self._response.__aexit__(*args)
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self._response.__aexit__(exc_type, exc_value, traceback)
 
 
 class AsyncPipelineClient(
@@ -150,26 +157,37 @@ class AsyncPipelineClient(
         base_url: str,
         *,
         pipeline: Optional[AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]] = None,
-        config: Optional[Configuration] = None,
-        **kwargs
+        config: Optional[Configuration[HTTPRequestType, AsyncHTTPResponseType]] = None,
+        **kwargs: Any,
     ):
         super(AsyncPipelineClient, self).__init__(base_url)
-        self._config: Configuration = config or Configuration(**kwargs)
+        self._config: Configuration[HTTPRequestType, AsyncHTTPResponseType] = config or Configuration(**kwargs)
         self._base_url = base_url
         self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]:
         await self._pipeline.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
-        await self.close()
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self._pipeline.__aexit__(exc_type, exc_value, traceback)
 
-    async def close(self):
-        await self._pipeline.__aexit__()
+    async def close(self) -> None:
+        await self.__aexit__()
 
     def _build_pipeline(
-        self, config: Configuration, *, policies=None, per_call_policies=None, per_retry_policies=None, **kwargs
+        self,
+        config: Configuration[HTTPRequestType, AsyncHTTPResponseType],
+        *,
+        policies=None,
+        per_call_policies=None,
+        per_retry_policies=None,
+        **kwargs,
     ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         transport = kwargs.get("transport")
         per_call_policies = per_call_policies or []
@@ -236,7 +254,8 @@ class AsyncPipelineClient(
                 policies = policies_1
 
         if not transport:
-            from .pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
+            # Use private import for better typing, mypy and pyright don't like PEP562
+            from .pipeline.transport._aiohttp import AioHttpTransport
 
             transport = AioHttpTransport(**kwargs)
 

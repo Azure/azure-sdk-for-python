@@ -251,6 +251,10 @@ def avoid_timedelta_overflow(td):
     When we get an entity (for instance, QueueDescription) and update this entity, this default value is
     deserialized to "P10675199DT2H48M5.477581S". Service Bus doesn't accept this value probably because it's too large.
     The workaround is to deduct the milliseconds by 0.000001.
+
+    :param timedelta or str or None td: The value of the property.
+    :return: The adjusted value of the property.
+    :rtype: timedelta or str or None
     """
     try:
         result = td

@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.services.delete(
+    client.services.delete(
         resource_group_name="rg1",
         search_service_name="mysearchservice",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2022-09-01/examples/SearchDeleteService.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2023-11-01/examples/SearchDeleteService.json
 if __name__ == "__main__":
     main()

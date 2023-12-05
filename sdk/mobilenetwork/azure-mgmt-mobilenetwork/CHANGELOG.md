@@ -1,5 +1,35 @@
 # Release History
 
+## 3.1.0 (2023-11-20)
+
+### Features Added
+
+  - Model PacketCapture has a new parameter output_files
+  - Model PacketCoreControlPlane has a new parameter control_plane_access_virtual_ipv4_addresses
+  - Model PacketCoreControlPlane has a new parameter event_hub
+  - Model PacketCoreControlPlane has a new parameter signaling
+  - Model PacketCoreDataPlane has a new parameter user_plane_access_virtual_ipv4_addresses
+
+## 3.0.0 (2023-07-21)
+
+### Features Added
+
+  - Added operation PacketCoreControlPlaneVersionsOperations.get_by_subscription
+  - Added operation PacketCoreControlPlaneVersionsOperations.list_by_subscription
+  - Added operation SitesOperations.begin_delete_packet_core
+  - Added operation group DiagnosticsPackagesOperations
+  - Added operation group PacketCapturesOperations
+  - Model Installation has a new parameter desired_state
+  - Model Installation has a new parameter reasons
+  - Model Installation has a new parameter reinstall_required
+  - Model PacketCoreControlPlane has a new parameter diagnostics_upload
+  - Model PacketCoreControlPlane has a new parameter installed_version
+
+### Breaking Changes
+
+  - Model ManagedServiceIdentity no longer has parameter principal_id
+  - Model ManagedServiceIdentity no longer has parameter tenant_id
+
 ## 2.0.0 (2023-01-16)
 
 ### Features Added

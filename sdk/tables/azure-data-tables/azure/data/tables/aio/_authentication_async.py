@@ -34,7 +34,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
         *scopes: str,
         discover_tenant: bool = True,
         discover_scopes: bool = True,
-        **kwargs
+        **kwargs,
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
@@ -75,43 +75,35 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
 def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy:
     ...
 
+
 @overload
 def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy:
     ...
+
 
 @overload
 def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy:
     ...
 
+
 @overload
 def _configure_credential(credential: AsyncTokenCredential) -> AsyncBearerTokenChallengePolicy:
     ...
+
 
 @overload
 def _configure_credential(credential: None) -> None:
     ...
 
+
 def _configure_credential(
     credential: Optional[
-        Union[
-            AzureNamedKeyCredential,
-            AzureSasCredential,
-            AsyncTokenCredential,
-            SharedKeyCredentialPolicy
-        ]
+        Union[AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential, SharedKeyCredentialPolicy]
     ]
-) -> Optional[
-    Union[
-        AsyncBearerTokenChallengePolicy,
-        AzureSasCredentialPolicy,
-        SharedKeyCredentialPolicy
-    ]
-]:
+) -> Optional[Union[AsyncBearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(AsyncTokenCredential, credential)
-        return AsyncBearerTokenChallengePolicy(
-            credential, STORAGE_OAUTH_SCOPE
-        )
+        return AsyncBearerTokenChallengePolicy(credential, STORAGE_OAUTH_SCOPE)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential
     if isinstance(credential, AzureSasCredential):
@@ -119,5 +111,5 @@ def _configure_credential(
     if isinstance(credential, AzureNamedKeyCredential):
         return SharedKeyCredentialPolicy(credential)
     if credential is not None:
-        raise TypeError(f"Unsupported credential: {credential}")
+        raise TypeError(f"Unsupported credential: {type(credential)}")
     return None

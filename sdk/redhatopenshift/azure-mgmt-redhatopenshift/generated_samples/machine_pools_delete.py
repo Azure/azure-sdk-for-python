@@ -29,14 +29,13 @@ def main():
         subscription_id="subscriptionId",
     )
 
-    response = client.machine_pools.delete(
+    client.machine_pools.delete(
         resource_group_name="resourceGroup",
         resource_name="resourceName",
         child_resource_name="childResourceName",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/stable/2022-09-04/examples/MachinePools_Delete.json
+# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/stable/2023-09-04/examples/MachinePools_Delete.json
 if __name__ == "__main__":
     main()

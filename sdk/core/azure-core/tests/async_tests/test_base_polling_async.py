@@ -47,7 +47,7 @@ from azure.core.polling.async_base_polling import (
     AsyncLROBasePolling,
 )
 from utils import ASYNCIO_REQUESTS_TRANSPORT_RESPONSES, request_and_responses_product, create_transport_response
-from rest_client_async import AsyncTestRestClient
+from rest_client_async import AsyncMockRestClient
 
 
 class SimpleResource:
@@ -787,7 +787,7 @@ async def test_post_final_state_via(async_pipeline_client_builder, deserializati
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_final_get_via_location(port, http_request, deserialization_cb):
-    client = AsyncTestRestClient(port)
+    client = AsyncMockRestClient(port)
     request = http_request(
         "PUT",
         "http://localhost:{}/polling/polling-with-options".format(port),

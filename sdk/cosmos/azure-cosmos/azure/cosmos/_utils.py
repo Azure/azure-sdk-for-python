@@ -24,24 +24,28 @@
 
 import platform
 import re
+import base64
+import json
+from typing import Any, Dict, Optional
+
 from ._version import VERSION
 
 
-def get_user_agent():
+def get_user_agent() -> str:
     os_name = safe_user_agent_header(platform.platform())
     python_version = safe_user_agent_header(platform.python_version())
     user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(VERSION, python_version, os_name)
     return user_agent
 
 
-def get_user_agent_async():
+def get_user_agent_async() -> str:
     os_name = safe_user_agent_header(platform.platform())
     python_version = safe_user_agent_header(platform.python_version())
     user_agent = "azsdk-python-cosmos-async/{} Python/{} ({})".format(VERSION, python_version, os_name)
     return user_agent
 
 
-def safe_user_agent_header(s):
+def safe_user_agent_header(s: Optional[str]) -> str:
     if s is None:
         s = "unknown"
     # remove all white spaces
@@ -49,3 +53,19 @@ def safe_user_agent_header(s):
     if not s:
         s = "unknown"
     return s
+
+
+def get_index_metrics_info(delimited_string: Optional[str]) -> Dict[str, Any]:
+    if delimited_string is None:
+        return {}
+    try:
+        # Decode the base64 string to bytes
+        bytes_string = base64.b64decode(delimited_string)
+        # Decode the bytes to a string using UTF-8 encoding
+        decoded_string = bytes_string.decode('utf-8')
+
+        # Python's json.loads method is used for deserialization
+        result = json.loads(decoded_string) or {}
+        return result
+    except (json.JSONDecodeError, ValueError):
+        return {}

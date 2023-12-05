@@ -29,14 +29,14 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.networkinterfaces.update(
+    response = client.network_interfaces.begin_update(
         resource_group_name="test-rg",
-        networkinterfaces_name="test-nic",
-        networkinterfaces={"tags": {"additionalProperties": "sample"}},
-    )
+        network_interface_name="test-nic",
+        network_interfaces={"tags": {"additionalProperties": "sample"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2021-09-01-preview/examples/UpdateNetworkInterface.json
+# x-ms-original-file: specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/preview/2023-09-01-preview/examples/UpdateNetworkInterface.json
 if __name__ == "__main__":
     main()

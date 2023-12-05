@@ -13,6 +13,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from . import ChallengeAuthPolicy
 from .._generated import KeyVaultClient as _KeyVaultClient
+from .._generated import models as _models
 from .._generated._serialization import Serializer
 from .._sdk_moniker import SDK_MONIKER
 
@@ -27,6 +28,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
+    V7_5_PREVIEW_1 = "7.5-preview.1"
     V7_4 = "7.4"
     V7_3 = "7.3"
     V7_2 = "7.2"
@@ -35,7 +37,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2016_10_01 = "2016-10-01"
 
 
-DEFAULT_VERSION = ApiVersion.V7_4
+DEFAULT_VERSION = ApiVersion.V7_5_PREVIEW_1
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -92,7 +94,7 @@ class KeyVaultClientBase(object):
                 # caller provided a configured client -> only models left to initialize
                 self._client = client
                 models = kwargs.get("generated_models")
-                self._models = models or _KeyVaultClient.models(api_version=self.api_version)
+                self._models = models or _models
                 return
 
             http_logging_policy = HttpLoggingPolicy(**kwargs)
@@ -108,7 +110,7 @@ class KeyVaultClientBase(object):
                 http_logging_policy=http_logging_policy,
                 **kwargs
             )
-            self._models = _KeyVaultClient.models(api_version=self.api_version)
+            self._models = _models
         except ValueError as exc:
             raise NotImplementedError(
                 f"This package doesn't support API version '{self.api_version}'. "

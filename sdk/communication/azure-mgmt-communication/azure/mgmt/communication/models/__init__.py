@@ -25,6 +25,7 @@ from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import LinkNotificationHubParameters
 from ._models_py3 import LinkedNotificationHub
+from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import NameAvailabilityParameters
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
@@ -38,6 +39,7 @@ from ._models_py3 import SystemData
 from ._models_py3 import TaggedResource
 from ._models_py3 import TrackedResource
 from ._models_py3 import UpdateDomainRequestParameters
+from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import VerificationParameter
 from ._models_py3 import VerificationStatusRecord
 
@@ -49,6 +51,7 @@ from ._communication_service_management_client_enums import DomainManagement
 from ._communication_service_management_client_enums import DomainsProvisioningState
 from ._communication_service_management_client_enums import EmailServicesProvisioningState
 from ._communication_service_management_client_enums import KeyType
+from ._communication_service_management_client_enums import ManagedServiceIdentityType
 from ._communication_service_management_client_enums import Origin
 from ._communication_service_management_client_enums import ProvisioningState
 from ._communication_service_management_client_enums import UserEngagementTracking
@@ -78,6 +81,7 @@ __all__ = [
     "ErrorResponse",
     "LinkNotificationHubParameters",
     "LinkedNotificationHub",
+    "ManagedServiceIdentity",
     "NameAvailabilityParameters",
     "Operation",
     "OperationDisplay",
@@ -91,6 +95,7 @@ __all__ = [
     "TaggedResource",
     "TrackedResource",
     "UpdateDomainRequestParameters",
+    "UserAssignedIdentity",
     "VerificationParameter",
     "VerificationStatusRecord",
     "ActionType",
@@ -101,6 +106,7 @@ __all__ = [
     "DomainsProvisioningState",
     "EmailServicesProvisioningState",
     "KeyType",
+    "ManagedServiceIdentityType",
     "Origin",
     "ProvisioningState",
     "UserEngagementTracking",

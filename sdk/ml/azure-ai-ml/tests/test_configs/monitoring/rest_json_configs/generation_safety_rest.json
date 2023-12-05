@@ -1,0 +1,108 @@
+{
+    "properties": {
+      "action": {
+        "actionType": "CreateMonitor",
+        "monitorDefinition": {
+          "computeConfiguration": {
+            "computeType": "ServerlessSpark",
+            "instanceType": "standard_e8s_v3",
+            "runtimeVersion": "3.3",
+            "computeIdentity": {
+              "computeIdentityType": "AmlToken"
+            }
+          },
+          "monitoringTarget": {
+            "taskType": "classification",
+            "deploymentId": "fake_endpoint_id"
+          },
+          "signals": {
+            "testSignal": {
+              "signalType": "GenerationSafetyQuality",
+              "mode": "Enabled",
+              "samplingRate": "1",
+              "workspaceConnectionId": "fake_workspace_connection_id",
+              "productionData": [
+                {
+                  "inputDataType": "Trailing",
+                  "uri": "my_model_inputs_data:1",
+                  "jobInputType": "mltable",
+                  "columns": {
+                    "correlation_id": "inference_correlation_id"
+                  },
+                  "windowSize": "P7D",
+                  "windowOffset": "P0D"
+                },
+                {
+                  "inputDataType": "Trailing",
+                  "uri": "my_model_outputs_data:1",
+                  "jobInputType": "mltable",
+                  "columns": {
+                    "correlation_id": "inference_correlation_id",
+                    "prediction": "is_fraud",
+                    "prediction_probability": "is_fraud_probability"
+                  },
+                  "windowSize": "P7D",
+                  "windowOffset": "P0D"
+                }
+              ],
+              "metricThresholds": [
+                    {
+                        "metric": "AcceptableGroundednessScorePerInstance",
+                        "threshold": {
+                        "value": 3
+                        }
+                    },
+                    {
+                        "metric": "AggregatedGroundednessPassRate",
+                        "threshold": {
+                        "value": 0.01
+                        }
+                    },
+                    {
+                      "metric": "AcceptableFluencyScorePerInstance",
+                      "threshold": {
+                      "value": 3
+                      }
+                    },
+                    {
+                        "metric": "AggregatedFluencyPassRate",
+                        "threshold": {
+                        "value": 0.02
+                        }
+                    }
+                ]
+            }
+          }
+        }
+      },
+      "trigger": {
+        "triggerType": "Recurrence",
+        "timeZone": "utc",
+        "frequency": "week",
+        "interval": 1,
+        "schedule": {
+          "hours": [
+            22,
+            20
+          ],
+          "minutes": [
+            0,
+            30
+          ],
+          "weekDays": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ]
+        }
+      },
+      "properties": {
+        "prop1": "value"
+      },
+      "tags": {
+        "tag1": "tag"
+      }
+    }
+  }

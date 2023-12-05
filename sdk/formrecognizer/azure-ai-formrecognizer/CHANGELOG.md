@@ -1,5 +1,51 @@
 # Release History
 
+## 3.3.3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 3.3.2 (2023-11-07)
+
+### Bugs Fixed
+- Fixed incorrect data type for returned formula objects.
+
+## 3.3.1 (2023-10-10)
+
+### Features Added
+- Exposed `send_request()` method in each client to send custom requests using the client's existing pipeline. ([#32151](https://github.com/Azure/azure-sdk-for-python/issues/32151))
+
+## 3.3.0 (2023-08-08)
+
+This version of the client library defaults to the service API version `2023-07-31`.
+
+### Breaking Changes
+ > Note: The following changes are only breaking from the previous beta. They are not breaking against previous stable versions.
+ 
+- Going forward this library will default to service API version `2023-07-31`.
+- Removed `query_fields` keyword argument from `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+- Removed `kind` property from `DocumentPage`.
+- Removed `images` property from `DocumentPage`.
+- Removed `DocumentImage` model.
+- Removed `annotations` property from `DocumentPage`.
+- Removed `DocumentAnnotation` model.
+- Removed `common_name` property from `DocumentKeyValuePair`.
+- Changed `AnalysisFeature` enum member names and values. Supported enum members are: `OCR_HIGH_RESOLUTION`, `LANGUAGES`, `BARCODES`, `FORMULAS`, `KEY_VALUE_PAIRS`, `STYLE_FONT`.
+- Renamed `custom_neural_document_model_builds` property to `neural_document_model_quota` on `ResourceDetails` model.
+- Renamed `AzureBlobSource` model to `BlobSource`.
+- Renamed `AzureBlobFileListSource` model to `BlobFileListSource`.
+- Marked `neural_document_model_quota` as optional on `ResourceDetails`.
+
+### Other Changes
+- Corrected typing for the `polygon` property on `DocumentWord`, `DocumentSelectionMark`, `DocumentLine`.
+- Corrected typing for `words`, `lines`, and `selection_marks` properties on `DocumentPage`.
+- Renamed the samples directory to `v3.2_and_later/` for samples that support 3.2 and later.
+
 ## 3.3.0b1 (2023-04-13)
 
 This version of the client library defaults to the service API version `2023-02-28-preview`.

@@ -1,6 +1,6 @@
 # Release History
 
-## 4.8.0b2 (Unreleased)
+## 4.8.0b3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.8.0b2 (2023-11-03)
+
+### Features Added
+- Added support for service API version `7.5-preview.1`
+
+### Other Changes
+- Key Vault API version `7.5-preview.1` is now the default
 
 ## 4.8.0b1 (2023-05-16)
 

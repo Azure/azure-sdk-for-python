@@ -31,9 +31,9 @@ def main():
 
     response = client.apply_updates.get_parent(
         resource_group_name="examplerg",
+        provider_name="Microsoft.Compute",
         resource_parent_type="virtualMachineScaleSets",
         resource_parent_name="smdtest1",
-        provider_name="Microsoft.Compute",
         resource_type="virtualMachines",
         resource_name="smdvm1",
         apply_update_name="e9b9685d-78e4-44c4-a81c-64a14f9b87b6",
@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/preview/2022-07-01-preview/examples/ApplyUpdates_GetParent.json
+# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/preview/2023-09-01-preview/examples/ApplyUpdates_GetParent.json
 if __name__ == "__main__":
     main()

@@ -8,13 +8,11 @@ from typing import Any, Dict, List
 
 from marshmallow import ValidationError, fields, post_dump, post_load, pre_dump, pre_load, validates
 
-from azure.ai.ml._schema.core.fields import CodeField, NestedField
+from azure.ai.ml._schema.core.fields import CodeField, EnvironmentField, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml.constants._common import AzureMLResourceType
 
-from ..assets.environment import AnonymousEnvironmentSchema
-from ..core.fields import ArmVersionedStr, RegistryStr, UnionField
+from ..core.fields import UnionField
 
 re_memory_pattern = re.compile("^\\d+[kKmMgGtTpP]$")
 
@@ -71,14 +69,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
     archives = fields.List(fields.Str(required=True))
     conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
     properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-        allow_none=True,
-    )
+    environment = EnvironmentField(allow_none=True)
     args = fields.Str(metadata={"description": "Command Line arguments."})
 
     @validates("py_files")
@@ -98,6 +89,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
         no_duplicates("archives", value)
 
     @pre_load
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def map_conf_field_names(self, data, **kwargs):
         """Map the field names in the conf dictionary.
         This function must be called after YamlFileSchema.load_from_file.

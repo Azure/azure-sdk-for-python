@@ -53,7 +53,10 @@ _SUPPORTED_API_VERSIONS = [
     '2021-08-06',
     '2021-12-02',
     '2022-11-02',
-    '2023-01-03'
+    '2023-01-03',
+    '2023-05-03',
+    '2023-08-03',
+    '2023-11-03',
 ]
 
 
@@ -148,6 +151,11 @@ def get_api_version(kwargs):
         raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
+def get_version_id(self_vid, kwargs):
+    # type: (Optional[str], Dict[str, Any]) -> Optional[str]
+    if 'version_id' in kwargs:
+        return kwargs.pop('version_id')
+    return self_vid
 
 def serialize_blob_tags_header(tags=None):
     # type: (Optional[Dict[str, str]]) -> str

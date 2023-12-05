@@ -87,7 +87,7 @@ class DatabaseProxy(object):
         """
         self.client_connection = client_connection
         self.id = id
-        self.database_link = u"dbs/{}".format(self.id)
+        self.database_link = "dbs/{}".format(self.id)
         self._properties = properties
 
     def __repr__(self) -> str:
@@ -104,16 +104,16 @@ class DatabaseProxy(object):
         return cast("Dict[str, str]", container_or_id)["id"]
 
     def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Dict[str, Any]]) -> str:
-        return u"{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
+        return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id: Union[UserProxy, str, Dict[str, Any]]) -> str:
         if isinstance(user_or_id, str):
-            return u"{}/users/{}".format(self.database_link, user_or_id)
+            return "{}/users/{}".format(self.database_link, user_or_id)
         try:
             return cast("UserProxy", user_or_id).user_link
         except AttributeError:
             pass
-        return u"{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
+        return "{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
 
     async def _get_properties(self) -> Dict[str, Any]:
         if self._properties is None:
@@ -161,7 +161,7 @@ class DatabaseProxy(object):
 
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
-        :type partition_key: ~azure.cosmos.partition_key.PartitionKey
+        :type partition_key: ~azure.cosmos.PartitionKey
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -255,7 +255,7 @@ class DatabaseProxy(object):
 
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
-        :type partition_key: ~azure.cosmos.partition_key.PartitionKey
+        :type partition_key: ~azure.cosmos.PartitionKey
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -421,7 +421,7 @@ class DatabaseProxy(object):
             :class:`ContainerProxy` instance of the container to be replaced.
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
-        :type partition_key: ~azure.cosmos.partition_key.PartitionKey
+        :type partition_key: ~azure.cosmos.PartitionKey
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -676,7 +676,7 @@ class DatabaseProxy(object):
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If the replace failed or the user with given ID does not exist.
+            If the replace operation failed or the user with given ID does not exist.
         :returns: A `UserProxy` instance representing the user after replace went through.
         :rtype: ~azure.cosmos.aio.UserProxy
         """

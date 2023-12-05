@@ -142,8 +142,9 @@ Source = namedtuple(
         'default_outcome',
         'outcomes',
         'capabilities'
-    ])
-Source.__new__.__defaults__ = (None,) * len(Source._fields) # type: ignore
+    ],
+    defaults=(None,) * 11 # type: ignore
+    )
 Source._code = 0x00000028 # type: ignore # pylint: disable=protected-access
 Source._definition = ( # type: ignore # pylint: disable=protected-access
     FIELD("address", AMQPTypes.string, False, None, False),
@@ -227,9 +228,10 @@ Target = namedtuple(
         'dynamic',
         'dynamic_node_properties',
         'capabilities'
-    ])
+    ],
+    defaults=(None,) * 7 # type: ignore
+    )
 Target._code = 0x00000029 # type: ignore # pylint: disable=protected-access
-Target.__new__.__defaults__ = (None,) * len(Target._fields) # type: ignore # type: ignore # pylint: disable=protected-access
 Target._definition = ( # type: ignore # pylint: disable=protected-access
     FIELD("address", AMQPTypes.string, False, None, False),
     FIELD("durable", AMQPTypes.uint, False, "none", False),

@@ -5,6 +5,7 @@ from azure.ai.ml import load_job
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.exceptions import ValidationException
+
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
 
@@ -110,54 +111,54 @@ class TestParallelForPipelineJobUT(TestControlFlowPipelineJobUT):
     @pytest.mark.parametrize(
         "exception_cls, yaml_path, msg, location",
         [
-            # items with invalid content type
-            (
+            pytest.param(
                 ValidationError,
                 "./tests/test_configs/pipeline_jobs/invalid/parallel_for/items_invalid_value_type.yml",
                 "Not a valid mapping type.",
                 '"path": "jobs.parallelfor.items",',
+                id="items_invalid_content_type",
             ),
-            # # items with empty dict as content
-            (
+            pytest.param(
                 ValidationException,
                 "./tests/test_configs/pipeline_jobs/invalid/parallel_for/items_empty.yml",
                 "Items is an empty list/dict.",
                 '"path": "jobs.parallelfor.items",',
+                id="items_empty_dict_content",
             ),
-            # item meta not match
-            (
+            pytest.param(
                 ValidationException,
                 "./tests/test_configs/pipeline_jobs/invalid/parallel_for/items_meta_mismatch.yml",
                 '"message": "Items should have same keys',
                 '"path": "jobs.parallelfor.items"',
+                id="items_meta_mismatch",
             ),
-            # items not exist
-            (
+            pytest.param(
                 ValidationException,
                 "./tests/test_configs/pipeline_jobs/invalid/parallel_for/items_not_exist.yml",
                 "got unmatched inputs with loop body component",
                 '"path": "jobs.parallelfor.items"',
+                id="items_not_exist",
             ),
-            # items invalid json
-            (
+            pytest.param(
                 ValidationException,
                 "./tests/test_configs/pipeline_jobs/invalid/parallel_for/items_invalid_json.yml",
                 '"message": "Items is neither a valid JSON',
                 '"path": "jobs.parallelfor.items"',
+                id="items_invalid_json",
             ),
-            # required field unprovided
-            (
+            pytest.param(
                 ValidationError,
                 "./tests/test_configs/pipeline_jobs/invalid/parallel_for/items_unprovided.yml",
                 '"message": "Missing data for required field',
                 "items_unprovided.yml#line 7",
+                id="required_field_unprovided",
             ),
-            # body unsupported
-            (
+            pytest.param(
                 ValidationException,
                 "./tests/test_configs/pipeline_jobs/invalid/parallel_for/body_not_supported.yml",
                 " got <class 'azure.ai.ml.entities._builders.parallel.Parallel'> instead.",
                 "",
+                id="body_not_supported",
             ),
         ],
     )

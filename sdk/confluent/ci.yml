@@ -27,6 +27,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: confluent
+    TestProxy: true
     Artifacts:
     - name: azure-mgmt-confluent
       safeName: azuremgmtconfluent

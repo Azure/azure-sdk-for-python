@@ -26,7 +26,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
 def main():
     client = ContainerServiceClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid1",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.managed_clusters.begin_create_or_update(
@@ -36,7 +36,7 @@ def main():
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "/subscriptions/subid1/resourceGroups/rgName1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1": {}
+                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rgName1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1": {}
                 },
             },
             "location": "location1",
@@ -64,7 +64,7 @@ def main():
                     "scan-interval": "20s",
                     "skip-nodes-with-system-pods": "false",
                 },
-                "diskEncryptionSetID": "/subscriptions/subid1/resourceGroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
+                "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
                 "dnsPrefix": "dnsprefix1",
                 "enablePodSecurityPolicy": True,
                 "enableRBAC": True,
@@ -76,6 +76,7 @@ def main():
                     "outboundType": "loadBalancer",
                 },
                 "servicePrincipalProfile": {"clientId": "clientid", "secret": "secret"},
+                "upgradeSettings": {"overrideSettings": {"forceUpgrade": False, "until": "2022-11-01T13:00:00Z"}},
                 "windowsProfile": {"adminPassword": "replacePassword1234$", "adminUsername": "azureuser"},
             },
             "sku": {"name": "Basic", "tier": "Free"},
@@ -85,6 +86,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-05-01/examples/ManagedClustersCreate_Update.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/aks/stable/2023-10-01/examples/ManagedClustersCreate_Update.json
 if __name__ == "__main__":
     main()

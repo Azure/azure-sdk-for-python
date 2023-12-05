@@ -2,26 +2,25 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Union, Optional
+from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_04_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_08_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class SamplingAlgorithm(ABC, RestTranslatableMixin):
     """Base class for sampling algorithms.
 
-    You should not instantiate this class directly. Instead, use one of its subclasses.
+    This class should not be instantiated directly. Instead, use one of its subclasses.
     """
 
     def __init__(self) -> None:
-        """Base class for sampling algorithms"""
         self.type = None
 
     @classmethod
@@ -45,17 +44,15 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
 class RandomSamplingAlgorithm(SamplingAlgorithm):
     """Random Sampling Algorithm.
 
-    :param rule: The specific type of random algorithm. Acceptable values are: "random",
-        "sobol".
+    :keyword rule: The specific type of random algorithm. Accepted values are: "random" and "sobol".
     :type rule: str
-    :param seed: The seed for random number generation.
-    :type seed: int
-    :param logbase: A positive number or the number "e" in string format to be used as the base for log
+    :keyword seed: The seed for random number generation.
+    :paramtype seed: int
+    :keyword logbase: A positive number or the number "e" in string format to be used as the base for log
         based random sampling.
-    :type logbase: Union[float, str]
+    :paramtype logbase: Union[float, str]
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_random_sampling_algorithm]
@@ -72,17 +69,6 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         seed: Optional[int] = None,
         logbase: Optional[Union[float, str]] = None,
     ) -> None:
-        """Random Sampling Algorithm.
-
-        :param rule: The specific type of random algorithm. Acceptable values are: "random",
-            "sobol".
-        :type rule: str
-        :param seed: The seed for random number generation.
-        :type seed: int
-        :param logbase: A positive number or the number "e" in string format to be used as the base for log
-            based random sampling.
-        :type logbase: Union[float, str]
-        """
         super().__init__()
         self.type = SamplingAlgorithmType.RANDOM.lower()
         self.rule = rule
@@ -109,7 +95,6 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
     """Grid Sampling Algorithm.
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_grid_sampling_algorithm]
@@ -136,7 +121,6 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
     """Bayesian Sampling Algorithm.
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]

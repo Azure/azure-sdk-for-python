@@ -29,7 +29,7 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.registries.begin_import_image(
+    client.registries.begin_import_image(
         resource_group_name="myResourceGroup",
         registry_name="myRegistry",
         parameters={
@@ -42,9 +42,8 @@ def main():
             "untaggedTargetRepositories": ["targetRepository1"],
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2022-12-01/examples/ImportImageByManifestDigest.json
+# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/stable/2023-07-01/examples/ImportImageByManifestDigest.json
 if __name__ == "__main__":
     main()

@@ -19,6 +19,21 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Values can be systemAssignedIdentity or userAssignedIdentity."""
+
+    SYSTEM_ASSIGNED_IDENTITY = "systemAssignedIdentity"
+    USER_ASSIGNED_IDENTITY = "userAssignedIdentity"
+    DELEGATED_RESOURCE_IDENTITY = "delegatedResourceIdentity"
+
+
+class InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Values are enabled and disabled."""
+
+    ENABLED = "enabled"
+    DISABLED = "disabled"
+
+
 class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the operation refers to the primary or secondary key."""
 
@@ -33,6 +48,17 @@ class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GEN2 = "Gen2"
 
 
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+
+
 class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the SKU, in standard format (such as S0)."""
 
@@ -41,17 +67,12 @@ class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     G2 = "G2"
 
 
-class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The identity type."""
-
-    SYSTEM_ASSIGNED = "SystemAssigned"
-    USER_ASSIGNED = "UserAssigned"
-    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
-    NONE = "None"
-
-
 class SigningKey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Map account key to use for signing."""
+    """The Map account key to use for signing. Picking ``primaryKey`` or ``secondaryKey`` will use the
+    Map account Shared Keys, and using ``managedIdentity`` will use the auto-renewed private key to
+    sign the SAS.
+    """
 
     PRIMARY_KEY = "primaryKey"
     SECONDARY_KEY = "secondaryKey"
+    MANAGED_IDENTITY = "managedIdentity"

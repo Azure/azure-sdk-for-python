@@ -1,8 +1,10 @@
+import contextlib
+import dataclasses
 import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Tuple
+from typing import Callable, List, Tuple
 
 import pytest
 
@@ -10,21 +12,18 @@ from azure.ai.ml._utils._asset_utils import (
     AmlIgnoreFile,
     GitIgnoreFile,
     IgnoreFile,
-    get_ignore_file,
-    get_object_hash,
-    get_directory_size,
-    traverse_directory,
     _check_or_modify_auto_delete_setting,
     _validate_auto_delete_setting_in_data_output,
     _validate_workspace_managed_datastore,
+    get_directory_size,
+    get_ignore_file,
+    get_object_hash,
+    get_upload_files_from_folder,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
-from azure.ai.ml.exceptions import (
-    AssetPathException,
-    ValidationException,
-)
 from azure.ai.ml.constants._common import AutoDeleteCondition
 from azure.ai.ml.entities._assets.auto_delete_setting import AutoDeleteSetting
+from azure.ai.ml.exceptions import AssetPathException, ValidationException
 
 
 @pytest.fixture
@@ -74,6 +73,104 @@ def generate_link_file(base_dir: str) -> Tuple[os.PathLike, os.PathLike]:
     return convert_windows_path_to_unix(target_file), convert_windows_path_to_unix(link_file)
 
 
+@dataclasses.dataclass
+class SymbolLinkTestCase:
+    target_folder: str
+    link_folder: str
+    temp_folder: str
+    target_file: str = None
+    expected_remote_paths_without_prefix: List[str] = None
+
+    @classmethod
+    @contextlib.contextmanager
+    def _base(cls) -> "SymbolLinkTestCase":
+        with tempfile.TemporaryDirectory() as base_dir:
+            test_case = cls(
+                target_folder=os.path.join(base_dir, "target_folder"),
+                link_folder=os.path.join(base_dir, "link_folder"),
+                temp_folder=os.path.join(base_dir, "temp_folder"),
+            )
+            os.mkdir(test_case.target_folder)
+            os.mkdir(test_case.link_folder)
+            os.mkdir(test_case.temp_folder)
+
+            test_case.target_file = os.path.join(test_case.target_folder, "target_file.txt")
+            with open(test_case.target_file, "w") as f:
+                f.write("file content")
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def intermediate_link(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            Path(test_case.temp_folder, "intermediate_file.txt").symlink_to(test_case.target_file)
+            link_file = os.path.join(test_case.link_folder, "link_file.txt")
+            Path(link_file).symlink_to(os.path.join(test_case.temp_folder, "intermediate_file.txt"))
+            test_case.expected_remote_paths_without_prefix = [
+                "link_file.txt",
+            ]
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def relative_file(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            link_file = os.path.join(test_case.link_folder, "link_file.txt")
+            cur_dir = os.getcwd()
+            os.chdir(test_case.link_folder)
+            os.symlink(src=os.path.relpath(test_case.target_file, test_case.link_folder), dst=link_file)
+            os.chdir(cur_dir)
+            test_case.expected_remote_paths_without_prefix = [
+                "link_file.txt",
+            ]
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def relative_folder(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            link_path = os.path.join(test_case.link_folder, "link_folder")
+            cur_dir = os.getcwd()
+            os.chdir(test_case.link_folder)
+            os.symlink(src=os.path.relpath(test_case.target_folder, test_case.link_folder), dst=link_path)
+            os.chdir(cur_dir)
+            test_case.expected_remote_paths_without_prefix = [
+                "link_folder/target_file.txt",
+            ]
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def relative_intermediate_folder(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            cur_dir = os.getcwd()
+            temp_base = os.path.join(test_case.temp_folder, "sub_folder")
+            os.mkdir(temp_base)
+            inter_folder = os.path.join(temp_base, "inter")
+            os.chdir(temp_base)
+            os.symlink(src=os.path.relpath(test_case.target_folder, temp_base), dst=inter_folder)
+
+            link_path = os.path.join(test_case.link_folder, "link_folder")
+            os.chdir(test_case.link_folder)
+            os.symlink(src=os.path.relpath(temp_base, test_case.link_folder), dst=link_path)
+            os.chdir(cur_dir)
+            test_case.expected_remote_paths_without_prefix = [
+                "link_folder/inter/target_file.txt",
+            ]
+            yield test_case
+
+    @classmethod
+    @contextlib.contextmanager
+    def basic_file(cls) -> "SymbolLinkTestCase":
+        with cls._base() as test_case:
+            link_file = os.path.join(test_case.link_folder, "link_file.txt")
+            os.symlink(src=test_case.target_file, dst=link_file)
+            test_case.expected_remote_paths_without_prefix = [
+                "link_file.txt",
+            ]
+            yield test_case
+
+
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestAssetUtils:
@@ -113,20 +210,21 @@ class TestAssetUtils:
         source_path = Path(storage_test_directory).resolve()
         prefix = source_path.name + "/"
 
-        amlignore_upload_paths = []
-        gitignore_upload_paths = []
-        no_ignore_upload_paths = []
-
-        for root, _, files in os.walk(source_path, followlinks=True):
-            amlignore_upload_paths += list(
-                traverse_directory(root, files, source_path, prefix, ignore_file=amlignore_file)
-            )
-            gitignore_upload_paths += list(
-                traverse_directory(root, files, source_path, prefix, ignore_file=gitignore_file)
-            )
-            no_ignore_upload_paths += list(
-                traverse_directory(root, files, source_path, prefix, ignore_file=no_ignore_file)
-            )
+        amlignore_upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+            ignore_file=amlignore_file,
+        )
+        gitignore_upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+            ignore_file=gitignore_file,
+        )
+        no_ignore_upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+            ignore_file=no_ignore_file,
+        )
 
         assert len(no_ignore_upload_paths) == 7
         assert len(gitignore_upload_paths) == 6
@@ -135,10 +233,10 @@ class TestAssetUtils:
     def test_upload_paths_match(self, storage_test_directory: str) -> None:
         source_path = Path(storage_test_directory).resolve()
         prefix = source_path.name + "/"
-        upload_paths = []
-
-        for root, _, files in os.walk(source_path, followlinks=True):
-            upload_paths += list(traverse_directory(root, files, source_path, prefix))
+        upload_paths = get_upload_files_from_folder(
+            source_path,
+            prefix=prefix,
+        )
 
         for local_path, remote_path in upload_paths:
             remote_path = remote_path.split("/", 2)[-1]  # strip LocalUpload/<asset id> prefix
@@ -146,38 +244,59 @@ class TestAssetUtils:
                 continue
             assert remote_path in local_path
 
-    def test_symlinks_included_in_hash(self, storage_test_directory: str) -> None:
+    @pytest.mark.parametrize(
+        "create_test_case",
+        [
+            pytest.param(SymbolLinkTestCase.basic_file, id="basic_file"),
+            pytest.param(SymbolLinkTestCase.intermediate_link, id="intermediate_link"),
+            pytest.param(SymbolLinkTestCase.relative_file, id="relative_file"),
+            pytest.param(SymbolLinkTestCase.relative_folder, id="relative_folder"),
+            pytest.param(SymbolLinkTestCase.relative_intermediate_folder, id="relative_intermediate_folder"),
+        ],
+    )
+    def test_symlinks_included_in_hash(
+        self, create_test_case: Callable[[], SymbolLinkTestCase], no_ignore_file: IgnoreFile
+    ) -> None:
         """Confirm that changes in the original file are respected when the symlink is hashed"""
-        target_file_path, link_file_path = generate_link_file(storage_test_directory)
+        with create_test_case() as test_case:
+            # hash symlink, update original file, hash symlink again and compare hashes
+            original_hash = get_object_hash(path=test_case.link_folder, ignore_file=no_ignore_file)
+            Path(test_case.target_file).write_text("some more text")
+            updated_hash = get_object_hash(path=test_case.link_folder, ignore_file=no_ignore_file)
+            assert original_hash != updated_hash
 
-        # hash symlink, update original file, hash symlink again and compare hashes
-        original_hash = get_object_hash(path=link_file_path, ignore_file=no_ignore_file)
-        Path(target_file_path).write_text("some more text")
-        updated_hash = get_object_hash(path=link_file_path, ignore_file=no_ignore_file)
-        assert original_hash != updated_hash
-
-    def test_symlink_upload_paths(self, storage_test_directory: str) -> None:
+    @pytest.mark.parametrize(
+        "create_test_case",
+        [
+            pytest.param(SymbolLinkTestCase.basic_file, id="basic_file"),
+            pytest.param(SymbolLinkTestCase.intermediate_link, id="intermediate_link"),
+            pytest.param(SymbolLinkTestCase.relative_file, id="relative_file"),
+            pytest.param(SymbolLinkTestCase.relative_folder, id="relative_folder"),
+            pytest.param(SymbolLinkTestCase.relative_intermediate_folder, id="relative_intermediate_folder"),
+        ],
+    )
+    def test_symlink_upload_paths(self, create_test_case: Callable[[], SymbolLinkTestCase]) -> None:
         """Confirm that symlink name is preserved for upload to storage, but that target file's path is uploaded
 
         e.g given a file ./dir/foo/bar.txt with a symlink ./other_dir/bar_link.txt, we want to upload the contents of ./dir/food/bar.txt at path ./other_dir/bar_link.txt in the remote storage.
         """
-        target_file_path, link_file_path = generate_link_file(storage_test_directory)
-
-        source_path = Path(storage_test_directory).resolve()
         prefix = "random_prefix/"
-        upload_paths_list = []
+        with create_test_case() as test_case:
+            upload_paths_list = get_upload_files_from_folder(
+                test_case.link_folder,
+                prefix=prefix,
+            )
 
-        for root, _, files in os.walk(source_path, followlinks=True):
-            upload_paths_list += list(traverse_directory(root, files, source_path, prefix))
+            local_paths = [i for i, _ in upload_paths_list]
+            remote_paths = [j for _, j in upload_paths_list]
 
-        local_paths = [i for i, _ in upload_paths_list]
-        remote_paths = [j for _, j in upload_paths_list]
-
-        # When username is too long, temp folder path will be truncated, e.g. longusername -> LONGUS~
-        # so resolve target_file_path to get the full path
-        assert Path(target_file_path).resolve().as_posix() in local_paths
-        # remote file names are relative to root and include the prefix
-        assert prefix + Path(link_file_path).relative_to(storage_test_directory).as_posix() in remote_paths
+            # When username is too long, temp folder path will be truncated, e.g. longusername -> LONGUS~
+            # so resolve target_file_path to get the full path
+            assert Path(test_case.target_file).resolve().as_posix() in local_paths
+            # remote file names are relative to root and include the prefix
+            assert list(sorted(remote_paths)) == list(
+                sorted([prefix + p for p in test_case.expected_remote_paths_without_prefix])
+            )
 
     def test_directory_size_with_ignore_file(self, storage_test_directory: str, amlignore_file: AmlIgnoreFile) -> None:
         base_size = get_directory_size(storage_test_directory)

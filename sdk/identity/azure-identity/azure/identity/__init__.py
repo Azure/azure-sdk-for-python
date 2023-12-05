@@ -28,6 +28,7 @@ from ._credentials import (
     WorkloadIdentityCredential,
 )
 from ._persistent_cache import TokenCachePersistenceOptions
+from ._bearer_token_provider import get_bearer_token_provider
 
 
 __all__ = [
@@ -55,6 +56,7 @@ __all__ = [
     "UsernamePasswordCredential",
     "VisualStudioCodeCredential",
     "WorkloadIdentityCredential",
+    "get_bearer_token_provider",
 ]
 
 from ._version import VERSION

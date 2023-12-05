@@ -8,7 +8,12 @@ from typing import Dict, Any
 
 
 def _to_camel_case(string: str) -> str:
-    """Convert a string to camel case."""
+    """Convert a string to camel case.
+
+    :param str string: The string to convert to camel case.
+    :return: The string converted to camel case.
+    :rtype: str
+    """
 
     # Split the string by underscore
     components = string.split("_")
@@ -19,9 +24,14 @@ def _to_camel_case(string: str) -> str:
 
 
 def _convert_dict_to_camel_case(dictionary: Dict[str, Any]) -> Dict[str, Any]:
-    """Convert dictionary keys to camel case recursively."""
+    """Convert dictionary keys to camel case recursively.
 
-    new_dictionary = {}
+    :param dict[str, any] dictionary: The dictionary to convert to camel case.
+    :return: The dictionary with keys converted to camel case.
+    :rtype: dict[str, any]
+    """
+
+    new_dictionary: Dict[str, Any] = {}
 
     # Iterate through all the keys in the dictionary
     for key, value in dictionary.items():

@@ -13,6 +13,7 @@ from .._utils import get_authentication_policy
 from .._generated.aio import SearchIndexClient
 from .._generated.models import (
     AutocompleteMode,
+    AutocompleteRequest,
     IndexAction,
     IndexBatch,
     IndexingResult,
@@ -23,9 +24,11 @@ from .._generated.models import (
     QueryType,
     SearchMode,
     ScoringStatistics,
-    Vector,
-    SemanticErrorHandling,
+    VectorFilterMode,
+    VectorQuery,
+    SemanticErrorMode,
     QueryDebugMode,
+    SuggestRequest,
 )
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
@@ -60,6 +63,7 @@ class SearchClient(HeadersMixin):
     """
 
     _ODATA_ACCEPT: str = "application/json;odata.metadata=none"
+    _client: SearchIndexClient
 
     def __init__(
         self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
@@ -72,7 +76,7 @@ class SearchClient(HeadersMixin):
         audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client: SearchIndexClient = SearchIndexClient(
+            self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
                 sdk_moniker=SDK_MONIKER,
@@ -82,7 +86,7 @@ class SearchClient(HeadersMixin):
         else:
             self._aad = True
             authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
-            self._client: SearchIndexClient = SearchIndexClient(
+            self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
                 authentication_policy=authentication_policy,
@@ -139,7 +143,7 @@ class SearchClient(HeadersMixin):
     @distributed_trace_async
     async def search(
         self,
-        search_text: str,
+        search_text: Optional[str] = None,
         *,
         include_total_count: Optional[bool] = None,
         facets: Optional[List[str]] = None,
@@ -152,6 +156,7 @@ class SearchClient(HeadersMixin):
         query_type: Optional[Union[str, QueryType]] = None,
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
+        semantic_query: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         search_mode: Optional[Union[str, SearchMode]] = None,
         query_language: Optional[Union[str, QueryLanguage]] = None,
@@ -160,7 +165,7 @@ class SearchClient(HeadersMixin):
         query_answer_count: Optional[int] = None,
         query_answer_threshold: Optional[float] = None,
         query_caption: Optional[Union[str, QueryCaptionType]] = None,
-        query_caption_highlight: Optional[bool] = None,
+        query_caption_highlight_enabled: Optional[bool] = None,
         semantic_fields: Optional[List[str]] = None,
         semantic_configuration_name: Optional[str] = None,
         select: Optional[List[str]] = None,
@@ -168,10 +173,9 @@ class SearchClient(HeadersMixin):
         top: Optional[int] = None,
         scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
         session_id: Optional[str] = None,
-        vector: Optional[List[float]] = None,
-        top_k: Optional[int] = None,
-        vector_fields: Optional[str] = None,
-        semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
+        vector_queries: Optional[List[VectorQuery]] = None,
+        vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
+        semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
         **kwargs
@@ -214,6 +218,10 @@ class SearchClient(HeadersMixin):
          "mylocation--122.2,44.8" (without the quotes).
         :keyword str scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
+        :keyword str semantic_query: Allows setting a separate search query that will be solely used for
+         semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+         is a need to use different queries between the base retrieval and ranking phase, and the L2
+         semantic phase.
         :keyword list[str] search_fields: The list of field names to which to scope the full-text search. When
          using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
          each fielded search expression take precedence over any field names listed in this parameter.
@@ -245,7 +253,7 @@ class SearchClient(HeadersMixin):
          query returns captions extracted from key passages in the highest ranked documents.
          Defaults to 'None'. Possible values include: "none", "extractive".
         :paramtype query_caption: str or ~azure.search.documents.models.QueryCaptionType
-        :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
+        :keyword bool query_caption_highlight_enabled: This parameter is only valid if the query type is 'semantic' when
          query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
         :keyword list[str] semantic_fields: The list of field names used for semantic search.
@@ -273,22 +281,20 @@ class SearchClient(HeadersMixin):
          interfere with the load balancing of the requests across replicas and adversely affect the
          performance of the search service. The value used as sessionId cannot start with a '_'
          character.
-        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
+        :keyword semantic_error_mode: Allows the user to choose whether a semantic call should fail
          completely (default / current behavior), or to return partial results. Known values are:
          "partial" and "fail".
-        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorHandling
+        :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
          time it takes for semantic enrichment to finish processing before the request fails.
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
          results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword vector: The vector representation of a search query.
-        :paramtype vector: list[float]
-        :keyword top_k: Number of nearest neighbors to return as top hits.
-        :paramtype top_k: int
-        :keyword vector_fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-          searched.
-        :paramtype vector_fields: str
+        :keyword vector_queries: The query parameters for vector and hybrid search queries.
+        :paramtype vector_queries: list[VectorQuery]
+        :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
+          vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
+        :paramtype vector_filter_mode: str or VectorFilterMode
         :return: A list of documents (dicts) matching the specified search criteria.
         :rtype:  AsyncSearchItemPaged[dict]
 
@@ -326,13 +332,10 @@ class SearchClient(HeadersMixin):
         answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
         captions = (
             query_caption
-            if not query_caption_highlight
-            else "{}|highlight-{}".format(query_caption, query_caption_highlight)
+            if not query_caption_highlight_enabled
+            else "{}|highlight-{}".format(query_caption, query_caption_highlight_enabled)
         )
         semantic_configuration = semantic_configuration_name
-        vector_option = None
-        if vector or top_k or vector_fields:
-            vector_option = Vector(value=vector, k=top_k, fields=vector_fields)
 
         query = SearchQuery(
             search_text=search_text,
@@ -343,10 +346,11 @@ class SearchClient(HeadersMixin):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
-            order_by=order_by,
+            order_by=order_by if isinstance(order_by, str) else None,
             query_type=query_type,
             scoring_parameters=scoring_parameters,
             scoring_profile=scoring_profile,
+            semantic_query=semantic_query,
             search_fields=search_fields_str,
             search_mode=search_mode,
             query_language=query_language,
@@ -360,13 +364,16 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector=vector_option,
-            semantic_error_handling=semantic_error_handling,
+            vector_queries=vector_queries,
+            vector_filter_mode=vector_filter_mode,
+            semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
         )
         if isinstance(select, list):
             query.select(select)
+        if isinstance(order_by, list):
+            query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["api_version"] = self._api_version
         return AsyncSearchItemPaged(self._client, query, kwargs, page_iterator_class=AsyncSearchPageIterator)
@@ -377,6 +384,7 @@ class SearchClient(HeadersMixin):
         search_text: str,
         suggester_name: str,
         *,
+        filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
@@ -431,7 +439,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search suggestions.
         """
-        filter_arg = kwargs.pop("filter", None)
+        filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
         query = SuggestQuery(
             search_text=search_text,
@@ -441,15 +449,19 @@ class SearchClient(HeadersMixin):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
-            order_by=order_by,
+            order_by=order_by if isinstance(order_by, str) else None,
             search_fields=search_fields_str,
             select=select if isinstance(select, str) else None,
             top=top,
         )
         if isinstance(select, list):
             query.select(select)
+        if isinstance(order_by, list):
+            query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = await self._client.documents.suggest_post(suggest_request=query.request, **kwargs)
+        request = cast(SuggestRequest, query.request)
+        response = await self._client.documents.suggest_post(suggest_request=request, **kwargs)
+        assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
 
@@ -524,7 +536,9 @@ class SearchClient(HeadersMixin):
         )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = await self._client.documents.autocomplete_post(autocomplete_request=query.request, **kwargs)
+        request = cast(AutocompleteRequest, query.request)
+        response = await self._client.documents.autocomplete_post(autocomplete_request=request, **kwargs)
+        assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
 
@@ -670,17 +684,18 @@ class SearchClient(HeadersMixin):
                 actions=actions[:pos], error_map=error_map, **kwargs
             )
             if batch_response_first_half:
-                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
+                result_first_half = batch_response_first_half
             else:
                 result_first_half = []
             batch_response_second_half = await self._index_documents_actions(
                 actions=actions[pos:], error_map=error_map, **kwargs
             )
             if batch_response_second_half:
-                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
+                result_second_half = batch_response_second_half
             else:
                 result_second_half = []
-            return result_first_half.extend(result_second_half)
+            result_first_half.extend(result_second_half)
+            return result_first_half
 
     async def __aenter__(self) -> "SearchClient":
         await self._client.__aenter__()  # pylint: disable=no-member

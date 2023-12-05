@@ -130,7 +130,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             raise DecodeError(
                 message="Failed to decode JSON data: {}".format(e),
                 response=response,
-                error=e)
+                error=e) from e
 
     return result, headers
 
@@ -157,11 +157,8 @@ async def AsynchronousRequest(
     :param _GlobalEndpointManager global_endpoint_manager:
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client: PipelineClient to process the request.
-    :param str method:
-    :param str path:
+    :param HttpRequest request: the HTTP request to be sent
     :param (str, unicode, file-like stream object, dict, list or None) request_data:
-    :param dict query_params:
-    :param dict headers:
     :return: tuple of (result, headers)
     :rtype: tuple of (dict dict)
     """
@@ -171,7 +168,7 @@ async def AsynchronousRequest(
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
-    # Pass _Request function with it's parameters to retry_utility's Execute method that wraps the call with retries
+    # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return await _retry_utility_async.ExecuteAsync(
         client,
         global_endpoint_manager,

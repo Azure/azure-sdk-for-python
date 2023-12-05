@@ -115,7 +115,11 @@ class Code(Artifact):
         return code_version_resource
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        """Update an artifact with the remote path of a local upload."""
+        """Update an artifact with the remote path of a local upload.
+
+        :param asset_artifact: The asset storage info of the artifact
+        :type asset_artifact: ArtifactStorageInfo
+        """
         if asset_artifact.is_file:
             # Code paths cannot be pointers to single files. It must be a pointer to a container
             # Skipping the setter to avoid being resolved as a local path

@@ -53,7 +53,7 @@ class StorageMoverMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-03-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -70,7 +70,7 @@ class StorageMoverMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
         self._config = StorageMoverMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

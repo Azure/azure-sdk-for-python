@@ -4,28 +4,38 @@
 
 from typing import List
 
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    NotificationSetting,
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EmailMonitoringAlertNotificationSettings,
     EmailNotificationEnableType,
+    NotificationSetting,
 )
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 @experimental
 class AlertNotification(RestTranslatableMixin):
     """Alert notification configuration for monitoring jobs
 
-    :param emails: A list of emails that will receive notifications for monitoring alerts
-    :type emails: List[str]
+    :keyword emails: A list of email addresses that will receive notifications for monitoring alerts.
+        Defaults to None.
+    :paramtype emails: Optional[list[str]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
+            :start-after: [START spark_monitor_definition]
+            :end-before: [END spark_monitor_definition]
+            :language: python
+            :dedent: 8
+            :caption: Configuring alert notifications for a monitored job.
     """
 
     def __init__(
         self,
         *,
         emails: List[str] = None,
-    ):
+    ) -> None:
         self.emails = emails
 
     def _to_rest_object(

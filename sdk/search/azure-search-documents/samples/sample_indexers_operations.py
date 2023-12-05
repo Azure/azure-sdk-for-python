@@ -20,9 +20,9 @@ USAGE:
 
 import os
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-key = os.getenv("AZURE_SEARCH_API_KEY")
-connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
+connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.models import (

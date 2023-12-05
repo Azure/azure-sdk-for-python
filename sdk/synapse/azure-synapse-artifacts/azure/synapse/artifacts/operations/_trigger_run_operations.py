@@ -25,7 +25,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -55,7 +55,7 @@ def build_rerun_trigger_instance_request(trigger_name: str, run_id: str, **kwarg
         "runId": _SERIALIZER.url("run_id", run_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -87,7 +87,7 @@ def build_cancel_trigger_instance_request(trigger_name: str, run_id: str, **kwar
         "runId": _SERIALIZER.url("run_id", run_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -168,23 +168,22 @@ class TriggerRunOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_rerun_trigger_instance_request(
+        _request = build_rerun_trigger_instance_request(
             trigger_name=trigger_name,
             run_id=run_id,
             api_version=api_version,
-            template_url=self.rerun_trigger_instance.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -194,9 +193,7 @@ class TriggerRunOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    rerun_trigger_instance.metadata = {"url": "/triggers/{triggerName}/triggerRuns/{runId}/rerun"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def cancel_trigger_instance(  # pylint: disable=inconsistent-return-statements
@@ -227,23 +224,22 @@ class TriggerRunOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_cancel_trigger_instance_request(
+        _request = build_cancel_trigger_instance_request(
             trigger_name=trigger_name,
             run_id=run_id,
             api_version=api_version,
-            template_url=self.cancel_trigger_instance.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -253,9 +249,7 @@ class TriggerRunOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    cancel_trigger_instance.metadata = {"url": "/triggers/{triggerName}/triggerRuns/{runId}/cancel"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def query_trigger_runs_by_workspace(
@@ -331,24 +325,23 @@ class TriggerRunOperations:
         else:
             _json = self._serialize.body(filter_parameters, "RunFilterParameters")
 
-        request = build_query_trigger_runs_by_workspace_request(
+        _request = build_query_trigger_runs_by_workspace_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.query_trigger_runs_by_workspace.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -360,8 +353,6 @@ class TriggerRunOperations:
         deserialized = self._deserialize("TriggerRunsQueryResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    query_trigger_runs_by_workspace.metadata = {"url": "/queryTriggerRuns"}
+        return deserialized  # type: ignore

@@ -96,31 +96,35 @@ class SourceControlConfigurationClient:  # pylint: disable=client-accepts-api-ve
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.cluster_extension_type = ClusterExtensionTypeOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
         )
         self.cluster_extension_types = ClusterExtensionTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
         )
         self.extension_type_versions = ExtensionTypeVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
         )
         self.location_extension_types = LocationExtensionTypesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
         )
-        self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.extensions = ExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
+        )
         self.operation_status = OperationStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
         )
         self.flux_configurations = FluxConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
         )
         self.flux_config_operation_status = FluxConfigOperationStatusOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
         )
         self.source_control_configurations = SourceControlConfigurationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
         )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-01-01-preview"
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

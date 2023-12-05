@@ -23,8 +23,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
 
     This flow is typically used by middle-tier services that authorize requests to other services with a delegated
     user identity. Because this is not an interactive authentication flow, an application using it must have admin
-    consent for any delegated permissions before requesting tokens for them. See `Azure Active Directory documentation
-    <https://docs.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow>`_ for a more detailed
+    consent for any delegated permissions before requesting tokens for them. See `Microsoft Entra ID documentation
+    <https://learn.microsoft.com/azure/active-directory/develop/v2-oauth2-on-behalf-of-flow>`_ for a more detailed
     description of the on-behalf-of flow.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
@@ -37,7 +37,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     :keyword str user_assertion: Required. The access token the credential will use as the user assertion when
         requesting on-behalf-of tokens
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword password: A certificate password. Used only when **client_certificate** is provided. If this value

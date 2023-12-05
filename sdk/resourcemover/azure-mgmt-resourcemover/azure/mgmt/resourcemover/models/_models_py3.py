@@ -49,7 +49,7 @@ class AffectedMoveResource(_serialization.Model):
         "move_resources": {"key": "moveResources", "type": "[AffectedMoveResource]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -69,7 +69,7 @@ class AutomaticResolutionProperties(_serialization.Model):
         "move_resource_id": {"key": "moveResourceId", "type": "str"},
     }
 
-    def __init__(self, *, move_resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, move_resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword move_resource_id: Gets the MoveResource ARM ID of
          the dependent resource if the resolution type is Automatic.
@@ -94,18 +94,20 @@ class ResourceSettings(_serialization.Model):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     """
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
     }
 
     _subtype_map = {
@@ -126,14 +128,23 @@ class ResourceSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, target_resource_name: str, **kwargs):
+    def __init__(
+        self,
+        *,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         """
         super().__init__(**kwargs)
-        self.resource_type = None  # type: Optional[str]
+        self.resource_type: Optional[str] = None
         self.target_resource_name = target_resource_name
+        self.target_resource_group_name = target_resource_group_name
 
 
 class AvailabilitySetResourceSettings(ResourceSettings):
@@ -144,8 +155,10 @@ class AvailabilitySetResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar fault_domain: Gets or sets the target fault domain.
@@ -156,7 +169,6 @@ class AvailabilitySetResourceSettings(ResourceSettings):
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
         "fault_domain": {"minimum": 1},
         "update_domain": {"maximum": 20, "minimum": 1},
     }
@@ -164,6 +176,7 @@ class AvailabilitySetResourceSettings(ResourceSettings):
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "fault_domain": {"key": "faultDomain", "type": "int"},
         "update_domain": {"key": "updateDomain", "type": "int"},
@@ -172,15 +185,18 @@ class AvailabilitySetResourceSettings(ResourceSettings):
     def __init__(
         self,
         *,
-        target_resource_name: str,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         fault_domain: Optional[int] = None,
         update_domain: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword fault_domain: Gets or sets the target fault domain.
@@ -188,8 +204,10 @@ class AvailabilitySetResourceSettings(ResourceSettings):
         :keyword update_domain: Gets or sets the target update domain.
         :paramtype update_domain: int
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Compute/availabilitySets"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Compute/availabilitySets"
         self.tags = tags
         self.fault_domain = fault_domain
         self.update_domain = update_domain
@@ -213,7 +231,7 @@ class AzureResourceReference(_serialization.Model):
         "source_arm_resource_id": {"key": "sourceArmResourceId", "type": "str"},
     }
 
-    def __init__(self, *, source_arm_resource_id: str, **kwargs):
+    def __init__(self, *, source_arm_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword source_arm_resource_id: Gets the ARM resource ID of the tracked resource being
          referenced. Required.
@@ -250,8 +268,8 @@ class BulkRemoveRequest(_serialization.Model):
         validate_only: Optional[bool] = None,
         move_resources: Optional[List[str]] = None,
         move_resource_input_type: Optional[Union[str, "_models.MoveResourceInputType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword validate_only: Gets or sets a value indicating whether the operation needs to only run
          pre-requisite.
@@ -300,8 +318,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -355,8 +373,8 @@ class CommitRequest(_serialization.Model):
         move_resources: List[str],
         validate_only: Optional[bool] = None,
         move_resource_input_type: Optional[Union[str, "_models.MoveResourceInputType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword validate_only: Gets or sets a value indicating whether the operation needs to only run
          pre-requisite.
@@ -408,8 +426,8 @@ class DiscardRequest(_serialization.Model):
         move_resources: List[str],
         validate_only: Optional[bool] = None,
         move_resource_input_type: Optional[Union[str, "_models.MoveResourceInputType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword validate_only: Gets or sets a value indicating whether the operation needs to only run
          pre-requisite.
@@ -436,27 +454,39 @@ class DiskEncryptionSetResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     """
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
     }
 
-    def __init__(self, *, target_resource_name: str, **kwargs):
+    def __init__(
+        self,
+        *,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Compute/diskEncryptionSets"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Compute/diskEncryptionSets"
 
 
 class Display(_serialization.Model):
@@ -466,40 +496,40 @@ class Display(_serialization.Model):
     (2) complex query filters for the event service; and
     (3) audit history / records for management operations.
 
-        :ivar provider: Gets or sets the provider.
-         The localized friendly form of the resource provider name – it is expected to also
-         include the publisher/company responsible.
-         It should use Title Casing and begin with "Microsoft" for 1st party services.
-         e.g. "Microsoft Monitoring Insights" or "Microsoft Compute.".
-        :vartype provider: str
-        :ivar resource: Gets or sets the resource.
-         The localized friendly form of the resource related to this action/operation – it
-         should match the public documentation for the resource provider.
-         It should use Title Casing.
-         This value should be unique for a particular URL type (e.g. nested types should *not*
-         reuse their parent’s display.resource field)
-         e.g. "Virtual Machines" or "Scheduler Job Collections", or "Virtual Machine VM Sizes"
-         or "Scheduler Jobs".
-        :vartype resource: str
-        :ivar operation: Gets or sets the operation.
-         The localized friendly name for the operation, as it should be shown to the user.
-         It should be concise (to fit in drop downs) but clear (i.e. self-documenting).
-         It should use Title Casing.
-         Prescriptive guidance: Read Create or Update Delete 'ActionName'.
-        :vartype operation: str
-        :ivar description: Gets or sets the description.
-         The localized friendly description for the operation, as it should be shown to the
-         user.
-         It should be thorough, yet concise – it will be used in tool tips and detailed views.
-         Prescriptive guidance for namespace:
-         Read any 'display.provider'  resource
-         Create or Update any  'display.provider'  resource
-         Delete any  'display.provider'  resource
-         Perform any other action on any  'display.provider'  resource
-         Prescriptive guidance for namespace:
-         Read any 'display.resource' Create or Update any  'display.resource' Delete any
-          'display.resource' 'ActionName' any 'display.resources'.
-        :vartype description: str
+    :ivar provider: Gets or sets the provider.
+     The localized friendly form of the resource provider name – it is expected to also
+     include the publisher/company responsible.
+     It should use Title Casing and begin with "Microsoft" for 1st party services.
+     e.g. "Microsoft Monitoring Insights" or "Microsoft Compute.".
+    :vartype provider: str
+    :ivar resource: Gets or sets the resource.
+     The localized friendly form of the resource related to this action/operation – it
+     should match the public documentation for the resource provider.
+     It should use Title Casing.
+     This value should be unique for a particular URL type (e.g. nested types should *not*
+     reuse their parent’s display.resource field)
+     e.g. "Virtual Machines" or "Scheduler Job Collections", or "Virtual Machine VM Sizes"
+     or "Scheduler Jobs".
+    :vartype resource: str
+    :ivar operation: Gets or sets the operation.
+     The localized friendly name for the operation, as it should be shown to the user.
+     It should be concise (to fit in drop downs) but clear (i.e. self-documenting).
+     It should use Title Casing.
+     Prescriptive guidance: Read Create or Update Delete 'ActionName'.
+    :vartype operation: str
+    :ivar description: Gets or sets the description.
+     The localized friendly description for the operation, as it should be shown to the
+     user.
+     It should be thorough, yet concise – it will be used in tool tips and detailed views.
+     Prescriptive guidance for namespace:
+     Read any 'display.provider'  resource
+     Create or Update any  'display.provider'  resource
+     Delete any  'display.provider'  resource
+     Perform any other action on any  'display.provider'  resource
+     Prescriptive guidance for namespace:
+     Read any 'display.resource' Create or Update any  'display.resource' Delete any
+      'display.resource' 'ActionName' any 'display.resources'.
+    :vartype description: str
     """
 
     _attribute_map = {
@@ -516,8 +546,8 @@ class Display(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Gets or sets the provider.
          The localized friendly form of the resource provider name – it is expected to also
@@ -585,8 +615,8 @@ class Identity(_serialization.Model):
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
         principal_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of identity used for the resource mover service. Known values are:
          "None", "SystemAssigned", and "UserAssigned".
@@ -623,7 +653,7 @@ class JobStatus(_serialization.Model):
         "job_progress": {"key": "jobProgress", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.job_name = None
@@ -638,27 +668,39 @@ class KeyVaultResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     """
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
     }
 
-    def __init__(self, *, target_resource_name: str, **kwargs):
+    def __init__(
+        self,
+        *,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.KeyVault/vaults"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.KeyVault/vaults"
 
 
 class LBBackendAddressPoolResourceSettings(_serialization.Model):
@@ -672,7 +714,7 @@ class LBBackendAddressPoolResourceSettings(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the backend address pool name.
         :paramtype name: str
@@ -714,8 +756,8 @@ class LBFrontendIPConfigurationResourceSettings(_serialization.Model):
         private_ip_allocation_method: Optional[str] = None,
         subnet: Optional["_models.SubnetReference"] = None,
         zones: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gets or sets the frontend IP configuration name.
         :paramtype name: str
@@ -760,7 +802,7 @@ class ProxyResourceReference(AzureResourceReference):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, source_arm_resource_id: str, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, source_arm_resource_id: str, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword source_arm_resource_id: Gets the ARM resource ID of the tracked resource being
          referenced. Required.
@@ -793,7 +835,7 @@ class LoadBalancerBackendAddressPoolReference(ProxyResourceReference):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, source_arm_resource_id: str, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, source_arm_resource_id: str, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword source_arm_resource_id: Gets the ARM resource ID of the tracked resource being
          referenced. Required.
@@ -825,7 +867,7 @@ class LoadBalancerNatRuleReference(ProxyResourceReference):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, source_arm_resource_id: str, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, source_arm_resource_id: str, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword source_arm_resource_id: Gets the ARM resource ID of the tracked resource being
          referenced. Required.
@@ -844,8 +886,10 @@ class LoadBalancerResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: Gets or sets load balancer sku (Basic/Standard).
@@ -865,12 +909,12 @@ class LoadBalancerResourceSettings(ResourceSettings):
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "sku": {"key": "sku", "type": "str"},
         "frontend_ip_configurations": {
@@ -884,17 +928,20 @@ class LoadBalancerResourceSettings(ResourceSettings):
     def __init__(
         self,
         *,
-        target_resource_name: str,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional[str] = None,
         frontend_ip_configurations: Optional[List["_models.LBFrontendIPConfigurationResourceSettings"]] = None,
         backend_address_pools: Optional[List["_models.LBBackendAddressPoolResourceSettings"]] = None,
         zones: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: Gets or sets load balancer sku (Basic/Standard).
@@ -911,8 +958,10 @@ class LoadBalancerResourceSettings(ResourceSettings):
           precedence only if frontend IP configurations settings are not present.
         :paramtype zones: str
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Network/loadBalancers"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Network/loadBalancers"
         self.tags = tags
         self.sku = sku
         self.frontend_ip_configurations = frontend_ip_configurations
@@ -932,7 +981,7 @@ class ManualResolutionProperties(_serialization.Model):
         "target_id": {"key": "targetId", "type": "str"},
     }
 
-    def __init__(self, *, target_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, target_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword target_id: Gets or sets the target resource ARM ID of the dependent resource if the
          resource type is Manual.
@@ -994,8 +1043,8 @@ class MoveCollection(_serialization.Model):
         location: Optional[str] = None,
         identity: Optional["_models.Identity"] = None,
         properties: Optional["_models.MoveCollectionProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1023,22 +1072,25 @@ class MoveCollectionProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar source_region: Gets or sets the source region. Required.
+    :ivar source_region: Gets or sets the source region.
     :vartype source_region: str
-    :ivar target_region: Gets or sets the target region. Required.
+    :ivar target_region: Gets or sets the target region.
     :vartype target_region: str
+    :ivar move_region: Gets or sets the move region which indicates the region where the VM
+     Regional to Zonal move will be conducted.
+    :vartype move_region: str
     :ivar provisioning_state: Defines the provisioning states. Known values are: "Succeeded",
      "Updating", "Creating", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.resourcemover.models.ProvisioningState
+    :ivar version: Gets or sets the version of move collection.
+    :vartype version: str
+    :ivar move_type: Defines the MoveType. Known values are: "RegionToRegion" and "RegionToZone".
+    :vartype move_type: str or ~azure.mgmt.resourcemover.models.MoveType
     :ivar errors: Defines the move collection errors.
     :vartype errors: ~azure.mgmt.resourcemover.models.MoveCollectionPropertiesErrors
     """
 
     _validation = {
-        "source_region": {"required": True},
-        "target_region": {"required": True},
         "provisioning_state": {"readonly": True},
         "errors": {"readonly": True},
     }
@@ -1046,21 +1098,44 @@ class MoveCollectionProperties(_serialization.Model):
     _attribute_map = {
         "source_region": {"key": "sourceRegion", "type": "str"},
         "target_region": {"key": "targetRegion", "type": "str"},
+        "move_region": {"key": "moveRegion", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "move_type": {"key": "moveType", "type": "str"},
         "errors": {"key": "errors", "type": "MoveCollectionPropertiesErrors"},
     }
 
-    def __init__(self, *, source_region: str, target_region: str, **kwargs):
+    def __init__(
+        self,
+        *,
+        source_region: Optional[str] = None,
+        target_region: Optional[str] = None,
+        move_region: Optional[str] = None,
+        version: Optional[str] = None,
+        move_type: Optional[Union[str, "_models.MoveType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword source_region: Gets or sets the source region. Required.
+        :keyword source_region: Gets or sets the source region.
         :paramtype source_region: str
-        :keyword target_region: Gets or sets the target region. Required.
+        :keyword target_region: Gets or sets the target region.
         :paramtype target_region: str
+        :keyword move_region: Gets or sets the move region which indicates the region where the VM
+         Regional to Zonal move will be conducted.
+        :paramtype move_region: str
+        :keyword version: Gets or sets the version of move collection.
+        :paramtype version: str
+        :keyword move_type: Defines the MoveType. Known values are: "RegionToRegion" and
+         "RegionToZone".
+        :paramtype move_type: str or ~azure.mgmt.resourcemover.models.MoveType
         """
         super().__init__(**kwargs)
         self.source_region = source_region
         self.target_region = target_region
+        self.move_region = move_region
         self.provisioning_state = None
+        self.version = version
+        self.move_type = move_type
         self.errors = None
 
 
@@ -1075,7 +1150,7 @@ class MoveResourceError(_serialization.Model):
         "properties": {"key": "properties", "type": "MoveResourceErrorBody"},
     }
 
-    def __init__(self, *, properties: Optional["_models.MoveResourceErrorBody"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.MoveResourceErrorBody"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The move resource error body.
         :paramtype properties: ~azure.mgmt.resourcemover.models.MoveResourceErrorBody
@@ -1095,7 +1170,7 @@ class MoveCollectionPropertiesErrors(MoveResourceError):
         "properties": {"key": "properties", "type": "MoveResourceErrorBody"},
     }
 
-    def __init__(self, *, properties: Optional["_models.MoveResourceErrorBody"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.MoveResourceErrorBody"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The move resource error body.
         :paramtype properties: ~azure.mgmt.resourcemover.models.MoveResourceErrorBody
@@ -1118,8 +1193,8 @@ class MoveCollectionResultList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.MoveCollection"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.MoveCollection"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets the list of move collections.
         :paramtype value: list[~azure.mgmt.resourcemover.models.MoveCollection]
@@ -1148,7 +1223,7 @@ class MoveErrorInfo(_serialization.Model):
         "move_resources": {"key": "moveResources", "type": "[AffectedMoveResource]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.move_resources = None
@@ -1186,7 +1261,7 @@ class MoveResource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, properties: Optional["_models.MoveResourceProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.MoveResourceProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Defines the move resource properties.
         :paramtype properties: ~azure.mgmt.resourcemover.models.MoveResourceProperties
@@ -1232,8 +1307,8 @@ class MoveResourceCollection(_serialization.Model):
         value: Optional[List["_models.MoveResource"]] = None,
         next_link: Optional[str] = None,
         summary_collection: Optional["_models.SummaryCollection"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets the list of move resources.
         :paramtype value: list[~azure.mgmt.resourcemover.models.MoveResource]
@@ -1290,8 +1365,8 @@ class MoveResourceDependency(_serialization.Model):
         manual_resolution: Optional["_models.ManualResolutionProperties"] = None,
         automatic_resolution: Optional["_models.AutomaticResolutionProperties"] = None,
         is_optional: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Gets the source ARM ID of the dependent resource.
         :paramtype id: str
@@ -1341,8 +1416,8 @@ class MoveResourceDependencyOverride(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         target_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Gets or sets the ARM ID of the dependent resource.
         :paramtype id: str
@@ -1388,7 +1463,7 @@ class MoveResourceErrorBody(_serialization.Model):
         "details": {"key": "details", "type": "[MoveResourceErrorBody]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1408,7 +1483,7 @@ class MoveResourceFilter(_serialization.Model):
         "properties": {"key": "properties", "type": "MoveResourceFilterProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.MoveResourceFilterProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.MoveResourceFilterProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.resourcemover.models.MoveResourceFilterProperties
@@ -1428,7 +1503,7 @@ class MoveResourceFilterProperties(_serialization.Model):
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, provisioning_state: Optional[str] = None, **kwargs):
+    def __init__(self, *, provisioning_state: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword provisioning_state: The provisioning state.
         :paramtype provisioning_state: str
@@ -1503,8 +1578,8 @@ class MoveResourceProperties(_serialization.Model):  # pylint: disable=too-many-
         existing_target_id: Optional[str] = None,
         resource_settings: Optional["_models.ResourceSettings"] = None,
         depends_on_overrides: Optional[List["_models.MoveResourceDependencyOverride"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_id: Gets or sets the Source ARM Id of the resource. Required.
         :paramtype source_id: str
@@ -1541,7 +1616,7 @@ class MoveResourcePropertiesErrors(MoveResourceError):
         "properties": {"key": "properties", "type": "MoveResourceErrorBody"},
     }
 
-    def __init__(self, *, properties: Optional["_models.MoveResourceErrorBody"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.MoveResourceErrorBody"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The move resource error body.
         :paramtype properties: ~azure.mgmt.resourcemover.models.MoveResourceErrorBody
@@ -1580,8 +1655,8 @@ class MoveResourceStatus(_serialization.Model):
         *,
         job_status: Optional["_models.JobStatus"] = None,
         errors: Optional["_models.MoveResourceError"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword job_status: Defines the job status.
         :paramtype job_status: ~azure.mgmt.resourcemover.models.JobStatus
@@ -1625,8 +1700,8 @@ class MoveResourcePropertiesMoveStatus(MoveResourceStatus):
         *,
         job_status: Optional["_models.JobStatus"] = None,
         errors: Optional["_models.MoveResourceError"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword job_status: Defines the job status.
         :paramtype job_status: ~azure.mgmt.resourcemover.models.JobStatus
@@ -1644,8 +1719,10 @@ class NetworkInterfaceResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar ip_configurations: Gets or sets the IP configurations of the NIC.
@@ -1658,12 +1735,12 @@ class NetworkInterfaceResourceSettings(ResourceSettings):
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "ip_configurations": {"key": "ipConfigurations", "type": "[NicIpConfigurationResourceSettings]"},
         "enable_accelerated_networking": {"key": "enableAcceleratedNetworking", "type": "bool"},
@@ -1672,15 +1749,18 @@ class NetworkInterfaceResourceSettings(ResourceSettings):
     def __init__(
         self,
         *,
-        target_resource_name: str,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         ip_configurations: Optional[List["_models.NicIpConfigurationResourceSettings"]] = None,
         enable_accelerated_networking: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword ip_configurations: Gets or sets the IP configurations of the NIC.
@@ -1690,8 +1770,10 @@ class NetworkInterfaceResourceSettings(ResourceSettings):
          networking is enabled.
         :paramtype enable_accelerated_networking: bool
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Network/networkInterfaces"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Network/networkInterfaces"
         self.tags = tags
         self.ip_configurations = ip_configurations
         self.enable_accelerated_networking = enable_accelerated_networking
@@ -1705,8 +1787,10 @@ class NetworkSecurityGroupResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar security_rules: Gets or sets Security rules of network security group.
@@ -1715,12 +1799,12 @@ class NetworkSecurityGroupResourceSettings(ResourceSettings):
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "security_rules": {"key": "securityRules", "type": "[NsgSecurityRule]"},
     }
@@ -1728,21 +1812,26 @@ class NetworkSecurityGroupResourceSettings(ResourceSettings):
     def __init__(
         self,
         *,
-        target_resource_name: str,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         security_rules: Optional[List["_models.NsgSecurityRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword security_rules: Gets or sets Security rules of network security group.
         :paramtype security_rules: list[~azure.mgmt.resourcemover.models.NsgSecurityRule]
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Network/networkSecurityGroups"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Network/networkSecurityGroups"
         self.tags = tags
         self.security_rules = security_rules
 
@@ -1797,8 +1886,8 @@ class NicIpConfigurationResourceSettings(_serialization.Model):
         load_balancer_backend_address_pools: Optional[List["_models.LoadBalancerBackendAddressPoolReference"]] = None,
         load_balancer_nat_rules: Optional[List["_models.LoadBalancerNatRuleReference"]] = None,
         public_ip: Optional["_models.PublicIpReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gets or sets the IP configuration name.
         :paramtype name: str
@@ -1850,7 +1939,7 @@ class NsgReference(AzureResourceReference):
         "source_arm_resource_id": {"key": "sourceArmResourceId", "type": "str"},
     }
 
-    def __init__(self, *, source_arm_resource_id: str, **kwargs):
+    def __init__(self, *, source_arm_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword source_arm_resource_id: Gets the ARM resource ID of the tracked resource being
          referenced. Required.
@@ -1924,8 +2013,8 @@ class NsgSecurityRule(_serialization.Model):
         protocol: Optional[str] = None,
         source_address_prefix: Optional[str] = None,
         source_port_range: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gets or sets the Security rule name.
         :paramtype name: str
@@ -1998,7 +2087,7 @@ class OperationErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "MoveErrorInfo"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -2067,8 +2156,8 @@ class OperationsDiscovery(_serialization.Model):
         display: Optional["_models.Display"] = None,
         origin: Optional[str] = None,
         properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gets or sets Name of the API.
          The name of the operation being performed on this particular object. It should
@@ -2135,8 +2224,12 @@ class OperationsDiscoveryCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.OperationsDiscovery"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.OperationsDiscovery"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets or sets the ClientDiscovery details.
         :paramtype value: list[~azure.mgmt.resourcemover.models.OperationsDiscovery]
@@ -2190,7 +2283,7 @@ class OperationStatus(_serialization.Model):
         "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2231,7 +2324,7 @@ class OperationStatusError(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[OperationErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -2273,8 +2366,8 @@ class PrepareRequest(_serialization.Model):
         move_resources: List[str],
         validate_only: Optional[bool] = None,
         move_resource_input_type: Optional[Union[str, "_models.MoveResourceInputType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword validate_only: Gets or sets a value indicating whether the operation needs to only run
          pre-requisite.
@@ -2301,8 +2394,10 @@ class PublicIPAddressResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar domain_name_label: Gets or sets the domain name label.
@@ -2319,12 +2414,12 @@ class PublicIPAddressResourceSettings(ResourceSettings):
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "domain_name_label": {"key": "domainNameLabel", "type": "str"},
         "fqdn": {"key": "fqdn", "type": "str"},
@@ -2336,18 +2431,21 @@ class PublicIPAddressResourceSettings(ResourceSettings):
     def __init__(
         self,
         *,
-        target_resource_name: str,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         domain_name_label: Optional[str] = None,
         fqdn: Optional[str] = None,
         public_ip_allocation_method: Optional[str] = None,
         sku: Optional[str] = None,
         zones: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword domain_name_label: Gets or sets the domain name label.
@@ -2361,8 +2459,10 @@ class PublicIPAddressResourceSettings(ResourceSettings):
         :keyword zones: Gets or sets public IP zones.
         :paramtype zones: str
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Network/publicIPAddresses"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Network/publicIPAddresses"
         self.tags = tags
         self.domain_name_label = domain_name_label
         self.fqdn = fqdn
@@ -2389,7 +2489,7 @@ class PublicIpReference(AzureResourceReference):
         "source_arm_resource_id": {"key": "sourceArmResourceId", "type": "str"},
     }
 
-    def __init__(self, *, source_arm_resource_id: str, **kwargs):
+    def __init__(self, *, source_arm_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword source_arm_resource_id: Gets the ARM resource ID of the tracked resource being
          referenced. Required.
@@ -2409,7 +2509,7 @@ class RequiredForResourcesCollection(_serialization.Model):
         "source_ids": {"key": "sourceIds", "type": "[str]"},
     }
 
-    def __init__(self, *, source_ids: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, source_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword source_ids: Gets or sets the list of source Ids for which the input resource is
          required.
@@ -2427,27 +2527,39 @@ class ResourceGroupResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     """
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
     }
 
-    def __init__(self, *, target_resource_name: str, **kwargs):
+    def __init__(
+        self,
+        *,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "resourceGroups"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "resourceGroups"
 
 
 class ResourceMoveRequest(_serialization.Model):
@@ -2483,8 +2595,8 @@ class ResourceMoveRequest(_serialization.Model):
         move_resources: List[str],
         validate_only: Optional[bool] = None,
         move_resource_input_type: Optional[Union[str, "_models.MoveResourceInputType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword validate_only: Gets or sets a value indicating whether the operation needs to only run
          pre-requisite.
@@ -2511,8 +2623,10 @@ class SqlDatabaseResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar zone_redundant: Defines the zone redundant resource setting. Known values are: "Enable"
@@ -2522,12 +2636,12 @@ class SqlDatabaseResourceSettings(ResourceSettings):
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "zone_redundant": {"key": "zoneRedundant", "type": "str"},
     }
@@ -2535,22 +2649,27 @@ class SqlDatabaseResourceSettings(ResourceSettings):
     def __init__(
         self,
         *,
-        target_resource_name: str,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         zone_redundant: Optional[Union[str, "_models.ZoneRedundant"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword zone_redundant: Defines the zone redundant resource setting. Known values are:
          "Enable" and "Disable".
         :paramtype zone_redundant: str or ~azure.mgmt.resourcemover.models.ZoneRedundant
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Sql/servers/databases"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Sql/servers/databases"
         self.tags = tags
         self.zone_redundant = zone_redundant
 
@@ -2563,8 +2682,10 @@ class SqlElasticPoolResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar zone_redundant: Defines the zone redundant resource setting. Known values are: "Enable"
@@ -2574,12 +2695,12 @@ class SqlElasticPoolResourceSettings(ResourceSettings):
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "zone_redundant": {"key": "zoneRedundant", "type": "str"},
     }
@@ -2587,22 +2708,27 @@ class SqlElasticPoolResourceSettings(ResourceSettings):
     def __init__(
         self,
         *,
-        target_resource_name: str,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         zone_redundant: Optional[Union[str, "_models.ZoneRedundant"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword zone_redundant: Defines the zone redundant resource setting. Known values are:
          "Enable" and "Disable".
         :paramtype zone_redundant: str or ~azure.mgmt.resourcemover.models.ZoneRedundant
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Sql/servers/elasticPools"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Sql/servers/elasticPools"
         self.tags = tags
         self.zone_redundant = zone_redundant
 
@@ -2615,27 +2741,39 @@ class SqlServerResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     """
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
     }
 
-    def __init__(self, *, target_resource_name: str, **kwargs):
+    def __init__(
+        self,
+        *,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Sql/servers"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Sql/servers"
 
 
 class SubnetReference(ProxyResourceReference):
@@ -2659,7 +2797,7 @@ class SubnetReference(ProxyResourceReference):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, source_arm_resource_id: str, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, source_arm_resource_id: str, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword source_arm_resource_id: Gets the ARM resource ID of the tracked resource being
          referenced. Required.
@@ -2693,8 +2831,8 @@ class SubnetResourceSettings(_serialization.Model):
         name: Optional[str] = None,
         address_prefix: Optional[str] = None,
         network_security_group: Optional["_models.NsgReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gets or sets the Subnet name.
         :paramtype name: str
@@ -2723,7 +2861,7 @@ class Summary(_serialization.Model):
         "item": {"key": "item", "type": "str"},
     }
 
-    def __init__(self, *, count: Optional[int] = None, item: Optional[str] = None, **kwargs):
+    def __init__(self, *, count: Optional[int] = None, item: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword count: Gets the count.
         :paramtype count: int
@@ -2750,8 +2888,8 @@ class SummaryCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, field_name: Optional[str] = None, summary: Optional[List["_models.Summary"]] = None, **kwargs
-    ):
+        self, *, field_name: Optional[str] = None, summary: Optional[List["_models.Summary"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword field_name: Gets or sets the field name on which summary is done.
         :paramtype field_name: str
@@ -2800,8 +2938,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -2838,7 +2976,9 @@ class UnresolvedDependenciesFilter(_serialization.Model):
         "properties": {"key": "properties", "type": "UnresolvedDependenciesFilterProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.UnresolvedDependenciesFilterProperties"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.UnresolvedDependenciesFilterProperties"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties:
         :paramtype properties: ~azure.mgmt.resourcemover.models.UnresolvedDependenciesFilterProperties
@@ -2858,7 +2998,7 @@ class UnresolvedDependenciesFilterProperties(_serialization.Model):
         "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(self, *, count: Optional[int] = None, **kwargs):
+    def __init__(self, *, count: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword count: The count of the resource.
         :paramtype count: int
@@ -2882,8 +3022,12 @@ class UnresolvedDependency(_serialization.Model):
     }
 
     def __init__(
-        self, *, count: Optional[int] = None, id: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self,
+        *,
+        count: Optional[int] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count: Gets or sets the count.
         :paramtype count: int
@@ -2924,8 +3068,12 @@ class UnresolvedDependencyCollection(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.UnresolvedDependency"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.UnresolvedDependency"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets or sets the list of unresolved dependencies.
         :paramtype value: list[~azure.mgmt.resourcemover.models.UnresolvedDependency]
@@ -2954,8 +3102,8 @@ class UpdateMoveCollectionRequest(_serialization.Model):
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, identity: Optional["_models.Identity"] = None, **kwargs
-    ):
+        self, *, tags: Optional[Dict[str, str]] = None, identity: Optional["_models.Identity"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
@@ -2975,8 +3123,10 @@ class VirtualMachineResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar user_managed_identities: Gets or sets user-managed identities.
@@ -2994,12 +3144,12 @@ class VirtualMachineResourceSettings(ResourceSettings):
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "user_managed_identities": {"key": "userManagedIdentities", "type": "[str]"},
         "target_availability_zone": {"key": "targetAvailabilityZone", "type": "str"},
@@ -3010,17 +3160,20 @@ class VirtualMachineResourceSettings(ResourceSettings):
     def __init__(
         self,
         *,
-        target_resource_name: str,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         user_managed_identities: Optional[List[str]] = None,
         target_availability_zone: Optional[Union[str, "_models.TargetAvailabilityZone"]] = None,
         target_vm_size: Optional[str] = None,
         target_availability_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword user_managed_identities: Gets or sets user-managed identities.
@@ -3035,8 +3188,10 @@ class VirtualMachineResourceSettings(ResourceSettings):
          machines not in an availability set at source.
         :paramtype target_availability_set_id: str
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Compute/virtualMachines"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Compute/virtualMachines"
         self.tags = tags
         self.user_managed_identities = user_managed_identities
         self.target_availability_zone = target_availability_zone
@@ -3052,8 +3207,10 @@ class VirtualNetworkResourceSettings(ResourceSettings):
     :ivar resource_type: The resource type. For example, the value can be
      Microsoft.Compute/virtualMachines. Required.
     :vartype resource_type: str
-    :ivar target_resource_name: Gets or sets the target Resource name. Required.
+    :ivar target_resource_name: Gets or sets the target Resource name.
     :vartype target_resource_name: str
+    :ivar target_resource_group_name: Gets or sets the target resource group name.
+    :vartype target_resource_group_name: str
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
     :ivar enable_ddos_protection: Gets or sets a value indicating whether gets or sets whether the
@@ -3071,12 +3228,12 @@ class VirtualNetworkResourceSettings(ResourceSettings):
 
     _validation = {
         "resource_type": {"required": True},
-        "target_resource_name": {"required": True},
     }
 
     _attribute_map = {
         "resource_type": {"key": "resourceType", "type": "str"},
         "target_resource_name": {"key": "targetResourceName", "type": "str"},
+        "target_resource_group_name": {"key": "targetResourceGroupName", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
         "enable_ddos_protection": {"key": "enableDdosProtection", "type": "bool"},
         "address_space": {"key": "addressSpace", "type": "[str]"},
@@ -3087,17 +3244,20 @@ class VirtualNetworkResourceSettings(ResourceSettings):
     def __init__(
         self,
         *,
-        target_resource_name: str,
+        target_resource_name: Optional[str] = None,
+        target_resource_group_name: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         enable_ddos_protection: Optional[bool] = None,
         address_space: Optional[List[str]] = None,
         dns_servers: Optional[List[str]] = None,
         subnets: Optional[List["_models.SubnetResourceSettings"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword target_resource_name: Gets or sets the target Resource name. Required.
+        :keyword target_resource_name: Gets or sets the target Resource name.
         :paramtype target_resource_name: str
+        :keyword target_resource_group_name: Gets or sets the target resource group name.
+        :paramtype target_resource_group_name: str
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
         :keyword enable_ddos_protection: Gets or sets a value indicating whether gets or sets whether
@@ -3113,8 +3273,10 @@ class VirtualNetworkResourceSettings(ResourceSettings):
         :keyword subnets: Gets or sets List of subnets in a VirtualNetwork.
         :paramtype subnets: list[~azure.mgmt.resourcemover.models.SubnetResourceSettings]
         """
-        super().__init__(target_resource_name=target_resource_name, **kwargs)
-        self.resource_type = "Microsoft.Network/virtualNetworks"  # type: str
+        super().__init__(
+            target_resource_name=target_resource_name, target_resource_group_name=target_resource_group_name, **kwargs
+        )
+        self.resource_type: str = "Microsoft.Network/virtualNetworks"
         self.tags = tags
         self.enable_ddos_protection = enable_ddos_protection
         self.address_space = address_space

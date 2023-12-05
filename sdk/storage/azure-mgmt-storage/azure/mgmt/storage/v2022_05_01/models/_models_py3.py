@@ -3364,7 +3364,7 @@ class LeaseContainerRequest(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar action: Specifies the lease action. Can be one of the available actions. Required. Known
-     values are: "Acquire", "Renew", "Change", "Release", and "Break".
+     values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
     :vartype action: str or ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerRequestEnum
     :ivar lease_id: Identifies the lease. Can be specified in any valid GUID string format.
     :vartype lease_id: str
@@ -3403,7 +3403,7 @@ class LeaseContainerRequest(_serialization.Model):
     ) -> None:
         """
         :keyword action: Specifies the lease action. Can be one of the available actions. Required.
-         Known values are: "Acquire", "Renew", "Change", "Release", and "Break".
+         Known values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
         :paramtype action: str or ~azure.mgmt.storage.v2022_05_01.models.LeaseContainerRequestEnum
         :keyword lease_id: Identifies the lease. Can be specified in any valid GUID string format.
         :paramtype lease_id: str
@@ -3461,7 +3461,7 @@ class LeaseShareRequest(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar action: Specifies the lease action. Can be one of the available actions. Required. Known
-     values are: "Acquire", "Renew", "Change", "Release", and "Break".
+     values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
     :vartype action: str or ~azure.mgmt.storage.v2022_05_01.models.LeaseShareAction
     :ivar lease_id: Identifies the lease. Can be specified in any valid GUID string format.
     :vartype lease_id: str
@@ -3500,7 +3500,7 @@ class LeaseShareRequest(_serialization.Model):
     ) -> None:
         """
         :keyword action: Specifies the lease action. Can be one of the available actions. Required.
-         Known values are: "Acquire", "Renew", "Change", "Release", and "Break".
+         Known values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
         :paramtype action: str or ~azure.mgmt.storage.v2022_05_01.models.LeaseShareAction
         :keyword lease_id: Identifies the lease. Can be specified in any valid GUID string format.
         :paramtype lease_id: str

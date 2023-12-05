@@ -29,12 +29,11 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.global_parameters.delete(
+    client.global_parameters.delete(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
         global_parameter_name="default",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/GlobalParameters_Delete.json

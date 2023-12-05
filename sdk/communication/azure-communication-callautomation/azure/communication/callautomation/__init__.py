@@ -3,25 +3,28 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import warnings
+
 from ._version import VERSION
 from ._call_automation_client import CallAutomationClient
 from ._call_connection_client import CallConnectionClient
 from ._models import (
     CallConnectionProperties,
-    CallInvite,
-    ServerCallLocator,
-    GroupCallLocator,
     FileSource,
     TextSource,
     SsmlSource,
+    RecognitionChoice,
     CallParticipant,
     RecordingProperties,
     AddParticipantResult,
     RemoveParticipantResult,
     TransferCallResult,
     MediaStreamingConfiguration,
+    TranscriptionConfiguration,
     ChannelAffinity,
-    MuteParticipantsResult
+    MuteParticipantResult,
+    SendDtmfTonesResult,
+    CancelAddParticipantOperationResult,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -30,7 +33,6 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     CommunicationIdentifierKind,
     CommunicationCloudEnvironment,
-    MicrosoftBotIdentifier,
     UnknownIdentifier,
 )
 from ._generated.models._enums import (
@@ -43,10 +45,11 @@ from ._generated.models._enums import (
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
     MediaStreamingTransportType,
+    TranscriptionTransportType,
     DtmfTone,
     CallConnectionState,
     RecordingState,
-    Gender
+    VoiceKind
 )
 __all__ = [
     # clients
@@ -54,14 +57,13 @@ __all__ = [
     "CallConnectionClient",
 
     # models for input
-    "CallInvite",
-    "ServerCallLocator",
-    "GroupCallLocator",
     "FileSource",
     "TextSource",
     "SsmlSource",
+    "RecognitionChoice",
     "ChannelAffinity",
     "MediaStreamingConfiguration",
+    "TranscriptionConfiguration",
 
     # models for output
     "CallConnectionProperties",
@@ -70,7 +72,9 @@ __all__ = [
     "AddParticipantResult",
     "RemoveParticipantResult",
     "TransferCallResult",
-    "MuteParticipantsResult",
+    "MuteParticipantResult",
+    "SendDtmfTonesResult",
+    "CancelAddParticipantOperationResult",
 
     # common ACS communication identifier
     "CommunicationIdentifier",
@@ -79,7 +83,6 @@ __all__ = [
     "CommunicationUserIdentifier",
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
-    "MicrosoftBotIdentifier",
     "UnknownIdentifier",
 
     # enums
@@ -92,9 +95,39 @@ __all__ = [
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
     "MediaStreamingTransportType",
+    "TranscriptionTransportType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
-    "Gender"
+    "VoiceKind"
 ]
 __version__ = VERSION
+
+
+def __getattr__(name):
+    if name == 'CallInvite':
+        warnings.warn(
+            "CallInvite is deprecated and should not be used. Please pass in keyword arguments directly.",
+            DeprecationWarning
+        )
+        from ._models import CallInvite
+        return CallInvite
+    if name == 'GroupCallLocator':
+        warnings.warn(
+            "GroupCallLocator is deprecated and should not be used. Please pass in 'group_call_id' directly.",
+            DeprecationWarning
+        )
+        from ._models import GroupCallLocator
+        return GroupCallLocator
+    if name == 'ServerCallLocator':
+        warnings.warn(
+            "ServerCallLocator is deprecated and should not be used. Please pass in 'server_call_id' directly.",
+            DeprecationWarning
+        )
+        from ._models import ServerCallLocator
+        return ServerCallLocator
+    if name == 'MicrosoftBotIdentifier':
+        warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
+        from ._shared.models  import _MicrosoftBotIdentifier
+        return _MicrosoftBotIdentifier
+    raise AttributeError(f"module 'azure.communication.callautomation' has no attribute {name}")

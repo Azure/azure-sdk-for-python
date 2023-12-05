@@ -26,15 +26,21 @@
 import json
 import logging
 import time
-from typing import Optional
+from typing import Optional, TypeVar
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse, HTTPRequestType, HTTPResponseType
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HttpLoggingPolicy
 from .http_constants import HttpHeaders
+
+HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)
+HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)
+
 
 def _format_error(payload: str) -> str:
     output = json.loads(payload)
     return output['message'].replace("\r", " ")
+
+
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
     def __init__(
@@ -42,7 +48,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             logger: Optional[logging.Logger] = None,
             *,
             enable_diagnostics_logging: Optional[bool] = False,
-            **kwargs): # pylint: disable=unused-argument
+            **kwargs):  # pylint: disable=unused-argument
         self._enable_diagnostics_logging = enable_diagnostics_logging
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
@@ -52,16 +58,16 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             ]
             self.allowed_header_names = set(cosmos_allow_list)
 
-    def on_request(self, request): # pylint: disable=too-many-return-statements, too-many-statements
+    def on_request(self, request):  # pylint: disable=too-many-return-statements, too-many-statements
         # type: (PipelineRequest) -> None
         super().on_request(request)
         if self._enable_diagnostics_logging:
             request.context["start_time"] = time.time()
 
     def on_response(
-        self,
-        request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+            self,
+            request: PipelineRequest[HTTPRequestType],
+            response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> None:
         super().on_response(request, response)
         if self._enable_diagnostics_logging:

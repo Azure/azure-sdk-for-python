@@ -1,14 +1,19 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
-# pylint: disable=protected-access
-
+import re
+from os import PathLike
+from pathlib import Path
 from typing import Dict, Union
+
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.core.exceptions import HttpResponseError
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path, _get_snapshot_path_info
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_path,
+    _get_datastore_name,
+    _get_snapshot_path_info,
+    get_datastore_info,
+)
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -29,6 +34,7 @@ from azure.ai.ml._utils._asset_utils import (
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -38,6 +44,10 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.core.exceptions import HttpResponseError
+
+# pylint: disable=protected-access
+
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -48,6 +58,19 @@ class CodeOperations(_ScopeDependentOperations):
 
     You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
     property MLClient.code
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
+    :type service_client: typing.Union[
+        ~azure.ai.ml._restclient.v2022_10_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2023_04_01._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces]
+    :param datastore_operations: Represents a client for performing operations on Datastores.
+    :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     """
 
     def __init__(
@@ -81,6 +104,15 @@ class CodeOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Code asset object.
         :rtype: ~azure.ai.ml.entities.Code
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START code_operations_create_or_update]
+                :end-before: [END code_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create code asset example.
         """
         try:
             name = code.name
@@ -191,7 +223,76 @@ class CodeOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :return: Code asset object.
         :rtype: ~azure.ai.ml.entities.Code
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START code_operations_get]
+                :end-before: [END code_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get code asset example.
         """
+        return self._get(name=name, version=version)
+
+    # this is a public API but CodeOperations is hidden, so it may only monitor internal calls
+    @monitor_with_activity(logger, "Code.Download", ActivityType.PUBLICAPI)
+    def download(self, name: str, version: str, download_path: Union[PathLike, str]) -> None:
+        """Download content of a code.
+
+        :param str name: Name of the code.
+        :param str version: Version of the code.
+        :param Union[PathLike, str] download_path: Local path as download destination,
+            defaults to current working directory of the current user. Contents will be overwritten.
+        :raise: ResourceNotFoundError if can't find a code matching provided name.
+        """
+        output_dir = Path(download_path)
+        if output_dir.is_dir():
+            # an OSError will be raised if the directory is not empty
+            output_dir.rmdir()
+        output_dir.mkdir(parents=True)
+
+        code = self._get(name=name, version=version)
+
+        # TODO: how should we maintain this regex?
+        m = re.match(
+            r"https://(?P<account_name>.+)\.blob\.core\.windows\.net"
+            r"(:[0-9]+)?/(?P<container_name>.+)/(?P<blob_name>.*)",
+            code.path,
+        )
+        if not m:
+            raise ValueError(f"Invalid code path: {code.path}")
+
+        # 1. different content now saved in different container, so we need to override the container name
+        # 2. get credentials from datastore requires authorization to perform action
+        #    'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore,
+        #    so we use local credential instead if so.
+        # check more information here:
+        # https://github.com/Azure/azureml_run_specification/blob/master/specs/create_workspace_asset_from_local_upload.md
+        try:
+            datastore_info = get_datastore_info(
+                self._datastore_operation,
+                # always use WORKSPACE_BLOB_STORE
+                name=_get_datastore_name(),
+                container_name=m.group("container_name"),
+            )
+        except HttpResponseError:
+            datastore_info = get_datastore_info(
+                self._datastore_operation,
+                # always use WORKSPACE_BLOB_STORE
+                name=_get_datastore_name(),
+                credential=self._service_client._config.credential,
+                container_name=m.group("container_name"),
+            )
+        storage_client = get_storage_client(**datastore_info)
+        storage_client.download(
+            starts_with=m.group("blob_name"),
+            destination=output_dir.as_posix(),
+        )
+        if not output_dir.is_dir() or not any(output_dir.iterdir()):
+            raise RuntimeError(f"Failed to download code to {output_dir}")
+
+    def _get(self, name: str, version: str = None) -> Code:
         if not version:
             msg = "Code asset version must be specified as part of name parameter, in format 'name:version'."
             raise ValidationException(

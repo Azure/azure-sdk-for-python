@@ -90,15 +90,23 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         self.verify_successful_room_response(response=response)
 
-    @pytest.mark.live_test_only
     @recorded_by_proxy
-    def test_create_room_validUntil_7Months_async(self):
+    def test_create_room_validUntil_seven_months(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_create_room_valid_until_in_past(self):
+        # room attributes
+        valid_until = datetime.now() - timedelta(weeks=1)
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.create_room(valid_until=valid_until)
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
@@ -195,6 +203,43 @@ class TestRoomsClient(ACSRoomsTestCase):
         self.verify_successful_room_response(
             response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
+    @pytest.mark.live_test_only
+    @recorded_by_proxy
+    def test_update_room_PstnDialOutEnabled(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        # update room attributes
+        update_response = self.rooms_client.update_room(room_id=create_response.id, pstn_dial_out_enabled=True)
+
+        self.verify_successful_room_response(
+            response=update_response, pstn_dial_out_enabled=True, room_id=create_response.id)
+
+        update_response = self.rooms_client.update_room(room_id=create_response.id, pstn_dial_out_enabled=False)
+
+        self.verify_successful_room_response(
+            response=update_response, pstn_dial_out_enabled=False, room_id=create_response.id)
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+    @pytest.mark.live_test_only
+    @recorded_by_proxy
+    def test_update_room_PstnDialOutRemainsUnchanged(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room(pstn_dial_out_enabled=True)
+
+        # update room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until =  datetime.now() + timedelta(weeks=4)
+        # update room attributes
+        update_response = self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+
+        self.verify_successful_room_response(
+            response=update_response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True, room_id=create_response.id)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
     @recorded_by_proxy
     def test_update_room_invalid_format_roomId(self):
         # try to update room with random room_id
@@ -203,6 +248,21 @@ class TestRoomsClient(ACSRoomsTestCase):
             valid_until = valid_from + timedelta(days=4)
             self.rooms_client.update_room(room_id="invalid_id", valid_from=valid_from, valid_until=valid_until)
             #  assert error is bad request
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_update_room_valid_until_in_past(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        with pytest.raises(HttpResponseError) as ex:
+            # update room attributes
+            valid_from =  datetime.now() - timedelta(days=3)
+            valid_until =  datetime.now() - timedelta(weeks=1)
+            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+            # delete created room
+            self.rooms_client.delete_room(room_id=create_response.id)
             assert str(ex.value.status_code) == "400"
             assert ex.value.message is not None
 
@@ -523,7 +583,56 @@ class TestRoomsClient(ACSRoomsTestCase):
             assert str(ex.value.status_code) == "404"
             assert ex.value.message is not None
 
-    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None):
+    @recorded_by_proxy
+    def test_delete_room_invalid_id(self):
+        # room with no attributes
+        with pytest.raises(HttpResponseError) as ex:
+            # delete created room with invalid id
+            self.rooms_client.delete_room(room_id="123")
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+    @pytest.mark.live_test_only
+    @recorded_by_proxy
+    def test_create_room_pstn_dial_out_enabled(self):
+        # room attributes
+
+        response = self.rooms_client.create_room(pstn_dial_out_enabled=True)
+
+        self.verify_successful_room_response(response=response, pstn_dial_out_enabled=True)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
+
+        response = self.rooms_client.create_room(pstn_dial_out_enabled=False)
+
+        self.verify_successful_room_response(response=response, pstn_dial_out_enabled=False)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
+
+    @pytest.mark.live_test_only
+    @recorded_by_proxy
+    def test_create_room_timerange_pstn_dial_out_enabled(self):
+        # room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=4)
+
+        response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True)
+
+        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=True)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
+
+        response = self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=False)
+
+        self.verify_successful_room_response(response=response, valid_from=valid_from, valid_until=valid_until, pstn_dial_out_enabled=False)
+
+        # delete created room
+        self.rooms_client.delete_room(room_id=response.id)
+
+    def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None, pstn_dial_out_enabled=None):
         if room_id is not None:
             assert room_id == response.id
         if valid_from is not None:
@@ -533,3 +642,5 @@ class TestRoomsClient(ACSRoomsTestCase):
             assert valid_until.replace(tzinfo=None) == datetime.strptime(
                 response.valid_until, "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
         assert response.created_at is not None
+        if pstn_dial_out_enabled is not None:
+            assert pstn_dial_out_enabled == response.pstn_dial_out_enabled

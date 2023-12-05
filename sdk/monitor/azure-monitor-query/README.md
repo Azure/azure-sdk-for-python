@@ -37,7 +37,7 @@ pip install azure-monitor-query
 
 ### Create the client
 
-An authenticated client is required to query Logs or Metrics. The library includes both synchronous and asynchronous forms of the clients. To authenticate, create an instance of a token credential. Use that instance when creating a `LogsQueryClient` or `MetricsQueryClient`. The following examples use `DefaultAzureCredential` from the [azure-identity](https://pypi.org/project/azure-identity/) package.
+An authenticated client is required to query Logs or Metrics. The library includes both synchronous and asynchronous forms of the clients. To authenticate, create an instance of a token credential. Use that instance when creating a `LogsQueryClient`, `MetricsQueryClient`, or `MetricsBatchQueryClient`. The following examples use `DefaultAzureCredential` from the [azure-identity](https://pypi.org/project/azure-identity/) package.
 
 #### Synchronous clients
 
@@ -117,15 +117,15 @@ Each set of metric values is a time series with the following characteristics:
 
 ### Logs query
 
-This example shows how to query a Log Analytics workspace. To handle the response and view it in a tabular form, the [pandas](https://pypi.org/project/pandas/) library is used. See the [samples][samples] if you choose not to use pandas.
+This example shows how to query a Log Analytics workspace. To handle the response and view it in a tabular form, the [`pandas`](https://pypi.org/project/pandas/) library is used. See the [samples][samples] if you choose not to use `pandas`.
 
 #### Specify timespan
 
 The `timespan` parameter specifies the time duration for which to query the data. This value can be one of the following:
 
 - a `timedelta`
-- a `timedelta` and a start datetime
-- a start datetime/end datetime
+- a `timedelta` and a start `datetime`
+- a start `datetime`/end `datetime`
 
 For example:
 
@@ -194,7 +194,7 @@ LogsQueryPartialResult
     |---columns_types
 ```
 
-The `LogsQueryResult` directly iterates over the table as a convenience. For example, to handle a logs query response with tables and display it using pandas:
+The `LogsQueryResult` directly iterates over the table as a convenience. For example, to handle a logs query response with tables and display it using `pandas`:
 
 ```python
 response = client.query(...)
@@ -310,6 +310,7 @@ The following example shows setting a server timeout in seconds. A gateway timeo
 
 ```python
 import os
+from datetime import timedelta
 from azure.monitor.query import LogsQueryClient
 from azure.identity import DefaultAzureCredential
 
@@ -524,6 +525,43 @@ for metric in response.metrics:
                 )
 ```
 
+### Metrics batch query
+
+A user can also query metrics from multiple resources at once using the `query_batch` method of `MetricsBatchQueryClient`. This uses a different API than the `MetricsQueryClient` and requires that a user pass in a regional endpoint when instantiating the client (for example, "https://westus3.metrics.monitor.azure.com").
+
+Note, each resource must be in the same region as the endpoint passed in when instantiating the client, and each resource must be in the same Azure subscription. Furthermore, the metric namespace that contains the metrics to be queried must also be passed. A list of metric namespaces can be found [here][metric_namespaces].
+
+
+```python
+from datetime import timedelta
+import os
+
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
+from azure.monitor.query import MetricsBatchQueryClient, MetricAggregationType
+
+
+credential = DefaultAzureCredential()
+client = MetricsBatchQueryClient(endpoint, credential)
+
+resource_uris = [
+    "/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/storageAccounts/<resource-name-1>",
+    "/subscriptions/<id>/resourceGroups/<rg-name>/providers/<source>/storageAccounts/<resource-name-2>"
+]
+
+response = client.query_batch(
+    resource_uris,
+    metric_namespace="Microsoft.Storage/storageAccounts",
+    metric_names=["Ingress"],
+    timespan=timedelta(hours=2),
+    granularity=timedelta(minutes=5),
+    aggregations=[MetricAggregationType.AVERAGE],
+)
+
+for metrics_query_result in response:
+    print(metrics_query_result.timespan)
+```
+
 ## Troubleshooting
 
 See our [troubleshooting guide][troubleshooting_guide] for details on how to diagnose various failure scenarios.
@@ -568,6 +606,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_subscription]: https://azure.microsoft.com/free/python/
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query/CHANGELOG.md
 [kusto_query_language]: https://learn.microsoft.com/azure/data-explorer/kusto/query/
+[metric_namespaces]: https://learn.microsoft.com/azure/azure-monitor/reference/supported-metrics/metrics-index#metrics-by-resource-provider
 [package]: https://aka.ms/azsdk-python-monitor-query-pypi
 [pip]: https://pypi.org/project/pip/
 [python_logging]: https://docs.python.org/3/library/logging.html

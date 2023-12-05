@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,7 +43,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,7 +54,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -69,7 +69,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -84,7 +84,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -101,7 +101,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -122,7 +122,7 @@ def build_get_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -139,7 +139,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -161,7 +161,7 @@ def build_create_or_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -180,7 +180,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -201,7 +201,7 @@ def build_delete_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -218,7 +218,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -240,7 +240,7 @@ def build_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -259,7 +259,7 @@ def build_restart_node_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -281,7 +281,7 @@ def build_restart_node_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1158,13 +1158,13 @@ class KubernetesClustersOperations:
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}"
     }
 
-    def _restart_node_initial(  # pylint: disable=inconsistent-return-statements
+    def _restart_node_initial(
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
         kubernetes_cluster_restart_node_parameters: Union[_models.KubernetesClusterRestartNodeParameters, IO],
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[_models.OperationStatusResult]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1178,7 +1178,7 @@ class KubernetesClustersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1212,17 +1212,23 @@ class KubernetesClustersOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     _restart_node_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}/restartNode"
@@ -1237,7 +1243,7 @@ class KubernetesClustersOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.OperationStatusResult]:
         """Restart a targeted node.
 
         Restart a targeted node of a Kubernetes cluster.
@@ -1261,8 +1267,9 @@ class KubernetesClustersOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either OperationStatusResult or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1275,7 +1282,7 @@ class KubernetesClustersOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.OperationStatusResult]:
         """Restart a targeted node.
 
         Restart a targeted node of a Kubernetes cluster.
@@ -1298,8 +1305,9 @@ class KubernetesClustersOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either OperationStatusResult or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1310,7 +1318,7 @@ class KubernetesClustersOperations:
         kubernetes_cluster_name: str,
         kubernetes_cluster_restart_node_parameters: Union[_models.KubernetesClusterRestartNodeParameters, IO],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.OperationStatusResult]:
         """Restart a targeted node.
 
         Restart a targeted node of a Kubernetes cluster.
@@ -1335,8 +1343,9 @@ class KubernetesClustersOperations:
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either OperationStatusResult or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1344,12 +1353,12 @@ class KubernetesClustersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._restart_node_initial(  # type: ignore
+            raw_result = self._restart_node_initial(
                 resource_group_name=resource_group_name,
                 kubernetes_cluster_name=kubernetes_cluster_name,
                 kubernetes_cluster_restart_node_parameters=kubernetes_cluster_restart_node_parameters,
@@ -1362,9 +1371,11 @@ class KubernetesClustersOperations:
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(

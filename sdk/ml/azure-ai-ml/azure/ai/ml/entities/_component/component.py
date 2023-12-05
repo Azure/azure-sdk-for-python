@@ -5,11 +5,12 @@ import re
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Tuple, Union
+from typing import IO, TYPE_CHECKING, AnyStr, Callable, Dict, Iterable, Optional, Tuple, Union
 
 from marshmallow import INCLUDE
+from typing_extensions import Literal
 
-from ..._restclient.v2022_10_01.models import (
+from ..._restclient.v2023_08_01_preview.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,
@@ -25,17 +26,20 @@ from ...constants._common import (
     REGISTRY_URI_FORMAT,
     SOURCE_PATH_CONTEXT_KEY,
     CommonYamlFields,
+    SchemaUrl,
 )
 from ...constants._component import ComponentSource, IOConstants, NodeType
 from ...entities._assets.asset import Asset
 from ...entities._inputs_outputs import Input, Output
-from ...entities._mixins import TelemetryMixin, YamlTranslatableMixin
+from ...entities._mixins import LocalizableMixin, TelemetryMixin, YamlTranslatableMixin
 from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
-from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
+from ...entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin, RemoteValidatableMixin
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .._inputs_outputs import GroupInput
 
+if TYPE_CHECKING:
+    from ...entities.builders import BaseNode
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
 
@@ -48,7 +52,8 @@ class Component(
     RemoteValidatableMixin,
     TelemetryMixin,
     YamlTranslatableMixin,
-    SchemaValidatableMixin,
+    PathAwareSchemaValidatableMixin,
+    LocalizableMixin,
 ):
     """Base class for component version, used to define a component. Can't be instantiated directly.
 
@@ -56,10 +61,9 @@ class Component(
     :type name: str
     :param version: Version of the resource.
     :type version: str
-    :param id:  Global id of the resource, Azure Resource Manager ID.
+    :param id: Global ID of the resource, Azure Resource Manager ID.
     :type id: str
-    :param type:  Type of the command, supported is 'command'.
-    :param type:  Type of the command, supported is 'command'.
+    :param type: Type of the command, supported is 'command'.
     :type type: str
     :param description: Description of the resource.
     :type description: str
@@ -69,18 +73,19 @@ class Component(
     :type properties: dict
     :param display_name: Display name of the component.
     :type display_name: str
-    :param is_deterministic: Whether the component is deterministic.
+    :param is_deterministic: Whether the component is deterministic. Defaults to True.
     :type is_deterministic: bool
     :param inputs: Inputs of the component.
     :type inputs: dict
     :param outputs: Outputs of the component.
     :type outputs: dict
-    :param yaml_str: The yaml string of the component.
+    :param yaml_str: The YAML string of the component.
     :type yaml_str: str
     :param _schema: Schema of the component.
     :type _schema: str
     :param creation_context: Creation metadata of the component.
     :type creation_context: ~azure.ai.ml.entities.SystemData
+    :param kwargs: Additional parameters for the component.
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -104,7 +109,7 @@ class Component(
         _schema: Optional[str] = None,
         creation_context: Optional[SystemData] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._intellectual_property = kwargs.pop("intellectual_property", None)
         # Setting this before super init because when asset init version, _auto_increment_version's value may change
         self._auto_increment_version = kwargs.pop("auto_increment", False)
@@ -128,8 +133,8 @@ class Component(
             properties=properties,
             creation_context=creation_context,
             is_anonymous=is_anonymous,
-            base_path=kwargs.pop("base_path", None),
-            source_path=kwargs.pop("source_path", None),
+            base_path=kwargs.pop(BASE_PATH_CONTEXT_KEY, None),
+            source_path=kwargs.pop(SOURCE_PATH_CONTEXT_KEY, None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
@@ -148,13 +153,13 @@ class Component(
         self._other_parameter = kwargs
 
     @property
-    def _func(self):
+    def _func(self) -> Callable[..., "BaseNode"]:
         from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 
         # validate input/output names before creating component function
         validation_result = self._validate_io_names(self.inputs)
         validation_result.merge_with(self._validate_io_names(self.outputs))
-        validation_result.try_raise(error_target=self._get_validation_error_target())
+        self._try_raise(validation_result)
 
         return _generate_component_function(self)
 
@@ -177,8 +182,12 @@ class Component(
         return self._display_name
 
     @display_name.setter
-    def display_name(self, custom_display_name):
-        """Set display_name of the component."""
+    def display_name(self, custom_display_name: str):
+        """Set display_name of the component.
+
+        :param custom_display_name: The new display name
+        :type custom_display_name: str
+        """
         self._display_name = custom_display_name
 
     @property
@@ -210,10 +219,20 @@ class Component(
 
     @property
     def version(self) -> str:
+        """Version of the component.
+
+        :return: Version of the component.
+        :rtype: str
+        """
         return self._version
 
     @version.setter
     def version(self, value: str) -> None:
+        """Set the version of the component.
+
+        :param value: The version of the component.
+        :type value: str
+        """
         if value:
             if not isinstance(value, str):
                 msg = f"Component version must be a string, not type {type(value)}."
@@ -242,8 +261,20 @@ class Component(
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     @staticmethod
-    def _resolve_component_source_from_id(id):
-        """Resolve the component source from id."""
+    def _resolve_component_source_from_id(
+        id: Optional[str],
+    ) -> Literal[ComponentSource.CLASS, ComponentSource.REMOTE_REGISTRY, ComponentSource.REMOTE_WORKSPACE_COMPONENT]:
+        """Resolve the component source from id.
+
+        :param id: The component ID
+        :type id: Optional[str]
+        :return: The component source
+        :rtype: Literal[
+                ComponentSource.CLASS,
+                ComponentSource.REMOTE_REGISTRY,
+                ComponentSource.REMOTE_WORKSPACE_COMPONENT
+            ]
+        """
         if id is None:
             return ComponentSource.CLASS
         # Consider default is workspace source, as
@@ -255,12 +286,20 @@ class Component(
         )
 
     @classmethod
-    def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> MutableValidationResult:
-        """Validate input/output names, raise exception if invalid."""
+    def _validate_io_names(cls, io_names: Iterable[str], raise_error: bool = False) -> MutableValidationResult:
+        """Validate input/output names, raise exception if invalid.
+
+        :param io_names: The names to validate
+        :type io_names: Iterable[str]
+        :param raise_error: Whether to raise if validation fails. Defaults to False
+        :type raise_error: bool
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         validation_result = cls._create_empty_validation_result()
         lower2original_kwargs = {}
 
-        for name in io_dict.keys():
+        for name in io_names:
             if re.match(IOConstants.VALID_KEY_PATTERN, name) is None:
                 msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
                 validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")
@@ -273,7 +312,7 @@ class Component(
                 )
             else:
                 lower2original_kwargs[lower_key] = name
-        return validation_result.try_raise(error_target=cls._get_validation_error_target(), raise_error=raise_error)
+        return cls._try_raise(validation_result, raise_error=raise_error)
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -294,8 +333,20 @@ class Component(
         return ComponentSchema(context=context)
 
     @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        return ErrorTarget.COMPONENT
+    def _create_validation_error(cls, message: str, no_personal_data_message: str) -> Exception:
+        return ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.COMPONENT,
+        )
+
+    @classmethod
+    def _is_flow(cls, data) -> bool:
+        _schema = data.get(CommonYamlFields.SCHEMA, None)
+
+        if _schema and _schema in [SchemaUrl.PROMPTFLOW_FLOW, SchemaUrl.PROMPTFLOW_RUN]:
+            return True
+        return False
 
     @classmethod
     def _load(
@@ -313,7 +364,11 @@ class Component(
 
         # type_in_override > type_in_yaml > default (command)
         if type_in_override is None:
-            type_in_override = data.get(CommonYamlFields.TYPE, NodeType.COMMAND)
+            type_in_override = data.get(CommonYamlFields.TYPE, None)
+        if type_in_override is None and cls._is_flow(data):
+            type_in_override = NodeType.FLOW_PARALLEL
+        if type_in_override is None:
+            type_in_override = NodeType.COMMAND
         data[CommonYamlFields.TYPE] = type_in_override
 
         from azure.ai.ml.entities._component.component_factory import component_factory
@@ -341,15 +396,15 @@ class Component(
                 **kwargs,
             )
         )
-        new_instance.__init__(
-            **init_kwargs,
-        )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
         # base_path in context can be changed in loading, so we use original base_path here.
-        new_instance._base_path = base_path
+        init_kwargs[BASE_PATH_CONTEXT_KEY] = base_path.absolute()
         if yaml_path:
-            new_instance._source_path = yaml_path
+            init_kwargs[SOURCE_PATH_CONTEXT_KEY] = Path(yaml_path).absolute().as_posix()
+        new_instance.__init__(
+            **init_kwargs,
+        )
         return new_instance
 
     @classmethod
@@ -407,7 +462,9 @@ class Component(
 
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
-        init_kwargs = cls._load_with_schema(rest_component_version.component_spec, unknown=INCLUDE)
+        init_kwargs = cls._load_with_schema(
+            rest_component_version.component_spec, context={BASE_PATH_CONTEXT_KEY: Path.cwd()}, unknown=INCLUDE
+        )
         init_kwargs.update(
             {
                 "id": obj.id,
@@ -424,16 +481,25 @@ class Component(
         return {k: v for k, v in init_kwargs.items() if v is not None and not (isinstance(v, dict) and not v)}
 
     def _get_anonymous_hash(self) -> str:
-        """Return the name of anonymous component.
+        """Return the hash of anonymous component.
 
-        same anonymous component(same code and interface) will have same name.
+        Anonymous Components (same code and interface) will have same hash.
+
+        :return: The component hash
+        :rtype: str
         """
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
         return self._get_component_hash(keys_to_omit=["name", "id", "version"])
 
-    def _get_component_hash(self, keys_to_omit=None) -> str:
-        """Return the hash of component."""
+    def _get_component_hash(self, keys_to_omit: Optional[Iterable[str]] = None) -> str:
+        """Return the hash of component.
+
+        :param keys_to_omit: An iterable of keys to omit when computing the component hash
+        :type keys_to_omit: Optional[Iterable[str]]
+        :return: The component hash
+        :rtype: str
+        """
         component_interface_dict = self._to_dict()
         return hash_dict(component_interface_dict, keys_to_omit=keys_to_omit)
 
@@ -480,8 +546,8 @@ class Component(
 
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # Convert import component to command component private preview
-        if component["type"] == NodeType.IMPORT:
-            component["type"] = NodeType.COMMAND
+        if component.get(CommonYamlFields.TYPE, None) == NodeType.IMPORT:
+            component[CommonYamlFields.TYPE] = NodeType.COMMAND
             component["inputs"] = component.pop("source")
             component["outputs"] = dict({"output": component.pop("output")})
             # method _to_dict() will remove empty keys
@@ -512,22 +578,38 @@ class Component(
         return result
 
     def _to_dict(self) -> Dict:
-        """Dump the command component content into a dictionary."""
-
         # Replace the name of $schema to schema.
         component_schema_dict = self._dump_for_validation()
-        component_schema_dict.pop("base_path", None)
+        component_schema_dict.pop(BASE_PATH_CONTEXT_KEY, None)
 
         # TODO: handle other_parameters and remove override from subclass
         return component_schema_dict
+
+    def _localize(self, base_path: str):
+        """Called on an asset got from service to clean up remote attributes like id, creation_context, etc. and update
+        base_path.
+
+        :param base_path: The base_path
+        :type base_path: str
+        """
+        if not getattr(self, "id", None):
+            raise ValueError("Only remote asset can be localize but got a {} without id.".format(type(self)))
+        self._id = None
+        self._creation_context = None
+        self._base_path = base_path
 
     def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument
         # Note: the is_anonymous is not reliable here, create_or_update will log is_anonymous from parameter.
         is_anonymous = self.name is None or ANONYMOUS_COMPONENT_NAME in self.name
         return {"type": self.type, "source": self._source, "is_anonymous": is_anonymous}
 
-    def __call__(self, *args, **kwargs) -> [..., Union["Command", "Parallel"]]:
-        """Call ComponentVersion as a function and get a Component object."""
+    # pylint: disable-next=docstring-missing-param
+    def __call__(self, *args, **kwargs) -> "BaseNode":
+        """Call ComponentVersion as a function and get a Component object.
+
+        :return: The component object
+        :rtype: BaseNode
+        """
         if args:
             # raise clear error message for unsupported positional args
             if self._func._has_parameters:

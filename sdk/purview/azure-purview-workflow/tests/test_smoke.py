@@ -14,6 +14,6 @@ class TestWorkflowSmoke(WorkflowTest):
     @recorded_by_proxy
     def test_smoke(self, workflow_endpoint):
         client = self.create_client(endpoint=workflow_endpoint)
-        response = client.list_workflows()
+        response = client.workflows.list()
         result = [item for item in response]
         assert len(result) >= 1

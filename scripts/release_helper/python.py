@@ -10,7 +10,7 @@ from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release, get_
 
 # assignee dict which will be assigned to handle issues
 _PYTHON_OWNER = {'azure-sdk', 'msyyc'}
-_PYTHON_ASSIGNEE = {'Wzb123456789'}
+_PYTHON_ASSIGNEE = {'ChenxiJiang333'}
 
 # labels
 _CONFIGURED = 'Configured'

@@ -26,10 +26,10 @@
     "include": [
       {
         "CoverageConfig": {
-          "ubuntu2004_pypy37": {
+          "ubuntu2004_pypy39": {
             "OSVmImage": "MMSUbuntu20.04",
             "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-            "PythonVersion": "pypy3.7",
+            "PythonVersion": "pypy3.9",
             "CoverageArg": "--disablecov",
             "TestSamples": "false"
           }

@@ -189,7 +189,7 @@ class SenderLink(Link):
         try:
             index = self._pending_deliveries.index(delivery)
         except ValueError:
-            raise ValueError("Found no matching pending transfer.")
+            raise ValueError("Found no matching pending transfer.") from None
         delivery = self._pending_deliveries[index]
         if delivery.sent:
             raise MessageException(

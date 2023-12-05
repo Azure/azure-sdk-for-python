@@ -36,6 +36,13 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CrossRegionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CrossRegionRestore state."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
+
+
 class CrossSubscriptionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CrossSubscriptionRestore state."""
 
@@ -215,6 +222,16 @@ class SecretStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INVALID = "Invalid"
     AZURE_KEY_VAULT = "AzureKeyVault"
+
+
+class SecureScoreLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Secure Score of Backup Vault."""
+
+    NONE = "None"
+    MINIMUM = "Minimum"
+    ADEQUATE = "Adequate"
+    MAXIMUM = "Maximum"
+    NOT_SUPPORTED = "NotSupported"
 
 
 class SoftDeleteState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

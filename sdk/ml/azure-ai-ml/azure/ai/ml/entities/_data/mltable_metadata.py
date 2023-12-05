@@ -64,7 +64,7 @@ class MLTableMetadata:
         """Construct an MLTable object from yaml file.
 
         :param yaml_path: Path to a local file as the source.
-        :type PathLike | str
+        :type yaml_path: PathLike | str
 
         :return: Constructed MLTable object.
         :rtype: MLTable

@@ -6,7 +6,7 @@
 
 from typing import Any, Dict
 
-from marshmallow import ValidationError, fields, post_load, pre_dump
+from marshmallow import ValidationError, fields, post_load, pre_dump, pre_load
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml.entities._credentials import (
@@ -53,10 +53,21 @@ class SasTokenSchema(metaclass=PatchedSchemaMeta):
 
 
 class BaseTenantCredentialSchema(metaclass=PatchedSchemaMeta):
-    authority_url = fields.Str(data_key="authority_uri")
+    authority_url = fields.Str()
     resource_url = fields.Str()
     tenant_id = fields.Str(required=True)
     client_id = fields.Str(required=True)
+
+    @pre_load
+    def accept_backward_compatible_keys(self, data, **kwargs):
+        acceptable_keys = [key for key in data.keys() if key in ("authority_url", "authority_uri")]
+        if len(acceptable_keys) > 1:
+            raise ValidationError(
+                "Cannot specify both 'authority_url' and 'authority_uri'. Please use 'authority_url'."
+            )
+        if acceptable_keys:
+            data["authority_url"] = data.pop(acceptable_keys[0])
+        return data
 
 
 class ServicePrincipalSchema(BaseTenantCredentialSchema):

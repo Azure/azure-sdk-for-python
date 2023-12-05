@@ -6,10 +6,10 @@
 
 from typing import Dict
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import BaseEnvironmentId as RestBaseEnvironmentId
+from azure.ai.ml._restclient.v2023_08_01_preview.models import BaseEnvironmentId as RestBaseEnvironmentId
 from azure.ai.ml._schema.assets.package.base_environment_source import BaseEnvironmentSourceSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
 @experimental
@@ -20,9 +20,17 @@ class BaseEnvironment:
 
     :param type: The type of the base environment.
     :type type: str
-    :param resource_id: The resource id of the base environment. e.g. azureml:<name>:<version>
+    :param resource_id: The resource id of the base environment. e.g. azureml:name:version
     :type resource_id: str
 
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START base_env_entity_create]
+            :end-before: [END base_env_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Create a Base Environment object.
     """
 
     def __init__(self, type, resource_id: str = None):

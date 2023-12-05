@@ -188,6 +188,10 @@ logging.getLogger().setLevel(logging.NOTSET)
 logger = logging.getLogger(__name__)
 
 logger.warning("Hello World!")
+
+# Telemetry records are flushed automatically upon application exit
+# If you would like to flush records manually yourself, you can call force_flush()
+logger_provider.force_flush()
 ```
 
 #### Export Correlated Log
@@ -397,6 +401,10 @@ histogram.record(99.9)
 # Async Gauge
 gauge = meter.create_observable_gauge("gauge", [observable_gauge_func])
 
+# Upon application exit, one last collection is made and telemetry records are
+# flushed automatically. # If you would like to flush records manually yourself,
+# you can call force_flush()
+meter_provider.force_flush()
 ```
 
 #### Metric custom views
@@ -521,7 +529,8 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
-trace.set_tracer_provider(TracerProvider())
+tracer_provider = TracerProvider()
+trace.set_tracer_provider(tracer_provider)
 tracer = trace.get_tracer(__name__)
 # This is the exporter that sends data to Application Insights
 exporter = AzureMonitorTraceExporter(
@@ -532,6 +541,10 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 
 with tracer.start_as_current_span("hello"):
     print("Hello, World!")
+
+# Telemetry records are flushed automatically upon application exit
+# If you would like to flush records manually yourself, you can call force_flush()
+tracer_provider.force_flush()
 ```
 
 #### Instrumentation with requests library
@@ -611,6 +624,10 @@ for i in range(100):
         print("Hello, World!")
 ```
 
+## Flush/shutdown behavior
+
+For all applications set up with OpenTelemetry SDK and Azure Monitor exporters, telemetry is flushed automatically upon application exit. Note that this does not include when application ends abruptly or crashes due to uncaught exception.
+
 ## Troubleshooting
 
 The exporter raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#azure-core-library-exceptions).
@@ -647,7 +664,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [aad_for_ai_docs]: https://learn.microsoft.com/azure/azure-monitor/app/azure-ad-authentication?tabs=python
-[api_docs]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-opentelemetry-exporter-azuremonitor/1.0.0b2/index.html
+[api_docs]: https://azure.github.io/azure-sdk-for-python/monitor.html#azure-monitor-opentelemetry-exporter
 [exporter_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter/samples
 [product_docs]: https://docs.microsoft.com/azure/azure-monitor/overview
 [azure_sub]: https://azure.microsoft.com/free/

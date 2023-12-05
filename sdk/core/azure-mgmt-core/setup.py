@@ -43,6 +43,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-mgmt-core",
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
@@ -68,7 +69,7 @@ setup(
         "pytyped": ["py.typed"],
     },
     install_requires=[
-        "azure-core<2.0.0,>=1.26.2",
+        "azure-core<2.0.0,>=1.29.0",
     ],
     python_requires=">=3.7",
 )

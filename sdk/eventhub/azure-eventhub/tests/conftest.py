@@ -18,6 +18,8 @@ from azure.mgmt.eventhub import EventHubManagementClient
 from azure.eventhub import EventHubProducerClient
 from azure.eventhub._pyamqp import ReceiveClient
 from azure.eventhub._pyamqp.authentication import SASTokenAuth
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblobaio import BlobCheckpointStore as BlobCheckpointStoreAsync
 try:
     import uamqp
     uamqp_transport_params = [True, False]
@@ -53,6 +55,24 @@ def sleep(request):
 @pytest.fixture(scope="session", params=uamqp_transport_params, ids=uamqp_transport_ids)
 def uamqp_transport(request):
     return request.param
+
+@pytest.fixture(scope="session")    
+def storage_connection_str():
+    try:
+        return os.environ['AZURE_STORAGE_CONN_STR']
+    except KeyError:
+        pytest.skip('AZURE_STORAGE_CONN_STR undefined')
+        return
+
+@pytest.fixture()    
+def checkpoint_store(storage_connection_str):
+    checkpoint_store = BlobCheckpointStore.from_connection_string(storage_connection_str, "blobcontainer" + str(uuid.uuid4()))
+    return checkpoint_store
+
+@pytest.fixture()    
+def checkpoint_store_aio(storage_connection_str):
+    checkpoint_store = BlobCheckpointStoreAsync.from_connection_string(storage_connection_str, "blobcontainer" + str(uuid.uuid4()))
+    return checkpoint_store
 
 def get_logger(filename, level=logging.INFO):
     azure_logger = logging.getLogger("azure.eventhub")
@@ -179,6 +199,17 @@ def live_eventhub(resource_group, eventhub_namespace):  # pylint: disable=redefi
         except:
             warnings.warn(UserWarning("eventhub teardown failed"))
 
+@pytest.fixture()
+def resource_mgmt_client():
+    try:
+        SUBSCRIPTION_ID = os.environ["AZURE_SUBSCRIPTION_ID"]
+    except KeyError:
+        pytest.skip('AZURE_SUBSCRIPTION_ID defined')
+        return
+    base_url = os.environ.get("EVENTHUB_RESOURCE_MANAGER_URL", "https://management.azure.com/")
+    credential_scopes = ["{}.default".format(base_url)]
+    resource_client = EventHubManagementClient(EnvironmentCredential(), SUBSCRIPTION_ID, base_url=base_url, credential_scopes=credential_scopes)
+    yield resource_client
 
 @pytest.fixture()
 def connection_str(live_eventhub):

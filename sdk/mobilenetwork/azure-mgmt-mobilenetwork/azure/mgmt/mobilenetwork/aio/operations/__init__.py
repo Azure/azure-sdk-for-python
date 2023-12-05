@@ -8,8 +8,10 @@
 
 from ._attached_data_networks_operations import AttachedDataNetworksOperations
 from ._data_networks_operations import DataNetworksOperations
+from ._diagnostics_packages_operations import DiagnosticsPackagesOperations
 from ._mobile_networks_operations import MobileNetworksOperations
 from ._operations import Operations
+from ._packet_captures_operations import PacketCapturesOperations
 from ._packet_core_control_planes_operations import PacketCoreControlPlanesOperations
 from ._packet_core_control_plane_versions_operations import PacketCoreControlPlaneVersionsOperations
 from ._packet_core_data_planes_operations import PacketCoreDataPlanesOperations
@@ -27,8 +29,10 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AttachedDataNetworksOperations",
     "DataNetworksOperations",
+    "DiagnosticsPackagesOperations",
     "MobileNetworksOperations",
     "Operations",
+    "PacketCapturesOperations",
     "PacketCoreControlPlanesOperations",
     "PacketCoreControlPlaneVersionsOperations",
     "PacketCoreDataPlanesOperations",

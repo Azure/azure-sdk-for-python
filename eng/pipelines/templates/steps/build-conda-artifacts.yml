@@ -1,94 +1,48 @@
 parameters:
-  - name: TestPipeline
-    type: boolean
-    default: false
-  - name: ServiceDirectory
-    type: string
-    default: ''
   - name: CondaArtifacts
     type: object
     default: []
+  - name: ArtifactPrefix
+    type: string
+    default: ''
+  - name: Arguments
+    type: string
+    default: ''
 
 steps:
-  - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-    parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
-      TestPipeline: ${{ parameters.TestPipeline }}
-
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     inputs:
       versionSpec: $(PythonVersion)
 
   - pwsh: |
-      mkdir $(Agent.BuildDirectory)/conda/
-      mkdir $(Agent.BuildDirectory)/conda/output
-      mkdir $(Agent.BuildDirectory)/conda/build
-      mkdir $(Agent.BuildDirectory)/conda/manifest
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      pip install "tools/azure-sdk-tools[build,conda]"
+      pip install disutils
+    displayName: Install build script requirements
 
-      Write-Host "##vso[task.setvariable variable=conda.output]$(Agent.BuildDirectory)/conda/output"
-      Write-Host "##vso[task.setvariable variable=conda.build]$(Agent.BuildDirectory)/conda/build"
-    displayName: 'Create Conda Working Directories'
+  - pwsh: |
+      $argument = @'
+      ${{ replace(convertToJson(parameters.CondaArtifacts), '"', '\"') }}
+      '@
 
-  - ${{ each artifact in parameters.CondaArtifacts }}:
-    # there may be multiple CondaArtifacts. Be certain $(conda.build) is clean just in case!
-    - pwsh:
-        Write-Host "Clean up Conda Build Directory $(conda.build)"
-        Remove-Item $(conda.build)/* -Recurse -Force
-      displayName: 'Clean Up Before Building ${{ artifact.name }}'
-
-    - ${{ each checkout in artifact.checkout }}:
-      - template: /eng/pipelines/templates/steps/get-tagged-code.yml
-        parameters:
-          DestinationDirectory: $(conda.build)/${{checkout.package}}
-          Package: ${{checkout.package}}
-          CheckoutPath: ${{checkout.checkout_path}}
-          Version: ${{checkout.version}}
-
-    - task: PythonScript@0
-      displayName: 'Build Source Distribution for ${{ artifact.name }}'
-      inputs:
-        scriptPath: 'scripts/devops_tasks/build_conda_artifacts.py'
-        arguments: >-
-          -d "$(conda.output)"
-          -b "$(conda.build)"
-          -m "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.meta_source }}"
-          -r "${{ artifact.common_root }}"
-          -n "${{ artifact.name }}"
-          -s "${{ parameters.ServiceDirectory }}"
-          -e "$(Build.SourcesDirectory)/eng/conda_env.yml"
-          -c "$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/ci.yml"
-
-    - bash: |
-        echo "##vso[task.prependpath]$CONDA/bin"
-      displayName: 'Prepend PATH with Conda and INIT'
-
-    - bash: |
-        conda env create --name ${{ artifact.name }} --file $(Build.SourcesDirectory)/eng/conda_env.yml
-        conda install --yes --quiet --name ${{ artifact.name }} conda-build conda-verify typing-extensions
-      displayName: 'Prepare Conda Environment for building ${{ artifact.name }}'
-
-    - bash: |
-        source activate ${{ artifact.name }}
-        conda-build . --output-folder "$(Agent.BuildDirectory)/conda/output/${{ artifact.name }}" -c $(AzureSDKCondaChannel)
-      displayName: 'Activate Conda Environment and Build ${{ artifact.name }}'
-      workingDirectory: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}/conda-recipe
+      sdk_build_conda -c "$argument" ${{ parameters.Arguments }}
+    displayName: Assemble Conda Packages
   
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
-      ArtifactPath: '$(Agent.BuildDirectory)/conda/output'
-      ArtifactName: 'conda'
-
+      ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
+      ArtifactName: '${{ parameters.ArtifactPrefix }}distributions'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-      displayName: 'Upload Conda Package SBOM'
+      displayName: 'Upload Conda SBOM'
       condition: succeededOrFailed()
       inputs:
-        BuildDropPath: '$(Agent.BuildDirectory)/conda/manifest'
+        BuildDropPath: '$(Build.SourcesDirectory)/conda/output'
 
-    - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-      parameters:
-        ArtifactPath: '$(Agent.BuildDirectory)/conda/manifest/_manifest'
-        ArtifactName: 'conda_manifest'
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/conda/output'
+      ArtifactName: '${{ parameters.ArtifactPrefix }}conda'

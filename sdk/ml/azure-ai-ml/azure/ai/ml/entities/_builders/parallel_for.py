@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import json
 import os
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml._schema import PathAwareSchema
@@ -17,6 +17,7 @@ from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, validate_attribute_type
+from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import UserErrorException
 
 
@@ -26,9 +27,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
     pipeline yml containing parallel_for node. Please do not manually initialize this class.
 
     :param body: Pipeline job for the parallel for loop body.
-    :type body: Pipeline
+    :type body: ~azure.ai.ml.entities.Pipeline
     :param items: The loop body's input which will bind to the loop node.
-    :type items: typing.Union[list, dict, str, NodeOutput, PipelineInput]
+    :type items: typing.Union[list, dict, str, ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+        ~azure.ai.ml.entities._job.pipeline._io.PipelineInput]
     :param max_concurrency: Maximum number of concurrent iterations to run. All loop body nodes will be executed
         in parallel if not specified.
     :type max_concurrency: int
@@ -52,11 +54,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
     def __init__(
         self,
         *,
-        body,
-        items,
-        max_concurrency=None,
+        body: "Pipeline",
+        items: Union[list, dict, str, PipelineInput, NodeOutput],
+        max_concurrency: Optional[int] = None,
         **kwargs,
-    ):
+    ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
@@ -87,11 +89,21 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
+        """Get the outputs of the parallel for loop.
+
+        :return: The dictionary containing the outputs of the parallel for loop.
+        :rtype: dict[str, Union[str, ~azure.ai.ml.Output]]
+        """
         return self._outputs
 
     @property
-    def items(self):
-        """The loop body's input which will bind to the loop node."""
+    def items(self) -> Union[list, dict, str, PipelineInput, NodeOutput]:
+        """Get the loop body's input which will bind to the loop node.
+
+        :return: The input for the loop body.
+        :rtype: typing.Union[list, dict, str, ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
+            ~azure.ai.ml.entities._job.pipeline._io.PipelineInput]
+        """
         return self._items
 
     @classmethod
@@ -106,8 +118,13 @@ class ParallelFor(LoopNode, NodeIOMixin):
         }
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param
     def _to_rest_item(cls, item: dict) -> dict:
-        """Convert item to rest object."""
+        """Convert item to rest object.
+
+        :return: The rest object
+        :rtype: dict
+        """
         primitive_inputs, asset_inputs = {}, {}
         # validate item
         for key, val in item.items():
@@ -128,6 +145,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         }
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _to_rest_items(cls, items: Union[list, dict, str, NodeOutput, PipelineInput]) -> str:
         """Convert items to rest object."""
         # validate items.
@@ -148,7 +166,11 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return rest_items
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
-        """Convert self to a rest object for remote call."""
+        """Convert self to a rest object for remote call.
+
+        :return: The rest object
+        :rtype: dict
+        """
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
@@ -156,6 +178,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return convert_ordered_dict_to_dict(rest_node)
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _from_rest_item(cls, rest_item):
         """Convert rest item to item."""
         primitive_inputs, asset_inputs = {}, {}
@@ -167,6 +190,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return {**cls._from_rest_inputs(inputs=asset_inputs), **primitive_inputs}
 
     @classmethod
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _from_rest_items(cls, rest_items: str) -> Union[dict, list, str]:
         """Convert items from rest object."""
         try:
@@ -194,8 +218,14 @@ class ParallelFor(LoopNode, NodeIOMixin):
         loaded_data["body"] = cls._get_body_from_pipeline_jobs(pipeline_jobs=pipeline_jobs, body_name=body_name)
         return cls(**loaded_data, **kwargs)
 
-    def _convert_output_meta(self, outputs):
-        """Convert output meta to aggregate types."""
+    def _convert_output_meta(self, outputs: Dict[str, Union[NodeOutput, Output]]) -> Dict[str, Output]:
+        """Convert output meta to aggregate types.
+
+        :param outputs: Output meta
+        :type outputs: Dict[str, Union[NodeOutput, Output]]
+        :return: Dictionary of aggregate types
+        :rtype: Dict[str, Output]
+        """
         # pylint: disable=protected-access
         aggregate_outputs = {}
         for name, output in outputs.items():
@@ -218,10 +248,14 @@ class ParallelFor(LoopNode, NodeIOMixin):
             aggregate_outputs[name] = resolved_output
         return aggregate_outputs
 
-    def _customized_validate(self):
-        """Customized validation for parallel for node."""
+    def _customized_validate(self) -> MutableValidationResult:
+        """Customized validation for parallel for node.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         # pylint: disable=protected-access
-        validation_result = self._validate_body(raise_error=False)
+        validation_result = self._validate_body()
         validation_result.merge_with(
             self._validate_items(items=self.items, raise_error=False, body_component=self.body._component)
         )
@@ -255,10 +289,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 yaml_path="items",
                 message="Items is required for parallel_for node",
             )
-        return validation_result.try_raise(
-            cls._get_validation_error_target(),
-            raise_error=raise_error,
-        )
+        return cls._try_raise(validation_result, raise_error=raise_error)
 
     @classmethod
     def _validate_items_list(cls, items: list, validation_result, body_component=None):

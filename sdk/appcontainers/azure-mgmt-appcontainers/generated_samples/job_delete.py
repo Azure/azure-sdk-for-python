@@ -29,13 +29,12 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.jobs.begin_delete(
+    client.jobs.begin_delete(
         resource_group_name="rg",
         job_name="testWorkerContainerAppsJob0",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2022-11-01-preview/examples/Job_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/Job_Delete.json
 if __name__ == "__main__":
     main()

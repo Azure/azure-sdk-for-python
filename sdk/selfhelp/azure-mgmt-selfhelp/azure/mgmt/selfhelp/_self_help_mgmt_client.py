@@ -15,7 +15,14 @@ from azure.mgmt.core import ARMPipelineClient
 from . import models as _models
 from ._configuration import SelfHelpMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import DiagnosticsOperations, DiscoverySolutionOperations, Operations
+from .operations import (
+    CheckNameAvailabilityOperations,
+    DiagnosticsOperations,
+    DiscoverySolutionOperations,
+    Operations,
+    SolutionOperations,
+    TroubleshootersOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -27,16 +34,23 @@ class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.selfhelp.operations.Operations
+    :ivar check_name_availability: CheckNameAvailabilityOperations operations
+    :vartype check_name_availability:
+     azure.mgmt.selfhelp.operations.CheckNameAvailabilityOperations
     :ivar diagnostics: DiagnosticsOperations operations
     :vartype diagnostics: azure.mgmt.selfhelp.operations.DiagnosticsOperations
     :ivar discovery_solution: DiscoverySolutionOperations operations
     :vartype discovery_solution: azure.mgmt.selfhelp.operations.DiscoverySolutionOperations
+    :ivar solution: SolutionOperations operations
+    :vartype solution: azure.mgmt.selfhelp.operations.SolutionOperations
+    :ivar troubleshooters: TroubleshootersOperations operations
+    :vartype troubleshooters: azure.mgmt.selfhelp.operations.TroubleshootersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-06-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-09-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -53,10 +67,15 @@ class SelfHelpMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.diagnostics = DiagnosticsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.discovery_solution = DiscoverySolutionOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.solution = SolutionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.troubleshooters = TroubleshootersOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

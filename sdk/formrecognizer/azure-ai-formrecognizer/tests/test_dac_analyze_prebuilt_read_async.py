@@ -28,7 +28,7 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
     @recorded_by_proxy_async
     async def test_document_read_url_features_formulas(self, client):
         async with client:
-            poller = await client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.OCR_FORMULA])
+            poller = await client.begin_analyze_document_from_url("prebuilt-read", self.formula_url_jpg, features=[AnalysisFeature.FORMULAS])
             result = await poller.result()
         assert len(result.pages) > 0
         assert len(result.pages[0].formulas) == 2
@@ -60,7 +60,7 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
             responses.append(extracted_document)
 
         async with client:
-            poller = await client.begin_analyze_document("prebuilt-read", document, cls=callback)
+            poller = await client.begin_analyze_document("prebuilt-read", document, features=[AnalysisFeature.LANGUAGES], cls=callback)
             result = await poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]
@@ -80,42 +80,6 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
         self.assertDocumentParagraphsTransformCorrect(returned_model.paragraphs, raw_analyze_result.paragraphs)
-
-    @skip_flaky_test
-    @FormRecognizerPreparer()
-    @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy_async
-    async def test_document_read_stream_docx(self, client, **kwargs):
-        with open(self.invoice_docx, "rb") as fd:
-            document = fd.read()
-
-        responses = []
-
-        def callback(raw_response, _, headers):
-            analyze_result = client._deserialize(AnalyzeResultOperation, raw_response)
-            extracted_document = AnalyzeResult._from_generated(analyze_result.analyze_result)
-            responses.append(analyze_result)
-            responses.append(extracted_document)
-
-        async with client:
-            poller = await client.begin_analyze_document("prebuilt-read", document, cls=callback)
-            result = await poller.result()
-        raw_analyze_result = responses[0].analyze_result
-        returned_model = responses[1]
-
-        # Check AnalyzeResult
-        assert returned_model.model_id == raw_analyze_result.model_id
-        assert returned_model.api_version == raw_analyze_result.api_version
-        assert returned_model.content == raw_analyze_result.content
-
-        self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
-        self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
-
-        # check that detected languages are returned
-        assert len(returned_model.languages) > 0
-        self.assertDocumentLanguagesTransformCorrect(returned_model.languages, raw_analyze_result.languages)
-        # check page range
-        assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
 
     @pytest.mark.live_test_only
@@ -150,8 +114,6 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
-        assert len(returned_model.languages) > 0
-        self.assertDocumentLanguagesTransformCorrect(returned_model.languages, raw_analyze_result.languages)
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
@@ -189,7 +151,5 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
         self.assertDocumentPagesTransformCorrect(returned_model.pages, raw_analyze_result.pages)
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
-        assert len(returned_model.languages) > 0
-        self.assertDocumentLanguagesTransformCorrect(returned_model.languages, raw_analyze_result.languages)
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)

@@ -132,7 +132,21 @@ def get_storage_client(
     account_url: Optional[str] = None,
     container_name: Optional[str] = None,
 ) -> Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]:
-    """Return a storage client class instance based on the storage account type."""
+    """Return a storage client class instance based on the storage account type.
+
+    :param credential: The credential
+    :type credential: str
+    :param storage_account: The storage_account name
+    :type storage_account: str
+    :param storage_type: The storage type
+    :type storage_type: Union[DatastoreType, str]
+    :param account_url: The account url
+    :type account_url: Optional[str]
+    :param container_name: The container name
+    :type container_name: Optional[str]
+    :return: The storage client
+    :rtype: Union[BlobStorageClient, FileStorageClient, Gen2StorageClient]
+    """
     client_builders = {
         DatastoreType.AZURE_BLOB: lambda credential, container_name, account_url: BlobStorageClient(
             credential=credential, account_url=account_url, container_name=container_name

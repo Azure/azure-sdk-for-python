@@ -10,7 +10,7 @@ parameters:
 - name: Tests
   displayName: Tests (regex of tests to run)
   type: string
-  default: '^(send-queue-message-batch|send-subscription-message-batch|receive-queue-message-batch|receive-subscription-message-batch)$'
+  default: '^(send-queue-messages-batch|send-subscription-messages-batch|receive-queue-messages-batch|receive-subscription-messages-batch)$'
 - name: Arguments
   displayName: Arguments (regex of arguments to run)
   type: string

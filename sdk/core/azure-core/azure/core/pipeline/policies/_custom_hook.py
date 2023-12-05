@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar
+from typing import TypeVar, Any
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpResponse, HttpRequest
@@ -41,7 +41,7 @@ class CustomHookPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument,super-init-not-called
+    def __init__(self, **kwargs: Any):  # pylint: disable=unused-argument,super-init-not-called
         self._request_callback = kwargs.get("raw_request_hook")
         self._response_callback = kwargs.get("raw_response_hook")
 

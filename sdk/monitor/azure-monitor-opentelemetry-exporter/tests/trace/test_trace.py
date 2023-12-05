@@ -48,6 +48,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
+        os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"] = "true"
         cls._exporter = AzureMonitorTraceExporter()
 
     @classmethod
@@ -1269,6 +1270,75 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter.get_tracer_provider")
+    def test_export_otel_resource_metric(self, mock_get_tracer_provider):
+        del os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"]
+        mock_tracer_provider = mock.Mock()
+        mock_get_tracer_provider.return_value = mock_tracer_provider
+        exporter = self._exporter
+        test_resource = resources.Resource(
+            attributes={
+                "string_test_key": "string_value",
+                "int_test_key": -1,
+                "bool_test_key": False,
+                "float_test_key": 0.5,
+                "sequence_test_key": ["a", "b"],
+            }
+        )
+        mock_tracer_provider.resource = test_resource
+        test_span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+        )
+        test_span.start()
+        test_span.end()
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.SUCCESS
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._get_otel_resource_envelope"
+            ) as mock_get_otel_resource_envelope:  # noqa: E501
+                mock_get_otel_resource_envelope.return_value = "test_envelope"
+                result = exporter.export([test_span])
+                self.assertEqual(result, SpanExportResult.SUCCESS)
+                mock_get_otel_resource_envelope.assert_called_once_with(test_resource)
+                envelopes = [
+                    "test_envelope",
+                    exporter._span_to_envelope(test_span)
+                ]
+                transmit.assert_called_once_with(envelopes)
+
+    def test_get_otel_resource_envelope(self):
+        exporter = self._exporter
+        test_resource = resources.Resource(
+            attributes={
+                "string_test_key": "string_value",
+                "int_test_key": -1,
+                "bool_test_key": False,
+                "float_test_key": 0.5,
+                "sequence_test_key": ["a", "b"],
+            }
+        )
+        envelope = exporter._get_otel_resource_envelope(test_resource)
+        metric_name = envelope.name
+        self.assertEqual(metric_name, "Microsoft.ApplicationInsights.Metric")
+        instrumentation_key = envelope.instrumentation_key
+        self.assertEqual(instrumentation_key, exporter._instrumentation_key)
+        
+        monitor_base = envelope.data
+        self.assertEqual(monitor_base.base_type, "MetricData")
+        metrics_data = monitor_base.base_data
+        resource_attributes = metrics_data.properties
+        self.assertEqual(resource_attributes, test_resource.attributes)
+        metrics = metrics_data.metrics
+        self.assertEqual(len(metrics), 1)
+        self.assertEqual(metrics[0].name, "_OTELRESOURCE_")
+
 
 class TestAzureTraceExporterUtils(unittest.TestCase):
     def test_get_trace_export_result(self):
@@ -1284,7 +1354,10 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             _get_trace_export_result(ExportResult.FAILED_RETRYABLE),
             SpanExportResult.FAILURE,
         )
-        self.assertEqual(_get_trace_export_result(None), None)
+        self.assertEqual(
+            _get_trace_export_result(None),
+            SpanExportResult.FAILURE,
+        )
 
     def test_check_instrumentation_span(self):
         span = mock.Mock()

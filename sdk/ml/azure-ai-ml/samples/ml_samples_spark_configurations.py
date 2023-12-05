@@ -20,14 +20,14 @@ import os
 
 class SparkConfigurationOptions(object):
     def ml_spark_config(self):
-        from azure.identity import DefaultAzureCredential
-
         from azure.ai.ml import MLClient
+        from azure.identity import DefaultAzureCredential
 
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
         credential = DefaultAzureCredential()
-        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
+        workspace_name = "test-ws1"
+        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name=workspace_name)
 
         cpu_cluster = ml_client.compute.get("cpu-cluster")
 
@@ -42,7 +42,8 @@ class SparkConfigurationOptions(object):
         monitor_definition = MonitorDefinition(
             compute=SparkResourceConfiguration(instance_type="standard_e4s_v3", runtime_version="3.2"),
             monitoring_target=MonitoringTarget(
-                endpoint_deployment_id="azureml:fraud_detection_endpoint:fraud_detection_deployment"
+                ml_task="Classification",
+                endpoint_deployment_id="azureml:fraud_detection_endpoint:fraud_detection_deployment",
             ),
             alert_notification=AlertNotification(emails=["abc@example.com", "def@example.com"]),
         )
@@ -70,7 +71,7 @@ class SparkConfigurationOptions(object):
             py_files=["utils.zip"],
             files=["my_files.txt"],
             args="--file_input ${{inputs.file_input}}",
-            base_path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline",
+            base_path="./sdk/ml/azure-ai-ml/tests/test_configs/dsl_pipeline/spark_job_in_pipeline",
         )
 
         # [END spark_component_definition]
@@ -87,7 +88,7 @@ class SparkConfigurationOptions(object):
         from azure.ai.ml.entities import SparkJob
 
         spark_job = SparkJob(
-            code="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/basic_src",
+            code="./sdk/ml/azure-ai-ml/tests/test_configs/dsl_pipeline/spark_job_in_pipeline/basic_src",
             entry={"file": "sampleword.py"},
             conf={
                 "spark.driver.cores": 2,
@@ -158,7 +159,7 @@ class SparkConfigurationOptions(object):
         node = spark(
             experiment_name="builder-spark-experiment-name",
             description="simply spark description",
-            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            code="./sdk/ml/azure-ai-ml/tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
             jars=["simple-1.1.1.jar"],
             driver_cores=1,
@@ -194,7 +195,7 @@ class SparkConfigurationOptions(object):
         # [START spark_function_configuration_2]
 
         node = spark(
-            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            code="./sdk/ml/azure-ai-ml/tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
             driver_cores=1,
             driver_memory="2g",

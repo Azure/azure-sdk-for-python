@@ -183,6 +183,7 @@ try:
 
         :param error: The error received in the send attempt.
         :type error: Exception
+        :return: The action to take according to error type.
         :rtype: ~uamqp.errors.ErrorAction
         """
         if error.condition == b"com.microsoft:server-busy":
@@ -264,6 +265,7 @@ try:
         def build_message(**kwargs: Any) -> "Message":
             """
             Creates a uamqp.Message with given arguments.
+            :return: A Message object.
             :rtype: uamqp.Message
             """
             return Message(**kwargs)
@@ -272,6 +274,8 @@ try:
         def build_batch_message(data: List) -> "BatchMessage":
             """
             Creates a uamqp.BatchMessage with given arguments.
+            :param list data: The data to send.
+            :return: A BatchMessage object.
             :rtype: uamqp.BatchMessage
             """
             return BatchMessage(data=data)
@@ -282,8 +286,9 @@ try:
         ) -> str:  # pylint: disable=unused-argument
             """
             Gets delivery tag of a Message.
-            :param message: Message to get delivery_tag from for uamqp.Message.
-            :param frame: Message to get delivery_tag from for pyamqp.Message.
+            :param ~uamqp.Message message: Message to get delivery_tag from for uamqp.Message.
+            :param any _: Ignored.
+            :return: Delivery tag of Message.
             :rtype: str
             """
             return message.delivery_tag
@@ -294,8 +299,9 @@ try:
         ) -> str:  # pylint: disable=unused-argument
             """
             Gets delivery id of a Message.
-            :param message: Message to get delivery_id from for uamqp.Message.
-            :param frame: Message to get delivery_id from for pyamqp.Message.
+            :param ~uamqp.Message message: Message to get delivery_id from for uamqp.Message.
+            :param any _: Ignored.
+            :return: Delivery id of Message.
             :rtype: str
             """
             return message.delivery_no
@@ -306,7 +312,8 @@ try:
         ) -> "Message":
             """
             Converts an AmqpAnnotatedMessage into an Amqp Message.
-            :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+            :param ~azure.servicebus.amqp.AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+            :return: Outgoing Amqp Message.
             :rtype: uamqp.Message
             """
             message_header = None
@@ -418,6 +425,7 @@ try:
             """
             Encodes the outgoing uamqp.Message of the message.
             :param ServiceBusMessage message: Message.
+            :return: Encoded message.
             :rtype: bytes
             """
             return cast("Message", message._message).encode_message()
@@ -430,7 +438,8 @@ try:
             Adds the given key/value to the application properties of the message.
             :param uamqp.Message message: Message.
             :param str key: Key to set in application properties.
-            :param str Value: Value to set for key in application properties.
+            :param str value: Value to set for key in application properties.
+            :return: Message with updated application properties.
             :rtype: uamqp.Message
             """
             if not message.application_properties:
@@ -443,6 +452,7 @@ try:
             """
             Gets the batch message encoded size given an underlying Message.
             :param uamqp.BatchMessage message: Message to get encoded size of.
+            :return: Size in bytes of encoded batch message.
             :rtype: int
             """
             return message.gather()[0].get_message_encoded_size()
@@ -452,6 +462,7 @@ try:
             """
             Gets the message encoded size given an underlying Message.
             :param uamqp.Message message: Message to get encoded size of.
+            :return: Size in bytes of encoded message.
             :rtype: int
             """
             return message.get_message_encoded_size()
@@ -460,7 +471,8 @@ try:
         def get_remote_max_message_size(handler: "AMQPClient") -> int:
             """
             Returns max peer message size.
-            :param AMQPClient handler: Client to get remote max message size on link from.
+            :param ~uamqp.AMQPClient handler: Client to get remote max message size on link from.
+            :return: Max message size.
             :rtype: int
             """
             return (
@@ -471,7 +483,8 @@ try:
         def get_handler_link_name(handler: "AMQPClient") -> str:
             """
             Returns link name.
-            :param AMQPClient handler: Client to get name of link from.
+            :param ~uamqp.AMQPClient handler: Client to get name of link from.
+            :return: Link name.
             :rtype: str
             """
             return handler.message_handler.name
@@ -485,6 +498,8 @@ try:
             :param ~azure.servicebus._common._configuration.Configuration config:
              Configuration.
             :keyword bool is_session: Is session enabled.
+            :return: Retry policy.
+            :rtype: ~azure.servicebus.common.errors.ServiceBusErrorPolicy
             """
             # TODO: What's the retry overlap between servicebus and pyamqp?
             return _ServiceBusErrorPolicy(
@@ -500,6 +515,8 @@ try:
             :param str host: The hostname, used by uamqp.
             :param JWTTokenAuth auth: The auth, used by uamqp.
             :param bool network_trace: Required.
+            :return: Connection
+            :rtype: ~uamqp.Connection
             """
             custom_endpoint_address = kwargs.pop(  # pylint:disable=unused-variable
                 "custom_endpoint_address"
@@ -519,7 +536,7 @@ try:
         def close_connection(connection: "Connection") -> None:
             """
             Closes existing connection.
-            :param connection: uamqp or pyamqp Connection.
+            :param ~uamqp.Connection connection: uamqp or pyamqp Connection.
             """
             connection.destroy()
 
@@ -538,6 +555,8 @@ try:
             :keyword str client_name: Required.
             :keyword dict link_properties: Required.
             :keyword properties: Required.
+            :return: SendClient
+            :rtype: ~uamqp.SendClient
             """
             target = kwargs.pop("target")
             retry_policy = kwargs.pop("retry_policy")
@@ -607,8 +626,8 @@ try:
         ) -> None:  # pylint: disable=unused-argument
             """
             Add ServiceBusMessage to the data body of the BatchMessage.
-            :param sb_message_batch: ServiceBusMessageBatch to add data to.
-            :param outgoing_sb_message: Transformed ServiceBusMessage for sending.
+            :param ~azure.servicebus.ServiceBusMessageBatch sb_message_batch: ServiceBusMessageBatch to add data to.
+            :param ~azure.servicebus.ServiceBusMessage outgoing_sb_message: Transformed ServiceBusMessage for sending.
             :rtype: None
             """
             # pylint: disable=protected-access
@@ -620,7 +639,9 @@ try:
             Creates and returns the Source.
 
             :param Source source: Required.
-            :param str or None session_id: Required.
+            :param str or None session_filter: Required.
+            :return: Source
+            :rtype: ~uamqp.Source
             """
             source = Source(source)
             source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
@@ -632,8 +653,8 @@ try:
         ) -> "ReceiveClient":
             """
             Creates and returns the receive client.
-            :param ~azure.servicebus._common._configuration.Configuration config:
-             The configuration.
+
+            :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
 
             :keyword str source: Required. The source.
             :keyword str offset: Required.
@@ -649,6 +670,8 @@ try:
             :keyword keep_alive_interval: Required.
             :keyword desired_capabilities: Required.
             :keyword timeout: Required.
+            :return The ReceiveClient.
+            :rtype: ~uamqp.ReceiveClient
             """
             source = kwargs.pop("source")
             retry_policy = kwargs.pop("retry_policy")
@@ -682,6 +705,12 @@ try:
         ) -> None:
             """
             Receiver on_attach callback.
+
+            :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
+            :param ~uamqp.Source source: The source.
+            :param ~uamqp.Target target: The target.
+            :param dict[str,any] properties: Properties.
+            :param Exception error: Error.
             """
             # pylint: disable=protected-access
             if receiver._session and str(source) == receiver._entity_uri:
@@ -704,7 +733,13 @@ try:
             receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
         ) -> Iterator["ServiceBusReceivedMessage"]:
             """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
-            and per-iter argument passing that requires the former."""
+            and per-iter argument passing that requires the former.
+
+            :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver to iterate over.
+            :param int or None max_wait_time: The maximum time to wait for messages, in seconds.
+            :return: An iterator of messages.
+            :rtype: iterator[~azure.servicebus.ServiceBusReceivedMessage]
+            """
             # pylint: disable=protected-access
             original_timeout = None
             while True:
@@ -732,7 +767,7 @@ try:
         # wait_time used by pyamqp
         @staticmethod
         def iter_next(
-            receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+            receiver: "ServiceBusReceiver", wait_time: Optional[int] = None,
         ) -> "ServiceBusReceivedMessage":  # pylint: disable=unused-argument
             # pylint: disable=protected-access
             try:
@@ -756,11 +791,18 @@ try:
                 receiver._receive_context.clear()
 
         @staticmethod
-        def enhanced_message_received(
+        def enhanced_message_received(  # pylint: disable=arguments-differ
             receiver: "ServiceBusReceiver", message: "Message"
         ) -> None:
             """
-            Receiver enhanced_message_received callback.
+            Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+            this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+            Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+            from the Service Bus entity.
+
+            :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
+            :param ~uamqp.Message message: The received message.
             """
             # pylint: disable=protected-access
             cast("ReceiveClient", receiver._handler)._was_message_received = True
@@ -790,8 +832,9 @@ try:
         def get_current_time(handler: "ReceiveClient") -> float:
             """
             Gets the current time.
-            :param ReceiveClient handler: Handler with counter to get time.
-            :rtype: int
+            :param ~uamqp.ReceiveClient handler: Handler with counter to get time.
+            :return: Current time in milliseconds.
+            :rtype: float
             """
             return handler._counter.get_current_ms()  # pylint: disable=protected-access
 
@@ -799,7 +842,7 @@ try:
         def reset_link_credit(handler: "ReceiveClient", link_credit: int) -> None:
             """
             Resets the link credit on the link.
-            :param ReceiveClient handler: Client with link to reset link credit.
+            :param ~uamqp.ReceiveClient handler: Client with link to reset link credit.
             :param int link_credit: Link credit needed.
             :rtype: None
             """
@@ -859,12 +902,14 @@ try:
         ) -> List["ServiceBusReceivedMessage"]:
             """
             Parses peek/deferred op messages into ServiceBusReceivedMessage.
-            :param Message message: Message to parse.
-            :param ServiceBusReceivedMessage message_type: Message type to pass parsed message to.
-            :keyword ServiceBusReceiver receiver: Required.
+            :param ~uamqp.Message message: Message to parse.
+            :param ~azure.servicebus.ServiceBusReceivedMessage message_type: Message type to pass parsed message to.
+            :keyword ~azure.servicebus.ServiceBusReceiver receiver: Required.
             :keyword bool is_peeked_message: Optional. For peeked messages.
             :keyword bool is_deferred_message: Optional. For deferred messages.
-            :keyword ServiceBusReceiveMode receive_mode: Optional.
+            :keyword ~azure.servicebus.ServiceBusReceiveMode receive_mode: Optional.
+            :return: List of ServiceBusReceivedMessage.
+            :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
             """
             parsed = []
             for m in message.get_data()[b"messages"]:
@@ -887,13 +932,15 @@ try:
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-            :param get_token: The callback function used for getting and refreshing
+            :param callable get_token: The callback function used for getting and refreshing
             tokens. It should return a valid jwt token each time it is called.
             :param bytes token_type: Token type.
             :param ~azure.servicebus._configuration.Configuration config: EH config.
 
             :keyword bool update_token: Required. Whether to update token. If not updating token,
             then pass 300 to refresh_window.
+            :return: JWTTokenAuth instance.
+            :rtype: ~uamqp.JWTTokenAuth
             """
             update_token = kwargs.pop("update_token")
             refresh_window = 0 if update_token else 300
@@ -952,13 +999,15 @@ try:
         ) -> "ServiceBusReceivedMessage":
             """
             Send mgmt request and return result of callback.
-            :param AMQPClient mgmt_client: Client to send request with.
-            :param Message mgmt_msg: Message.
+            :param ~uamqp.AMQPClient mgmt_client: Client to send request with.
+            :param ~uamqp.Message mgmt_msg: Message.
             :keyword bytes operation: Operation.
             :keyword bytes operation_type: Op type.
             :keyword bytes node: Mgmt target.
             :keyword int timeout: Timeout.
-            :keyword Callable callback: Callback to process request response.
+            :keyword callable callback: Callback to process request response.
+            :rtype: ~azure.servicebus.ServiceBusReceivedMessage
+            :return: The servicebus received message.
             """
             return mgmt_client.mgmt_request(
                 mgmt_msg,

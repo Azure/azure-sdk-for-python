@@ -31,14 +31,13 @@ def main():
         resource_name="migrationvault",
     )
 
-    response = client.replication_migration_items.begin_delete(
+    client.replication_migration_items.begin_delete(
         fabric_name="vmwarefabric1",
         protection_container_name="vmwareContainer1",
         migration_item_name="virtualmachine1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/ReplicationMigrationItems_Delete.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/ReplicationMigrationItems_Delete.json
 if __name__ == "__main__":
     main()

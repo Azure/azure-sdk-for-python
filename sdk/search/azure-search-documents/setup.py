@@ -39,6 +39,7 @@ setup(
     author="Microsoft Corporation",
     author_email="ascl@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents",
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -49,6 +50,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -63,7 +65,7 @@ setup(
     ),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.24.0",
+        "azure-core<2.0.0,>=1.28.0",
         "azure-common~=1.1",
         "isodate>=0.6.0",
     ],

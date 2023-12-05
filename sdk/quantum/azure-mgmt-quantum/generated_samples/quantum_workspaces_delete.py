@@ -29,11 +29,10 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.workspaces.begin_delete(
+    client.workspaces.begin_delete(
         resource_group_name="quantumResourcegroup",
         workspace_name="quantumworkspace1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/quantum/resource-manager/Microsoft.Quantum/preview/2022-01-10-preview/examples/quantumWorkspacesDelete.json

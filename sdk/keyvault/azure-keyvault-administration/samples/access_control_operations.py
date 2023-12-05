@@ -89,6 +89,7 @@ updated_definition = client.set_role_definition(
 )
 # [END update_a_role_definition]
 print(f"Role definition '{updated_definition.role_name}' updated successfully.")
+assert unique_definition_name
 
 # We can now fetch the created definition to verify that it was created as expected.
 print("\n.. Get a role definition")
@@ -104,6 +105,7 @@ from azure.keyvault.administration import KeyVaultRoleScope
 
 role_assignments = client.list_role_assignments(KeyVaultRoleScope.GLOBAL)
 for assignment in role_assignments:
+    assert assignment.properties
     print(f"Role assignment name: {assignment.name}")
     print(f"Principal ID associated with this assignment: {assignment.properties.principal_id}")
 # [END list_role_assignments]
@@ -114,6 +116,7 @@ for assignment in role_assignments:
 print("\n.. Create a role assignment")
 principal_id = os.environ["AZURE_CLIENT_ID"]
 definition_id = updated_definition.id
+assert definition_id
 # [START create_a_role_assignment]
 from azure.keyvault.administration import KeyVaultRoleScope
 
@@ -121,11 +124,13 @@ scope = KeyVaultRoleScope.GLOBAL
 role_assignment = client.create_role_assignment(scope=scope, definition_id=definition_id, principal_id=principal_id)
 print(f"Role assignment {role_assignment.name} created successfully.")
 # [END create_a_role_assignment]
+assert role_assignment.name
 
 # We can now fetch the role assignment to verify that it was created correctly.
 print("\n.. Get a role assignment")
 # [START get_a_role_assignment]
 fetched_assignment = client.get_role_assignment(scope=scope, name=role_assignment.name)
+assert fetched_assignment.properties
 print(f"Role assignment for principal {fetched_assignment.properties.principal_id} fetched successfully.")
 # [END get_a_role_assignment]
 

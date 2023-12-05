@@ -21,8 +21,8 @@ USAGE:
 import asyncio
 import os
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.aio import SearchIndexClient

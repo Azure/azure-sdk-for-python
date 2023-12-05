@@ -154,8 +154,8 @@ def example_send_and_receive_sync():
     servicebus_sender = example_create_servicebus_sender_sync()
     # [START send_sync]
     with servicebus_sender:
-        message = ServiceBusMessage("Hello World")
-        servicebus_sender.send_messages(message)
+        message_send = ServiceBusMessage("Hello World")
+        servicebus_sender.send_messages(message_send)
     # [END send_sync]
         servicebus_sender.send_messages([ServiceBusMessage("Hello World")] * 5)
 
@@ -167,7 +167,7 @@ def example_send_and_receive_sync():
     # [END create_batch_sync]
 
     # [START send_complex_message]
-    message = ServiceBusMessage(
+    message_send = ServiceBusMessage(
         "Hello World!!",
         session_id="MySessionID",
         application_properties={'data': 'custom_data'},
@@ -179,8 +179,8 @@ def example_send_and_receive_sync():
     servicebus_receiver = example_create_servicebus_receiver_sync()
     # [START peek_messages_sync]
     with servicebus_receiver:
-        messages = servicebus_receiver.peek_messages()
-        for message in messages:
+        messages_peek = servicebus_receiver.peek_messages()
+        for message in messages_peek:
             print(str(message))
     # [END peek_messages_sync]
 
@@ -200,15 +200,17 @@ def example_send_and_receive_sync():
     servicebus_receiver = example_create_servicebus_receiver_sync()
     # [START receive_sync]
     with servicebus_receiver:
-        messages = servicebus_receiver.receive_messages(max_wait_time=5)
-        for message in messages:
+        messages_sync = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages_sync:
             print(str(message))
             servicebus_receiver.complete_message(message)
     # [END receive_sync]
 
         # [START receive_complex_message]
-        messages = servicebus_receiver.receive_messages(max_wait_time=5)
-        for message in messages:
+        from typing import List
+        from azure.servicebus import ServiceBusReceivedMessage
+        messages_complex: List[ServiceBusReceivedMessage] = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages_complex:
             print("Receiving: {}".format(message))
             print("Time to live: {}".format(message.time_to_live))
             print("Sequence number: {}".format(message.sequence_number))
@@ -223,32 +225,32 @@ def example_send_and_receive_sync():
         # [END receive_complex_message]
 
         # [START abandon_message_sync]
-        messages = servicebus_receiver.receive_messages(max_wait_time=5)
-        for message in messages:
+        messages_abandon = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages_abandon:
             servicebus_receiver.abandon_message(message)
         # [END abandon_message_sync]
 
         # [START complete_message_sync]
-        messages = servicebus_receiver.receive_messages(max_wait_time=5)
-        for message in messages:
+        messages_complete = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages_complete:
             servicebus_receiver.complete_message(message)
         # [END complete_message_sync]
 
         # [START defer_message_sync]
-        messages = servicebus_receiver.receive_messages(max_wait_time=5)
-        for message in messages:
+        messages_defer = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages_defer:
             servicebus_receiver.defer_message(message)
         # [END defer_message_sync]
 
         # [START dead_letter_message_sync]
-        messages = servicebus_receiver.receive_messages(max_wait_time=5)
-        for message in messages:
+        messages_dead_letter = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages_dead_letter:
             servicebus_receiver.dead_letter_message(message)
         # [END dead_letter_message_sync]
 
         # [START renew_message_lock_sync]
-        messages = servicebus_receiver.receive_messages(max_wait_time=5)
-        for message in messages:
+        messages_lock = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages_lock:
             servicebus_receiver.renew_message_lock(message)
         # [END renew_message_lock_sync]
 
@@ -270,8 +272,8 @@ def example_receive_deferred_sync():
     # [START receive_defer_sync]
     with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = servicebus_receiver.receive_messages(max_wait_time=5)
-        for message in messages:
+        messages_defer = servicebus_receiver.receive_messages(max_wait_time=5)
+        for message in messages_defer:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(str(message))
             servicebus_receiver.defer_message(message)
@@ -304,8 +306,8 @@ def example_receive_deadletter_sync():
                 )
 
         with servicebus_client.get_queue_receiver(queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER) as servicebus_deadletter_receiver:
-            messages = servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
-            for message in messages:
+            messages_deadletter = servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
+            for message in messages_deadletter:
                 servicebus_deadletter_receiver.complete_message(message)
         # [END receive_deadletter_sync]
 

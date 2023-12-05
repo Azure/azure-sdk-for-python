@@ -29,14 +29,13 @@ def main():
         subscription_id="91d12660-3dec-467a-be2a-213b5544ddc0",
     )
 
-    response = client.iot_hub.begin_manual_failover(
+    client.iot_hub.begin_manual_failover(
         iot_hub_name="testHub",
         resource_group_name="myResourceGroup",
         failover_input={"failoverRegion": "testHub"},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/stable/2021-07-02/examples/IotHub_ManualFailover.json
+# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/stable/2023-06-30/examples/IotHub_ManualFailover.json
 if __name__ == "__main__":
     main()

@@ -6,7 +6,7 @@
 import json
 import shutil
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Optional
 
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.ai.ml.entities import OnlineEndpoint
@@ -20,18 +20,22 @@ class EndpointStub:
     machine in an idempotent, well-known location.
     """
 
-    def create_or_update(self, endpoint: OnlineEndpoint):
+    def create_or_update(self, endpoint: OnlineEndpoint) -> OnlineEndpoint:
         """Create or update a local endpoint.
 
         :param OnlineEndpoint endpoint: OnlineEndpoint entity to create or update.
+        :return: The provided endpoint
+        :rtype: OnlineEndpoint
         """
         self._create_endpoint_cache(endpoint=endpoint)
         return endpoint
 
-    def get(self, endpoint_name: str):
+    def get(self, endpoint_name: str) -> Optional[OnlineEndpoint]:
         """Get a local endpoint.
 
         :param str endpoint_name: Name of local endpoint to get.
+        :return: The specified Online Endpoint
+        :rtype: Optional[Endpoint]
         """
         endpoint_path = self._get_endpoint_cache_file(endpoint_name=endpoint_name)
         if endpoint_path.exists():
@@ -39,7 +43,11 @@ class EndpointStub:
         return None
 
     def list(self) -> Iterable[Path]:
-        """List all local endpoints."""
+        """List all local endpoints.
+
+        :return: An iterable of paths to endpoints
+        :rtype: Iterable[Path]
+        """
         endpoints = []
         azureml_dir = self._get_inferencing_cache_dir()
         for endpoint_file in azureml_dir.glob("*/*.json"):
@@ -58,16 +66,21 @@ class EndpointStub:
         """Invoke a local endpoint.
 
         For an EndpointStub, it cannot invoke, so we return a helper message.
+
+        :return: Invocation result
+        :rtype: str
         """
         return (
             "This local endpoint does not have any deployments, so it cannot be invoked."
             "Please use 'az ml online-deployment create --local' before invoking."
         )
 
-    def _create_endpoint_cache(self, endpoint: OnlineEndpoint):
+    def _create_endpoint_cache(self, endpoint: OnlineEndpoint) -> Path:
         """Create or update a local endpoint cache.
 
         :param OnlineEndpoint endpoint: OnlineEndpoint entity to create or update.
+        :return: The endpoint cache path
+        :rtype: Path
         """
         endpoint_cache_path = self._get_endpoint_cache_file(endpoint_name=endpoint.name)
         endpoint_metadata = json.dumps(endpoint.dump())
@@ -78,7 +91,8 @@ class EndpointStub:
         """Get a local endpoint cache Path. Idempotent.
 
         :param str endpoint_name: Name of local endpoint to get local cache.
-        :returns Path: path to cached endpoint file.
+        :return: path to cached endpoint file.
+        :rtype: Path
         """
         build_directory = self._create_build_directory(endpoint_name=endpoint_name)
         return Path(build_directory, f"{endpoint_name}.json")
@@ -87,7 +101,8 @@ class EndpointStub:
         """Create or update a local endpoint build directory.
 
         :param str endpoint_name: Name of local endpoint to get local directory.
-        :returns Path: path to endpoint build directory.
+        :return: path to endpoint build directory.
+        :rtype: Path
         """
         build_directory = self._get_build_directory(endpoint_name=endpoint_name)
         build_directory.mkdir(parents=True, exist_ok=True)
@@ -97,7 +112,8 @@ class EndpointStub:
         """Get a local endpoint build directory. Idempotent.
 
         :param str endpoint_name: Name of local endpoint to get local directory.
-        :returns Path: path to endpoint build directory.
+        :return: path to endpoint build directory.
+        :rtype: Path
         """
         return Path(self._get_inferencing_cache_dir(), endpoint_name)
 
@@ -105,6 +121,7 @@ class EndpointStub:
     def _get_inferencing_cache_dir(cls) -> Path:
         """Get a local inferencing directory. Idempotent.
 
-        :returns Path: path to local inferencing cache directory.
+        :return: path to local inferencing cache directory.
+        :rtype: Path
         """
         return Path(Path.home(), ".azureml", "inferencing")

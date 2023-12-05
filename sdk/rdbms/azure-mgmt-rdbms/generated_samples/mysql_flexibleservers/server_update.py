@@ -34,13 +34,14 @@ def main():
         server_name="mysqltestserver",
         parameters={
             "properties": {
-                "storage": {"autoGrow": "Disabled", "autoIoScaling": "Disabled", "iops": 200, "storageSizeGB": 30}
+                "network": {"publicNetworkAccess": "Disabled"},
+                "storage": {"autoGrow": "Disabled", "autoIoScaling": "Disabled", "iops": 200, "storageSizeGB": 30},
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2022-09-30-preview/examples/ServerUpdate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-06-01-preview/examples/ServerUpdate.json
 if __name__ == "__main__":
     main()

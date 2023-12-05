@@ -42,6 +42,7 @@ def _split_chunks(logs: List[JSON], max_size_bytes: int = MAX_CHUNK_SIZE_BYTES) 
 
 def _create_gzip_requests(logs: List[JSON]) -> Generator[Tuple[bytes, List[JSON]], None, None]:
     for chunk in _split_chunks(logs):
+        # cspell:ignore wbits
         zlib_mode = 16 + zlib.MAX_WBITS  # for gzip encoding
         _compress = zlib.compressobj(wbits=zlib_mode)
         data = _compress.compress(bytes(json.dumps(chunk), encoding="utf-8"))

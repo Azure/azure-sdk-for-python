@@ -102,7 +102,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Union, TypeVar, Any
 
-
 # Yes:
 if TYPE_CHECKING:
     from a import b  # avoiding a circular import
@@ -151,15 +150,15 @@ def begin_build_model(
 ```python
 from typing import Optional
 
-# Yes:
-def foo(
-    bar: Optional[str] = None,
-) -> None:
-    ...
-
 # No:
 def foo(
     bar: str = None,
+) -> None:
+    ...
+
+# Yes:
+def foo(
+    bar: Optional[str] = None,
 ) -> None:
     ...
 ```
@@ -169,17 +168,17 @@ def foo(
 ```python
 from typing import Optional, Any
 
-# Yes
-def foo(
-    bar: Optional[Any] = None,
-) -> None:
-    bar.append(1)  # error caught at type checking time: Item "None" of "Optional[Any]" has no attribute "append"
-
-# No
+# No:
 def foo(
     bar: Any = None,
 ) -> None:
     bar.append(1)  # error caught at runtime: AttributeError: 'NoneType' object has no attribute 'append'
+
+# Yes:
+def foo(
+    bar: Optional[Any] = None,
+) -> None:
+    bar.append(1)  # error caught at type checking time: Item "None" of "Optional[Any]" has no attribute "append"
 ```
 
 ### Collections
@@ -203,13 +202,13 @@ def get_entity(entity_id: str) -> dict[str, str]:
 ```python
 from typing import Sequence, Iterable
 
-# Yes:
-def create_batch(entities: Sequence[Entity]) -> None:
+# No: the function calls len(), Iterable doesn't support it
+def create_batch(entities: Iterable[Entity]) -> None:
     if len(entities) > 1:
         ...
 
-# No: the function calls len(), Iterable doesn't support it
-def create_batch(entities: Iterable[Entity]) -> None:
+# Yes:
+def create_batch(entities: Sequence[Entity]) -> None:
     if len(entities) > 1:
         ...
 ```

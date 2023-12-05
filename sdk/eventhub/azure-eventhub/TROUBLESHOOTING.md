@@ -184,6 +184,7 @@ When filing GitHub issues, the following details are requested:
 
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
+[PublishEventsWithWebSocketsAndProxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/proxy_async.py
 [MigrationGuide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/migration_guide.md
 [SUPPORT]: https://github.com/Azure/azure-sdk-for-python/blob/main/SUPPORT.md
 

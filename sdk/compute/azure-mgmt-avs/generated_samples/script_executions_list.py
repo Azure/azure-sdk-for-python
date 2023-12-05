@@ -31,12 +31,12 @@ def main():
 
     response = client.script_executions.list(
         resource_group_name="group1",
-        private_cloud_name="{privateCloudName}",
+        private_cloud_name="cloud1",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2022-05-01/examples/ScriptExecutions_List.json
+# x-ms-original-file: specification/vmware/resource-manager/Microsoft.AVS/stable/2023-03-01/examples/ScriptExecutions_List.json
 if __name__ == "__main__":
     main()

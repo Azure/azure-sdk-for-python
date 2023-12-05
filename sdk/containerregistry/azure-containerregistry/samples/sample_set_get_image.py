@@ -32,7 +32,7 @@ from utilities import get_authority, get_credential
 class SetGetImage(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority)
 
@@ -40,10 +40,13 @@ class SetGetImage(object):
         # [START upload_blob_and_manifest]
         self.repository_name = "sample-oci-image"
         layer = BytesIO(b"Sample layer")
-        config = BytesIO(json.dumps(
-            {
-                "sample config": "content",
-            }).encode())
+        config = BytesIO(
+            json.dumps(
+                {
+                    "sample config": "content",
+                }
+            ).encode()
+        )
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
             layer_digest, layer_size = client.upload_blob(self.repository_name, layer)
@@ -74,7 +77,7 @@ class SetGetImage(object):
             manifest_digest = client.set_manifest(self.repository_name, oci_manifest, tag="latest")
             print(f"Uploaded manifest: digest - {manifest_digest}")
         # [END upload_blob_and_manifest]
-    
+
     def get_oci_image(self):
         # [START download_blob_and_manifest]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
@@ -82,7 +85,7 @@ class SetGetImage(object):
             get_manifest_result = client.get_manifest(self.repository_name, "latest")
             received_manifest = get_manifest_result.manifest
             print(f"Got manifest:\n{received_manifest}")
-            
+
             # Download and write out the layers
             for layer in received_manifest["layers"]:
                 # Remove the "sha256:" prefix from digest
@@ -108,8 +111,8 @@ class SetGetImage(object):
                 os.remove(config_file_name)
             print(f"Got config: {config_file_name}")
         # [END download_blob_and_manifest]
-        
-    def delete_blob(self):    
+
+    def delete_blob(self):
         # [START delete_blob]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             get_manifest_result = client.get_manifest(self.repository_name, "latest")
@@ -120,8 +123,8 @@ class SetGetImage(object):
             # Delete the config
             client.delete_blob(self.repository_name, received_manifest["config"]["digest"])
         # [END delete_blob]
-        
-    def delete_oci_image(self):    
+
+    def delete_oci_image(self):
         # [START delete_manifest]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             get_manifest_result = client.get_manifest(self.repository_name, "latest")
@@ -134,7 +137,7 @@ class SetGetImage(object):
         self.get_oci_image()
         self.delete_blob()
         self.delete_oci_image()
-    
+
     def set_get_docker_image(self):
         repository_name = "sample-docker-image"
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
@@ -151,20 +154,22 @@ class SetGetImage(object):
                 "config": {
                     "digest": config_digest,
                     "mediaType": "application/vnd.docker.container.image.v1+json",
-                    "size": config_size
+                    "size": config_size,
                 },
                 "layers": [
                     {
                         "digest": layer_digest,
                         "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
-                        "size": layer_size
+                        "size": layer_size,
                     }
                 ],
                 "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
-                "schemaVersion": 2
+                "schemaVersion": 2,
             }
             # Set the image with one custom media type
-            client.set_manifest(repository_name, docker_manifest, tag="sample", media_type=docker_manifest["mediaType"])
+            client.set_manifest(
+                repository_name, docker_manifest, tag="sample", media_type=str(docker_manifest["mediaType"])
+            )
 
             # Get the image
             get_manifest_result = client.get_manifest(repository_name, "sample")
@@ -172,7 +177,7 @@ class SetGetImage(object):
             print(received_manifest)
             received_manifest_media_type = get_manifest_result.media_type
             print(received_manifest_media_type)
-            
+
             # Delete the image
             client.delete_manifest(repository_name, get_manifest_result.digest)
 

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-import time
+
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.identity import DefaultAzureCredential
 
@@ -58,6 +58,7 @@ print(f"Certificate with name '{storage_certificate.name}' was created.")
 print("\n.. Delete a Certificate")
 deleted_bank_poller = client.begin_delete_certificate(bank_cert_name)
 deleted_bank_certificate = deleted_bank_poller.result()
+assert deleted_bank_certificate.name
 # To ensure certificate is deleted on the server side.
 deleted_bank_poller.wait()
 

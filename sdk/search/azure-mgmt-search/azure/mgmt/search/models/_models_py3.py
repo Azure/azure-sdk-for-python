@@ -896,6 +896,120 @@ class QueryKey(_serialization.Model):
         self.key = None
 
 
+class QuotaUsageResult(_serialization.Model):
+    """Describes the quota usage for a particular sku supported by Azure Cognitive Search.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource id of the quota usage sku endpoint for Microsoft.Search provider.
+    :vartype id: str
+    :ivar unit: The unit of measurement for the search sku.
+    :vartype unit: str
+    :ivar current_value: The currently used up value for the particular search sku.
+    :vartype current_value: int
+    :ivar limit: The quota limit for the particular search sku.
+    :vartype limit: int
+    :ivar name: The name of the sku supported by Azure Cognitive Search.
+    :vartype name: ~azure.mgmt.search.models.QuotaUsageResultName
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "QuotaUsageResultName"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        unit: Optional[str] = None,
+        current_value: Optional[int] = None,
+        limit: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: The resource id of the quota usage sku endpoint for Microsoft.Search provider.
+        :paramtype id: str
+        :keyword unit: The unit of measurement for the search sku.
+        :paramtype unit: str
+        :keyword current_value: The currently used up value for the particular search sku.
+        :paramtype current_value: int
+        :keyword limit: The quota limit for the particular search sku.
+        :paramtype limit: int
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.unit = unit
+        self.current_value = current_value
+        self.limit = limit
+        self.name = None
+
+
+class QuotaUsageResultName(_serialization.Model):
+    """The name of the sku supported by Azure Cognitive Search.
+
+    :ivar value: The sku name supported by Azure Cognitive Search.
+    :vartype value: str
+    :ivar localized_value: The localized string value for the sku supported by Azure Cognitive
+     Search.
+    :vartype localized_value: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The sku name supported by Azure Cognitive Search.
+        :paramtype value: str
+        :keyword localized_value: The localized string value for the sku supported by Azure Cognitive
+         Search.
+        :paramtype localized_value: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.localized_value = localized_value
+
+
+class QuotaUsagesListResult(_serialization.Model):
+    """Response containing the quota usage information for all the supported skus of Azure Cognitive
+    Search service.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The quota usages for the SKUs supported by Azure Cognitive Search.
+    :vartype value: list[~azure.mgmt.search.models.QuotaUsageResult]
+    :ivar next_link: Request URL that can be used to query next page of quota usages. Returned when
+     the total number of requested quota usages exceed maximum page size.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[QuotaUsageResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class SearchManagementRequestOptions(_serialization.Model):
     """Parameter group.
 
@@ -1019,7 +1133,7 @@ class SearchService(TrackedResource):  # pylint: disable=too-many-instance-attri
      state. If your service is in the degraded, disabled, or error states, it means the Azure
      Cognitive Search team is actively investigating the underlying issue. Dedicated services in
      these states are still chargeable based on the number of search units provisioned. Known values
-     are: "running", "provisioning", "deleting", "degraded", "disabled", "error", and "stopped".
+     are: "running", "provisioning", "deleting", "degraded", "disabled", and "error".
     :vartype status: str or ~azure.mgmt.search.models.SearchServiceStatus
     :ivar status_details: The details of the search service status.
     :vartype status_details: str
@@ -1050,6 +1164,10 @@ class SearchService(TrackedResource):  # pylint: disable=too-many-instance-attri
      Cognitive Search service.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.search.models.PrivateEndpointConnection]
+    :ivar semantic_search: Sets options that control the availability of semantic search. This
+     configuration is only possible for certain Azure Cognitive Search SKUs in certain locations.
+     Known values are: "disabled", "free", and "standard".
+    :vartype semantic_search: str or ~azure.mgmt.search.models.SearchSemanticSearch
     :ivar shared_private_link_resources: The list of shared private link resources managed by the
      Azure Cognitive Search service.
     :vartype shared_private_link_resources:
@@ -1093,6 +1211,7 @@ class SearchService(TrackedResource):  # pylint: disable=too-many-instance-attri
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
+        "semantic_search": {"key": "properties.semanticSearch", "type": "str"},
         "shared_private_link_resources": {
             "key": "properties.sharedPrivateLinkResources",
             "type": "[SharedPrivateLinkResource]",
@@ -1114,6 +1233,7 @@ class SearchService(TrackedResource):  # pylint: disable=too-many-instance-attri
         encryption_with_cmk: Optional["_models.EncryptionWithCmk"] = None,
         disable_local_auth: Optional[bool] = None,
         auth_options: Optional["_models.DataPlaneAuthOptions"] = None,
+        semantic_search: Optional[Union[str, "_models.SearchSemanticSearch"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1159,6 +1279,10 @@ class SearchService(TrackedResource):  # pylint: disable=too-many-instance-attri
         :keyword auth_options: Defines the options for how the data plane API of a search service
          authenticates requests. This cannot be set if 'disableLocalAuth' is set to true.
         :paramtype auth_options: ~azure.mgmt.search.models.DataPlaneAuthOptions
+        :keyword semantic_search: Sets options that control the availability of semantic search. This
+         configuration is only possible for certain Azure Cognitive Search SKUs in certain locations.
+         Known values are: "disabled", "free", and "standard".
+        :paramtype semantic_search: str or ~azure.mgmt.search.models.SearchSemanticSearch
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
@@ -1175,6 +1299,7 @@ class SearchService(TrackedResource):  # pylint: disable=too-many-instance-attri
         self.disable_local_auth = disable_local_auth
         self.auth_options = auth_options
         self.private_endpoint_connections = None
+        self.semantic_search = semantic_search
         self.shared_private_link_resources = None
 
 
@@ -1259,7 +1384,7 @@ class SearchServiceUpdate(Resource):  # pylint: disable=too-many-instance-attrib
      state. If your service is in the degraded, disabled, or error states, it means the Azure
      Cognitive Search team is actively investigating the underlying issue. Dedicated services in
      these states are still chargeable based on the number of search units provisioned. Known values
-     are: "running", "provisioning", "deleting", "degraded", "disabled", "error", and "stopped".
+     are: "running", "provisioning", "deleting", "degraded", "disabled", and "error".
     :vartype status: str or ~azure.mgmt.search.models.SearchServiceStatus
     :ivar status_details: The details of the search service status.
     :vartype status_details: str
@@ -1290,6 +1415,10 @@ class SearchServiceUpdate(Resource):  # pylint: disable=too-many-instance-attrib
      Cognitive Search service.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.search.models.PrivateEndpointConnection]
+    :ivar semantic_search: Sets options that control the availability of semantic search. This
+     configuration is only possible for certain Azure Cognitive Search SKUs in certain locations.
+     Known values are: "disabled", "free", and "standard".
+    :vartype semantic_search: str or ~azure.mgmt.search.models.SearchSemanticSearch
     :ivar shared_private_link_resources: The list of shared private link resources managed by the
      Azure Cognitive Search service.
     :vartype shared_private_link_resources:
@@ -1332,6 +1461,7 @@ class SearchServiceUpdate(Resource):  # pylint: disable=too-many-instance-attrib
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
+        "semantic_search": {"key": "properties.semanticSearch", "type": "str"},
         "shared_private_link_resources": {
             "key": "properties.sharedPrivateLinkResources",
             "type": "[SharedPrivateLinkResource]",
@@ -1353,6 +1483,7 @@ class SearchServiceUpdate(Resource):  # pylint: disable=too-many-instance-attrib
         encryption_with_cmk: Optional["_models.EncryptionWithCmk"] = None,
         disable_local_auth: Optional[bool] = None,
         auth_options: Optional["_models.DataPlaneAuthOptions"] = None,
+        semantic_search: Optional[Union[str, "_models.SearchSemanticSearch"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1400,6 +1531,10 @@ class SearchServiceUpdate(Resource):  # pylint: disable=too-many-instance-attrib
         :keyword auth_options: Defines the options for how the data plane API of a search service
          authenticates requests. This cannot be set if 'disableLocalAuth' is set to true.
         :paramtype auth_options: ~azure.mgmt.search.models.DataPlaneAuthOptions
+        :keyword semantic_search: Sets options that control the availability of semantic search. This
+         configuration is only possible for certain Azure Cognitive Search SKUs in certain locations.
+         Known values are: "disabled", "free", and "standard".
+        :paramtype semantic_search: str or ~azure.mgmt.search.models.SearchSemanticSearch
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -1418,6 +1553,7 @@ class SearchServiceUpdate(Resource):  # pylint: disable=too-many-instance-attrib
         self.disable_local_auth = disable_local_auth
         self.auth_options = auth_options
         self.private_endpoint_connections = None
+        self.semantic_search = semantic_search
         self.shared_private_link_resources = None
 
 

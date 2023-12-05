@@ -17,7 +17,7 @@ USAGE:
     python blob_samples_authentication_async.py
     Set the environment variables with your own values before running the sample:
     1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
-    2) OAUTH_STORAGE_ACCOUNT_NAME - the oath storage account name
+    2) OAUTH_STORAGE_ACCOUNT_NAME - the oauth storage account name
     3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
     4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
     5) ACTIVE_DIRECTORY_APPLICATION_ID - Azure Active Directory application ID

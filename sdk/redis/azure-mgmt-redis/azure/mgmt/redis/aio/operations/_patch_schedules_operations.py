@@ -65,7 +65,8 @@ class PatchSchedulesOperations:
     ) -> AsyncIterable["_models.RedisPatchSchedule"]:
         """Gets all patch schedules in the specified redis cache (there is only one).
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -163,7 +164,8 @@ class PatchSchedulesOperations:
     ) -> _models.RedisPatchSchedule:
         """Create or replace the patching schedule for Redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the Redis cache. Required.
         :type name: str
@@ -194,7 +196,8 @@ class PatchSchedulesOperations:
     ) -> _models.RedisPatchSchedule:
         """Create or replace the patching schedule for Redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the Redis cache. Required.
         :type name: str
@@ -223,7 +226,8 @@ class PatchSchedulesOperations:
     ) -> _models.RedisPatchSchedule:
         """Create or replace the patching schedule for Redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the Redis cache. Required.
         :type name: str
@@ -313,7 +317,8 @@ class PatchSchedulesOperations:
     ) -> None:
         """Deletes the patching schedule of a redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the redis cache. Required.
         :type name: str
@@ -377,7 +382,8 @@ class PatchSchedulesOperations:
     ) -> _models.RedisPatchSchedule:
         """Gets the patching schedule of a redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the redis cache. Required.
         :type name: str

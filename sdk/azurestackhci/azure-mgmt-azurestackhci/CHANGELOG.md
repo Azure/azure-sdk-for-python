@@ -1,5 +1,65 @@
 # Release History
 
+## 8.0.0b3 (2023-10-23)
+
+### Features Added
+
+  - Added operation GuestAgentsOperations.list
+  - Added operation HybridIdentityMetadataOperations.list
+  - Added operation group GalleryImagesOperations
+  - Added operation group LogicalNetworksOperations
+  - Added operation group MarketplaceGalleryImagesOperations
+  - Added operation group NetworkInterfacesOperations
+  - Added operation group StorageContainersOperations
+  - Added operation group VirtualHardDisksOperations
+  - Added operation group VirtualMachineInstancesOperations
+  - Model HardwareProfileUpdate has a new parameter memory_mb
+  - Model HttpProxyConfiguration has a new parameter http_proxy
+  - Model HttpProxyConfiguration has a new parameter no_proxy
+  - Model HttpProxyConfiguration has a new parameter trusted_ca
+  - Model IPPool has a new parameter name
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model StorageProfileUpdateDataDisksItem has a new parameter id
+  - Model TrackedResource has a new parameter system_data
+
+### Breaking Changes
+
+  - Model GuestAgent no longer has parameter http_proxy_config
+  - Model HardwareProfileUpdate no longer has parameter memory_gb
+  - Model StorageProfileUpdateDataDisksItem no longer has parameter name
+  - Operation GuestAgentOperations.begin_create has a new required parameter resource_uri
+  - Operation GuestAgentOperations.begin_create no longer has parameter name
+  - Operation GuestAgentOperations.begin_create no longer has parameter resource_group_name
+  - Operation GuestAgentOperations.begin_create no longer has parameter virtual_machine_name
+  - Operation GuestAgentOperations.begin_delete has a new required parameter resource_uri
+  - Operation GuestAgentOperations.begin_delete no longer has parameter name
+  - Operation GuestAgentOperations.begin_delete no longer has parameter resource_group_name
+  - Operation GuestAgentOperations.begin_delete no longer has parameter virtual_machine_name
+  - Operation GuestAgentOperations.get has a new required parameter resource_uri
+  - Operation GuestAgentOperations.get no longer has parameter name
+  - Operation GuestAgentOperations.get no longer has parameter resource_group_name
+  - Operation GuestAgentOperations.get no longer has parameter virtual_machine_name
+  - Operation HybridIdentityMetadataOperations.get has a new required parameter resource_uri
+  - Operation HybridIdentityMetadataOperations.get no longer has parameter metadata_name
+  - Operation HybridIdentityMetadataOperations.get no longer has parameter resource_group_name
+  - Operation HybridIdentityMetadataOperations.get no longer has parameter virtual_machine_name
+  - Removed operation GuestAgentsOperations.list_by_virtual_machines
+  - Removed operation HybridIdentityMetadataOperations.create
+  - Removed operation HybridIdentityMetadataOperations.delete
+  - Removed operation HybridIdentityMetadataOperations.list_by_virtual_machines
+  - Removed operation group ArcSettingsOperations
+  - Removed operation group ClustersOperations
+  - Removed operation group ExtensionsOperations
+  - Removed operation group GalleryimagesOperations
+  - Removed operation group MachineExtensionsOperations
+  - Removed operation group MarketplacegalleryimagesOperations
+  - Removed operation group NetworkinterfacesOperations
+  - Removed operation group StoragecontainersOperations
+  - Removed operation group VirtualharddisksOperations
+  - Removed operation group VirtualmachinesOperations
+  - Removed operation group VirtualnetworksOperations
+
 ## 8.0.0b2 (2022-12-15)
 
 ### Features Added

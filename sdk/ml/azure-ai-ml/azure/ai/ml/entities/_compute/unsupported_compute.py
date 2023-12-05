@@ -12,13 +12,13 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 class UnsupportedCompute(Compute):
     """Unsupported compute resource.
 
-    Only for use displaying compute properties for resources not fully supported in the SDK.
+    Only used for displaying compute properties for resources not fully supported in the SDK.
     """
 
     def __init__(
         self,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[TYPE] = "*** Unsupported Compute Type ***"
         super().__init__(**kwargs)
 

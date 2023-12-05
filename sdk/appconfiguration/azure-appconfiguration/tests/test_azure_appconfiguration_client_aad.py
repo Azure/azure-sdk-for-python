@@ -44,29 +44,26 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
     @recorded_by_proxy
     def test_add_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        kv = ConfigurationSetting(
+        test_config_setting = ConfigurationSetting(
             key=KEY + "_ADD",
             label=LABEL,
             value=TEST_VALUE,
             content_type=TEST_CONTENT_TYPE,
             tags={"tag1": "tag1", "tag2": "tag2"},
         )
-        created_kv = client.add_configuration_setting(kv)
+        created_kv = client.add_configuration_setting(test_config_setting)
         assert (
-            created_kv.label == kv.label
-            and kv.value == kv.value
-            and created_kv.content_type == kv.content_type
-            and created_kv.tags == kv.tags
+            created_kv.label == test_config_setting.label
+            and created_kv.value == test_config_setting.value
+            and created_kv.content_type == test_config_setting.content_type
+            and created_kv.tags == test_config_setting.tags
+            and created_kv.etag != None
+            and created_kv.etag != test_config_setting.etag
+            and created_kv.last_modified != None
+            and created_kv.read_only == False
         )
-        assert created_kv.etag is not None and created_kv.last_modified is not None and created_kv.read_only is False
-        client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
 
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_add_existing_configuration_setting(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        test_config_setting = self.create_config_setting()
-        self.add_for_test(client, test_config_setting)
+        # test add existing configuration setting
         with pytest.raises(ResourceExistsError):
             client.add_configuration_setting(
                 ConfigurationSetting(
@@ -74,7 +71,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
                     label=test_config_setting.label,
                 )
             )
-        client.delete_configuration_setting(key=test_config_setting.key, label=test_config_setting.label)
+        client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
 
     # method: set_configuration_setting
     @app_config_aad_decorator
@@ -97,7 +94,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
 
     @app_config_aad_decorator
     @recorded_by_proxy
-    def test_set_existing_configuration_setting_label_wrong_etag(self, appconfiguration_endpoint_string):
+    def test_set_configuration_setting_wrong_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
         to_set_kv.value = to_set_kv.value + "a"
@@ -106,63 +103,10 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
         with pytest.raises(ResourceModifiedError):
             client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_set_configuration_setting_etag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        kv = ConfigurationSetting(
-            key=KEY + "_SET",
-            label=LABEL,
-            value=TEST_VALUE,
-            content_type=TEST_CONTENT_TYPE,
-            tags={"tag1": "tag1", "tag2": "tag2"},
-        )
-        kv.etag = "random etag"
-        with pytest.raises(ResourceModifiedError):
-            client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
-
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_set_configuration_setting_no_etag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_set_kv = ConfigurationSetting(
-            key=KEY + "_SET",
-            label=LABEL,
-            value=TEST_VALUE,
-            content_type=TEST_CONTENT_TYPE,
-            tags={"tag1": "tag1", "tag2": "tag2"},
-        )
-        set_kv = client.set_configuration_setting(to_set_kv)
-        assert (
-            to_set_kv.key == set_kv.key
-            and to_set_kv.label == set_kv.label
-            and to_set_kv.value == set_kv.value
-            and to_set_kv.content_type == set_kv.content_type
-            and to_set_kv.tags == set_kv.tags
-            and to_set_kv.etag != set_kv.etag
-        )
-        client.delete_configuration_setting(key=to_set_kv.key, label=to_set_kv.label)
-
     # method: get_configuration_setting
     @app_config_aad_decorator
     @recorded_by_proxy
-    def test_get_configuration_setting_no_label(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        compare_kv = self.create_config_setting_no_label()
-        self.add_for_test(client, compare_kv)
-        fetched_kv = client.get_configuration_setting(compare_kv.key)
-        assert (
-            fetched_kv.key == compare_kv.key
-            and fetched_kv.value == compare_kv.value
-            and fetched_kv.content_type == compare_kv.content_type
-            and fetched_kv.tags == compare_kv.tags
-        )
-        assert fetched_kv.label is None
-        client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
-
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_get_configuration_setting_label(self, appconfiguration_endpoint_string):
+    def test_get_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
         self.add_for_test(client, compare_kv)
@@ -172,6 +116,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
             and fetched_kv.value == compare_kv.value
             and fetched_kv.content_type == compare_kv.content_type
             and fetched_kv.tags == compare_kv.tags
+            and fetched_kv.label == compare_kv.label
         )
         assert fetched_kv.label is not None
         client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
@@ -181,15 +126,33 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
     def test_get_non_existing_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
-        self.add_for_test(client, compare_kv)
         with pytest.raises(ResourceNotFoundError):
             client.get_configuration_setting(compare_kv.key, compare_kv.label + "a")
+
+    @app_config_aad_decorator
+    @recorded_by_proxy
+    def test_get_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
+        compare_kv = self.create_config_setting()
+        self.add_for_test(client, compare_kv)
+        compare_kv = client.get_configuration_setting(compare_kv.key, compare_kv.label)
+
+        # test get with wrong etag
+        with pytest.raises(ResourceModifiedError):
+            client.get_configuration_setting(
+                compare_kv.key, compare_kv.label, etag="wrong etag", match_condition=MatchConditions.IfNotModified
+            )
+        # test get with correct etag
+        with pytest.raises(ResourceNotFoundError):
+            client.get_configuration_setting(compare_kv.key, etag=compare_kv.etag)
+        client.get_configuration_setting(compare_kv.key, compare_kv.label, etag=compare_kv.etag)
+
         client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     # method: delete_configuration_setting
     @app_config_aad_decorator
     @recorded_by_proxy
-    def test_delete_with_key_no_label(self, appconfiguration_endpoint_string):
+    def test_delete_configuration_setting_with_key_no_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
         self.add_for_test(client, to_delete_kv)
@@ -200,7 +163,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
 
     @app_config_aad_decorator
     @recorded_by_proxy
-    def test_delete_with_key_label(self, appconfiguration_endpoint_string):
+    def test_delete_configuration_setting_with_key_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting()
         self.add_for_test(client, to_delete_kv)
@@ -211,33 +174,29 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
 
     @app_config_aad_decorator
     @recorded_by_proxy
-    def test_delete_not_existing(self, appconfiguration_endpoint_string):
+    def test_delete_not_existing_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         deleted_kv = client.delete_configuration_setting("not_exist_" + KEY)
         assert deleted_kv is None
 
     @app_config_aad_decorator
     @recorded_by_proxy
-    def test_delete_correct_etag(self, appconfiguration_endpoint_string):
+    def test_delete_configuration_setting_with_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
         self.add_for_test(client, to_delete_kv)
-        deleted_kv = client.delete_configuration_setting(to_delete_kv.key, etag=to_delete_kv.etag)
-        assert deleted_kv is not None
-        with pytest.raises(ResourceNotFoundError):
-            client.get_configuration_setting(to_delete_kv.key)
+        to_delete_kv = client.get_configuration_setting(to_delete_kv.key, to_delete_kv.label)
 
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_delete_wrong_etag(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_delete_kv = self.create_config_setting_no_label()
-        self.add_for_test(client, to_delete_kv)
+        # test delete with wrong etag
         with pytest.raises(ResourceModifiedError):
             client.delete_configuration_setting(
                 to_delete_kv.key, etag="wrong etag", match_condition=MatchConditions.IfNotModified
             )
-        client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
+        # test delete with correct etag
+        deleted_kv = client.delete_configuration_setting(to_delete_kv.key, etag=to_delete_kv.etag)
+        assert deleted_kv is not None
+        with pytest.raises(ResourceNotFoundError):
+            client.get_configuration_setting(to_delete_kv.key)
 
     # method: list_configuration_settings
     @app_config_aad_decorator
@@ -305,6 +264,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
         self.add_for_test(client, to_list_kv)
+        to_list_kv = client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(
             client.list_configuration_settings(
@@ -411,6 +371,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
         self.add_for_test(client, to_list_kv)
+        to_list_kv = client.get_configuration_setting(to_list_kv.key, to_list_kv.label)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(
             client.list_revisions(key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers)
@@ -419,59 +380,40 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
         client.delete_configuration_setting(to_list_kv.key)
 
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_read_only(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        kv = self.create_config_setting_no_label()
-        self.add_for_test(client, kv)
-        read_only_kv = client.set_read_only(kv)
-        assert read_only_kv.read_only
-        readable_kv = client.set_read_only(read_only_kv, False)
-        assert not readable_kv.read_only
-        client.delete_configuration_setting(kv.key)
-
-    @app_config_aad_decorator
-    @recorded_by_proxy
-    def test_delete_read_only(self, appconfiguration_endpoint_string):
-        client = self.create_aad_client(appconfiguration_endpoint_string)
-        to_delete_kv = self.create_config_setting_no_label()
-        self.add_for_test(client, to_delete_kv)
-        read_only_kv = client.set_read_only(to_delete_kv)
-        with pytest.raises(ResourceReadOnlyError):
-            client.delete_configuration_setting(to_delete_kv.key)
-        client.set_read_only(read_only_kv, False)
-        client.delete_configuration_setting(to_delete_kv.key)
-        with pytest.raises(ResourceNotFoundError):
-            client.get_configuration_setting(to_delete_kv.key)
-
+    # method: set_read_only
     @app_config_aad_decorator
     @recorded_by_proxy
     def test_set_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
         self.add_for_test(client, to_set_kv)
-        to_set_kv.value = to_set_kv.value + "a"
-        to_set_kv.tags = {"a": "b", "c": "d"}
+        to_set_kv = client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
+
         read_only_kv = client.set_read_only(to_set_kv)
+        assert read_only_kv.read_only
         with pytest.raises(ResourceReadOnlyError):
             client.set_configuration_setting(read_only_kv)
-        readable_kv = client.set_read_only(read_only_kv, False)
-        readable_kv.value = to_set_kv.value
-        readable_kv.tags = to_set_kv.tags
-        set_kv = client.set_configuration_setting(readable_kv)
-        assert (
-            to_set_kv.key == set_kv.key
-            and to_set_kv.label == to_set_kv.label
-            and to_set_kv.value == set_kv.value
-            and to_set_kv.content_type == set_kv.content_type
-            and to_set_kv.tags == set_kv.tags
-            and to_set_kv.etag != set_kv.etag
-        )
-        set_kv.etag = "bad"
+        with pytest.raises(ResourceReadOnlyError):
+            client.delete_configuration_setting(read_only_kv.key, read_only_kv.label)
+
+        writable_kv = client.set_read_only(read_only_kv, False)
+        assert not writable_kv.read_only
+        client.set_configuration_setting(writable_kv)
+        client.delete_configuration_setting(writable_kv.key)
+
+    @app_config_aad_decorator
+    @recorded_by_proxy
+    def test_set_read_only_with_wrong_etag(self, appconfiguration_endpoint_string):
+        client = self.create_aad_client(appconfiguration_endpoint_string)
+        to_set_kv = self.create_config_setting()
+        self.add_for_test(client, to_set_kv)
+        to_set_kv = client.get_configuration_setting(to_set_kv.key, to_set_kv.label)
+
+        to_set_kv.etag = "wrong etag"
         with pytest.raises(ResourceModifiedError):
-            client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
-        client.delete_configuration_setting(to_set_kv.key)
+            client.set_read_only(to_set_kv, False, match_condition=MatchConditions.IfNotModified)
+
+        client.delete_configuration_setting(to_set_kv)
 
     @app_config_aad_decorator
     @recorded_by_proxy
@@ -509,7 +451,8 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
         sync_token_header3 = ",".join(str(x) for x in sync_token_header3.values())
         assert sync_token_header2 != sync_token_header3
 
-        client.delete_configuration_setting(new.key)
+        client.delete_configuration_setting("KEY1")
+        client.delete_configuration_setting("KEY2")
 
     @app_config_aad_decorator
     @recorded_by_proxy
@@ -578,29 +521,43 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
     def test_config_setting_feature_flag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
-        set_flag = client.set_configuration_setting(feature_flag)
 
+        set_flag = client.set_configuration_setting(feature_flag)
         self._assert_same_keys(feature_flag, set_flag)
+        set_flag_value = json.loads(set_flag.value)
+        assert set_flag_value["id"] == "test_feature"
+        assert set_flag_value["enabled"] == True
+        assert set_flag_value["conditions"] != None
 
         set_flag.enabled = not set_flag.enabled
         changed_flag = client.set_configuration_setting(set_flag)
-
-        changed_flag.enabled = False
+        assert changed_flag.enabled == False
         temp = json.loads(changed_flag.value)
+        assert temp["id"] == set_flag_value["id"]
         assert temp["enabled"] == False
+        assert temp["conditions"] == set_flag_value["conditions"]
 
-        c = json.loads(copy.deepcopy(changed_flag.value))
+        c = json.loads(changed_flag.value)
         c["enabled"] = True
         changed_flag.value = json.dumps(c)
         assert changed_flag.enabled == True
+        temp = json.loads(changed_flag.value)
+        assert temp["id"] == set_flag_value["id"]
+        assert temp["enabled"] == True
+        assert temp["conditions"] == set_flag_value["conditions"]
 
         changed_flag.value = json.dumps({})
         assert changed_flag.enabled == None
-        assert changed_flag.value == json.dumps({"enabled": None, "conditions": {"client_filters": None}})
+        temp = json.loads(changed_flag.value)
+        assert temp["id"] == set_flag_value["id"]
+        assert temp["enabled"] == None
+        assert temp["conditions"] != None
+        assert temp["conditions"]["client_filters"] == None
 
         set_flag.value = "bad_value"
         assert set_flag.enabled == None
         assert set_flag.filters == None
+        assert set_flag.value == "bad_value"
 
         client.delete_configuration_setting(changed_flag.key)
 

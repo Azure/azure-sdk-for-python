@@ -6,7 +6,7 @@
 
 import logging
 from abc import ABC
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar, Optional
 
 K = TypeVar("K")
 V = TypeVar("V")
@@ -82,7 +82,9 @@ class _AttrDict(Generic[K, V], dict, ABC):
         assign value to it.
 
         :param attr_name: Attribute name
+        :type attr_name: str
         :return: If the given attribute name should be treated as arbitrary attribute.
+        :rtype: bool
         """
         # Internal attribute won't be set as arbitrary attribute.
         if attr_name.startswith("_"):
@@ -142,10 +144,17 @@ def has_attr_safe(obj, attr):
     return has_attr
 
 
-def try_get_non_arbitrary_attr_for_potential_attr_dict(obj, attr):
+def try_get_non_arbitrary_attr(obj: Any, attr: str) -> Optional[Any]:
     """Try to get non-arbitrary attribute for potential attribute dict.
 
     Will not create target attribute if it is an arbitrary attribute in _AttrDict.
+
+    :param obj: The obj
+    :type obj: Any
+    :param attr: The attribute name
+    :type attr: str
+    :return: obj.attr
+    :rtype: Any
     """
     if has_attr_safe(obj, attr):
         return obj[attr] if isinstance(obj, dict) else getattr(obj, attr)

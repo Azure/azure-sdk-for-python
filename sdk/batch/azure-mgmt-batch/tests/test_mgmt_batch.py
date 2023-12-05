@@ -5,17 +5,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-import binascii
-import hashlib
 import io
-import json
-import logging
 import time
-import unittest
 
 import pytest
 import requests
-import six
 import os
 
 import azure.mgmt.batch
@@ -23,7 +17,6 @@ from azure.mgmt.batch import models
 import azure.mgmt.network.models
 from mgmt_batch_preparers import KeyVaultPreparer, SimpleBatchPreparer
 
-from azure_devtools.scenario_tests.recording_processors import GeneralNameReplacer, RecordingProcessor
 from devtools_testutils import (
     AzureMgmtRecordedTestCase, recorded_by_proxy,
     ResourceGroupPreparer,
@@ -42,33 +35,7 @@ EXPECTED_POOL_QUOTA = 100
 SECRET_FIELDS = ["primary", "secondary"]
 
 
-def get_redacted_key(key):
-    redacted_value = "redacted"
-    digest = hashlib.sha256(six.ensure_binary(key)).digest()
-    redacted_value += six.ensure_str(binascii.hexlify(digest))[:6]
-    return redacted_value
-
-
-class RecordingRedactor(RecordingProcessor):
-    """Removes keys from test recordings"""
-
-    def process_response(self, response):
-        try:
-            body = json.loads(response["body"]["string"])
-        except (KeyError, ValueError):
-            return response
-
-        for field in body:
-            if field in SECRET_FIELDS:
-                body[field] = get_redacted_key(body[field])
-
-        response["body"]["string"] = json.dumps(body)
-        return response
-
-
 class TestMgmtBatch(AzureMgmtRecordedTestCase):
-    scrubber = GeneralNameReplacer()
-    redactor = RecordingRedactor()
 
     def setup_method(self, method):
         self.mgmt_batch_client = self.create_mgmt_client(

@@ -28,8 +28,11 @@ _SUPPORTED_API_VERSIONS = [
     '2021-08-06',
     '2021-12-02',
     '2022-11-02',
-    '2023-01-03'
-]
+    '2023-01-03',
+    '2023-05-03',
+    '2023-08-03',
+    '2023-11-03',
+]  # This list must be in chronological order!
 
 
 def get_api_version(kwargs):
@@ -39,6 +42,16 @@ def get_api_version(kwargs):
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
         raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
     return api_version or _SUPPORTED_API_VERSIONS[-1]
+
+
+def compare_api_versions(version1: str, version2: str) -> int:
+    v1 = _SUPPORTED_API_VERSIONS.index(version1)
+    v2 = _SUPPORTED_API_VERSIONS.index(version2)
+    if v1 == v2:
+        return 0
+    if v1 < v2:
+        return -1
+    return 1
 
 
 def convert_dfs_url_to_blob_url(dfs_account_url):

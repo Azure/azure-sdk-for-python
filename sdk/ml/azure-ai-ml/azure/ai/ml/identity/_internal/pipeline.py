@@ -21,8 +21,12 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import RequestsTransport
 
 
-def _get_config(**kwargs):
-    """Configuration common to a/sync pipelines."""
+def _get_config(**kwargs) -> Configuration:
+    """Configuration common to a/sync pipelines.
+
+    :return: The configuration object
+    :rtype: Configuration
+    """
     config = Configuration(**kwargs)
     config.custom_hook_policy = CustomHookPolicy(**kwargs)
     config.headers_policy = HeadersPolicy(**kwargs)

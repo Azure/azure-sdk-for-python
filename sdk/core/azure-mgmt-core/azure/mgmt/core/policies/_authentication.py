@@ -25,15 +25,23 @@
 # --------------------------------------------------------------------------
 import base64
 import time
-from typing import Optional, TypeVar
+from typing import Optional, Union, MutableMapping, List, Any, Sequence, TypeVar, Generic
 
+from azure.core.credentials import AccessToken, TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.exceptions import ServiceRequestError
+from azure.core.pipeline.transport import (
+    HttpRequest as LegacyHttpRequest,
+    HttpResponse as LegacyHttpResponse,
+)
+from azure.core.rest import HttpRequest, HttpResponse
 
 
-HTTPRequestType = TypeVar("HTTPRequestType")
-HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+HTTPResponseType = Union[LegacyHttpResponse, HttpResponse]
+TokenCredentialType = TypeVar("TokenCredentialType", bound=Union[TokenCredential, AsyncTokenCredential])
 
 
 class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
@@ -70,17 +78,19 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
 
 
 # pylint:disable=too-few-public-methods
-class _AuxiliaryAuthenticationPolicyBase:
+class _AuxiliaryAuthenticationPolicyBase(Generic[TokenCredentialType]):
     """Adds auxiliary authorization token header to requests.
 
     :param ~azure.core.credentials.TokenCredential auxiliary_credentials: auxiliary credential for authorizing requests
     :param str scopes: required authentication scopes
     """
 
-    def __init__(self, auxiliary_credentials, *scopes, **kwargs):  # pylint: disable=unused-argument
+    def __init__(  # pylint: disable=unused-argument
+        self, auxiliary_credentials: Sequence[TokenCredentialType], *scopes: str, **kwargs: Any
+    ) -> None:
         self._auxiliary_credentials = auxiliary_credentials
         self._scopes = scopes
-        self._aux_tokens = None
+        self._aux_tokens: Optional[List[AccessToken]] = None
 
     @staticmethod
     def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
@@ -98,7 +108,7 @@ class _AuxiliaryAuthenticationPolicyBase:
                 "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
             )
 
-    def _update_headers(self, headers):
+    def _update_headers(self, headers: MutableMapping[str, str]) -> None:
         """Updates the x-ms-authorization-auxiliary header with the auxiliary token.
 
         :param dict headers: The HTTP Request headers
@@ -109,7 +119,7 @@ class _AuxiliaryAuthenticationPolicyBase:
             )
 
     @property
-    def _need_new_aux_tokens(self):
+    def _need_new_aux_tokens(self) -> bool:
         if not self._aux_tokens:
             return True
         for token in self._aux_tokens:
@@ -119,10 +129,10 @@ class _AuxiliaryAuthenticationPolicyBase:
 
 
 class AuxiliaryAuthenticationPolicy(
-    _AuxiliaryAuthenticationPolicyBase,
+    _AuxiliaryAuthenticationPolicyBase[TokenCredential],
     SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType],
 ):
-    def _get_auxiliary_tokens(self, *scopes, **kwargs):
+    def _get_auxiliary_tokens(self, *scopes: str, **kwargs: Any) -> Optional[List[AccessToken]]:
         if self._auxiliary_credentials:
             return [cred.get_token(*scopes, **kwargs) for cred in self._auxiliary_credentials]
         return None

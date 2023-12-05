@@ -20,8 +20,9 @@ exporter = AzureMonitorMetricExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
 # Metrics are reported every 1 minute
-reader = PeriodicExportingMetricReader(exporter)
-metrics.set_meter_provider(MeterProvider(metric_readers=[reader]))
+reader = PeriodicExportingMetricReader(exporter,export_interval_millis=60000)
+meter_provider = MeterProvider(metric_readers=[reader])
+metrics.set_meter_provider(meter_provider)
 
 # Create a namespaced meter
 meter = metrics.get_meter_provider().get_meter("sample")
@@ -65,5 +66,10 @@ histogram.record(99.9)
 
 # Async Gauge
 gauge = meter.create_observable_gauge("gauge", [observable_gauge_func])
+
+# Upon application exit, one last collection is made and telemetry records are
+# flushed automatically. # If you would like to flush records manually yourself,
+# you can call force_flush()
+meter_provider.force_flush()
 
 # cSpell:disable

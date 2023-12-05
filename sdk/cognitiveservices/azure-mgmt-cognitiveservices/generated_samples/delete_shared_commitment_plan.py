@@ -29,13 +29,12 @@ def main():
         subscription_id="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     )
 
-    response = client.commitment_plans.begin_delete_plan(
+    client.commitment_plans.begin_delete_plan(
         resource_group_name="resourceGroupName",
         commitment_plan_name="commitmentPlanName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2022-12-01/examples/DeleteSharedCommitmentPlan.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/DeleteSharedCommitmentPlan.json
 if __name__ == "__main__":
     main()

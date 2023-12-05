@@ -29,15 +29,15 @@ async def main():
     CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
     config_setting1 = ConfigurationSetting(key="my_key1", label="my_label1")
     config_setting2 = ConfigurationSetting(key="my_key1", label="my_label2")
-    snapshot_name = uuid4()
+    snapshot_name = str(uuid4())
     async with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
         await client.add_configuration_setting(config_setting1)
         await client.add_configuration_setting(config_setting2)
 
         # [START create_snapshot]
-        from azure.appconfiguration import ConfigurationSettingFilter
+        from azure.appconfiguration import ConfigurationSettingsFilter
 
-        filters = [ConfigurationSettingFilter(key="my_key1", label="my_label1")]
+        filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
         response = await client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = await response.result()
         print_snapshot(created_snapshot)
@@ -67,10 +67,10 @@ async def main():
         # [END list_snapshots]
         print("")
 
-        # [START list_snapshot_configuration_settings]
-        async for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
+        # [START list_configuration_settings_for_snapshot]
+        async for config_setting in client.list_configuration_settings(snapshot_name=snapshot_name):
             print_configuration_setting(config_setting)
-        # [END list_snapshot_configuration_settings]
+        # [END list_configuration_settings_for_snapshot]
 
         await client.delete_configuration_setting(key=config_setting1.key, label=config_setting1.label)
         await client.delete_configuration_setting(key=config_setting2.key, label=config_setting2.label)

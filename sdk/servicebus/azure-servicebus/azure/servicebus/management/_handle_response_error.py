@@ -20,4 +20,4 @@ def _handle_response_error():
             )
         except AttributeError:
             new_response_error = response_error
-        raise new_response_error
+        raise new_response_error from None

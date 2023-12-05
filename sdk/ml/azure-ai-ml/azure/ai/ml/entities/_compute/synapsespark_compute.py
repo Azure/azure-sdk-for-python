@@ -21,18 +21,16 @@ from azure.ai.ml.entities._util import load_from_dict
 class AutoScaleSettings:
     """Auto-scale settings for Synapse Spark compute.
 
-    :param min_node_count: The minimum compute node count.
-    :type min_node_count: int
-    :param max_node_count: The maximum compute node count.
-    :type max_node_count: int
-    :param enabled: Specifies if auto-scale is enabled.
-    :type enabled: bool
+    :keyword min_node_count: The minimum compute node count.
+    :paramtype min_node_count: Optional[int]
+    :keyword max_node_count: The maximum compute node count.
+    :paramtype max_node_count: Optional[int]
+    :keyword enabled: Specifies if auto-scale is enabled.
+    :paramtype enabled: Optional[bool]
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
-
             :start-after: [START synapse_spark_compute_configuration]
             :end-before: [END synapse_spark_compute_configuration]
             :language: python
@@ -70,13 +68,12 @@ class AutoScaleSettings:
 class AutoPauseSettings:
     """Auto pause settings for Synapse Spark compute.
 
-    :param delay_in_minutes: The time delay in minutes before pausing cluster.
-    :type delay_in_minutes: int
-    :param enabled:  Specifies if auto-pause is enabled.
-    :type enabled: bool
+    :keyword delay_in_minutes: The time delay in minutes before pausing cluster.
+    :paramtype delay_in_minutes: Optional[int]
+    :keyword enabled: Specifies if auto-pause is enabled.
+    :paramtype enabled: Optional[bool]
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START synapse_spark_compute_configuration]
@@ -108,33 +105,30 @@ class AutoPauseSettings:
 class SynapseSparkCompute(Compute):
     """SynapseSpark Compute resource.
 
-    :param name: The name of the compute.
-    :type name: str
-    :param description: The description of the resource.
-    :type description: str
-    :param tags: The set of resource tags defined as key/value pairs.
-    :type tags: Dict[str, str]
-    :param node_count: The number of nodes in the compute.
-    :type node_count: int
-    :param node_family: The node family of the compute.
-    :type node_family: str
-    :param node_size: The size of the node.
-    :type node_size: str
-    :param spark_version: The version of Spark to use.
-    :type spark_version: str
-    :param identity: The configuration of identities that are associated with the compute cluster.
-    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
-    :param scale_settings: The scale settings for the compute.
-    :type scale_settings: ~azure.ai.ml.entities.AutoScaleSettings
-    :param auto_pause_settings: The auto pause settings for the compute.
-    :type auto_pause_settings: ~azure.ai.ml.entities.AutoPauseSettings
-    :param location: The resource location.
-    :type location: str
-    :param resource_id: The ARM resource ID of the underlying compute.
-    :type resource_id: str
+    :keyword name: The name of the compute.
+    :paramtype name: str
+    :keyword description: The description of the resource. Defaults to None.
+    :paramtype description: Optional[str]
+    :keyword tags: The set of resource tags defined as key/value pairs. Defaults to None.
+    :paramtype tags: Optional[[dict[str, str]]
+    :keyword node_count: The number of nodes in the compute.
+    :paramtype node_count: Optional[int]
+    :keyword node_family: The node family of the compute.
+    :paramtype node_family: Optional[str]
+    :keyword node_size: The size of the node.
+    :paramtype node_size: Optional[str]
+    :keyword spark_version: The version of Spark to use.
+    :paramtype spark_version: Optional[str]
+    :keyword identity: The configuration of identities that are associated with the compute cluster.
+    :paramtype identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
+    :keyword scale_settings: The scale settings for the compute.
+    :paramtype scale_settings: Optional[~azure.ai.ml.entities.AutoScaleSettings]
+    :keyword auto_pause_settings: The auto pause settings for the compute.
+    :paramtype auto_pause_settings: Optional[~azure.ai.ml.entities.AutoPauseSettings]
+    :keyword kwargs: Additional keyword arguments passed to the parent class.
+    :paramtype kwargs: Optional[dict]
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START synapse_spark_compute_configuration]

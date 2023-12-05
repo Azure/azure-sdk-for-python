@@ -31,11 +31,18 @@ from typing import (
     Any,
     Optional,
     AsyncIterator as AsyncIteratorType,
+    Union,
     TYPE_CHECKING,
     overload,
+    Type,
+    Mapping,
 )
-import urllib3
-
+from types import TracebackType
+from urllib3.exceptions import (
+    ProtocolError,
+    NewConnectionError,
+    ConnectTimeoutError,
+)
 import requests
 
 from azure.core.exceptions import (
@@ -93,15 +100,20 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     async def __aenter__(self):
         return super(AsyncioRequestsTransport, self).__enter__()
 
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
-        return super(AsyncioRequestsTransport, self).__exit__()
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        return super(AsyncioRequestsTransport, self).__exit__(exc_type, exc_value, traceback)
 
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
     @overload  # type: ignore
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: HttpRequest, **kwargs: Any
+        self, request: HttpRequest, *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
@@ -110,14 +122,12 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     @overload
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: "RestHttpRequest", **kwargs: Any
+        self, request: "RestHttpRequest", *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send a `azure.core.rest` request using this HTTP sender.
 
@@ -126,12 +136,12 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.rest.AsyncHttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    async def send(self, request, **kwargs):  # pylint:disable=invalid-overridden-method
+    async def send(  # pylint:disable=invalid-overridden-method
+        self, request: Union[HttpRequest, "RestHttpRequest"], *, proxies: Optional[Mapping[str, str]] = None, **kwargs
+    ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
@@ -139,14 +149,12 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        :keyword requests.Session session: will override the driver session and use yours.
-         Should NOT be done unless really required. Anything else is sent straight to requests.
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
-        error = None  # type: Optional[AzureErrorUnion]
+        error: Optional[AzureErrorUnion] = None
         data_to_send = await self._retrieve_request_data(request)
         try:
             response = await loop.run_in_executor(
@@ -162,17 +170,21 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     timeout=kwargs.pop("connection_timeout", self.connection_config.timeout),
                     cert=kwargs.pop("connection_cert", self.connection_config.cert),
                     allow_redirects=False,
+                    proxies=proxies,
                     **kwargs
                 ),
             )
             response.raw.enforce_content_length = True
 
-        except urllib3.exceptions.NewConnectionError as err:
+        except (
+            NewConnectionError,
+            ConnectTimeoutError,
+        ) as err:
             error = ServiceRequestError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
-            if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
+            if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
             else:
                 error = ServiceRequestError(err, error=err)

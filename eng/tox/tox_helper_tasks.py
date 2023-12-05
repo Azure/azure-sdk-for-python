@@ -10,59 +10,36 @@
 import shutil
 import sys
 import logging
-import ast
 import os
-import textwrap
-import io
 import glob
 import zipfile
-import fnmatch
+import tarfile
 import subprocess
 import re
 
-from packaging.specifiers import SpecifierSet
-from pkg_resources import Requirement, parse_version
-
 logging.getLogger().setLevel(logging.INFO)
 
+def unzip_sdist_to_directory(containing_folder: str) -> str:
+    zips = glob.glob(os.path.join(containing_folder, "*.zip"))
 
-def get_pip_list_output():
-    """Uses the invoking python executable to get the output from pip list."""
-    out = subprocess.Popen(
-        [sys.executable, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-
-    stdout, stderr = out.communicate()
-
-    collected_output = {}
-
-    if stdout and (stderr is None):
-        # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
-        for line in stdout.decode("utf-8").split(os.linesep)[2:]:
-            if line:
-                package, version = re.split("==", line)
-                collected_output[package] = version
+    if zips:
+        return unzip_file_to_directory(zips[0], containing_folder)
     else:
-        raise Exception(stderr)
-
-    return collected_output
-
-
-def unzip_sdist_to_directory(containing_folder):
-    # grab the first one
-    path_to_zip_file = glob.glob(os.path.join(containing_folder, "*.zip"))[0]
-    return unzip_file_to_directory(path_to_zip_file, containing_folder)
+        tars = glob.glob(os.path.join(containing_folder, "*.tar.gz"))
+        return unzip_file_to_directory(tars[0], containing_folder)
 
 
-def unzip_file_to_directory(path_to_zip_file, extract_location):
-    # unzip file in given path
-    # dump into given path
-    with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
-        zip_ref.extractall(extract_location)
-        extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
-        return os.path.join(extract_location, extracted_dir)
+def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    if path_to_zip_file.endswith(".zip"):
+        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+            zip_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+            return os.path.join(extract_location, extracted_dir)
+    else:
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+            return os.path.join(extract_location, extracted_dir)
 
 
 def move_and_rename(source_location):

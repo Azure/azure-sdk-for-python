@@ -573,14 +573,14 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sharing_ref_docs]: https://aka.ms/azsdk/python/purviewcatalog/ref-docs
 [sharing_product_documentation]: https://azure.microsoft.com/services/purview/
 [azure_subscription]: https://azure.microsoft.com/free/
-[purview_resource]: https://docs.microsoft.com/azure/purview
+[purview_resource]: https://learn.microsoft.com/purview/
 [pip]: https://pypi.org/project/pip/
 [authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
 [default_azure_credential]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-identity/latest/azure.identity.html#azure.identity.DefaultAzureCredential
 [request_builders_and_client]: https://aka.ms/azsdk/python/protocol/quickstart
-[enable_aad]: https://docs.microsoft.com/azure/purview/
+[enable_aad]: https://learn.microsoft.com/purview/
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [python_logging]: https://docs.python.org/3.5/library/logging.html
 [cla]: https://cla.microsoft.com

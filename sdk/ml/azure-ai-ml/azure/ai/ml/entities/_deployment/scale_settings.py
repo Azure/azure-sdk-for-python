@@ -96,9 +96,9 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
     """Auto scale settings.
 
     :param min_instances: Minimum number of the instances
-    :type min_instances: int, optional
+    :type min_instances: int
     :param max_instances: Maximum number of the instances
-    :type max_instances: int, optional
+    :type max_instances: int
     :param polling_interval: The polling interval in ISO 8691 format. Only supports duration with
      precision as low as Seconds.
     :type polling_interval: str

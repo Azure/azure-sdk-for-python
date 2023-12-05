@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,7 +43,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,7 +54,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -69,7 +69,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -84,7 +84,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -101,7 +101,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -119,7 +119,7 @@ def build_get_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -136,7 +136,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -155,7 +155,7 @@ def build_create_or_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -174,7 +174,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -192,7 +192,7 @@ def build_delete_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -209,7 +209,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -228,7 +228,7 @@ def build_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -241,89 +241,13 @@ def build_update_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_attach_volume_request(
-    resource_group_name: str, virtual_machine_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/attachVolume",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "virtualMachineName": _SERIALIZER.url(
-            "virtual_machine_name", virtual_machine_name, "str", pattern=r"^([a-zA-Z0-9][a-zA-Z0-9]{0,62}[a-zA-Z0-9])$"
-        ),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_detach_volume_request(
-    resource_group_name: str, virtual_machine_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/detachVolume",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "virtualMachineName": _SERIALIZER.url(
-            "virtual_machine_name", virtual_machine_name, "str", pattern=r"^([a-zA-Z0-9][a-zA-Z0-9]{0,62}[a-zA-Z0-9])$"
-        ),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_power_off_request(
     resource_group_name: str, virtual_machine_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -342,7 +266,7 @@ def build_power_off_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -361,7 +285,7 @@ def build_reimage_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -379,7 +303,7 @@ def build_reimage_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -396,7 +320,7 @@ def build_restart_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -414,7 +338,7 @@ def build_restart_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -431,7 +355,7 @@ def build_start_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -449,7 +373,7 @@ def build_start_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -460,7 +384,7 @@ def build_start_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
+class VirtualMachinesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1324,467 +1248,13 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}"
     }
 
-    def _attach_volume_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        virtual_machine_name: str,
-        virtual_machine_attach_volume_parameters: Union[_models.VirtualMachineVolumeParameters, IO],
-        **kwargs: Any
-    ) -> None:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(virtual_machine_attach_volume_parameters, (IOBase, bytes)):
-            _content = virtual_machine_attach_volume_parameters
-        else:
-            _json = self._serialize.body(virtual_machine_attach_volume_parameters, "VirtualMachineVolumeParameters")
-
-        request = build_attach_volume_request(
-            resource_group_name=resource_group_name,
-            virtual_machine_name=virtual_machine_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._attach_volume_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _attach_volume_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/attachVolume"
-    }
-
-    @overload
-    def begin_attach_volume(
-        self,
-        resource_group_name: str,
-        virtual_machine_name: str,
-        virtual_machine_attach_volume_parameters: _models.VirtualMachineVolumeParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Attach volume to the virtual machine.
-
-        Attach volume to the provided virtual machine.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param virtual_machine_name: The name of the virtual machine. Required.
-        :type virtual_machine_name: str
-        :param virtual_machine_attach_volume_parameters: The request body. Required.
-        :type virtual_machine_attach_volume_parameters:
-         ~azure.mgmt.networkcloud.models.VirtualMachineVolumeParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_attach_volume(
-        self,
-        resource_group_name: str,
-        virtual_machine_name: str,
-        virtual_machine_attach_volume_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Attach volume to the virtual machine.
-
-        Attach volume to the provided virtual machine.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param virtual_machine_name: The name of the virtual machine. Required.
-        :type virtual_machine_name: str
-        :param virtual_machine_attach_volume_parameters: The request body. Required.
-        :type virtual_machine_attach_volume_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_attach_volume(
-        self,
-        resource_group_name: str,
-        virtual_machine_name: str,
-        virtual_machine_attach_volume_parameters: Union[_models.VirtualMachineVolumeParameters, IO],
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Attach volume to the virtual machine.
-
-        Attach volume to the provided virtual machine.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param virtual_machine_name: The name of the virtual machine. Required.
-        :type virtual_machine_name: str
-        :param virtual_machine_attach_volume_parameters: The request body. Is either a
-         VirtualMachineVolumeParameters type or a IO type. Required.
-        :type virtual_machine_attach_volume_parameters:
-         ~azure.mgmt.networkcloud.models.VirtualMachineVolumeParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._attach_volume_initial(  # type: ignore
-                resource_group_name=resource_group_name,
-                virtual_machine_name=virtual_machine_name,
-                virtual_machine_attach_volume_parameters=virtual_machine_attach_volume_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_attach_volume.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/attachVolume"
-    }
-
-    def _detach_volume_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        virtual_machine_name: str,
-        virtual_machine_detach_volume_parameters: Union[_models.VirtualMachineVolumeParameters, IO],
-        **kwargs: Any
-    ) -> None:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(virtual_machine_detach_volume_parameters, (IOBase, bytes)):
-            _content = virtual_machine_detach_volume_parameters
-        else:
-            _json = self._serialize.body(virtual_machine_detach_volume_parameters, "VirtualMachineVolumeParameters")
-
-        request = build_detach_volume_request(
-            resource_group_name=resource_group_name,
-            virtual_machine_name=virtual_machine_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._detach_volume_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _detach_volume_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/detachVolume"
-    }
-
-    @overload
-    def begin_detach_volume(
-        self,
-        resource_group_name: str,
-        virtual_machine_name: str,
-        virtual_machine_detach_volume_parameters: _models.VirtualMachineVolumeParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Detach volume from the virtual machine.
-
-        Detach volume from the provided virtual machine.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param virtual_machine_name: The name of the virtual machine. Required.
-        :type virtual_machine_name: str
-        :param virtual_machine_detach_volume_parameters: The request body. Required.
-        :type virtual_machine_detach_volume_parameters:
-         ~azure.mgmt.networkcloud.models.VirtualMachineVolumeParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_detach_volume(
-        self,
-        resource_group_name: str,
-        virtual_machine_name: str,
-        virtual_machine_detach_volume_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Detach volume from the virtual machine.
-
-        Detach volume from the provided virtual machine.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param virtual_machine_name: The name of the virtual machine. Required.
-        :type virtual_machine_name: str
-        :param virtual_machine_detach_volume_parameters: The request body. Required.
-        :type virtual_machine_detach_volume_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_detach_volume(
-        self,
-        resource_group_name: str,
-        virtual_machine_name: str,
-        virtual_machine_detach_volume_parameters: Union[_models.VirtualMachineVolumeParameters, IO],
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Detach volume from the virtual machine.
-
-        Detach volume from the provided virtual machine.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param virtual_machine_name: The name of the virtual machine. Required.
-        :type virtual_machine_name: str
-        :param virtual_machine_detach_volume_parameters: The request body. Is either a
-         VirtualMachineVolumeParameters type or a IO type. Required.
-        :type virtual_machine_detach_volume_parameters:
-         ~azure.mgmt.networkcloud.models.VirtualMachineVolumeParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._detach_volume_initial(  # type: ignore
-                resource_group_name=resource_group_name,
-                virtual_machine_name=virtual_machine_name,
-                virtual_machine_detach_volume_parameters=virtual_machine_detach_volume_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_detach_volume.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/detachVolume"
-    }
-
-    def _power_off_initial(  # pylint: disable=inconsistent-return-statements
+    def _power_off_initial(
         self,
         resource_group_name: str,
         virtual_machine_name: str,
         virtual_machine_power_off_parameters: Optional[Union[_models.VirtualMachinePowerOffParameters, IO]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[_models.OperationStatusResult]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1798,7 +1268,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1833,17 +1303,23 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     _power_off_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/powerOff"
@@ -1858,7 +1334,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.OperationStatusResult]:
         """Power off the virtual machine.
 
         Power off the provided virtual machine.
@@ -1882,8 +1358,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either OperationStatusResult or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1896,7 +1373,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.OperationStatusResult]:
         """Power off the virtual machine.
 
         Power off the provided virtual machine.
@@ -1919,8 +1396,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either OperationStatusResult or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1931,7 +1409,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         virtual_machine_name: str,
         virtual_machine_power_off_parameters: Optional[Union[_models.VirtualMachinePowerOffParameters, IO]] = None,
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.OperationStatusResult]:
         """Power off the virtual machine.
 
         Power off the provided virtual machine.
@@ -1956,8 +1434,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either OperationStatusResult or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1965,12 +1444,12 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._power_off_initial(  # type: ignore
+            raw_result = self._power_off_initial(
                 resource_group_name=resource_group_name,
                 virtual_machine_name=virtual_machine_name,
                 virtual_machine_power_off_parameters=virtual_machine_power_off_parameters,
@@ -1983,9 +1462,11 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -2008,9 +1489,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/powerOff"
     }
 
-    def _reimage_initial(  # pylint: disable=inconsistent-return-statements
+    def _reimage_initial(
         self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any
-    ) -> None:
+    ) -> Optional[_models.OperationStatusResult]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2023,7 +1504,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
 
         request = build_reimage_request(
             resource_group_name=resource_group_name,
@@ -2044,24 +1525,32 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     _reimage_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/reimage"
     }
 
     @distributed_trace
-    def begin_reimage(self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_reimage(
+        self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
         """Reimage the virtual machine.
 
         Reimage the provided virtual machine.
@@ -2079,20 +1568,21 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either OperationStatusResult or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._reimage_initial(  # type: ignore
+            raw_result = self._reimage_initial(
                 resource_group_name=resource_group_name,
                 virtual_machine_name=virtual_machine_name,
                 api_version=api_version,
@@ -2103,9 +1593,11 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -2128,9 +1620,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/reimage"
     }
 
-    def _restart_initial(  # pylint: disable=inconsistent-return-statements
+    def _restart_initial(
         self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any
-    ) -> None:
+    ) -> Optional[_models.OperationStatusResult]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2143,7 +1635,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
 
         request = build_restart_request(
             resource_group_name=resource_group_name,
@@ -2164,24 +1656,32 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     _restart_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/restart"
     }
 
     @distributed_trace
-    def begin_restart(self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_restart(
+        self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
         """Restart the virtual machine.
 
         Restart the provided virtual machine.
@@ -2199,20 +1699,21 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either OperationStatusResult or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._restart_initial(  # type: ignore
+            raw_result = self._restart_initial(
                 resource_group_name=resource_group_name,
                 virtual_machine_name=virtual_machine_name,
                 api_version=api_version,
@@ -2223,9 +1724,11 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(
@@ -2248,9 +1751,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/restart"
     }
 
-    def _start_initial(  # pylint: disable=inconsistent-return-statements
+    def _start_initial(
         self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any
-    ) -> None:
+    ) -> Optional[_models.OperationStatusResult]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2263,7 +1766,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
 
         request = build_start_request(
             resource_group_name=resource_group_name,
@@ -2284,24 +1787,32 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     _start_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/start"
     }
 
     @distributed_trace
-    def begin_start(self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_start(
+        self, resource_group_name: str, virtual_machine_name: str, **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
         """Start the virtual machine.
 
         Start the provided virtual machine.
@@ -2319,20 +1830,21 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns either OperationStatusResult or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._start_initial(  # type: ignore
+            raw_result = self._start_initial(
                 resource_group_name=resource_group_name,
                 virtual_machine_name=virtual_machine_name,
                 api_version=api_version,
@@ -2343,9 +1855,11 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: PollingMethod = cast(

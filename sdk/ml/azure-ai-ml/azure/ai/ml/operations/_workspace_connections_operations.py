@@ -6,7 +6,7 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -26,15 +26,15 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     """WorkspaceConnectionsOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
-    for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create
+    an MLClient instance that instantiates it for you and attaches it as an attribute.
     """
 
     def __init__(
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient052022,
+        service_client: ServiceClient062023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -53,7 +53,16 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         :param name: Name of the workspace connection.
         :type name: str
         :return: The workspace connection with the provided name.
-        :rtype: WorkspaceConnection
+        :rtype: ~azure.ai.ml.entities.WorkspaceConnection
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_workspace.py
+                :start-after: [START get_connection]
+                :end-before: [END get_connection]
+                :language: python
+                :dedent: 8
+                :caption: Get a workspace connection by name.
         """
 
         obj = self._operation.get(
@@ -71,15 +80,24 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         :param workspace_connection: Workspace Connection definition
             or object which can be translated to a workspace connection.
-        :type workspace_connection: WorkspaceConnection
+        :type workspace_connection: ~azure.ai.ml.entities.WorkspaceConnection
         :return: Created or update workspace connection.
-        :rtype: WorkspaceConnection
+        :rtype: ~azure.ai.ml.entities.WorkspaceConnection
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_workspace.py
+                :start-after: [START create_or_update_connection]
+                :end-before: [END create_or_update_connection]
+                :language: python
+                :dedent: 8
+                :caption: Create or update a workspace connection, this example shows snowflake.
         """
         rest_workspace_connection = workspace_connection._to_rest_object()
         response = self._operation.create(
             workspace_name=self._workspace_name,
             connection_name=workspace_connection.name,
-            parameters=rest_workspace_connection,
+            body=rest_workspace_connection,
             **self._scope_kwargs,
             **kwargs,
         )
@@ -92,9 +110,18 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         :param name: Name of the workspace connection.
         :type name: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_workspace.py
+                :start-after: [START delete_connection]
+                :end-before: [END delete_connection]
+                :language: python
+                :dedent: 8
+                :caption: Delete a workspace connection.
         """
 
-        return self._operation.delete(
+        self._operation.delete(
             connection_name=name,
             workspace_name=self._workspace_name,
             **self._scope_kwargs,
@@ -103,14 +130,23 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "WorkspaceConnections.List", ActivityType.PUBLICAPI)
     def list(
         self,
-        connection_type=None,
+        connection_type: Optional[str] = None,
     ) -> Iterable[WorkspaceConnection]:
-        """List all environment assets in workspace.
+        """List all workspace connections for a workspace.
 
         :param connection_type: Type of workspace connection to list.
-        :type connection_type: str
+        :type connection_type: Optional[str]
         :return: An iterator like instance of workspace connection objects
-        :rtype: Iterable[WorkspaceConnection]
+        :rtype: Iterable[~azure.ai.ml.entities.WorkspaceConnection]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_workspace.py
+                :start-after: [START list_connection]
+                :end-before: [END list_connection]
+                :language: python
+                :dedent: 8
+                :caption: Lists all connections for a workspace for a certain type, in this case "git".
         """
         return self._operation.list(
             workspace_name=self._workspace_name,

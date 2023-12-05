@@ -26,6 +26,7 @@
 import logging
 from functools import lru_cache
 from typing import (
+    cast,
     TYPE_CHECKING,
     Any,
     Dict,
@@ -115,7 +116,7 @@ class AvroEncoder(object):
         :rtype: str
         """
         schema_id = self._auto_register_schema_func(
-            self._schema_group, schema_name, schema_str, "Avro", **kwargs
+            cast(str, self._schema_group), schema_name, schema_str, "Avro", **kwargs
         ).id
         return schema_id
 
@@ -185,8 +186,10 @@ class AvroEncoder(object):
         :keyword message_type: The message class to construct the message. Must be a subtype of the
          azure.schemaregistry.encoder.avroencoder.MessageType protocol.
         :paramtype message_type: Type[MessageType] or None
-        :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: Dict[str, Any]
+        :keyword request_options: The keyword arguments for http requests to be passed to
+         the client.
+        :paramtype request_options: dict[str, Any] or None
+        :return: The Message object or the TypedDict containing encoded content and content type.
         :rtype: MessageType or MessageContent
         :raises ~azure.schemaregistry.encoder.avroencoder.InvalidSchemaError:
             Indicates an issue with validating schema.
@@ -232,7 +235,7 @@ class AvroEncoder(object):
         message: Union[MessageContent, MessageType],
         *,
         readers_schema: Optional[str] = None,
-        request_options: Dict[str, Any] = None,
+        request_options: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
         """Decode bytes content using schema ID in the content type field. `message` must be one of the following:
@@ -247,8 +250,9 @@ class AvroEncoder(object):
         :keyword readers_schema: An optional reader's schema as defined by the Apache Avro specification.
         :paramtype readers_schema: str or None
         :keyword request_options: The keyword arguments for http requests to be passed to the client.
-        :paramtype request_options: Dict[str, Any]
-        :rtype: Dict[str, Any]
+        :paramtype request_options: dict[str, Any] or None
+        :return: The decoded content.
+        :rtype: dict[str, Any]
         :raises ~azure.schemaregistry.encoder.avroencoder.InvalidSchemaError:
             Indicates an issue with validating schemas.
         :raises ~azure.schemaregistry.encoder.avroencoder.InvalidContentError:

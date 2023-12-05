@@ -5,18 +5,32 @@ import os
 from contextlib import contextmanager
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Iterable, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_ignore_file
 from azure.ai.ml._utils.utils import is_private_preview_enabled
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 
 class ComponentIgnoreFile(IgnoreFile):
     _COMPONENT_CODE_IGNORES = ["__pycache__"]
+    """Component-specific ignore file used for ignoring files in a component directory.
+
+    :param directory_path: The directory path for the ignore file.
+    :type directory_path: Union[str, Path]
+    :param additional_includes_file_name: Name of the additional includes file in the root directory to be ignored.
+    :type additional_includes_file_name: str
+    :param skip_ignore_file: Whether to skip the ignore file, defaults to False.
+    :type skip_ignore_file: bool
+    :param extra_ignore_list: List of additional ignore files to be considered during file exclusion.
+    :type extra_ignore_list: List[~azure.ai.ml._utils._asset_utils.IgnoreFile]
+    :raises ValueError: If additional include file is not found.
+    :return: The ComponentIgnoreFile object.
+    :rtype: ComponentIgnoreFile
+    """
 
     def __init__(
         self,
@@ -36,21 +50,42 @@ class ComponentIgnoreFile(IgnoreFile):
         super(ComponentIgnoreFile, self).__init__(file_path=file_path)
 
     def exists(self) -> bool:
-        """Override to always return True as we do have default ignores."""
+        """Check if the ignore file exists.
+
+        :return: True
+        :rtype: bool
+        """
         return True
 
     @property
     def base_path(self) -> Path:
+        """Get the base path of the ignore file.
+
+        :return: The base path.
+        :rtype: Path
+        """
         # for component ignore file, the base path can be different from file.parent
         return self._base_path
 
     def rebase(self, directory_path: Union[str, Path]) -> "ComponentIgnoreFile":
-        """Rebase the ignore file to a new directory."""
+        """Rebase the ignore file to a new directory.
+
+        :param directory_path: The new directory path.
+        :type directory_path: Union[str, Path]
+        :return: The rebased ComponentIgnoreFile object.
+        :rtype: ComponentIgnoreFile
+        """
         self._base_path = directory_path
         return self
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
-        """Override to add custom ignores for internal component."""
+        """Check if a file should be excluded based on the ignore file rules.
+
+        :param file_path: The file path.
+        :type file_path: Union[str, Path]
+        :return: True if the file should be excluded, False otherwise.
+        :rtype: bool
+        """
         if self._additional_includes_file_name and self._get_rel_path(file_path) == self._additional_includes_file_name:
             return True
         for ignore_file in self._extra_ignore_list:
@@ -59,13 +94,25 @@ class ComponentIgnoreFile(IgnoreFile):
         return super(ComponentIgnoreFile, self).is_file_excluded(file_path)
 
     def merge(self, other_path: Path) -> "ComponentIgnoreFile":
-        """Merge ignore list from another ComponentIgnoreFile object."""
+        """Merge the ignore list from another ComponentIgnoreFile object.
+
+        :param other_path: The path of the other ignore file.
+        :type other_path: Path
+        :return: The merged ComponentIgnoreFile object.
+        :rtype: ComponentIgnoreFile
+        """
         if other_path.is_file():
             return self
         return ComponentIgnoreFile(other_path, extra_ignore_list=self._extra_ignore_list + [self])
 
     def _get_ignore_list(self) -> List[str]:
-        """Override to add custom ignores."""
+        """Retrieves the list of ignores from ignore file
+
+        Override to add custom ignores.
+
+        :return: The ignore rules
+        :rtype: List[str]
+        """
         if not super(ComponentIgnoreFile, self).exists():
             return self._COMPONENT_CODE_IGNORES
         return super(ComponentIgnoreFile, self)._get_ignore_list() + self._COMPONENT_CODE_IGNORES
@@ -112,9 +159,13 @@ class ComponentCodeMixin:
     """
 
     def _get_base_path_for_code(self) -> Path:
-        """Get base path for additional includes."""
-        if hasattr(self, "base_path"):
-            return Path(self.base_path)
+        """Get base path for additional includes.
+
+        :return: The base path
+        :rtype: Path
+        """
+        if hasattr(self, BASE_PATH_CONTEXT_KEY):
+            return Path(getattr(self, BASE_PATH_CONTEXT_KEY))
         raise NotImplementedError(
             "Component must have a base_path attribute to use ComponentCodeMixin. "
             "Please set base_path in __init__ or override _get_base_path_for_code."
@@ -122,8 +173,12 @@ class ComponentCodeMixin:
 
     @classmethod
     def _get_code_field_name(cls) -> str:
-        """Get the field name for code. Will be used to get origin code value by default and will be used as
-        field name of validation diagnostics.
+        """Get the field name for code.
+
+        Will be used to get origin code value by default and will be used as field name of validation diagnostics.
+
+        :return: Code field name
+        :rtype: str
         """
         return "code"
 
@@ -134,6 +189,25 @@ class ComponentCodeMixin:
         to a temp folder along with additional includes to form a new code content.
         """
         return getattr(self, self._get_code_field_name(), None)
+
+    def _fill_back_code_value(self, value: str) -> None:
+        """Fill resolved code value back to the component.
+
+        :param value: resolved code value
+        :type value: str
+        :return: no return
+        :rtype: None
+        """
+        return setattr(self, self._get_code_field_name(), value)
+
+    def _get_origin_code_in_str(self) -> Optional[str]:
+        """Get origin code value in str to simplify following logic."""
+        origin_code_value = self._get_origin_code_value()
+        if origin_code_value is None:
+            return None
+        if isinstance(origin_code_value, Path):
+            return origin_code_value.as_posix()
+        return str(origin_code_value)
 
     def _append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(
         self, base_validation_result: MutableValidationResult = None
@@ -158,7 +232,7 @@ class ComponentCodeMixin:
         # If private features are enable and component has code value of type str we need to check
         # that it is a valid git path case. Otherwise, we should throw a ValidationError
         # saying that the code value is not valid
-        code_type = _get_code_type(self._get_origin_code_value())
+        code_type = _get_code_type(self._get_origin_code_in_str())
         if code_type == CodeType.GIT and not is_private_preview_enabled():
             if base_validation_result is not None:
                 base_validation_result.append_error(
@@ -168,13 +242,14 @@ class ComponentCodeMixin:
         return code_type == CodeType.LOCAL
 
     @contextmanager
-    def _build_code(self) -> Optional[Code]:
+    def _build_code(self) -> Iterable[Optional[Code]]:
         """Create a Code object if necessary based on origin code value and yield it.
 
-        If built code is the same as its origin value, do nothing and yield None.
-        Otherwise, yield a Code object pointing to the code.
+        :return: If built code is the same as its origin value, do nothing and yield None.
+           Otherwise, yield a Code object pointing to the code.
+        :rtype: Iterable[Optional[Code]]
         """
-        origin_code_value = self._get_origin_code_value()
+        origin_code_value = self._get_origin_code_in_str()
         code_type = _get_code_type(origin_code_value)
 
         if code_type == CodeType.GIT:
@@ -188,20 +263,27 @@ class ComponentCodeMixin:
             yield None
 
     @contextmanager
-    def _try_build_local_code(self):
-        """Extract the logic of _build_code for local code for further override."""
-        origin_code_value = self._get_origin_code_value()
+    def _try_build_local_code(self) -> Iterable[Optional[Code]]:
+        """Extract the logic of _build_code for local code for further override.
+
+        :return: The Code object if could be constructed, None otherwise
+        :rtype: Iterable[Optional[Code]]
+        """
+        origin_code_value = self._get_origin_code_in_str()
         if origin_code_value is None:
             yield None
         else:
+            base_path = self._get_base_path_for_code()
+            absolute_path = origin_code_value if os.path.isabs(origin_code_value) else base_path / origin_code_value
+
             yield Code(
-                base_path=self._get_base_path_for_code(),
+                base_path=base_path,
                 path=origin_code_value,
-                ignore_file=ComponentIgnoreFile(origin_code_value),
+                ignore_file=ComponentIgnoreFile(absolute_path),
             )
 
     def _with_local_code(self):
         # TODO: remove this method after we have a better way to do this judge in cache_utils
-        origin_code_value = self._get_origin_code_value()
+        origin_code_value = self._get_origin_code_in_str()
         code_type = _get_code_type(origin_code_value)
         return code_type == CodeType.LOCAL

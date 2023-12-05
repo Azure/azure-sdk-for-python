@@ -29,13 +29,13 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     :param description: Description of the resource.
     :type description: typing.Optional[str]
     :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type traffic: typing.Optional[typing.Dict[str, int]]
+    :paramtype traffic: typing.Optional[typing.Dict[str, int]]
     :keyword scoring_uri: str, Endpoint URI, readonly
-    :type scoring_uri: typing.Optional[str]
+    :paramtype scoring_uri: typing.Optional[str]
     :keyword openapi_uri: str, Endpoint Open API URI, readonly
-    :type openapi_uri: typing.Optional[str]
+    :paramtype openapi_uri: typing.Optional[str]
     :keyword provisioning_state: str, provisioning state, readonly
-    :type provisioning_state: typing.Optional[str]
+    :paramtype provisioning_state: typing.Optional[str]
     """
 
     def __init__(
@@ -65,13 +65,13 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         :param description: Description of the resource.
         :type description: typing.Optional[str]
         :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to {}
-        :type traffic: typing.Optional[typing.Dict[str, int]]
+        :paramtype traffic: typing.Optional[typing.Dict[str, int]]
         :keyword scoring_uri: str, Endpoint URI, readonly
-        :type scoring_uri: typing.Optional[str]
+        :paramtype scoring_uri: typing.Optional[str]
         :keyword openapi_uri: str, Endpoint Open API URI, readonly
-        :type openapi_uri: typing.Optional[str]
+        :paramtype openapi_uri: typing.Optional[str]
         :keyword provisioning_state: str, provisioning state, readonly
-        :type provisioning_state: typing.Optional[str]
+        :paramtype provisioning_state: typing.Optional[str]
         """
         # MFE is case-insensitive for Name. So convert the name into lower case here.
         if name:
@@ -114,8 +114,9 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
     def dump(self, dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None, **kwargs) -> None:
         pass
 
+    @classmethod
     @abstractmethod
-    def _from_rest_object(self, obj: Any) -> Any:
+    def _from_rest_object(cls, obj: Any) -> Any:
         pass
 
     def _merge_with(self, other: "Endpoint") -> None:

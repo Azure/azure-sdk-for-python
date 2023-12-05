@@ -35,7 +35,7 @@ extends:
     # https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
       - Name: storage_ci_matrix
-        Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
+        Path: eng/pipelines/templates/stages/platform-matrix-excluding-pypy.json
         Selection: sparse
         GenerateVMJobs: true
     Artifacts:
@@ -57,20 +57,3 @@ extends:
       safeName: azuremgmtstoragesync
     - name: azure-mgmt-storageimportexport
       safeName: azuremgmtstorageimportexport
-    CondaArtifacts:
-    - name: azure-storage
-      meta_source: conda-recipe/meta.yaml
-      common_root: azure/storage
-      checkout:
-        - package: azure-storage-blob
-          checkout_path: sdk/storage
-          version: 12.12.0
-        - package: azure-storage-queue
-          checkout_path: sdk/storage
-          version: 12.3.0
-        - package: azure-storage-file-share
-          checkout_path: sdk/storage
-          version: 12.8.0
-        - package: azure-storage-file-datalake
-          checkout_path: sdk/storage
-          version: 12.7.0

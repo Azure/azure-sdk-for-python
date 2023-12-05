@@ -85,38 +85,40 @@ class AuthorizationManagementClient:  # pylint: disable=client-accepts-api-versi
         self._config = AuthorizationManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
+        )
         self.access_review_schedule_definitions = AccessReviewScheduleDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
         )
         self.access_review_instances = AccessReviewInstancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
         )
         self.access_review_instance = AccessReviewInstanceOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
         )
         self.access_review_instance_decisions = AccessReviewInstanceDecisionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
         )
         self.access_review_default_settings = AccessReviewDefaultSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
         )
         self.access_review_schedule_definitions_assigned_for_my_approval = (
             AccessReviewScheduleDefinitionsAssignedForMyApprovalOperations(
-                self._client, self._config, self._serialize, self._deserialize
+                self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
             )
         )
         self.access_review_instances_assigned_for_my_approval = AccessReviewInstancesAssignedForMyApprovalOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
         )
         self.access_review_instance_my_decisions = AccessReviewInstanceMyDecisionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-01-preview"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:

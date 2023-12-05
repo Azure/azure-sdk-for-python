@@ -282,12 +282,20 @@ class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     READ_ONLY_FOLLOWING = "ReadOnlyFollowing"
 
 
+class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The language name, for example Python."""
+
+    PYTHON = "Python"
+
+
 class LanguageExtensionImageName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Language extension image name."""
 
     R = "R"
     PYTHON3_6_5 = "Python3_6_5"
     PYTHON3_10_8 = "Python3_10_8"
+    PYTHON3_10_8_DL = "Python3_10_8_DL"
+    PYTHON_CUSTOM_IMAGE = "PythonCustomImage"
 
 
 class LanguageExtensionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -386,3 +394,12 @@ class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_KUSTO_CLUSTERS_ATTACHED_DATABASE_CONFIGURATIONS = (
         "Microsoft.Kusto/clusters/attachedDatabaseConfigurations"
     )
+
+
+class VnetState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """When enabled, the cluster is deployed into the configured subnet, when disabled it will be
+    removed from the subnet.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"

@@ -87,31 +87,30 @@ class LinkedServiceOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_get_linked_services_by_workspace_request(
+                _request = build_get_linked_services_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_linked_services_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
+                _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("LinkedServiceListResponse", pipeline_response)
@@ -121,11 +120,11 @@ class LinkedServiceOperations:
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -136,8 +135,6 @@ class LinkedServiceOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    get_linked_services_by_workspace.metadata = {"url": "/linkedservices"}
 
     async def _create_or_update_linked_service_initial(
         self, linked_service_name: str, properties: _models.LinkedService, if_match: Optional[str] = None, **kwargs: Any
@@ -160,25 +157,24 @@ class LinkedServiceOperations:
         _linked_service = _models.LinkedServiceResource(properties=properties)
         _json = self._serialize.body(_linked_service, "LinkedServiceResource")
 
-        request = build_create_or_update_linked_service_request(
+        _request = build_create_or_update_linked_service_request(
             linked_service_name=linked_service_name,
             if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._create_or_update_linked_service_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -192,11 +188,9 @@ class LinkedServiceOperations:
             deserialized = self._deserialize("LinkedServiceResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _create_or_update_linked_service_initial.metadata = {"url": "/linkedservices/{linkedServiceName}"}
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def begin_create_or_update_linked_service(
@@ -252,7 +246,7 @@ class LinkedServiceOperations:
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("LinkedServiceResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -276,8 +270,6 @@ class LinkedServiceOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update_linked_service.metadata = {"url": "/linkedservices/{linkedServiceName}"}
 
     @distributed_trace_async
     async def get_linked_service(
@@ -310,23 +302,22 @@ class LinkedServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[Optional[_models.LinkedServiceResource]] = kwargs.pop("cls", None)
 
-        request = build_get_linked_service_request(
+        _request = build_get_linked_service_request(
             linked_service_name=linked_service_name,
             if_none_match=if_none_match,
             api_version=api_version,
-            template_url=self.get_linked_service.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -340,11 +331,9 @@ class LinkedServiceOperations:
             deserialized = self._deserialize("LinkedServiceResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_linked_service.metadata = {"url": "/linkedservices/{linkedServiceName}"}
+        return deserialized  # type: ignore
 
     async def _delete_linked_service_initial(  # pylint: disable=inconsistent-return-statements
         self, linked_service_name: str, **kwargs: Any
@@ -363,22 +352,21 @@ class LinkedServiceOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_linked_service_request(
+        _request = build_delete_linked_service_request(
             linked_service_name=linked_service_name,
             api_version=api_version,
-            template_url=self._delete_linked_service_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -388,9 +376,7 @@ class LinkedServiceOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_linked_service_initial.metadata = {"url": "/linkedservices/{linkedServiceName}"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_delete_linked_service(self, linked_service_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -431,7 +417,7 @@ class LinkedServiceOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -455,8 +441,6 @@ class LinkedServiceOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_delete_linked_service.metadata = {"url": "/linkedservices/{linkedServiceName}"}
-
     async def _rename_linked_service_initial(  # pylint: disable=inconsistent-return-statements
         self, linked_service_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> None:
@@ -478,24 +462,23 @@ class LinkedServiceOperations:
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_linked_service_request(
+        _request = build_rename_linked_service_request(
             linked_service_name=linked_service_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_linked_service_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -505,9 +488,7 @@ class LinkedServiceOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
-
-    _rename_linked_service_initial.metadata = {"url": "/linkedservices/{linkedServiceName}/rename"}
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
     async def begin_rename_linked_service(
@@ -555,7 +536,7 @@ class LinkedServiceOperations:
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -578,5 +559,3 @@ class LinkedServiceOperations:
                 deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_rename_linked_service.metadata = {"url": "/linkedservices/{linkedServiceName}/rename"}

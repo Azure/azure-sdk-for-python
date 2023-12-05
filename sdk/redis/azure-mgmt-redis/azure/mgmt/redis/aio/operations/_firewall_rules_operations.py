@@ -65,7 +65,8 @@ class FirewallRulesOperations:
     ) -> AsyncIterable["_models.RedisFirewallRule"]:
         """Gets all firewall rules in the specified redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -163,7 +164,8 @@ class FirewallRulesOperations:
     ) -> _models.RedisFirewallRule:
         """Create or update a redis cache firewall rule.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -194,7 +196,8 @@ class FirewallRulesOperations:
     ) -> _models.RedisFirewallRule:
         """Create or update a redis cache firewall rule.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -223,7 +226,8 @@ class FirewallRulesOperations:
     ) -> _models.RedisFirewallRule:
         """Create or update a redis cache firewall rule.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -312,7 +316,8 @@ class FirewallRulesOperations:
     ) -> _models.RedisFirewallRule:
         """Gets a single firewall rule in a specified redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -379,7 +384,8 @@ class FirewallRulesOperations:
     ) -> None:
         """Deletes a single firewall rule in a specified redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str

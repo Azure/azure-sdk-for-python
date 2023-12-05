@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional, Tuple, TypeVar, Union
-
+from typing_extensions import Literal
 from azure.storage.blob import BlobSasPermissions, generate_blob_sas
 from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
@@ -63,31 +63,53 @@ def _get_datastore_name(*, datastore_name: Optional[str] = WORKSPACE_BLOB_STORE)
     return datastore_name
 
 
-def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, str]:
-    """Get datastore account, type, and auth information."""
+def get_datastore_info(
+    operations: DatastoreOperations,
+    name: str,
+    *,
+    credential=None,
+    **kwargs,
+) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
+    """Get datastore account, type, and auth information.
+
+    :param operations: DatastoreOperations object
+    :type operations: DatastoreOperations
+    :param name: Name of the datastore. If not provided, the default datastore will be used.
+    :type name: str
+    :keyword credential: Local credential to use for authentication. If not provided, will try to get
+        credentials from the datastore, which requires authorization to perform action
+        'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore.
+    :paramtype credential: str
+    :return: The dictionary with datastore info
+    :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name"], str]
+    """
     datastore_info = {}
     if name:
-        datastore = operations.get(name, include_secrets=True)
+        datastore = operations.get(name, include_secrets=credential is None)
     else:
-        datastore = operations.get_default(include_secrets=True)
+        datastore = operations.get_default(include_secrets=credential is None)
 
     storage_endpoint = _get_storage_endpoint_from_metadata()
-    credentials = datastore.credentials
     datastore_info["storage_type"] = datastore.type
     datastore_info["storage_account"] = datastore.account_name
     datastore_info["account_url"] = STORAGE_ACCOUNT_URLS[datastore.type].format(
         datastore.account_name, storage_endpoint
     )
-    if isinstance(credentials, AccountKeyConfiguration):
-        datastore_info["credential"] = credentials.account_key
+    if credential is not None:
+        datastore_info["credential"] = credential
     else:
-        try:
-            datastore_info["credential"] = credentials.sas_token
-        except Exception as e:  # pylint: disable=broad-except
-            if not hasattr(credentials, "sas_token"):
-                datastore_info["credential"] = operations._credential
-            else:
-                raise e
+        credential = datastore.credentials
+
+        if isinstance(credential, AccountKeyConfiguration):
+            datastore_info["credential"] = credential.account_key
+        else:
+            try:
+                datastore_info["credential"] = credential.sas_token
+            except Exception as e:  # pylint: disable=broad-except
+                if not hasattr(credential, "sas_token"):
+                    datastore_info["credential"] = operations._credential
+                else:
+                    raise e
 
     if datastore.type == DatastoreType.AZURE_BLOB:
         datastore_info["container_name"] = str(datastore.container_name)
@@ -99,16 +121,31 @@ def get_datastore_info(operations: DatastoreOperations, name: str) -> Dict[str, 
             f"Supported types are {DatastoreType.AZURE_BLOB} and {DatastoreType.AZURE_DATA_LAKE_GEN2}."
         )
 
+    for override_param_name, value in kwargs.items():
+        if override_param_name in datastore_info:
+            datastore_info[override_param_name] = value
+
     return datastore_info
 
 
-def list_logs_in_datastore(ds_info: Dict[str, str], prefix: str, legacy_log_folder_name: str) -> Dict[str, str]:
+def list_logs_in_datastore(
+    ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str],
+    prefix: str,
+    legacy_log_folder_name: str,
+) -> Dict[str, str]:
     """Returns a dictionary of file name to blob or data lake uri with SAS token, matching the structure of
     RunDetails.logFiles.
 
-    legacy_log_folder_name: the name of the folder in the datastore that contains the logs
-        /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
-        /logs/azureml/*.txt is the legacy log structure for pipeline parent Job
+    :param ds_info: The datastore info
+    :type ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
+    :param prefix: A prefix used to filter logs by path
+    :type prefix: str
+    :param legacy_log_folder_name: the name of the folder in the datastore that contains the logs
+        * /azureml-logs/*.txt is the legacy log structure for commandJob and sweepJob
+        * /logs/azureml/*.txt is the legacy log structure for pipeline parent Job
+    :type legacy_log_folder_name: str
+    :return: A mapping of log file name to the remote URI
+    :rtype: Dict[str, str]
     """
     if ds_info["storage_type"] not in [
         DatastoreType.AZURE_BLOB,
@@ -167,9 +204,33 @@ def upload_artifact(
     asset_name: Optional[str] = None,
     asset_version: Optional[str] = None,
     ignore_file: IgnoreFile = IgnoreFile(None),
-    sas_uri=None,
+    sas_uri: Optional[str] = None,
 ) -> ArtifactStorageInfo:
-    """Upload local file or directory to datastore."""
+    """Upload local file or directory to datastore.
+
+    :param local_path: The local file or directory to upload
+    :type local_path: str
+    :param datastore_operation: The datastore operation
+    :type datastore_operation: DatastoreOperations
+    :param operation_scope: The operation scope
+    :type operation_scope: OperationScope
+    :param datastore_name: The datastore name
+    :type datastore_name: Optional[str]
+    :param asset_hash: The asset hash
+    :type asset_hash: Optional[str]
+    :param show_progress: Whether to show progress on the console. Defaults to True.
+    :type show_progress: bool
+    :param asset_name: The asset name
+    :type asset_name: Optional[str]
+    :param asset_version: The asset version
+    :type asset_version: Optional[str]
+    :param ignore_file: The IgnoreFile determining which, if any, files to ignore when uploading
+    :type ignore_file: IgnoreFile
+    :param sas_uri: The sas uri to use for uploading
+    :type sas_uri: Optional[str]
+    :return: The artifact storage info
+    :rtype: ArtifactStorageInfo
+    """
     if sas_uri:
         storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
     else:
@@ -210,12 +271,18 @@ def download_artifact(
 ) -> str:
     """Download datastore path to local file or directory.
 
-    :param Union[str, os.PathLike] starts_with: Prefix of blobs to download
-    :param str destination: Path that files will be written to
-    :param DatastoreOperations datastore_operation: Datastore operations
-    :param Optional[str] datastore_name: name of datastore
-    :param Dict datastore_info: the return value of invoking get_datastore_info
-    :return str: Path that files were written to
+    :param starts_with: Prefix of blobs to download
+    :type starts_with: Union[str, os.PathLike]
+    :param destination: Path that files will be written to
+    :type destination: str
+    :param datastore_operation: Datastore operations
+    :type datastore_operation: DatastoreOperations
+    :param datastore_name: name of datastore
+    :type datastore_name: Optional[str]
+    :param datastore_info: the return value of invoking get_datastore_info
+    :type datastore_info: Optional[Dict]
+    :return: Path that files were written to
+    :rtype: str
     """
     starts_with = starts_with.as_posix() if isinstance(starts_with, Path) else starts_with
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
@@ -232,7 +299,19 @@ def download_artifact_from_storage_url(
     datastore_operation: DatastoreOperations,
     datastore_name: Optional[str],
 ) -> str:
-    """Download datastore blob URL to local file or directory."""
+    """Download datastore blob URL to local file or directory.
+
+    :param blob_url: The blob url to download
+    :type blob_url: str
+    :param destination: Path that the artifact will be written to
+    :type destination: str
+    :param datastore_operation: The datastore operations
+    :type datastore_operation: DatastoreOperations
+    :param datastore_name: The datastore name
+    :type datastore_name: Optional[str]
+    :return: Path that files were written to
+    :rtype: str
+    """
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     datastore_info = get_datastore_info(datastore_operation, datastore_name)
     starts_with = get_artifact_path_from_storage_url(
@@ -247,13 +326,14 @@ def download_artifact_from_storage_url(
     )
 
 
-def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operation: DatastoreOperations):
+def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operation: DatastoreOperations) -> str:
     """Downloads artifact pointed to by URI of the form `azureml://...` to destination.
 
     :param str uri: AzureML uri of artifact to download
     :param str destination: Path to download artifact to
     :param DatastoreOperations datastore_operation: datastore operations
-    :return str: Path that files were downloaded to
+    :return: Path that files were downloaded to
+    :rtype: str
     """
     parsed_uri = AzureMLDatastorePathUri(uri)
     return download_artifact(
@@ -266,12 +346,14 @@ def download_artifact_from_aml_uri(uri: str, destination: str, datastore_operati
 
 def aml_datastore_path_exists(
     uri: str, datastore_operation: DatastoreOperations, datastore_info: Optional[dict] = None
-):
+) -> bool:
     """Checks whether `uri` of the form "azureml://" points to either a directory or a file.
 
     :param str uri: azure ml datastore uri
     :param DatastoreOperations datastore_operation: Datastore operation
     :param dict datastore_info: return value of get_datastore_info
+    :return: True if uri exists False otherwise
+    :rtype: bool
     """
     parsed_uri = AzureMLDatastorePathUri(uri)
     datastore_info = datastore_info or get_datastore_info(datastore_operation, parsed_uri.datastore)
@@ -373,14 +455,25 @@ def _check_and_upload_path(
     sas_uri: Optional[str] = None,
     show_progress: bool = True,
     blob_uri: Optional[str] = None,
-) -> Tuple[T, str]:
+) -> Tuple[T, Optional[str]]:
     """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
 
-    param T artifact: artifact to check and upload param
-    Union["DataOperations", "ModelOperations", "CodeOperations"]
-    asset_operations:     the asset operations to use for uploading
-    param str datastore_name: the name of the datastore to upload to
-    param str sas_uri: the sas uri to use for uploading
+    :param artifact: artifact to check and upload param
+    :type artifact: T
+    :param asset_operations: The asset operations to use for uploading
+    :type asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"]
+    :param artifact_type: The artifact type
+    :type artifact_type: str
+    :param datastore_name: the name of the datastore to upload to
+    :type datastore_name: Optional[str]
+    :param sas_uri: the sas uri to use for uploading
+    :type sas_uri: Optional[str]
+    :param show_progress: Whether to show progress on the console. Defaults to True.
+    :type show_progress: bool
+    :param blob_uri: The storage account uri
+    :type blob_uri: Optional[str]
+    :return: A 2-tuple of the uploaded artifact, and the indicator file.
+    :rtype: Tuple[T, Optional[str]]
     """
 
     datastore_name = artifact.datastore

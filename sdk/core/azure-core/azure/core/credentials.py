@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from collections import namedtuple
 from typing import Any, NamedTuple, Optional
 from typing_extensions import Protocol, runtime_checkable
 
@@ -24,7 +23,12 @@ class TokenCredential(Protocol):
     """Protocol for classes able to provide OAuth tokens."""
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -33,13 +37,20 @@ class TokenCredential(Protocol):
         :keyword str claims: Additional claims required in the token, such as those returned in a resource
             provider's claims challenge following an authorization failure.
         :keyword str tenant_id: Optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :rtype: AccessToken
         :return: An AccessToken instance containing the token string and its expiration time in Unix time.
         """
+        ...
 
 
-AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])
+class AzureNamedKey(NamedTuple):
+    """Represents a name and key pair."""
+
+    name: str
+    key: str
 
 
 __all__ = [

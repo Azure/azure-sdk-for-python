@@ -8,6 +8,7 @@
 
 from ._models_py3 import ApplyUpdate
 from ._models_py3 import ConfigurationAssignment
+from ._models_py3 import ConfigurationAssignmentFilterProperties
 from ._models_py3 import ErrorDetails
 from ._models_py3 import InputLinuxParameters
 from ._models_py3 import InputPatchConfiguration
@@ -23,23 +24,24 @@ from ._models_py3 import OperationInfo
 from ._models_py3 import OperationsListResult
 from ._models_py3 import Resource
 from ._models_py3 import SystemData
-from ._models_py3 import TaskProperties
+from ._models_py3 import TagSettingsProperties
 from ._models_py3 import Update
 
 from ._maintenance_management_client_enums import CreatedByType
 from ._maintenance_management_client_enums import ImpactType
 from ._maintenance_management_client_enums import MaintenanceScope
 from ._maintenance_management_client_enums import RebootOptions
-from ._maintenance_management_client_enums import TaskScope
+from ._maintenance_management_client_enums import TagOperators
 from ._maintenance_management_client_enums import UpdateStatus
 from ._maintenance_management_client_enums import Visibility
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ApplyUpdate",
     "ConfigurationAssignment",
+    "ConfigurationAssignmentFilterProperties",
     "ErrorDetails",
     "InputLinuxParameters",
     "InputPatchConfiguration",
@@ -55,13 +57,13 @@ __all__ = [
     "OperationsListResult",
     "Resource",
     "SystemData",
-    "TaskProperties",
+    "TagSettingsProperties",
     "Update",
     "CreatedByType",
     "ImpactType",
     "MaintenanceScope",
     "RebootOptions",
-    "TaskScope",
+    "TagOperators",
     "UpdateStatus",
     "Visibility",
 ]

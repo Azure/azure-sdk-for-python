@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 import logging
 
-from typing import Mapping, Optional, Any
+from typing import Dict, Optional, Union, Any
 
-from opentelemetry.util.types import AttributeValue
+from opentelemetry.util.types import Attributes
 from opentelemetry.sdk.metrics import (
     Counter,
     Histogram,
@@ -23,9 +23,11 @@ from opentelemetry.sdk.metrics.export import (
     NumberDataPoint,
 )
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 
-from azure.monitor.opentelemetry.exporter._constants import _AUTOCOLLECTED_INSTRUMENT_NAMES
+from azure.monitor.opentelemetry.exporter._constants import (
+    _AUTOCOLLECTED_INSTRUMENT_NAMES,
+    _METRIC_ENVELOPE_NAME,
+)
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MetricDataPoint,
@@ -60,8 +62,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         BaseExporter.__init__(self, **kwargs)
         MetricExporter.__init__(
             self,
-            preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,
-            preferred_aggregation=kwargs.get("preferred_aggregation"),
+            preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES, # type: ignore
+            preferred_aggregation=kwargs.get("preferred_aggregation"), # type: ignore
         )
 
     # pylint: disable=R1702
@@ -92,7 +94,6 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                                 point,
                                 metric.name,
                                 resource_metric.resource,
-                                scope_metric.scope
                             )
                             if envelope is not None:
                                 envelopes.append(envelope)
@@ -124,22 +125,23 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         :param timeout_millis: The maximum amount of time to wait for shutdown. Not currently used.
         :type timeout_millis: float
         """
-        self.storage.close()
+        if self.storage:
+            self.storage.close()
 
     def _point_to_envelope(
         self,
         point: DataPointT,
         name: str,
         resource: Optional[Resource] = None,
-        scope: Optional[InstrumentationScope] = None
     ) -> Optional[TelemetryItem]:
-        envelope = _convert_point_to_envelope(point, name, resource, scope)
+        envelope = _convert_point_to_envelope(point, name, resource)
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
-            envelope = _handle_std_metric_envelope(envelope, name, point.attributes)
+            envelope = _handle_std_metric_envelope(envelope, name, point.attributes) # type: ignore
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
+    # pylint: disable=docstring-keyword-should-match-keyword-only
     @classmethod
     def from_connection_string(
         cls, conn_str: str, **kwargs: Any
@@ -164,15 +166,11 @@ def _convert_point_to_envelope(
     point: DataPointT,
     name: str,
     resource: Optional[Resource] = None,
-    scope: Optional[InstrumentationScope] = None
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
-    envelope.name = "Microsoft.ApplicationInsights.Metric"
-    envelope.tags.update(_utils._populate_part_a_fields(resource))
-    namespace = None
-    if scope is not None:
-        namespace = scope.name
-    value = 0
+    envelope.name = _METRIC_ENVELOPE_NAME
+    envelope.tags.update(_utils._populate_part_a_fields(resource)) # type: ignore
+    value: Union[int, float] = 0
     count = 1
     min_ = None
     max_ = None
@@ -189,11 +187,8 @@ def _convert_point_to_envelope(
     # truncation logic
     properties = _utils._filter_custom_properties(point.attributes)
 
-    if namespace is not None:
-        namespace = str(namespace)[:256]
     data_point = MetricDataPoint(
         name=str(name)[:1024],
-        namespace=namespace,
         value=value,
         count=count,
         min=min_,
@@ -214,44 +209,46 @@ def _convert_point_to_envelope(
 def _handle_std_metric_envelope(
     envelope: TelemetryItem,
     name: str,
-    attributes:Mapping[str, AttributeValue]
+    attributes: Attributes,
 ) -> Optional[TelemetryItem]:
-    properties = {}
+    properties: Dict[str, str] = {}
     tags = envelope.tags
+    if not attributes:
+        attributes = {}
     # TODO: switch to semconv constants
-    status_code = attributes.get("http.status_code", None)
+    status_code = attributes.get("http.status_code")
     if name == "http.client.duration":
         properties["_MS.MetricId"] = "dependencies/duration"
         properties["_MS.IsAutocollected"] = "True"
         properties["Dependency.Type"] = "http"
-        properties["Dependency.Success"] = str(_is_status_code_success(status_code, 400))
+        properties["Dependency.Success"] = str(_is_status_code_success(status_code, 400)) # type: ignore
         target = None
         if "peer.service" in attributes:
-            target = attributes["peer.service"]
+            target = attributes["peer.service"] # type: ignore
         elif "net.peer.name" in attributes:
-            if attributes["net.peer.name"] is None:
+            if attributes["net.peer.name"] is None: # type: ignore
                 target = None
             elif "net.host.port" in attributes and \
-                attributes["net.host.port"] is not None:
+                attributes["net.host.port"] is not None: # type: ignore
                 target = "{}:{}".format(
-                    attributes["net.peer.name"],
-                    attributes["net.host.port"],
+                    attributes["net.peer.name"], # type: ignore
+                    attributes["net.host.port"], # type: ignore
                 )
             else:
-                target = attributes["net.peer.name"]
-        properties["dependency/target"] = target
+                target = attributes["net.peer.name"] # type: ignore
+        properties["dependency/target"] = target # type: ignore
         properties["dependency/resultCode"] = str(status_code)
         # TODO: operation/synthetic
-        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]
-        properties["cloud/roleName"] = tags["ai.cloud.role"]
+        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"] # type: ignore
+        properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
     elif name == "http.server.duration":
         properties["_MS.MetricId"] = "requests/duration"
         properties["_MS.IsAutocollected"] = "True"
         properties["request/resultCode"] = str(status_code)
         # TODO: operation/synthetic
-        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]
-        properties["cloud/roleName"] = tags["ai.cloud.role"]
-        properties["Request.Success"] = str(_is_status_code_success(status_code, 500))
+        properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"] # type: ignore
+        properties["cloud/roleName"] = tags["ai.cloud.role"] # type: ignore
+        properties["Request.Success"] = str(_is_status_code_success(status_code, 500)) # type: ignore
     else:
         # Any other autocollected metrics are not supported yet for standard metrics
         # We ignore these envelopes in these cases
@@ -259,7 +256,7 @@ def _handle_std_metric_envelope(
 
     # TODO: rpc, database, messaging
 
-    envelope.data.base_data.properties = properties
+    envelope.data.base_data.properties = properties # type: ignore
 
     return envelope
 
@@ -271,9 +268,4 @@ def _is_status_code_success(status_code: Optional[str], threshold: int) -> bool:
 def _get_metric_export_result(result: ExportResult) -> MetricExportResult:
     if result == ExportResult.SUCCESS:
         return MetricExportResult.SUCCESS
-    if result in (
-        ExportResult.FAILED_RETRYABLE,
-        ExportResult.FAILED_NOT_RETRYABLE,
-    ):
-        return MetricExportResult.FAILURE
-    return None
+    return MetricExportResult.FAILURE

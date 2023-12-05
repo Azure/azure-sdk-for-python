@@ -12,8 +12,10 @@ from typing import Dict, Any
 from glob import glob
 import yaml
 
+from . import build_packaging
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
+from .conf import CONF_NAME
 from jinja2 import Environment, FileSystemLoader
 
 
@@ -60,18 +62,28 @@ def get_package_names(sdk_folder):
     return package_names
 
 
+def call_build_config(package_name: str, folder_name: str):
+    build_packaging(
+        folder_name,
+        os.environ.get("GH_TOKEN", None),
+        packages=[package_name],
+        build_conf=True,
+    )
+    # Replace this check_call by in process equivalent call, for better debugging
+    # check_call(
+    #     f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
+    #     shell=True,
+    # )
+
 def init_new_service(package_name, folder_name, is_typespec = False):
     if not is_typespec:
         setup = Path(folder_name, package_name, "setup.py")
         if not setup.exists():
-            check_call(
-                f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
-                shell=True,
-            )
+            call_build_config(package_name, folder_name)
     else:
         output_path = Path(folder_name) / package_name
-        if not (output_path / "sdk_packaging.toml").exists():
-            with open(output_path / "sdk_packaging.toml", "w") as file_out:
+        if not (output_path / CONF_NAME).exists():
+            with open(output_path / CONF_NAME, "w") as file_out:
                 file_out.write("[packaging]\nauto_update = false")
 
     # add ci.yaml
@@ -83,11 +95,20 @@ def init_new_service(package_name, folder_name, is_typespec = False):
 
 
 def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
+    package_folder = Path(sdk_folder, folder_name, package_name)
+    if not package_folder.exists():
+        _LOGGER.info(f"Fail to save metadata since package folder doesn't exist: {package_folder}")
+        return
+    if not (package_folder / "_meta.json").exists():
+        metadata = {}
+    else:
+        with open(str(package_folder / "_meta.json"), "r") as file_in:
+            metadata = json.load(file_in)
 
-    metadata = {
+    metadata.update({
         "commit": data["headSha"],
         "repository_url": data["repoHttpsUrl"],
-    }
+    })
     if "meta" in config:
         readme_file = str(Path(spec_folder, input_readme))
         global_conf = config["meta"]
@@ -112,12 +133,6 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
         metadata.update(config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
-
-    package_folder = Path(sdk_folder, folder_name, package_name).expanduser()
-    if not os.path.exists(package_folder):
-        _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
-        _LOGGER.info("Failed to save metadata.")
-        return
 
     metadata_file_path = os.path.join(package_folder, "_meta.json")
     with open(metadata_file_path, "w") as writer:

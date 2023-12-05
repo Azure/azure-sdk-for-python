@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
 
@@ -43,6 +44,8 @@ async def run_sample():
     print("\n.. Create Secret")
     bank_secret = await client.set_secret("listOpsBankSecretNameAsync", "listOpsSecretValue1")
     storage_secret = await client.set_secret("listOpsStorageSecretNameAsync", "listOpsSecretValue2")
+    assert bank_secret.name
+    assert storage_secret.name
     print(f"Secret with name '{bank_secret.name}' was created.")
     print(f"Secret with name '{storage_secret.name}' was created.")
 
@@ -53,6 +56,7 @@ async def run_sample():
     print("\n.. List secrets from the Key Vault")
     secrets = client.list_properties_of_secrets()
     async for secret in secrets:
+        assert secret.name
         retrieved_secret = await client.get_secret(secret.name)
         print(f"Secret with name '{retrieved_secret.name}' with value '{retrieved_secret.value}' was found.")
 

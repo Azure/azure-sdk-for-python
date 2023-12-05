@@ -60,8 +60,8 @@ class KeyVaultManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.vaults = VaultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.vaults = VaultsOperations(self._client, self._config, self._serialize, self._deserialize, "2016-10-01")
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2016-10-01")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

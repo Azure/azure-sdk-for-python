@@ -16,7 +16,7 @@ from .._models import AnalyzeResult
 
 
 class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
-    """DocumentAnalysisClient analyzes information from documents and images.
+    """DocumentAnalysisClient analyzes information from documents and images, and classifies documents.
     It is the interface to use for analyzing with prebuilt models (receipts, business cards,
     invoices, identity documents, among others), analyzing layout from documents, analyzing general
     document types, and analyzing custom documents with built models (to see a full list of models
@@ -44,14 +44,14 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_authentication_async.py
             :start-after: [START create_da_client_with_key_async]
             :end-before: [END create_da_client_with_key_async]
             :language: python
             :dedent: 4
             :caption: Creating the DocumentAnalysisClient with an endpoint and API key.
 
-        .. literalinclude:: ../samples/v3.2/async_samples/sample_authentication_async.py
+        .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_authentication_async.py
             :start-after: [START create_da_client_with_aad_async]
             :end-before: [END create_da_client_with_aad_async]
             :language: python
@@ -62,7 +62,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
-        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2023_02_28_PREVIEW)
+        api_version = kwargs.pop("api_version", DocumentAnalysisApiVersion.V2023_07_31)
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
@@ -89,28 +89,25 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
         :keyword features: Document analysis features to enable.
-        :paramtype: list[str or ~azure.ai.formrecognizer.AnalysisFeature]
-        :keyword query_fields: List of additional fields to extract. Examples: "NumberOfGuests,StoreNumber".
-            Default value is None. See https://aka.ms/azsdk/formrecognizer/queryfields for usage.
-        :paramtype: list[str]
+        :paramtype features: list[str]
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
-            The *features* and *query_fields* keyword arguments.
+        .. versionadded:: 2023-07-31
+            The *features* keyword argument.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_analyze_invoices_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_analyze_invoices_async.py
                 :start-after: [START analyze_invoices_async]
                 :end-before: [END analyze_invoices_async]
                 :language: python
                 :dedent: 4
                 :caption: Analyze an invoice. For more samples see the `samples` folder.
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_analyze_custom_documents_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_analyze_custom_documents_async.py
                 :start-after: [START analyze_custom_documents_async]
                 :end-before: [END analyze_custom_documents_async]
                 :language: python
@@ -128,11 +125,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             _client_op_path = self._client
             if kwargs.pop("features", None):
                 raise ValueError(
-                    "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
-                )
-            if kwargs.pop("query_fields", None):
-                raise ValueError(
-                    "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'features' is only available for API version V2023_07_31 and later."
                 )
         else:
             _client_op_path = self._client.document_models
@@ -165,21 +158,18 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :keyword str locale: Locale hint of the input document.
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
         :keyword features: Document analysis features to enable.
-        :paramtype: list[str or ~azure.ai.formrecognizer.AnalysisFeature]
-        :keyword query_fields: List of additional fields to extract. Examples: "NumberOfGuests,StoreNumber".
-            Default value is None. See https://aka.ms/azsdk/formrecognizer/queryfields for usage.
-        :paramtype: list[str]
+        :paramtype features: list[str]
         :return: An instance of an AsyncLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
-            The *features* and *query_fields* keyword arguments.
+        .. versionadded:: 2023-07-31
+            The *features* keyword argument.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_analyze_receipts_from_url_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_analyze_receipts_from_url_async.py
                 :start-after: [START analyze_receipts_from_url_async]
                 :end-before: [END analyze_receipts_from_url_async]
                 :language: python
@@ -204,11 +194,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
             _client_op_path = self._client
             if kwargs.pop("features", None):
                 raise ValueError(
-                    "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
-                )
-            if kwargs.pop("query_fields", None):
-                raise ValueError(
-                    "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'features' is only available for API version V2023_07_31 and later."
                 )
         else:
             _client_op_path = self._client.document_models
@@ -237,12 +223,12 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *begin_classify_document* client method.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_classify_document_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_classify_document_async.py
                 :start-after: [START classify_document_async]
                 :end-before: [END classify_document_async]
                 :language: python
@@ -252,7 +238,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             raise ValueError("Method 'begin_classify_document()' is only available for API version "
-                             "V2023_02_28_PREVIEW and later")
+                             "V2023_07_31 and later")
 
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
@@ -287,12 +273,12 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
-        .. versionadded:: 2023-02-28-preview
+        .. versionadded:: 2023-07-31
             The *begin_classify_document_from_url* client method.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/async_samples/sample_classify_document_from_url_async.py
+            .. literalinclude:: ../samples/v3.2_and_later/async_samples/sample_classify_document_from_url_async.py
                 :start-after: [START classify_document_from_url_async]
                 :end-before: [END classify_document_from_url_async]
                 :language: python
@@ -302,7 +288,7 @@ class DocumentAnalysisClient(FormRecognizerClientBaseAsync):
 
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             raise ValueError("Method 'begin_classify_document_from_url()' is only available for API version "
-                             "V2023_02_28_PREVIEW and later")
+                             "V2023_07_31 and later")
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 

@@ -27,7 +27,7 @@ from typing import Any, ContextManager, Iterator, Optional, Union
 
 import httpx
 from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
+from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest
@@ -103,12 +103,14 @@ class HttpXStreamDownloadGenerator:
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: Pipeline, response: HttpXTransportResponse, **kwargs) -> None:
+    def __init__(
+        self, pipeline: Pipeline, response: HttpXTransportResponse, *, decompress: bool = True, **kwargs
+    ) -> None:
         self.pipeline = pipeline
         self.response = response
-        decompress = kwargs.pop("decompress", True)
+        should_decompress = decompress
 
-        if decompress:
+        if should_decompress:
             self.iter_content_func = self.response.internal_response.iter_bytes()
         else:
             self.iter_content_func = self.response.internal_response.iter_raw()
@@ -122,18 +124,32 @@ class HttpXStreamDownloadGenerator:
         except StopIteration:
             self.response.stream_contextmanager.__exit__(None, None, None)
             raise
+        except httpx.DecodingError as ex:
+            if len(ex.args) > 0:
+                raise DecodeError(ex.args[0]) from ex
+            raise DecodeError("Failed to decode.") from ex
 
 
 class HttpXTransport(HttpTransport):
     """Implements a basic httpx HTTP sender
 
     :keyword httpx.Client client: HTTPX client to use instead of the default one
+    :keyword bool client_owner: Decide if the client provided by user is owned by this transport. Default to True.
+    :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
     """
 
-    def __init__(self, *, client: Optional[httpx.Client] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        client: Optional[httpx.Client] = None,
+        client_owner: bool = True,
+        use_env_settings: bool = True,
+        **kwargs: Any
+    ) -> None:
         self.client = client
         self.connection_config = ConnectionConfiguration(**kwargs)
-        self._use_env_settings = kwargs.pop("use_env_settings", True)
+        self._client_owner = client_owner
+        self._use_env_settings = use_env_settings
 
     def open(self) -> None:
         if self.client is None:
@@ -149,7 +165,7 @@ class HttpXTransport(HttpTransport):
         :return: None
         :rtype: None
         """
-        if self.client:
+        if self._client_owner and self.client:
             self.client.close()
             self.client = None
 
@@ -169,6 +185,7 @@ class HttpXTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.experimental.transport.HttpXTransportResponse
         """
+        self.open()
         stream_response = kwargs.pop("stream", False)
         timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
         # not needed here as its already handled during init
@@ -179,7 +196,7 @@ class HttpXTransport(HttpTransport):
             "headers": request.headers.items(),
             "data": request.data,
             "files": request.files,
-            "timeout": timeout if timeout else request.timeout,
+            "timeout": timeout,
             **kwargs,
         }
 
@@ -188,11 +205,11 @@ class HttpXTransport(HttpTransport):
 
         stream_ctx: Optional[ContextManager] = None
         try:
-            if stream_response:
+            if stream_response and self.client:
                 stream_ctx = self.client.stream(**parameters)
                 if stream_ctx:
                     response = stream_ctx.__enter__()
-            else:
+            elif self.client:
                 response = self.client.request(**parameters)
         except (
             httpx.ReadTimeout,

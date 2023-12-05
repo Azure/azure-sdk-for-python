@@ -11,7 +11,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from .._exceptions import CredentialUnavailableError
 from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, EnvironmentVariables
-from .._internal import normalize_authority, validate_tenant_id
+from .._internal import normalize_authority, validate_tenant_id, within_dac
 from .._internal.aad_client import AadClient, AadClientBase
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.decorators import log_get_token
@@ -29,7 +29,6 @@ class _VSCodeCredentialBase(abc.ABC):
         super(_VSCodeCredentialBase, self).__init__()
 
         user_settings = get_user_settings()
-        self._is_chained = kwargs.pop("is_chained", False)
         self._cloud = user_settings.get("azure.cloud", "AzureCloud")
         self._refresh_token = None
         self._unavailable_reason = ""
@@ -88,7 +87,7 @@ class _VSCodeCredentialBase(abc.ABC):
                 # we can't guess confidently.
                 self._unavailable_reason = (
                     'VS Code is configured to use a custom cloud. Set keyword argument "authority"'
-                    + ' with the Azure Active Directory endpoint for cloud "{}"'.format(self._cloud)
+                    + ' with the Microsoft Entra endpoint for cloud "{}"'.format(self._cloud)
                 )
                 return
 
@@ -115,13 +114,13 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
     versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider
     authenticating with :class:`AzureCliCredential`.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com".
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com".
         This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority
         matching the "Azure: Cloud" setting in VS Code's user settings or, when that setting has no value, the
         authority for Azure Public Cloud.
     :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "Azure: Tenant"
         setting in VS Code's user settings or, when that setting has no value, the "organizations" tenant, which
-        supports only Azure Active Directory work or school accounts.
+        supports only Microsoft Entra work or school accounts.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
@@ -141,7 +140,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         self.__exit__()
 
     @log_get_token("VSCodeCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         This method is called automatically by Azure SDK clients.
@@ -149,6 +150,9 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -162,13 +166,13 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
                 " to troubleshoot this issue."
             )
             raise CredentialUnavailableError(message=error_message)
-        if self._is_chained:
+        if within_dac.get():
             try:
-                token = super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
+                token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 return token
             except ClientAuthenticationError as ex:
                 raise CredentialUnavailableError(message=ex.message) from ex
-        return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
+        return super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
     def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         self._client = cast(AadClient, self._client)

@@ -85,9 +85,9 @@ class TestManagement(FormRecognizerTest):
 
         assert info.custom_document_models.limit
         assert info.custom_document_models.count
-        assert info.custom_neural_document_model_builds.quota
-        assert info.custom_neural_document_model_builds.quota_resets_on
-        assert info.custom_neural_document_model_builds.used is not None
+        assert info.neural_document_model_quota.quota
+        assert info.neural_document_model_quota.quota_resets_on
+        assert info.neural_document_model_quota.used is not None
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -202,7 +202,7 @@ class TestManagement(FormRecognizerTest):
             assert classifier.expires_on
             for doc_type, source in classifier.doc_types.items():
                 assert doc_type
-                assert source.azure_blob_source or source.azure_blob_file_list_source
+                assert source.source
 
         # check failed op
         if failed_op:
@@ -241,6 +241,6 @@ class TestManagement(FormRecognizerTest):
             with dtc.get_document_analysis_client() as dac:
                 assert transport.session is not None
                 dac.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg).wait()
-                assert dac._api_version == DocumentAnalysisApiVersion.V2023_02_28_PREVIEW
+                assert dac._api_version == DocumentAnalysisApiVersion.V2023_07_31
             dtc.get_resource_details()
             assert transport.session is not None

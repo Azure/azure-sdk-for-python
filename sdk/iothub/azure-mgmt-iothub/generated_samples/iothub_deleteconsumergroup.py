@@ -29,15 +29,14 @@ def main():
         subscription_id="91d12660-3dec-467a-be2a-213b5544ddc0",
     )
 
-    response = client.iot_hub_resource.delete_event_hub_consumer_group(
+    client.iot_hub_resource.delete_event_hub_consumer_group(
         resource_group_name="myResourceGroup",
         resource_name="testHub",
         event_hub_endpoint_name="events",
         name="test",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/stable/2021-07-02/examples/iothub_deleteconsumergroup.json
+# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/stable/2023-06-30/examples/iothub_deleteconsumergroup.json
 if __name__ == "__main__":
     main()

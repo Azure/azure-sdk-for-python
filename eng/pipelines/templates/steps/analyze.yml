@@ -29,7 +29,7 @@ steps:
     displayName: 'Set Tox Environment Skips'
     inputs:
       scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
-      arguments: '--team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
 
   - ${{ each artifact in parameters.Artifacts }}:
     - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
@@ -80,14 +80,14 @@ steps:
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
 
   - template: run_mypy.yml
@@ -109,6 +109,13 @@ steps:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
+
+  - task: PythonScript@0
+    displayName: 'Run Keyword Validation Check'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords'
+    condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
 
   - task: DownloadPipelineArtifact@2
     condition: succeededOrFailed()

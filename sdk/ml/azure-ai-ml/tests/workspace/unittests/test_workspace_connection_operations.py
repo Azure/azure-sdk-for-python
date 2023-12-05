@@ -69,7 +69,6 @@ class TestWorkspaceConnectionsOperation:
             type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
             credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
-            metadata=None,
         )
         workspace_connection = load_workspace_connection(
             source="./tests/test_configs/workspace_connection/python_feed_pat.yaml"

@@ -240,6 +240,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         self.bsc.key_encryption_key = None
         with mock.patch('os.urandom', mock_urandom):
             await blob.upload_blob(content, overwrite=True)
+
+        # Set kek to None to test only resolver for download
+        blob.key_encryption_key = None
         data = await (await blob.download_blob()).readall()
 
         # Assert
@@ -1035,3 +1038,63 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         # Assert
         assert content == data
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_encryption_user_agent(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        def assert_user_agent(request):
+            assert request.http_request.headers['User-Agent'].startswith('azstorage-clientsideencryption/2.0 ')
+
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'Hello World Encrypted!'
+
+        # Act
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent)
+        await (await blob.download_blob(raw_request_hook=assert_user_agent)).readall()
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_encryption_user_agent_app_id(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        self.enable_encryption_v2(kek)
+
+        app_id = 'TestAppId'
+        content = b'Hello World Encrypted!'
+
+        def assert_user_agent(request):
+            start = f'{app_id} azstorage-clientsideencryption/2.0 '
+            assert request.http_request.headers['User-Agent'].startswith(start)
+
+        # Test method level keyword
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent, user_agent=app_id)
+        await (await blob.download_blob(raw_request_hook=assert_user_agent, user_agent=app_id)).readall()
+
+        # Test client constructor level keyword
+        bsc = BlobServiceClient(
+            self.bsc.url,
+            credential=storage_account_key,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek,
+            user_agent=app_id)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent)
+        await (await blob.download_blob(raw_request_hook=assert_user_agent)).readall()

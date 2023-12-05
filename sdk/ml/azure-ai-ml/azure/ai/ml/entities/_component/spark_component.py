@@ -26,46 +26,47 @@ class SparkComponent(
 ):  # pylint: disable=too-many-instance-attributes
     """Spark component version, used to define a Spark Component or Job.
 
-    :param code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
-        to a remote location. Defaults to ".".
+    :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url pointing
+        to a remote location. Defaults to ".", indicating the current directory.
     :type code: Union[str, os.PathLike]
-    :param entry: The file or class entry point.
-    :type entry: Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]
-    :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: list[str]
-    :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: list[str]
-    :param files: The list of files to be placed in the working directory of each executor.
-    :type files: list[str]
-    :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: list[str]
-    :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
-    :type driver_cores: int
-    :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
+    :keyword entry: The file or class entry point.
+    :paramtype entry: Optional[Union[dict[str, str], ~azure.ai.ml.entities.SparkJobEntry]]
+    :keyword py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps. Defaults to None.
+    :paramtype py_files: Optional[list[str]]
+    :keyword jars: The list of .JAR files to include on the driver and executor classpaths. Defaults to None.
+    :paramtype jars: Optional[list[str]]
+    :keyword files: The list of files to be placed in the working directory of each executor. Defaults to None.
+    :paramtype files: Optional[list[str]]
+    :keyword archives: The list of archives to be extracted into the working directory of each executor.
+        Defaults to None.
+    :paramtype archives: Optional[list[str]]
+    :keyword driver_cores: The number of cores to use for the driver process, only in cluster mode.
+    :paramtype driver_cores: Optional[int]
+    :keyword driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
         suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
-    :type driver_memory: str
-    :param executor_cores: The number of cores to use on each executor.
-    :type executor_cores: int
-    :param executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
+    :paramtype driver_memory: Optional[str]
+    :keyword executor_cores: The number of cores to use on each executor.
+    :paramtype executor_cores: Optional[int]
+    :keyword executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
         suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
-    :type executor_memory: str
-    :param executor_instances: The initial number of executors.
-    :type executor_instances: int
-    :param dynamic_allocation_enabled: Whether to use dynamic resource allocation, which scales the number of executors
-        registered with this application up and down based on the workload. Defaults to False.
-    :type dynamic_allocation_enabled: bool
-    :param dynamic_allocation_min_executors: The lower bound for the number of executors if dynamic allocation is
+    :paramtype executor_memory: Optional[str]
+    :keyword executor_instances: The initial number of executors.
+    :paramtype executor_instances: Optional[int]
+    :keyword dynamic_allocation_enabled: Whether to use dynamic resource allocation, which scales the number of
+        executors registered with this application up and down based on the workload. Defaults to False.
+    :paramtype dynamic_allocation_enabled: Optional[bool]
+    :keyword dynamic_allocation_min_executors: The lower bound for the number of executors if dynamic allocation is
         enabled.
-    :type dynamic_allocation_min_executors: int
-    :param dynamic_allocation_max_executors: The upper bound for the number of executors if dynamic allocation is
+    :paramtype dynamic_allocation_min_executors: Optional[int]
+    :keyword dynamic_allocation_max_executors: The upper bound for the number of executors if dynamic allocation is
         enabled.
-    :type dynamic_allocation_max_executors: int
-    :param conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: dict[str, str]
-    :param environment: The Azure ML environment to run the job in.
-    :type environment: Union[str, ~azure.ai.ml.entities.Environment]
-    :param inputs: A mapping of input names to input data sources used in the job.
-    :type inputs: dict[str, Union[
+    :paramtype dynamic_allocation_max_executors: Optional[int]
+    :keyword conf: A dictionary with pre-defined Spark configurations key and values. Defaults to None.
+    :paramtype conf: Optional[dict[str, str]]
+    :keyword environment: The Azure ML environment to run the job in.
+    :paramtype environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+    :keyword inputs: A mapping of input names to input data sources used in the job. Defaults to None.
+    :paramtype inputs: Optional[dict[str, Union[
         ~azure.ai.ml.entities._job.pipeline._io.NodeOutput,
         ~azure.ai.ml.Input,
         str,
@@ -73,15 +74,13 @@ class SparkComponent(
         int,
         float,
         Enum,
-        ]
-    ]
-    :param outputs: A mapping of output names to output data sources used in the job.
-    :type outputs: dict[str, Union[str, ~azure.ai.ml.Output]]
-    :param args: The arguments for the job.
-    :type args: str
+        ]]]
+    :keyword outputs: A mapping of output names to output data sources used in the job. Defaults to None.
+    :paramtype outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
+    :keyword args: The arguments for the job. Defaults to None.
+    :paramtype args: Optional[str]
 
     .. admonition:: Example:
-        :class: tip
 
         .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_component_definition]
@@ -172,8 +171,20 @@ class SparkComponent(
         return validation_result
 
     def _to_dict(self) -> Dict:
-        """Dump the spark component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(SparkComponent, self)._to_dict()})
+
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the component content into a sorted yaml string.
+
+        :return: The ordered dict
+        :rtype: Dict
+        """
+
+        obj = super()._to_ordered_dict_for_yaml_dump()
+        # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
+        if self.code and isinstance(self.code, str):
+            obj["code"] = self.code
+        return obj
 
     def _get_environment_id(self) -> Union[str, None]:
         # Return environment id of environment

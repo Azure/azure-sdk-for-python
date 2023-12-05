@@ -1,5 +1,20 @@
 # Release History
 
+## 10.3.0 (2023-10-23)
+
+### Features Added
+
+  - Model MHSMPrivateEndpointConnection has a new parameter identity
+  - Model MHSMPrivateLinkResource has a new parameter identity
+  - Model ManagedHsm has a new parameter identity
+  - Model ManagedHsmResource has a new parameter identity
+
+## 10.2.3 (2023-07-25)
+
+### Bugs Fixed
+
+  - Do not use configured api_version to relpace the value in nextLink for `VaultsOperation.list`
+
 ## 10.2.2 (2023-05-24)
 
 ### Other Changes

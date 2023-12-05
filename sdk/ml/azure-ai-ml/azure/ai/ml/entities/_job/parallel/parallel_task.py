@@ -102,8 +102,7 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
         return load_from_dict(ComponentParallelTaskSchema, data, context, **kwargs)
 
     @classmethod
-    def _from_dict(cls, dct: dict):
-        """Convert a dict to an Input object."""
+    def _from_dict(cls, dct: dict) -> "ParallelTask":
         obj = cls(**dict(dct.items()))
         return obj
 

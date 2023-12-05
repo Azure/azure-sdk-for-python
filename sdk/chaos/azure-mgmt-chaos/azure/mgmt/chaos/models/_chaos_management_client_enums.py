@@ -41,17 +41,33 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current provisioning state for a given Azure Chaos resource."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+
+
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """String of the resource identity type."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
 
 
 class SelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum of the selector type."""
 
-    PERCENT = "Percent"
-    RANDOM = "Random"
-    TAG = "Tag"
     LIST = "List"
+    QUERY = "Query"
+
+
+class TargetReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of the Target reference type."""
+
+    CHAOS_TARGET = "ChaosTarget"

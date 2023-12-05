@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -31,7 +31,9 @@ class CheckNameAvailabilityParameters(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, type: str = "Microsoft.Quantum/Workspaces", **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, type: str = "Microsoft.Quantum/Workspaces", **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name for checking availability.
         :paramtype name: str
@@ -66,7 +68,7 @@ class CheckNameAvailabilityResult(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, name_available: Optional[bool] = None, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, name_available: Optional[bool] = None, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name_available: Indicator of availability of the Quantum Workspace resource name.
         :paramtype name_available: bool
@@ -100,7 +102,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -140,7 +142,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -151,7 +153,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.quantum.models.ErrorDetail
@@ -161,7 +164,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.quantum.models.ErrorDetail
@@ -186,8 +189,12 @@ class OfferingsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ProviderDescription"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ProviderDescription"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Result of a list Providers operation.
         :paramtype value: list[~azure.mgmt.quantum.models.ProviderDescription]
@@ -223,8 +230,8 @@ class Operation(_serialization.Model):
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
         display: Optional["_models.OperationDisplay"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -266,8 +273,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Provider name.
         :paramtype provider: str
@@ -305,7 +312,7 @@ class OperationsList(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: List["_models.Operation"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Operation"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: Url to follow for getting next page of operations.
         :paramtype next_link: str
@@ -332,8 +339,12 @@ class PricingDetail(_serialization.Model):
     }
 
     def __init__(
-        self, *, id: Optional[str] = None, value: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        value: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Unique id for this pricing information.
         :paramtype id: str
@@ -360,8 +371,12 @@ class PricingDimension(_serialization.Model):
     }
 
     def __init__(
-        self, *, id: Optional[str] = None, name: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Unique id of this pricing dimension.
         :paramtype id: str
@@ -374,7 +389,8 @@ class PricingDimension(_serialization.Model):
 
 
 class Provider(_serialization.Model):
-    """Information about a Provider. A Provider is an entity that offers Targets to run Azure Quantum Jobs.
+    """Information about a Provider. A Provider is an entity that offers Targets to run Azure Quantum
+    Jobs.
 
     :ivar provider_id: Unique id of this provider.
     :vartype provider_id: str
@@ -409,8 +425,8 @@ class Provider(_serialization.Model):
         application_name: Optional[str] = None,
         provisioning_state: Optional[Union[str, "_models.Status"]] = None,
         resource_usage_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider_id: Unique id of this provider.
         :paramtype provider_id: str
@@ -436,7 +452,8 @@ class Provider(_serialization.Model):
 
 
 class ProviderDescription(_serialization.Model):
-    """Information about an offering. A provider offering is an entity that offers Targets to run Azure Quantum Jobs.
+    """Information about an offering. A provider offering is an entity that offers Targets to run
+    Azure Quantum Jobs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -463,8 +480,8 @@ class ProviderDescription(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         properties: Optional["_models.ProviderProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Unique provider's id.
         :paramtype id: str
@@ -533,8 +550,8 @@ class ProviderProperties(_serialization.Model):
         skus: Optional[List["_models.SkuDescription"]] = None,
         quota_dimensions: Optional[List["_models.QuotaDimension"]] = None,
         pricing_dimensions: Optional[List["_models.PricingDimension"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword aad: Azure Active Directory info.
         :paramtype aad: ~azure.mgmt.quantum.models.ProviderPropertiesAad
@@ -583,7 +600,7 @@ class ProviderPropertiesAad(_serialization.Model):
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.application_id = None
@@ -611,7 +628,7 @@ class ProviderPropertiesManagedApplication(_serialization.Model):
         "offer_id": {"key": "offerId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.publisher_id = None
@@ -645,7 +662,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -654,7 +671,8 @@ class Resource(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -689,7 +707,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -773,8 +791,8 @@ class QuantumWorkspace(TrackedResource):  # pylint: disable=too-many-instance-at
         identity: Optional["_models.QuantumWorkspaceIdentity"] = None,
         providers: Optional[List["_models.Provider"]] = None,
         storage_account: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -822,7 +840,7 @@ class QuantumWorkspaceIdentity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.ResourceIdentityType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.ResourceIdentityType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The identity type. Known values are: "SystemAssigned" and "None".
         :paramtype type: str or ~azure.mgmt.quantum.models.ResourceIdentityType
@@ -877,8 +895,8 @@ class QuotaDimension(_serialization.Model):
         description: Optional[str] = None,
         unit: Optional[str] = None,
         unit_plural: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Unique id of this dimension.
         :paramtype id: str
@@ -957,8 +975,8 @@ class SkuDescription(_serialization.Model):
         targets: Optional[List[str]] = None,
         quota_dimensions: Optional[List["_models.QuotaDimension"]] = None,
         pricing_details: Optional[List["_models.PricingDetail"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Unique sku id.
         :paramtype id: str
@@ -1029,8 +1047,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1067,7 +1085,7 @@ class TagsObject(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1107,8 +1125,8 @@ class TargetDescription(_serialization.Model):
         description: Optional[str] = None,
         accepted_data_formats: Optional[List[str]] = None,
         accepted_content_encodings: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Unique target id.
         :paramtype id: str
@@ -1145,8 +1163,12 @@ class WorkspaceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.QuantumWorkspace"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.QuantumWorkspace"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Result of a list Workspaces operation.
         :paramtype value: list[~azure.mgmt.quantum.models.QuantumWorkspace]
