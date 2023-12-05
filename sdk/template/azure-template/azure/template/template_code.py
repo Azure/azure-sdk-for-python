@@ -6,5 +6,5 @@
 
 
 def template_main() -> bool:
-    print("Package code.")
+    print("Package code test.")
     return True
