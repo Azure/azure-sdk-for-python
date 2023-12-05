@@ -15,7 +15,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
 
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATIONS_BIT_MAP
 
@@ -71,11 +71,11 @@ def _getlocale():
 
 
 azure_monitor_context = {
-    "ai.device.id": platform.node(),
-    "ai.device.locale": _getlocale(),
-    "ai.device.osVersion": platform.version(),
-    "ai.device.type": "Other",
-    "ai.internal.sdkVersion": "{}py{}:otel{}:ext{}".format(
+    ContextTagKeys.AI_DEVICE_ID: platform.node(),
+    ContextTagKeys.AI_DEVICE_LOCALE: _getlocale(),
+    ContextTagKeys.AI_DEVICE_OS_VERSION: platform.version(),
+    ContextTagKeys.AI_DEVICE_TYPE: "Other",
+    ContextTagKeys.AI_INTERNAL_SDK_VERSION: "{}py{}:otel{}:ext{}".format(
         _get_sdk_version_prefix(), platform.python_version(), opentelemetry_version, ext_version
     ),
 }
@@ -163,15 +163,15 @@ def _populate_part_a_fields(resource: Resource):
         service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
         if service_name:
             if service_namespace:
-                tags["ai.cloud.role"] = str(service_namespace) + \
+                tags[ContextTagKeys.AI_CLOUD_ROLE] = str(service_namespace) + \
                     "." + str(service_name)
             else:
-                tags["ai.cloud.role"] = service_name # type: ignore
+                tags[ContextTagKeys.AI_CLOUD_ROLE] = service_name # type: ignore
         if service_instance_id:
-            tags["ai.cloud.roleInstance"] = service_instance_id # type: ignore
+            tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = service_instance_id # type: ignore
         else:
-            tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
-        tags["ai.internal.nodeName"] = tags["ai.cloud.roleInstance"]
+            tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE] = platform.node()  # hostname default
+        tags[ContextTagKeys.AI_INTERNAL_NODE_NAME] = tags[ContextTagKeys.AI_CLOUD_ROLE_INSTANCE]
     return tags
 
 # pylint: disable=W0622
