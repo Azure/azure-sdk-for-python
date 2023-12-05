@@ -40,6 +40,7 @@ class EventHubError(Exception):
                 _, _, self.error = condition.partition(":")
                 self.message += "\nError: {}".format(self.error)
             try:
+                details.description = cast(str, details.description)
                 self._parse_error(details.description)
                 self.details = cast(List[str], self.details)
                 for detail in self.details:
