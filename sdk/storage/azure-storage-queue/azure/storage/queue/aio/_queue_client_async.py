@@ -145,6 +145,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
@@ -174,6 +177,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -305,7 +311,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
     async def set_queue_metadata(
         self, metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
@@ -335,7 +341,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         try:
-            await self._client.queue.set_metadata(
+            return await self._client.queue.set_metadata(
                 timeout=timeout, headers=headers, cls=return_response_headers, **kwargs
             )
         except HttpResponseError as error:
@@ -423,7 +429,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
 
     @distributed_trace_async
     async def send_message(
-        self, content: Any,
+        self, content: Optional[object],
         *,
         visibility_timeout: Optional[int] = None,
         time_to_live: Optional[int] = None,
@@ -442,7 +448,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
 
-        :param Any content:
+        :param Optional[object] content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str. The encoded message can be up to
             64KB in size.
@@ -685,7 +691,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
     async def update_message(
         self, message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
-        content: Optional[Any] = None,
+        content: Optional[object] = None,
         *,
         visibility_timeout: Optional[int] = None,
         **kwargs: Any
@@ -710,7 +716,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
-        :param Any content:
+        :param Optional[object] content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str.
         :keyword int visibility_timeout:

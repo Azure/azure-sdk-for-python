@@ -6,12 +6,8 @@
 
 import time
 from typing import Any, Dict
+from urllib.parse import urlparse
 from wsgiref.handlers import format_date_time
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
 
 from azure.core.pipeline.policies import (
     HeadersPolicy,

@@ -21,9 +21,7 @@ import asyncio
 
 
 class JobQueueSamplesAsync(object):
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
-    if not endpoint:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
+    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
 
     _job_queue_id = "sample_q_policy"
     _distribution_policy_id = "sample_dp_policy"

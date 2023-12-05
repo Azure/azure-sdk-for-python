@@ -15,7 +15,7 @@ from azure.core.settings import settings
 settings.tracing_implementation = "opentelemetry"
 
 # In the below example, we use a simple console exporter, uncomment these lines to use
-# the OpenTelemetry exporter for Azure MonitorOpenTelemetry exporter for Azure Monitor.
+# the OpenTelemetry exporter for Azure Monitor.
 # Example of a trace exporter for Azure Monitor, but you can use anything OpenTelemetry supports.
 
 # from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter

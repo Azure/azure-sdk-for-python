@@ -15,7 +15,10 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.policies import ContentDecodePolicy
 
 # the functions we patch
-from azure.core.pipeline.transport import RequestsTransport
+try:
+    from azure.core.pipeline.transport import RequestsTransport
+except:
+    pass
 
 from .helpers import get_test_id, is_live, is_live_and_not_recording
 from .proxy_testcase import start_record_or_playback, stop_record_or_playback, transform_request

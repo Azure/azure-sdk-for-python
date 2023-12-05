@@ -179,10 +179,15 @@ class AioHttpTransport(AsyncHttpTransport):
                     break
 
         response: Optional[RestAsyncHttpResponse] = None
-        config["ssl"] = self._build_ssl_config(
-            cert=config.pop("connection_cert", self.connection_config.get("cert")),
-            verify=config.pop("connection_verify", self.connection_config.get("verify")),
+        ssl = self._build_ssl_config(
+            cert=config.pop("connection_cert", self.connection_config.get("connection_cert")),
+            verify=config.pop("connection_verify", self.connection_config.get("connection_verify")),
         )
+
+        # If "ssl" is True, then we don't set the "ssl" config as aiohttp will use ssl.create_default_context
+        # to create the SSL context by default.
+        if ssl is not True:
+            config["ssl"] = ssl
         # If we know for sure there is not body, disable "auto content type"
         # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
@@ -190,7 +195,7 @@ class AioHttpTransport(AsyncHttpTransport):
             config["skip_auto_headers"] = ["Content-Type"]
         try:
             stream_response = config.pop("stream", False)
-            timeout = config.pop("connection_timeout", self.connection_config.get("timeout"))
+            timeout = config.pop("connection_timeout", self.connection_config.get("connection_timeout"))
             read_timeout = config.pop("read_timeout", self.connection_config.get("read_timeout"))
             socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
             result = await self.session.request(  # type: ignore
