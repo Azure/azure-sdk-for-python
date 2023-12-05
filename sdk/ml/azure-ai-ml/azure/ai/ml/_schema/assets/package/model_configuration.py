@@ -17,8 +17,8 @@ module_logger = logging.getLogger(__name__)
 class ModelConfigurationSchema(PathAwareSchema):
     mode = StringTransformedEnum(
         allowed_values=[
-            "copy",
-            "download",
+            "Copy",
+            "Download",
         ]
     )
     mount_path = fields.Str()
