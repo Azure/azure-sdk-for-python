@@ -827,7 +827,7 @@ def encode_unknown(output: bytearray, value: Optional[Any], **kwargs: Any) -> No
         raise TypeError("Unable to encode unknown value: {}".format(value))
 
 
-_FIELD_DEFINITIONS = {
+_FIELD_DEFINITIONS: Dict[FieldDefinition, Callable[[Any], Any]] = {
     FieldDefinition.fields: encode_fields,
     FieldDefinition.annotations: encode_annotations,
     FieldDefinition.message_id: encode_message_id,
