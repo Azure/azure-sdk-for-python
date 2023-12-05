@@ -231,7 +231,6 @@ class DatabaseProxy(object):
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         data = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
@@ -332,7 +331,6 @@ class DatabaseProxy(object):
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
 
         collection_link = self._get_container_link(container)
         self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
@@ -401,7 +399,6 @@ class DatabaseProxy(object):
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -440,7 +437,6 @@ class DatabaseProxy(object):
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,

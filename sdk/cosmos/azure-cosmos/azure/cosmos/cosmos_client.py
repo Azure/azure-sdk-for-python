@@ -376,7 +376,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:

@@ -120,8 +120,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _set_partition_key(
         self,
-        partition_key: Union[str, float, int, bool]
-    ) -> Union[str, float, bool, int, _Empty, _Undefined]:
+        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+    ) -> Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return partition_key
@@ -219,7 +219,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
 
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
@@ -264,7 +263,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            feed_options["populateQueryMetrics"] = populate_query_metrics
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
@@ -499,7 +497,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -551,7 +548,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -607,12 +603,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         response_hook = kwargs.pop('response_hook', None)
 
         request_options["disableAutomaticIdGeneration"] = not kwargs.pop('enable_automatic_id_generation', False)
-        if populate_query_metrics:
+        if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
@@ -749,7 +744,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
         if post_trigger_include is not None:
