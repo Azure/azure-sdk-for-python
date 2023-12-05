@@ -105,7 +105,7 @@ def create_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
     version = get_version_running(check_type)
     build_link = get_build_link(check_type)
     if check_type == "sphinx":
-        merge_date = "2024-06-15" # This is a one-time event
+        merge_date = "2024-04-15" # This is a one-time event
         error_type = "docstring"
         guide_link = "[Sphinx and docstring checker](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#sphinx-and-docstring-checker)"
         title = f"{package_name} needs {error_type} updates for {check_type}"
