@@ -87,7 +87,7 @@ def encode_null(output: bytearray, *args: Any, **kwargs: Any) -> None:  # pylint
 
 
 def encode_boolean(
-    output: bytearray, value: bool, with_constructor: bool =True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: bool, with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
 ) -> None:
     """
     <encoding name="true" code="0x41" category="fixed" width="0" label="the boolean value true"/>
@@ -131,7 +131,7 @@ def encode_ubyte(
 
 
 def encode_ushort(
-    output: bytearray, value: int, with_constructor: bool =True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
 ) -> None:
     """
     <encoding code="0x60" category="fixed" width="2" label="16-bit unsigned integer in network byte order"/>
@@ -1027,7 +1027,7 @@ def encode_payload(output: bytearray, payload: Message) -> bytes:
     return output
 
 
-def encode_frame(frame: Optional[NamedTuple], frame_type: bytes =_FRAME_TYPE) -> Tuple[bytes, Optional[bytes]]:
+def encode_frame(frame: Optional[NamedTuple], frame_type: bytes = _FRAME_TYPE) -> Tuple[bytes, Optional[bytes]]:
     # TODO: allow passing type specific bytes manually, e.g. Empty Frame needs padding
     if frame is None:
         size = 8
