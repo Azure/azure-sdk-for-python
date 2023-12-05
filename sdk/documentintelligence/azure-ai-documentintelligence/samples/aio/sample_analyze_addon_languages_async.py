@@ -7,18 +7,17 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_highres_async.py
+FILE: sample_analyze_addon_languages_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to recognize documents with improved quality using
-    the add-on 'OCR_HIGH_RESOLUTION' capability.
+    This sample demonstrates how to detect languages from the document using the
+    add-on 'LANGUAGES' capability.
 
-    Add-on capabilities are available within all models except for the Business card
-    model. This sample uses Layout model to demonstrate.
+    This sample uses Layout model to demonstrate.
 
-    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
     enum class. For more information, see:
-    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+    https://aka.ms/azsdk/python/documentintelligence/analysisfeature.
 
     The following capabilities are free:
     - BARCODES
@@ -28,11 +27,12 @@ DESCRIPTION:
     - FORMULAS
     - OCR_HIGH_RESOLUTION
     - STYLE_FONT
+    - QUERY_FIELDS
 
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_highres_async.py
+    python sample_analyze_addon_languages_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -41,18 +41,18 @@ USAGE:
 
 import asyncio
 import os
-from utils import get_words
 
 
-async def analyze_with_highres():
+async def analyze_languages():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "sample_forms/add_ons/highres.png",
+            "..",
+            "sample_forms/add_ons/fonts_and_languages.png",
         )
     )
-    # [START analyze_with_highres]
+    # [START analyze_languages]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature
@@ -68,51 +68,24 @@ async def analyze_with_highres():
             poller = await document_analysis_client.begin_analyze_document(
                 "prebuilt-layout",
                 analyze_request=f,
-                features=[DocumentAnalysisFeature.OCR_HIGH_RESOLUTION],
+                features=[DocumentAnalysisFeature.LANGUAGES],
                 content_type="application/octet-stream",
             )
         result = await poller.result()
 
-    if any([style.is_handwritten for style in result.styles]):
-        print("Document contains handwritten content")
-    else:
-        print("Document does not contain handwritten content")
-
-    for page in result.pages:
-        print(f"----Analyzing layout from page #{page.page_number}----")
-        print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
-
-        for line_idx, line in enumerate(page.lines):
-            words = get_words(page, line)
-            print(
-                f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
-                f"within bounding polygon '{line.polygon}'"
-            )
-
-            for word in words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
-
-        for selection_mark in page.selection_marks:
-            print(
-                f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
-            )
-
-    for table_idx, table in enumerate(result.tables):
-        print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
-        for region in table.bounding_regions:
-            print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
-        for cell in table.cells:
-            print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
-            for region in cell.bounding_regions:
-                print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
+    print("----Languages detected in the document----")
+    print(f"Detected {len(result.languages)} languages:")
+    for lang_idx, lang in enumerate(result.languages):
+        print(f"- Language #{lang_idx}: locale '{lang.locale}'")
+        print(f"  Confidence: {lang.confidence}")
+        print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
 
     print("----------------------------------------")
-    # [END analyze_with_highres]
+    # [END analyze_languages]
 
 
 async def main():
-    await analyze_with_highres()
+    await analyze_languages()
 
 
 if __name__ == "__main__":
@@ -123,10 +96,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         asyncio.run(main())
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

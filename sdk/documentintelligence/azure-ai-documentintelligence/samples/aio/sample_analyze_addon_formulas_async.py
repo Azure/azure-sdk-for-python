@@ -7,18 +7,17 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_languages_async.py
+FILE: sample_analyze_addon_formulas_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to detect languages from the document using the
-    add-on 'LANGUAGES' capability.
+    This sample demonstrates how to extract all identified formulas, such as mathematical
+    equations, using the add-on 'FORMULAS' capability.
 
-    Add-on capabilities are available within all models except for the Business card
-    model. This sample uses Layout model to demonstrate.
+    This sample uses Layout model to demonstrate.
 
-    Add-on capabilities accept a list of strings containing values from the `AnalysisFeature`
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
     enum class. For more information, see:
-    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+    https://aka.ms/azsdk/python/documentintelligence/analysisfeature.
 
     The following capabilities are free:
     - BARCODES
@@ -28,11 +27,12 @@ DESCRIPTION:
     - FORMULAS
     - OCR_HIGH_RESOLUTION
     - STYLE_FONT
+    - QUERY_FIELDS
 
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_languages_async.py
+    python sample_analyze_addon_formulas_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -43,15 +43,16 @@ import asyncio
 import os
 
 
-async def analyze_languages():
+async def analyze_formulas():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "sample_forms/add_ons/fonts_and_languages.png",
+            "..",
+            "sample_forms/add_ons/formulas.pdf",
         )
     )
-    # [START analyze_languages]
+    # [START analyze_formulas]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature
@@ -62,29 +63,41 @@ async def analyze_languages():
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     async with document_analysis_client:
-        # Specify which add-on capabilities to enable.
+        # Specify which add-on capabilities to enable
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
                 "prebuilt-layout",
                 analyze_request=f,
-                features=[DocumentAnalysisFeature.LANGUAGES],
+                features=[DocumentAnalysisFeature.FORMULAS],
                 content_type="application/octet-stream",
             )
         result = await poller.result()
 
-    print("----Languages detected in the document----")
-    print(f"Detected {len(result.languages)} languages:")
-    for lang_idx, lang in enumerate(result.languages):
-        print(f"- Language #{lang_idx}: locale '{lang.locale}'")
-        print(f"  Confidence: {lang.confidence}")
-        print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
+    # Iterate over extracted formulas on each page and print inline and display formulas
+    # separately.
+    for page in result.pages:
+        print(f"----Formulas detected from page #{page.page_number}----")
+        inline_formulas = [f for f in page.formulas if f.kind == "inline"]
+        display_formulas = [f for f in page.formulas if f.kind == "display"]
+
+        print(f"Detected {len(inline_formulas)} inline formulas.")
+        for formula_idx, formula in enumerate(inline_formulas):
+            print(f"- Inline #{formula_idx}: {formula.value}")
+            print(f"  Confidence: {formula.confidence}")
+            print(f"  Bounding regions: {formula.polygon}")
+
+        print(f"\nDetected {len(display_formulas)} display formulas.")
+        for formula_idx, formula in enumerate(display_formulas):
+            print(f"- Display #{formula_idx}: {formula.value}")
+            print(f"  Confidence: {formula.confidence}")
+            print(f"  Bounding regions: {formula.polygon}")
 
     print("----------------------------------------")
-    # [END analyze_languages]
+    # [END analyze_formulas]
 
 
 async def main():
-    await analyze_languages()
+    await analyze_formulas()
 
 
 if __name__ == "__main__":
@@ -95,10 +108,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         asyncio.run(main())
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

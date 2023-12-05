@@ -7,15 +7,15 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_languages.py
+FILE: sample_analyze_addon_query_fields.py
 
 DESCRIPTION:
-    This sample demonstrates how to detect languages from the document using the
-    add-on 'LANGUAGES' capability.
+    This sample demonstrates how to extract additional fields using the
+    add-on 'QUERY_FIELDS' capability.
 
     This sample uses Layout model to demonstrate.
 
-    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature `
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
     enum class. For more information, see:
     https://aka.ms/azsdk/python/documentintelligence/analysisfeature.
 
@@ -32,7 +32,7 @@ DESCRIPTION:
     See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_languages.py
+    python sample_analyze_addon_query_fields.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
@@ -42,43 +42,31 @@ USAGE:
 import os
 
 
-def analyze_languages():
-    path_to_sample_documents = os.path.abspath(
-        os.path.join(
-            os.path.abspath(__file__),
-            "..",
-            "sample_forms/add_ons/fonts_and_languages.png",
-        )
-    )
-    # [START analyze_languages]
+def analyze_query_fields():
+    # [START analyze_query_fields]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
-    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
+    from azure.ai.documentintelligence.models import AnalyzeDocumentRequest, DocumentAnalysisFeature
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/forms/Invoice_1.pdf"
 
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Specify which add-on capabilities to enable.
-    with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-layout",
-            analyze_request=f,
-            features=[DocumentAnalysisFeature.LANGUAGES],
-            content_type="application/octet-stream",
-        )
+    poller = document_analysis_client.begin_analyze_document(
+        "prebuilt-layout",
+        AnalyzeDocumentRequest(url_source=url),
+        features=[DocumentAnalysisFeature.QUERY_FIELDS],
+        query_fields=["Address", "InvoiceNumber"],
+    )
     result = poller.result()
-
-    print("----Languages detected in the document----")
-    print(f"Detected {len(result.languages)} languages:")
-    for lang_idx, lang in enumerate(result.languages):
-        print(f"- Language #{lang_idx}: locale '{lang.locale}'")
-        print(f"  Confidence: {lang.confidence}")
-        print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
-
-    print("----------------------------------------")
-    # [END analyze_languages]
+    print("Here are extra fields in result:\n")
+    for doc in result.documents:
+        print(f"Address: {doc.fields['Address'].value_string}")
+        print(f"Invoice number: {doc.fields['InvoiceNumber'].value_string}")
+    # [END analyze_query_fields]
 
 
 if __name__ == "__main__":
@@ -87,7 +75,7 @@ if __name__ == "__main__":
 
     try:
         load_dotenv(find_dotenv())
-        analyze_languages()
+        analyze_query_fields()
     except HttpResponseError as error:
         # Examples of how to check an HttpResponseError
         # Check by error code:

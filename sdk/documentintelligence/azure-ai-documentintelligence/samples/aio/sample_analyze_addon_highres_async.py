@@ -7,50 +7,84 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout_async.py
+FILE: sample_analyze_addon_highres_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract text, selection marks, and layout information from a document
-    given through a file.
+    This sample demonstrates how to recognize documents with improved quality using
+    the add-on 'OCR_HIGH_RESOLUTION' capability.
 
-    Note that selection marks returned from begin_analyze_document(model_id="prebuilt-layout") do not return the text
-    associated with the checkbox. For the API to return this information, build a custom model to analyze the
-    checkbox and its text. See sample_build_model.py for more information.
+    This sample uses Layout model to demonstrate.
+
+    Add-on capabilities accept a list of strings containing values from the `DocumentAnalysisFeature`
+    enum class. For more information, see:
+    https://aka.ms/azsdk/python/documentintelligence/analysisfeature.
+
+    The following capabilities are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following capabilities will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+    - QUERY_FIELDS
+
+    See pricing: https://azure.microsoft.com/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_layout_async.py
+    python sample_analyze_addon_highres_async.py
 
     Set the environment variables with your own values before running the sample:
     1) DOCUMENTINTELLIGENCE_ENDPOINT - the endpoint to your Document Intelligence resource.
     2) DOCUMENTINTELLIGENCE_API_KEY - your Document Intelligence API key.
 """
 
-import os
 import asyncio
-from utils import get_words
+import os
 
 
-async def analyze_layout():
+def get_words(page, line):
+    result = []
+    for word in page.words:
+        if _in_span(word, line.spans):
+            result.append(word)
+    return result
+
+
+def _in_span(word, spans):
+    for span in spans:
+        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+            return True
+    return False
+
+
+async def analyze_with_highres():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
-            "./sample_forms/forms/form_selection_mark.png",
+            "..",
+            "sample_forms/add_ons/highres.png",
         )
     )
-
-    # [START extract_layout]
+    # [START analyze_with_highres]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.models import DocumentAnalysisFeature
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
     async with document_analysis_client:
+        # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
             poller = await document_analysis_client.begin_analyze_document(
-                "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
+                "prebuilt-layout",
+                analyze_request=f,
+                features=[DocumentAnalysisFeature.OCR_HIGH_RESOLUTION],
+                content_type="application/octet-stream",
             )
         result = await poller.result()
 
@@ -89,11 +123,11 @@ async def analyze_layout():
                 print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
 
     print("----------------------------------------")
-    # [END extract_layout]
+    # [END analyze_with_highres]
 
 
 async def main():
-    await analyze_layout()
+    await analyze_with_highres()
 
 
 if __name__ == "__main__":
@@ -104,10 +138,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         asyncio.run(main())
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

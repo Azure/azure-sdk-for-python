@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze invoices.
 
     See fields found on a invoice here:
-    https://aka.ms/azsdk/formrecognizer/invoicefieldschema
+    https://aka.ms/azsdk/documentintelligence/invoicefieldschema
 
 USAGE:
     python sample_analyze_invoices_async.py
@@ -31,6 +31,7 @@ async def analyze_invoice():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
+            "..",
             "..",
             "./sample_forms/forms/sample_invoice.jpg",
         )
@@ -214,10 +215,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         asyncio.run(main())
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

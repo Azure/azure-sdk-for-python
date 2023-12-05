@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze US W-2 tax forms.
 
     See fields found on a US W-2 tax form here:
-    https://aka.ms/azsdk/formrecognizer/taxusw2fieldschema
+    https://aka.ms/azsdk/documentintelligence/taxusw2fieldschema
 
 USAGE:
     python sample_analyze_tax_us_w2_async.py
@@ -25,13 +25,17 @@ USAGE:
 
 import os
 import asyncio
-from utils import format_address_value
+
+
+def format_address_value(address_value):
+    return f"\n......House/building number: {address_value.house_number}\n......Road: {address_value.road}\n......City: {address_value.city}\n......State: {address_value.state}\n......Postal code: {address_value.postal_code}"
 
 
 async def analyze_tax_us_w2():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
+            "..",
             "..",
             "./sample_forms/tax/sample_w2.png",
         )
@@ -248,10 +252,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         asyncio.run(main())
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:
