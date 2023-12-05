@@ -419,27 +419,14 @@
         },
         "spark_runtime_version": {
             "type": "string",
+            "defaultValue": "",
             "metadata": {
                 "description": "spark version to be used by all feature sets"
             }
         },
-        "offline_store_connection_name": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store offline store config"
-            }
-        },
-        "online_store_connection_name": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Feature store online store config"
-            }
-        },
         "offlineStoreStorageAccountOption": {
             "type": "string",
-            "defaultValue": "existing",
+            "defaultValue": "none",
             "allowedValues": [
                 "new",
                 "existing",
@@ -477,6 +464,13 @@
                 "description": "Feature store offline store subscription id"
             }
         },
+        "offline_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store config"
+            }
+        },
         "online_store_resource_id": {
             "type": "string",
             "defaultValue": "",
@@ -496,6 +490,13 @@
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store online store subscription id"
+            }
+        },
+        "online_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store config"
             }
         },
         "materializationIdentityOption": {

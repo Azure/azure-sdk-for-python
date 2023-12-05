@@ -129,12 +129,9 @@
         "value": {}
     },
     "spark_runtime_version" : {
-        "value": ""
+        "value": null
     },
     "offlineStoreStorageAccountOption": {
-        "value": "none"
-    },
-    "offline_store_connection_name" : {
         "value": null
     },
     "offline_store_storage_account_name": {
@@ -149,6 +146,24 @@
     "offline_store_subscription_id" : {
         "value": null
     },
+    "offline_store_connection_name" : {
+        "value": null
+    },
+    "online_store_resource_id" : {
+        "value": null
+    },
+    "online_store_resource_group_name" : {
+        "value": null
+    },
+    "online_store_subscription_id" : {
+        "value": null
+    },
+    "online_store_connection_name" : {
+        "value": null
+    },
+    "grant_materialization_permissions" : {
+        "value": "true"
+    },
     "materializationIdentityOption": {
         "value": null
     },
@@ -160,21 +175,6 @@
     },
     "materialization_identity_subscription_id": {
         "value": null
-    },
-    "grant_materialization_permissions" : {
-        "value": "true"
-    },
-    "online_store_connection_name" : {
-        "value": null
-    },
-    "online_store_resource_id" : {
-        "value": ""
-    },
-    "online_store_resource_group_name" : {
-        "value": ""
-    },
-    "online_store_subscription_id" : {
-        "value": ""
     },
     "workspace_hub_config" : {
         "value": {}
