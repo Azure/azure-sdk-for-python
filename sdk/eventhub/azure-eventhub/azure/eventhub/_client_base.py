@@ -511,10 +511,10 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
 
 
 class ConsumerProducerMixin(object):
-    def __enter__(self):
+    def __enter__(self) -> ConsumerProducerMixin:
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         self.close()
 
     def _create_handler(self, auth):
@@ -549,7 +549,7 @@ class ConsumerProducerMixin(object):
     def _close_handler(self):
         if self._handler:
             self._handler.close()  # close the link (sharing connection) or connection (not sharing)
-        self.running = False
+        self.running: bool = False
 
     def _close_connection(self):
         self._close_handler()
