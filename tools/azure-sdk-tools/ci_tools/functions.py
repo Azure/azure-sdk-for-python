@@ -180,6 +180,7 @@ def apply_business_filter(collected_packages: List[str], filter_type: str) -> Li
 
     return pkg_set_ci_filtered
 
+
 def discover_targeted_packages(
     glob_string: str,
     target_root_dir: str,
