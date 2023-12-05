@@ -23,4 +23,4 @@ This is the first preview of the `azure-ai-documentintelligence` package, target
 - Changed some currency-related fields in `prebuilt-receipt` model.
 - Retired model `prebuilt-businessCard` and `prebuilt-document`. `prebuilt-document` model is essentially `prebuilt-layout` with `features="keyValuePairs"` specified. _(This is only supported as an optional feature for "prebuilt-layout" and "prebuilt-invoice".)_
 
-If you were using the old `azure-ai-formrecognizer` package, please refer [MIGRATION.MD](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/MIGRATION_GUIDE.md) for more details.
+If you were using the old `azure-ai-formrecognizer` package, please refer [MIGRATION_GUIDE.MD](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/MIGRATION_GUIDE.md) for more details.

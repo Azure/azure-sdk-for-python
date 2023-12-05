@@ -43,11 +43,11 @@ async def analyze_custom_documents(custom_model_id):
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     model_id = os.getenv("CUSTOM_BUILT_MODEL_ID", custom_model_id)
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Make sure your document's type is included in the list of document types the custom model can analyze
     with open(path_to_sample_documents, "rb") as f:
-        poller = await document_analysis_client.begin_analyze_document(
+        poller = await document_intelligence_client.begin_analyze_document(
             model_id=model_id, analyze_request=f, content_type="application/octet-stream"
         )
     result = await poller.result()
@@ -112,11 +112,11 @@ async def main():
                 build_mode=DocumentBuildMode.TEMPLATE,
                 azure_blob_source=AzureBlobContentSource(container_url=blob_container_sas_url),
             )
-            document_model_admin_client = DocumentIntelligenceAdministrationClient(
+            document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
             )
-            async with document_model_admin_client:
-                poll = await document_model_admin_client.begin_build_document_model(request)
+            async with document_intelligence_admin_client:
+                poll = await document_intelligence_admin_client.begin_build_document_model(request)
                 model = await poll.result()
             model_id = model.model_id
     await analyze_custom_documents(model_id)

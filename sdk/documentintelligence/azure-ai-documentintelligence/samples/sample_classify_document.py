@@ -48,11 +48,11 @@ def classify_document(classifier_id):
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     classifier_id = os.getenv("CLASSIFIER_ID", classifier_id)
 
-    document_analysis_client = DocumentIntelligenceClient(
+    document_intelligence_client = DocumentIntelligenceClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_classify_document(
+        poller = document_intelligence_client.begin_classify_document(
             classifier_id, classify_request=f, content_type="application/octet-stream"
         )
     result = poller.result()
@@ -87,11 +87,11 @@ if __name__ == "__main__":
             key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
             blob_container_sas_url = os.environ["DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL"]
 
-            document_model_admin_client = DocumentIntelligenceAdministrationClient(
+            document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
             )
 
-            poller = document_model_admin_client.begin_build_classifier(
+            poller = document_intelligence_admin_client.begin_build_classifier(
                 BuildDocumentClassifierRequest(
                     classifier_id=str(uuid.uuid4()),
                     doc_types={

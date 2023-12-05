@@ -105,11 +105,11 @@ async def main():
                 build_mode=DocumentBuildMode.TEMPLATE,
                 azure_blob_source=AzureBlobContentSource(container_url=blob_container_sas_url),
             )
-            document_model_admin_client = DocumentIntelligenceAdministrationClient(
+            document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
             )
-            async with document_model_admin_client:
-                poll = await document_model_admin_client.begin_build_document_model(request)
+            async with document_intelligence_admin_client:
+                poll = await document_intelligence_admin_client.begin_build_document_model(request)
                 model = await poll.result()
             model_id = model.model_id
     await sample_copy_model_to(model_id)
