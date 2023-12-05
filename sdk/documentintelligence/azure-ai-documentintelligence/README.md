@@ -22,12 +22,12 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 python -m pip install azure-ai-documentintelligence
 ```
 
-This table shows the relationship between SDK versions and supported API versions of the service:
-|SDK version|Supported API version of service
+This table shows the relationship between SDK versions and supported API service versions:
+|SDK version|Supported API service version
 |-|-
 |1.0.0b1 | 2023-10-31-preview
 
-Older API versions are supported in `azure-ai-formrecognizer`, please check the relationship from [there](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/README.md#install-the-package). 
+Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
 #### Prequisites
 
@@ -663,6 +663,7 @@ additional questions or comments.
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
+[migration-guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/MIGRATION_GUIDE.md
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
 [addon_barcodes_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_barcodes.py
 [addon_fonts_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_fonts.py
