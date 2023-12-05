@@ -33,8 +33,8 @@ def analyze_documents_output_in_markdown():
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/forms/Invoice_1.pdf"
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    poller = document_analysis_client.begin_analyze_document(
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-layout",
         AnalyzeDocumentRequest(url_source=url),
         output_content_format=ContentFormat.MARKDOWN,

@@ -52,10 +52,10 @@ def sample_compose_model():
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     container_sas_url = os.environ["DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL"]
 
-    document_model_admin_client = DocumentIntelligenceAdministrationClient(
+    document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    supplies_poller = document_model_admin_client.begin_build_document_model(
+    supplies_poller = document_intelligence_admin_client.begin_build_document_model(
         BuildDocumentModelRequest(
             model_id=str(uuid.uuid4()),
             build_mode=DocumentBuildMode.TEMPLATE,
@@ -63,7 +63,7 @@ def sample_compose_model():
             description="Purchase order-Office Supplies",
         )
     )
-    equipment_poller = document_model_admin_client.begin_build_document_model(
+    equipment_poller = document_intelligence_admin_client.begin_build_document_model(
         BuildDocumentModelRequest(
             model_id=str(uuid.uuid4()),
             build_mode=DocumentBuildMode.TEMPLATE,
@@ -71,7 +71,7 @@ def sample_compose_model():
             description="Purchase order-Office Equipment",
         )
     )
-    furniture_poller = document_model_admin_client.begin_build_document_model(
+    furniture_poller = document_intelligence_admin_client.begin_build_document_model(
         BuildDocumentModelRequest(
             model_id=str(uuid.uuid4()),
             build_mode=DocumentBuildMode.TEMPLATE,
@@ -79,7 +79,7 @@ def sample_compose_model():
             description="Purchase order-Office Furniture",
         )
     )
-    cleaning_supplies_poller = document_model_admin_client.begin_build_document_model(
+    cleaning_supplies_poller = document_intelligence_admin_client.begin_build_document_model(
         BuildDocumentModelRequest(
             model_id=str(uuid.uuid4()),
             build_mode=DocumentBuildMode.TEMPLATE,
@@ -92,7 +92,7 @@ def sample_compose_model():
     furniture_model = furniture_poller.result()
     cleaning_supplies_model = cleaning_supplies_poller.result()
 
-    poller = document_model_admin_client.begin_compose_model(
+    poller = document_intelligence_admin_client.begin_compose_model(
         ComposeDocumentModelRequest(
             model_id=str(uuid.uuid4()),
             component_models=[

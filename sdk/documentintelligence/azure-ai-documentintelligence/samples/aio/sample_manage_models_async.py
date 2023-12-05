@@ -27,8 +27,8 @@ import os
 
 
 async def sample_manage_models():
-    # Let's build a model to use for this sample
     # [START build_model]
+    # Let's build a model to use for this sample
     import uuid
     from azure.ai.documentintelligence.aio import DocumentIntelligenceAdministrationClient
     from azure.ai.documentintelligence.models import (
@@ -42,11 +42,11 @@ async def sample_manage_models():
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     container_sas_url = os.environ["DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL"]
 
-    document_model_admin_client = DocumentIntelligenceAdministrationClient(
+    document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
         endpoint, AzureKeyCredential(key)
     )
-    async with document_model_admin_client:
-        poller = await document_model_admin_client.begin_build_document_model(
+    async with document_intelligence_admin_client:
+        poller = await document_intelligence_admin_client.begin_build_document_model(
             BuildDocumentModelRequest(
                 model_id=str(uuid.uuid4()),
                 build_mode=DocumentBuildMode.TEMPLATE,
@@ -73,7 +73,7 @@ async def sample_manage_models():
         # [END build_model]
 
         # [START get_resource_info]
-        account_details = await document_model_admin_client.get_resource_info()
+        account_details = await document_intelligence_admin_client.get_resource_info()
         print(
             f"Our resource has {account_details.custom_document_models.count} custom models, "
             f"and we can have at most {account_details.custom_document_models.limit} custom models"
@@ -85,9 +85,9 @@ async def sample_manage_models():
         )
         # [END get_resource_info]
 
-        # Next, we get a paged list of all of our custom models
         # [START list_models]
-        models = document_model_admin_client.list_models()
+        # Next, we get a paged list of all of our custom models
+        models = document_intelligence_admin_client.list_models()
 
         print("We have the following 'ready' models with IDs and descriptions:")
         async for model in models:
@@ -95,23 +95,23 @@ async def sample_manage_models():
         # [END list_models]
 
         # [START get_model]
-        my_model = await document_model_admin_client.get_model(model_id=model.model_id)
+        my_model = await document_intelligence_admin_client.get_model(model_id=model.model_id)
         print(f"\nModel ID: {my_model.model_id}")
         print(f"Description: {my_model.description}")
         print(f"Model created on: {my_model.created_date_time}")
         print(f"Model expires on: {my_model.expiration_date_time}")
         # [END get_model]
 
-        # Finally, we will delete this model by ID
         # [START delete_model]
-        await document_model_admin_client.delete_model(model_id=my_model.model_id)
-        # [END delete_document_model]
+        # Finally, we will delete this model by ID
+        await document_intelligence_admin_client.delete_model(model_id=my_model.model_id)
 
         from azure.core.exceptions import ResourceNotFoundError
         try:
-            await document_model_admin_client.get_model(model_id=my_model.model_id)
+            await document_intelligence_admin_client.get_model(model_id=my_model.model_id)
         except ResourceNotFoundError:
             print(f"Successfully deleted model with ID {my_model.model_id}")
+        # [END delete_model]
 
 
 async def main():

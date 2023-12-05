@@ -90,7 +90,7 @@ Each page is treated as a separate document. Each empty page is kept as its own 
 
 ### Clients names updates
 
-|SDK version|Supported API version of service|
+|SDK version|Supported API service version|
 |-|-|
 |1.0.0b1|2023-10-31-preview|
 |3.3.X(azure-ai-formrecognizer latest GA release)|2.0, 2.1, 2022-08-31, 2023-07-31 (default)|

@@ -45,9 +45,9 @@ def analyze_tax_us_w2():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
+        poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-tax.us.w2", analyze_request=f, locale="en-US", content_type="application/octet-stream"
         )
     w2s = poller.result()

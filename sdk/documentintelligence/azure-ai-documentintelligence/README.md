@@ -1,5 +1,5 @@
-
 # Azure AI Document Intelligence client library for Python
+
 Azure AI Document Intelligence ([previously known as Form Recognizer][service-rename]) is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
@@ -10,6 +10,9 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 - Classifiers - Build custom classification models that combine layout and language features to accurately detect and identify documents you process within your application.
 - Add-on capabilities - Extract barcodes/QR codes, formulas, font/style, etc. or enable high resolution mode for large documents with optional parameters.
 
+[Source code][python-di-src]
+| [Package (PyPI)][python-di-pypi]
+| [Samples][python-di-samples]
 
 ## Getting started
 
@@ -18,6 +21,13 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 ```bash
 python -m pip install azure-ai-documentintelligence
 ```
+
+This table shows the relationship between SDK versions and supported API service versions:
+|SDK version|Supported API service version
+|-|-
+|1.0.0b1 | 2023-10-31-preview
+
+Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
 #### Prequisites
 
@@ -101,7 +111,7 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 
 endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
 credential = AzureKeyCredential("<api_key>")
-document_analysis_client = DocumentIntelligenceClient(endpoint, credential)
+document_intelligence_client = DocumentIntelligenceClient(endpoint, credential)
 ```
 
 #### Create the client with an Azure Active Directory credential
@@ -131,7 +141,7 @@ from azure.identity import DefaultAzureCredential
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 credential = DefaultAzureCredential()
 
-document_analysis_client = DocumentIntelligenceClient(endpoint, credential)
+document_intelligence_client = DocumentIntelligenceClient(endpoint, credential)
 ```
 
 ## Key concepts
@@ -188,6 +198,8 @@ The following section provides several code snippets covering some of the most c
 
 Extract text, selection marks, text styles, and table structures, along with their bounding region coordinates, from documents.
 
+<!-- SNIPPET:sample_analyze_layout.extract_layout -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
@@ -195,89 +207,51 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-document_intelligence_client = DocumentIntelligenceClient(
-    endpoint=endpoint, credential=AzureKeyCredential(key)
-)
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 with open(path_to_sample_documents, "rb") as f:
     poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-layout", analyze_request=f, content_type="application/octet-stream"
     )
 result = poller.result()
 
-for idx, style in enumerate(result.styles):
-    print(
-        "Document contains {} content".format(
-            "handwritten" if style.is_handwritten else "no handwritten"
-        )
-    )
+if any([style.is_handwritten for style in result.styles]):
+    print("Document contains handwritten content")
+else:
+    print("Document does not contain handwritten content")
 
 for page in result.pages:
-    print("----Analyzing layout from page #{}----".format(page.page_number))
-    print(
-        "Page has width: {} and height: {}, measured with unit: {}".format(
-            page.width, page.height, page.unit
-        )
-    )
+    print(f"----Analyzing layout from page #{page.page_number}----")
+    print(f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}")
 
     for line_idx, line in enumerate(page.lines):
-        words = line.get_words()
+        words = get_words(page, line)
         print(
-            "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
-                line_idx,
-                len(words),
-                line.content,
-                line.polygon,
-            )
+            f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
+            f"within bounding polygon '{line.polygon}'"
         )
 
         for word in words:
-            print(
-                "......Word '{}' has a confidence of {}".format(
-                    word.content, word.confidence
-                )
-            )
+            print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
     for selection_mark in page.selection_marks:
         print(
-            "...Selection mark is '{}' within bounding polygon '{}' and has a confidence of {}".format(
-                selection_mark.state,
-                selection_mark.polygon,
-                selection_mark.confidence,
-            )
+            f"Selection mark is '{selection_mark.state}' within bounding polygon "
+            f"'{selection_mark.polygon}' and has a confidence of {selection_mark.confidence}"
         )
 
 for table_idx, table in enumerate(result.tables):
-    print(
-        "Table # {} has {} rows and {} columns".format(
-            table_idx, table.row_count, table.column_count
-        )
-    )
+    print(f"Table # {table_idx} has {table.row_count} rows and " f"{table.column_count} columns")
     for region in table.bounding_regions:
-        print(
-            "Table # {} location on page: {} is {}".format(
-                table_idx,
-                region.page_number,
-                region.polygon,
-            )
-        )
+        print(f"Table # {table_idx} location on page: {region.page_number} is {region.polygon}")
     for cell in table.cells:
-        print(
-            "...Cell[{}][{}] has content '{}'".format(
-                cell.row_index,
-                cell.column_index,
-                cell.content,
-            )
-        )
+        print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
         for region in cell.bounding_regions:
-            print(
-                "...content on page {} is within bounding polygon '{}'".format(
-                    region.page_number,
-                    region.polygon,
-                )
-            )
+            print(f"...content on page {region.page_number} is within bounding polygon '{region.polygon}'")
 
 print("----------------------------------------")
 ```
+
+<!-- END SNIPPET -->
 
 ### Using Prebuilt Models
 
@@ -294,9 +268,9 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 with open(path_to_sample_documents, "rb") as f:
-    poller = document_analysis_client.begin_analyze_document(
+    poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-receipt", analyze_request=f, locale="en-US", content_type="application/octet-stream"
     )
 receipts = poller.result()
@@ -364,6 +338,7 @@ More details on setting up a container and required file structure can be found 
 <!-- SNIPPET:sample_manage_models.build_model -->
 
 ```python
+# Let's build a model to use for this sample
 import uuid
 from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
 from azure.ai.documentintelligence.models import (
@@ -377,10 +352,10 @@ endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 container_sas_url = os.environ["DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL"]
 
-document_model_admin_client = DocumentIntelligenceAdministrationClient(
+document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
     endpoint, AzureKeyCredential(key)
 )
-poller = document_model_admin_client.begin_build_document_model(
+poller = document_intelligence_admin_client.begin_build_document_model(
     BuildDocumentModelRequest(
         model_id=str(uuid.uuid4()),
         build_mode=DocumentBuildMode.TEMPLATE,
@@ -423,11 +398,11 @@ endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 model_id = os.getenv("CUSTOM_BUILT_MODEL_ID", custom_model_id)
 
-document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
 # Make sure your document's type is included in the list of document types the custom model can analyze
 with open(path_to_sample_documents, "rb") as f:
-    poller = document_analysis_client.begin_analyze_document(
+    poller = document_intelligence_client.begin_analyze_document(
         model_id=model_id, analyze_request=f, content_type="application/octet-stream"
     )
 result = poller.result()
@@ -470,6 +445,8 @@ print("-----------------------------------")
 
 Additionally, a document URL can also be used to analyze documents using the `begin_analyze_document` method.
 
+<!-- SNIPPET:sample_analyze_receipts_from_url.analyze_receipts_from_url -->
+
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
@@ -478,53 +455,122 @@ from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
 endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
 key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/receipt/contoso-receipt.png"
-poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/receipt/contoso-receipt.png"
+poller = document_intelligence_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
 receipts = poller.result()
 ```
+
+<!-- END SNIPPET -->
 
 ### Manage Your Models
 
 Manage the custom models attached to your account.
 
+<!-- SNIPPET:sample_manage_models.build_model -->
+
 ```python
+# Let's build a model to use for this sample
+import uuid
 from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient
+from azure.ai.documentintelligence.models import (
+    DocumentBuildMode,
+    BuildDocumentModelRequest,
+    AzureBlobContentSource,
+)
 from azure.core.credentials import AzureKeyCredential
-from azure.core.exceptions import ResourceNotFoundError
 
-endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+container_sas_url = os.environ["DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL"]
 
-document_model_admin_client = DocumentIntelligenceAdministrationClient(endpoint, credential)
+document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
+    endpoint, AzureKeyCredential(key)
+)
+poller = document_intelligence_admin_client.begin_build_document_model(
+    BuildDocumentModelRequest(
+        model_id=str(uuid.uuid4()),
+        build_mode=DocumentBuildMode.TEMPLATE,
+        azure_blob_source=AzureBlobContentSource(container_url=container_sas_url),
+        description="my model description",
+    )
+)
+model = poller.result()
 
-account_details = document_model_admin_client.get_resource_info()
-print("Our account has {} custom models, and we can have at most {} custom models".format(
-    account_details.custom_document_models.count, account_details.custom_document_models.limit
-))
-
-# Here we get a paged list of all of our models
-models = document_model_admin_client.list_models()
-print("We have models with the following ids: {}".format(
-    ", ".join([m.model_id for m in models])
-))
-
-# Replace with the custom model ID from the "Build a model" sample
-model_id = "<model_id from the Build a Model sample>"
-
-custom_model = document_model_admin_client.get_model(model_id=model_id)
-print("Model ID: {}".format(custom_model.model_id))
-print("Description: {}".format(custom_model.description))
-print("Model created on: {}\n".format(custom_model.created_on))
-
-# Finally, we will delete this model by ID
-document_model_admin_client.delete_model(model_id=custom_model.model_id)
-
-try:
-    document_model_admin_client.get_model(model_id=custom_model.model_id)
-except ResourceNotFoundError:
-    print("Successfully deleted model with id {}".format(custom_model.model_id))
+print(f"Model ID: {model.model_id}")
+print(f"Description: {model.description}")
+print(f"Model created on: {model.created_date_time}")
+print(f"Model expires on: {model.expiration_date_time}")
+print("Doc types the model can recognize:")
+for name, doc_type in model.doc_types.items():
+    print(
+        f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:"
+    )
+    for field_name, field in doc_type.field_schema.items():
+        print(
+            f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+            f"{doc_type.field_confidence[field_name]}"
+        )
 ```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:sample_manage_models.get_resource_info -->
+
+```python
+account_details = document_intelligence_admin_client.get_resource_info()
+print(
+    f"Our resource has {account_details.custom_document_models.count} custom models, "
+    f"and we can have at most {account_details.custom_document_models.limit} custom models"
+)
+neural_models = account_details.custom_neural_document_model_builds
+print(
+    f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
+    f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_reset_date_time}"
+)
+```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:sample_manage_models.list_models -->
+
+```python
+# Next, we get a paged list of all of our custom models
+models = document_intelligence_admin_client.list_models()
+
+print("We have the following 'ready' models with IDs and descriptions:")
+for model in models:
+    print(f"{model.model_id} | {model.description}")
+```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:sample_manage_models.get_model -->
+
+```python
+my_model = document_intelligence_admin_client.get_model(model_id=model.model_id)
+print(f"\nModel ID: {my_model.model_id}")
+print(f"Description: {my_model.description}")
+print(f"Model created on: {my_model.created_date_time}")
+print(f"Model expires on: {my_model.expiration_date_time}")
+```
+
+<!-- END SNIPPET -->
+
+<!-- SNIPPET:sample_manage_models.delete_model -->
+
+```python
+# Finally, we will delete this model by ID
+document_intelligence_admin_client.delete_model(model_id=my_model.model_id)
+
+from azure.core.exceptions import ResourceNotFoundError
+try:
+    document_intelligence_admin_client.get_model(model_id=my_model.model_id)
+except ResourceNotFoundError:
+    print(f"Successfully deleted model with ID {my_model.model_id}")
+```
+
+<!-- END SNIPPET -->
 
 ### Add-on Capabilities
 Document Intelligence supports more sophisticated analysis capabilities. These optional features can be enabled and disabled depending on the scenario of the document extraction.
@@ -595,7 +641,6 @@ additional questions or comments.
 <!-- LINKS -->
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
 [python-di-product-docs]: https://learn.microsoft.com/azure/applied-ai-services/form-recognizer/overview?view=form-recog-3.0.0
 [azure_portal]: https://ms.portal.azure.com/
@@ -608,7 +653,6 @@ additional questions or comments.
 [di-build-training-set]: https://aka.ms/azsdk/documentintelligence/buildtrainingset
 [di-models]: https://aka.ms/azsdk/documentintelligence/models
 [di-errors]: https://aka.ms/azsdk/documentintelligence/errors
-
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
@@ -619,12 +663,12 @@ additional questions or comments.
 [custom_subdomain]: https://docs.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
+[migration-guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/MIGRATION_GUIDE.md
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples
-[changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/CHANGELOG.md
 [addon_barcodes_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_barcodes.py
 [addon_fonts_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_fonts.py
 [addon_formulas_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_formulas.py
 [addon_highres_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_highres.py
 [addon_languages_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_languages.py
-[query_fields_sample] https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_query_fields.py
+[query_fields_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_analyze_addon_query_fields.py
 [service-rename]: https://techcommunity.microsoft.com/t5/azure-ai-services-blog/azure-form-recognizer-is-now-azure-ai-document-intelligence-with/ba-p/3875765

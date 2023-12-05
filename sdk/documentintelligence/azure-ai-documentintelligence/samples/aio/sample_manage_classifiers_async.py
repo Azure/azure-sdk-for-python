@@ -41,12 +41,12 @@ async def sample_manage_classifiers():
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     container_sas_url = os.environ["DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL"]
 
-    document_model_admin_client = DocumentIntelligenceAdministrationClient(
+    document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    async with document_model_admin_client:
+    async with document_intelligence_admin_client:
         # build a document classifier
-        poller = await document_model_admin_client.begin_build_classifier(
+        poller = await document_intelligence_admin_client.begin_build_classifier(
             BuildDocumentClassifierRequest(
                 classifier_id=str(uuid.uuid4()),
                 doc_types={
@@ -76,7 +76,7 @@ async def sample_manage_classifiers():
 
         # Next, we get a paged list of all of our document classifiers
         # [START list_classifiers]
-        classifiers = document_model_admin_client.list_classifiers()
+        classifiers = document_intelligence_admin_client.list_classifiers()
 
         print("We have the following 'ready' models with IDs and descriptions:")
         async for classifier in classifiers:
@@ -84,7 +84,7 @@ async def sample_manage_classifiers():
         # [END list_classifiers]
 
         # [START get_classifier]
-        my_classifier = await document_model_admin_client.get_classifier(classifier_id=classifier.classifier_id)
+        my_classifier = await document_intelligence_admin_client.get_classifier(classifier_id=classifier.classifier_id)
         print(f"\nClassifier ID: {my_classifier.classifier_id}")
         print(f"Description: {my_classifier.description}")
         print(f"Classifier created on: {my_classifier.created_date_time}")
@@ -93,12 +93,12 @@ async def sample_manage_classifiers():
 
         # Finally, we will delete this classifier by ID
         # [START delete_classifier]
-        await document_model_admin_client.delete_classifier(classifier_id=my_classifier.classifier_id)
+        await document_intelligence_admin_client.delete_classifier(classifier_id=my_classifier.classifier_id)
         # [END delete_document_classifier]
 
         from azure.core.exceptions import ResourceNotFoundError
         try:
-            await document_model_admin_client.get_classifier(classifier_id=my_classifier.classifier_id)
+            await document_intelligence_admin_client.get_classifier(classifier_id=my_classifier.classifier_id)
         except ResourceNotFoundError:
             print(f"Successfully deleted classifier with ID {my_classifier.classifier_id}")
     

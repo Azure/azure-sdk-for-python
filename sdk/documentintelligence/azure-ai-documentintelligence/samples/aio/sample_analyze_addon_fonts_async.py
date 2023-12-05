@@ -68,11 +68,11 @@ async def analyze_fonts():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    async with document_analysis_client:
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    async with document_intelligence_client:
         # Specify which add-on capabilities to enable.
         with open(path_to_sample_documents, "rb") as f:
-            poller = await document_analysis_client.begin_analyze_document(
+            poller = await document_intelligence_client.begin_analyze_document(
                 "prebuilt-layout",
                 analyze_request=f,
                 features=[DocumentAnalysisFeature.STYLE_FONT],

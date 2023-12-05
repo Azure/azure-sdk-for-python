@@ -40,10 +40,11 @@ def analyze_receipts_from_url():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/receipt/contoso-receipt.png"
-    poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
+    poller = document_intelligence_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
     receipts = poller.result()
+    # [END analyze_receipts_from_url]
 
     for idx, receipt in enumerate(receipts.documents):
         print(f"--------Analysis of receipt #{idx + 1}--------")
@@ -92,7 +93,6 @@ def analyze_receipts_from_url():
         if total:
             print(f"Total: {format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
         print("--------------------------------------")
-    # [END analyze_receipts_from_url]
 
 
 if __name__ == "__main__":

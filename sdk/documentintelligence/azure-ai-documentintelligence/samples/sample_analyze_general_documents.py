@@ -56,11 +56,11 @@ def analyze_general_documents():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(
+    document_intelligence_client = DocumentIntelligenceClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
+        poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-layout",
             analyze_request=f,
             features=[DocumentAnalysisFeature.KEY_VALUE_PAIRS],
