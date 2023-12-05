@@ -5,6 +5,8 @@
 # pylint: disable=protected-access,no-value-for-parameter
 
 import os
+import time
+import uuid
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Union
@@ -116,6 +118,7 @@ class DataOperations(_ScopeDependentOperations):
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
+        self._compute_operation = service_client.compute # TODO
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -738,7 +741,7 @@ class DataOperations(_ScopeDependentOperations):
     def mount(
         self,
         path: str,
-        mount_point: str = "/home/azureuser/mount/data",
+        mount_point: str = None,
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,
@@ -758,9 +761,10 @@ class DataOperations(_ScopeDependentOperations):
         read_only = mode == "ro_mount"
         assert read_only, "read-write mount for data asset is not supported yet"
 
-        import os
         ci_name = os.environ.get("CI_NAME")
-        assert not persistent or (persistent and ci_name is not None), "persistent mount is only supported on Compute Instance"
+        assert not persistent or (
+            persistent and ci_name is not None
+        ), "persistent mount is only supported on Compute Instance"
 
         # cspell:ignore rslex
         from azureml.dataprep import rslex_fuse_subprocess_wrapper
@@ -769,7 +773,42 @@ class DataOperations(_ScopeDependentOperations):
             self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
         )
         if persistent and ci_name is not None:
-            raise NotImplementedError("TODO")
+            mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}"
+            self._compute_operation.update_data_mounts(
+                self._resource_group_name,
+                self._workspace_name,
+                ci_name,
+                [ComputeInstanceDataMount( # TODO
+                    source=uri,
+                    source_type="URI",
+                    mount_name=mount_name,
+                    mount_action="Mount",
+                    mount_path=mount_point or '',
+                )],
+                api_version="2021-01-01",
+            )
+            print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
+            while True:
+                compute = self._compute_operation.get(
+                    self._resource_group_name,
+                    self._workspace_name,
+                    ci_name)
+                mounts = compute.properties.properties.data_mounts
+                try:
+                    mount = [mount for mount in mounts if mount.mount_name == mount_name][0]
+                    if mount.mount_state == "Mounted":
+                        print(f"Mounted [name: {mount_name}].")
+                        break
+                    elif mount.mount_state == "MountRequested":
+                        pass
+                    elif mount.mount_state == "MountFailed":
+                        raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")
+                    else:
+                        raise Exception(f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}")
+                except IndexError:
+                    pass
+                time.sleep(5) # TBD: timeout?
+
         else:
             rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug, credential=self._operation._config.credential)
 
