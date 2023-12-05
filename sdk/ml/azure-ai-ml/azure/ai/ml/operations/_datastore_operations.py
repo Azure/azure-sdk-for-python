@@ -49,7 +49,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         serviceclient_2023_04_01_preview: ServiceClient042023Preview,
         serviceclient_2024_01_01_preview: ServiceClient012024Preview,
-        **kwargs: Dict
+        **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
@@ -271,21 +271,20 @@ class DatastoreOperations(_ScopeDependentOperations):
                 self._resource_group_name,
                 self._workspace_name,
                 ci_name,
-                [ComputeInstanceDataMount(
-                    source=uri,
-                    source_type="URI",
-                    mount_name=mount_name,
-                    mount_action="Mount",
-                    mount_path=mount_point or '',
-                )],
+                [
+                    ComputeInstanceDataMount(
+                        source=uri,
+                        source_type="URI",
+                        mount_name=mount_name,
+                        mount_action="Mount",
+                        mount_path=mount_point or "",
+                    )
+                ],
                 api_version="2021-01-01",
             )
             print(f"Mount requested [name: {mount_name}]. Waiting for completion ...")
             while True:
-                compute = self._compute_operation.get(
-                    self._resource_group_name,
-                    self._workspace_name,
-                    ci_name)
+                compute = self._compute_operation.get(self._resource_group_name, self._workspace_name, ci_name)
                 mounts = compute.properties.properties.data_mounts
                 try:
                     mount = [mount for mount in mounts if mount.mount_name == mount_name][0]
@@ -300,6 +299,8 @@ class DatastoreOperations(_ScopeDependentOperations):
                         raise Exception(f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}")
                 except IndexError:
                     pass
-                time.sleep(5) # TBD: timeout?
+                time.sleep(5)  # TBD: timeout?
         else:
-            rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug, credential=self._operation._config.credential)
+            rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(
+                uri, mount_point, read_only, debug, credential=self._operation._config.credential
+            )
