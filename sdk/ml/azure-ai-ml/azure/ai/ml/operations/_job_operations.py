@@ -7,7 +7,7 @@ import json
 import os.path
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Set, Union, cast
 
 import jwt
 from marshmallow import ValidationError
@@ -967,7 +967,11 @@ class JobOperations(_ScopeDependentOperations):
             output_names=output_names,
         )
 
-        missing_outputs = (output_names or set()).difference(outputs.keys())
+        missing_outputs: Set = set()
+        if output_names is not None:
+            missing_outputs = set(output_names).difference(outputs.keys())
+        else:
+            missing_outputs = set().difference(outputs.keys())
 
         # Include default artifact store in outputs
         if (not output_names) or DEFAULT_ARTIFACT_STORE_OUTPUT_NAME in missing_outputs:
