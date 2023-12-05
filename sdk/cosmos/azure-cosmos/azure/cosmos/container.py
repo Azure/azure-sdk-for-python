@@ -174,7 +174,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def read_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
-        partition_key: Union[str, float, int, bool],
+        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
         populate_query_metrics: Optional[bool] = None,
         post_trigger_include: Optional[str] = None,
         **kwargs: Any
@@ -184,7 +184,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param item: The ID (name) or dict representing item to retrieve.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -337,7 +337,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         query: str,
         parameters: Optional[List[Dict[str, object]]] = None,
-        partition_key: Optional[Union[str, float, int, bool]] = None,
+        partition_key: Optional[Union[str, int, float, bool, List[Union[str, int, float, bool]]]] = None,
         enable_cross_partition_query: Optional[bool] = None,
         max_item_count: Optional[int] = None,
         enable_scan_in_query: Optional[bool] = None,
@@ -357,7 +357,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             Ignored if no query is provided.
         :type parameters: [List[Dict[str, object]]]
         :param partition_key: partition key at which the query request is targeted.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :param bool enable_cross_partition_query: Allows sending of more than one request to
             execute the query in the Azure Cosmos DB service.
             More than one request is necessary if the query is not scoped to single partition key value.
@@ -631,7 +631,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def patch_item(
         self,
         item: Union[str, Dict[str, Any]],
-        partition_key: Union[str, int, float, bool],
+        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
         patch_operations: List[Dict[str, Any]],
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -643,7 +643,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param item: The ID (name) or dict representing item to be patched.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: The partition key of the object to patch.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :param patch_operations: The list of patch operations to apply to the item.
         :type patch_operations: List[Dict[str, Any]]
         :keyword str filter_predicate: conditional filter to apply to Patch operations.
@@ -678,7 +678,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
-        partition_key: Union[str, int, float, bool],
+        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
         **kwargs: Any
     ) -> List[Dict[str, Any]]:
         """ Executes the transactional batch for the specified partition key.
@@ -686,7 +686,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param batch_operations: The batch of operations to be executed.
         :type batch_operations: List[Tuple[Any]]
         :param partition_key: The partition key value of the batch operations.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -714,7 +714,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[Mapping[str, Any], str],
-        partition_key: Union[str, int, float, bool],
+        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -727,7 +727,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param item: The ID (name) or dict representing item to be deleted.
         :type item: Union[str, Dict[str, Any]]
         :param partition_key: Specifies the partition key value for the item.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -927,7 +927,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
-        :type partition_key: Union[str, int, float, bool]
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved conflict.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
@@ -979,7 +979,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def delete_all_items_by_partition_key(
         self,
-        partition_key: Union[str, int, float, bool],
+        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]],
         **kwargs: Any
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
@@ -1004,7 +1004,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
+        response = self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                             options=request_options, **kwargs)
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, None)
+            response_hook(self.client_connection.last_response_headers, response)

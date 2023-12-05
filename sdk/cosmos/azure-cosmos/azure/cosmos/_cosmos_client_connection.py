@@ -2157,7 +2157,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Exposes an API to delete all items with a single partition key without the user having
          to explicitly call delete on each record in the partition key.
 
@@ -2180,13 +2180,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         headers = base.GetHeaders(self, self.default_headers, "post", path, collection_id, "partitionkey", options)
         request_params = RequestObject("partitionkey", documents._OperationType.Delete)
-        _, self.last_response_headers = self.__Post(
+        response, self.last_response_headers = self.__Post(
             path=path,
             request_params=request_params,
             req_headers=headers,
             body=None,
             **kwargs
         )
+        return response
 
     def ReplaceTrigger(
         self,
