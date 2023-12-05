@@ -43,10 +43,10 @@ async def analyze_identity_documents():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    async with document_analysis_client:
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    async with document_intelligence_client:
         with open(path_to_sample_documents, "rb") as f:
-            poller = await document_analysis_client.begin_analyze_document(
+            poller = await document_intelligence_client.begin_analyze_document(
                 "prebuilt-idDocument", analyze_request=f, content_type="application/octet-stream"
             )
         id_documents = await poller.result()

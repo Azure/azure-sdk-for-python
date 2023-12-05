@@ -100,7 +100,7 @@ if __name__ == "__main__":
             if not endpoint or not key:
                 raise ValueError("Please provide endpoint and API key to run the samples.")
 
-            document_model_admin_client = DocumentIntelligenceAdministrationClient(
+            document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
             )
             blob_container_sas_url = os.getenv("DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL")
@@ -110,7 +110,7 @@ if __name__ == "__main__":
                     build_mode=DocumentBuildMode.TEMPLATE,
                     azure_blob_source=AzureBlobContentSource(container_url=blob_container_sas_url),
                 )
-                model = document_model_admin_client.begin_build_document_model(request).result()
+                model = document_intelligence_admin_client.begin_build_document_model(request).result()
                 model_id = model.model_id
         sample_copy_model_to(model_id)
     except HttpResponseError as error:

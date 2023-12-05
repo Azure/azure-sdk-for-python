@@ -52,10 +52,10 @@ def analyze_query_fields():
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/forms/Invoice_1.pdf"
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Specify which add-on capabilities to enable.
-    poller = document_analysis_client.begin_analyze_document(
+    poller = document_intelligence_client.begin_analyze_document(
         "prebuilt-layout",
         AnalyzeDocumentRequest(url_source=url),
         features=[DocumentAnalysisFeature.QUERY_FIELDS],
