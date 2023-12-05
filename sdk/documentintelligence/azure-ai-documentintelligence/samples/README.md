@@ -51,7 +51,7 @@ what you can do with the Azure Document Intelligence client library.
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_document_intelligence_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
 [azure_identity_pip]: https://pypi.org/project/azure-identity/
-[python-di-ref-docs]: https://aka.ms/azsdk/python/formrecognizer/docs
+[python-di-ref-docs]: https://aka.ms/azsdk/python/documentintelligence/docs
 [get-endpoint-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/README.md#get-the-endpoint
 [get-key-instructions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/README.md#get-the-api-key
 [changelog]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/documentintelligence/azure-ai-documentintelligence/CHANGELOG.md

@@ -27,6 +27,7 @@ import os
 
 
 async def sample_manage_models():
+    # Let's build a model to use for this sample
     # [START build_model]
     import uuid
     from azure.ai.documentintelligence.aio import DocumentIntelligenceAdministrationClient
@@ -92,17 +93,6 @@ async def sample_manage_models():
         async for model in models:
             print(f"{model.model_id} | {model.description}")
         # [END list_models]
-
-        # let's build a model to use for this sample
-        poller = await document_model_admin_client.begin_build_document_model(
-            BuildDocumentModelRequest(
-                model_id=str(uuid.uuid4()),
-                build_mode=DocumentBuildMode.TEMPLATE,
-                azure_blob_source=AzureBlobContentSource(container_url=container_sas_url),
-                description="model for sample",
-            )
-        )
-        model = await poller.result()
 
         # [START get_model]
         my_model = await document_model_admin_client.get_model(model_id=model.model_id)

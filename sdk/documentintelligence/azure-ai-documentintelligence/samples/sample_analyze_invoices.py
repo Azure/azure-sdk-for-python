@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze invoices.
 
     See fields found on a invoice here:
-    https://aka.ms/azsdk/formrecognizer/invoicefieldschema
+    https://aka.ms/azsdk/documentintelligence/invoicefieldschema
 
 USAGE:
     python sample_analyze_invoices.py

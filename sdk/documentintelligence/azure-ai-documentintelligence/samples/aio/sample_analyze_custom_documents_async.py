@@ -15,9 +15,6 @@ DESCRIPTION:
     was built on. To learn how to build your own models, look at
     sample_build_model.py.
 
-    The model can be built using the training files found here:
-    https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
-
 USAGE:
     python sample_analyze_custom_documents_async.py
 

@@ -13,9 +13,6 @@ DESCRIPTION:
     This sample demonstrates how to copy a custom model from a source Form Recognizer resource
     to a target Form Recognizer resource.
 
-    The model used in this sample can be created in the sample_build_model.py using the
-    training files in https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
-
 USAGE:
     python sample_copy_model_to.py
 

@@ -14,7 +14,7 @@ DESCRIPTION:
     To learn how to build your custom classifier, see sample_build_classifier.py.
 
     More details on building a classifier and labeling your data can be found here:
-    https://aka.ms/azsdk/formrecognizer/buildclassifiermodel
+    https://aka.ms/azsdk/documentintelligence/buildclassifiermodel
 
 USAGE:
     python sample_classify_document.py

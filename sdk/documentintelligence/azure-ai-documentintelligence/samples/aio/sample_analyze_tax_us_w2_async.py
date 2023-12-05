@@ -13,7 +13,7 @@ DESCRIPTION:
     This sample demonstrates how to analyze US W-2 tax forms.
 
     See fields found on a US W-2 tax form here:
-    https://aka.ms/azsdk/formrecognizer/taxusw2fieldschema
+    https://aka.ms/azsdk/documentintelligence/taxusw2fieldschema
 
 USAGE:
     python sample_analyze_tax_us_w2_async.py
