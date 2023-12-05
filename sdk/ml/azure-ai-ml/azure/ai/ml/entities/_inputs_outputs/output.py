@@ -35,7 +35,7 @@ class Output(_InputOutputBase):
             * 'upload': Upload the data from the compute target
             * 'direct': Pass in the URI as a string
         :paramtype mode: Optional[str]
-        :keyword path_on_compute: The access path of the data input for compute
+        :keyword path_on_compute: The access path of the data output for compute
         :paramtype mode: Optional[str]
         :keyword description: The description of the output.
         :paramtype description: Optional[str]

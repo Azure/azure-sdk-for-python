@@ -62,7 +62,6 @@ def generate_path_property(azureml_type):
 def generate_path_on_compute_property(azureml_type):
     return UnionField(
         [
-            ArmVersionedStr(azureml_type=azureml_type),
             LocalPathField(pattern=r"^file:.*"),
         ],
         is_strict=True,
