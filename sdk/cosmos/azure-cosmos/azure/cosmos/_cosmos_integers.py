@@ -64,10 +64,9 @@ class UInt64:
     def __or__(self, other):
         if isinstance(other, UInt64):
             return UInt64(self.value | other.value)
-        elif isinstance(other, int):
+        if isinstance(other, int):
             return UInt64(self.value | other)
-        else:
-            raise TypeError("Unsupported type for OR operation")
+        raise TypeError("Unsupported type for OR operation")
 
     def __invert__(self):
         return UInt64(~self.value & 0xFFFFFFFFFFFFFFFF)

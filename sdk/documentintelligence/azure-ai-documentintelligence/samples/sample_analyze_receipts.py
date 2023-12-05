@@ -14,7 +14,7 @@ DESCRIPTION:
     using a pre-trained receipt model.
 
     See fields found on a receipt here:
-    https://aka.ms/azsdk/formrecognizer/receiptfieldschema
+    https://aka.ms/azsdk/documentintelligence/receiptfieldschema
 
 USAGE:
     python sample_analyze_receipts.py
@@ -25,7 +25,10 @@ USAGE:
 """
 
 import os
-from utils import format_price
+
+
+def format_price(price_dict):
+    return "".join([f"{p}" for p in price_dict.values()])
 
 
 def analyze_receipts():
@@ -109,10 +112,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         analyze_receipts()
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:
