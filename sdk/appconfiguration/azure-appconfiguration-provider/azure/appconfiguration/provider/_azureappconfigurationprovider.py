@@ -96,6 +96,10 @@ def load(
     :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
+    :paramtype feature_flag_enabled: bool
+    :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
+    :paramtype feature_flag_selectors: List[SettingSelector]
+    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all feature flags without a label.
     """
 
 
@@ -140,6 +144,10 @@ def load(
     :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
+    :paramtype feature_flag_enabled: bool
+    :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
+    :paramtype feature_flag_selectors: List[SettingSelector]
+    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all feature flags without a label.
     """
 
 
@@ -416,70 +424,114 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             or self._keyvault_client_configs is not None
             or self._secret_resolver is not None
         )
+        self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
+        self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
+        self._refresh_on_feature_flags = None
+        self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._update_lock = Lock()
 
     def refresh(self, **kwargs) -> None:
-        if not self._refresh_on:
-            logging.debug("Refresh called but no refresh options set.")
+        if not self._refresh_on and not self._refresh_on_feature_flags:
+            logging.debug("Refresh called but no refresh enabled.")
             return
 
-        if not self._refresh_timer.needs_refresh():
-            logging.debug("Refresh called but refresh interval not elapsed.")
-            return
+        with self._update_lock:
+            need_refresh = self._refresh_timer.needs_refresh()
+            feature_flags_need_refresh = self._feature_flag_refresh_timer.needs_refresh()
+            configuration_settings, sentinel_keys = {}, dict(self._refresh_on)
+            feature_flags, feature_flag_sentinel_keys = dict(self._dict[FEATURE_MANAGEMENT_KEY]), dict(
+                self._refresh_on_feature_flags
+            )
+            had_refresh = False
+            if need_refresh:
+                configuration_settings, sentinel_keys = self.refresh_configuration_settings(
+                    configuration_settings, sentinel_keys, self._refresh_timer, **kwargs
+                )
+                had_refresh = True
+            else:
+                configuration_settings = self._dict
+            if feature_flags_need_refresh:
+                feature_flags, feature_flag_sentinel_keys = self.refresh_configuration_settings(
+                    feature_flags, feature_flag_sentinel_keys, self._feature_flag_refresh_timer, **kwargs
+                )
+                had_refresh = True
+            else:
+                feature_flags = self._dict[FEATURE_FLAG_PREFIX]
+
+            if had_refresh:
+                configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_flags
+                self._refresh_on = sentinel_keys
+                self._refresh_on_feature_flags = feature_flag_sentinel_keys
+                self._dict = configuration_settings
+            if not need_refresh and not feature_flags_need_refresh:
+                logging.debug("Refresh called but refresh interval not elapsed.")
+                return
+
+    def refresh_configuration_settings(self, configuration_settings, sentinel_keys, timer, **kwargs) -> None:
         success = False
+        need_refresh = False
+        headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
         try:
-            with self._update_lock:
-                need_refresh = False
-                updated_sentinel_keys = dict(self._refresh_on)
-                headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
-                for (key, label), etag in updated_sentinel_keys.items():
-                    try:
-                        updated_sentinel = self._client.get_configuration_setting(
-                            key=key,
-                            label=label,
-                            etag=etag,
-                            match_condition=MatchConditions.IfModified,
-                            headers=headers,
-                            **kwargs
-                        )
-                        if updated_sentinel is not None:
-                            logging.debug(
-                                "Refresh all triggered by key: %s label %s.",
-                                key,
-                                label,
-                            )
+            for (key, label), etag in sentinel_keys.items():
+                try:
+                    updated_config = self._client.get_configuration_setting(
+                        key=key,
+                        label=label,
+                        etag=etag,
+                        match_condition=MatchConditions.IfModified,
+                        headers=headers,
+                        **kwargs
+                    )
+                    if updated_config is not None:
+                        sentinel_keys[(key, label)] = updated_config.etag
+                        if not isinstance(updated_config, FeatureFlagConfigurationSetting):
+                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
                             need_refresh = True
-
-                            updated_sentinel_keys[(key, label)] = updated_sentinel.etag
-                    except HttpResponseError as e:
-                        if e.status_code == 404:
-                            if etag is not None:
+                        elif isinstance(updated_config, FeatureFlagConfigurationSetting):
+                            configuration_settings[key] = updated_config.value
+                except HttpResponseError as e:
+                    if e.status_code == 404:
+                        if etag is not None:
+                            sentinel_keys[(key, label)] = None
+                            if not isinstance(updated_config, FeatureFlagConfigurationSetting):
                                 # If the sentinel is not found, it means the key/label was deleted, so we should refresh
                                 logging.debug("Refresh all triggered by key: %s label %s.", key, label)
                                 need_refresh = True
-                                updated_sentinel_keys[(key, label)] = None
-                        else:
-                            raise e
-                # Need to only update once, no matter how many sentinels are updated
-                if need_refresh:
-                    self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
-                    if self._on_refresh_success:
-                        self._on_refresh_success()
-                # Even if we don't need to refresh, we should reset the timer
-                self._refresh_timer.reset()
-                success = True
-                return
+                            elif isinstance(updated_config, FeatureFlagConfigurationSetting):
+                                configuration_settings[key] = None
+                        continue
+                    raise e
+            # Need to only update once, no matter how many sentinels are updated
+            if need_refresh:
+                configuration_settings, sentinel_keys = self._load_configuration_settings(
+                    headers=headers, sentinel_keys=sentinel_keys, **kwargs
+                )
+                if self._on_refresh_success:
+                    self._on_refresh_success()
+            success = True
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
-            if self._on_refresh_error:
-                self._on_refresh_error(e)
-                return
-            raise
+            if not self._on_refresh_error:
+                raise
+            self._on_refresh_error(e)
         finally:
             if not success:
-                self._refresh_timer.backoff()
+                timer.backoff()
+                return
+            # Even if we don't need to refresh, we should reset the timer
+            timer.reset()
+            return configuration_settings, sentinel_keys
 
     def _load_all(self, **kwargs):
+        configuration_settings, sentinel_keys = self._load_configuration_settings(**kwargs)
+        feature_flags, feature_flag_sentinel_keys = self._load_feature_flags(**kwargs)
+        if self._feature_flag_enabled:
+            configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_flags
+            self._refresh_on_feature_flags = feature_flag_sentinel_keys
+        self._refresh_on = sentinel_keys
+        self._dict = configuration_settings
+
+    def _load_configuration_settings(self, **kwargs):
         configuration_settings = {}
         sentinel_keys = kwargs.pop("sentinel_keys", self._refresh_on)
         for select in self._selects:
@@ -491,10 +543,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 value = self._process_key_value(config)
 
                 if isinstance(config, FeatureFlagConfigurationSetting):
-                    feature_management = configuration_settings.get(FEATURE_MANAGEMENT_KEY, {})
-                    feature_management[key] = value
-                    if FEATURE_MANAGEMENT_KEY not in configuration_settings:
-                        configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_management
+                    # Feature flags are ignored if loaded by Selects
+                    pass
                 else:
                     configuration_settings[key] = value
                 # Every time we run load_all, we should update the etag of our refresh sentinels
@@ -502,8 +552,22 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
                 if (config.key, config.label) in self._refresh_on:
                     sentinel_keys[(config.key, config.label)] = config.etag
-        self._refresh_on = sentinel_keys
-        self._dict = configuration_settings
+        return configuration_settings, sentinel_keys
+
+    def _load_feature_flags(self, **kwargs):
+        feature_flag_sentinel_keys = {}
+        loaded_feature_flags = {}
+        if self._feature_flag_enabled:
+            for select in self._feature_flag_selectors:
+                feature_flags = self._client.list_configuration_settings(
+                    key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
+                )
+                breakpoint()
+                for feature_flag in feature_flags:
+                    key = self._process_key_name(feature_flag)
+                    loaded_feature_flags[key] = feature_flag.value
+                    feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
+        return loaded_feature_flags, feature_flag_sentinel_keys
 
     def _process_key_name(self, config):
         trimmed_key = config.key
