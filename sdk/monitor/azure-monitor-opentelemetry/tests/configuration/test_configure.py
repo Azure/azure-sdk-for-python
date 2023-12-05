@@ -202,6 +202,14 @@ class TestConfigure(unittest.TestCase):
             "azure_app_service,azure_vm"
         )
 
+    @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": ""})
+    def test_setup_resources_empty_string(self):
+        _setup_resources()
+        self.assertEqual(
+            os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
+            ""
+        )
+
     @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "test_detector"})
     def test_setup_resources_existing_detectors(self):
         _setup_resources()
@@ -210,12 +218,12 @@ class TestConfigure(unittest.TestCase):
             "test_detector"
         )
 
-    @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "test_detector,azure_vm"})
-    def test_setup_resources_existing_with_azure_detectors(self):
+    @patch.dict("os.environ", {"OTEL_EXPERIMENTAL_RESOURCE_DETECTORS": "azure_vm,test_detector, azure_app_service"})
+    def test_setup_resources_azure_and_existing_detectors(self):
         _setup_resources()
         self.assertEqual(
             os.environ["OTEL_EXPERIMENTAL_RESOURCE_DETECTORS"],
-            "test_detector,azure_vm"
+            "azure_vm,test_detector, azure_app_service"
         )
 
     @patch(
