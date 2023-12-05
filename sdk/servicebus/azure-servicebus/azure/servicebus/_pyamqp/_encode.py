@@ -619,7 +619,7 @@ def encode_fields(value):
 
 
 def encode_annotations(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+    # type: (Optional[Dict[Union[str, bytes] , Any]]) -> Dict[str, Any]
     """The annotations type is a map where the keys are restricted to be of type symbol or of type ulong.
 
     All ulong keys, and all symbolic keys except those beginning with "x-" are reserved.

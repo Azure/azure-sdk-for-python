@@ -8,10 +8,13 @@
 import struct
 import uuid
 import logging
-from typing import List, Optional, Tuple, Dict, Callable, Any, cast, Union  # pylint: disable=unused-import
+from typing import List, Optional, Tuple, Dict, Callable, Any, cast, Union, TYPE_CHECKING  # pylint: disable=unused-import
 
 
 from .message import Message, Header, Properties
+
+if TYPE_CHECKING:
+    from .message import MessageDict
 
 _LOGGER = logging.getLogger(__name__)
 _HEADER_PREFIX = memoryview(b'AMQP')
@@ -276,7 +279,8 @@ def decode_payload(buffer):
             message["footer"] = value
     # TODO: we can possibly swap out the Message construct with a TypedDict
     #  for both input and output so we get the best of both.
-    return Message(**message)
+    message_properties = cast("MessageDict", message)
+    return Message(**message_properties)
 
 
 def decode_frame(data):

@@ -96,6 +96,7 @@ if TYPE_CHECKING:
     from .._common._configuration import Configuration
     from .._pyamqp.performatives import AttachFrame, TransferFrame
     from .._pyamqp.client import AMQPClient
+    from .._pyamqp.message import MessageDict
 
 
 class _ServiceBusErrorPolicy(RetryPolicy):
@@ -210,26 +211,26 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def get_message_delivery_tag(
         _, frame: "TransferFrame"
-    ) -> Optional[str]:  # pylint: disable=unused-argument
+    ) -> Optional[bytes]:  # pylint: disable=unused-argument
         """
         Gets delivery tag of a Message.
         :param any _: Ignored.
         :param ~pyamqp.performatives.TransferFrame frame: Frame to get delivery_tag from for pyamqp.Message.
         :return: Delivery tag of the message.
-        :rtype: str or None
+        :rtype: bytes or None
         """
         return frame[2] if frame else None
 
     @staticmethod
     def get_message_delivery_id(
         _, frame: "TransferFrame"
-    ) -> Optional[str]:  # pylint: disable=unused-argument
+    ) -> Optional[int]:  # pylint: disable=unused-argument
         """
         Gets delivery id of a Message.
         :param any _: Ignored.
         :param ~pyamqp.performatives.TransferFrame frame: Message to get delivery_id from for pyamqp.Message.
         :return: Delivery id of the message.
-        :rtype: str or None
+        :rtype: int or None
         """
         return frame[1] if frame else None
 
@@ -368,9 +369,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: Batch message encoded size.
         :rtype: int
         """
-        # TODO: how to type below?
-        # type: ignore
-        return utils.get_message_encoded_size(BatchMessage(*message))
+        message_list = cast("MessageDict", message)
+        return utils.get_message_encoded_size(BatchMessage(*message_list))
 
     @staticmethod
     def get_message_encoded_size(message: "Message") -> int:
@@ -713,7 +713,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             message=received[1],
             receive_mode=receiver._receive_mode,
             receiver=receiver,
-            frame=received[0],
+            frame=received[0],  # TODO: type header not transferframe?
             amqp_transport=receiver._amqp_transport
         )
         receiver._last_received_sequenced_number = message.sequence_number
@@ -810,7 +810,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
         """
         parsed = []
-        for m in message.value[b"messages"]:
+        # casting value to List[ServiceBusReceivedMessage] since we know type for peek/deferred ops
+        for m in cast(List["ServiceBusReceivedMessage"], message.value)[b"messages"]:
             wrapped = decode_payload(memoryview(m[b"message"]))
             parsed.append(
                 message_type(
