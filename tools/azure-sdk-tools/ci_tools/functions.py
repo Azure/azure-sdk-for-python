@@ -180,18 +180,6 @@ def apply_business_filter(collected_packages: List[str], filter_type: str) -> Li
 
     return pkg_set_ci_filtered
 
-def apply_ci_disabled_filter(collected_packages: List[str]) -> List[str]:
-    if os.getenv("PULLREQUEST"):
-        return collected_packages
-
-    pkg_set_ci_disabled_filtered = list(filter(lambda x: str_to_bool(get_config_setting(x, "ci_enabled", True)), collected_packages))
-    logging.debug("Target packages after applying ci enabled filter: {}".format(pkg_set_ci_disabled_filtered))
-    logging.debug(
-        "Package(s) omitted by ci enabled filter: {}".format(generate_difference(collected_packages, pkg_set_ci_disabled_filtered))
-    )
-    return pkg_set_ci_disabled_filtered
-
-
 def discover_targeted_packages(
     glob_string: str,
     target_root_dir: str,
@@ -228,9 +216,6 @@ def discover_targeted_packages(
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
-
-    # Apply filter based on libraries that have ci_enabled=false
-    # collected_packages = apply_ci_disabled_filter(collected_packages)
 
     return sorted(collected_packages)
 
