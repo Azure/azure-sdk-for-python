@@ -5,13 +5,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
+import pytest
 import unittest
 
 from azure.mgmt.resourcegraph import ResourceGraphClient
 from azure.mgmt.resourcegraph.models import *
 from devtools_testutils import AzureMgmtRecordedTestCase
 
-@unittest.skip("The test doesn't work.")
+@pytest.mark.skip("The test doesn't work.")
 class TestMgmtResourceGraph(AzureMgmtRecordedTestCase):
 
     def setUp(self):

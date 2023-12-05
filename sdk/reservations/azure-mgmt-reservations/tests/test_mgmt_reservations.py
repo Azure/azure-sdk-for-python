@@ -1,3 +1,5 @@
+import pytest
+
 from azure.mgmt.reservations import AzureReservationAPI
 from azure.mgmt.reservations.models import *
 from devtools_testutils import AzureMgmtRecordedTestCase
@@ -12,11 +14,10 @@ import unittest
 # change the custom endpoint to set the environment
 _CUSTOM_ENDPOINT = "https://api-dogfood.resources.windows-int.net/"
 
-@unittest.skip("skip test")
+@pytest.mark.skip("skip test")
 class TestMgmtReservations(AzureMgmtRecordedTestCase):
 
-    def setUp(self):
-        super(TestMgmtReservations, self).setUp()
+    def setup_method(self, _):
         self.reservation_client = self.create_basic_client(AzureReservationAPI, base_url=_CUSTOM_ENDPOINT)
         # self.reservation_client = self.create_basic_client(AzureReservationAPI)
 
