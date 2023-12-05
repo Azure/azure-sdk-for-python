@@ -439,29 +439,25 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             need_refresh = self._refresh_timer.needs_refresh()
             feature_flags_need_refresh = self._feature_flag_refresh_timer.needs_refresh()
             configuration_settings, sentinel_keys = {}, dict(self._refresh_on)
-            feature_flags, feature_flag_sentinel_keys = dict(self._dict[FEATURE_MANAGEMENT_KEY]), dict(
-                self._refresh_on_feature_flags
-            )
+            feature_flags = dict(self._dict.get(FEATURE_MANAGEMENT_KEY, {}))
+            feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags) if self._refresh_on_feature_flags != None else {}
             had_refresh = False
             if need_refresh:
-                configuration_settings, sentinel_keys = self.refresh_configuration_settings(
+                configuration_settings, sentinel_keys, had_refresh = self.refresh_configuration_settings(
                     configuration_settings, sentinel_keys, self._refresh_timer, **kwargs
                 )
-                had_refresh = True
-            else:
-                configuration_settings = self._dict
-            if feature_flags_need_refresh:
-                feature_flags, feature_flag_sentinel_keys = self.refresh_configuration_settings(
+                if not had_refresh:
+                    configuration_settings = self._dict
+            if feature_flags_need_refresh and len(feature_flags) > 0:
+                feature_flags, feature_flag_sentinel_keys, had_refresh = self.refresh_configuration_settings(
                     feature_flags, feature_flag_sentinel_keys, self._feature_flag_refresh_timer, **kwargs
                 )
-                had_refresh = True
-            else:
-                feature_flags = self._dict[FEATURE_FLAG_PREFIX]
 
             if had_refresh:
-                configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_flags
+                if len(feature_flags) > 0:
+                    configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_flags
+                    self._refresh_on_feature_flags = feature_flag_sentinel_keys
                 self._refresh_on = sentinel_keys
-                self._refresh_on_feature_flags = feature_flag_sentinel_keys
                 self._dict = configuration_settings
             if not need_refresh and not feature_flags_need_refresh:
                 logging.debug("Refresh called but refresh interval not elapsed.")
@@ -470,6 +466,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     def refresh_configuration_settings(self, configuration_settings, sentinel_keys, timer, **kwargs) -> None:
         success = False
         need_refresh = False
+        updated_feature_flags = False
         headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
         try:
             for (key, label), etag in sentinel_keys.items():
@@ -488,7 +485,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             logging.debug("Refresh all triggered by key: %s label %s.", key, label)
                             need_refresh = True
                         elif isinstance(updated_config, FeatureFlagConfigurationSetting):
-                            configuration_settings[key] = updated_config.value
+                            configuration_settings[self._process_key_name(updated_config)] = updated_config.value
+                            updated_feature_flags = True
                 except HttpResponseError as e:
                     if e.status_code == 404:
                         if etag is not None:
@@ -520,7 +518,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return
             # Even if we don't need to refresh, we should reset the timer
             timer.reset()
-            return configuration_settings, sentinel_keys
+            return configuration_settings, sentinel_keys, need_refresh or updated_feature_flags
 
     def _load_all(self, **kwargs):
         configuration_settings, sentinel_keys = self._load_configuration_settings(**kwargs)
@@ -562,7 +560,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 feature_flags = self._client.list_configuration_settings(
                     key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
                 )
-                breakpoint()
                 for feature_flag in feature_flags:
                     key = self._process_key_name(feature_flag)
                     loaded_feature_flags[key] = feature_flag.value

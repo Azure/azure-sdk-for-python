@@ -37,7 +37,6 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["my_json"]["key"] == "value"
         assert client["trimmed"] == "key"
         assert "test.trimmed" not in client
-        breakpoint()
         assert "FeatureManagement" in client
         assert "Alpha" in client["FeatureManagement"]
 
