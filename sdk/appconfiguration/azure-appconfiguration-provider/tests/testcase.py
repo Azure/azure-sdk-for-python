@@ -136,7 +136,7 @@ def get_configs(keyvault_secret_url):
         create_config_setting(
             ".appconfig.featureflag/Alpha",
             "\0",
-             '{	"id": "Alpha", "description": "", "enabled": false, "conditions": {	"client_filters": []	}}',
+            '{	"id": "Alpha", "description": "", "enabled": false, "conditions": {	"client_filters": []	}}',
             "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
         )
     )
