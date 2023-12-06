@@ -476,7 +476,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         finally:
             if not success:
                 self._refresh_timer.backoff()
-            if need_refresh and self._on_refresh_success:
+            elif need_refresh and self._on_refresh_success:
                 self._on_refresh_success()
 
     def _load_all(self, **kwargs):
