@@ -67,7 +67,7 @@ def mock_data_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config_no_progress: OperationConfig,
     mock_aml_services_2022_10_01: Mock,
-    mock_aml_services_2024_01_01: Mock,
+    mock_aml_services_2024_01_01_preview: Mock,
     mock_datastore_operations: Mock,
     mock_machinelearning_client: Mock,
 ) -> DataOperations:
@@ -75,7 +75,7 @@ def mock_data_operation(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config_no_progress,
         service_client=mock_aml_services_2022_10_01,
-        service_client_012024_preview=mock_aml_services_2024_01_01,
+        service_client_012024_preview=mock_aml_services_2024_01_01_preview,
         datastore_operations=mock_datastore_operations,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         all_operations=mock_machinelearning_client._operation_container,
