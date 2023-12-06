@@ -14,7 +14,7 @@ from azure.mgmt.batch import BatchManagementClient
     pip install azure-identity
     pip install azure-mgmt-batch
 # USAGE
-    python pool_create_no_public_ip_addresses.py
+    python pool_create_virtual_machine_configuration_service_artifact_reference.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -38,22 +38,26 @@ def main():
                 "deploymentConfiguration": {
                     "virtualMachineConfiguration": {
                         "imageReference": {
-                            "id": "/subscriptions/subid/resourceGroups/networking-group/providers/Microsoft.Compute/galleries/testgallery/images/testimagedef/versions/0.0.1"
+                            "offer": "WindowsServer",
+                            "publisher": "MicrosoftWindowsServer",
+                            "sku": "2019-datacenter-smalldisk",
+                            "version": "latest",
                         },
-                        "nodeAgentSkuId": "batch.node.ubuntu 18.04",
+                        "nodeAgentSkuId": "batch.node.windows amd64",
+                        "serviceArtifactReference": {
+                            "id": "/subscriptions/subid/resourceGroups/default-azurebatch-japaneast/providers/Microsoft.Compute/galleries/myGallery/serviceArtifacts/myServiceArtifact/vmArtifactsProfiles/vmArtifactsProfile"
+                        },
+                        "windowsConfiguration": {"enableAutomaticUpdates": False},
                     }
                 },
-                "networkConfiguration": {
-                    "publicIPAddressConfiguration": {"provision": "NoPublicIPAddresses"},
-                    "subnetId": "/subscriptions/subid/resourceGroups/rg1234/providers/Microsoft.Network/virtualNetworks/network1234/subnets/subnet123",
-                },
-                "vmSize": "STANDARD_D4",
+                "scaleSettings": {"fixedScale": {"targetDedicatedNodes": 2, "targetLowPriorityNodes": 0}},
+                "vmSize": "Standard_d4s_v3",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2023-11-01/examples/PoolCreate_NoPublicIPAddresses.json
+# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2023-11-01/examples/PoolCreate_VirtualMachineConfiguration_ServiceArtifactReference.json
 if __name__ == "__main__":
     main()
