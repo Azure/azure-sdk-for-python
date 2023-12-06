@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (it should be perview) (2023-12-18)
+## 10.2.0b13 (2023-12-18)
 
+### Other Changes
 
+  - Fix for last version
 
 ## 10.2.0b12 (2023-11-20)
 
