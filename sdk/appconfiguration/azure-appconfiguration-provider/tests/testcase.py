@@ -133,11 +133,10 @@ def get_configs(keyvault_secret_url):
     configs.append(create_config_setting("refresh_message", "\0", "original value"))
     configs.append(create_config_setting("non_refreshed_message", "\0", "Static"))
     configs.append(
-        create_config_setting(
-            ".appconfig.featureflag/Alpha",
+        create_feature_flag_config_setting(
+            "Alpha",
             "\0",
-            '{	"id": "Alpha", "description": "", "enabled": false, "conditions": {	"client_filters": []	}}',
-            "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
+            True,
         )
     )
     if keyvault_secret_url:

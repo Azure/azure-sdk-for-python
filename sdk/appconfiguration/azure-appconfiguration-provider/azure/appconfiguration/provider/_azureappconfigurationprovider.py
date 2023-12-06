@@ -427,9 +427,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             logging.debug("Refresh called but refresh interval not elapsed.")
             return
         success = False
+        need_refresh = False
         try:
             with self._update_lock:
-                need_refresh = False
                 updated_sentinel_keys = dict(self._refresh_on)
                 headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
                 for (key, label), etag in updated_sentinel_keys.items():
@@ -463,8 +463,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 # Need to only update once, no matter how many sentinels are updated
                 if need_refresh:
                     self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
-                    if self._on_refresh_success:
-                        self._on_refresh_success()
                 # Even if we don't need to refresh, we should reset the timer
                 self._refresh_timer.reset()
                 success = True
@@ -478,6 +476,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         finally:
             if not success:
                 self._refresh_timer.backoff()
+            if need_refresh and self._on_refresh_success:
+                self._on_refresh_success()
 
     def _load_all(self, **kwargs):
         configuration_settings = {}
@@ -489,7 +489,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             for config in configurations:
                 key = self._process_key_name(config)
                 value = self._process_key_value(config)
-
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     feature_management = configuration_settings.get(FEATURE_MANAGEMENT_KEY, {})
                     feature_management[key] = value
