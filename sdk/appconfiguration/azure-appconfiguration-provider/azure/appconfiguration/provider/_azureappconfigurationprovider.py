@@ -100,6 +100,10 @@ def load(
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
     :paramtype feature_flag_selectors: List[SettingSelector]
     :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all feature flags without a label.
+    :paramtype feature_flag_refresh_enabled: bool
+    :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is False.
+    :paramtype feature_flag_trim_prefixes: List[str]
+    :keyword feature_flag_trim_prefixes: Optional list of prefixes to trim from feature flag keys. By default will trim the FEATURE_FLAG_PREFIX.
     """
 
 
@@ -147,7 +151,11 @@ def load(
     :paramtype feature_flag_enabled: bool
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
     :paramtype feature_flag_selectors: List[SettingSelector]
-    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all feature flags without a label.
+    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all feature flags without a label..
+    :paramtype feature_flag_refresh_enabled: bool
+    :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is False.
+    :paramtype feature_flag_trim_prefixes: List[str]
+    :keyword feature_flag_trim_prefixes: Optional list of prefixes to trim from feature flag keys. By default will trim the FEATURE_FLAG_PREFIX.
     """
 
 
@@ -428,13 +436,18 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
         self._refresh_on_feature_flags = None
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
+        self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
+        self._feature_flag_trim_prefixes: List[str] = []
+        feature_flag_trim_prefixes = kwargs.pop("feature_flag_trim_prefixes", [])
+        self._feature_flag_trim_prefixes = sorted(feature_flag_trim_prefixes, key=len, reverse=True)
         self._update_lock = Lock()
 
     def refresh(self, **kwargs) -> None:
-        if not self._refresh_on and not self._refresh_on_feature_flags:
+        if not self._refresh_on and not self._feature_flag_refresh_enabled:
             logging.debug("Refresh called but no refresh enabled.")
             return
 
+        did_update = False
         with self._update_lock:
             need_refresh = self._refresh_timer.needs_refresh()
             feature_flags_need_refresh = self._feature_flag_refresh_timer.needs_refresh()
@@ -449,12 +462,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 )
                 if not had_refresh:
                     configuration_settings = self._dict
-            if feature_flags_need_refresh and len(feature_flags) > 0:
+            if self._feature_flag_refresh_enabled and  feature_flags_need_refresh and len(feature_flags) > 0:
                 feature_flags, feature_flag_sentinel_keys, had_refresh_feature_flags = self.refresh_configuration_settings(
                     feature_flags, feature_flag_sentinel_keys, self._feature_flag_refresh_timer, **kwargs
                 )
 
             if had_refresh or had_refresh_feature_flags:
+                did_update = True
                 if len(feature_flags) > 0:
                     configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_flags
                     self._refresh_on_feature_flags = feature_flag_sentinel_keys
@@ -463,6 +477,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             if not need_refresh and not feature_flags_need_refresh:
                 logging.debug("Refresh called but refresh interval not elapsed.")
                 return
+        if did_update:
+            if self._on_refresh_success:
+                self._on_refresh_success()
 
     def refresh_configuration_settings(self, configuration_settings, sentinel_keys, timer, **kwargs) -> None:
         success = False
@@ -505,8 +522,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 configuration_settings, sentinel_keys = self._load_configuration_settings(
                     headers=headers, sentinel_keys=sentinel_keys, **kwargs
                 )
-                if self._on_refresh_success:
-                    self._on_refresh_success()
             success = True
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
@@ -564,18 +579,27 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 for feature_flag in feature_flags:
                     key = self._process_key_name(feature_flag)
                     loaded_feature_flags[key] = feature_flag.value
-                    feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
+                    if self._feature_flag_refresh_enabled:
+                        feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return loaded_feature_flags, feature_flag_sentinel_keys
 
     def _process_key_name(self, config):
         trimmed_key = config.key
         # Trim the key if it starts with one of the prefixes provided
+
+        # Feature Flags have there own prefix, so we need to trim that first
+        if isinstance(config, FeatureFlagConfigurationSetting) and trimmed_key.startswith(FEATURE_FLAG_PREFIX):
+            trimmed_key = trimmed_key[len(FEATURE_FLAG_PREFIX) :]
+            for trim in self._feature_flag_trim_prefixes:
+                if trimmed_key.startswith(trim):
+                    trimmed_key = trimmed_key[len(trim) :]
+                    break
+            return trimmed_key
+        
         for trim in self._trim_prefixes:
             if config.key.startswith(trim):
                 trimmed_key = config.key[len(trim) :]
                 break
-        if isinstance(config, FeatureFlagConfigurationSetting) and trimmed_key.startswith(FEATURE_FLAG_PREFIX):
-            return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
         return trimmed_key
 
     def _process_key_value(self, config):
