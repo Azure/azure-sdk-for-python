@@ -633,7 +633,7 @@
         },
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
-        "materializationIdentity": "[if(not(equals(parameters('materializationIdentityOption'), 'none')), resourceId(parameters('materialization_identity_subscription_id'), parameters('materialization_identity_resource_group_name'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name')), '')]",
+        "materializationIdentity": "[resourceId(parameters('materialization_identity_subscription_id'), parameters('materialization_identity_resource_group_name'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]",
         "offlineStore": "[resourceId(parameters('offline_store_subscription_id'), parameters('offline_store_resource_group_name'), 'Microsoft.Storage/storageAccounts/blobServices/containers', parameters('offline_store_storage_account_name'), 'default', parameters('offline_store_container_name'))]",
         "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]"
     },

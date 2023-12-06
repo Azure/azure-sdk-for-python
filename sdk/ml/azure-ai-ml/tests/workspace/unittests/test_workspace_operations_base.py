@@ -366,9 +366,9 @@ class TestWorkspaceOperation:
         assert param["offline_store_resource_group_name"]["value"] == "rg"
         assert param["offline_store_subscription_id"]["value"] == "test_subscription"
         assert param["offline_store_connection_name"]["value"] is None
-        assert param["online_store_resource_id"]["value"] == ""
-        assert param["online_store_resource_group_name"]["value"] == ""
-        assert param["online_store_subscription_id"]["value"] == ""
+        assert param["online_store_resource_id"]["value"] is None
+        assert param["online_store_resource_group_name"]["value"] is None
+        assert param["online_store_subscription_id"]["value"] is None
         assert param["online_store_connection_name"]["value"] is None
 
         # test create feature store with materialization identity
@@ -511,13 +511,13 @@ class TestWorkspaceOperation:
         )
 
         assert template is not None
-        assert param["materialization_identity_resource_id"] == {"value": ""}
-        assert param["offline_store_target"] == {"value": ""}
-        assert param["offline_store_resource_group_name"] == {"value": ""}
-        assert param["offline_store_subscription_id"] == {"value": ""}
-        assert param["online_store_target"] == {"value": ""}
-        assert param["online_store_resource_group_name"] == {"value": ""}
-        assert param["online_store_subscription_id"] == {"value": ""}
+        assert param["materialization_identity_resource_id"] == {"value": None}
+        assert param["offline_store_target"] == {"value": None}
+        assert param["offline_store_resource_group_name"] == {"value": None}
+        assert param["offline_store_subscription_id"] == {"value": None}
+        assert param["online_store_target"] == {"value": None}
+        assert param["online_store_resource_group_name"] == {"value": None}
+        assert param["online_store_subscription_id"] == {"value": None}
         assert param["update_workspace_role_assignment"] == {"value": "false"}
         assert param["update_offline_store_role_assignment"] == {"value": "false"}
         assert param["update_online_store_role_assignment"] == {"value": "false"}

@@ -777,7 +777,8 @@ class WorkspaceOperationsBase(ABC):
         param = get_template(resource_type=ArmConstants.FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM)
 
         materialization_identity_id = kwargs.get("materialization_identity_id", None)
-        _set_val(param["materialization_identity_resource_id"], materialization_identity_id)
+        if materialization_identity_id:
+            _set_val(param["materialization_identity_resource_id"], materialization_identity_id)
 
         _set_val(param["workspace_name"], workspace.name)
         resource_group = kwargs.get("resource_group", workspace.resource_group)
