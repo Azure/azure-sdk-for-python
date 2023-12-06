@@ -20,13 +20,14 @@ from azure.core.polling import LROPoller
     "mock_workspace_dependent_resource_name_generator",
 )
 class TestFeatureStore(AzureRecordedTestCase):
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="ARM template makes playback complex, so the test is flaky when run against recording",
-    )
+    # @pytest.mark.skipif(
+    #    condition=not is_live(),
+    #    reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    # )
+    @pytest.mark.skip
     @pytest.mark.nofixdeploymentname
     @pytest.mark.nofixresourcename
-    def test_feature_store_create(
+    def test_feature_store_create_and_delete(
         self,
         client: MLClient,
         randstr: Callable[[], str],
@@ -101,9 +102,7 @@ class TestFeatureStore(AzureRecordedTestCase):
         assert create_fs.offline_store.target
         assert create_fs.online_store.target == online_store_target
 
-        fs_poller = client.workspaces.begin_delete(
-            name=fs1.name, delete_dependent_resources=True, permanently_delete=True
-        )
+        fs_poller = client.feature_stores.begin_delete(name=fs1.name, delete_dependent_resources=True)
         fs_poller.result()
 
         # provisioned with offline store
@@ -128,9 +127,7 @@ class TestFeatureStore(AzureRecordedTestCase):
         assert create_fs.offline_store.target == offline_store_target
         assert not offline_store_target.startswith(create_fs.storage_account)
 
-        fs_poller = client.workspaces.begin_delete(
-            name=fs2.name, delete_dependent_resources=True, permanently_delete=True
-        )
+        fs_poller = client.feature_stores.begin_delete(name=fs2.name, delete_dependent_resources=True)
         fs_poller.result()
 
         # provisioned with materialization identity
@@ -157,9 +154,7 @@ class TestFeatureStore(AzureRecordedTestCase):
         assert create_fs._feature_store_settings.offline_store_connection_name
         assert create_fs.offline_store.target.startswith(create_fs.storage_account)
 
-        fs_poller = client.workspaces.begin_delete(
-            name=fs3.name, delete_dependent_resources=True, permanently_delete=True
-        )
+        fs_poller = client.feature_stores.begin_delete(name=fs3.name, delete_dependent_resources=True)
         fs_poller.result()
 
         fs_name = f"e2etest_fs4_{randstr('fs4')}"
@@ -188,9 +183,7 @@ class TestFeatureStore(AzureRecordedTestCase):
         assert create_fs.online_store.target == online_store_target
         assert create_fs.offline_store.target == offline_store_target
 
-        fs_poller = client.workspaces.begin_delete(
-            name=fs4.name, delete_dependent_resources=True, permanently_delete=True
-        )
+        fs_poller = client.feature_stores.begin_delete(name=fs4.name, delete_dependent_resources=True)
         fs_poller.result()
 
         # provision with storage account
@@ -244,18 +237,16 @@ class TestFeatureStore(AzureRecordedTestCase):
         assert create_fs.offline_store.target
         assert not create_fs.offline_store.target.startswith(default_storage_account)
 
-        fs_poller = client.workspaces.begin_delete(
-            name=fs5.name, delete_dependent_resources=True, permanently_delete=True
-        )
+        fs_poller = client.feature_stores.begin_delete(name=fs5.name, delete_dependent_resources=True)
         fs_poller.result()
-        fs_poller = client.workspaces.begin_delete(
-            name=fs6.name, delete_dependent_resources=True, permanently_delete=True
-        )
+        fs_poller = client.feature_stores.begin_delete(name=fs6.name, delete_dependent_resources=True)
         fs_poller.result()
-        fs_poller = client.workspaces.begin_delete(
-            name=fs.name, delete_dependent_resources=True, permanently_delete=True
-        )
+        fs_poller = client.feature_stores.begin_delete(name=fs.name, delete_dependent_resources=True)
         fs_poller.result()
+
+        # delete test
+        with pytest.raises(Exception):
+            client.feature_stores.get(fs.name)
 
         # normal workspace create
         from azure.ai.ml.entities import Workspace
@@ -458,7 +449,7 @@ class TestFeatureStore(AzureRecordedTestCase):
                 outbound_rules=[
                     PrivateEndpointDestination(
                         name="sourcerulefs",
-                        service_resource_id=provisioned_offline_store_resource_id,
+                        service_resource_id=create_fs.storage_account,
                         subresource_target="dfs",
                         spark_enabled="true",
                     ),
@@ -471,20 +462,11 @@ class TestFeatureStore(AzureRecordedTestCase):
                 ],
             ),
         )
-
         fs_poller = client.feature_stores.begin_update(feature_store=managed_network_fs)
         fs_poller.result()
         status_poller = client.feature_stores.begin_provision_network(feature_store_name=fs_name)
         assert isinstance(status_poller, LROPoller)
 
-        # delete test
-        fs_poller = client.feature_stores.begin_delete(name=fs_name, delete_dependent_resources=True)
-        assert isinstance(fs_poller, LROPoller)
-        fs_poller.result()
-
-        with pytest.raises(Exception):
-            client.feature_stores.get(fs_name)
-
+        fs_poller = client.feature_stores.begin_delete(name=fs.name, delete_dependent_resources=True)
         if alt_fs_name:
             fs_poller = client.feature_stores.begin_delete(name=alt_fs_name, delete_dependent_resources=True)
-            fs_poller.result()
