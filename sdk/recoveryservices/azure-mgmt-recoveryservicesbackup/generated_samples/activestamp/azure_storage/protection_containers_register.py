@@ -29,7 +29,7 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.protection_containers.register(
+    response = client.protection_containers.begin_register(
         vault_name="swaggertestvault",
         resource_group_name="SwaggerTestRg",
         fabric_name="Azure",
@@ -43,10 +43,10 @@ def main():
                 "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/SwaggerTestRg/providers/Microsoft.Storage/storageAccounts/swaggertestsa",
             }
         },
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicesbackup/resource-manager/Microsoft.RecoveryServices/stable/2023-04-01/examples/AzureStorage/ProtectionContainers_Register.json
+# x-ms-original-file: specification/recoveryservicesbackup/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/AzureStorage/ProtectionContainers_Register.json
 if __name__ == "__main__":
     main()
