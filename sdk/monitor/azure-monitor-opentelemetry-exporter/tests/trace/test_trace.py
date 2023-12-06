@@ -1354,7 +1354,10 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
             _get_trace_export_result(ExportResult.FAILED_RETRYABLE),
             SpanExportResult.FAILURE,
         )
-        self.assertEqual(_get_trace_export_result(None), None)
+        self.assertEqual(
+            _get_trace_export_result(None),
+            SpanExportResult.FAILURE,
+        )
 
     def test_check_instrumentation_span(self):
         span = mock.Mock()

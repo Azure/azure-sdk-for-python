@@ -586,20 +586,34 @@
                 "description": "A flag to determine whether to set up feature store"
             }
         },
-        "byo_open_ai_resource_id": {
-            "type": "string",
-            "defaultValue": "",
-            "metadata": {
-                "description": "Resource Id of BYO open ai resource."
-            }
-        },
         "serverless_compute_settings": {
             "type": "object",
             "defaultValue": {},
             "metadata": {
                 "description": "Serverless compute configuration."
             }
-        }
+        },
+        "endpoint_resource_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The resource id that this workspace hub's endpoints should reference."
+            }
+        },
+        "endpoint_kind": {
+            "type": "string",
+            "defaultValue": "AIServices",
+            "metadata": {
+                "description": "The kind of endpoints this workspace hub ought to contain."
+            }
+        },
+        "endpoint_option": {
+            "type": "string",
+            "defaultValue": "new",
+            "metadata": {
+                "description": "Testing value. Do not touch."
+            }
+        } 
     },
     "variables": {
         "tenantId": "[subscription().tenantId]",
@@ -652,22 +666,6 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-            "type": "Microsoft.Insights/components",
-            "tags": "[parameters('tagValues')]",
-            "apiVersion": "2020-02-02-preview",
-            "name": "[parameters('applicationInsightsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap')),'southcentralus', parameters('applicationInsightsLocation'))]",
-            "kind": "web",
-            "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsName'))]"
-            ],
-            "properties": {
-                "Application_Type": "web",
-                "WorkspaceResourceId": "[parameters('logAnalyticsArmId')]"
-            }
-        },
-        {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
             "apiVersion": "2023-08-01-preview",
@@ -675,19 +673,12 @@
             "name": "[parameters('workspaceName')]",
             "kind": "[parameters('kind')]",
             "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]"
-            ],
             "identity": "[parameters('identity')]",
             "properties": {
                 "friendlyName": "[parameters('friendlyName')]",
                 "description": "[parameters('description')]",
-                "applicationInsights": "[variables('applicationInsights')]",
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
                 "hubResourceId": "[parameters('workspace_hub')]",
-                "azureOpenAI": {
-                    "resourceId": "[parameters('byo_open_ai_resource_id')]"
-                },
                 "serverlessComputeSettings": "[parameters('serverless_compute_settings')]"
             }
         }

@@ -44,7 +44,7 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
         self._client = MonitorBatchMetricsClient(
             credential=credential, endpoint=self._endpoint, authentication_policy=authentication_policy, **kwargs
         )
-        self._batch_metrics_op = self._client.metrics
+        self._batch_metrics_op = self._client.metrics_batch
 
     @distributed_trace
     def query_batch(

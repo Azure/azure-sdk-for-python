@@ -34,7 +34,7 @@ class ServerlessComputeSettingsSchema(PathAwareSchema):
         if custom_subnet == "None":
             custom_subnet = None  # For loading from YAML when the user wants to trigger a removal
         no_public_ip = data.pop("no_public_ip", False)
-        return ServerlessComputeSettings(custom_subnet, no_public_ip)
+        return ServerlessComputeSettings(custom_subnet=custom_subnet, no_public_ip=no_public_ip)
 
     @validates("custom_subnet")
     def validate_custom_subnet(self, data: str, **_kwargs):

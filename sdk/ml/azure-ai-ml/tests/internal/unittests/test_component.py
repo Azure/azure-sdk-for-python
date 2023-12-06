@@ -974,3 +974,23 @@ class TestComponent:
         expected_dict["environment"]["version"] = treat_component.environment.version
         del expected_dict["environment"]["conda_file"]["name"]
         assert treat_component._to_dict() == expected_dict
+
+    def test_load_from_internal_aether_bridge_component(self):
+        yaml_path = "./tests/test_configs/internal/aether_bridge_component/component_spec.yaml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component
+        rest_object = component._to_rest_object()
+        assert rest_object.properties.component_spec == {
+            "name": "aether_bridge_component",
+            "version": "0.0.1",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/AetherBridgeComponent.json",
+            "display_name": "Aether Bridge Component",
+            "inputs": {
+                "mock_param1": {"type": "AnyFile", "optional": False},
+                "mock_param2": {"type": "AnyFile", "optional": False},
+            },
+            "outputs": {"job_info": {"type": "AnyFile"}},
+            "type": "AetherBridgeComponent",
+            "command": "mock.exe {inputs.mock_param1} {inputs.mock_param2} {outputs.job_info}",
+            "_source": "YAML.COMPONENT",
+        }

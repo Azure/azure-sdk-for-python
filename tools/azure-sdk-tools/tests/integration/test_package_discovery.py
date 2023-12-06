@@ -8,23 +8,6 @@ repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", 
 core_service_root = os.path.join(repo_root, "sdk", "core")
 storage_service_root = os.path.join(repo_root, "sdk", "storage")
 
-
-def test_toml_result():
-    package_with_toml = os.path.join(core_service_root, "azure-core")
-
-    parsed_setup = ParsedSetup.from_path(package_with_toml)
-    result = parsed_setup.get_build_config()
-
-    expected = {
-        "mypy": True,
-        "type_check_samples": True,
-        "verifytypes": True,
-        "pyright": False,
-    }
-
-    assert expected == result
-
-
 def test_discovery():
     results = discover_targeted_packages("azure*", core_service_root)
 
@@ -33,7 +16,6 @@ def test_discovery():
 
     assert len(results) > 1
     assert len(non_empty_results) == 1
-
 
 def test_discovery_omit_mgmt():
     results = discover_targeted_packages("azure*", storage_service_root, filter_type="Omit_management")

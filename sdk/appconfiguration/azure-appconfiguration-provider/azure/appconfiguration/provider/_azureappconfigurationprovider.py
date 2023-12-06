@@ -62,6 +62,7 @@ def load(
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
@@ -89,6 +90,9 @@ def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :paramtype on_refresh_success: Optional[Callable]
+    :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
+    happened.
     :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
@@ -104,6 +108,7 @@ def load(
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
@@ -129,6 +134,9 @@ def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :paramtype on_refresh_success: Optional[Callable]
+    :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
+     happened.
     :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
@@ -183,8 +191,19 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
-            sentinel = provider._client.get_configuration_setting(key, label, headers=headers)
-            provider._refresh_on[(key, label)] = sentinel.etag
+            try:
+                sentinel = provider._client.get_configuration_setting(key, label, headers=headers)
+                provider._refresh_on[(key, label)] = sentinel.etag
+            except HttpResponseError as e:
+                if e.status_code == 404:
+                    # If the sentinel is not found a refresh should be triggered when it is created.
+                    logging.debug(
+                        "WatchKey key: %s label %s was configured but not found. Refresh will be triggered if created.",
+                        key,
+                        label,
+                    )
+                else:
+                    raise e
     return provider
 
 
@@ -320,21 +339,6 @@ def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
     return key, label
 
 
-def _is_retryable_error(error: HttpResponseError) -> bool:
-    """Determine whether the service error should be silently retried after a backoff period, or raised.
-    Don't know what errors this applies to yet, so just always raising for now.
-    :param error: The http error to check.
-    :type error: ~azure.core.exceptions.HttpResponseError
-    :return: Whether the error should be retried.
-    :rtype: bool
-    """
-    # 408: Request Timeout
-    # 429: Too Many Requests
-    # 500: Internal Server Error
-    # 504: Gateway Timeout
-    return error.status_code in [408, 429, 500, 504]
-
-
 class _RefreshTimer:
     """
     A timer that tracks the next refresh time and the number of attempts.
@@ -353,7 +357,7 @@ class _RefreshTimer:
         self._next_refresh_time = time.time() + self._interval
         self._attempts = 1
 
-    def retry(self) -> None:
+    def backoff(self) -> None:
         self._next_refresh_time = time.time() + self._calculate_backoff() / 1000
         self._attempts += 1
 
@@ -402,6 +406,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
         self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
+        self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
@@ -421,47 +426,62 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         if not self._refresh_timer.needs_refresh():
             logging.debug("Refresh called but refresh interval not elapsed.")
             return
+        success = False
         try:
             with self._update_lock:
-                for (key, label), etag in self._refresh_on.items():
-                    updated_sentinel = self._client.get_configuration_setting(
-                        key=key,
-                        label=label,
-                        etag=etag,
-                        match_condition=MatchConditions.IfModified,
-                        headers=_get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs),
-                        **kwargs
-                    )
-                    if updated_sentinel is not None:
-                        logging.debug(
-                            "Refresh all triggered by key: %s label %s.",
-                            key,
-                            label,
+                need_refresh = False
+                updated_sentinel_keys = dict(self._refresh_on)
+                headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+                for (key, label), etag in updated_sentinel_keys.items():
+                    try:
+                        updated_sentinel = self._client.get_configuration_setting(
+                            key=key,
+                            label=label,
+                            etag=etag,
+                            match_condition=MatchConditions.IfModified,
+                            headers=headers,
+                            **kwargs
                         )
-                        self._load_all(headers=_get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs))
-                        self._refresh_on[(key, label)] = updated_sentinel.etag
-                        self._refresh_timer.reset()
-                        return
-        except (ServiceRequestError, ServiceResponseError) as e:
-            logging.debug("Failed to refresh, retrying: %r", e)
-            self._refresh_timer.retry()
-        except HttpResponseError as e:
+                        if updated_sentinel is not None:
+                            logging.debug(
+                                "Refresh all triggered by key: %s label %s.",
+                                key,
+                                label,
+                            )
+                            need_refresh = True
+
+                            updated_sentinel_keys[(key, label)] = updated_sentinel.etag
+                    except HttpResponseError as e:
+                        if e.status_code == 404:
+                            if etag is not None:
+                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                                need_refresh = True
+                                updated_sentinel_keys[(key, label)] = None
+                        else:
+                            raise e
+                # Need to only update once, no matter how many sentinels are updated
+                if need_refresh:
+                    self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
+                    if self._on_refresh_success:
+                        self._on_refresh_success()
+                # Even if we don't need to refresh, we should reset the timer
+                self._refresh_timer.reset()
+                success = True
+                return
+        except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
-            self._refresh_timer.retry()
-            if _is_retryable_error(e):
-                return
             if self._on_refresh_error:
                 self._on_refresh_error(e)
                 return
             raise
-        except Exception as e:
-            if self._on_refresh_error:
-                self._on_refresh_error(e)
-                return
-            raise
+        finally:
+            if not success:
+                self._refresh_timer.backoff()
 
     def _load_all(self, **kwargs):
         configuration_settings = {}
+        sentinel_keys = kwargs.pop("sentinel_keys", self._refresh_on)
         for select in self._selects:
             configurations = self._client.list_configuration_settings(
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
@@ -481,7 +501,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 # so they stay up-to-date.
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
                 if (config.key, config.label) in self._refresh_on:
-                    self._refresh_on[(config.key, config.label)] = config.etag
+                    sentinel_keys[(config.key, config.label)] = config.etag
+        self._refresh_on = sentinel_keys
         self._dict = configuration_settings
 
     def _process_key_name(self, config):

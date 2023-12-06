@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from ._communication_identity_client import CommunicationIdentityClient
-
 from ._generated.models import CommunicationTokenScope
 
 from ._shared.models import (
@@ -17,8 +16,6 @@ from ._shared.models import (
     identifier_from_raw_id,
     MicrosoftTeamsUserIdentifier,
     MicrosoftTeamsUserProperties,
-    MicrosoftBotProperties,
-    MicrosoftBotIdentifier,
     PhoneNumberIdentifier,
     PhoneNumberProperties,
     UnknownIdentifier,
@@ -37,8 +34,6 @@ __all__ = [
     "identifier_from_raw_id",
     "MicrosoftTeamsUserIdentifier",
     "MicrosoftTeamsUserProperties",
-    "MicrosoftBotIdentifier",
-    "MicrosoftBotProperties",
     "PhoneNumberIdentifier",
     "PhoneNumberProperties",
     "UnknownIdentifier",

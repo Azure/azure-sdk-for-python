@@ -337,7 +337,7 @@ Note: Any dependency mentioned only in dev_requirements are not considered to id
 Tox name of this test is `latestdependency` and steps to manually run this test locally is as follows.
 
 1. Go to package root. For e.g azure-storage-blob or azure-identity
-2. Run command `tox run -e latestdependency -c ../../../tox/tox.ini --root .`
+2. Run command `tox run -e latestdependency -c ../../../eng/tox/tox.ini --root .`
 
 #### Minimum Dependency Test
 
@@ -354,7 +354,7 @@ Tox name of this test is `mindependency` and steps to manually run this test loc
 
 1. Go to package root. For e.g azure-storage-blob or azure-identity
 2. Run following command
-`tox run -e mindependency -c ../../../tox/tox.ini --root .`
+`tox run -e mindependency -c ../../../eng/tox/tox.ini --root .`
 
 #### Regression Test
 

@@ -1,4 +1,6 @@
 import uuid
+
+from azure.cosmos import http_constants
 from azure.cosmos.aio import CosmosClient
 import azure.cosmos.aio._retry_utility_async as retry_utility
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
@@ -329,6 +331,36 @@ class TestQueryAsync:
         metrics = metrics_header.split(';')
         assert len(metrics) > 1
         assert all(['=' in x for x in metrics])
+
+    @pytest.mark.asyncio
+    async def test_populate_index_metrics(self):
+        await self._set_up()
+        created_collection = await self.created_db.create_container_if_not_exists(
+            "index_metrics_test" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"))
+        doc_id = 'MyId' + str(uuid.uuid4())
+        document_definition = {'pk': 'pk', 'id': doc_id}
+        await created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key='pk',
+            populate_index_metrics=True
+        )
+
+        iter_list = [item async for item in query_iterable]
+        assert iter_list[0]['id'] == doc_id
+
+        INDEX_HEADER_NAME = http_constants.HttpHeaders.IndexUtilization
+        assert INDEX_HEADER_NAME in created_collection.client_connection.last_response_headers
+        index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
+        assert index_metrics != {}
+        expected_index_metrics = {'UtilizedSingleIndexes': [{'FilterExpression': '', 'IndexSpec': '/pk/?',
+                                'FilterPreciseSet': True, 'IndexPreciseSet': True, 'IndexImpactScore': 'High'}],
+                                'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
+                                'PotentialCompositeIndexes': []}
+        assert expected_index_metrics == index_metrics
 
     @pytest.mark.asyncio
     async def test_max_item_count_honored_in_order_by_query_async(self):

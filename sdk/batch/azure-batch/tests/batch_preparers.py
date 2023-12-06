@@ -9,13 +9,7 @@ from azure.mgmt.batch import models
 import azure.batch
 from azure.batch.batch_auth import SharedKeyCredentials
 
-from azure_devtools.scenario_tests.preparers import (
-    AbstractPreparer,
-    SingleValueReplacer,
-)
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
-from devtools_testutils import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from devtools_testutils import AzureMgmtPreparer, AzureTestError, ResourceGroupPreparer, FakeResource
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 

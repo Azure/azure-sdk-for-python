@@ -32,8 +32,8 @@ worker_tags = {
 }
 
 worker_channel_configs = [
-    RouterChannel(channel_id = "fakeChannel1", capacity_cost_per_job=10, max_number_of_jobs=10),
-    RouterChannel(channel_id = "fakeChannel2", capacity_cost_per_job=90, max_number_of_jobs=1),
+    RouterChannel(channel_id="fakeChannel1", capacity_cost_per_job=10, max_number_of_jobs=10),
+    RouterChannel(channel_id="fakeChannel2", capacity_cost_per_job=90, max_number_of_jobs=1),
 ]
 
 worker_capacity = 100

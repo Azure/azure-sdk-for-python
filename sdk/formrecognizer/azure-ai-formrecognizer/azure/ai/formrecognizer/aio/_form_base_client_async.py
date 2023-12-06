@@ -95,10 +95,11 @@ class FormRecognizerClientBaseAsync:
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the base URL. The service API version used for the request is the same as
-        the client's unless otherwise specified. Overriding the client's configured API version is only supported on
-        API version 2022-08-31 and later. This method does not raise if the response is an error; to raise an
-        exception, call `raise_for_status()` on the returned response object. For more information about how to send
-        custom requests with this method, see https://aka.ms/azsdk/dpcodegen/python/send_request.
+        the client's unless otherwise specified. Overriding the client's configured API version in relative URL is
+        supported on client with API version 2022-08-31 and later. Overriding in absolute URL supported on client with
+        any API version. This method does not raise if the response is an error; to raise an exception, call
+        `raise_for_status()` on the returned response object. For more information about how to send custom requests
+        with this method, see https://aka.ms/azsdk/dpcodegen/python/send_request.
 
         :param request: The network request you want to make.
         :type request: ~azure.core.rest.HttpRequest
@@ -108,8 +109,7 @@ class FormRecognizerClientBaseAsync:
         api_version = self._api_version
         if hasattr(api_version, "value"):
             api_version = api_version.value
-        if self._api_version.startswith("v"):
-            # Skip the API version formatting for v2 API versions
+        if self._api_version in ["2.0", "2.1"]:
             request_copy = deepcopy(request)
         else:
             request_copy = _format_api_version(request, api_version)

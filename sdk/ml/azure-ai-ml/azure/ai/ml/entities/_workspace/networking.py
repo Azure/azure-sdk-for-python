@@ -5,7 +5,7 @@
 from typing import Any, Dict, Optional, List
 
 from abc import ABC
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
@@ -266,7 +266,7 @@ class ManagedNetwork:
                 for outbound_rule in self.outbound_rules
             }
             if self.outbound_rules
-            else None
+            else {}
         )
         return RestManagedNetwork(isolation_mode=self.isolation_mode, outbound_rules=rest_outbound_rules)
 

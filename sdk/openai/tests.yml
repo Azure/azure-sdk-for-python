@@ -4,7 +4,7 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       JobName: openai_v1
-      InjectedPackages: git+https://github.com/openai/openai-python@v1
+      InjectedPackages: git+https://github.com/openai/openai-python@main
       ServiceDirectory: openai
       MatrixFilters:
         - PythonVersion=3.11.*
@@ -25,7 +25,7 @@ stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       JobName: openai_v0
-      InjectedPackages: git+https://github.com/openai/openai-python@main
+      InjectedPackages: git+https://github.com/openai/openai-python@v0.28.1
       ServiceDirectory: openai
       MatrixFilters:
         - PythonVersion=3.11.*

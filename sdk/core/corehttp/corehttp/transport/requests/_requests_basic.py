@@ -31,7 +31,7 @@ from urllib3.exceptions import (
     NewConnectionError,
     ConnectTimeoutError,
 )
-import requests  # pylint: disable=networking-import-outside-azure-core-transport
+import requests  # pylint: disable=all
 
 from ...exceptions import (
     ServiceRequestError,
@@ -135,7 +135,7 @@ class RequestsTransport(HttpTransport):
         error: Optional[BaseErrorUnion] = None
 
         try:
-            connection_timeout = kwargs.pop("connection_timeout", self.connection_config.get("timeout"))
+            connection_timeout = kwargs.pop("connection_timeout", self.connection_config.get("connection_timeout"))
 
             if isinstance(connection_timeout, tuple):
                 if "read_timeout" in kwargs:
@@ -150,9 +150,9 @@ class RequestsTransport(HttpTransport):
                 headers=request.headers,
                 data=request._data,  # pylint: disable=protected-access
                 files=request._files,  # pylint: disable=protected-access
-                verify=kwargs.pop("connection_verify", self.connection_config.get("verify")),
+                verify=kwargs.pop("connection_verify", self.connection_config.get("connection_verify")),
                 timeout=timeout,
-                cert=kwargs.pop("connection_cert", self.connection_config.get("cert")),
+                cert=kwargs.pop("connection_cert", self.connection_config.get("connection_cert")),
                 allow_redirects=False,
                 **kwargs
             )

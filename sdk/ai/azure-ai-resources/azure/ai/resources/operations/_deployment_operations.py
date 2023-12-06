@@ -21,9 +21,9 @@ from ..entities.deployment import Deployment
 from ..entities.deployment_keys import DeploymentKeys
 from ..entities.models import Model, PromptflowModel
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
+ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
@@ -68,7 +68,7 @@ class DeploymentOperations:
                 deployment.instance_type = "Standard_DS3_v2"
             # Create dockerfile
             with open(f"{model.path}/Dockerfile", "w+") as f:
-                base_image = "mcr.microsoft.com/azureml/promptflow/promptflow-runtime:latest" if not model.base_image else model.base_image
+                base_image = "mcr.microsoft.com/azureml/promptflow/promptflow-runtime-stable:latest" if not model.base_image else model.base_image
                 f.writelines([f"FROM {base_image}\n", "COPY ./* /\n", "RUN pip install -r requirements.txt\n"])
             azureml_environment = Environment(
                 build=BuildContext(
@@ -113,8 +113,8 @@ class DeploymentOperations:
                 azureml_model = AzureMLModel(name=f"{deployment.name}-deployment-model", path=model.path, type="mlflow_model")
             if model.conda_file and model.chat_module:
                 azureml_model = AzureMLModel(name=f"{deployment.name}-deployment-model", path=model.path, type="custom_model")
-                chat_module = f"{Path(model.path).resolve().name}.{model.chat_module}"
-                create_chat_scoring_script(temp_dir.name, chat_module)
+                model_dir_name = Path(model.path).resolve().name
+                create_chat_scoring_script(temp_dir.name, model.chat_module, model_dir_name)
                 azureml_environment = Environment(
                     image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
                     conda_file=str(Path(model.path) / model.conda_file),
@@ -158,8 +158,12 @@ class DeploymentOperations:
                         default_instance_type, deployment, allowed_instance_types=allowed_instance_types
                     )
 
-                if "registries/azureml" in model_details.id:
+                if "registries/azureml/" in model_details.id:
                     default_instance_type = model_details.properties["inference-recommended-sku"]
+                    allowed_instance_types = []
+                    if "," in default_instance_type:
+                        allowed_instance_types = model_details.properties["inference-recommended-sku"].split(",")
+                        default_instance_type = allowed_instance_types[0]
                     min_sku_spec = model_details.properties["inference-min-sku-spec"].split("|")
                     self._check_default_instance_type_and_populate(
                         default_instance_type, deployment, min_sku_spec=min_sku_spec
@@ -230,8 +234,8 @@ class DeploymentOperations:
         shutil.rmtree(temp_dir.name)
         created_deployment = create_deployment_poller.result()
 
-        created_endpoint.traffic = {deployment.name: 100}
-        update_endpoint_poller = self._ml_client.begin_create_or_update(created_endpoint)
+        v2_endpoint.traffic = {deployment.name: 100}
+        update_endpoint_poller = self._ml_client.begin_create_or_update(v2_endpoint)
         updated_endpoint = update_endpoint_poller.result()
 
         return Deployment._from_v2_endpoint_deployment(updated_endpoint, deployment)

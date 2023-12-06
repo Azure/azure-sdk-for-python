@@ -26,8 +26,6 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
 
     :keyword primary_metric: The primary metric to use for optimization.
     :paramtype primary_metric: Optional[str, ~azure.ai.ml.ObjectDetectionPrimaryMetrics]
-    :keyword kwargs: Job-specific arguments.
-    :paramtype kwargs: Dict[str, Any]
 
     .. admonition:: Example:
 

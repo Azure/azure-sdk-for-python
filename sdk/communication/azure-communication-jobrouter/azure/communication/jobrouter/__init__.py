@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import JobRouterAdministrationClient
-from ._client import JobRouterClient
+from ._patch import JobRouterAdministrationClient
+from ._patch import JobRouterClient
 from ._version import VERSION
 
 __version__ = VERSION

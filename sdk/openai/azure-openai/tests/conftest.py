@@ -4,6 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
+import asyncio
+import json
+import httpx
 import os
 import pytest
 import importlib
@@ -31,6 +35,7 @@ AZURE_AD = "azuread"
 WHISPER_AZURE = "whisper_azure"
 WHISPER_AZURE_AD = "whisper_azuread"
 WHISPER_ALL = ["whisper_azure", "whisper_azuread", "openai"]
+DALLE_AZURE = "dalle_azure"
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
@@ -49,7 +54,7 @@ ENV_AZURE_OPENAI_API_VERSION = "2023-09-01-preview"
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "text-davinci-003"
 ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo-16k"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
-ENV_AZURE_OPENAI_AUDIO_NAME = "whisper-deployment"
+ENV_AZURE_OPENAI_AUDIO_NAME = "whisper"
 
 ENV_OPENAI_KEY = "OPENAI_KEY"
 ENV_OPENAI_COMPLETIONS_MODEL = "text-davinci-003"
@@ -101,6 +106,121 @@ def azure_openai_creds():
 
 # openai>=1.0.0 ---------------------------------------------------------------------------
 
+class CustomHTTPTransport(httpx.HTTPTransport):
+    """Temp stop-gap support for DALL-E"""
+    def handle_request(
+        self,
+        request: httpx.Request,
+    ) -> httpx.Response:
+        if "images/generations" in request.url.path and request.url.params[
+            "api-version"
+        ] in [
+            "2023-06-01-preview",
+            "2023-07-01-preview",
+            "2023-08-01-preview",
+            "2023-09-01-preview",
+            "2023-10-01-preview",
+        ]:
+            request.url = request.url.copy_with(path="/openai/images/generations:submit")
+            response = super().handle_request(request)
+            operation_location_url = response.headers["operation-location"]
+            request.url = httpx.URL(operation_location_url)
+            request.method = "GET"
+            response = super().handle_request(request)
+            response.read()
+
+            timeout_secs: int = 120
+            start_time = time.time()
+            while response.json()["status"] not in ["succeeded", "failed"]:
+                if time.time() - start_time > timeout_secs:
+                    timeout = {"error": {"code": "Timeout", "message": "Operation polling timed out."}}
+                    return httpx.Response(
+                        status_code=400,
+                        headers=response.headers,
+                        content=json.dumps(timeout).encode("utf-8"),
+                        request=request,
+                    )
+
+                time.sleep(int(response.headers.get("retry-after")) or 10)
+                response = super().handle_request(request)
+                response.read()
+
+            if response.json()["status"] == "failed":
+                error_data = response.json()
+                return httpx.Response(
+                    status_code=400,
+                    headers=response.headers,
+                    content=json.dumps(error_data).encode("utf-8"),
+                    request=request,
+                )
+
+            result = response.json()["result"]
+            return httpx.Response(
+                status_code=200,
+                headers=response.headers,
+                content=json.dumps(result).encode("utf-8"),
+                request=request,
+            )
+        return super().handle_request(request)
+
+
+class AsyncCustomHTTPTransport(httpx.AsyncHTTPTransport):
+    """Temp stop-gap support for DALL-E"""
+    async def handle_async_request(
+        self,
+        request: httpx.Request,
+    ) -> httpx.Response:
+        if "images/generations" in request.url.path and request.url.params[
+            "api-version"
+        ] in [
+            "2023-06-01-preview",
+            "2023-07-01-preview",
+            "2023-08-01-preview",
+            "2023-09-01-preview",
+            "2023-10-01-preview",
+        ]:
+            request.url = request.url.copy_with(path="/openai/images/generations:submit")
+            response = await super().handle_async_request(request)
+            operation_location_url = response.headers["operation-location"]
+            request.url = httpx.URL(operation_location_url)
+            request.method = "GET"
+            response = await super().handle_async_request(request)
+            await response.aread()
+
+            timeout_secs: int = 120
+            start_time = time.time()
+            while response.json()["status"] not in ["succeeded", "failed"]:
+                if time.time() - start_time > timeout_secs:
+                    timeout = {"error": {"code": "Timeout", "message": "Operation polling timed out."}}
+                    return httpx.Response(
+                        status_code=400,
+                        headers=response.headers,
+                        content=json.dumps(timeout).encode("utf-8"),
+                        request=request,
+                    )
+
+                await asyncio.sleep(int(response.headers.get("retry-after")) or 10)
+                response = await super().handle_async_request(request)
+                await response.aread()
+
+            if response.json()["status"] == "failed":
+                error_data = response.json()
+                return httpx.Response(
+                    status_code=400,
+                    headers=response.headers,
+                    content=json.dumps(error_data).encode("utf-8"),
+                    request=request,
+                )
+
+            result = response.json()["result"]
+            return httpx.Response(
+                status_code=200,
+                headers=response.headers,
+                content=json.dumps(result).encode("utf-8"),
+                request=request,
+            )
+        return await super().handle_async_request(request)
+
 @pytest.fixture
 def client(api_type):
     if os.getenv(ENV_OPENAI_TEST_MODE, "v1") != "v1":
@@ -132,6 +252,13 @@ def client(api_type):
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
             azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+    elif api_type == "dalle_azure":
+        client = openai.AzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            http_client=httpx.Client(transport=CustomHTTPTransport())
         )
 
     return client
@@ -168,6 +295,13 @@ def client_async(api_type):
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
             azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+    elif api_type == "dalle_azure":
+        client = openai.AsyncAzureOpenAI(
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+            http_client=httpx.AsyncClient(transport=AsyncCustomHTTPTransport())
         )
 
     return client

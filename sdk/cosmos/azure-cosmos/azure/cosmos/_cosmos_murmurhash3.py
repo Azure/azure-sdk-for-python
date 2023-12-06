@@ -25,11 +25,11 @@
 # operations, multiply (MU) and rotate (R), used in its inner loop. Unlike cryptographic hash functions, it is not
 # specifically designed to be difficult to reverse by an adversary, making it unsuitable for cryptographic purposes.
 
- # This contains a Python port of the 128-bit hash function from Austin Appleby's original C++ code in SMHasher.
+# This contains a Python port of the 128-bit hash function from Austin Appleby's original C++ code in SMHasher.
 
- # This is public domain code with no copyrights. From home page of
- # <a href="https://github.com/aappleby/smhasher">SMHasher</a>:
- #  "All MurmurHash versions are public domain software, and the author disclaims all copyright to their code."
+# This is public domain code with no copyrights. From home page of
+# <a href="https://github.com/aappleby/smhasher">SMHasher</a>:
+#  "All MurmurHash versions are public domain software, and the author disclaims all copyright to their code."
 from ._cosmos_integers import UInt128, UInt64
 
 

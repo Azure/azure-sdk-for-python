@@ -59,9 +59,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.upsert_distribution_policy(
-                dp_identifier, policy
-            )
+            distribution_policy_response = router_client.upsert_distribution_policy(dp_identifier, policy)
 
             # add for cleanup
             self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -90,9 +88,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.upsert_distribution_policy(
-                dp_identifier, policy
-            )
+            distribution_policy_response = router_client.upsert_distribution_policy(dp_identifier, policy)
 
             # add for cleanup
             self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -139,9 +135,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.upsert_distribution_policy(
-                dp_identifier, policy
-            )
+            distribution_policy_response = router_client.upsert_distribution_policy(dp_identifier, policy)
 
             # add for cleanup
             self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -186,9 +180,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.upsert_distribution_policy(
-                dp_identifier, policy
-            )
+            distribution_policy_response = router_client.upsert_distribution_policy(dp_identifier, policy)
 
             # add for cleanup
             self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -224,9 +216,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.upsert_distribution_policy(
-                dp_identifier, policy
-            )
+            distribution_policy_response = router_client.upsert_distribution_policy(dp_identifier, policy)
 
             assert distribution_policy_response is not None
             DistributionPolicyValidator.validate_distribution_policy(
@@ -259,9 +249,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=identifier,
             )
 
-            distribution_policy_response = router_client.upsert_distribution_policy(
-                identifier, policy
-            )
+            distribution_policy_response = router_client.upsert_distribution_policy(identifier, policy)
 
             # add for cleanup
             self.distribution_policy_ids[self._testMethodName].append(identifier)

@@ -62,14 +62,14 @@ class QaMetrics:
 
 class ChatMetrics:
     DEFAULT_LIST = [
-        EvaluationMetrics.GROUNDING_SCORE,
-        EvaluationMetrics.RETRIEVAL_SCORE,
-        EvaluationMetrics.GENERATION_SCORE
+        EvaluationMetrics.GPT_GROUNDEDNESS,
+        EvaluationMetrics.GPT_RELEVANCE,
+        EvaluationMetrics.GPT_RETRIEVAL_SCORE
     ]
     SUPPORTED_LIST = [
-        EvaluationMetrics.GROUNDING_SCORE,
-        EvaluationMetrics.RETRIEVAL_SCORE,
-        EvaluationMetrics.GENERATION_SCORE
+        EvaluationMetrics.GPT_GROUNDEDNESS,
+        EvaluationMetrics.GPT_RELEVANCE,
+        EvaluationMetrics.GPT_RETRIEVAL_SCORE
     ]
 
 

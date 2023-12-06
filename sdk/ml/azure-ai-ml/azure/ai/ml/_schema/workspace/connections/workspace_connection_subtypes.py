@@ -20,7 +20,7 @@ class OpenAIWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     )
     credentials = NestedField(ApiKeyConfigurationSchema)
 
-    api_version = fields.Str(required=True, allow_none=False)
+    api_version = fields.Str(required=False, allow_none=True)
     api_type = fields.Str(required=False, allow_none=True)
 
     @post_load
@@ -37,7 +37,7 @@ class AzureAISearchWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     )
     credentials = NestedField(ApiKeyConfigurationSchema)
 
-    api_version = fields.Str(required=True, allow_none=False)
+    api_version = fields.Str(required=False, allow_none=True)
 
     @post_load
     def make(self, data, **kwargs):
@@ -54,7 +54,7 @@ class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     )
     credentials = NestedField(ApiKeyConfigurationSchema)
 
-    api_version = fields.Str(required=True, allow_none=False)
+    api_version = fields.Str(required=False, allow_none=True)
     kind = fields.Str(required=True, allow_none=False)
 
     @post_load
