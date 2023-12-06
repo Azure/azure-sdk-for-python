@@ -24,12 +24,9 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
             refresh_on=[WatchKey("refresh_message")],
             refresh_interval=1,
             on_refresh_success=mock_callback,
-            feature_flag_enabled=True,
         )
         assert client["refresh_message"] == "original value"
         assert client["my_json"]["key"] == "value"
-        assert "FeatureManagement" in client
-        assert "Alpha" in client["FeatureManagement"]
 
         setting = client._client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
@@ -76,13 +73,10 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
             appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             on_refresh_success=mock_callback,
-            feature_flag_enabled=True,
         )
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
         assert client["my_json"]["key"] == "value"
-        assert "FeatureManagement" in client
-        assert "Alpha" in client["FeatureManagement"]
 
         setting = client._client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"

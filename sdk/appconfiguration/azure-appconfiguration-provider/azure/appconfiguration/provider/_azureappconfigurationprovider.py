@@ -442,6 +442,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             feature_flags = dict(self._dict.get(FEATURE_MANAGEMENT_KEY, {}))
             feature_flag_sentinel_keys = dict(self._refresh_on_feature_flags) if self._refresh_on_feature_flags != None else {}
             had_refresh = False
+            had_refresh_feature_flags = False
             if need_refresh:
                 configuration_settings, sentinel_keys, had_refresh = self.refresh_configuration_settings(
                     configuration_settings, sentinel_keys, self._refresh_timer, **kwargs
@@ -449,11 +450,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 if not had_refresh:
                     configuration_settings = self._dict
             if feature_flags_need_refresh and len(feature_flags) > 0:
-                feature_flags, feature_flag_sentinel_keys, had_refresh = self.refresh_configuration_settings(
+                feature_flags, feature_flag_sentinel_keys, had_refresh_feature_flags = self.refresh_configuration_settings(
                     feature_flags, feature_flag_sentinel_keys, self._feature_flag_refresh_timer, **kwargs
                 )
 
-            if had_refresh:
+            if had_refresh or had_refresh_feature_flags:
                 if len(feature_flags) > 0:
                     configuration_settings[FEATURE_MANAGEMENT_KEY] = feature_flags
                     self._refresh_on_feature_flags = feature_flag_sentinel_keys
