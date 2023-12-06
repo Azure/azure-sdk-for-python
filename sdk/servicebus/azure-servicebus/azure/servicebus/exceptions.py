@@ -4,14 +4,14 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Union, cast
 
 from azure.core.exceptions import AzureError
 
 class ServiceBusError(AzureError):
     """Base exception for all Service Bus errors which can be used for default error handling.
 
-    :param str message: The message object stringified as 'message' attribute
+    :param str or bytes message: The message object stringified as 'message' attribute
     :keyword error: The original exception if any
     :paramtype error: Exception
     :ivar exc_type: The exc_type from sys.exc_info()
@@ -23,7 +23,7 @@ class ServiceBusError(AzureError):
 
     def __init__(
         self,
-        message: str,
+        message: Union[str, bytes],
         *args: Any,
         **kwargs: Any
     ) -> None:
@@ -31,10 +31,8 @@ class ServiceBusError(AzureError):
         self._shutdown_handler = kwargs.pop("shutdown_handler", True)
         self._condition = kwargs.pop("condition", None)
         self._status_code = kwargs.pop("status_code", None)
-        try:
+        if isinstance(message, bytes):
             message = message.decode("UTF-8")
-        except AttributeError:
-            pass
 
         message = message or "Service Bus has encountered an error."
 

@@ -16,8 +16,8 @@ class ServiceBusConnectionStringProperties(DictMixin):
     def __init__(
         self,
         *,
-        fully_qualified_namespace: Optional[str] = None,
-        endpoint: Optional[str] = None,
+        fully_qualified_namespace: str,
+        endpoint: str,
         entity_path: Optional[str] = None,
         shared_access_signature: Optional[str] = None,
         shared_access_key_name: Optional[str] = None,
@@ -46,34 +46,34 @@ class ServiceBusConnectionStringProperties(DictMixin):
         return self._endpoint
 
     @property
-    def entity_path(self) -> str:
+    def entity_path(self) -> Optional[str]:
         """Optional. Represents the name of the queue/topic.
-        :rtype: str
+        :rtype: str or None
         """
 
         return self._entity_path
 
     @property
-    def shared_access_signature(self) -> str:
+    def shared_access_signature(self) -> Optional[str]:
         """
         This can be provided instead of the shared_access_key_name and the shared_access_key.
-        :rtype: str
+        :rtype: str or None
         """
         return self._shared_access_signature
 
     @property
-    def shared_access_key_name(self) -> str:
+    def shared_access_key_name(self) -> Optional[str]:
         """
         The name of the shared_access_key. This must be used along with the shared_access_key.
-        :rtype: str
+        :rtype: str or None
         """
         return self._shared_access_key_name
 
     @property
-    def shared_access_key(self) -> str:
+    def shared_access_key(self) -> Optional[str]:
         """
         The shared_access_key can be used along with the shared_access_key_name as a credential.
-        :rtype: str
+        :rtype: str or None
         """
         return self._shared_access_key
 
@@ -88,12 +88,11 @@ def parse_connection_string(conn_str: str) -> "ServiceBusConnectionStringPropert
     """
     fully_qualified_namespace, policy, key, entity, signature = _parse_conn_str(conn_str, True)[:-1]
     endpoint = "sb://" + fully_qualified_namespace + "/"
-    props = {
-        "fully_qualified_namespace": fully_qualified_namespace,
-        "endpoint": endpoint,
-        "entity_path": entity,
-        "shared_access_signature": signature,
-        "shared_access_key_name": policy,
-        "shared_access_key": key,
-    }
-    return ServiceBusConnectionStringProperties(**props)
+    return ServiceBusConnectionStringProperties(
+        fully_qualified_namespace=fully_qualified_namespace,
+        endpoint=endpoint,
+        entity_path=entity,
+        shared_access_signature=signature,
+        shared_access_key_name=policy,
+        shared_access_key=key,
+    )

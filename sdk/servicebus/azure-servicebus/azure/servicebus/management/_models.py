@@ -7,7 +7,7 @@
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Type, Dict, Any, Union, Optional, List, Tuple, TYPE_CHECKING
+from typing import Type, Dict, Any, Union, Optional, List, Tuple, TYPE_CHECKING, cast
 from ._generated._serialization import Model
 
 from ._generated.models import (
@@ -35,7 +35,8 @@ if TYPE_CHECKING:
         NamespaceType,
         EntityAvailabilityStatus,
         EntityStatus,
-        AccessRights
+        AccessRights,
+        MessageCountDetails,
     )
 
 adjust_attribute_map()
@@ -151,12 +152,12 @@ class NamespaceProperties(DictMixin):
         self,
         name: str,
         *,
-        alias: str,
-        created_at_utc: datetime,
-        messaging_sku: Union[str, "MessagingSku"],
-        messaging_units: int,
-        modified_at_utc: datetime,
-        namespace_type: Union[str, "NamespaceType"],
+        alias: Optional[str],
+        created_at_utc: Optional[datetime],
+        messaging_sku: Optional[Union[str, "MessagingSku"]],
+        messaging_units: Optional[int],
+        modified_at_utc: Optional[datetime],
+        namespace_type: Optional[Union[str, "NamespaceType"]],
     ) -> None:
         self.name = name
         self.alias = alias
@@ -204,156 +205,156 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :param name: Name of the queue.
     :type name: str
     :keyword authorization_rules: Authorization rules for resource.
-    :paramtype authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
+    :paramtype authorization_rules: list[~azure.servicebus.management.AuthorizationRule] or None
     :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
      automatically deleted. The minimum duration is 5 minutes.
-    :paramtype auto_delete_on_idle: ~datetime.timedelta
+    :paramtype auto_delete_on_idle: ~datetime.timedelta or str or None
     :keyword dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
      letter support when a message expires.
-    :paramtype dead_lettering_on_message_expiration: bool
+    :paramtype dead_lettering_on_message_expiration: bool or None
     :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :paramtype default_message_time_to_live: ~datetime.timedelta
+    :paramtype default_message_time_to_live: ~datetime.timedelta or str or None
     :keyword duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
      duration of the duplicate detection history. The default value is 10 minutes.
-    :paramtype duplicate_detection_history_time_window: ~datetime.timedelta
+    :paramtype duplicate_detection_history_time_window: ~datetime.timedelta or str or None
     :keyword availability_status: Availibility status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :paramtype availability_status: str or
+    :paramtype availability_status: str or None or
      ~azure.servicebus.management.EntityAvailabilityStatus
     :keyword enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
-    :paramtype enable_batched_operations: bool
+    :paramtype enable_batched_operations: bool or None
     :keyword enable_express: A value that indicates whether Express Entities are enabled. An express
      queue holds a message in memory temporarily before writing it to persistent storage.
-    :paramtype enable_express: bool
+    :paramtype enable_express: bool or None
     :keyword enable_partitioning: A value that indicates whether the queue is to be partitioned
      across multiple message brokers.
-    :paramtype enable_partitioning: bool
+    :paramtype enable_partitioning: bool or None
     :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
-    :paramtype lock_duration: ~datetime.timedelta
+    :paramtype lock_duration: ~datetime.timedelt or Nonea
     :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
      after this number of deliveries. Default value is 10.
-    :paramtype max_delivery_count: int
+    :paramtype max_delivery_count: int or None
     :keyword max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
-    :paramtype max_size_in_megabytes: int
+    :paramtype max_size_in_megabytes: int or None
     :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
-    :paramtype requires_duplicate_detection: bool
+    :paramtype requires_duplicate_detection: bool or None
     :keyword requires_session: A value that indicates whether the queue supports the concept of
      sessions.
-    :paramtype requires_session: bool
+    :paramtype requires_session: bool or None
     :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
     :paramtype status: str or ~azure.servicebus.management.EntityStatus
     :keyword forward_to: The name of the recipient entity to which all the messages sent to the queue
      are forwarded to.
-    :paramtype forward_to: str
+    :paramtype forward_to: str or None
     :keyword user_metadata: Custom metdata that user can associate with the description. Max length
      is 1024 chars.
-    :paramtype user_metadata: str
+    :paramtype user_metadata: str or None
     :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
-    :paramtype forward_dead_lettered_messages_to: str
+    :paramtype forward_dead_lettered_messages_to: str or None
     :keyword max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
      can be accepted by the queue. This feature is only available when using a Premium namespace
      and Service Bus API version "2021-05" or higher.
-    :paramtype max_message_size_in_kilobytes: int
+    :paramtype max_message_size_in_kilobytes: int or None
 
     :ivar name: Name of the queue.
-    :vartype name: str
+    :vartype name: str or None
     :ivar authorization_rules: Authorization rules for resource.
     :vartype authorization_rules: list[~azure.servicebus.management.AuthorizationRule]
     :ivar auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the queue is
      automatically deleted. The minimum duration is 5 minutes.
-    :vartype auto_delete_on_idle: ~datetime.timedelta
+    :vartype auto_delete_on_idle: ~datetime.timedelta or str or None
     :ivar dead_lettering_on_message_expiration: A value that indicates whether this queue has dead
      letter support when a message expires.
-    :vartype dead_lettering_on_message_expiration: bool
+    :vartype dead_lettering_on_message_expiration: bool or None
     :ivar default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :vartype default_message_time_to_live: ~datetime.timedelta
+    :vartype default_message_time_to_live: ~datetime.timedelta or str or None
     :ivar duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
      duration of the duplicate detection history. The default value is 10 minutes.
-    :vartype duplicate_detection_history_time_window: ~datetime.timedelta
+    :vartype duplicate_detection_history_time_window: ~datetime.timedelta or str or None
     :ivar availability_status: Availibility status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :vartype availability_status: str or
+    :vartype availability_status: str or None or
      ~azure.servicebus.management.EntityAvailabilityStatus
     :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
-    :vartype enable_batched_operations: bool
+    :vartype enable_batched_operations: bool or None
     :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
      queue holds a message in memory temporarily before writing it to persistent storage.
-    :vartype enable_express: bool
+    :vartype enable_express: bool or None
     :ivar enable_partitioning: A value that indicates whether the queue is to be partitioned
      across multiple message brokers.
-    :vartype enable_partitioning: bool
+    :vartype enable_partitioning: bool or None
     :ivar lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
-    :vartype lock_duration: ~datetime.timedelta
+    :vartype lock_duration: ~datetime.timedelta or str or None
     :ivar max_delivery_count: The maximum delivery count. A message is automatically deadlettered
      after this number of deliveries. Default value is 10.
-    :vartype max_delivery_count: int
+    :vartype max_delivery_count: int or None
     :ivar max_size_in_megabytes: The maximum size of the queue in megabytes, which is the size of
      memory allocated for the queue.
-    :vartype max_size_in_megabytes: int
+    :vartype max_size_in_megabytes: int or None
     :ivar requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
-    :vartype requires_duplicate_detection: bool
+    :vartype requires_duplicate_detection: bool or None
     :ivar requires_session: A value that indicates whether the queue supports the concept of
      sessions.
-    :vartype requires_session: bool
+    :vartype requires_session: bool or None
     :ivar status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :vartype status: str or ~azure.servicebus.management.EntityStatus
+    :vartype status: str or ~azure.servicebus.management.EntityStatus or None
     :ivar forward_to: The name of the recipient entity to which all the messages sent to the queue
      are forwarded to.
-    :vartype forward_to: str
+    :vartype forward_to: str or None
     :ivar user_metadata: Custom metdata that user can associate with the description. Max length
      is 1024 chars.
-    :vartype user_metadata: str
+    :vartype user_metadata: str or None
     :ivar forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      dead-lettered messages of this subscription are forwarded to.
-    :vartype forward_dead_lettered_messages_to: str
+    :vartype forward_dead_lettered_messages_to: str or None
     :ivar max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
      can be accepted by the queue. This feature is only available when using a Premium namespace
      and Service Bus API version "2021-05" or higher.
-    :vartype max_message_size_in_kilobytes: int
+    :vartype max_message_size_in_kilobytes: int or None
     """
 
     def __init__(
         self,
         name: str,
         *,
-        authorization_rules: List[InternalAuthorizationRule],
-        auto_delete_on_idle: timedelta,
-        dead_lettering_on_message_expiration: bool,
-        default_message_time_to_live: timedelta,
-        duplicate_detection_history_time_window: timedelta,
-        availability_status: Union[str, "EntityAvailabilityStatus"],
-        enable_batched_operations: bool,
-        enable_express: bool,
-        enable_partitioning: bool,
-        lock_duration: timedelta,
-        max_delivery_count: int,
-        max_size_in_megabytes: int,
-        requires_duplicate_detection: bool,
-        requires_session: bool,
-        status: Union[str, "EntityStatus"],
-        forward_to: str,
-        user_metadata: str,
-        forward_dead_lettered_messages_to: str,
-        max_message_size_in_kilobytes: int,
+        authorization_rules: Optional[List["AuthorizationRule"]],
+        auto_delete_on_idle: Optional[Union[timedelta, str]],
+        dead_lettering_on_message_expiration: Optional[bool],
+        default_message_time_to_live: Optional[Union[timedelta, str]],
+        duplicate_detection_history_time_window: Optional[Union[timedelta, str]],
+        availability_status: Optional[Union[str, "EntityAvailabilityStatus"]],
+        enable_batched_operations: Optional[bool],
+        enable_express: Optional[bool],
+        enable_partitioning: Optional[bool],
+        lock_duration: Optional[Union[timedelta, str]],
+        max_delivery_count: Optional[int],
+        max_size_in_megabytes: Optional[int],
+        requires_duplicate_detection: Optional[bool],
+        requires_session: Optional[bool],
+        status: Optional[Union[str, "EntityStatus"]],
+        forward_to: Optional[str],
+        user_metadata: Optional[str],
+        forward_dead_lettered_messages_to: Optional[str],
+        max_message_size_in_kilobytes: Optional[int],
     ) -> None:
         self.name = name
-        self._internal_qd: Optional[InternalQueueDescription] = None
+        self._internal_qd: InternalQueueDescription
 
         self.authorization_rules = authorization_rules
         self.auto_delete_on_idle = auto_delete_on_idle
@@ -505,8 +506,8 @@ class QueueRuntimeProperties(object):
     """Service Bus queue runtime properties."""
 
     def __init__(self) -> None:
-        self._name: Optional[str] = None
-        self._internal_qr: Optional[InternalQueueDescription] = None
+        self._name: str
+        self._internal_qr: InternalQueueDescription
 
     @classmethod
     def _from_internal_entity(
@@ -528,86 +529,86 @@ class QueueRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at_utc(self) -> datetime:
+    def accessed_at_utc(self) -> Optional[datetime]:
         """Last time a message was sent, or the last time there was a receive request to this queue.
 
-        :rtype:  ~datetime.datetime
+        :rtype:  ~datetime.datetime or None
         """
         return self._internal_qr.accessed_at
 
     @property
-    def created_at_utc(self) -> datetime:
+    def created_at_utc(self) -> Optional[datetime]:
         """The exact time the queue was created.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._internal_qr.created_at
 
     @property
-    def updated_at_utc(self) -> datetime:
+    def updated_at_utc(self) -> Optional[datetime]:
         """The exact the entity was updated.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._internal_qr.updated_at
 
     @property
-    def size_in_bytes(self) -> int:
+    def size_in_bytes(self) -> Optional[int]:
         """The size of the queue, in bytes.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._internal_qr.size_in_bytes
 
     @property
-    def total_message_count(self) -> int:
+    def total_message_count(self) -> Optional[int]:
         """Total number of messages.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._internal_qr.message_count
 
     @property
-    def active_message_count(self) -> int:
+    def active_message_count(self) -> Optional[int]:
         """Number of active messages in the queue, topic, or subscription.
 
-        :rtype: int
+        :rtype: int or None
         """
-        return self._internal_qr.message_count_details.active_message_count
+        return cast("MessageCountDetails", self._internal_qr.message_count_details).active_message_count
 
     @property
-    def dead_letter_message_count(self) -> int:
+    def dead_letter_message_count(self) -> Optional[int]:
         """Number of messages that are dead lettered.
 
-        :rtype: int
+        :rtype: int or None
         """
-        return self._internal_qr.message_count_details.dead_letter_message_count
+        return cast("MessageCountDetails", self._internal_qr.message_count_details).dead_letter_message_count
 
     @property
-    def scheduled_message_count(self) -> int:
+    def scheduled_message_count(self) -> Optional[int]:
         """Number of scheduled messages.
 
-        :rtype: int
+        :rtype: int or None
         """
-        return self._internal_qr.message_count_details.scheduled_message_count
+        return cast("MessageCountDetails", self._internal_qr.message_count_details).scheduled_message_count
 
     @property
-    def transfer_dead_letter_message_count(self) -> int:
+    def transfer_dead_letter_message_count(self) -> Optional[int]:
         """Number of messages transferred into dead letters.
 
-        :rtype: int
+        :rtype: int or None
         """
         return (
-            self._internal_qr.message_count_details.transfer_dead_letter_message_count
+            cast("MessageCountDetails", self._internal_qr.message_count_details).transfer_dead_letter_message_count
         )
 
     @property
-    def transfer_message_count(self) -> int:
+    def transfer_message_count(self) -> Optional[int]:
         """Number of messages transferred to another queue, topic, or subscription.
 
-        :rtype: int
+        :rtype: int or None
         """
-        return self._internal_qr.message_count_details.transfer_message_count
+        return cast("MessageCountDetails", self._internal_qr.message_count_details).transfer_message_count
 
 
 class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
@@ -621,75 +622,75 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     :ivar default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :type default_message_time_to_live: ~datetime.timedelta
+    :type default_message_time_to_live: ~datetime.timedelta or str or None
     :ivar max_size_in_megabytes: The maximum size of the topic in megabytes, which is the size of
      memory allocated for the topic.
-    :type max_size_in_megabytes: float 
+    :type max_size_in_megabytes: float or None
     :ivar requires_duplicate_detection: A value indicating if this topic requires duplicate
      detection.
-    :type requires_duplicate_detection: bool
+    :type requires_duplicate_detection: bool or None
     :ivar duplicate_detection_history_time_window: ISO 8601 timeSpan structure that defines the
      duration of the duplicate detection history. The default value is 10 minutes.
-    :type duplicate_detection_history_time_window: ~datetime.timedelta
+    :type duplicate_detection_history_time_window: ~datetime.timedelta or str or None
     :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
-    :type enable_batched_operations: bool
+    :type enable_batched_operations: bool or None
     :ivar size_in_bytes: The size of the topic, in bytes.
-    :type size_in_bytes: int
+    :type size_in_bytes: int or None
     :ivar filtering_messages_before_publishing: Filter messages before publishing.
-    :type filtering_messages_before_publishing: bool
+    :type filtering_messages_before_publishing: bool or None
     :ivar authorization_rules: Authorization rules for resource.
     :type authorization_rules:
-     list[~azure.servicebus.management.AuthorizationRule]
+     list[~azure.servicebus.management.AuthorizationRule] or None
     :ivar status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :type status: str or ~azure.servicebus.management.EntityStatus
+    :type status: str or ~azure.servicebus.management.EntityStatus or None
     :ivar support_ordering: A value that indicates whether the topic supports ordering.
-    :type support_ordering: bool
+    :type support_ordering: bool or None
     :ivar auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the topic is
      automatically deleted. The minimum duration is 5 minutes.
-    :type auto_delete_on_idle: ~datetime.timedelta
+    :type auto_delete_on_idle: ~datetime.timedelta or str or None
     :ivar enable_partitioning: A value that indicates whether the topic is to be partitioned
      across multiple message brokers.
-    :type enable_partitioning: bool
+    :type enable_partitioning: bool or None
     :ivar availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :type availability_status: str or
+    :type availability_status: str or None or
      ~azure.servicebus.management.EntityAvailabilityStatus
     :ivar enable_express: A value that indicates whether Express Entities are enabled. An express
      queue holds a message in memory temporarily before writing it to persistent storage.
-    :type enable_express: bool
+    :type enable_express: bool or None
     :ivar user_metadata: Metadata associated with the topic.
-    :type user_metadata: str
+    :type user_metadata: str or None
     :ivar max_message_size_in_kilobytes: The maximum size in kilobytes of message payload that
      can be accepted by the topic. This feature is only available when using a Premium namespace
      and Service Bus API version "2021-05" or higher.
-    :type max_message_size_in_kilobytes: int
+    :type max_message_size_in_kilobytes: int or None
     """
 
     def __init__(
         self,
         name: str,
         *,
-        default_message_time_to_live: timedelta,
-        max_size_in_megabytes: int,
-        requires_duplicate_detection: bool,
-        duplicate_detection_history_time_window: timedelta,
-        enable_batched_operations: bool,
-        size_in_bytes: int,
-        filtering_messages_before_publishing: bool,
-        authorization_rules: List[InternalAuthorizationRule],
-        status: Union[str, "EntityStatus"],
-        support_ordering: bool,
-        auto_delete_on_idle: timedelta,
-        enable_partitioning: bool,
-        availability_status: Union[str, "EntityAvailabilityStatus"],
-        enable_express: bool,
-        user_metadata: str,
-        max_message_size_in_kilobytes: int,
+        default_message_time_to_live: Optional[Union[timedelta, str]],
+        max_size_in_megabytes: Optional[int],
+        requires_duplicate_detection: Optional[bool],
+        duplicate_detection_history_time_window: Optional[Union[timedelta, str]],
+        enable_batched_operations: Optional[bool],
+        size_in_bytes: Optional[int],
+        filtering_messages_before_publishing: Optional[bool],
+        authorization_rules: Optional[List["AuthorizationRule"]],
+        status: Optional[Union[str, "EntityStatus"]],
+        support_ordering: Optional[bool],
+        auto_delete_on_idle: Optional[Union[timedelta, str]],
+        enable_partitioning: Optional[bool],
+        availability_status: Optional[Union[str, "EntityAvailabilityStatus"]],
+        enable_express: Optional[bool],
+        user_metadata: Optional[str],
+        max_message_size_in_kilobytes: Optional[int],
     ) -> None:
         self.name = name
-        self._internal_td: Optional[InternalTopicDescription] = None
+        self._internal_td: InternalTopicDescription
 
         self.default_message_time_to_live = default_message_time_to_live
         self.max_size_in_megabytes = max_size_in_megabytes
@@ -806,8 +807,8 @@ class TopicRuntimeProperties(object):
     """Runtime properties of a Service Bus topic resource."""
 
     def __init__(self) -> None:
-        self._name: Optional[str] = None
-        self._internal_td: Optional[InternalTopicDescription] = None
+        self._name: str
+        self._internal_td: InternalTopicDescription
 
     @classmethod
     def _from_internal_entity(
@@ -829,52 +830,52 @@ class TopicRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at_utc(self) -> datetime:
+    def accessed_at_utc(self) -> Optional[datetime]:
         """Last time a message was sent, or the last time there was a receive request
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._internal_td.accessed_at
 
     @property
-    def created_at_utc(self) -> datetime:
+    def created_at_utc(self) -> Optional[datetime]:
         """The exact time the queue was created.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._internal_td.created_at
 
     @property
-    def updated_at_utc(self) -> datetime:
+    def updated_at_utc(self) -> Optional[datetime]:
         """The exact time the entity was updated.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._internal_td.updated_at
 
     @property
-    def size_in_bytes(self) -> int:
+    def size_in_bytes(self) -> Optional[int]:
         """The current size of the entity in bytes.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._internal_td.size_in_bytes
 
     @property
-    def subscription_count(self) -> int:
+    def subscription_count(self) -> Optional[int]:
         """The number of subscriptions in the topic.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._internal_td.subscription_count
 
     @property
-    def scheduled_message_count(self) -> int:
+    def scheduled_message_count(self) -> Optional[int]:
         """Number of scheduled messages.
 
-        :rtype: int
+        :rtype: int or None
         """
-        return self._internal_td.message_count_details.scheduled_message_count
+        return cast("MessageCountDetails", self._internal_td.message_count_details).scheduled_message_count
 
 
 class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
@@ -889,44 +890,44 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
     :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
-    :paramtype lock_duration: ~datetime.timedelta
+    :paramtype lock_duration: ~datetime.timedelta or str or None
     :keyword requires_session: A value that indicates whether the queue supports the concept of
      sessions.
-    :paramtype requires_session: bool
+    :paramtype requires_session: bool or None
     :keyword default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :paramtype default_message_time_to_live: ~datetime.timedelta
+    :paramtype default_message_time_to_live: ~datetime.timedelta or str or None
     :keyword dead_lettering_on_message_expiration: A value that indicates whether this subscription
      has dead letter support when a message expires.
-    :paramtype dead_lettering_on_message_expiration: bool
+    :paramtype dead_lettering_on_message_expiration: bool or None
     :keyword dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
      subscription has dead letter support when a message expires.
-    :paramtype dead_lettering_on_filter_evaluation_exceptions: bool
+    :paramtype dead_lettering_on_filter_evaluation_exceptions: bool or None
     :keyword max_delivery_count: The maximum delivery count. A message is automatically deadlettered
      after this number of deliveries. Default value is 10.
-    :paramtype max_delivery_count: int
+    :paramtype max_delivery_count: int or None
     :keyword enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
-    :paramtype enable_batched_operations: bool
+    :paramtype enable_batched_operations: bool or None
     :keyword status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :paramtype status: str or ~azure.servicebus.management.EntityStatus
+    :paramtype status: str or ~azure.servicebus.management.EntityStatus or None
     :keyword forward_to: The name of the recipient entity to which all the messages sent to the
      subscription are forwarded to.
-    :paramtype forward_to: str
+    :paramtype forward_to: str or None
     :keyword user_metadata: Metadata associated with the subscription. Maximum number of characters
      is 1024.
-    :paramtype user_metadata: str
+    :paramtype user_metadata: str or None
     :keyword forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      messages sent to the subscription are forwarded to.
-    :paramtype forward_dead_lettered_messages_to: str
+    :paramtype forward_dead_lettered_messages_to: str or None
     :keyword auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
      automatically deleted. The minimum duration is 5 minutes.
-    :paramtype auto_delete_on_idle: ~datetime.timedelta
+    :paramtype auto_delete_on_idle: ~datetime.timedelta or str or None
     :keyword availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :paramtype availability_status: str or
+    :paramtype availability_status: str or None or
      ~azure.servicebus.management.EntityAvailabilityStatus
 
     :ivar name: Name of the subscription.
@@ -934,66 +935,67 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
     :ivar lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
-    :vartype lock_duration: ~datetime.timedelta
+    :vartype lock_duration: ~datetime.timedelta or str or None
     :ivar requires_session: A value that indicates whether the queue supports the concept of
      sessions.
-    :vartype requires_session: bool
+    :vartype requires_session: bool or None
     :ivar default_message_time_to_live: ISO 8601 default message timespan to live value. This is
      the duration after which the message expires, starting from when the message is sent to Service
      Bus. This is the default value used when TimeToLive is not set on a message itself.
-    :vartype default_message_time_to_live: ~datetime.timedelta
+    :vartype default_message_time_to_live: ~datetime.timedelta or str or None
     :ivar dead_lettering_on_message_expiration: A value that indicates whether this subscription
      has dead letter support when a message expires.
-    :vartype dead_lettering_on_message_expiration: bool
+    :vartype dead_lettering_on_message_expiration: bool or None
     :ivar dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
      subscription has dead letter support when a message expires.
-    :vartype dead_lettering_on_filter_evaluation_exceptions: bool
+    :vartype dead_lettering_on_filter_evaluation_exceptions: bool or None
     :ivar max_delivery_count: The maximum delivery count. A message is automatically deadlettered
      after this number of deliveries. Default value is 10.
-    :vartype max_delivery_count: int
+    :vartype max_delivery_count: int or None
     :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
-    :vartype enable_batched_operations: bool
+    :vartype enable_batched_operations: bool or None
     :ivar status: Status of a Service Bus resource. Possible values include: "Active", "Creating",
      "Deleting", "Disabled", "ReceiveDisabled", "Renaming", "Restoring", "SendDisabled", "Unknown".
-    :vartype status: str or ~azure.servicebus.management.EntityStatus
+    :vartype status: str or ~azure.servicebus.management.EntityStatus or None
     :ivar forward_to: The name of the recipient entity to which all the messages sent to the
      subscription are forwarded to.
-    :vartype forward_to: str
+    :vartype forward_to: str or None
     :ivar user_metadata: Metadata associated with the subscription. Maximum number of characters
      is 1024.
-    :vartype user_metadata: str
+    :vartype user_metadata: str or None
     :ivar forward_dead_lettered_messages_to: The name of the recipient entity to which all the
      messages sent to the subscription are forwarded to.
-    :vartype forward_dead_lettered_messages_to: str
+    :vartype forward_dead_lettered_messages_to: str or None
     :ivar auto_delete_on_idle: ISO 8601 timeSpan idle interval after which the subscription is
      automatically deleted. The minimum duration is 5 minutes.
-    :vartype auto_delete_on_idle: ~datetime.timedelta
+    :vartype auto_delete_on_idle: ~datetime.timedelta or str or None
     :ivar availability_status: Availability status of the entity. Possible values include:
      "Available", "Limited", "Renaming", "Restoring", "Unknown".
-    :vartype availability_status: str or
+    :vartype availability_status: str or None or
      ~azure.servicebus.management.EntityAvailabilityStatus
     """
 
     def __init__(
         self,
         name: str,
-        lock_duration: timedelta,
-        requires_session: bool,
-        default_message_time_to_live: timedelta,
-        dead_lettering_on_message_expiration: bool,
-        dead_lettering_on_filter_evaluation_exceptions: bool,
-        max_delivery_count: int,
-        enable_batched_operations: bool,
-        status: Union[str, "EntityStatus"],
-        forward_to: str,
-        user_metadata: str,
-        forward_dead_lettered_messages_to: str,
-        auto_delete_on_idle: timedelta,
-        availability_status: Union[str, "EntityAvailabilityStatus"],
+        *,
+        lock_duration: Optional[Union[timedelta, str]],
+        requires_session: Optional[bool],
+        default_message_time_to_live: Optional[Union[timedelta, str]],
+        dead_lettering_on_message_expiration: Optional[bool],
+        dead_lettering_on_filter_evaluation_exceptions: Optional[bool],
+        max_delivery_count: Optional[int],
+        enable_batched_operations: Optional[bool],
+        status: Optional[Union[str, "EntityStatus"]],
+        forward_to: Optional[str],
+        user_metadata: Optional[str],
+        forward_dead_lettered_messages_to: Optional[str],
+        auto_delete_on_idle: Optional[Union[timedelta, str]],
+        availability_status: Optional[Union[str, "EntityAvailabilityStatus"]],
     ) -> None:
         self.name = name
-        self._internal_sd: Optional[InternalSubscriptionDescription] = None
+        self._internal_sd: InternalSubscriptionDescription
 
         self.lock_duration = lock_duration
         self.requires_session = requires_session
@@ -1102,8 +1104,8 @@ class SubscriptionRuntimeProperties(object):
     """Runtime properties of a Service Bus topic subscription resource."""
 
     def __init__(self) -> None:
-        self._internal_sd: Optional[InternalSubscriptionDescription] = None
-        self._name: Optional[str] = None
+        self._internal_sd: InternalSubscriptionDescription
+        self._name: str
 
     @classmethod
     def _from_internal_entity(
@@ -1126,70 +1128,70 @@ class SubscriptionRuntimeProperties(object):
         return self._name
 
     @property
-    def accessed_at_utc(self) -> datetime:
+    def accessed_at_utc(self) -> Optional[datetime]:
         """Last time a message was sent, or the last time there was a receive request
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._internal_sd.accessed_at
 
     @property
-    def created_at_utc(self) -> datetime:
+    def created_at_utc(self) -> Optional[datetime]:
         """The exact time the subscription was created.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._internal_sd.created_at
 
     @property
-    def updated_at_utc(self) -> datetime:
+    def updated_at_utc(self) -> Optional[datetime]:
         """The exact time the entity is updated.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._internal_sd.updated_at
 
     @property
-    def total_message_count(self) -> int:
+    def total_message_count(self) -> Optional[int]:
         """The number of messages in the subscription.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._internal_sd.message_count
 
     @property
-    def active_message_count(self) -> int:
+    def active_message_count(self) -> Optional[int]:
         """Number of active messages in the subscription.
 
-        :rtype: int
+        :rtype: int or None
         """
-        return self._internal_sd.message_count_details.active_message_count
+        return cast("MessageCountDetails", self._internal_sd.message_count_details).active_message_count
 
     @property
-    def dead_letter_message_count(self) -> int:
+    def dead_letter_message_count(self) -> Optional[int]:
         """Number of messages that are dead lettered.
 
-        :rtype: int
+        :rtype: int or None
         """
-        return self._internal_sd.message_count_details.dead_letter_message_count
+        return cast("MessageCountDetails", self._internal_sd.message_count_details).dead_letter_message_count
 
     @property
-    def transfer_dead_letter_message_count(self) -> int:
+    def transfer_dead_letter_message_count(self) -> Optional[int]:
         """Number of messages transferred into dead letters.
 
-        :rtype: int
+        :rtype: int or None
         """
         return (
-            self._internal_sd.message_count_details.transfer_dead_letter_message_count
+            cast("MessageCountDetails", self._internal_sd.message_count_details).transfer_dead_letter_message_count
         )
 
     @property
-    def transfer_message_count(self) -> int:
+    def transfer_message_count(self) -> Optional[int]:
         """Number of messages transferred to another queue, topic, or subscription.
 
-        :rtype: int
+        :rtype: int or None
         """
-        return self._internal_sd.message_count_details.transfer_message_count
+        return cast("MessageCountDetails", self._internal_sd.message_count_details).transfer_message_count
 
 
 class RuleProperties(DictMixin):
@@ -1203,34 +1205,34 @@ class RuleProperties(DictMixin):
     :type name: str
     :keyword filter: The filter of the rule.
     :paramtype filter: ~azure.servicebus.management.CorrelationRuleFilter or
-     ~azure.servicebus.management.SqlRuleFilter
+     ~azure.servicebus.management.SqlRuleFilter or None
     :keyword action: The action of the rule.
     :paramtype action: ~azure.servicebus.management.SqlRuleAction or None
     :keyword created_at_utc: The exact time the rule was created.
-    :paramtype created_at_utc: ~datetime.datetime
+    :paramtype created_at_utc: ~datetime.datetime or None
 
     :ivar name: Name of the rule.
     :vartype name: str
     :ivar filter: The filter of the rule.
     :vartype filter: ~azure.servicebus.management.CorrelationRuleFilter or
-     ~azure.servicebus.management.SqlRuleFilter
+     ~azure.servicebus.management.SqlRuleFilter or None
     :ivar action: The action of the rule.
     :vartype action: ~azure.servicebus.management.SqlRuleAction or None
     :ivar created_at_utc: The exact time the rule was created.
-    :vartype created_at_utc: ~datetime.datetime
+    :vartype created_at_utc: ~datetime.datetime or None
     """
 
     def __init__(
         self,
         name: str,
         *,
-        filter: Union["CorrelationRuleFilter", "SqlRuleFilter"],
+        filter: Optional[Union["CorrelationRuleFilter", "SqlRuleFilter"]],
         action: Optional["SqlRuleAction"],
-        created_at_utc: datetime,
+        created_at_utc: Optional[datetime],
     ) -> None:
 
         self.name = name
-        self._internal_rule: Optional[InternalRuleDescription] = None
+        self._internal_rule: InternalRuleDescription
 
         self.filter = filter
         self.action = action
@@ -1560,7 +1562,7 @@ class AuthorizationRule(object):
         type: Optional[str] = None,
         claim_type: Optional[str] = None,
         claim_value: Optional[str] = None,
-        rights: Optional[List["AccessRights"]] = None,
+        rights: Optional[List[Union[str, "AccessRights"]]] = None,
         created_at_utc: Optional[datetime] = None,
         modified_at_utc: Optional[datetime] = None,
         key_name: Optional[str] = None,
@@ -1578,7 +1580,7 @@ class AuthorizationRule(object):
         self.secondary_key = secondary_key
 
     @classmethod
-    def _from_internal_entity(cls, internal_authorization_rule):
+    def _from_internal_entity(cls, internal_authorization_rule: InternalAuthorizationRule) -> "AuthorizationRule":
         authorization_rule = cls()
         authorization_rule.claim_type = internal_authorization_rule.claim_type
         authorization_rule.claim_value = internal_authorization_rule.claim_value

@@ -7,7 +7,8 @@ import functools
 import time
 import datetime
 from datetime import timezone
-from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type
+from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type, Mapping
+from typing_extensions import Buffer
 
 from .._pyamqp import (
     utils,
@@ -357,6 +358,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         if not message.application_properties:
             message = message._replace(application_properties={})
+        # type: ignore[misc]
+        # TODO: fix error when typing pyamqp: `Property "application_properties" defined in "Message" is read-only `
+        # may be able to add @property.setter to app props in pyamqp.Message to fix this
         message.application_properties = cast(Dict[Union[str, bytes], Any], message.application_properties)
         message.application_properties.setdefault(key, value)
         return message
@@ -810,14 +814,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
         """
         parsed = []
-        # casting value to List[ServiceBusReceivedMessage] since we know type for peek/deferred ops
-        for m in cast(List["ServiceBusReceivedMessage"], message.value)[b"messages"]:
-            wrapped = decode_payload(memoryview(m[b"message"]))
-            parsed.append(
-                message_type(
-                    wrapped, **kwargs
+        if message.value:
+            for m in message.value[b"messages"]:
+                wrapped = decode_payload(memoryview(m[b"message"]))
+                parsed.append(
+                    message_type(
+                        wrapped, **kwargs
+                    )
                 )
-            )
         return parsed
 
     @staticmethod
@@ -870,7 +874,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def create_mgmt_msg(
         message: "Message",
-        application_properties: Dict[str, Any],
+        application_properties: Optional[Dict[Union[str, bytes], Any]],
         config: "Configuration",
         reply_to: str,
         **kwargs: Any
@@ -883,7 +887,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param str reply_to: Reply to.
         :rtype: ~pyamqp.message.Message
         """
-        return Message( # type: ignore # TODO: fix mypy error
+        return Message(
             value=message,
             properties=Properties(
                 reply_to=reply_to,
