@@ -41,7 +41,7 @@ def move_output_and_compress(target_dir, package_dir, package_name):
     individual_zip_location = os.path.join(ci_doc_dir, package_name, package_name)
     shutil.make_archive(individual_zip_location, 'gztar', target_dir)
 
-def sphinx_build(target_dir, output_dir, fail_on_warning=False, args=None, package_name=None):
+def sphinx_build(target_dir, output_dir, fail_on_warning=False, package_name=None):
     command_array = [
                 "sphinx-build",
                 "-b",
@@ -68,7 +68,7 @@ def sphinx_build(target_dir, output_dir, fail_on_warning=False, args=None, packa
                 args.working_directory, e.returncode
             )
         )
-        if args.strict and in_ci():
+        if fail_on_warning and in_ci():
             create_vnext_issue(package_name, "sphinx")
         exit(1)
 
@@ -129,7 +129,6 @@ if __name__ == "__main__":
             target_dir,
             output_dir,
             fail_on_warning=fail_on_warning,
-            args=args,
             package_name=pkg_details.name
         )
 
