@@ -306,7 +306,6 @@ class DatastoreOperations(_ScopeDependentOperations):
                     pass
                 time.sleep(5)
         else:
-            # pylint:disable=unexpected-keyword-arg
             rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(
                 uri, mount_point, read_only, debug, credential=self._operation._config.credential
             )
