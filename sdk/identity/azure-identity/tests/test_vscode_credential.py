@@ -25,12 +25,14 @@ GET_REFRESH_TOKEN = VisualStudioCodeCredential.__module__ + ".get_refresh_token"
 GET_USER_SETTINGS = VisualStudioCodeCredential.__module__ + ".get_user_settings"
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def get_credential(user_settings=None, **kwargs):
     # defaulting to empty user settings ensures tests work when real user settings are available
     with mock.patch(GET_USER_SETTINGS, lambda: user_settings or {}):
         return VisualStudioCodeCredential(**kwargs)
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_tenant_id():
     def get_transport(expected_tenant):
         return validating_transport(
@@ -63,6 +65,7 @@ def test_tenant_id():
     assert transport.send.call_count == 1
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_tenant_id_validation():
     """The credential should raise ValueError when given an invalid tenant_id"""
 
@@ -76,6 +79,7 @@ def test_tenant_id_validation():
             get_credential(tenant_id=tenant)
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
 
@@ -84,6 +88,7 @@ def test_no_scopes():
         credential.get_token()
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_policies_configurable():
     policy = mock.Mock(spec_set=SansIOHTTPPolicy, on_request=mock.Mock())
 
@@ -100,6 +105,7 @@ def test_policies_configurable():
     assert policy.on_request.called
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_user_agent():
     transport = validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
@@ -110,6 +116,7 @@ def test_user_agent():
         credential.get_token("scope")
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
 def test_request_url(authority):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
@@ -141,6 +148,7 @@ def test_request_url(authority):
     assert token.token == access_token
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_credential_unavailable_error():
     credential = get_credential()
     with mock.patch(GET_REFRESH_TOKEN, return_value=None):
@@ -148,6 +156,7 @@ def test_credential_unavailable_error():
             credential.get_token("scope")
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_redeem_token():
     expected_token = AccessToken("token", 42)
     expected_value = "value"
@@ -166,6 +175,7 @@ def test_redeem_token():
         assert mock_client.obtain_token_by_refresh_token.call_count == 1
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_cache_refresh_token():
     expected_token = AccessToken("token", 42)
 
@@ -184,6 +194,7 @@ def test_cache_refresh_token():
         assert mock_get_credentials.call_count == 1
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_no_obtain_token_if_cached():
     expected_token = AccessToken("token", time.time() + 3600)
 
@@ -204,6 +215,7 @@ def test_no_obtain_token_if_cached():
     assert token.expires_on == expected_token.expires_on
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_native_adapter():
     """Exercise the native adapter for the current OS"""
 
@@ -221,6 +233,7 @@ def test_native_adapter():
     get_refresh_token("AzureCloud")
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_adfs():
     """The credential should raise CredentialUnavailableError when configured for ADFS"""
 
@@ -230,6 +243,7 @@ def test_adfs():
     assert "adfs" in ex.value.message.lower()
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_custom_cloud_no_authority():
     """The credential is unavailable when VS Code is configured to use a custom cloud with no known authority"""
 
@@ -239,6 +253,7 @@ def test_custom_cloud_no_authority():
         credential.get_token("scope")
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 @pytest.mark.parametrize(
     "cloud,authority",
     (
@@ -267,6 +282,7 @@ def test_reads_cloud_settings(cloud, authority):
     assert transport.send.call_count == 1
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_no_user_settings():
     """the credential should default to Public Cloud and "organizations" tenant when it can't read VS Code settings"""
 
@@ -282,6 +298,7 @@ def test_no_user_settings():
     assert transport.send.call_count == 1
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_multitenant_authentication():
     first_tenant = "first-tenant"
     first_token = "***"
@@ -317,6 +334,7 @@ def test_multitenant_authentication():
     assert token.token == first_token
 
 
+@pytest.mark.skip(reason="VS code credential is disabled")
 def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"

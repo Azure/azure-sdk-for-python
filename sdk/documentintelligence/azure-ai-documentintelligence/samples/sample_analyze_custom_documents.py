@@ -15,9 +15,6 @@ DESCRIPTION:
     was built on. To learn how to build your own models, look at
     sample_build_model.py.
 
-    The model can be built using the training files found here:
-    https://aka.ms/azsdk/formrecognizer/sampletrainingfiles
-
 USAGE:
     python sample_analyze_custom_documents.py
 
@@ -45,11 +42,11 @@ def analyze_custom_documents(custom_model_id):
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
     model_id = os.getenv("CUSTOM_BUILT_MODEL_ID", custom_model_id)
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
     # Make sure your document's type is included in the list of document types the custom model can analyze
     with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
+        poller = document_intelligence_client.begin_analyze_document(
             model_id=model_id, analyze_request=f, content_type="application/octet-stream"
         )
     result = poller.result()
@@ -112,7 +109,7 @@ if __name__ == "__main__":
             if not endpoint or not key:
                 raise ValueError("Please provide endpoint and API key to run the samples.")
 
-            document_model_admin_client = DocumentIntelligenceAdministrationClient(
+            document_intelligence_admin_client = DocumentIntelligenceAdministrationClient(
                 endpoint=endpoint, credential=AzureKeyCredential(key)
             )
             blob_container_sas_url = os.getenv("DOCUMENTINTELLIGENCE_STORAGE_CONTAINER_SAS_URL")
@@ -122,14 +119,10 @@ if __name__ == "__main__":
                     build_mode=DocumentBuildMode.TEMPLATE,
                     azure_blob_source=AzureBlobContentSource(container_url=blob_container_sas_url),
                 )
-                model = document_model_admin_client.begin_build_document_model(request).result()
+                model = document_intelligence_admin_client.begin_build_document_model(request).result()
                 model_id = model.model_id
         analyze_custom_documents(model_id)
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

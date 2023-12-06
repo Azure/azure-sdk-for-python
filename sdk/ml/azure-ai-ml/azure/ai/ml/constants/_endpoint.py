@@ -12,6 +12,7 @@ class EndpointInvokeFields(object):
     DEFAULT_HEADER = {"Content-Type": "application/json"}
     AUTHORIZATION = "Authorization"
     MODEL_DEPLOYMENT = "azureml-model-deployment"
+    REPEATABILITY_REQUEST_ID = "repeatability_request-id"
 
 
 class EndpointGetLogsFields(object):
