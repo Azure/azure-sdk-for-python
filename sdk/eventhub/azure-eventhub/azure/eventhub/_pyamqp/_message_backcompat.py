@@ -16,7 +16,6 @@ from typing import (
     Dict,
     Union,
     Protocol,
-    Tuple,
 )
 
 from ._encode import encode_payload
@@ -24,17 +23,18 @@ from .utils import get_message_encoded_size
 from .error import AMQPError
 from .message import Header, Properties
 
+
 if TYPE_CHECKING:
     from ..amqp._amqp_message import AmqpAnnotatedMessage, AmqpMessageProperties, AmqpMessageHeader
     from .message import Message
-    from .error import ErrorCondition, AMQPException
+    from .error import ErrorCondition
     class Settler(Protocol):
         def settle_messages(
             self,
-            delivery_id: Union[int, Tuple[int, int]],
+            delivery_id: Optional[int],
             outcome: str,
             *,
-            error: Optional[AMQPException] = None,
+            error: AMQPError = AMQPError,
             **kwargs: Any
         ) -> None:
             ...
@@ -81,8 +81,8 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         self.state: "MessageState" = MessageState.SendComplete
         self.idle_time: int = 0
         self.retries: int = 0
-        self._settler: Optional["Settler"] = kwargs.get("settler")
-        self._encoding: str = kwargs.get("encoding")
+        self._settler: "Settler" = kwargs.get("settler")
+        self._encoding = kwargs.get("encoding")
         self.delivery_no: Optional[int] = kwargs.get("delivery_no")
         self.delivery_tag: Optional[str] = kwargs.get("delivery_tag") or None
         self.on_send_complete: Optional[Callable] = None
@@ -138,7 +138,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         # to maintain the same behavior as uamqp, app prop values will not be decoded
         self.application_properties = cast(
             Dict[Union[str, bytes], Any],
-            self._message.application_properties.copy()
+            cast(Dict[Union[str, bytes], Any], self._message.application_properties).copy()
         )
         encode_payload(output, self._to_outgoing_amqp_message(self._message))
         return bytes(output)

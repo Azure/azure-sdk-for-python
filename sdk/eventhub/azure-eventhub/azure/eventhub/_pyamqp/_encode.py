@@ -24,6 +24,7 @@ from typing import (
     Sequence,
     Collection,
 )
+from typing_extensions import Buffer
 
 try:
     from typing import TypeAlias  # type: ignore
@@ -619,7 +620,7 @@ def encode_fields(value):
 
 
 def encode_annotations(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+    # type: (Optional[Dict[Union[str, bytes] , Any]]) -> Dict[str, Any]
     """The annotations type is a map where the keys are restricted to be of type symbol or of type ulong.
 
     All ulong keys, and all symbolic keys except those beginning with "x-" are reserved.
@@ -818,7 +819,7 @@ def encode_unknown(output, value, **kwargs):
         raise TypeError("Unable to encode unknown value: {}".format(value))
 
 
-_FIELD_DEFINITIONS = {
+_FIELD_DEFINITIONS: Dict[FieldDefinition, Callable] = {
     FieldDefinition.fields: encode_fields,
     FieldDefinition.annotations: encode_annotations,
     FieldDefinition.message_id: encode_message_id,
@@ -940,6 +941,7 @@ def encode_payload(output, payload):
         encode_value(output, describe_performative(payload[3]))
 
     if payload[4]:  # application properties
+        payload[4] = cast(Dict[str, Any], payload[4])
         encode_value(
             output,
             {
@@ -1033,6 +1035,7 @@ def encode_frame(frame, frame_type=_FRAME_TYPE):
     frame_data = bytearray()
     encode_value(frame_data, frame_description)
     if isinstance(frame, performatives.TransferFrame):
+        frame.payload = cast(Buffer, frame.payload)
         frame_data += frame.payload
 
     size = len(frame_data) + 8

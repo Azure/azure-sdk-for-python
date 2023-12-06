@@ -59,8 +59,7 @@ if TYPE_CHECKING:
         from uamqp import ReceiveClient as uamqp_AMQPRecieveClient
         from uamqp import SendClient as uamqp_AMQPSendClient
     except ImportError:
-        uamqp_Message = None
-        uamqp_JWTTokenAuth = None
+        pass
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
     from ._pyamqp import ReceiveClient as pyamqp_AMQPRecieveClient
@@ -421,6 +420,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 mgmt_client.open(connection=conn)
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
+
                 mgmt_msg.application_properties[
                     "security_token"
                 ] = self._amqp_transport.get_updated_token(mgmt_auth)

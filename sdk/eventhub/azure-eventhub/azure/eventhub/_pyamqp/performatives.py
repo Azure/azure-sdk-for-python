@@ -8,6 +8,7 @@
 from collections import namedtuple
 import sys
 from typing import NamedTuple, Optional
+from typing_extensions import Buffer
 
 from .types import AMQPTypes, FieldDefinition, ObjDefinition
 from .constants import FIELD
@@ -346,7 +347,7 @@ class TransferFrame(NamedTuple):
     resume: Optional[bool] = None
     aborted: Optional[bool] = None
     batchable: Optional[bool] = None
-    payload: Optional[bytes] = None
+    payload: Optional[Buffer] = None
 
 TransferFrame._code = 0x00000014  # type: ignore # pylint:disable=protected-access
 TransferFrame._definition = (  # type: ignore # pylint:disable=protected-access

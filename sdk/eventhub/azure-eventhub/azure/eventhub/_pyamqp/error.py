@@ -5,13 +5,12 @@
 #--------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
-from typing import Any, Union, Optional
+from typing import Any, Union, Optional, cast
 from enum import Enum
 from collections import namedtuple
 
 from .constants import SECURE_PORT, FIELD
 from .types import AMQPTypes, FieldDefinition
-
 
 class ErrorCondition(bytes, Enum):
     # Shared error conditions:
@@ -202,7 +201,7 @@ class AMQPException(Exception):
     """
     def __init__(self, condition: bytes, **kwargs: Any):
         self.condition: Union[bytes, Enum] = condition or ErrorCondition.UnknownError
-        self.description: Optional[str] = kwargs.get("description", None)
+        self.description: Optional[Union[str, bytes]] = kwargs.get("description", None)
         self.info: Optional[str] = kwargs.get("info", None)
         self.message: Optional[str] = kwargs.get("message", None)
         self.inner_error: Optional[str] = kwargs.get("error", None)

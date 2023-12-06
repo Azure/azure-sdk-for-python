@@ -6,13 +6,28 @@
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from typing import NamedTuple, Optional, Union, TYPE_CHECKING, Dict, Any, List
+from typing_extensions import TypedDict
 
 from .types import AMQPTypes, FieldDefinition
 from .constants import FIELD, MessageDeliveryState
 from .performatives import _CAN_ADD_DOCSTRING
 
+
 if TYPE_CHECKING:
     from uuid import UUID
+    class MessageDict(TypedDict):  # needed for use with spread operator
+        """
+        Typing for Message, used with the spread operator.
+        """
+        header: Optional["Header"]
+        delivery_annotations: Optional[Dict[Union[str, bytes], Any]]
+        message_annotations: Optional[Dict[Union[str, bytes], Any]]
+        properties: Optional["Properties"]
+        application_properties: Optional[Dict[Union[str, bytes], Any]]
+        data: Optional[bytes]
+        sequence: Optional[List[Any]]
+        value: Optional[Any]
+        footer: Optional[Dict[Any, Any]]
 
 
 class Header(NamedTuple):
@@ -167,10 +182,10 @@ if _CAN_ADD_DOCSTRING:
 # TODO: should be a class, namedtuple or dataclass, immutability vs performance, need to collect performance data
 class Message(NamedTuple):
     header: Optional[Header] = None
-    delivery_annotations: Dict[bytes, Any] = {}
-    message_annotations: Dict[bytes, Any] = {}
+    delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = None
+    message_annotations: Optional[Dict[Union[str, bytes], Any]] = None
     properties: Optional[Properties] = None
-    application_properties: Dict[str, Any] = {}
+    application_properties: Optional[Dict[Union[str, bytes], Any]] = None   # TODO: make not read-only
     data: Optional[bytes] = None
     sequence: Optional[List[Any]] = None
     value: Optional[Any] = None
