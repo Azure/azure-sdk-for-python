@@ -237,15 +237,20 @@ class DatastoreOperations(_ScopeDependentOperations):
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,
-        **kwargs,
+        **_kwargs,
     ) -> None:
         """Mount a datastore to a local path.
 
         :param path: The data store path to mount, in the form of `<name>` or `azureml://datastores/<name>`.
-        :type name: str
+        :type path: str
         :param mount_point: A local path used as mount point.
-        :type version: str
+        :type mount_point: str
         :param mode: Mount mode, either `ro_mount` (read-only) or `rw_mount` (read-write).
+        :type mode: str
+        :param debug: Whether to enable verbose logging.
+        :type debug: bool
+        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance.
+        :type persistent: bool
         :return: None
         """
 
@@ -291,7 +296,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                     if mount.mount_state == "Mounted":
                         print(f"Mounted [name: {mount_name}].")
                         break
-                    elif mount.mount_state == "MountRequested":
+                    if mount.mount_state == "MountRequested":
                         pass
                     elif mount.mount_state == "MountFailed":
                         raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")

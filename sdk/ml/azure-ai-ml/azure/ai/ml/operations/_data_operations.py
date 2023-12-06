@@ -748,15 +748,20 @@ class DataOperations(_ScopeDependentOperations):
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,
-        **kwargs,
+        **_kwargs,
     ) -> None:
         """Mount a data asset to a local path.
 
         :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
-        :type name: str
+        :type path: str
         :param mount_point: A local path used as mount point.
-        :type version: str
+        :type mount_point: str
         :param mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
+        :type mode: str
+        :param debug: Whether to enable verbose logging.
+        :type debug: bool
+        :param persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance.
+        :type persistent: bool
         :return: None
         """
 
@@ -801,7 +806,7 @@ class DataOperations(_ScopeDependentOperations):
                     if mount.mount_state == "Mounted":
                         print(f"Mounted [name: {mount_name}].")
                         break
-                    elif mount.mount_state == "MountRequested":
+                    if mount.mount_state == "MountRequested":
                         pass
                     elif mount.mount_state == "MountFailed":
                         raise Exception(f"Mount failed [name: {mount_name}]: {mount.error}")
