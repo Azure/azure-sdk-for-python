@@ -29,7 +29,6 @@ from azure.monitor.opentelemetry.exporter._utils import (
 )
 
 
-
 def throw(exc_type, *args, **kwargs):
     def func(*_args, **_kwargs):
         raise exc_type(*args, **kwargs)
