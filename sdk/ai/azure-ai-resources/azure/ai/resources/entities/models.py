@@ -8,12 +8,6 @@ from typing import Union
 
 
 @dataclass
-class LangchainModel:
-    chain: "langchain.chains.Chain"
-    conda_file: Union[str, os.PathLike]
-
-
-@dataclass
 class PromptflowModel:
     path: Union[str, os.PathLike]
     base_image: str = None
