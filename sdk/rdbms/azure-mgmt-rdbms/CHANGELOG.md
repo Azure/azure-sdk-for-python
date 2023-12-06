@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-  - Fix for last version
+  - Fix for ServerThreatProtectionSettingsOperations.begin_create_or_update
 
 ## 10.2.0b12 (2023-11-20)
 
