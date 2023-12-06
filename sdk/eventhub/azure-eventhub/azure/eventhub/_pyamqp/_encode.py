@@ -652,7 +652,7 @@ def encode_annotations(value):
 
 
 def encode_application_properties(value):
-    # type: (Optional[Dict[str, Any]]) -> Dict[str, Any]
+    # type: (Optional[Dict[Union[str, bytes], Any]]) -> Dict[str, Any]
     """The application-properties section is a part of the bare message used for structured application data.
 
     <type name="application-properties" class="restricted" source="map" provides="section">
@@ -941,7 +941,6 @@ def encode_payload(output, payload):
         encode_value(output, describe_performative(payload[3]))
 
     if payload[4]:  # application properties
-        payload[4] = cast(Dict[str, Any], payload[4])
         encode_value(
             output,
             {
