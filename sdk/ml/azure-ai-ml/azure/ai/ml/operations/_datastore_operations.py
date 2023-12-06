@@ -304,7 +304,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                         raise Exception(f"Got unexpected mount state [name: {mount_name}]: {mount.mount_state}")
                 except IndexError:
                     pass
-                time.sleep(5)  # TBD: timeout?
+                time.sleep(5)
         else:
             rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(
                 uri, mount_point, read_only, debug, credential=self._operation._config.credential
