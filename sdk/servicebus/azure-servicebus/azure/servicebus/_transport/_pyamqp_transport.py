@@ -8,7 +8,6 @@ import time
 import datetime
 from datetime import timezone
 from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type, Mapping
-from typing_extensions import Buffer
 
 from .._pyamqp import (
     utils,
@@ -358,10 +357,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         if not message.application_properties:
             message = message._replace(application_properties={})
-        # type: ignore[misc]
         # TODO: fix error when typing pyamqp: `Property "application_properties" defined in "Message" is read-only `
         # may be able to add @property.setter to app props in pyamqp.Message to fix this
-        message.application_properties = cast(Dict[Union[str, bytes], Any], message.application_properties)
+        message.application_properties = cast(  # type: ignore[misc]
+            Dict[Union[str, bytes], Any], message.application_properties
+        )
         message.application_properties.setdefault(key, value)
         return message
 
@@ -702,13 +702,13 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def build_received_message(
         receiver: "ServiceBusReceiver",
         message_type: Type["ServiceBusReceivedMessage"],
-        received: "Message"
+        received: Tuple["TransferFrame", "Message"],
     ) -> "ServiceBusReceivedMessage":
         """
         Build ServiceBusReceivedMessage.
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
         :param type message_type: The type of message to build.
-        :param ~pyamqp.message.Message received: The received message.
+        :param tuple[~pyamqp.performatives.TransferFrame, ~pyamqp.message.Message] received: The received message.
         :return: The built ServiceBusReceivedMessage.
         :rtype: ~azure.servicebus.ServiceBusReceivedMessage
         """
@@ -717,7 +717,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             message=received[1],
             receive_mode=receiver._receive_mode,
             receiver=receiver,
-            frame=received[0],  # TODO: type header not transferframe?
+            frame=received[0],
             amqp_transport=receiver._amqp_transport
         )
         receiver._last_received_sequenced_number = message.sequence_number

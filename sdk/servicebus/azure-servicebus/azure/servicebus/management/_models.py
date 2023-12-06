@@ -389,7 +389,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
                 for r in internal_qd.authorization_rules
             ]
             if internal_qd.authorization_rules
-            else (internal_qd.authorization_rules or []),
+            else None,
             auto_delete_on_idle=internal_qd.auto_delete_on_idle,
             dead_lettering_on_message_expiration=internal_qd.dead_lettering_on_message_expiration,
             default_message_time_to_live=internal_qd.default_message_time_to_live,
@@ -729,7 +729,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
                 for r in internal_td.authorization_rules
             ]
             if internal_td.authorization_rules
-            else internal_td.authorization_rules,
+            else None,
             status=internal_td.status,
             support_ordering=internal_td.support_ordering,
             auto_delete_on_idle=internal_td.auto_delete_on_idle,

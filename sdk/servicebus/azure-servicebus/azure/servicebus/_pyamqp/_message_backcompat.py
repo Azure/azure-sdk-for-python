@@ -34,7 +34,7 @@ if TYPE_CHECKING:
             delivery_id: Optional[int],
             outcome: str,
             *,
-            error: AMQPError = AMQPError,
+            error: Optional[AMQPError] = None,
             **kwargs: Any
         ) -> None:
             ...
@@ -81,7 +81,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         self.state: "MessageState" = MessageState.SendComplete
         self.idle_time: int = 0
         self.retries: int = 0
-        self._settler: "Settler" = kwargs.get("settler")
+        self._settler: "Settler" = kwargs.pop("settler")
         self._encoding = kwargs.get("encoding")
         self.delivery_no: Optional[int] = kwargs.get("delivery_no")
         self.delivery_tag: Optional[str] = kwargs.get("delivery_tag") or None
