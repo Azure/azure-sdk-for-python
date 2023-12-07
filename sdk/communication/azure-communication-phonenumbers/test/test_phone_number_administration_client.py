@@ -214,6 +214,32 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         release_poller.result()
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
+    @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
+    @recorded_by_proxy
+    def test_purchase_phone_numbers_dnr(self, **kwargs):
+        capabilities = PhoneNumberCapabilities(
+            calling=PhoneNumberCapabilityType.INBOUND,
+            sms=PhoneNumberCapabilityType.INBOUND_OUTBOUND
+        )
+        search_poller = self.phone_number_client.begin_search_available_phone_numbers(
+            "IT",
+            PhoneNumberType.TOLL_FREE,
+            PhoneNumberAssignmentType.APPLICATION,
+            capabilities,
+            polling=True
+        )
+        phone_number_to_buy = search_poller.result()
+        purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(
+            phone_number_to_buy.search_id, consent_to_not_resell_numbers=True, polling=True)
+        purchase_poller.result()
+        assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+
+        release_poller = self.phone_number_client.begin_release_phone_number(
+            phone_number_to_buy.phone_numbers[0])
+        release_poller.result()
+        assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+
+
     @recorded_by_proxy
     def test_get_purchased_phone_number_with_invalid_phone_number(self, **kwargs):
         if self.is_playback():

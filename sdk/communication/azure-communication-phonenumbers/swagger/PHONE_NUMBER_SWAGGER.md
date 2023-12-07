@@ -23,3 +23,17 @@ python: true
 title: Phone Numbers Client
 models-mode: msrest
 ```
+
+### Removed Property error from PhoneNumberSearchResult
+``` yaml
+directive:
+  where-model: PhoneNumberSearchResult
+  remove-property: error
+```
+
+### Removed Property errorCode from PhoneNumberSearchResult
+``` yaml
+directive:
+  where-model: PhoneNumberSearchResult
+  remove-property: errorCode
+```
