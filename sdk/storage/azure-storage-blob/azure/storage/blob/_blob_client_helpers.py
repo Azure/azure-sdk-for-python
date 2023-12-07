@@ -841,12 +841,14 @@ def _abort_copy_options(copy_id: Union[BlobProperties, str], **kwargs: Any) -> D
     """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
     if hasattr(copy_id, 'copy'):
-        copy_id = copy_id.copy.id
-        if isinstance(copy_id, BlobProperties):
-            try:
-                copy_id = copy_id['copy_id']
-            except TypeError:
-                pass
+        try:
+            copy_id = copy_id.copy.id
+        except AttributeError:
+            if isinstance(copy_id, BlobProperties):
+                try:
+                    copy_id = copy_id['copy_id']
+                except TypeError:
+                    pass
     options = {
         'copy_id': copy_id,
         'lease_access_conditions': access_conditions,
