@@ -500,41 +500,23 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
         try:
             for (key, label), etag in sentinel_keys.items():
-                try:
-                    updated_config = self._client.get_configuration_setting(
-                        key=key,
-                        label=label,
-                        etag=etag,
-                        match_condition=MatchConditions.IfModified,
-                        headers=headers,
-                        **kwargs
-                    )
-                    if updated_config is not None:
-                        sentinel_keys[(key, label)] = updated_config.etag
-                        if not isinstance(updated_config, FeatureFlagConfigurationSetting):
-                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                            need_refresh = True
-                        elif isinstance(updated_config, FeatureFlagConfigurationSetting):
-                            configuration_settings[self._process_key_name(updated_config)] = updated_config.value
-                            updated_feature_flags = True
-                except HttpResponseError as e:
-                    if e.status_code == 404:
-                        sentinel_keys[(key, label)] = None
-                        if etag is not None and not isinstance(updated_config, FeatureFlagConfigurationSetting):
-                            # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                            need_refresh = True
-                        elif etag is not None and isinstance(updated_config, FeatureFlagConfigurationSetting):
-                            configuration_settings[key] = None
-                            updated_feature_flags = True
-                        continue
-                    raise e
+                etag, update, is_feature_flag, configuration_settings = self._check_configuration_settings(
+                    key, label, etag, headers, configuration_settings, **kwargs
+                )
+                if update and not is_feature_flag:
+                    need_refresh = True
+                elif update and is_feature_flag:
+                    updated_feature_flags = True
+
+                sentinel_keys[(key, label)] = etag
             # Need to only update once, no matter how many sentinels are updated
             if need_refresh:
                 configuration_settings, sentinel_keys = self._load_configuration_settings(
                     headers=headers, sentinel_keys=sentinel_keys, **kwargs
                 )
             success = True
+            # Even if we don't need to refresh, we should reset the timer
+            timer.reset()
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
             if not self._on_refresh_error:
@@ -543,10 +525,30 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         finally:
             if not success:
                 timer.backoff()
-            else:
-                # Even if we don't need to refresh, we should reset the timer
-                timer.reset()
         return configuration_settings, sentinel_keys, need_refresh or updated_feature_flags
+
+    def _check_configuration_settings(self, key, label, etag, headers, configuration_settings, **kwargs) -> None:
+        is_feature_flag = not isinstance(updated_config, FeatureFlagConfigurationSetting)
+        try:
+            updated_config = self._client.get_configuration_setting(
+                key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
+            )
+            if updated_config is not None:
+                if not is_feature_flag:
+                    logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                elif is_feature_flag:
+                    configuration_settings[self._process_key_name(updated_config)] = updated_config.value
+                return updated_config.etag, True, is_feature_flag, configuration_settings
+        except HttpResponseError as e:
+            if e.status_code == 404:
+                if etag is not None and not is_feature_flag:
+                    # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                    logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                elif etag is not None and is_feature_flag:
+                    configuration_settings[key] = None
+                return None, True, is_feature_flag, configuration_settings
+            raise e
+        return etag, False, is_feature_flag, configuration_settings
 
     def _load_all(self, **kwargs):
         configuration_settings, sentinel_keys = self._load_configuration_settings(**kwargs)
