@@ -48,6 +48,7 @@ class PhoneNumberOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RELEASE_PHONE_NUMBER = "releasePhoneNumber"
     SEARCH = "search"
     UPDATE_PHONE_NUMBER_CAPABILITIES = "updatePhoneNumberCapabilities"
+    RESERVATION_PURCHASE = "reservationPurchase"
 
 
 class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -55,3 +56,14 @@ class PhoneNumberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     GEOGRAPHIC = "geographic"
     TOLL_FREE = "tollFree"
+
+
+class ReservationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ReservationStatus."""
+
+    ACTIVE = "active"
+    SUBMITTED = "submitted"
+    COMPLETED = "completed"
+    PARTIALLY_COMPLETED = "partiallyCompleted"
+    CANCELLED = "cancelled"
+    EXPIRED = "expired"
