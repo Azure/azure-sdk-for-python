@@ -65,19 +65,18 @@ class AnalyzeRequest(_serialization.Model):
 
     :ivar text: The text to break into tokens. Required.
     :vartype text: str
-    :ivar analyzer: The name of the analyzer to use to break the given text. If this parameter is
-     not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters are
-     mutually exclusive. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft",
-     "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft",
-     "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft",
-     "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft",
-     "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene",
-     "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft",
-     "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft",
-     "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft",
-     "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene",
-     "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene",
-     "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
+    :ivar analyzer: The name of the analyzer to use to break the given text. Known values are:
+     "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
+     "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
+     "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft", "cs.lucene",
+     "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft", "en.lucene",
+     "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene", "gl.lucene",
+     "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft", "he.microsoft",
+     "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft", "id.microsoft",
+     "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft", "ja.lucene",
+     "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene", "lt.microsoft",
+     "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene", "fa.lucene",
+     "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
      "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
      "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
      "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
@@ -85,17 +84,17 @@ class AnalyzeRequest(_serialization.Model):
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
     :vartype analyzer: str or ~search_service_client.models.LexicalAnalyzerName
-    :ivar tokenizer: The name of the tokenizer to use to break the given text. If this parameter is
-     not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters are
-     mutually exclusive. Known values are: "classic", "edgeNGram", "keyword_v2", "letter",
-     "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer", "nGram",
-     "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", and "whitespace".
+    :ivar tokenizer: The name of the tokenizer to use to break the given text. Known values are:
+     "classic", "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
+     "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
+     "standard_v2", "uax_url_email", and "whitespace".
     :vartype tokenizer: str or ~search_service_client.models.LexicalTokenizerName
+    :ivar normalizer: The name of the normalizer to use to normalize the given text. Known values
+     are: "asciifolding", "elision", "lowercase", "standard", and "uppercase".
+    :vartype normalizer: str or ~search_service_client.models.LexicalNormalizerName
     :ivar token_filters: An optional list of token filters to use when breaking the given text.
-     This parameter can only be set when using the tokenizer parameter.
     :vartype token_filters: list[str or ~search_service_client.models.TokenFilterName]
     :ivar char_filters: An optional list of character filters to use when breaking the given text.
-     This parameter can only be set when using the tokenizer parameter.
     :vartype char_filters: list[str or ~search_service_client.models.CharFilterName]
     """
 
@@ -107,6 +106,7 @@ class AnalyzeRequest(_serialization.Model):
         "text": {"key": "text", "type": "str"},
         "analyzer": {"key": "analyzer", "type": "str"},
         "tokenizer": {"key": "tokenizer", "type": "str"},
+        "normalizer": {"key": "normalizer", "type": "str"},
         "token_filters": {"key": "tokenFilters", "type": "[str]"},
         "char_filters": {"key": "charFilters", "type": "[str]"},
     }
@@ -117,6 +117,7 @@ class AnalyzeRequest(_serialization.Model):
         text: str,
         analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
         tokenizer: Optional[Union[str, "_models.LexicalTokenizerName"]] = None,
+        normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = None,
         token_filters: Optional[List[Union[str, "_models.TokenFilterName"]]] = None,
         char_filters: Optional[List[Union[str, "_models.CharFilterName"]]] = None,
         **kwargs: Any
@@ -124,43 +125,44 @@ class AnalyzeRequest(_serialization.Model):
         """
         :keyword text: The text to break into tokens. Required.
         :paramtype text: str
-        :keyword analyzer: The name of the analyzer to use to break the given text. If this parameter
-         is not specified, you must specify a tokenizer instead. The tokenizer and analyzer parameters
-         are mutually exclusive. Known values are: "ar.microsoft", "ar.lucene", "hy.lucene",
-         "bn.microsoft", "eu.lucene", "bg.microsoft", "bg.lucene", "ca.microsoft", "ca.lucene",
-         "zh-Hans.microsoft", "zh-Hans.lucene", "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft",
-         "cs.microsoft", "cs.lucene", "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene",
-         "en.microsoft", "en.lucene", "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft",
-         "fr.lucene", "gl.lucene", "de.microsoft", "de.lucene", "el.microsoft", "el.lucene",
-         "gu.microsoft", "he.microsoft", "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene",
-         "is.microsoft", "id.microsoft", "id.lucene", "ga.lucene", "it.microsoft", "it.lucene",
-         "ja.microsoft", "ja.lucene", "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft",
-         "lv.lucene", "lt.microsoft", "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft",
-         "no.lucene", "fa.lucene", "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene",
-         "pt-PT.microsoft", "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft",
-         "ru.lucene", "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft",
-         "es.microsoft", "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft",
-         "th.microsoft", "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft",
-         "vi.microsoft", "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern",
-         "simple", "stop", and "whitespace".
+        :keyword analyzer: The name of the analyzer to use to break the given text. Known values are:
+         "ar.microsoft", "ar.lucene", "hy.lucene", "bn.microsoft", "eu.lucene", "bg.microsoft",
+         "bg.lucene", "ca.microsoft", "ca.lucene", "zh-Hans.microsoft", "zh-Hans.lucene",
+         "zh-Hant.microsoft", "zh-Hant.lucene", "hr.microsoft", "cs.microsoft", "cs.lucene",
+         "da.microsoft", "da.lucene", "nl.microsoft", "nl.lucene", "en.microsoft", "en.lucene",
+         "et.microsoft", "fi.microsoft", "fi.lucene", "fr.microsoft", "fr.lucene", "gl.lucene",
+         "de.microsoft", "de.lucene", "el.microsoft", "el.lucene", "gu.microsoft", "he.microsoft",
+         "hi.microsoft", "hi.lucene", "hu.microsoft", "hu.lucene", "is.microsoft", "id.microsoft",
+         "id.lucene", "ga.lucene", "it.microsoft", "it.lucene", "ja.microsoft", "ja.lucene",
+         "kn.microsoft", "ko.microsoft", "ko.lucene", "lv.microsoft", "lv.lucene", "lt.microsoft",
+         "ml.microsoft", "ms.microsoft", "mr.microsoft", "nb.microsoft", "no.lucene", "fa.lucene",
+         "pl.microsoft", "pl.lucene", "pt-BR.microsoft", "pt-BR.lucene", "pt-PT.microsoft",
+         "pt-PT.lucene", "pa.microsoft", "ro.microsoft", "ro.lucene", "ru.microsoft", "ru.lucene",
+         "sr-cyrillic.microsoft", "sr-latin.microsoft", "sk.microsoft", "sl.microsoft", "es.microsoft",
+         "es.lucene", "sv.microsoft", "sv.lucene", "ta.microsoft", "te.microsoft", "th.microsoft",
+         "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
+         "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
+         "whitespace".
         :paramtype analyzer: str or ~search_service_client.models.LexicalAnalyzerName
-        :keyword tokenizer: The name of the tokenizer to use to break the given text. If this parameter
-         is not specified, you must specify an analyzer instead. The tokenizer and analyzer parameters
-         are mutually exclusive. Known values are: "classic", "edgeNGram", "keyword_v2", "letter",
-         "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer", "nGram",
-         "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", and "whitespace".
+        :keyword tokenizer: The name of the tokenizer to use to break the given text. Known values are:
+         "classic", "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
+         "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
+         "standard_v2", "uax_url_email", and "whitespace".
         :paramtype tokenizer: str or ~search_service_client.models.LexicalTokenizerName
+        :keyword normalizer: The name of the normalizer to use to normalize the given text. Known
+         values are: "asciifolding", "elision", "lowercase", "standard", and "uppercase".
+        :paramtype normalizer: str or ~search_service_client.models.LexicalNormalizerName
         :keyword token_filters: An optional list of token filters to use when breaking the given text.
-         This parameter can only be set when using the tokenizer parameter.
         :paramtype token_filters: list[str or ~search_service_client.models.TokenFilterName]
         :keyword char_filters: An optional list of character filters to use when breaking the given
-         text. This parameter can only be set when using the tokenizer parameter.
+         text.
         :paramtype char_filters: list[str or ~search_service_client.models.CharFilterName]
         """
         super().__init__(**kwargs)
         self.text = text
         self.analyzer = analyzer
         self.tokenizer = tokenizer
+        self.normalizer = normalizer
         self.token_filters = token_filters
         self.char_filters = char_filters
 
@@ -345,6 +347,478 @@ class AzureActiveDirectoryApplicationCredentials(_serialization.Model):
         super().__init__(**kwargs)
         self.application_id = application_id
         self.application_secret = application_secret
+
+
+class SearchIndexerSkill(_serialization.Model):
+    """Base type for skills.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureMachineLearningSkill, WebApiSkill, AzureOpenAIEmbeddingSkill, CustomEntityLookupSkill,
+    EntityRecognitionSkill, KeyPhraseExtractionSkill, LanguageDetectionSkill, MergeSkill,
+    PIIDetectionSkill, SentimentSkill, SplitSkill, TextTranslationSkill, EntityLinkingSkill,
+    EntityRecognitionSkillV3, SentimentSkillV3, ConditionalSkill, DocumentExtractionSkill,
+    ShaperSkill, ImageAnalysisSkill, OcrSkill
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :vartype odata_type: str
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :vartype context: str
+    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
+     an upstream skill. Required.
+    :vartype inputs: list[~search_service_client.models.InputFieldMappingEntry]
+    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
+     be consumed as an input by another skill. Required.
+    :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+        "inputs": {"required": True},
+        "outputs": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "context": {"key": "context", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
+        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
+    }
+
+    _subtype_map = {
+        "odata_type": {
+            "#Microsoft.Skills.Custom.AmlSkill": "AzureMachineLearningSkill",
+            "#Microsoft.Skills.Custom.WebApiSkill": "WebApiSkill",
+            "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill": "AzureOpenAIEmbeddingSkill",
+            "#Microsoft.Skills.Text.CustomEntityLookupSkill": "CustomEntityLookupSkill",
+            "#Microsoft.Skills.Text.EntityRecognitionSkill": "EntityRecognitionSkill",
+            "#Microsoft.Skills.Text.KeyPhraseExtractionSkill": "KeyPhraseExtractionSkill",
+            "#Microsoft.Skills.Text.LanguageDetectionSkill": "LanguageDetectionSkill",
+            "#Microsoft.Skills.Text.MergeSkill": "MergeSkill",
+            "#Microsoft.Skills.Text.PIIDetectionSkill": "PIIDetectionSkill",
+            "#Microsoft.Skills.Text.SentimentSkill": "SentimentSkill",
+            "#Microsoft.Skills.Text.SplitSkill": "SplitSkill",
+            "#Microsoft.Skills.Text.TranslationSkill": "TextTranslationSkill",
+            "#Microsoft.Skills.Text.V3.EntityLinkingSkill": "EntityLinkingSkill",
+            "#Microsoft.Skills.Text.V3.EntityRecognitionSkill": "EntityRecognitionSkillV3",
+            "#Microsoft.Skills.Text.V3.SentimentSkill": "SentimentSkillV3",
+            "#Microsoft.Skills.Util.ConditionalSkill": "ConditionalSkill",
+            "#Microsoft.Skills.Util.DocumentExtractionSkill": "DocumentExtractionSkill",
+            "#Microsoft.Skills.Util.ShaperSkill": "ShaperSkill",
+            "#Microsoft.Skills.Vision.ImageAnalysisSkill": "ImageAnalysisSkill",
+            "#Microsoft.Skills.Vision.OcrSkill": "OcrSkill",
+        }
+    }
+
+    def __init__(
+        self,
+        *,
+        inputs: List["_models.InputFieldMappingEntry"],
+        outputs: List["_models.OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
+         with no name defined will be given a default name of its 1-based index in the skills array,
+         prefixed with the character '#'.
+        :paramtype name: str
+        :keyword description: The description of the skill which describes the inputs, outputs, and
+         usage of the skill.
+        :paramtype description: str
+        :keyword context: Represents the level at which operations take place, such as the document
+         root or document content (for example, /document or /document/content). The default is
+         /document.
+        :paramtype context: str
+        :keyword inputs: Inputs of the skills could be a column in the source data set, or the output
+         of an upstream skill. Required.
+        :paramtype inputs: list[~search_service_client.models.InputFieldMappingEntry]
+        :keyword outputs: The output of a skill is either a field in a search index, or a value that
+         can be consumed as an input by another skill. Required.
+        :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
+        """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
+        self.name = name
+        self.description = description
+        self.context = context
+        self.inputs = inputs
+        self.outputs = outputs
+
+
+class AzureMachineLearningSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attributes
+    """The AML skill allows you to extend AI enrichment with a custom Azure Machine Learning (AML)
+    model. Once an AML model is trained and deployed, an AML skill integrates it into AI
+    enrichment.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :vartype odata_type: str
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :vartype context: str
+    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
+     an upstream skill. Required.
+    :vartype inputs: list[~search_service_client.models.InputFieldMappingEntry]
+    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
+     be consumed as an input by another skill. Required.
+    :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
+    :ivar scoring_uri: (Required for no authentication or key authentication) The scoring URI of
+     the AML service to which the JSON payload will be sent. Only the https URI scheme is allowed.
+    :vartype scoring_uri: str
+    :ivar authentication_key: (Required for key authentication) The key for the AML service.
+    :vartype authentication_key: str
+    :ivar resource_id: (Required for token authentication). The Azure Resource Manager resource ID
+     of the AML service. It should be in the format
+     subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long
+    :vartype resource_id: str
+    :ivar timeout: (Optional) When specified, indicates the timeout for the http client making the
+     API call.
+    :vartype timeout: ~datetime.timedelta
+    :ivar region: (Optional for token authentication). The region the AML service is deployed in.
+    :vartype region: str
+    :ivar degree_of_parallelism: (Optional) When specified, indicates the number of calls the
+     indexer will make in parallel to the endpoint you have provided. You can decrease this value if
+     your endpoint is failing under too high of a request load, or raise it if your endpoint is able
+     to accept more requests and you would like an increase in the performance of the indexer. If
+     not set, a default value of 5 is used. The degreeOfParallelism can be set to a maximum of 10
+     and a minimum of 1.
+    :vartype degree_of_parallelism: int
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+        "inputs": {"required": True},
+        "outputs": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "context": {"key": "context", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
+        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
+        "scoring_uri": {"key": "uri", "type": "str"},
+        "authentication_key": {"key": "key", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "timeout": {"key": "timeout", "type": "duration"},
+        "region": {"key": "region", "type": "str"},
+        "degree_of_parallelism": {"key": "degreeOfParallelism", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        inputs: List["_models.InputFieldMappingEntry"],
+        outputs: List["_models.OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        scoring_uri: Optional[str] = None,
+        authentication_key: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        timeout: Optional[datetime.timedelta] = None,
+        region: Optional[str] = None,
+        degree_of_parallelism: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
+         with no name defined will be given a default name of its 1-based index in the skills array,
+         prefixed with the character '#'.
+        :paramtype name: str
+        :keyword description: The description of the skill which describes the inputs, outputs, and
+         usage of the skill.
+        :paramtype description: str
+        :keyword context: Represents the level at which operations take place, such as the document
+         root or document content (for example, /document or /document/content). The default is
+         /document.
+        :paramtype context: str
+        :keyword inputs: Inputs of the skills could be a column in the source data set, or the output
+         of an upstream skill. Required.
+        :paramtype inputs: list[~search_service_client.models.InputFieldMappingEntry]
+        :keyword outputs: The output of a skill is either a field in a search index, or a value that
+         can be consumed as an input by another skill. Required.
+        :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
+        :keyword scoring_uri: (Required for no authentication or key authentication) The scoring URI of
+         the AML service to which the JSON payload will be sent. Only the https URI scheme is allowed.
+        :paramtype scoring_uri: str
+        :keyword authentication_key: (Required for key authentication) The key for the AML service.
+        :paramtype authentication_key: str
+        :keyword resource_id: (Required for token authentication). The Azure Resource Manager resource
+         ID of the AML service. It should be in the format
+         subscriptions/{guid}/resourceGroups/{resource-group-name}/Microsoft.MachineLearningServices/workspaces/{workspace-name}/services/{service_name}.  # pylint: disable=line-too-long
+        :paramtype resource_id: str
+        :keyword timeout: (Optional) When specified, indicates the timeout for the http client making
+         the API call.
+        :paramtype timeout: ~datetime.timedelta
+        :keyword region: (Optional for token authentication). The region the AML service is deployed
+         in.
+        :paramtype region: str
+        :keyword degree_of_parallelism: (Optional) When specified, indicates the number of calls the
+         indexer will make in parallel to the endpoint you have provided. You can decrease this value if
+         your endpoint is failing under too high of a request load, or raise it if your endpoint is able
+         to accept more requests and you would like an increase in the performance of the indexer. If
+         not set, a default value of 5 is used. The degreeOfParallelism can be set to a maximum of 10
+         and a minimum of 1.
+        :paramtype degree_of_parallelism: int
+        """
+        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        self.odata_type: str = "#Microsoft.Skills.Custom.AmlSkill"
+        self.scoring_uri = scoring_uri
+        self.authentication_key = authentication_key
+        self.resource_id = resource_id
+        self.timeout = timeout
+        self.region = region
+        self.degree_of_parallelism = degree_of_parallelism
+
+
+class AzureOpenAIEmbeddingSkill(SearchIndexerSkill):
+    """Allows you to generate a vector embedding for a given text input using the Azure OpenAI
+    resource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :vartype odata_type: str
+    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
+     with no name defined will be given a default name of its 1-based index in the skills array,
+     prefixed with the character '#'.
+    :vartype name: str
+    :ivar description: The description of the skill which describes the inputs, outputs, and usage
+     of the skill.
+    :vartype description: str
+    :ivar context: Represents the level at which operations take place, such as the document root
+     or document content (for example, /document or /document/content). The default is /document.
+    :vartype context: str
+    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
+     an upstream skill. Required.
+    :vartype inputs: list[~search_service_client.models.InputFieldMappingEntry]
+    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
+     be consumed as an input by another skill. Required.
+    :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
+    :ivar resource_uri: The resource URI for your Azure OpenAI resource.
+    :vartype resource_uri: str
+    :ivar deployment_id: ID of your Azure OpenAI model deployment on the designated resource.
+    :vartype deployment_id: str
+    :ivar api_key: API key for the designated Azure OpenAI resource.
+    :vartype api_key: str
+    :ivar auth_identity: The user-assigned managed identity used for outbound connections.
+    :vartype auth_identity: ~search_service_client.models.SearchIndexerDataIdentity
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+        "inputs": {"required": True},
+        "outputs": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "context": {"key": "context", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
+        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
+        "resource_uri": {"key": "resourceUri", "type": "str"},
+        "deployment_id": {"key": "deploymentId", "type": "str"},
+        "api_key": {"key": "apiKey", "type": "str"},
+        "auth_identity": {"key": "authIdentity", "type": "SearchIndexerDataIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        inputs: List["_models.InputFieldMappingEntry"],
+        outputs: List["_models.OutputFieldMappingEntry"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        context: Optional[str] = None,
+        resource_uri: Optional[str] = None,
+        deployment_id: Optional[str] = None,
+        api_key: Optional[str] = None,
+        auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
+         with no name defined will be given a default name of its 1-based index in the skills array,
+         prefixed with the character '#'.
+        :paramtype name: str
+        :keyword description: The description of the skill which describes the inputs, outputs, and
+         usage of the skill.
+        :paramtype description: str
+        :keyword context: Represents the level at which operations take place, such as the document
+         root or document content (for example, /document or /document/content). The default is
+         /document.
+        :paramtype context: str
+        :keyword inputs: Inputs of the skills could be a column in the source data set, or the output
+         of an upstream skill. Required.
+        :paramtype inputs: list[~search_service_client.models.InputFieldMappingEntry]
+        :keyword outputs: The output of a skill is either a field in a search index, or a value that
+         can be consumed as an input by another skill. Required.
+        :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
+        :keyword resource_uri: The resource URI for your Azure OpenAI resource.
+        :paramtype resource_uri: str
+        :keyword deployment_id: ID of your Azure OpenAI model deployment on the designated resource.
+        :paramtype deployment_id: str
+        :keyword api_key: API key for the designated Azure OpenAI resource.
+        :paramtype api_key: str
+        :keyword auth_identity: The user-assigned managed identity used for outbound connections.
+        :paramtype auth_identity: ~search_service_client.models.SearchIndexerDataIdentity
+        """
+        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        self.odata_type: str = "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"
+        self.resource_uri = resource_uri
+        self.deployment_id = deployment_id
+        self.api_key = api_key
+        self.auth_identity = auth_identity
+
+
+class AzureOpenAIParameters(_serialization.Model):
+    """Specifies the parameters for connecting to the Azure OpenAI resource.
+
+    :ivar resource_uri: The resource URI of the Azure OpenAI resource.
+    :vartype resource_uri: str
+    :ivar deployment_id: ID of the Azure OpenAI model deployment on the designated resource.
+    :vartype deployment_id: str
+    :ivar api_key: API key of the designated Azure OpenAI resource.
+    :vartype api_key: str
+    :ivar auth_identity: The user-assigned managed identity used for outbound connections.
+    :vartype auth_identity: ~search_service_client.models.SearchIndexerDataIdentity
+    """
+
+    _attribute_map = {
+        "resource_uri": {"key": "resourceUri", "type": "str"},
+        "deployment_id": {"key": "deploymentId", "type": "str"},
+        "api_key": {"key": "apiKey", "type": "str"},
+        "auth_identity": {"key": "authIdentity", "type": "SearchIndexerDataIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        resource_uri: Optional[str] = None,
+        deployment_id: Optional[str] = None,
+        api_key: Optional[str] = None,
+        auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_uri: The resource URI of the Azure OpenAI resource.
+        :paramtype resource_uri: str
+        :keyword deployment_id: ID of the Azure OpenAI model deployment on the designated resource.
+        :paramtype deployment_id: str
+        :keyword api_key: API key of the designated Azure OpenAI resource.
+        :paramtype api_key: str
+        :keyword auth_identity: The user-assigned managed identity used for outbound connections.
+        :paramtype auth_identity: ~search_service_client.models.SearchIndexerDataIdentity
+        """
+        super().__init__(**kwargs)
+        self.resource_uri = resource_uri
+        self.deployment_id = deployment_id
+        self.api_key = api_key
+        self.auth_identity = auth_identity
+
+
+class VectorSearchVectorizer(_serialization.Model):
+    """Specifies the vectorization method to be used during query time.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureOpenAIVectorizer, CustomVectorizer
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The name to associate with this particular vectorization method. Required.
+    :vartype name: str
+    :ivar kind: The name of the kind of vectorization method being configured for use with vector
+     search. Required. Known values are: "azureOpenAI" and "customWebApi".
+    :vartype kind: str or ~search_service_client.models.VectorSearchVectorizerKind
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+    }
+
+    _subtype_map = {"kind": {"azureOpenAI": "AzureOpenAIVectorizer", "customWebApi": "CustomVectorizer"}}
+
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The name to associate with this particular vectorization method. Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.kind: Optional[str] = None
+
+
+class AzureOpenAIVectorizer(VectorSearchVectorizer):
+    """Specifies the Azure OpenAI resource used to vectorize a query string.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The name to associate with this particular vectorization method. Required.
+    :vartype name: str
+    :ivar kind: The name of the kind of vectorization method being configured for use with vector
+     search. Required. Known values are: "azureOpenAI" and "customWebApi".
+    :vartype kind: str or ~search_service_client.models.VectorSearchVectorizerKind
+    :ivar azure_open_ai_parameters: Contains the parameters specific to Azure OpenAI embedding
+     vectorization.
+    :vartype azure_open_ai_parameters: ~search_service_client.models.AzureOpenAIParameters
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "azure_open_ai_parameters": {"key": "azureOpenAIParameters", "type": "AzureOpenAIParameters"},
+    }
+
+    def __init__(
+        self, *, name: str, azure_open_ai_parameters: Optional["_models.AzureOpenAIParameters"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name to associate with this particular vectorization method. Required.
+        :paramtype name: str
+        :keyword azure_open_ai_parameters: Contains the parameters specific to Azure OpenAI embedding
+         vectorization.
+        :paramtype azure_open_ai_parameters: ~search_service_client.models.AzureOpenAIParameters
+        """
+        super().__init__(name=name, **kwargs)
+        self.kind: str = "azureOpenAI"
+        self.azure_open_ai_parameters = azure_open_ai_parameters
 
 
 class Similarity(_serialization.Model):
@@ -699,7 +1173,7 @@ class CognitiveServicesAccount(_serialization.Model):
 
 
 class CognitiveServicesAccountKey(CognitiveServicesAccount):
-    """An Azure AI service resource provisioned with a key that is attached to a skillset.
+    """The multi-region account key of an Azure AI service resource that's attached to a skillset.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -805,113 +1279,6 @@ class CommonGramTokenFilter(TokenFilter):
         self.use_query_mode = use_query_mode
 
 
-class SearchIndexerSkill(_serialization.Model):
-    """Base type for skills.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    WebApiSkill, CustomEntityLookupSkill, EntityRecognitionSkill, KeyPhraseExtractionSkill,
-    LanguageDetectionSkill, MergeSkill, PIIDetectionSkill, SentimentSkill, SplitSkill,
-    TextTranslationSkill, EntityLinkingSkill, EntityRecognitionSkillV3, SentimentSkillV3,
-    ConditionalSkill, DocumentExtractionSkill, ShaperSkill, ImageAnalysisSkill, OcrSkill
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
-    :vartype odata_type: str
-    :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
-     with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
-    :vartype name: str
-    :ivar description: The description of the skill which describes the inputs, outputs, and usage
-     of the skill.
-    :vartype description: str
-    :ivar context: Represents the level at which operations take place, such as the document root
-     or document content (for example, /document or /document/content). The default is /document.
-    :vartype context: str
-    :ivar inputs: Inputs of the skills could be a column in the source data set, or the output of
-     an upstream skill. Required.
-    :vartype inputs: list[~search_service_client.models.InputFieldMappingEntry]
-    :ivar outputs: The output of a skill is either a field in a search index, or a value that can
-     be consumed as an input by another skill. Required.
-    :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    """
-
-    _validation = {
-        "odata_type": {"required": True},
-        "inputs": {"required": True},
-        "outputs": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "context": {"key": "context", "type": "str"},
-        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
-        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
-    }
-
-    _subtype_map = {
-        "odata_type": {
-            "#Microsoft.Skills.Custom.WebApiSkill": "WebApiSkill",
-            "#Microsoft.Skills.Text.CustomEntityLookupSkill": "CustomEntityLookupSkill",
-            "#Microsoft.Skills.Text.EntityRecognitionSkill": "EntityRecognitionSkill",
-            "#Microsoft.Skills.Text.KeyPhraseExtractionSkill": "KeyPhraseExtractionSkill",
-            "#Microsoft.Skills.Text.LanguageDetectionSkill": "LanguageDetectionSkill",
-            "#Microsoft.Skills.Text.MergeSkill": "MergeSkill",
-            "#Microsoft.Skills.Text.PIIDetectionSkill": "PIIDetectionSkill",
-            "#Microsoft.Skills.Text.SentimentSkill": "SentimentSkill",
-            "#Microsoft.Skills.Text.SplitSkill": "SplitSkill",
-            "#Microsoft.Skills.Text.TranslationSkill": "TextTranslationSkill",
-            "#Microsoft.Skills.Text.V3.EntityLinkingSkill": "EntityLinkingSkill",
-            "#Microsoft.Skills.Text.V3.EntityRecognitionSkill": "EntityRecognitionSkillV3",
-            "#Microsoft.Skills.Text.V3.SentimentSkill": "SentimentSkillV3",
-            "#Microsoft.Skills.Util.ConditionalSkill": "ConditionalSkill",
-            "#Microsoft.Skills.Util.DocumentExtractionSkill": "DocumentExtractionSkill",
-            "#Microsoft.Skills.Util.ShaperSkill": "ShaperSkill",
-            "#Microsoft.Skills.Vision.ImageAnalysisSkill": "ImageAnalysisSkill",
-            "#Microsoft.Skills.Vision.OcrSkill": "OcrSkill",
-        }
-    }
-
-    def __init__(
-        self,
-        *,
-        inputs: List["_models.InputFieldMappingEntry"],
-        outputs: List["_models.OutputFieldMappingEntry"],
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        context: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
-         with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
-        :paramtype name: str
-        :keyword description: The description of the skill which describes the inputs, outputs, and
-         usage of the skill.
-        :paramtype description: str
-        :keyword context: Represents the level at which operations take place, such as the document
-         root or document content (for example, /document or /document/content). The default is
-         /document.
-        :paramtype context: str
-        :keyword inputs: Inputs of the skills could be a column in the source data set, or the output
-         of an upstream skill. Required.
-        :paramtype inputs: list[~search_service_client.models.InputFieldMappingEntry]
-        :keyword outputs: The output of a skill is either a field in a search index, or a value that
-         can be consumed as an input by another skill. Required.
-        :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        """
-        super().__init__(**kwargs)
-        self.odata_type: Optional[str] = None
-        self.name = name
-        self.description = description
-        self.context = context
-        self.inputs = inputs
-        self.outputs = outputs
-
-
 class ConditionalSkill(SearchIndexerSkill):
     """A skill that enables scenarios that require a Boolean operation to determine the data to assign
     to an output.
@@ -922,7 +1289,7 @@ class ConditionalSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -966,7 +1333,7 @@ class ConditionalSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -993,8 +1360,8 @@ class CorsOptions(_serialization.Model):
 
     :ivar allowed_origins: The list of origins from which JavaScript code will be granted access to
      your index. Can contain a list of hosts of the form
-     {protocol}://{fully-qualified-domain-name}[:{port#}], or a single ``*`` to allow all origins
-     (not recommended). Required.
+     {protocol}://{fully-qualified-domain-name}[:{port#}], or a single '*' to allow all origins (not
+     recommended). Required.
     :vartype allowed_origins: list[str]
     :ivar max_age_in_seconds: The duration for which browsers should cache CORS preflight
      responses. Defaults to 5 minutes.
@@ -1014,8 +1381,8 @@ class CorsOptions(_serialization.Model):
         """
         :keyword allowed_origins: The list of origins from which JavaScript code will be granted access
          to your index. Can contain a list of hosts of the form
-         {protocol}://{fully-qualified-domain-name}[:{port#}], or a single ``*`` to allow all origins
-         (not recommended). Required.
+         {protocol}://{fully-qualified-domain-name}[:{port#}], or a single '*' to allow all origins (not
+         recommended). Required.
         :paramtype allowed_origins: list[str]
         :keyword max_age_in_seconds: The duration for which browsers should cache CORS preflight
          responses. Defaults to 5 minutes.
@@ -1365,7 +1732,7 @@ class CustomEntityLookupSkill(SearchIndexerSkill):  # pylint: disable=too-many-i
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -1441,7 +1808,7 @@ class CustomEntityLookupSkill(SearchIndexerSkill):  # pylint: disable=too-many-i
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -1487,6 +1854,230 @@ class CustomEntityLookupSkill(SearchIndexerSkill):  # pylint: disable=too-many-i
         self.global_default_fuzzy_edit_distance = global_default_fuzzy_edit_distance
 
 
+class LexicalNormalizer(_serialization.Model):
+    """Base type for normalizers.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CustomNormalizer
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: A URI fragment specifying the type of normalizer. Required.
+    :vartype odata_type: str
+    :ivar name: The name of the normalizer. It must only contain letters, digits, spaces, dashes or
+     underscores, can only start and end with alphanumeric characters, and is limited to 128
+     characters. It cannot end in '.microsoft' nor '.lucene', nor be named 'asciifolding',
+     'standard', 'lowercase', 'uppercase', or 'elision'. Required.
+    :vartype name: str
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    _subtype_map = {"odata_type": {"#Microsoft.Azure.Search.CustomNormalizer": "CustomNormalizer"}}
+
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the normalizer. It must only contain letters, digits, spaces, dashes
+         or underscores, can only start and end with alphanumeric characters, and is limited to 128
+         characters. It cannot end in '.microsoft' nor '.lucene', nor be named 'asciifolding',
+         'standard', 'lowercase', 'uppercase', or 'elision'. Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
+        self.name = name
+
+
+class CustomNormalizer(LexicalNormalizer):
+    """Allows you to configure normalization for filterable, sortable, and facetable fields, which by
+    default operate with strict matching. This is a user-defined configuration consisting of at
+    least one or more filters, which modify the token that is stored.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: A URI fragment specifying the type of normalizer. Required.
+    :vartype odata_type: str
+    :ivar name: The name of the normalizer. It must only contain letters, digits, spaces, dashes or
+     underscores, can only start and end with alphanumeric characters, and is limited to 128
+     characters. It cannot end in '.microsoft' nor '.lucene', nor be named 'asciifolding',
+     'standard', 'lowercase', 'uppercase', or 'elision'. Required.
+    :vartype name: str
+    :ivar token_filters: A list of token filters used to filter out or modify the input token. For
+     example, you can specify a lowercase filter that converts all characters to lowercase. The
+     filters are run in the order in which they are listed.
+    :vartype token_filters: list[str or ~search_service_client.models.TokenFilterName]
+    :ivar char_filters: A list of character filters used to prepare input text before it is
+     processed. For instance, they can replace certain characters or symbols. The filters are run in
+     the order in which they are listed.
+    :vartype char_filters: list[str or ~search_service_client.models.CharFilterName]
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "token_filters": {"key": "tokenFilters", "type": "[str]"},
+        "char_filters": {"key": "charFilters", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        token_filters: Optional[List[Union[str, "_models.TokenFilterName"]]] = None,
+        char_filters: Optional[List[Union[str, "_models.CharFilterName"]]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the normalizer. It must only contain letters, digits, spaces, dashes
+         or underscores, can only start and end with alphanumeric characters, and is limited to 128
+         characters. It cannot end in '.microsoft' nor '.lucene', nor be named 'asciifolding',
+         'standard', 'lowercase', 'uppercase', or 'elision'. Required.
+        :paramtype name: str
+        :keyword token_filters: A list of token filters used to filter out or modify the input token.
+         For example, you can specify a lowercase filter that converts all characters to lowercase. The
+         filters are run in the order in which they are listed.
+        :paramtype token_filters: list[str or ~search_service_client.models.TokenFilterName]
+        :keyword char_filters: A list of character filters used to prepare input text before it is
+         processed. For instance, they can replace certain characters or symbols. The filters are run in
+         the order in which they are listed.
+        :paramtype char_filters: list[str or ~search_service_client.models.CharFilterName]
+        """
+        super().__init__(name=name, **kwargs)
+        self.odata_type: str = "#Microsoft.Azure.Search.CustomNormalizer"
+        self.token_filters = token_filters
+        self.char_filters = char_filters
+
+
+class CustomVectorizer(VectorSearchVectorizer):
+    """Specifies a user-defined vectorizer for generating the vector embedding of a query string.
+    Integration of an external vectorizer is achieved using the custom Web API interface of a
+    skillset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The name to associate with this particular vectorization method. Required.
+    :vartype name: str
+    :ivar kind: The name of the kind of vectorization method being configured for use with vector
+     search. Required. Known values are: "azureOpenAI" and "customWebApi".
+    :vartype kind: str or ~search_service_client.models.VectorSearchVectorizerKind
+    :ivar custom_web_api_parameters: Specifies the properties of the user-defined vectorizer.
+    :vartype custom_web_api_parameters: ~search_service_client.models.CustomWebApiParameters
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "kind": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "custom_web_api_parameters": {"key": "customWebApiParameters", "type": "CustomWebApiParameters"},
+    }
+
+    def __init__(
+        self, *, name: str, custom_web_api_parameters: Optional["_models.CustomWebApiParameters"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name to associate with this particular vectorization method. Required.
+        :paramtype name: str
+        :keyword custom_web_api_parameters: Specifies the properties of the user-defined vectorizer.
+        :paramtype custom_web_api_parameters: ~search_service_client.models.CustomWebApiParameters
+        """
+        super().__init__(name=name, **kwargs)
+        self.kind: str = "customWebApi"
+        self.custom_web_api_parameters = custom_web_api_parameters
+
+
+class CustomWebApiParameters(_serialization.Model):
+    """Specifies the properties for connecting to a user-defined vectorizer.
+
+    :ivar uri: The URI of the Web API providing the vectorizer.
+    :vartype uri: str
+    :ivar http_headers: The headers required to make the HTTP request.
+    :vartype http_headers: dict[str, str]
+    :ivar http_method: The method for the HTTP request.
+    :vartype http_method: str
+    :ivar timeout: The desired timeout for the request. Default is 30 seconds.
+    :vartype timeout: ~datetime.timedelta
+    :ivar auth_resource_id: Applies to custom endpoints that connect to external code in an Azure
+     function or some other application that provides the transformations. This value should be the
+     application ID created for the function or app when it was registered with Azure Active
+     Directory. When specified, the vectorization connects to the function or app using a managed ID
+     (either system or user-assigned) of the search service and the access token of the function or
+     app, using this value as the resource id for creating the scope of the access token.
+    :vartype auth_resource_id: str
+    :ivar auth_identity: The user-assigned managed identity used for outbound connections. If an
+     authResourceId is provided and it's not specified, the system-assigned managed identity is
+     used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
+     If set to "none", the value of this property is cleared.
+    :vartype auth_identity: ~search_service_client.models.SearchIndexerDataIdentity
+    """
+
+    _attribute_map = {
+        "uri": {"key": "uri", "type": "str"},
+        "http_headers": {"key": "httpHeaders", "type": "{str}"},
+        "http_method": {"key": "httpMethod", "type": "str"},
+        "timeout": {"key": "timeout", "type": "duration"},
+        "auth_resource_id": {"key": "authResourceId", "type": "str"},
+        "auth_identity": {"key": "authIdentity", "type": "SearchIndexerDataIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        uri: Optional[str] = None,
+        http_headers: Optional[Dict[str, str]] = None,
+        http_method: Optional[str] = None,
+        timeout: Optional[datetime.timedelta] = None,
+        auth_resource_id: Optional[str] = None,
+        auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword uri: The URI of the Web API providing the vectorizer.
+        :paramtype uri: str
+        :keyword http_headers: The headers required to make the HTTP request.
+        :paramtype http_headers: dict[str, str]
+        :keyword http_method: The method for the HTTP request.
+        :paramtype http_method: str
+        :keyword timeout: The desired timeout for the request. Default is 30 seconds.
+        :paramtype timeout: ~datetime.timedelta
+        :keyword auth_resource_id: Applies to custom endpoints that connect to external code in an
+         Azure function or some other application that provides the transformations. This value should
+         be the application ID created for the function or app when it was registered with Azure Active
+         Directory. When specified, the vectorization connects to the function or app using a managed ID
+         (either system or user-assigned) of the search service and the access token of the function or
+         app, using this value as the resource id for creating the scope of the access token.
+        :paramtype auth_resource_id: str
+        :keyword auth_identity: The user-assigned managed identity used for outbound connections. If an
+         authResourceId is provided and it's not specified, the system-assigned managed identity is
+         used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
+         If set to "none", the value of this property is cleared.
+        :paramtype auth_identity: ~search_service_client.models.SearchIndexerDataIdentity
+        """
+        super().__init__(**kwargs)
+        self.uri = uri
+        self.http_headers = http_headers
+        self.http_method = http_method
+        self.timeout = timeout
+        self.auth_resource_id = auth_resource_id
+        self.auth_identity = auth_identity
+
+
 class DataChangeDetectionPolicy(_serialization.Model):
     """Base type for data change detection policies.
 
@@ -1524,7 +2115,7 @@ class DataDeletionDetectionPolicy(_serialization.Model):
     """Base type for data deletion detection policies.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    SoftDeleteColumnDeletionDetectionPolicy
+    NativeBlobSoftDeleteDeletionDetectionPolicy, SoftDeleteColumnDeletionDetectionPolicy
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1543,7 +2134,8 @@ class DataDeletionDetectionPolicy(_serialization.Model):
 
     _subtype_map = {
         "odata_type": {
-            "#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy": "SoftDeleteColumnDeletionDetectionPolicy"
+            "#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy": "NativeBlobSoftDeleteDeletionDetectionPolicy",
+            "#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy": "SoftDeleteColumnDeletionDetectionPolicy",
         }
     }
 
@@ -1873,7 +2465,7 @@ class DocumentExtractionSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -1930,7 +2522,7 @@ class DocumentExtractionSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -1958,6 +2550,38 @@ class DocumentExtractionSkill(SearchIndexerSkill):
         self.parsing_mode = parsing_mode
         self.data_to_extract = data_to_extract
         self.configuration = configuration
+
+
+class DocumentKeysOrIds(_serialization.Model):
+    """DocumentKeysOrIds.
+
+    :ivar document_keys: document keys to be reset.
+    :vartype document_keys: list[str]
+    :ivar datasource_document_ids: datasource document identifiers to be reset.
+    :vartype datasource_document_ids: list[str]
+    """
+
+    _attribute_map = {
+        "document_keys": {"key": "documentKeys", "type": "[str]"},
+        "datasource_document_ids": {"key": "datasourceDocumentIds", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        document_keys: Optional[List[str]] = None,
+        datasource_document_ids: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword document_keys: document keys to be reset.
+        :paramtype document_keys: list[str]
+        :keyword datasource_document_ids: datasource document identifiers to be reset.
+        :paramtype datasource_document_ids: list[str]
+        """
+        super().__init__(**kwargs)
+        self.document_keys = document_keys
+        self.datasource_document_ids = datasource_document_ids
 
 
 class EdgeNGramTokenFilter(TokenFilter):
@@ -2207,7 +2831,7 @@ class EntityLinkingSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -2268,7 +2892,7 @@ class EntityLinkingSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -2303,7 +2927,7 @@ class EntityLinkingSkill(SearchIndexerSkill):
 
 
 class EntityRecognitionSkill(SearchIndexerSkill):
-    """Text analytics entity recognition.
+    """This skill is deprecated. Use the V3.EntityRecognitionSkill instead.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2311,7 +2935,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -2379,7 +3003,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -2428,7 +3052,7 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -2450,9 +3074,9 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
      confidence score is greater than the value specified. If not set (default), or if explicitly
      set to null, all entities will be included.
     :vartype minimum_precision: float
-    :ivar model_version: The version of the model to use when calling the Text Analytics service.
-     It will default to the latest available when not specified. We recommend you do not specify
-     this value unless absolutely necessary.
+    :ivar model_version: The version of the model to use when calling the Text Analytics API. It
+     will default to the latest available when not specified. We recommend you do not specify this
+     value unless absolutely necessary.
     :vartype model_version: str
     """
 
@@ -2493,7 +3117,7 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -2517,9 +3141,9 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
          confidence score is greater than the value specified. If not set (default), or if explicitly
          set to null, all entities will be included.
         :paramtype minimum_precision: float
-        :keyword model_version: The version of the model to use when calling the Text Analytics
-         service. It will default to the latest available when not specified. We recommend you do not
-         specify this value unless absolutely necessary.
+        :keyword model_version: The version of the model to use when calling the Text Analytics API. It
+         will default to the latest available when not specified. We recommend you do not specify this
+         value unless absolutely necessary.
         :paramtype model_version: str
         """
         super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
@@ -2993,7 +3617,7 @@ class ImageAnalysisSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -3053,7 +3677,7 @@ class ImageAnalysisSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -3087,7 +3711,69 @@ class ImageAnalysisSkill(SearchIndexerSkill):
         self.details = details
 
 
-class IndexerExecutionResult(_serialization.Model):
+class IndexerCurrentState(_serialization.Model):
+    """Represents all of the state that defines and dictates the indexer's current execution.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar mode: The mode the indexer is running in. Known values are: "indexingAllDocs" and
+     "indexingResetDocs".
+    :vartype mode: str or ~search_service_client.models.IndexingMode
+    :ivar all_docs_initial_change_tracking_state: Change tracking state used when indexing starts
+     on all documents in the datasource.
+    :vartype all_docs_initial_change_tracking_state: str
+    :ivar all_docs_final_change_tracking_state: Change tracking state value when indexing finishes
+     on all documents in the datasource.
+    :vartype all_docs_final_change_tracking_state: str
+    :ivar reset_docs_initial_change_tracking_state: Change tracking state used when indexing starts
+     on select, reset documents in the datasource.
+    :vartype reset_docs_initial_change_tracking_state: str
+    :ivar reset_docs_final_change_tracking_state: Change tracking state value when indexing
+     finishes on select, reset documents in the datasource.
+    :vartype reset_docs_final_change_tracking_state: str
+    :ivar reset_document_keys: The list of document keys that have been reset. The document key is
+     the document's unique identifier for the data in the search index. The indexer will prioritize
+     selectively re-ingesting these keys.
+    :vartype reset_document_keys: list[str]
+    :ivar reset_datasource_document_ids: The list of datasource document ids that have been reset.
+     The datasource document id is the unique identifier for the data in the datasource. The indexer
+     will prioritize selectively re-ingesting these ids.
+    :vartype reset_datasource_document_ids: list[str]
+    """
+
+    _validation = {
+        "mode": {"readonly": True},
+        "all_docs_initial_change_tracking_state": {"readonly": True},
+        "all_docs_final_change_tracking_state": {"readonly": True},
+        "reset_docs_initial_change_tracking_state": {"readonly": True},
+        "reset_docs_final_change_tracking_state": {"readonly": True},
+        "reset_document_keys": {"readonly": True},
+        "reset_datasource_document_ids": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "all_docs_initial_change_tracking_state": {"key": "allDocsInitialChangeTrackingState", "type": "str"},
+        "all_docs_final_change_tracking_state": {"key": "allDocsFinalChangeTrackingState", "type": "str"},
+        "reset_docs_initial_change_tracking_state": {"key": "resetDocsInitialChangeTrackingState", "type": "str"},
+        "reset_docs_final_change_tracking_state": {"key": "resetDocsFinalChangeTrackingState", "type": "str"},
+        "reset_document_keys": {"key": "resetDocumentKeys", "type": "[str]"},
+        "reset_datasource_document_ids": {"key": "resetDatasourceDocumentIds", "type": "[str]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.mode = None
+        self.all_docs_initial_change_tracking_state = None
+        self.all_docs_final_change_tracking_state = None
+        self.reset_docs_initial_change_tracking_state = None
+        self.reset_docs_final_change_tracking_state = None
+        self.reset_document_keys = None
+        self.reset_datasource_document_ids = None
+
+
+class IndexerExecutionResult(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Represents the result of an individual indexer execution.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3097,6 +3783,11 @@ class IndexerExecutionResult(_serialization.Model):
     :ivar status: The outcome of this indexer execution. Required. Known values are:
      "transientFailure", "success", "inProgress", and "reset".
     :vartype status: str or ~search_service_client.models.IndexerExecutionStatus
+    :ivar status_detail: The outcome of this indexer execution. "resetDocs"
+    :vartype status_detail: str or ~search_service_client.models.IndexerExecutionStatusDetail
+    :ivar current_state: All of the state that defines and dictates the indexer's current
+     execution.
+    :vartype current_state: ~search_service_client.models.IndexerCurrentState
     :ivar error_message: The error message indicating the top-level error, if any.
     :vartype error_message: str
     :ivar start_time: The start time of this indexer execution.
@@ -3122,6 +3813,8 @@ class IndexerExecutionResult(_serialization.Model):
 
     _validation = {
         "status": {"required": True, "readonly": True},
+        "status_detail": {"readonly": True},
+        "current_state": {"readonly": True},
         "error_message": {"readonly": True},
         "start_time": {"readonly": True},
         "end_time": {"readonly": True},
@@ -3135,6 +3828,8 @@ class IndexerExecutionResult(_serialization.Model):
 
     _attribute_map = {
         "status": {"key": "status", "type": "str"},
+        "status_detail": {"key": "statusDetail", "type": "str"},
+        "current_state": {"key": "currentState", "type": "IndexerCurrentState"},
         "error_message": {"key": "errorMessage", "type": "str"},
         "start_time": {"key": "startTime", "type": "iso-8601"},
         "end_time": {"key": "endTime", "type": "iso-8601"},
@@ -3150,6 +3845,8 @@ class IndexerExecutionResult(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.status = None
+        self.status_detail = None
+        self.current_state = None
         self.error_message = None
         self.start_time = None
         self.end_time = None
@@ -3563,7 +4260,7 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -3625,7 +4322,7 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -3803,7 +4500,7 @@ class LanguageDetectionSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -3858,7 +4555,7 @@ class LanguageDetectionSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -3985,6 +4682,32 @@ class LimitTokenFilter(TokenFilter):
         self.odata_type: str = "#Microsoft.Azure.Search.LimitTokenFilter"
         self.max_token_count = max_token_count
         self.consume_all_tokens = consume_all_tokens
+
+
+class ListAliasesResult(_serialization.Model):
+    """Response from a List Aliases request. If successful, it includes the associated index mappings
+    for all aliases.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar aliases: The aliases in the Search service. Required.
+    :vartype aliases: list[~search_service_client.models.SearchAlias]
+    """
+
+    _validation = {
+        "aliases": {"required": True, "readonly": True},
+    }
+
+    _attribute_map = {
+        "aliases": {"key": "value", "type": "[SearchAlias]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.aliases = None
 
 
 class ListDataSourcesResult(_serialization.Model):
@@ -4422,7 +5145,7 @@ class MergeSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -4476,7 +5199,7 @@ class MergeSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -4666,6 +5389,31 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer):
         self.language = language
 
 
+class NativeBlobSoftDeleteDeletionDetectionPolicy(DataDeletionDetectionPolicy):
+    """Defines a data deletion detection policy utilizing Azure Blob Storage's native soft delete
+    feature for deletion detection.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: A URI fragment specifying the type of data deletion detection policy.
+     Required.
+    :vartype odata_type: str
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy"
+
+
 class NGramTokenFilter(TokenFilter):
     """Generates n-grams of the given size(s). This token filter is implemented using Apache Lucene.
 
@@ -4838,7 +5586,7 @@ class OcrSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -4870,6 +5618,10 @@ class OcrSkill(SearchIndexerSkill):
     :ivar should_detect_orientation: A value indicating to turn orientation detection on or not.
      Default is false.
     :vartype should_detect_orientation: bool
+    :ivar line_ending: Defines the sequence of characters to use between the lines of text
+     recognized by the OCR skill. The default value is "space". Known values are: "space",
+     "carriageReturn", "lineFeed", and "carriageReturnLineFeed".
+    :vartype line_ending: str or ~search_service_client.models.LineEnding
     """
 
     _validation = {
@@ -4887,6 +5639,7 @@ class OcrSkill(SearchIndexerSkill):
         "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
         "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
         "should_detect_orientation": {"key": "detectOrientation", "type": "bool"},
+        "line_ending": {"key": "lineEnding", "type": "str"},
     }
 
     def __init__(
@@ -4899,12 +5652,13 @@ class OcrSkill(SearchIndexerSkill):
         context: Optional[str] = None,
         default_language_code: Optional[Union[str, "_models.OcrSkillLanguage"]] = None,
         should_detect_orientation: bool = False,
+        line_ending: Optional[Union[str, "_models.LineEnding"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -4937,11 +5691,16 @@ class OcrSkill(SearchIndexerSkill):
         :keyword should_detect_orientation: A value indicating to turn orientation detection on or not.
          Default is false.
         :paramtype should_detect_orientation: bool
+        :keyword line_ending: Defines the sequence of characters to use between the lines of text
+         recognized by the OCR skill. The default value is "space". Known values are: "space",
+         "carriageReturn", "lineFeed", and "carriageReturnLineFeed".
+        :paramtype line_ending: str or ~search_service_client.models.LineEnding
         """
         super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
         self.odata_type: str = "#Microsoft.Skills.Vision.OcrSkill"
         self.default_language_code = default_language_code
         self.should_detect_orientation = should_detect_orientation
+        self.line_ending = line_ending
 
 
 class OutputFieldMappingEntry(_serialization.Model):
@@ -5419,7 +6178,7 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -5443,7 +6202,7 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
      detected in the input text. Default is 'none'. Known values are: "none" and "replace".
     :vartype masking_mode: str or ~search_service_client.models.PIIDetectionSkillMaskingMode
     :ivar mask: The character used to mask the text if the maskingMode parameter is set to replace.
-     Default is ``*``.
+     Default is '*'.
     :vartype mask: str
     :ivar model_version: The version of the model to use when calling the Text Analytics service.
      It will default to the latest available when not specified. We recommend you do not specify
@@ -5500,7 +6259,7 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -5526,7 +6285,7 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
          detected in the input text. Default is 'none'. Known values are: "none" and "replace".
         :paramtype masking_mode: str or ~search_service_client.models.PIIDetectionSkillMaskingMode
         :keyword mask: The character used to mask the text if the maskingMode parameter is set to
-         replace. Default is ``*``.
+         replace. Default is '*'.
         :paramtype mask: str
         :keyword model_version: The version of the model to use when calling the Text Analytics
          service. It will default to the latest available when not specified. We recommend you do not
@@ -5658,6 +6417,48 @@ class ScoringProfile(_serialization.Model):
         self.text_weights = text_weights
         self.functions = functions
         self.function_aggregation = function_aggregation
+
+
+class SearchAlias(_serialization.Model):
+    """Represents an index alias, which describes a mapping from the alias name to an index. The alias
+    name can be used in place of the index name for supported operations.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The name of the alias. Required.
+    :vartype name: str
+    :ivar indexes: The name of the index this alias maps to. Only one index name may be specified.
+     Required.
+    :vartype indexes: list[str]
+    :ivar e_tag: The ETag of the alias.
+    :vartype e_tag: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "indexes": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "indexes": {"key": "indexes", "type": "[str]"},
+        "e_tag": {"key": "@odata\\.etag", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, indexes: List[str], e_tag: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the alias. Required.
+        :paramtype name: str
+        :keyword indexes: The name of the index this alias maps to. Only one index name may be
+         specified. Required.
+        :paramtype indexes: list[str]
+        :keyword e_tag: The ETag of the alias.
+        :paramtype e_tag: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.indexes = indexes
+        self.e_tag = e_tag
 
 
 class SearchError(_serialization.Model):
@@ -5822,10 +6623,15 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
     :vartype index_analyzer: str or ~search_service_client.models.LexicalAnalyzerName
+    :ivar normalizer: The name of the normalizer to use for the field. This option can be used only
+     with fields with filterable, sortable, or facetable enabled. Once the normalizer is chosen, it
+     cannot be changed for the field. Must be null for complex fields. Known values are:
+     "asciifolding", "elision", "lowercase", "standard", and "uppercase".
+    :vartype normalizer: str or ~search_service_client.models.LexicalNormalizerName
     :ivar vector_search_dimensions: The dimensionality of the vector field.
     :vartype vector_search_dimensions: int
     :ivar vector_search_profile_name: The name of the vector search profile that specifies the
-     algorithm to use when searching the vector field.
+     algorithm and vectorizer to use when searching the vector field.
     :vartype vector_search_profile_name: str
     :ivar synonym_maps: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
@@ -5856,6 +6662,7 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
         "analyzer": {"key": "analyzer", "type": "str"},
         "search_analyzer": {"key": "searchAnalyzer", "type": "str"},
         "index_analyzer": {"key": "indexAnalyzer", "type": "str"},
+        "normalizer": {"key": "normalizer", "type": "str"},
         "vector_search_dimensions": {"key": "dimensions", "type": "int"},
         "vector_search_profile_name": {"key": "vectorSearchProfile", "type": "str"},
         "synonym_maps": {"key": "synonymMaps", "type": "[str]"},
@@ -5876,6 +6683,7 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
         analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
         search_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
         index_analyzer: Optional[Union[str, "_models.LexicalAnalyzerName"]] = None,
+        normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = None,
         vector_search_dimensions: Optional[int] = None,
         vector_search_profile_name: Optional[str] = None,
         synonym_maps: Optional[List[str]] = None,
@@ -6004,10 +6812,15 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
          "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
          "whitespace".
         :paramtype index_analyzer: str or ~search_service_client.models.LexicalAnalyzerName
+        :keyword normalizer: The name of the normalizer to use for the field. This option can be used
+         only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
+         chosen, it cannot be changed for the field. Must be null for complex fields. Known values are:
+         "asciifolding", "elision", "lowercase", "standard", and "uppercase".
+        :paramtype normalizer: str or ~search_service_client.models.LexicalNormalizerName
         :keyword vector_search_dimensions: The dimensionality of the vector field.
         :paramtype vector_search_dimensions: int
         :keyword vector_search_profile_name: The name of the vector search profile that specifies the
-         algorithm to use when searching the vector field.
+         algorithm and vectorizer to use when searching the vector field.
         :paramtype vector_search_profile_name: str
         :keyword synonym_maps: A list of the names of synonym maps to associate with this field. This
          option can be used only with searchable fields. Currently only one synonym map per field is
@@ -6031,6 +6844,7 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
         self.analyzer = analyzer
         self.search_analyzer = search_analyzer
         self.index_analyzer = index_analyzer
+        self.normalizer = normalizer
         self.vector_search_dimensions = vector_search_dimensions
         self.vector_search_profile_name = vector_search_profile_name
         self.synonym_maps = synonym_maps
@@ -6065,6 +6879,8 @@ class SearchIndex(_serialization.Model):  # pylint: disable=too-many-instance-at
     :vartype token_filters: list[~search_service_client.models.TokenFilter]
     :ivar char_filters: The character filters for the index.
     :vartype char_filters: list[~search_service_client.models.CharFilter]
+    :ivar normalizers: The normalizers for the index.
+    :vartype normalizers: list[~search_service_client.models.LexicalNormalizer]
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
@@ -6104,6 +6920,7 @@ class SearchIndex(_serialization.Model):  # pylint: disable=too-many-instance-at
         "tokenizers": {"key": "tokenizers", "type": "[LexicalTokenizer]"},
         "token_filters": {"key": "tokenFilters", "type": "[TokenFilter]"},
         "char_filters": {"key": "charFilters", "type": "[CharFilter]"},
+        "normalizers": {"key": "normalizers", "type": "[LexicalNormalizer]"},
         "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
         "similarity": {"key": "similarity", "type": "Similarity"},
         "semantic_search": {"key": "semantic", "type": "SemanticSearch"},
@@ -6124,6 +6941,7 @@ class SearchIndex(_serialization.Model):  # pylint: disable=too-many-instance-at
         tokenizers: Optional[List["_models.LexicalTokenizer"]] = None,
         token_filters: Optional[List["_models.TokenFilter"]] = None,
         char_filters: Optional[List["_models.CharFilter"]] = None,
+        normalizers: Optional[List["_models.LexicalNormalizer"]] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         similarity: Optional["_models.Similarity"] = None,
         semantic_search: Optional["_models.SemanticSearch"] = None,
@@ -6154,6 +6972,8 @@ class SearchIndex(_serialization.Model):  # pylint: disable=too-many-instance-at
         :paramtype token_filters: list[~search_service_client.models.TokenFilter]
         :keyword char_filters: The character filters for the index.
         :paramtype char_filters: list[~search_service_client.models.CharFilter]
+        :keyword normalizers: The normalizers for the index.
+        :paramtype normalizers: list[~search_service_client.models.LexicalNormalizer]
         :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
          This key is used to provide an additional level of encryption-at-rest for your data when you
          want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
@@ -6187,6 +7007,7 @@ class SearchIndex(_serialization.Model):  # pylint: disable=too-many-instance-at
         self.tokenizers = tokenizers
         self.token_filters = token_filters
         self.char_filters = char_filters
+        self.normalizers = normalizers
         self.encryption_key = encryption_key
         self.similarity = similarity
         self.semantic_search = semantic_search
@@ -6234,6 +7055,9 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
      keys is not available for free search services, and is only available for paid services created
      on or after January 1, 2019.
     :vartype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
+    :ivar cache: Adds caching to an enrichment pipeline to allow for incremental modification steps
+     without having to rebuild the index every time.
+    :vartype cache: ~search_service_client.models.SearchIndexerCache
     """
 
     _validation = {
@@ -6255,6 +7079,7 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
         "is_disabled": {"key": "disabled", "type": "bool"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
         "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "cache": {"key": "cache", "type": "SearchIndexerCache"},
     }
 
     def __init__(
@@ -6272,6 +7097,7 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
         is_disabled: bool = False,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
+        cache: Optional["_models.SearchIndexerCache"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6310,6 +7136,9 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
          keys is not available for free search services, and is only available for paid services created
          on or after January 1, 2019.
         :paramtype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
+        :keyword cache: Adds caching to an enrichment pipeline to allow for incremental modification
+         steps without having to rebuild the index every time.
+        :paramtype cache: ~search_service_client.models.SearchIndexerCache
         """
         super().__init__(**kwargs)
         self.name = name
@@ -6324,6 +7153,56 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
         self.is_disabled = is_disabled
         self.e_tag = e_tag
         self.encryption_key = encryption_key
+        self.cache = cache
+
+
+class SearchIndexerCache(_serialization.Model):
+    """SearchIndexerCache.
+
+    :ivar storage_connection_string: The connection string to the storage account where the cache
+     data will be persisted.
+    :vartype storage_connection_string: str
+    :ivar enable_reprocessing: Specifies whether incremental reprocessing is enabled.
+    :vartype enable_reprocessing: bool
+    :ivar identity: The user-assigned managed identity used for connections to the enrichment
+     cache.  If the connection string indicates an identity (ResourceId) and it's not specified, the
+     system-assigned managed identity is used. On updates to the indexer, if the identity is
+     unspecified, the value remains unchanged. If set to "none", the value of this property is
+     cleared.
+    :vartype identity: ~search_service_client.models.SearchIndexerDataIdentity
+    """
+
+    _attribute_map = {
+        "storage_connection_string": {"key": "storageConnectionString", "type": "str"},
+        "enable_reprocessing": {"key": "enableReprocessing", "type": "bool"},
+        "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_connection_string: Optional[str] = None,
+        enable_reprocessing: Optional[bool] = None,
+        identity: Optional["_models.SearchIndexerDataIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword storage_connection_string: The connection string to the storage account where the
+         cache data will be persisted.
+        :paramtype storage_connection_string: str
+        :keyword enable_reprocessing: Specifies whether incremental reprocessing is enabled.
+        :paramtype enable_reprocessing: bool
+        :keyword identity: The user-assigned managed identity used for connections to the enrichment
+         cache.  If the connection string indicates an identity (ResourceId) and it's not specified, the
+         system-assigned managed identity is used. On updates to the indexer, if the identity is
+         unspecified, the value remains unchanged. If set to "none", the value of this property is
+         cleared.
+        :paramtype identity: ~search_service_client.models.SearchIndexerDataIdentity
+        """
+        super().__init__(**kwargs)
+        self.storage_connection_string = storage_connection_string
+        self.enable_reprocessing = enable_reprocessing
+        self.identity = identity
 
 
 class SearchIndexerDataContainer(_serialization.Model):
@@ -6363,6 +7242,62 @@ class SearchIndexerDataContainer(_serialization.Model):
         self.query = query
 
 
+class SearchIndexerDataIdentity(_serialization.Model):
+    """Abstract base type for data identities.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SearchIndexerDataNoneIdentity, SearchIndexerDataUserAssignedIdentity
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: A URI fragment specifying the type of identity. Required.
+    :vartype odata_type: str
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+    }
+
+    _subtype_map = {
+        "odata_type": {
+            "#Microsoft.Azure.Search.DataNoneIdentity": "SearchIndexerDataNoneIdentity",
+            "#Microsoft.Azure.Search.DataUserAssignedIdentity": "SearchIndexerDataUserAssignedIdentity",
+        }
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
+
+
+class SearchIndexerDataNoneIdentity(SearchIndexerDataIdentity):
+    """Clears the identity property of a datasource.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: A URI fragment specifying the type of identity. Required.
+    :vartype odata_type: str
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Azure.Search.DataNoneIdentity"
+
+
 class SearchIndexerDataSource(_serialization.Model):
     """Represents a datasource definition, which can be used to configure an indexer.
 
@@ -6379,6 +7314,11 @@ class SearchIndexerDataSource(_serialization.Model):
     :vartype credentials: ~search_service_client.models.DataSourceCredentials
     :ivar container: The data container for the datasource. Required.
     :vartype container: ~search_service_client.models.SearchIndexerDataContainer
+    :ivar identity: An explicit managed identity to use for this datasource. If not specified and
+     the connection string is a managed identity, the system-assigned managed identity is used. If
+     not specified, the value remains unchanged. If "none" is specified, the value of this property
+     is cleared.
+    :vartype identity: ~search_service_client.models.SearchIndexerDataIdentity
     :ivar data_change_detection_policy: The data change detection policy for the datasource.
     :vartype data_change_detection_policy: ~search_service_client.models.DataChangeDetectionPolicy
     :ivar data_deletion_detection_policy: The data deletion detection policy for the datasource.
@@ -6410,6 +7350,7 @@ class SearchIndexerDataSource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "credentials": {"key": "credentials", "type": "DataSourceCredentials"},
         "container": {"key": "container", "type": "SearchIndexerDataContainer"},
+        "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
         "data_change_detection_policy": {"key": "dataChangeDetectionPolicy", "type": "DataChangeDetectionPolicy"},
         "data_deletion_detection_policy": {"key": "dataDeletionDetectionPolicy", "type": "DataDeletionDetectionPolicy"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
@@ -6424,6 +7365,7 @@ class SearchIndexerDataSource(_serialization.Model):
         credentials: "_models.DataSourceCredentials",
         container: "_models.SearchIndexerDataContainer",
         description: Optional[str] = None,
+        identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         data_change_detection_policy: Optional["_models.DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["_models.DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -6442,6 +7384,11 @@ class SearchIndexerDataSource(_serialization.Model):
         :paramtype credentials: ~search_service_client.models.DataSourceCredentials
         :keyword container: The data container for the datasource. Required.
         :paramtype container: ~search_service_client.models.SearchIndexerDataContainer
+        :keyword identity: An explicit managed identity to use for this datasource. If not specified
+         and the connection string is a managed identity, the system-assigned managed identity is used.
+         If not specified, the value remains unchanged. If "none" is specified, the value of this
+         property is cleared.
+        :paramtype identity: ~search_service_client.models.SearchIndexerDataIdentity
         :keyword data_change_detection_policy: The data change detection policy for the datasource.
         :paramtype data_change_detection_policy:
          ~search_service_client.models.DataChangeDetectionPolicy
@@ -6466,10 +7413,48 @@ class SearchIndexerDataSource(_serialization.Model):
         self.type = type
         self.credentials = credentials
         self.container = container
+        self.identity = identity
         self.data_change_detection_policy = data_change_detection_policy
         self.data_deletion_detection_policy = data_deletion_detection_policy
         self.e_tag = e_tag
         self.encryption_key = encryption_key
+
+
+class SearchIndexerDataUserAssignedIdentity(SearchIndexerDataIdentity):
+    """Specifies the identity for a datasource to use.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: A URI fragment specifying the type of identity. Required.
+    :vartype odata_type: str
+    :ivar user_assigned_identity: The fully qualified Azure resource Id of a user assigned managed
+     identity typically in the form
+     "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"  # pylint: disable=line-too-long
+     that should have been assigned to the search service. Required.
+    :vartype user_assigned_identity: str
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+        "user_assigned_identity": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
+    }
+
+    def __init__(self, *, user_assigned_identity: str, **kwargs: Any) -> None:
+        """
+        :keyword user_assigned_identity: The fully qualified Azure resource Id of a user assigned
+         managed identity typically in the form
+         "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"  # pylint: disable=line-too-long
+         that should have been assigned to the search service. Required.
+        :paramtype user_assigned_identity: str
+        """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Azure.Search.DataUserAssignedIdentity"
+        self.user_assigned_identity = user_assigned_identity
 
 
 class SearchIndexerError(_serialization.Model):
@@ -6529,6 +7514,149 @@ class SearchIndexerError(_serialization.Model):
         self.documentation_link = None
 
 
+class SearchIndexerIndexProjections(_serialization.Model):
+    """Definition of additional projections to secondary search indexes.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar selectors: A list of projections to be performed to secondary search indexes. Required.
+    :vartype selectors: list[~search_service_client.models.SearchIndexerIndexProjectionSelector]
+    :ivar parameters: A dictionary of index projection-specific configuration properties. Each name
+     is the name of a specific property. Each value must be of a primitive type.
+    :vartype parameters: ~search_service_client.models.SearchIndexerIndexProjectionsParameters
+    """
+
+    _validation = {
+        "selectors": {"required": True},
+    }
+
+    _attribute_map = {
+        "selectors": {"key": "selectors", "type": "[SearchIndexerIndexProjectionSelector]"},
+        "parameters": {"key": "parameters", "type": "SearchIndexerIndexProjectionsParameters"},
+    }
+
+    def __init__(
+        self,
+        *,
+        selectors: List["_models.SearchIndexerIndexProjectionSelector"],
+        parameters: Optional["_models.SearchIndexerIndexProjectionsParameters"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword selectors: A list of projections to be performed to secondary search indexes.
+         Required.
+        :paramtype selectors: list[~search_service_client.models.SearchIndexerIndexProjectionSelector]
+        :keyword parameters: A dictionary of index projection-specific configuration properties. Each
+         name is the name of a specific property. Each value must be of a primitive type.
+        :paramtype parameters: ~search_service_client.models.SearchIndexerIndexProjectionsParameters
+        """
+        super().__init__(**kwargs)
+        self.selectors = selectors
+        self.parameters = parameters
+
+
+class SearchIndexerIndexProjectionSelector(_serialization.Model):
+    """Description for what data to store in the designated search index.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar target_index_name: Name of the search index to project to. Must have a key field with the
+     'keyword' analyzer set. Required.
+    :vartype target_index_name: str
+    :ivar parent_key_field_name: Name of the field in the search index to map the parent document's
+     key value to. Must be a string field that is filterable and not the key field. Required.
+    :vartype parent_key_field_name: str
+    :ivar source_context: Source context for the projections. Represents the cardinality at which
+     the document will be split into multiple sub documents. Required.
+    :vartype source_context: str
+    :ivar mappings: Mappings for the projection, or which source should be mapped to which field in
+     the target index. Required.
+    :vartype mappings: list[~search_service_client.models.InputFieldMappingEntry]
+    """
+
+    _validation = {
+        "target_index_name": {"required": True},
+        "parent_key_field_name": {"required": True},
+        "source_context": {"required": True},
+        "mappings": {"required": True},
+    }
+
+    _attribute_map = {
+        "target_index_name": {"key": "targetIndexName", "type": "str"},
+        "parent_key_field_name": {"key": "parentKeyFieldName", "type": "str"},
+        "source_context": {"key": "sourceContext", "type": "str"},
+        "mappings": {"key": "mappings", "type": "[InputFieldMappingEntry]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_index_name: str,
+        parent_key_field_name: str,
+        source_context: str,
+        mappings: List["_models.InputFieldMappingEntry"],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_index_name: Name of the search index to project to. Must have a key field with
+         the 'keyword' analyzer set. Required.
+        :paramtype target_index_name: str
+        :keyword parent_key_field_name: Name of the field in the search index to map the parent
+         document's key value to. Must be a string field that is filterable and not the key field.
+         Required.
+        :paramtype parent_key_field_name: str
+        :keyword source_context: Source context for the projections. Represents the cardinality at
+         which the document will be split into multiple sub documents. Required.
+        :paramtype source_context: str
+        :keyword mappings: Mappings for the projection, or which source should be mapped to which field
+         in the target index. Required.
+        :paramtype mappings: list[~search_service_client.models.InputFieldMappingEntry]
+        """
+        super().__init__(**kwargs)
+        self.target_index_name = target_index_name
+        self.parent_key_field_name = parent_key_field_name
+        self.source_context = source_context
+        self.mappings = mappings
+
+
+class SearchIndexerIndexProjectionsParameters(_serialization.Model):
+    """A dictionary of index projection-specific configuration properties. Each name is the name of a
+    specific property. Each value must be of a primitive type.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar projection_mode: Defines behavior of the index projections in relation to the rest of the
+     indexer. Known values are: "skipIndexingParentDocuments" and "includeIndexingParentDocuments".
+    :vartype projection_mode: str or ~search_service_client.models.IndexProjectionMode
+    """
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "projection_mode": {"key": "projectionMode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        projection_mode: Optional[Union[str, "_models.IndexProjectionMode"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword projection_mode: Defines behavior of the index projections in relation to the rest of
+         the indexer. Known values are: "skipIndexingParentDocuments" and
+         "includeIndexingParentDocuments".
+        :paramtype projection_mode: str or ~search_service_client.models.IndexProjectionMode
+        """
+        super().__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.projection_mode = projection_mode
+
+
 class SearchIndexerKnowledgeStore(_serialization.Model):
     """Definition of additional projections to azure blob, table, or files, of enriched data.
 
@@ -6539,6 +7667,15 @@ class SearchIndexerKnowledgeStore(_serialization.Model):
     :vartype storage_connection_string: str
     :ivar projections: A list of additional projections to perform during indexing. Required.
     :vartype projections: list[~search_service_client.models.SearchIndexerKnowledgeStoreProjection]
+    :ivar identity: The user-assigned managed identity used for connections to Azure Storage when
+     writing knowledge store projections. If the connection string indicates an identity
+     (ResourceId) and it's not specified, the system-assigned managed identity is used. On updates
+     to the indexer, if the identity is unspecified, the value remains unchanged. If set to "none",
+     the value of this property is cleared.
+    :vartype identity: ~search_service_client.models.SearchIndexerDataIdentity
+    :ivar parameters: A dictionary of knowledge store-specific configuration properties. Each name
+     is the name of a specific property. Each value must be of a primitive type.
+    :vartype parameters: ~search_service_client.models.SearchIndexerKnowledgeStoreParameters
     """
 
     _validation = {
@@ -6549,6 +7686,8 @@ class SearchIndexerKnowledgeStore(_serialization.Model):
     _attribute_map = {
         "storage_connection_string": {"key": "storageConnectionString", "type": "str"},
         "projections": {"key": "projections", "type": "[SearchIndexerKnowledgeStoreProjection]"},
+        "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
+        "parameters": {"key": "parameters", "type": "SearchIndexerKnowledgeStoreParameters"},
     }
 
     def __init__(
@@ -6556,6 +7695,8 @@ class SearchIndexerKnowledgeStore(_serialization.Model):
         *,
         storage_connection_string: str,
         projections: List["_models.SearchIndexerKnowledgeStoreProjection"],
+        identity: Optional["_models.SearchIndexerDataIdentity"] = None,
+        parameters: Optional["_models.SearchIndexerKnowledgeStoreParameters"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6565,10 +7706,21 @@ class SearchIndexerKnowledgeStore(_serialization.Model):
         :keyword projections: A list of additional projections to perform during indexing. Required.
         :paramtype projections:
          list[~search_service_client.models.SearchIndexerKnowledgeStoreProjection]
+        :keyword identity: The user-assigned managed identity used for connections to Azure Storage
+         when writing knowledge store projections. If the connection string indicates an identity
+         (ResourceId) and it's not specified, the system-assigned managed identity is used. On updates
+         to the indexer, if the identity is unspecified, the value remains unchanged. If set to "none",
+         the value of this property is cleared.
+        :paramtype identity: ~search_service_client.models.SearchIndexerDataIdentity
+        :keyword parameters: A dictionary of knowledge store-specific configuration properties. Each
+         name is the name of a specific property. Each value must be of a primitive type.
+        :paramtype parameters: ~search_service_client.models.SearchIndexerKnowledgeStoreParameters
         """
         super().__init__(**kwargs)
         self.storage_connection_string = storage_connection_string
         self.projections = projections
+        self.identity = identity
+        self.parameters = parameters
 
 
 class SearchIndexerKnowledgeStoreProjectionSelector(_serialization.Model):
@@ -6730,6 +7882,43 @@ class SearchIndexerKnowledgeStoreObjectProjectionSelector(SearchIndexerKnowledge
     :ivar storage_container: Blob container to store projections in. Required.
     :vartype storage_container: str
     """
+
+
+class SearchIndexerKnowledgeStoreParameters(_serialization.Model):
+    """A dictionary of knowledge store-specific configuration properties. Each name is the name of a
+    specific property. Each value must be of a primitive type.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar synthesize_generated_key_name: Whether or not projections should synthesize a generated
+     key name if one isn't already present.
+    :vartype synthesize_generated_key_name: bool
+    """
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "synthesize_generated_key_name": {"key": "synthesizeGeneratedKeyName", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, Any]] = None,
+        synthesize_generated_key_name: bool = False,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword synthesize_generated_key_name: Whether or not projections should synthesize a
+         generated key name if one isn't already present.
+        :paramtype synthesize_generated_key_name: bool
+        """
+        super().__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.synthesize_generated_key_name = synthesize_generated_key_name
 
 
 class SearchIndexerKnowledgeStoreProjection(_serialization.Model):
@@ -6898,6 +8087,8 @@ class SearchIndexerSkillset(_serialization.Model):
     :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
      enriched data.
     :vartype knowledge_store: ~search_service_client.models.SearchIndexerKnowledgeStore
+    :ivar index_projections: Definition of additional projections to secondary search index(es).
+    :vartype index_projections: ~search_service_client.models.SearchIndexerIndexProjections
     :ivar e_tag: The ETag of the skillset.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -6922,6 +8113,7 @@ class SearchIndexerSkillset(_serialization.Model):
         "skills": {"key": "skills", "type": "[SearchIndexerSkill]"},
         "cognitive_services_account": {"key": "cognitiveServices", "type": "CognitiveServicesAccount"},
         "knowledge_store": {"key": "knowledgeStore", "type": "SearchIndexerKnowledgeStore"},
+        "index_projections": {"key": "indexProjections", "type": "SearchIndexerIndexProjections"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
         "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
     }
@@ -6934,6 +8126,7 @@ class SearchIndexerSkillset(_serialization.Model):
         description: Optional[str] = None,
         cognitive_services_account: Optional["_models.CognitiveServicesAccount"] = None,
         knowledge_store: Optional["_models.SearchIndexerKnowledgeStore"] = None,
+        index_projections: Optional["_models.SearchIndexerIndexProjections"] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         **kwargs: Any
@@ -6951,6 +8144,8 @@ class SearchIndexerSkillset(_serialization.Model):
         :keyword knowledge_store: Definition of additional projections to Azure blob, table, or files,
          of enriched data.
         :paramtype knowledge_store: ~search_service_client.models.SearchIndexerKnowledgeStore
+        :keyword index_projections: Definition of additional projections to secondary search index(es).
+        :paramtype index_projections: ~search_service_client.models.SearchIndexerIndexProjections
         :keyword e_tag: The ETag of the skillset.
         :paramtype e_tag: str
         :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -6969,6 +8164,7 @@ class SearchIndexerSkillset(_serialization.Model):
         self.skills = skills
         self.cognitive_services_account = cognitive_services_account
         self.knowledge_store = knowledge_store
+        self.index_projections = index_projections
         self.e_tag = e_tag
         self.encryption_key = encryption_key
 
@@ -7066,8 +8262,7 @@ class SearchIndexerWarning(_serialization.Model):
 
 class SearchResourceEncryptionKey(_serialization.Model):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
-    used to encrypt or decrypt data-at-rest on your search service, such as indexes and synonym
-    maps.
+    used to encrypt or decrypt data-at-rest, such as indexes and synonym maps.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -7085,6 +8280,11 @@ class SearchResourceEncryptionKey(_serialization.Model):
      Azure Key Vault. Not required if using managed identity instead.
     :vartype access_credentials:
      ~search_service_client.models.AzureActiveDirectoryApplicationCredentials
+    :ivar identity: An explicit managed identity to use for this encryption key. If not specified
+     and the access credentials property is null, the system-assigned managed identity is used. On
+     update to the resource, if the explicit identity is unspecified, it remains unchanged. If
+     "none" is specified, the value of this property is cleared.
+    :vartype identity: ~search_service_client.models.SearchIndexerDataIdentity
     """
 
     _validation = {
@@ -7098,6 +8298,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         "key_version": {"key": "keyVaultKeyVersion", "type": "str"},
         "vault_uri": {"key": "keyVaultUri", "type": "str"},
         "access_credentials": {"key": "accessCredentials", "type": "AzureActiveDirectoryApplicationCredentials"},
+        "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
     }
 
     def __init__(
@@ -7107,6 +8308,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         key_version: str,
         vault_uri: str,
         access_credentials: Optional["_models.AzureActiveDirectoryApplicationCredentials"] = None,
+        identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7124,12 +8326,18 @@ class SearchResourceEncryptionKey(_serialization.Model):
          your Azure Key Vault. Not required if using managed identity instead.
         :paramtype access_credentials:
          ~search_service_client.models.AzureActiveDirectoryApplicationCredentials
+        :keyword identity: An explicit managed identity to use for this encryption key. If not
+         specified and the access credentials property is null, the system-assigned managed identity is
+         used. On update to the resource, if the explicit identity is unspecified, it remains unchanged.
+         If "none" is specified, the value of this property is cleared.
+        :paramtype identity: ~search_service_client.models.SearchIndexerDataIdentity
         """
         super().__init__(**kwargs)
         self.key_name = key_name
         self.key_version = key_version
         self.vault_uri = vault_uri
         self.access_credentials = access_credentials
+        self.identity = identity
 
 
 class SemanticConfiguration(_serialization.Model):
@@ -7284,8 +8492,7 @@ class SemanticSearch(_serialization.Model):
 
 
 class SentimentSkill(SearchIndexerSkill):
-    """Text analytics positive-negative sentiment analysis, scored as a floating point value in a
-    range of zero to 1.
+    """This skill is deprecated. Use the V3.SentimentSkill instead.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -7293,7 +8500,7 @@ class SentimentSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -7343,7 +8550,7 @@ class SentimentSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -7379,7 +8586,7 @@ class SentimentSkillV3(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -7439,7 +8646,7 @@ class SentimentSkillV3(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -7478,6 +8685,8 @@ class ServiceCounters(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar alias_counter: Total number of aliases. Required.
+    :vartype alias_counter: ~search_service_client.models.ResourceCounter
     :ivar document_counter: Total number of documents across all indexes in the service. Required.
     :vartype document_counter: ~search_service_client.models.ResourceCounter
     :ivar index_counter: Total number of indexes. Required.
@@ -7490,7 +8699,7 @@ class ServiceCounters(_serialization.Model):
     :vartype storage_size_counter: ~search_service_client.models.ResourceCounter
     :ivar synonym_map_counter: Total number of synonym maps. Required.
     :vartype synonym_map_counter: ~search_service_client.models.ResourceCounter
-    :ivar skillset_counter: Total number of skillsets.
+    :ivar skillset_counter: Total number of skillsets. Required.
     :vartype skillset_counter: ~search_service_client.models.ResourceCounter
     :ivar vector_index_size_counter: Total memory consumption of all vector indexes within the
      service, in bytes. Required.
@@ -7498,16 +8707,19 @@ class ServiceCounters(_serialization.Model):
     """
 
     _validation = {
+        "alias_counter": {"required": True},
         "document_counter": {"required": True},
         "index_counter": {"required": True},
         "indexer_counter": {"required": True},
         "data_source_counter": {"required": True},
         "storage_size_counter": {"required": True},
         "synonym_map_counter": {"required": True},
+        "skillset_counter": {"required": True},
         "vector_index_size_counter": {"required": True},
     }
 
     _attribute_map = {
+        "alias_counter": {"key": "aliasesCount", "type": "ResourceCounter"},
         "document_counter": {"key": "documentCount", "type": "ResourceCounter"},
         "index_counter": {"key": "indexesCount", "type": "ResourceCounter"},
         "indexer_counter": {"key": "indexersCount", "type": "ResourceCounter"},
@@ -7521,17 +8733,20 @@ class ServiceCounters(_serialization.Model):
     def __init__(
         self,
         *,
+        alias_counter: "_models.ResourceCounter",
         document_counter: "_models.ResourceCounter",
         index_counter: "_models.ResourceCounter",
         indexer_counter: "_models.ResourceCounter",
         data_source_counter: "_models.ResourceCounter",
         storage_size_counter: "_models.ResourceCounter",
         synonym_map_counter: "_models.ResourceCounter",
+        skillset_counter: "_models.ResourceCounter",
         vector_index_size_counter: "_models.ResourceCounter",
-        skillset_counter: Optional["_models.ResourceCounter"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword alias_counter: Total number of aliases. Required.
+        :paramtype alias_counter: ~search_service_client.models.ResourceCounter
         :keyword document_counter: Total number of documents across all indexes in the service.
          Required.
         :paramtype document_counter: ~search_service_client.models.ResourceCounter
@@ -7545,13 +8760,14 @@ class ServiceCounters(_serialization.Model):
         :paramtype storage_size_counter: ~search_service_client.models.ResourceCounter
         :keyword synonym_map_counter: Total number of synonym maps. Required.
         :paramtype synonym_map_counter: ~search_service_client.models.ResourceCounter
-        :keyword skillset_counter: Total number of skillsets.
+        :keyword skillset_counter: Total number of skillsets. Required.
         :paramtype skillset_counter: ~search_service_client.models.ResourceCounter
         :keyword vector_index_size_counter: Total memory consumption of all vector indexes within the
          service, in bytes. Required.
         :paramtype vector_index_size_counter: ~search_service_client.models.ResourceCounter
         """
         super().__init__(**kwargs)
+        self.alias_counter = alias_counter
         self.document_counter = document_counter
         self.index_counter = index_counter
         self.indexer_counter = indexer_counter
@@ -7661,7 +8877,7 @@ class ShaperSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -7705,7 +8921,7 @@ class ShaperSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -7821,6 +9037,26 @@ class ShingleTokenFilter(TokenFilter):
         self.filter_token = filter_token
 
 
+class SkillNames(_serialization.Model):
+    """SkillNames.
+
+    :ivar skill_names: the names of skills to be reset.
+    :vartype skill_names: list[str]
+    """
+
+    _attribute_map = {
+        "skill_names": {"key": "skillNames", "type": "[str]"},
+    }
+
+    def __init__(self, *, skill_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword skill_names: the names of skills to be reset.
+        :paramtype skill_names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.skill_names = skill_names
+
+
 class SnowballTokenFilter(TokenFilter):
     """A filter that stems words using a Snowball-generated stemmer. This token filter is implemented
     using Apache Lucene.
@@ -7916,7 +9152,7 @@ class SoftDeleteColumnDeletionDetectionPolicy(DataDeletionDetectionPolicy):
         self.soft_delete_marker_value = soft_delete_marker_value
 
 
-class SplitSkill(SearchIndexerSkill):
+class SplitSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attributes
     """A skill to split a string into chunks of text.
 
     All required parameters must be populated in order to send to Azure.
@@ -7925,7 +9161,7 @@ class SplitSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -7949,6 +9185,14 @@ class SplitSkill(SearchIndexerSkill):
     :vartype text_split_mode: str or ~search_service_client.models.TextSplitMode
     :ivar maximum_page_length: The desired maximum page length. Default is 10000.
     :vartype maximum_page_length: int
+    :ivar page_overlap_length: Only applicable when textSplitMode is set to 'pages'. If specified,
+     n+1th chunk will start with this number of characters/tokens from the end of the nth chunk.
+    :vartype page_overlap_length: int
+    :ivar maximum_pages_to_take: Only applicable when textSplitMode is set to 'pages'. If
+     specified, the SplitSkill will discontinue splitting after processing the first
+     'maximumPagesToTake' pages, in order to improve performance when only a few initial pages are
+     needed from each document.
+    :vartype maximum_pages_to_take: int
     """
 
     _validation = {
@@ -7967,6 +9211,8 @@ class SplitSkill(SearchIndexerSkill):
         "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
         "text_split_mode": {"key": "textSplitMode", "type": "str"},
         "maximum_page_length": {"key": "maximumPageLength", "type": "int"},
+        "page_overlap_length": {"key": "pageOverlapLength", "type": "int"},
+        "maximum_pages_to_take": {"key": "maximumPagesToTake", "type": "int"},
     }
 
     def __init__(
@@ -7980,12 +9226,14 @@ class SplitSkill(SearchIndexerSkill):
         default_language_code: Optional[Union[str, "_models.SplitSkillLanguage"]] = None,
         text_split_mode: Optional[Union[str, "_models.TextSplitMode"]] = None,
         maximum_page_length: Optional[int] = None,
+        page_overlap_length: Optional[int] = None,
+        maximum_pages_to_take: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -8010,12 +9258,23 @@ class SplitSkill(SearchIndexerSkill):
         :paramtype text_split_mode: str or ~search_service_client.models.TextSplitMode
         :keyword maximum_page_length: The desired maximum page length. Default is 10000.
         :paramtype maximum_page_length: int
+        :keyword page_overlap_length: Only applicable when textSplitMode is set to 'pages'. If
+         specified, n+1th chunk will start with this number of characters/tokens from the end of the nth
+         chunk.
+        :paramtype page_overlap_length: int
+        :keyword maximum_pages_to_take: Only applicable when textSplitMode is set to 'pages'. If
+         specified, the SplitSkill will discontinue splitting after processing the first
+         'maximumPagesToTake' pages, in order to improve performance when only a few initial pages are
+         needed from each document.
+        :paramtype maximum_pages_to_take: int
         """
         super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
         self.odata_type: str = "#Microsoft.Skills.Text.SplitSkill"
         self.default_language_code = default_language_code
         self.text_split_mode = text_split_mode
         self.maximum_page_length = maximum_page_length
+        self.page_overlap_length = page_overlap_length
+        self.maximum_pages_to_take = maximum_pages_to_take
 
 
 class SqlIntegratedChangeTrackingPolicy(DataChangeDetectionPolicy):
@@ -8330,12 +9589,12 @@ class SynonymMap(_serialization.Model):
     :vartype synonyms: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
-     want full assurance that no one, not even Microsoft, can decrypt your sensitive data. Once you
-     have encrypted your data, it will always remain encrypted. The search service will ignore
-     attempts to set this property to null. You can change this property as needed if you want to
-     rotate your encryption key; Your data will be unaffected. Encryption with customer-managed keys
-     is not available for free search services, and is only available for paid services created on
-     or after January 1, 2019.
+     want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
+     encrypted your data, it will always remain encrypted. The search service will ignore attempts
+     to set this property to null. You can change this property as needed if you want to rotate your
+     encryption key; Your data will be unaffected. Encryption with customer-managed keys is not
+     available for free search services, and is only available for paid services created on or after
+     January 1, 2019.
     :vartype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
     :ivar e_tag: The ETag of the synonym map.
     :vartype e_tag: str
@@ -8374,12 +9633,12 @@ class SynonymMap(_serialization.Model):
         :paramtype synonyms: str
         :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
          This key is used to provide an additional level of encryption-at-rest for your data when you
-         want full assurance that no one, not even Microsoft, can decrypt your sensitive data. Once you
-         have encrypted your data, it will always remain encrypted. The search service will ignore
-         attempts to set this property to null. You can change this property as needed if you want to
-         rotate your encryption key; Your data will be unaffected. Encryption with customer-managed keys
-         is not available for free search services, and is only available for paid services created on
-         or after January 1, 2019.
+         want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
+         encrypted your data, it will always remain encrypted. The search service will ignore attempts
+         to set this property to null. You can change this property as needed if you want to rotate your
+         encryption key; Your data will be unaffected. Encryption with customer-managed keys is not
+         available for free search services, and is only available for paid services created on or after
+         January 1, 2019.
         :paramtype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
         :keyword e_tag: The ETag of the synonym map.
         :paramtype e_tag: str
@@ -8570,7 +9829,7 @@ class TextTranslationSkill(SearchIndexerSkill):
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -8588,18 +9847,18 @@ class TextTranslationSkill(SearchIndexerSkill):
      that don't specify the to language explicitly. Required. Known values are: "af", "ar", "bn",
      "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil",
      "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
-     "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm", "sr-Cyrl",
-     "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy",
-     "yua", and "is".
+     "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
+     "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
+     "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and "is".
     :vartype default_to_language_code: str or
      ~search_service_client.models.TextTranslationSkillLanguage
     :ivar default_from_language_code: The language code to translate documents from for documents
      that don't specify the from language explicitly. Known values are: "af", "ar", "bn", "bs",
      "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil", "fi",
-     "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh", "ko",
-     "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm", "sr-Cyrl",
-     "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy",
-     "yua", and "is".
+     "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
+     "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
+     "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
+     "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and "is".
     :vartype default_from_language_code: str or
      ~search_service_client.models.TextTranslationSkillLanguage
     :ivar suggested_from: The language code to translate documents from when neither the
@@ -8607,9 +9866,10 @@ class TextTranslationSkill(SearchIndexerSkill):
      automatic language detection is unsuccessful. Default is ``en``. Known values are: "af", "ar",
      "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj",
      "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw",
-     "tlh", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm",
-     "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur",
-     "vi", "cy", "yua", and "is".
+     "tlh", "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt",
+     "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty",
+     "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and
+     "is".
     :vartype suggested_from: str or ~search_service_client.models.TextTranslationSkillLanguage
     """
 
@@ -8648,7 +9908,7 @@ class TextTranslationSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -8667,18 +9927,18 @@ class TextTranslationSkill(SearchIndexerSkill):
          that don't specify the to language explicitly. Required. Known values are: "af", "ar", "bn",
          "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil",
          "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
-         "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm", "sr-Cyrl",
-         "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy",
-         "yua", and "is".
+         "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
+         "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
+         "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and "is".
         :paramtype default_to_language_code: str or
          ~search_service_client.models.TextTranslationSkillLanguage
         :keyword default_from_language_code: The language code to translate documents from for
          documents that don't specify the from language explicitly. Known values are: "af", "ar", "bn",
          "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj", "fil",
          "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw", "tlh",
-         "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm", "sr-Cyrl",
-         "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy",
-         "yua", and "is".
+         "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "pt-br",
+         "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
+         "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and "is".
         :paramtype default_from_language_code: str or
          ~search_service_client.models.TextTranslationSkillLanguage
         :keyword suggested_from: The language code to translate documents from when neither the
@@ -8686,9 +9946,10 @@ class TextTranslationSkill(SearchIndexerSkill):
          automatic language detection is unsuccessful. Default is ``en``. Known values are: "af", "ar",
          "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj",
          "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw",
-         "tlh", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm",
-         "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta", "te", "th", "to", "tr", "uk", "ur",
-         "vi", "cy", "yua", and "is".
+         "tlh", "tlh-Latn", "tlh-Piqd", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt",
+         "pt-br", "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty",
+         "ta", "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", "pa", and
+         "is".
         :paramtype suggested_from: str or ~search_service_client.models.TextTranslationSkillLanguage
         """
         super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
@@ -8861,11 +10122,14 @@ class VectorSearch(_serialization.Model):
     :ivar algorithms: Contains configuration options specific to the algorithm used during indexing
      or querying.
     :vartype algorithms: list[~search_service_client.models.VectorSearchAlgorithmConfiguration]
+    :ivar vectorizers: Contains configuration options on how to vectorize text vector queries.
+    :vartype vectorizers: list[~search_service_client.models.VectorSearchVectorizer]
     """
 
     _attribute_map = {
         "profiles": {"key": "profiles", "type": "[VectorSearchProfile]"},
         "algorithms": {"key": "algorithms", "type": "[VectorSearchAlgorithmConfiguration]"},
+        "vectorizers": {"key": "vectorizers", "type": "[VectorSearchVectorizer]"},
     }
 
     def __init__(
@@ -8873,6 +10137,7 @@ class VectorSearch(_serialization.Model):
         *,
         profiles: Optional[List["_models.VectorSearchProfile"]] = None,
         algorithms: Optional[List["_models.VectorSearchAlgorithmConfiguration"]] = None,
+        vectorizers: Optional[List["_models.VectorSearchVectorizer"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8881,10 +10146,13 @@ class VectorSearch(_serialization.Model):
         :keyword algorithms: Contains configuration options specific to the algorithm used during
          indexing or querying.
         :paramtype algorithms: list[~search_service_client.models.VectorSearchAlgorithmConfiguration]
+        :keyword vectorizers: Contains configuration options on how to vectorize text vector queries.
+        :paramtype vectorizers: list[~search_service_client.models.VectorSearchVectorizer]
         """
         super().__init__(**kwargs)
         self.profiles = profiles
         self.algorithms = algorithms
+        self.vectorizers = vectorizers
 
 
 class VectorSearchProfile(_serialization.Model):
@@ -8897,6 +10165,9 @@ class VectorSearchProfile(_serialization.Model):
     :ivar algorithm_configuration_name: The name of the vector search algorithm configuration that
      specifies the algorithm and optional parameters. Required.
     :vartype algorithm_configuration_name: str
+    :ivar vectorizer: The name of the kind of vectorization method being configured for use with
+     vector search.
+    :vartype vectorizer: str
     """
 
     _validation = {
@@ -8907,19 +10178,26 @@ class VectorSearchProfile(_serialization.Model):
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "algorithm_configuration_name": {"key": "algorithm", "type": "str"},
+        "vectorizer": {"key": "vectorizer", "type": "str"},
     }
 
-    def __init__(self, *, name: str, algorithm_configuration_name: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, algorithm_configuration_name: str, vectorizer: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name to associate with this particular vector search profile. Required.
         :paramtype name: str
         :keyword algorithm_configuration_name: The name of the vector search algorithm configuration
          that specifies the algorithm and optional parameters. Required.
         :paramtype algorithm_configuration_name: str
+        :keyword vectorizer: The name of the kind of vectorization method being configured for use with
+         vector search.
+        :paramtype vectorizer: str
         """
         super().__init__(**kwargs)
         self.name = name
         self.algorithm_configuration_name = algorithm_configuration_name
+        self.vectorizer = vectorizer
 
 
 class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attributes
@@ -8932,7 +10210,7 @@ class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attr
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -8959,6 +10237,18 @@ class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attr
     :ivar degree_of_parallelism: If set, the number of parallel calls that can be made to the Web
      API.
     :vartype degree_of_parallelism: int
+    :ivar auth_resource_id: Applies to custom skills that connect to external code in an Azure
+     function or some other application that provides the transformations. This value should be the
+     application ID created for the function or app when it was registered with Azure Active
+     Directory. When specified, the custom skill connects to the function or app using a managed ID
+     (either system or user-assigned) of the search service and the access token of the function or
+     app, using this value as the resource id for creating the scope of the access token.
+    :vartype auth_resource_id: str
+    :ivar auth_identity: The user-assigned managed identity used for outbound connections. If an
+     authResourceId is provided and it's not specified, the system-assigned managed identity is
+     used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
+     If set to "none", the value of this property is cleared.
+    :vartype auth_identity: ~search_service_client.models.SearchIndexerDataIdentity
     """
 
     _validation = {
@@ -8981,6 +10271,8 @@ class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attr
         "timeout": {"key": "timeout", "type": "duration"},
         "batch_size": {"key": "batchSize", "type": "int"},
         "degree_of_parallelism": {"key": "degreeOfParallelism", "type": "int"},
+        "auth_resource_id": {"key": "authResourceId", "type": "str"},
+        "auth_identity": {"key": "authIdentity", "type": "SearchIndexerDataIdentity"},
     }
 
     def __init__(
@@ -8997,12 +10289,14 @@ class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attr
         timeout: Optional[datetime.timedelta] = None,
         batch_size: Optional[int] = None,
         degree_of_parallelism: Optional[int] = None,
+        auth_resource_id: Optional[str] = None,
+        auth_identity: Optional["_models.SearchIndexerDataIdentity"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -9030,6 +10324,18 @@ class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attr
         :keyword degree_of_parallelism: If set, the number of parallel calls that can be made to the
          Web API.
         :paramtype degree_of_parallelism: int
+        :keyword auth_resource_id: Applies to custom skills that connect to external code in an Azure
+         function or some other application that provides the transformations. This value should be the
+         application ID created for the function or app when it was registered with Azure Active
+         Directory. When specified, the custom skill connects to the function or app using a managed ID
+         (either system or user-assigned) of the search service and the access token of the function or
+         app, using this value as the resource id for creating the scope of the access token.
+        :paramtype auth_resource_id: str
+        :keyword auth_identity: The user-assigned managed identity used for outbound connections. If an
+         authResourceId is provided and it's not specified, the system-assigned managed identity is
+         used. On updates to the indexer, if the identity is unspecified, the value remains unchanged.
+         If set to "none", the value of this property is cleared.
+        :paramtype auth_identity: ~search_service_client.models.SearchIndexerDataIdentity
         """
         super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
         self.odata_type: str = "#Microsoft.Skills.Custom.WebApiSkill"
@@ -9039,6 +10345,8 @@ class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attr
         self.timeout = timeout
         self.batch_size = batch_size
         self.degree_of_parallelism = degree_of_parallelism
+        self.auth_resource_id = auth_resource_id
+        self.auth_identity = auth_identity
 
 
 class WordDelimiterTokenFilter(TokenFilter):  # pylint: disable=too-many-instance-attributes

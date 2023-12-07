@@ -8,22 +8,28 @@ from pathlib import Path
 import shutil
 import tempfile
 from typing import Any, List, Union, Iterable
+import uuid
 
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model as AzureMLModel, DataCollector, DeploymentCollection, Environment, BuildContext
+from azure.ai.ml.entities import ManagedOnlineDeployment, Model as AzureMLModel, DataCollector, DeploymentCollection, Environment, BuildContext
+from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies
 from azure.core.tracing.decorator import distributed_trace
+from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources.models import DeploymentMode
+from azure.core.polling import LROPoller
 
 from .._utils._scoring_script_utils import create_chat_scoring_script, create_mlmodel_file
 from .._utils._registry_utils import get_registry_model
-from .._utils._deployment_utils import get_default_allowed_instance_type_for_hugging_face
+from .._utils._deployment_utils import get_default_allowed_instance_type_for_hugging_face, get_empty_deployment_arm_template
 from ..entities.deployment import Deployment
 from ..entities.deployment_keys import DeploymentKeys
 from ..entities.models import Model, PromptflowModel
 
-from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, ActivityLogger
 
-ops_logger = OpsLogger(__name__)
+ops_logger = ActivityLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
@@ -32,10 +38,11 @@ class DeploymentOperations:
         self._ml_client = ml_client
         self._connections = connections
         ops_logger.update_info(kwargs)
+        self._resource_management_client = ResourceManagementClient(self._ml_client._credential, self._ml_client.subscription_id)
 
     @distributed_trace
-    @monitor_with_activity(logger, "Deployment.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, deployment: Deployment) -> Any:
+    @monitor_with_activity(logger, "Deployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    def begin_create_or_update(self, deployment: Deployment) -> LROPoller[Deployment]:
         model = deployment.model
         endpoint_name = deployment.endpoint_name if deployment.endpoint_name else deployment.name
 
@@ -53,13 +60,6 @@ class DeploymentOperations:
                 sampling_rate=1,
             )
 
-        v2_endpoint = ManagedOnlineEndpoint(
-            name=endpoint_name,
-            properties={
-                "enforce_access_to_default_secret_stores": "enabled"
-            }
-        )
-        created_endpoint = self._ml_client.begin_create_or_update(v2_endpoint).result()
         model = deployment.model
         v2_deployment = None
         temp_dir = tempfile.TemporaryDirectory()
@@ -227,18 +227,46 @@ class DeploymentOperations:
                 app_insights_enabled=deployment.app_insights_enabled,
                 data_collector=data_collector,
             )
-
+        if deployment.data_collector_enabled:
+            self._ml_client.online_deployments._register_collection_data_assets(v2_deployment)
+        orchestrators = OperationOrchestrator(
+            operation_container=self._ml_client.online_deployments._all_operations,
+            operation_scope=self._ml_client.online_deployments._operation_scope,
+            operation_config=self._ml_client.online_deployments._operation_config,
+        )
+        upload_dependencies(v2_deployment, orchestrators)
+        location = self._ml_client.online_deployments._get_workspace_location()
         v2_deployment.tags = deployment.tags
         v2_deployment.properties = deployment.properties
-        create_deployment_poller = self._ml_client.begin_create_or_update(v2_deployment)
         shutil.rmtree(temp_dir.name)
-        created_deployment = create_deployment_poller.result()
+    
+        template = get_empty_deployment_arm_template()
+        template["parameters"]["workspaceName"] = {"defaultValue": self._ml_client.workspace_name, "type": "String"}
+        template["parameters"]["onlineEndpointName"] = {"defaultValue": endpoint_name, "type": "String"}
+        template["parameters"]["onlineDeploymentName"] = {"defaultValue": deployment.name, "type": "String"}
+        template["parameters"]["onlineDeploymentProperties"] = {"defaultValue": v2_deployment._to_rest_object(location=location).properties.serialize(), "type": "Object"}
+        template["parameters"]["location"] = {"defaultValue": location, "type": "String"}
+        template["parameters"]["deploymentInstanceCount"] = {"defaultValue": deployment.instance_count, "type": "int"}
 
-        v2_endpoint.traffic = {deployment.name: 100}
-        update_endpoint_poller = self._ml_client.begin_create_or_update(v2_endpoint)
-        updated_endpoint = update_endpoint_poller.result()
 
-        return Deployment._from_v2_endpoint_deployment(updated_endpoint, deployment)
+        def lro_callback(raw_response, deserialized, headers):
+            outputs = deserialized.properties.outputs
+            return Deployment._from_v2_endpoint_deployment(
+                self._ml_client.online_endpoints.get(outputs["online_endpoint_name"]["value"]),
+                self._ml_client.online_deployments.get(outputs["online_deployment_name"]["value"], outputs["online_endpoint_name"]["value"])
+            )
+
+        return self._resource_management_client.deployments.begin_create_or_update(
+            self._ml_client.resource_group_name,
+            str(uuid.uuid4()),
+            {
+                "properties": {
+                    "template": template,
+                    "mode": DeploymentMode.incremental,
+                }
+            },
+            cls=lro_callback,
+        )
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Get", ActivityType.PUBLICAPI)

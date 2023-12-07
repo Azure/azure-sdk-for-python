@@ -1,5 +1,12 @@
 # Release History
 
+## 10.3.0 (2023-11-20)
+
+### Features Added
+
+  - Model Registry has a new parameter metadata_search
+  - Model RegistryUpdateParameters has a new parameter metadata_search
+
 ## 10.2.0 (2023-09-21)
 
 ### Features Added

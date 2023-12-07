@@ -15,6 +15,7 @@ from . import models as _models
 from ._configuration import SearchServiceClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
+    AliasesOperations,
     DataSourcesOperations,
     IndexersOperations,
     IndexesOperations,
@@ -24,7 +25,9 @@ from .operations import (
 )
 
 
-class SearchServiceClient(SearchServiceClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class SearchServiceClient(
+    SearchServiceClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Client that can be used to manage and query indexes and documents, as well as manage other
     resources, on a search service.
 
@@ -38,10 +41,12 @@ class SearchServiceClient(SearchServiceClientOperationsMixin):  # pylint: disabl
     :vartype synonym_maps: search_service_client.operations.SynonymMapsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: search_service_client.operations.IndexesOperations
+    :ivar aliases: AliasesOperations operations
+    :vartype aliases: search_service_client.operations.AliasesOperations
     :param endpoint: The endpoint URL of the search service. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-10-01-Preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -78,6 +83,7 @@ class SearchServiceClient(SearchServiceClientOperationsMixin):  # pylint: disabl
         self.skillsets = SkillsetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.synonym_maps = SynonymMapsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.aliases = AliasesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

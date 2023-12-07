@@ -29,6 +29,7 @@ from ...operations._skillsets_operations import (
     build_delete_request,
     build_get_request,
     build_list_request,
+    build_reset_skills_request,
 )
 from .._vendor import SearchServiceClientMixinABC
 
@@ -63,6 +64,8 @@ class SkillsetsOperations:
         skillset: _models.SearchIndexerSkillset,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -71,7 +74,7 @@ class SkillsetsOperations:
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/update-skillset
+           - https://docs.microsoft.com/rest/api/searchservice/update-skillset
 
         :param skillset_name: The name of the skillset to create or update. Required.
         :type skillset_name: str
@@ -87,6 +90,12 @@ class SkillsetsOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
+        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -106,6 +115,8 @@ class SkillsetsOperations:
         skillset: IO,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -114,7 +125,7 @@ class SkillsetsOperations:
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/update-skillset
+           - https://docs.microsoft.com/rest/api/searchservice/update-skillset
 
         :param skillset_name: The name of the skillset to create or update. Required.
         :type skillset_name: str
@@ -130,6 +141,12 @@ class SkillsetsOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
+        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -149,13 +166,15 @@ class SkillsetsOperations:
         skillset: Union[_models.SearchIndexerSkillset, IO],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
     ) -> _models.SearchIndexerSkillset:
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/update-skillset
+           - https://docs.microsoft.com/rest/api/searchservice/update-skillset
 
         :param skillset_name: The name of the skillset to create or update. Required.
         :type skillset_name: str
@@ -171,6 +190,12 @@ class SkillsetsOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
+        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -213,6 +238,8 @@ class SkillsetsOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
+            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -261,7 +288,7 @@ class SkillsetsOperations:
         """Deletes a skillset in a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/delete-skillset
+           - https://docs.microsoft.com/rest/api/searchservice/delete-skillset
 
         :param skillset_name: The name of the skillset to delete. Required.
         :type skillset_name: str
@@ -333,7 +360,7 @@ class SkillsetsOperations:
         """Retrieves a skillset in a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/get-skillset
+           - https://docs.microsoft.com/rest/api/searchservice/get-skillset
 
         :param skillset_name: The name of the skillset to retrieve. Required.
         :type skillset_name: str
@@ -401,10 +428,10 @@ class SkillsetsOperations:
         """List all skillsets in a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/list-skillset
+           - https://docs.microsoft.com/rest/api/searchservice/list-skillset
 
         :param select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         comma-separated list of JSON property names, or ``*`` for all properties. The default is all
+         comma-separated list of JSON property names, or '*' for all properties. The default is all
          properties. Default value is None.
         :type select: str
         :param request_options: Parameter group. Default value is None.
@@ -476,7 +503,7 @@ class SkillsetsOperations:
         """Creates a new skillset in a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/create-skillset
+           - https://docs.microsoft.com/rest/api/searchservice/create-skillset
 
         :param skillset: The skillset containing one or more skills to create in a search service.
          Required.
@@ -504,7 +531,7 @@ class SkillsetsOperations:
         """Creates a new skillset in a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/create-skillset
+           - https://docs.microsoft.com/rest/api/searchservice/create-skillset
 
         :param skillset: The skillset containing one or more skills to create in a search service.
          Required.
@@ -530,7 +557,7 @@ class SkillsetsOperations:
         """Creates a new skillset in a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/create-skillset
+           - https://docs.microsoft.com/rest/api/searchservice/create-skillset
 
         :param skillset: The skillset containing one or more skills to create in a search service. Is
          either a SearchIndexerSkillset type or a IO type. Required.
@@ -604,3 +631,148 @@ class SkillsetsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @overload
+    async def reset_skills(  # pylint: disable=inconsistent-return-statements
+        self,
+        skillset_name: str,
+        skill_names: _models.SkillNames,
+        request_options: Optional[_models.RequestOptions] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Reset an existing skillset in a search service.
+
+        .. seealso::
+           - https://aka.ms/reset-skills
+
+        :param skillset_name: The name of the skillset to reset. Required.
+        :type skillset_name: str
+        :param skill_names: The names of skills to reset. Required.
+        :type skill_names: ~search_service_client.models.SkillNames
+        :param request_options: Parameter group. Default value is None.
+        :type request_options: ~search_service_client.models.RequestOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def reset_skills(  # pylint: disable=inconsistent-return-statements
+        self,
+        skillset_name: str,
+        skill_names: IO,
+        request_options: Optional[_models.RequestOptions] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Reset an existing skillset in a search service.
+
+        .. seealso::
+           - https://aka.ms/reset-skills
+
+        :param skillset_name: The name of the skillset to reset. Required.
+        :type skillset_name: str
+        :param skill_names: The names of skills to reset. Required.
+        :type skill_names: IO
+        :param request_options: Parameter group. Default value is None.
+        :type request_options: ~search_service_client.models.RequestOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def reset_skills(  # pylint: disable=inconsistent-return-statements
+        self,
+        skillset_name: str,
+        skill_names: Union[_models.SkillNames, IO],
+        request_options: Optional[_models.RequestOptions] = None,
+        **kwargs: Any
+    ) -> None:
+        """Reset an existing skillset in a search service.
+
+        .. seealso::
+           - https://aka.ms/reset-skills
+
+        :param skillset_name: The name of the skillset to reset. Required.
+        :type skillset_name: str
+        :param skill_names: The names of skills to reset. Is either a SkillNames type or a IO type.
+         Required.
+        :type skill_names: ~search_service_client.models.SkillNames or IO
+        :param request_options: Parameter group. Default value is None.
+        :type request_options: ~search_service_client.models.RequestOptions
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _x_ms_client_request_id = None
+        if request_options is not None:
+            _x_ms_client_request_id = request_options.x_ms_client_request_id
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(skill_names, (IOBase, bytes)):
+            _content = skill_names
+        else:
+            _json = self._serialize.body(skill_names, "SkillNames")
+
+        _request = build_reset_skills_request(
+            skillset_name=skillset_name,
+            x_ms_client_request_id=_x_ms_client_request_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore

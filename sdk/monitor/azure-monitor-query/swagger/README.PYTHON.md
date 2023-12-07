@@ -33,7 +33,7 @@ These settings apply only when `--tag=release_query` is specified on the command
 
 ```yaml $(tag) == 'release_query'
 input-file:
-  - https://github.com/Azure/azure-rest-api-specs/blob/605407bc0c1a133018285f550d01175469cb3c3a/specification/operationalinsights/data-plane/Microsoft.OperationalInsights/stable/2022-10-27/OperationalInsights.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/operationalinsights/data-plane/Microsoft.OperationalInsights/stable/2022-10-27/OperationalInsights.json
 output-folder: ../azure/monitor/query/_generated
 title: MonitorQueryClient
 description: Azure Monitor Query Python Client
@@ -45,9 +45,9 @@ These settings apply only when `--tag=release_metrics` is specified on the comma
 
 ```yaml $(tag) == 'release_metrics'
 input-file:
-    - https://github.com/Azure/azure-rest-api-specs/blob/605407bc0c1a133018285f550d01175469cb3c3a/specification/monitor/resource-manager/Microsoft.Insights/stable/2018-01-01/metricDefinitions_API.json
-    - https://github.com/Azure/azure-rest-api-specs/blob/605407bc0c1a133018285f550d01175469cb3c3a/specification/monitor/resource-manager/Microsoft.Insights/stable/2018-01-01/metrics_API.json
-    - https://github.com/Azure/azure-rest-api-specs/blob/605407bc0c1a133018285f550d01175469cb3c3a/specification/monitor/resource-manager/Microsoft.Insights/preview/2017-12-01-preview/metricNamespaces_API.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/monitor/resource-manager/Microsoft.Insights/stable/2018-01-01/metricDefinitions_API.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/monitor/resource-manager/Microsoft.Insights/stable/2018-01-01/metrics_API.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/monitor/resource-manager/Microsoft.Insights/preview/2017-12-01-preview/metricNamespaces_API.json
 output-folder: ../azure/monitor/query/_generated/metrics
 title: MonitorMetricsClient
 description: Azure Monitor Metrics Python Client
@@ -59,7 +59,7 @@ These settings apply only when `--tag=release_metrics` is specified on the comma
 
 ```yaml $(tag) == 'release_metrics_batch'
 input-file:
-    - https://raw.githubusercontent.com/srnagar/azure-rest-api-specs/154cb5c6d5bdd2b183ea8d9d1b7e5bbd0caa625b/specification/monitor/data-plane/Microsoft.Insights/preview/2023-05-01-preview/metricBatch.json
+    - https://github.com/Azure/azure-rest-api-specs/blob/21f5332f2dc7437d1446edf240e9a3d4c90c6431/specification/monitor/data-plane/Microsoft.Insights/preview/2023-05-01-preview/metricBatch.json
 output-folder: ../azure/monitor/query/_generated/metrics/batch
 title: MonitorBatchMetricsClient
 description: Azure Monitor Batch Metrics Python Client
@@ -85,11 +85,16 @@ directive:
     $.required = ["name", "type"]
 ```
 
-### Remove default value
+### Interval adjustments
+
+Currently, the value for `default`` is erroneously being set to the parameter default in the generated method: https://github.com/Azure/autorest.python/issues/2062
+Also, the interval parameter in the spec does not use the "duration" format due to the need to support the "FULL" keyword which is not a valid ISO 8601 duration. In the Python SDK, we want the interval parameter to be `timedelta` only, so we add the "duration" format.
 
 ``` yaml
 directive:
 - from: swagger-document
   where: $.parameters[IntervalParameter]
   transform: >
-    delete $.default
+    delete $.default;
+    $.format = "duration";
+```

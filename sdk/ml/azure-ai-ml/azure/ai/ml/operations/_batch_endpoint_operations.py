@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 
+import uuid
 import json
 import os
 import re
@@ -53,7 +54,7 @@ from azure.ai.ml.entities import BatchEndpoint, BatchJob
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -375,15 +376,26 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         module_logger.debug("ml_audience_scopes used: `%s`\n", ml_audience_scopes)
         key = self._credentials.get_token(*ml_audience_scopes).token
         headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {key}"
+        headers[EndpointInvokeFields.REPEATABILITY_REQUEST_ID] = str(uuid.uuid4())
 
         if deployment_name:
             headers[EndpointInvokeFields.MODEL_DEPLOYMENT] = deployment_name
 
-        response = self._requests_pipeline.post(
-            endpoint.properties.scoring_uri,
-            json=request,
-            headers=headers,
-        )
+        retry_attempts = 0
+        while retry_attempts < 5:
+            try:
+                response = self._requests_pipeline.post(
+                    endpoint.properties.scoring_uri,
+                    json=request,
+                    headers=headers,
+                )
+            except (ServiceRequestError, ServiceResponseError):
+                retry_attempts += 1
+                continue
+            break
+        if retry_attempts == 5:
+            retry_msg = "Max retry attempts reached while trying to connect to server. Please check connection and invoke again."  # pylint: disable=line-too-long
+            raise MlException(message=retry_msg, no_personal_data_message=retry_msg, target=ErrorTarget.BATCH_ENDPOINT)
         validate_response(response)
         batch_job = json.loads(response.text())
         return BatchJobResource.deserialize(batch_job)

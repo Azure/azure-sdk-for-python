@@ -22,9 +22,7 @@ import time
 
 
 class RouterJobSamples(object):
-    endpoint = os.environ.get("AZURE_COMMUNICATION_SERVICE_ENDPOINT", None)
-    if not endpoint:
-        raise ValueError("Set AZURE_COMMUNICATION_SERVICE_ENDPOINT env before run this sample.")
+    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
 
     _job_id = "sample_job"
     _job_w_cp_id = "sample_job_w_cp"

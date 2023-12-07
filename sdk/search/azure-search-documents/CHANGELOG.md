@@ -1,8 +1,12 @@
 # Release History
 
-## 11.4.1 (Unreleased)
+## 11.5.0b1 (Unreleased)
 
 ### Features Added
+
+- Added `semantic_query` for `Search` method.
+- Added back alias operations to `SearchIndexClient`
+- Added back `query_language`, `query_speller`, `semantic_fields` and `debug` for `Search` method.
 
 ### Breaking Changes
 

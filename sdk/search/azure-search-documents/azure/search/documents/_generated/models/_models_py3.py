@@ -302,6 +302,29 @@ class AutocompleteResult(_serialization.Model):
         self.results = None
 
 
+class DocumentDebugInfo(_serialization.Model):
+    """Contains debugging information that can be used to further explore your search results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar semantic: Contains debugging information specific to semantic ranking requests.
+    :vartype semantic: ~search_index_client.models.SemanticDebugInfo
+    """
+
+    _validation = {
+        "semantic": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "semantic": {"key": "semantic", "type": "SemanticDebugInfo"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.semantic = None
+
+
 class FacetResult(_serialization.Model):
     """A single bucket of a facet query result. Reports the number of documents with a field value
     falling within a particular range or having a particular value or interval.
@@ -523,7 +546,7 @@ class QueryAnswerResult(_serialization.Model):
 class QueryCaptionResult(_serialization.Model):
     """Captions are the most representative passages from the document relatively to the search query.
     They are often used as document summary. Captions are only returned for queries of type
-    ``semantic``.
+    'semantic'..
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -559,6 +582,71 @@ class QueryCaptionResult(_serialization.Model):
         self.additional_properties = additional_properties
         self.text = None
         self.highlights = None
+
+
+class QueryResultDocumentRerankerInput(_serialization.Model):
+    """The raw concatenated strings that were sent to the semantic enrichment process.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar title: The raw string for the title field that was used for semantic enrichment.
+    :vartype title: str
+    :ivar content: The raw concatenated strings for the content fields that were used for semantic
+     enrichment.
+    :vartype content: str
+    :ivar keywords: The raw concatenated strings for the keyword fields that were used for semantic
+     enrichment.
+    :vartype keywords: str
+    """
+
+    _validation = {
+        "title": {"readonly": True},
+        "content": {"readonly": True},
+        "keywords": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "title": {"key": "title", "type": "str"},
+        "content": {"key": "content", "type": "str"},
+        "keywords": {"key": "keywords", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.title = None
+        self.content = None
+        self.keywords = None
+
+
+class QueryResultDocumentSemanticField(_serialization.Model):
+    """Description of fields that were sent to the semantic enrichment process, as well as how they
+    were used.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the field that was sent to the semantic enrichment process.
+    :vartype name: str
+    :ivar state: The way the field was used for the semantic enrichment process (fully used,
+     partially used, or unused). Known values are: "used", "unused", and "partial".
+    :vartype state: str or ~search_index_client.models.SemanticFieldState
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.state = None
 
 
 class RequestOptions(_serialization.Model):
@@ -606,13 +694,6 @@ class SearchDocumentsResult(_serialization.Model):
      the requested results in a single response. You can use this JSON along with @odata.nextLink to
      formulate another POST Search request to get the next part of the search response.
     :vartype next_page_parameters: ~search_index_client.models.SearchRequest
-    :ivar results: The sequence of results returned by the query. Required.
-    :vartype results: list[~search_index_client.models.SearchResult]
-    :ivar next_link: Continuation URL returned when the query can't return all the requested
-     results in a single response. You can use this URL to formulate another GET or POST Search
-     request to get the next part of the search response. Make sure to use the same verb (GET or
-     POST) as the request that produced this response.
-    :vartype next_link: str
     :ivar semantic_partial_response_reason: Reason that a partial response was returned for a
      semantic ranking request. Known values are: "maxWaitExceeded", "capacityOverloaded", and
      "transient".
@@ -622,6 +703,13 @@ class SearchDocumentsResult(_serialization.Model):
      ranking request. Known values are: "baseResults" and "rerankedResults".
     :vartype semantic_partial_response_type: str or
      ~search_index_client.models.SemanticSearchResultsType
+    :ivar results: The sequence of results returned by the query. Required.
+    :vartype results: list[~search_index_client.models.SearchResult]
+    :ivar next_link: Continuation URL returned when the query can't return all the requested
+     results in a single response. You can use this URL to formulate another GET or POST Search
+     request to get the next part of the search response. Make sure to use the same verb (GET or
+     POST) as the request that produced this response.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -630,10 +718,10 @@ class SearchDocumentsResult(_serialization.Model):
         "facets": {"readonly": True},
         "answers": {"readonly": True},
         "next_page_parameters": {"readonly": True},
-        "results": {"required": True, "readonly": True},
-        "next_link": {"readonly": True},
         "semantic_partial_response_reason": {"readonly": True},
         "semantic_partial_response_type": {"readonly": True},
+        "results": {"required": True, "readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -642,10 +730,10 @@ class SearchDocumentsResult(_serialization.Model):
         "facets": {"key": "@search\\.facets", "type": "{[FacetResult]}"},
         "answers": {"key": "@search\\.answers", "type": "[QueryAnswerResult]"},
         "next_page_parameters": {"key": "@search\\.nextPageParameters", "type": "SearchRequest"},
-        "results": {"key": "value", "type": "[SearchResult]"},
-        "next_link": {"key": "@odata\\.nextLink", "type": "str"},
         "semantic_partial_response_reason": {"key": "@search\\.semanticPartialResponseReason", "type": "str"},
         "semantic_partial_response_type": {"key": "@search\\.semanticPartialResponseType", "type": "str"},
+        "results": {"key": "value", "type": "[SearchResult]"},
+        "next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -656,10 +744,10 @@ class SearchDocumentsResult(_serialization.Model):
         self.facets = None
         self.answers = None
         self.next_page_parameters = None
-        self.results = None
-        self.next_link = None
         self.semantic_partial_response_reason = None
         self.semantic_partial_response_type = None
+        self.results = None
+        self.next_link = None
 
 
 class SearchError(_serialization.Model):
@@ -742,10 +830,48 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
     :ivar scoring_profile: The name of a scoring profile to evaluate match scores for matching
      documents in order to sort the results.
     :vartype scoring_profile: str
+    :ivar semantic_query: Allows setting a separate search query that will be solely used for
+     semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+     is a need to use different queries between the base retrieval and ranking phase, and the L2
+     semantic phase.
+    :vartype semantic_query: str
+    :ivar semantic_configuration: The name of the semantic configuration that lists which fields
+     should be used for semantic ranking, captions, highlights, and answers.
+    :vartype semantic_configuration: str
+    :ivar semantic_error_handling: Allows the user to choose whether a semantic call should fail
+     completely, or to return partial results (default). Known values are: "partial" and "fail".
+    :vartype semantic_error_handling: str or ~search_index_client.models.SemanticErrorMode
+    :ivar semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
+     time it takes for semantic enrichment to finish processing before the request fails.
+    :vartype semantic_max_wait_in_milliseconds: int
+    :ivar debug: Enables a debugging tool that can be used to further explore your search results.
+     Known values are: "disabled" and "semantic".
+    :vartype debug: str or ~search_index_client.models.QueryDebugMode
     :ivar search_fields: The list of field names to which to scope the full-text search. When using
      fielded search (fieldName:searchExpression) in a full Lucene query, the field names of each
      fielded search expression take precedence over any field names listed in this parameter.
     :vartype search_fields: list[str]
+    :ivar query_language: The language of the query. Known values are: "none", "en-us", "en-gb",
+     "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn", "zh-tw",
+     "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl", "hu-hu",
+     "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo", "da-dk",
+     "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn", "el-gr",
+     "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es", "fi-fi",
+     "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es", "gu-in",
+     "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", and "ur-pk".
+    :vartype query_language: str or ~search_index_client.models.QueryLanguage
+    :ivar speller: Improve search recall by spell-correcting individual search query terms. Known
+     values are: "none" and "lexicon".
+    :vartype speller: str or ~search_index_client.models.Speller
+    :ivar answers: This parameter is only valid if the query type is ``semantic``. If set, the
+     query returns answers extracted from key passages in the highest ranked documents. The number
+     of answers returned can be configured by appending the pipe character ``|`` followed by the
+     ``count-<number of answers>`` option after the answers parameter value, such as
+     ``extractive|count-3``. Default count is 1. The confidence threshold can be configured by
+     appending the pipe character ``|`` followed by the ``threshold-<confidence threshold>`` option
+     after the answers parameter value, such as ``extractive|threshold-0.9``. Default threshold is
+     0.7. Known values are: "none" and "extractive".
+    :vartype answers: str or ~search_index_client.models.QueryAnswerType
     :ivar search_mode: A value that specifies whether any or all of the search terms must be
      matched in order to count the document as a match. Known values are: "any" and "all".
     :vartype search_mode: str or ~search_index_client.models.SearchMode
@@ -772,24 +898,6 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
      paging, the response will include a continuation token that can be used to issue another Search
      request for the next page of results.
     :vartype top: int
-    :ivar semantic_configuration: The name of the semantic configuration that lists which fields
-     should be used for semantic ranking, captions, highlights, and answers.
-    :vartype semantic_configuration: str
-    :ivar semantic_error_handling: Allows the user to choose whether a semantic call should fail
-     completely, or to return partial results. Known values are: "partial" and "fail".
-    :vartype semantic_error_handling: str or ~search_index_client.models.SemanticErrorMode
-    :ivar semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
-     time it takes for semantic enrichment to finish processing before the request fails.
-    :vartype semantic_max_wait_in_milliseconds: int
-    :ivar answers: This parameter is only valid if the query type is ``semantic``. If set, the
-     query returns answers extracted from key passages in the highest ranked documents. The number
-     of answers returned can be configured by appending the pipe character ``|`` followed by the
-     ``count-<number of answers>`` option after the answers parameter value, such as
-     ``extractive|count-3``. Default count is 1. The confidence threshold can be configured by
-     appending the pipe character ``|`` followed by the ``threshold-<confidence threshold>`` option
-     after the answers parameter value, such as ``extractive|threshold-0.9``. Default threshold is
-     0.7. Known values are: "none" and "extractive".
-    :vartype answers: str or ~search_index_client.models.QueryAnswerType
     :ivar captions: This parameter is only valid if the query type is ``semantic``. If set, the
      query returns captions extracted from key passages in the highest ranked documents. When
      Captions is set to ``extractive``\ , highlighting is enabled by default, and can be configured
@@ -797,6 +905,8 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
      as ``extractive|highlight-true``. Defaults to ``None``. Known values are: "none" and
      "extractive".
     :vartype captions: str or ~search_index_client.models.QueryCaptionType
+    :ivar semantic_fields: The list of field names used for semantic ranking.
+    :vartype semantic_fields: list[str]
     """
 
     _validation = {
@@ -815,21 +925,26 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
         "query_type": {"key": "queryType", "type": "str"},
         "scoring_parameters": {"key": "ScoringParameters", "type": "[str]"},
         "scoring_profile": {"key": "scoringProfile", "type": "str"},
+        "semantic_query": {"key": "semanticQuery", "type": "str"},
+        "semantic_configuration": {"key": "semanticConfiguration", "type": "str"},
+        "semantic_error_handling": {"key": "semanticErrorHandling", "type": "str"},
+        "semantic_max_wait_in_milliseconds": {"key": "semanticMaxWaitInMilliseconds", "type": "int"},
+        "debug": {"key": "debug", "type": "str"},
         "search_fields": {"key": "searchFields", "type": "[str]"},
+        "query_language": {"key": "queryLanguage", "type": "str"},
+        "speller": {"key": "speller", "type": "str"},
+        "answers": {"key": "answers", "type": "str"},
         "search_mode": {"key": "searchMode", "type": "str"},
         "scoring_statistics": {"key": "scoringStatistics", "type": "str"},
         "session_id": {"key": "sessionId", "type": "str"},
         "select": {"key": "$select", "type": "[str]"},
         "skip": {"key": "$skip", "type": "int"},
         "top": {"key": "$top", "type": "int"},
-        "semantic_configuration": {"key": "semanticConfiguration", "type": "str"},
-        "semantic_error_handling": {"key": "semanticErrorHandling", "type": "str"},
-        "semantic_max_wait_in_milliseconds": {"key": "semanticMaxWaitInMilliseconds", "type": "int"},
-        "answers": {"key": "answers", "type": "str"},
         "captions": {"key": "captions", "type": "str"},
+        "semantic_fields": {"key": "semanticFields", "type": "[str]"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         include_total_result_count: Optional[bool] = None,
@@ -843,18 +958,23 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
         query_type: Optional[Union[str, "_models.QueryType"]] = None,
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
+        semantic_query: Optional[str] = None,
+        semantic_configuration: Optional[str] = None,
+        semantic_error_handling: Optional[Union[str, "_models.SemanticErrorMode"]] = None,
+        semantic_max_wait_in_milliseconds: Optional[int] = None,
+        debug: Optional[Union[str, "_models.QueryDebugMode"]] = None,
         search_fields: Optional[List[str]] = None,
+        query_language: Optional[Union[str, "_models.QueryLanguage"]] = None,
+        speller: Optional[Union[str, "_models.Speller"]] = None,
+        answers: Optional[Union[str, "_models.QueryAnswerType"]] = None,
         search_mode: Optional[Union[str, "_models.SearchMode"]] = None,
         scoring_statistics: Optional[Union[str, "_models.ScoringStatistics"]] = None,
         session_id: Optional[str] = None,
         select: Optional[List[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
-        semantic_configuration: Optional[str] = None,
-        semantic_error_handling: Optional[Union[str, "_models.SemanticErrorMode"]] = None,
-        semantic_max_wait_in_milliseconds: Optional[int] = None,
-        answers: Optional[Union[str, "_models.QueryAnswerType"]] = None,
         captions: Optional[Union[str, "_models.QueryCaptionType"]] = None,
+        semantic_fields: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -901,10 +1021,48 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
         :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
         :paramtype scoring_profile: str
+        :keyword semantic_query: Allows setting a separate search query that will be solely used for
+         semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+         is a need to use different queries between the base retrieval and ranking phase, and the L2
+         semantic phase.
+        :paramtype semantic_query: str
+        :keyword semantic_configuration: The name of the semantic configuration that lists which fields
+         should be used for semantic ranking, captions, highlights, and answers.
+        :paramtype semantic_configuration: str
+        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
+         completely, or to return partial results (default). Known values are: "partial" and "fail".
+        :paramtype semantic_error_handling: str or ~search_index_client.models.SemanticErrorMode
+        :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
+         of time it takes for semantic enrichment to finish processing before the request fails.
+        :paramtype semantic_max_wait_in_milliseconds: int
+        :keyword debug: Enables a debugging tool that can be used to further explore your search
+         results. Known values are: "disabled" and "semantic".
+        :paramtype debug: str or ~search_index_client.models.QueryDebugMode
         :keyword search_fields: The list of field names to which to scope the full-text search. When
          using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
          each fielded search expression take precedence over any field names listed in this parameter.
         :paramtype search_fields: list[str]
+        :keyword query_language: The language of the query. Known values are: "none", "en-us", "en-gb",
+         "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn", "zh-tw",
+         "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl", "hu-hu",
+         "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo", "da-dk",
+         "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn", "el-gr",
+         "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es", "fi-fi",
+         "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es", "gu-in",
+         "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", and "ur-pk".
+        :paramtype query_language: str or ~search_index_client.models.QueryLanguage
+        :keyword speller: Improve search recall by spell-correcting individual search query terms.
+         Known values are: "none" and "lexicon".
+        :paramtype speller: str or ~search_index_client.models.Speller
+        :keyword answers: This parameter is only valid if the query type is ``semantic``. If set, the
+         query returns answers extracted from key passages in the highest ranked documents. The number
+         of answers returned can be configured by appending the pipe character ``|`` followed by the
+         ``count-<number of answers>`` option after the answers parameter value, such as
+         ``extractive|count-3``. Default count is 1. The confidence threshold can be configured by
+         appending the pipe character ``|`` followed by the ``threshold-<confidence threshold>`` option
+         after the answers parameter value, such as ``extractive|threshold-0.9``. Default threshold is
+         0.7. Known values are: "none" and "extractive".
+        :paramtype answers: str or ~search_index_client.models.QueryAnswerType
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
          matched in order to count the document as a match. Known values are: "any" and "all".
         :paramtype search_mode: str or ~search_index_client.models.SearchMode
@@ -931,24 +1089,6 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
          server-side paging, the response will include a continuation token that can be used to issue
          another Search request for the next page of results.
         :paramtype top: int
-        :keyword semantic_configuration: The name of the semantic configuration that lists which fields
-         should be used for semantic ranking, captions, highlights, and answers.
-        :paramtype semantic_configuration: str
-        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
-         completely, or to return partial results. Known values are: "partial" and "fail".
-        :paramtype semantic_error_handling: str or ~search_index_client.models.SemanticErrorMode
-        :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
-         of time it takes for semantic enrichment to finish processing before the request fails.
-        :paramtype semantic_max_wait_in_milliseconds: int
-        :keyword answers: This parameter is only valid if the query type is ``semantic``. If set, the
-         query returns answers extracted from key passages in the highest ranked documents. The number
-         of answers returned can be configured by appending the pipe character ``|`` followed by the
-         ``count-<number of answers>`` option after the answers parameter value, such as
-         ``extractive|count-3``. Default count is 1. The confidence threshold can be configured by
-         appending the pipe character ``|`` followed by the ``threshold-<confidence threshold>`` option
-         after the answers parameter value, such as ``extractive|threshold-0.9``. Default threshold is
-         0.7. Known values are: "none" and "extractive".
-        :paramtype answers: str or ~search_index_client.models.QueryAnswerType
         :keyword captions: This parameter is only valid if the query type is ``semantic``. If set, the
          query returns captions extracted from key passages in the highest ranked documents. When
          Captions is set to ``extractive``\ , highlighting is enabled by default, and can be configured
@@ -956,6 +1096,8 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
          as ``extractive|highlight-true``. Defaults to ``None``. Known values are: "none" and
          "extractive".
         :paramtype captions: str or ~search_index_client.models.QueryCaptionType
+        :keyword semantic_fields: The list of field names used for semantic ranking.
+        :paramtype semantic_fields: list[str]
         """
         super().__init__(**kwargs)
         self.include_total_result_count = include_total_result_count
@@ -969,18 +1111,23 @@ class SearchOptions(_serialization.Model):  # pylint: disable=too-many-instance-
         self.query_type = query_type
         self.scoring_parameters = scoring_parameters
         self.scoring_profile = scoring_profile
+        self.semantic_query = semantic_query
+        self.semantic_configuration = semantic_configuration
+        self.semantic_error_handling = semantic_error_handling
+        self.semantic_max_wait_in_milliseconds = semantic_max_wait_in_milliseconds
+        self.debug = debug
         self.search_fields = search_fields
+        self.query_language = query_language
+        self.speller = speller
+        self.answers = answers
         self.search_mode = search_mode
         self.scoring_statistics = scoring_statistics
         self.session_id = session_id
         self.select = select
         self.skip = skip
         self.top = top
-        self.semantic_configuration = semantic_configuration
-        self.semantic_error_handling = semantic_error_handling
-        self.semantic_max_wait_in_milliseconds = semantic_max_wait_in_milliseconds
-        self.answers = answers
         self.captions = captions
+        self.semantic_fields = semantic_fields
 
 
 class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-attributes
@@ -1041,6 +1188,23 @@ class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-
     :ivar scoring_profile: The name of a scoring profile to evaluate match scores for matching
      documents in order to sort the results.
     :vartype scoring_profile: str
+    :ivar semantic_query: Allows setting a separate search query that will be solely used for
+     semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+     is a need to use different queries between the base retrieval and ranking phase, and the L2
+     semantic phase.
+    :vartype semantic_query: str
+    :ivar semantic_configuration: The name of a semantic configuration that will be used when
+     processing documents for queries of type semantic.
+    :vartype semantic_configuration: str
+    :ivar semantic_error_handling: Allows the user to choose whether a semantic call should fail
+     completely, or to return partial results (default). Known values are: "partial" and "fail".
+    :vartype semantic_error_handling: str or ~search_index_client.models.SemanticErrorMode
+    :ivar semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
+     time it takes for semantic enrichment to finish processing before the request fails.
+    :vartype semantic_max_wait_in_milliseconds: int
+    :ivar debug: Enables a debugging tool that can be used to further explore your reranked
+     results. Known values are: "disabled" and "semantic".
+    :vartype debug: str or ~search_index_client.models.QueryDebugMode
     :ivar search_text: A full-text search query expression; Use "*" or omit this parameter to match
      all documents.
     :vartype search_text: str
@@ -1052,6 +1216,22 @@ class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-
     :ivar search_mode: A value that specifies whether any or all of the search terms must be
      matched in order to count the document as a match. Known values are: "any" and "all".
     :vartype search_mode: str or ~search_index_client.models.SearchMode
+    :ivar query_language: A value that specifies the language of the search query. Known values
+     are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
+     "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
+     "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
+     "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
+     "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
+     "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
+     "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
+     "te-in", and "ur-pk".
+    :vartype query_language: str or ~search_index_client.models.QueryLanguage
+    :ivar speller: A value that specified the type of the speller to use to spell-correct
+     individual search query terms. Known values are: "none" and "lexicon".
+    :vartype speller: str or ~search_index_client.models.QuerySpellerType
+    :ivar answers: A value that specifies whether answers should be returned as part of the search
+     response. Known values are: "none" and "extractive".
+    :vartype answers: str or ~search_index_client.models.QueryAnswerType
     :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
      as retrievable in the schema are included.
     :vartype select: str
@@ -1064,27 +1244,16 @@ class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-
      paging, the response will include a continuation token that can be used to issue another Search
      request for the next page of results.
     :vartype top: int
-    :ivar semantic_configuration: The name of a semantic configuration that will be used when
-     processing documents for queries of type semantic.
-    :vartype semantic_configuration: str
-    :ivar semantic_error_handling: Allows the user to choose whether a semantic call should fail
-     completely (default / current behavior), or to return partial results. Known values are:
-     "partial" and "fail".
-    :vartype semantic_error_handling: str or ~search_index_client.models.SemanticErrorMode
-    :ivar semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
-     time it takes for semantic enrichment to finish processing before the request fails.
-    :vartype semantic_max_wait_in_milliseconds: int
-    :ivar answers: A value that specifies whether answers should be returned as part of the search
-     response. Known values are: "none" and "extractive".
-    :vartype answers: str or ~search_index_client.models.QueryAnswerType
     :ivar captions: A value that specifies whether captions should be returned as part of the
      search response. Known values are: "none" and "extractive".
     :vartype captions: str or ~search_index_client.models.QueryCaptionType
+    :ivar semantic_fields: The comma-separated list of field names used for semantic ranking.
+    :vartype semantic_fields: str
     :ivar vector_queries: The query parameters for vector and hybrid search queries.
     :vartype vector_queries: list[~search_index_client.models.VectorQuery]
     :ivar vector_filter_mode: Determines whether or not filters are applied before or after the
-     vector search is performed. Default is 'preFilter' for new indexes. Known values are:
-     "postFilter" and "preFilter".
+     vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and
+     "preFilter".
     :vartype vector_filter_mode: str or ~search_index_client.models.VectorFilterMode
     """
 
@@ -1106,17 +1275,22 @@ class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-
         "session_id": {"key": "sessionId", "type": "str"},
         "scoring_parameters": {"key": "scoringParameters", "type": "[str]"},
         "scoring_profile": {"key": "scoringProfile", "type": "str"},
-        "search_text": {"key": "search", "type": "str"},
-        "search_fields": {"key": "searchFields", "type": "str"},
-        "search_mode": {"key": "searchMode", "type": "str"},
-        "select": {"key": "select", "type": "str"},
-        "skip": {"key": "skip", "type": "int"},
-        "top": {"key": "top", "type": "int"},
+        "semantic_query": {"key": "semanticQuery", "type": "str"},
         "semantic_configuration": {"key": "semanticConfiguration", "type": "str"},
         "semantic_error_handling": {"key": "semanticErrorHandling", "type": "str"},
         "semantic_max_wait_in_milliseconds": {"key": "semanticMaxWaitInMilliseconds", "type": "int"},
+        "debug": {"key": "debug", "type": "str"},
+        "search_text": {"key": "search", "type": "str"},
+        "search_fields": {"key": "searchFields", "type": "str"},
+        "search_mode": {"key": "searchMode", "type": "str"},
+        "query_language": {"key": "queryLanguage", "type": "str"},
+        "speller": {"key": "speller", "type": "str"},
         "answers": {"key": "answers", "type": "str"},
+        "select": {"key": "select", "type": "str"},
+        "skip": {"key": "skip", "type": "int"},
+        "top": {"key": "top", "type": "int"},
         "captions": {"key": "captions", "type": "str"},
+        "semantic_fields": {"key": "semanticFields", "type": "str"},
         "vector_queries": {"key": "vectorQueries", "type": "[VectorQuery]"},
         "vector_filter_mode": {"key": "vectorFilterMode", "type": "str"},
     }
@@ -1137,17 +1311,22 @@ class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-
         session_id: Optional[str] = None,
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
-        search_text: Optional[str] = None,
-        search_fields: Optional[str] = None,
-        search_mode: Optional[Union[str, "_models.SearchMode"]] = None,
-        select: Optional[str] = None,
-        skip: Optional[int] = None,
-        top: Optional[int] = None,
+        semantic_query: Optional[str] = None,
         semantic_configuration: Optional[str] = None,
         semantic_error_handling: Optional[Union[str, "_models.SemanticErrorMode"]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
+        debug: Optional[Union[str, "_models.QueryDebugMode"]] = None,
+        search_text: Optional[str] = None,
+        search_fields: Optional[str] = None,
+        search_mode: Optional[Union[str, "_models.SearchMode"]] = None,
+        query_language: Optional[Union[str, "_models.QueryLanguage"]] = None,
+        speller: Optional[Union[str, "_models.QuerySpellerType"]] = None,
         answers: Optional[Union[str, "_models.QueryAnswerType"]] = None,
+        select: Optional[str] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
         captions: Optional[Union[str, "_models.QueryCaptionType"]] = None,
+        semantic_fields: Optional[str] = None,
         vector_queries: Optional[List["_models.VectorQuery"]] = None,
         vector_filter_mode: Optional[Union[str, "_models.VectorFilterMode"]] = None,
         **kwargs: Any
@@ -1209,6 +1388,23 @@ class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-
         :keyword scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
         :paramtype scoring_profile: str
+        :keyword semantic_query: Allows setting a separate search query that will be solely used for
+         semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+         is a need to use different queries between the base retrieval and ranking phase, and the L2
+         semantic phase.
+        :paramtype semantic_query: str
+        :keyword semantic_configuration: The name of a semantic configuration that will be used when
+         processing documents for queries of type semantic.
+        :paramtype semantic_configuration: str
+        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
+         completely, or to return partial results (default). Known values are: "partial" and "fail".
+        :paramtype semantic_error_handling: str or ~search_index_client.models.SemanticErrorMode
+        :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
+         of time it takes for semantic enrichment to finish processing before the request fails.
+        :paramtype semantic_max_wait_in_milliseconds: int
+        :keyword debug: Enables a debugging tool that can be used to further explore your reranked
+         results. Known values are: "disabled" and "semantic".
+        :paramtype debug: str or ~search_index_client.models.QueryDebugMode
         :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
          match all documents.
         :paramtype search_text: str
@@ -1220,6 +1416,22 @@ class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-
         :keyword search_mode: A value that specifies whether any or all of the search terms must be
          matched in order to count the document as a match. Known values are: "any" and "all".
         :paramtype search_mode: str or ~search_index_client.models.SearchMode
+        :keyword query_language: A value that specifies the language of the search query. Known values
+         are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
+         "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
+         "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
+         "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
+         "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
+         "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
+         "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
+         "te-in", and "ur-pk".
+        :paramtype query_language: str or ~search_index_client.models.QueryLanguage
+        :keyword speller: A value that specified the type of the speller to use to spell-correct
+         individual search query terms. Known values are: "none" and "lexicon".
+        :paramtype speller: str or ~search_index_client.models.QuerySpellerType
+        :keyword answers: A value that specifies whether answers should be returned as part of the
+         search response. Known values are: "none" and "extractive".
+        :paramtype answers: str or ~search_index_client.models.QueryAnswerType
         :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
          marked as retrievable in the schema are included.
         :paramtype select: str
@@ -1232,27 +1444,16 @@ class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-
          server-side paging, the response will include a continuation token that can be used to issue
          another Search request for the next page of results.
         :paramtype top: int
-        :keyword semantic_configuration: The name of a semantic configuration that will be used when
-         processing documents for queries of type semantic.
-        :paramtype semantic_configuration: str
-        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
-         completely (default / current behavior), or to return partial results. Known values are:
-         "partial" and "fail".
-        :paramtype semantic_error_handling: str or ~search_index_client.models.SemanticErrorMode
-        :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
-         of time it takes for semantic enrichment to finish processing before the request fails.
-        :paramtype semantic_max_wait_in_milliseconds: int
-        :keyword answers: A value that specifies whether answers should be returned as part of the
-         search response. Known values are: "none" and "extractive".
-        :paramtype answers: str or ~search_index_client.models.QueryAnswerType
         :keyword captions: A value that specifies whether captions should be returned as part of the
          search response. Known values are: "none" and "extractive".
         :paramtype captions: str or ~search_index_client.models.QueryCaptionType
+        :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
+        :paramtype semantic_fields: str
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
         :paramtype vector_queries: list[~search_index_client.models.VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
-         vector search is performed. Default is 'preFilter' for new indexes. Known values are:
-         "postFilter" and "preFilter".
+         vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and
+         "preFilter".
         :paramtype vector_filter_mode: str or ~search_index_client.models.VectorFilterMode
         """
         super().__init__(**kwargs)
@@ -1269,17 +1470,22 @@ class SearchRequest(_serialization.Model):  # pylint: disable=too-many-instance-
         self.session_id = session_id
         self.scoring_parameters = scoring_parameters
         self.scoring_profile = scoring_profile
-        self.search_text = search_text
-        self.search_fields = search_fields
-        self.search_mode = search_mode
-        self.select = select
-        self.skip = skip
-        self.top = top
+        self.semantic_query = semantic_query
         self.semantic_configuration = semantic_configuration
         self.semantic_error_handling = semantic_error_handling
         self.semantic_max_wait_in_milliseconds = semantic_max_wait_in_milliseconds
+        self.debug = debug
+        self.search_text = search_text
+        self.search_fields = search_fields
+        self.search_mode = search_mode
+        self.query_language = query_language
+        self.speller = speller
         self.answers = answers
+        self.select = select
+        self.skip = skip
+        self.top = top
         self.captions = captions
+        self.semantic_fields = semantic_fields
         self.vector_queries = vector_queries
         self.vector_filter_mode = vector_filter_mode
 
@@ -1299,15 +1505,18 @@ class SearchResult(_serialization.Model):
     :vartype score: float
     :ivar reranker_score: The relevance score computed by the semantic ranker for the top search
      results. Search results are sorted by the RerankerScore first and then by the Score.
-     RerankerScore is only returned for queries of type ``semantic``.
+     RerankerScore is only returned for queries of type 'semantic'.
     :vartype reranker_score: float
     :ivar highlights: Text fragments from the document that indicate the matching search terms,
      organized by each applicable field; null if hit highlighting was not enabled for the query.
     :vartype highlights: dict[str, list[str]]
     :ivar captions: Captions are the most representative passages from the document relatively to
      the search query. They are often used as document summary. Captions are only returned for
-     queries of type ``semantic``.
+     queries of type 'semantic'.
     :vartype captions: list[~search_index_client.models.QueryCaptionResult]
+    :ivar document_debug_info: Contains debugging information that can be used to further explore
+     your search results.
+    :vartype document_debug_info: list[~search_index_client.models.DocumentDebugInfo]
     """
 
     _validation = {
@@ -1315,6 +1524,7 @@ class SearchResult(_serialization.Model):
         "reranker_score": {"readonly": True},
         "highlights": {"readonly": True},
         "captions": {"readonly": True},
+        "document_debug_info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1323,6 +1533,7 @@ class SearchResult(_serialization.Model):
         "reranker_score": {"key": "@search\\.rerankerScore", "type": "float"},
         "highlights": {"key": "@search\\.highlights", "type": "{[str]}"},
         "captions": {"key": "@search\\.captions", "type": "[QueryCaptionResult]"},
+        "document_debug_info": {"key": "@search\\.documentDebugInfo", "type": "[DocumentDebugInfo]"},
     }
 
     def __init__(self, *, additional_properties: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
@@ -1337,6 +1548,49 @@ class SearchResult(_serialization.Model):
         self.reranker_score = None
         self.highlights = None
         self.captions = None
+        self.document_debug_info = None
+
+
+class SemanticDebugInfo(_serialization.Model):
+    """SemanticDebugInfo.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar title_field: The title field that was sent to the semantic enrichment process, as well as
+     how it was used.
+    :vartype title_field: ~search_index_client.models.QueryResultDocumentSemanticField
+    :ivar content_fields: The content fields that were sent to the semantic enrichment process, as
+     well as how they were used.
+    :vartype content_fields: list[~search_index_client.models.QueryResultDocumentSemanticField]
+    :ivar keyword_fields: The keyword fields that were sent to the semantic enrichment process, as
+     well as how they were used.
+    :vartype keyword_fields: list[~search_index_client.models.QueryResultDocumentSemanticField]
+    :ivar reranker_input: The raw concatenated strings that were sent to the semantic enrichment
+     process.
+    :vartype reranker_input: ~search_index_client.models.QueryResultDocumentRerankerInput
+    """
+
+    _validation = {
+        "title_field": {"readonly": True},
+        "content_fields": {"readonly": True},
+        "keyword_fields": {"readonly": True},
+        "reranker_input": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "title_field": {"key": "titleField", "type": "QueryResultDocumentSemanticField"},
+        "content_fields": {"key": "contentFields", "type": "[QueryResultDocumentSemanticField]"},
+        "keyword_fields": {"key": "keywordFields", "type": "[QueryResultDocumentSemanticField]"},
+        "reranker_input": {"key": "rerankerInput", "type": "QueryResultDocumentRerankerInput"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.title_field = None
+        self.content_fields = None
+        self.keyword_fields = None
+        self.reranker_input = None
 
 
 class SuggestDocumentsResult(_serialization.Model):
@@ -1663,11 +1917,12 @@ class VectorQuery(_serialization.Model):
     """The query parameters for vector and hybrid search queries.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    VectorizedQuery
+    VectorizableTextQuery, VectorizedQuery
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of vector query being performed. Required. "vector"
+    :ivar kind: The kind of vector query being performed. Required. Known values are: "vector" and
+     "text".
     :vartype kind: str or ~search_index_client.models.VectorQueryKind
     :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
     :vartype k_nearest_neighbors: int
@@ -1691,7 +1946,7 @@ class VectorQuery(_serialization.Model):
         "exhaustive": {"key": "exhaustive", "type": "bool"},
     }
 
-    _subtype_map = {"kind": {"vector": "VectorizedQuery"}}
+    _subtype_map = {"kind": {"text": "VectorizableTextQuery", "vector": "VectorizedQuery"}}
 
     def __init__(
         self,
@@ -1719,12 +1974,75 @@ class VectorQuery(_serialization.Model):
         self.exhaustive = exhaustive
 
 
+class VectorizableTextQuery(VectorQuery):
+    """The query parameters to use for vector search when a text value that needs to be vectorized is
+    provided.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: The kind of vector query being performed. Required. Known values are: "vector" and
+     "text".
+    :vartype kind: str or ~search_index_client.models.VectorQueryKind
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
+    :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+     searched.
+    :vartype fields: str
+    :ivar exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
+     vectors within the vector index. Useful for scenarios where exact matches are critical, such as
+     determining ground truth values.
+    :vartype exhaustive: bool
+    :ivar text: The text to be vectorized to perform a vector search query. Required.
+    :vartype text: str
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "text": {"required": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
+        "fields": {"key": "fields", "type": "str"},
+        "exhaustive": {"key": "exhaustive", "type": "bool"},
+        "text": {"key": "text", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        text: str,
+        k_nearest_neighbors: Optional[int] = None,
+        fields: Optional[str] = None,
+        exhaustive: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
+        :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
+         searched.
+        :paramtype fields: str
+        :keyword exhaustive: When true, triggers an exhaustive k-nearest neighbor search across all
+         vectors within the vector index. Useful for scenarios where exact matches are critical, such as
+         determining ground truth values.
+        :paramtype exhaustive: bool
+        :keyword text: The text to be vectorized to perform a vector search query. Required.
+        :paramtype text: str
+        """
+        super().__init__(k_nearest_neighbors=k_nearest_neighbors, fields=fields, exhaustive=exhaustive, **kwargs)
+        self.kind: str = "text"
+        self.text = text
+
+
 class VectorizedQuery(VectorQuery):
     """The query parameters to use for vector search when a raw vector value is provided.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar kind: The kind of vector query being performed. Required. "vector"
+    :ivar kind: The kind of vector query being performed. Required. Known values are: "vector" and
+     "text".
     :vartype kind: str or ~search_index_client.models.VectorQueryKind
     :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
     :vartype k_nearest_neighbors: int
