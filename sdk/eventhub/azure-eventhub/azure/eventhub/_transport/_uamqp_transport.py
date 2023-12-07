@@ -101,11 +101,11 @@ if uamqp_installed:
         MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         TIMEOUT_FACTOR = 1000
         CONNECTION_CLOSING_STATES: Tuple[
-        Union[uamqp_ConnectionState, "pyamqp_ConnectionState"],
-        Union[uamqp_ConnectionState, "pyamqp_ConnectionState"],
-        Union[uamqp_ConnectionState, "pyamqp_ConnectionState"],
-        Union[uamqp_ConnectionState, "pyamqp_ConnectionState"],
-        Optional[Union[uamqp_ConnectionState, "pyamqp_ConnectionState"]]] = (  # pylint:disable=protected-access
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Union["uamqp_ConnectionState", "pyamqp_ConnectionState"],
+        Optional[Union["uamqp_ConnectionState", "pyamqp_ConnectionState"]]] = (  # pylint:disable=protected-access
                 c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member

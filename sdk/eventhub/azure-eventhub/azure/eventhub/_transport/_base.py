@@ -61,11 +61,11 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     MAX_MESSAGE_LENGTH_BYTES: int
     TIMEOUT_FACTOR: int
     CONNECTION_CLOSING_STATES: Tuple[
-        Union[uamqp_ConnectionState, pyamqp_ConnectionState],
-        Union[uamqp_ConnectionState, pyamqp_ConnectionState],
-        Union[uamqp_ConnectionState, pyamqp_ConnectionState],
-        Union[uamqp_ConnectionState, pyamqp_ConnectionState],
-        Optional[Union[uamqp_ConnectionState, pyamqp_ConnectionState]]]
+        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
+        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
+        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
+        Union["uamqp_ConnectionState", pyamqp_ConnectionState],
+        Optional[Union["uamqp_ConnectionState", pyamqp_ConnectionState]]]
     TRANSPORT_IDENTIFIER: str
 
     # define symbols
@@ -182,7 +182,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @abstractmethod
     def get_connection_state(
         connection: Union[uamqp_Connection, pyamqp_Connection]
-    ) -> Union[uamqp_ConnectionState, pyamqp_ConnectionState]:
+    ) -> Union["uamqp_ConnectionState", pyamqp_ConnectionState]:
         """
         Gets connection state.
         :param connection: uamqp or pyamqp Connection.
