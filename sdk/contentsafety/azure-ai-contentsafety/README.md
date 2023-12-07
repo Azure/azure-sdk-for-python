@@ -1,7 +1,18 @@
 
 # Azure AI Content Safety client library for Python
 
-[Azure AI Content Safety][contentsafety_overview] detects harmful user-generated and AI-generated content in applications and services. Content Safety includes text and image APIs that allow you to detect material that is harmful.
+[Azure AI Content Safety][contentsafety_overview] detects harmful user-generated and AI-generated content in applications and services. Content Safety includes text and image APIs that allow you to detect material that is harmful:
+
+* Text Analysis API: Scans text for sexual content, violence, hate, and self-harm with multi-severity levels.
+* Image Analysis API: Scans images for sexual content, violence, hate, and self-harm with multi-severity levels.
+* Text Blocklist Management APIs: The default AI classifiers are sufficient for most content safety needs; however, you might need to screen for terms that are specific to your use case. You can create blocklists of terms to use with the Text API.
+
+## Documentation
+
+Various documentation is available to help you get started
+
+- [API reference documentation][api_reference_docs]
+- [Product documentation][product_documentation]
 
 ## Getting started
 
@@ -43,7 +54,7 @@ The API key can be found in the [Azure Portal][azure_portal] or by running the f
 
     ```python
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import ContentSafetyClient, BlocklistClient
     
     endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
     credential = AzureKeyCredential("<api_key>")
@@ -66,7 +77,7 @@ The API key can be found in the [Azure Portal][azure_portal] or by running the f
 
     ```python
     from azure.identity import DefaultAzureCredential
-    from azure.ai.contentsafety import ContentSafetyClient
+    from azure.ai.contentsafety import ContentSafetyClient, BlocklistClient
     
     endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
     credential = DefaultAzureCredential()
@@ -683,3 +694,5 @@ additional questions or comments.
 [authenticate_with_microsoft_entra_id]: https://learn.microsoft.com/azure/ai-services/authentication?tabs=powershell#authenticate-with-microsoft-entra-id
 [text_severity_levels]: https://learn.microsoft.com/azure/ai-services/content-safety/concepts/harm-categories?tabs=definitions#text-content
 [image_severity_levels]: https://learn.microsoft.com/azure/ai-services/content-safety/concepts/harm-categories?tabs=definitions#image-content
+[product_documentation]: https://learn.microsoft.com/azure/cognitive-services/content-safety/
+[api_reference_docs]: https://azure.github.io/azure-sdk-for-python/cognitiveservices.html#azure-ai-contentsafety
