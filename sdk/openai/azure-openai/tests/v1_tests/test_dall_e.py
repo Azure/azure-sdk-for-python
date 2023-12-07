@@ -35,7 +35,7 @@ class TestDallE(AzureRecordedTestCase):
         assert len(image.data) == 1
         for img in image.data:
             assert img.url
-            assert image.revised_prompt
+            assert img.revised_prompt
 
     @configure
     @pytest.mark.parametrize("api_type", [OPENAI, DALLE_AZURE])

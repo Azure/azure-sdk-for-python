@@ -37,7 +37,7 @@ class TestDallEAsync(AzureRecordedTestCase):
         assert len(image.data) == 1
         for img in image.data:
             assert img.url
-            assert image.revised_prompt
+            assert img.revised_prompt
 
     @configure_async
     @pytest.mark.asyncio
