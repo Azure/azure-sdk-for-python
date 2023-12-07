@@ -243,6 +243,15 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             self
         )
 
+    async def __aenter__(self) -> "ServiceBusReceiver":
+        if self._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
+        await self._open_with_retry()
+        return self
+
     def __aiter__(self) -> AsyncIteratorType[ServiceBusReceivedMessage]:
         return self._iter_contextual_wrapper()
 

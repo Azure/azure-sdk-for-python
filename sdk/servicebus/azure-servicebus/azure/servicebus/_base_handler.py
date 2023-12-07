@@ -330,16 +330,6 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
         return kwargs
 
-    def __enter__(self) -> "BaseHandler":
-        if self._shutdown.is_set():
-            raise ValueError(
-                "The handler has already been shutdown. Please use ServiceBusClient to "
-                "create a new instance."
-            )
-
-        self._open_with_retry()
-        return self
-
     def __exit__(self, *args: Any) -> None:
         self.close()
 
