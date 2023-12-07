@@ -35,7 +35,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str
@@ -80,7 +80,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :paramtype use_managed_identity: Literal[True]
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
-        :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `result()` on this object to wait for the
+        :returns: An azure.core.polling.LROPoller instance. Call `result()` on this object to wait for the
             operation to complete and get a :class:`KeyVaultBackupResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultBackupResult]
 
@@ -176,7 +176,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         :keyword str key_name: Name of a single key in the backup. When set, only this key will be restored.
         :keyword str continuation_token: A continuation token to restart polling from a saved state.
 
-        :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `wait()` or `result()` on this object to wait
+        :returns: An azure.core.polling.LROPoller instance. Call `wait()` or `result()` on this object to wait
             for the operation to complete (the return value is None in either case).
         :rtype: ~azure.core.polling.LROPoller
 

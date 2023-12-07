@@ -27,7 +27,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str

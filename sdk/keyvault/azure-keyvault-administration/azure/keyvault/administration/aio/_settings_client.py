@@ -19,7 +19,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str
@@ -34,9 +34,9 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the account setting.
 
-        :returns: The account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
+        :returns: The account setting, as a azure.keyvault.administration.KeyVaultSetting.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         result = await self._client.get_setting(vault_base_url=self._vault_url, setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
@@ -45,9 +45,9 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
     def list_settings(self, **kwargs) -> AsyncItemPaged[KeyVaultSetting]:
         """Lists all account settings.
 
-        :returns: A :class:`~azure.keyvault.administration.GetSettingsResult` object containing the account's settings.
+        :returns: A azure.keyvault.administration.GetSettingsResult object containing the account's settings.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultSetting]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         result = self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
 
@@ -67,13 +67,13 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
     async def update_setting(self, setting: KeyVaultSetting, **kwargs) -> KeyVaultSetting:
         """Updates the named account setting with the provided value.
 
-        :param setting: A :class:`~azure.keyvault.administration.KeyVaultSetting` to update. The account setting with
+        :param setting: A azure.keyvault.administration.KeyVaultSetting to update. The account setting with
             the provided name will be updated to have the provided value.
         :type setting: ~azure.keyvault.administration.KeyVaultSetting
 
-        :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
+        :returns: The updated account setting, as a azure.keyvault.administration.KeyVaultSetting.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         parameters = UpdateSettingRequest(value=setting.value)
         result = await self._client.update_setting(

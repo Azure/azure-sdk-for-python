@@ -42,9 +42,9 @@ def _update_challenge(request: PipelineRequest, challenger: "PipelineResponse") 
     """Parse challenge from a challenge response, cache it, and return it.
 
     :param request: The pipeline request that prompted the challenge response.
-    :type request: :class:`~azure.core.pipeline.PipelineRequest`
+    :type request: ~azure.core.pipeline.PipelineRequest
     :param challenger: The pipeline response containing the authentication challenge.
-    :type challenger: :class:`~azure.core.pipeline.PipelineResponse`
+    :type challenger: ~azure.core.pipeline.PipelineResponse
 
     :returns: An HttpChallenge object representing the authentication challenge.
     :rtype: HttpChallenge
@@ -64,7 +64,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
     """
 
     def __init__(self, credential: "TokenCredential", *scopes: str, **kwargs) -> None:
