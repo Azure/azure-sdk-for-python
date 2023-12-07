@@ -218,8 +218,7 @@ class Component(
         :return: Outputs of the component.
         :rtype: dict
         """
-        res: dict = self._outputs
-        return res
+        return self._outputs
 
     @property
     def version(self) -> str:
