@@ -99,7 +99,7 @@ class AbstractSpan(Protocol, Generic[SpanType]):
         self,
         exception_type: Optional[Type[BaseException]],
         exception_value: Optional[BaseException],
-        traceback: TracebackType,
+        traceback: Optional[TracebackType],
     ) -> None:
         """Finish a span.
 
