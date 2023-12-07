@@ -565,7 +565,7 @@ def _set_blob_metadata_options(metadata: Optional[Dict[str, str]] = None, **kwar
 
 def _create_page_blob_options(
     size: int,
-    content_settings: Optional[ContentSettings] = None,
+    content_settings: Optional["ContentSettings"] = None,
     metadata: Optional[Dict[str, str]] = None,
     premium_page_blob_tier: Optional[Union[str, "PremiumPageBlobTier"]] = None,
     **kwargs: Any
@@ -642,7 +642,7 @@ def _create_page_blob_options(
     return options
 
 def _create_append_blob_options(
-    content_settings: Optional[ContentSettings] = None,
+    content_settings: Optional["ContentSettings"] = None,
     metadata: Optional[Dict[str, str]] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
@@ -979,7 +979,7 @@ def _get_block_list_result(blocks: Any) -> Tuple[List[Optional[BlobBlock]], List
 
 def _commit_block_list_options(
     block_list: List[BlobBlock],
-    content_settings: Optional[ContentSettings] = None,
+    content_settings: Optional["ContentSettings"] = None,
     metadata: Optional[Dict[str, str]] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
