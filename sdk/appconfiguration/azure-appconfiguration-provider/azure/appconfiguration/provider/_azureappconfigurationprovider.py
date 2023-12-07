@@ -579,7 +579,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         with self._update_lock:
             return copy.deepcopy(self._dict.items())
 
-    def values(self) -> Iterable[Union[str, JSON]]: 
+    def values(self) -> Iterable[Union[str, JSON]]:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
