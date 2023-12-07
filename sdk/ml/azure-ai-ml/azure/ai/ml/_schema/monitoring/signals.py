@@ -74,8 +74,7 @@ class ProductionDataSchema(metaclass=PatchedSchemaMeta):
     input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
     data_context = StringTransformedEnum(allowed_values=[o.value for o in MonitorDatasetContext])
     pre_processing_component = fields.Str()
-    lookback_window_size = fields.Str()
-    lookback_window_offset = fields.Str()
+    data_window = NestedField(BaselineDataRangeSchema)
 
     @post_load
     def make(self, data, **kwargs):
@@ -188,8 +187,7 @@ class FADProductionDataSchema(metaclass=PatchedSchemaMeta):
         keys=StringTransformedEnum(allowed_values=[o.value for o in FADColumnNames]), values=fields.Str()
     )
     pre_processing_component = fields.Str()
-    lookback_window_size = fields.Str()
-    lookback_window_offset = fields.Str()
+    data_window = NestedField(BaselineDataRangeSchema)
 
     @post_load
     def make(self, data, **kwargs):
