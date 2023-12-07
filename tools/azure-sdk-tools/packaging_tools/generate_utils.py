@@ -5,7 +5,7 @@ import os
 import re
 from functools import wraps
 
-from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
+from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
 from subprocess import check_call
 from typing import Dict, Any
