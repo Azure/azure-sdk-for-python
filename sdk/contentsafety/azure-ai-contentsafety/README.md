@@ -1,5 +1,6 @@
 
 # Azure AI Content Safety client library for Python
+
 [Azure AI Content Safety][contentsafety_overview] detects harmful user-generated and AI-generated content in applications and services. Content Safety includes text and image APIs that allow you to detect material that is harmful.
 
 ## Getting started
@@ -19,6 +20,7 @@ pip install azure-ai-contentsafety
 ### Authenticate the client
 
 #### Get the endpoint
+
 You can find the endpoint for your Azure AI Content Safety service resource using the [Azure Portal][azure_portal] or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
@@ -26,7 +28,7 @@ You can find the endpoint for your Azure AI Content Safety service resource usin
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
-#### Create a ContentSafetyClient with API key
+#### Create a ContentSafetyClient/BlocklistClient with API key
 
 To use an API key as the `credential` parameter.
 
@@ -45,16 +47,17 @@ The API key can be found in the [Azure Portal][azure_portal] or by running the f
     
     endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
     credential = AzureKeyCredential("<api_key>")
-    client = ContentSafetyClient(endpoint, credential)
+    content_safety_client = ContentSafetyClient(endpoint, credential)
+    blocklist_client = BlocklistClient(endpoint, credential)
     ```
 
-#### Create a ContentSafetyClient with Microsoft Entra ID token credential
+#### Create a ContentSafetyClient/BlocklistClient with Microsoft Entra ID token credential
 
-- Step 1: Enable Microsoft Entra ID for your resource
-    Please refer to this Cognitive Services authentication document [Authenticate with Microsoft Entra ID.][authenticate_with_microsoft_entra_id] for the steps to enable Microsoft Entra ID for your resource.
+- Step 1: Enable Microsoft Entra ID for your resource.
+    Please refer to this document [Authenticate with Microsoft Entra ID][authenticate_with_microsoft_entra_id] for the steps to enable Microsoft Entra ID for your resource.
 
     The main steps are:
-  - Create resource with a custom subdomain. 
+  - Create resource with a custom subdomain.
   - Create Service Principal and assign Cognitive Services User role to it.
 
 - Step 2: Set the values of the client ID, tenant ID, and client secret of the Microsoft Entra application as environment variables: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
@@ -67,12 +70,14 @@ The API key can be found in the [Azure Portal][azure_portal] or by running the f
     
     endpoint = "https://<my-custom-subdomain>.cognitiveservices.azure.com/"
     credential = DefaultAzureCredential()
-    client = ContentSafetyClient(endpoint, credential)
+    content_safety_client = ContentSafetyClient(endpoint, credential)
+    blocklist_client = BlocklistClient(endpoint, credential)
     ```
 
 ## Key concepts
 
 ### Available features
+
 There are different types of analysis available from this service. The following table describes the currently available APIs.
 
 |Feature  |Description  |
@@ -82,6 +87,7 @@ There are different types of analysis available from this service. The following
 | Text Blocklist Management APIs|The default AI classifiers are sufficient for most content safety needs. However, you might need to screen for terms that are specific to your use case. You can create blocklists of terms to use with the Text API.|
 
 ### Harm categories
+
 Content Safety recognizes four distinct categories of objectionable content.
 
 |Category|Description|
@@ -94,9 +100,10 @@ Content Safety recognizes four distinct categories of objectionable content.
 Classification can be multi-labeled. For example, when a text sample goes through the text moderation model, it could be classified as both Sexual content and Violence.
 
 ### Severity levels
+
 Every harm category the service applies also comes with a severity level rating. The severity level is meant to indicate the severity of the consequences of showing the flagged content.
 
-**Text**: The current version of the text model supports the full 0-7 severity scale. The classifier detects amongst all severities along this scale. If the user specifies, it can return severities in the trimmed scale of 0, 2, 4, and 6; each two adjacent levels are mapped to a single level. You can refer [text content severity levels definitions][text_severity_levels] for details.
+**Text**: The current version of the text model supports the full 0-7 severity scale. By default, the response will output 4 values: 0, 2, 4, and 6. Each two adjacent levels are mapped to a single level. Users could use "outputType" in request and set it as "EightSeverityLevels" to get 8 values in output: 0,1,2,3,4,5,6,7. You can refer [text content severity levels definitions][text_severity_levels] for details.
 
 - [0,1] -> 0
 - [2,3] -> 2
@@ -111,15 +118,17 @@ Every harm category the service applies also comes with a severity level rating.
 - [6,7] -> 6
 
 ### Text blocklist management
+
 Following operations are supported to manage your text blocklist:
+
 - Create or modify a blocklist
 - List all blocklists
 - Get a blocklist by blocklistName
-- Add blockItems to a blocklist
-- Remove blockItems from a blocklist
-- List all blockItems in a blocklist by blocklistName
-- Get a blockItem in a blocklist by blockItemId and blocklistName
-- Delete a blocklist and all of its blockItems
+- Add blocklistItems to a blocklist
+- Remove blocklistItems from a blocklist
+- List all blocklistItems in a blocklist by blocklistName
+- Get a blocklistItem in a blocklist by blocklistItemId and blocklistName
+- Delete a blocklist and all of its blocklistItems
 
 You can set the blocklists you want to use when analyze text, then you can get blocklist match result from returned response.
 

@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Support AAD Authentication
+- Support Microsoft Entra ID Authentication
 - Support 8 severity level for AnalyzeText
 
 ### Breaking Changes
@@ -17,14 +17,13 @@ Contract change for AnalyzeText, AnalyzeImage, Blocklist management related meth
   - Renamed breakByBlocklists to haltOnBlocklistHit
   - Added AnalyzeTextOutputType model for the `output_type` property.
 - AnalyzeTextResult
-  - Renamed blocklistsMatchResults to blocklistsMatch
+  - Renamed TextBlocklistMatchResult to TextBlocklistMatch
   - Replaced TextAnalyzeSeverityResult by TextCategoriesAnalysis
 
 #### AnalyzeImage
 
 - AnalyzeImageOptions
-  - Replaced ImageData by ContentSafetyImageData
-  - Add AnalyzeImageOutputType
+  - Added AnalyzeImageOutputType
 - AnalyzeImageResult
   - Replaced ImageAnalyzeSeverityResult by ImageCategoriesAnalysis
 
