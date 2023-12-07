@@ -37,7 +37,7 @@ class SearchField(_serialization.Model):
     :ivar type: The data type of the field. Required. Known values are: "Edm.String", "Edm.Int32",
      "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset", "Edm.GeographyPoint",
      "Edm.ComplexType", and "Edm.Single".
-    :vartype type: str or ~search_service_client.models.SearchFieldDataType
+    :vartype type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
     :ivar key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
      type Edm.String. Key fields can be used to look up documents directly and update or delete
@@ -98,7 +98,7 @@ class SearchField(_serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype analyzer_name: str or ~search_service_client.models.LexicalAnalyzerName
+    :vartype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :ivar search_analyzer_name: The name of the analyzer used at search time for the field. This option
      can be used only with searchable fields. It must be set together with indexAnalyzer and it
      cannot be set together with the analyzer option. This property cannot be set to the name of a
@@ -121,7 +121,7 @@ class SearchField(_serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype search_analyzer_name: str or ~search_service_client.models.LexicalAnalyzerName
+    :vartype search_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :ivar index_analyzer_name: The name of the analyzer used at indexing time for the field. This option
      can be used only with searchable fields. It must be set together with searchAnalyzer and it
      cannot be set together with the analyzer option.  This property cannot be set to the name of a
@@ -144,7 +144,12 @@ class SearchField(_serialization.Model):
      "th.lucene", "tr.microsoft", "tr.lucene", "uk.microsoft", "ur.microsoft", "vi.microsoft",
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
-    :vartype index_analyzer_name: str or ~search_service_client.models.LexicalAnalyzerName
+    :vartype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :ivar normalizer: The name of the normalizer to use for the field. This option can be used only
+     with fields with filterable, sortable, or facetable enabled. Once the normalizer is chosen, it
+     cannot be changed for the field. Must be null for complex fields. Known values are:
+     "asciifolding", "elision", "lowercase", "standard", and "uppercase".
+    :vartype normalizer: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :ivar vector_search_dimensions: The dimensionality of the vector field.
     :vartype vector_search_dimensions: int
     :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
@@ -158,7 +163,7 @@ class SearchField(_serialization.Model):
     :vartype synonym_map_names: list[str]
     :ivar fields: A list of sub-fields if this is a field of type Edm.ComplexType or
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
-    :vartype fields: list[~search_service_client.models.SearchField]
+    :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
     """
 
     _validation = {
@@ -178,6 +183,7 @@ class SearchField(_serialization.Model):
         "analyzer_name": {"key": "analyzerName", "type": "str"},
         "search_analyzer_name": {"key": "searchAnalyzerName", "type": "str"},
         "index_analyzer_name": {"key": "indexAnalyzerName", "type": "str"},
+        "normalizer_name": {"key": "normalizerName", "type": "str"},
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
         "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
@@ -236,7 +242,7 @@ class SearchField(_serialization.Model):
         fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
         try:
-            normalizer = search_field.normalizer_name
+            normalizer = search_field.normalizer
         except AttributeError:
             normalizer = None
         return cls(
@@ -463,9 +469,9 @@ def ComplexField(**kw):
     :paramtype name: str
     :keyword collection: Whether this complex field is a collection (default False)
     :paramtype collection: bool
-    :paramtype type: str or ~search_service_client.models.DataType
+    :paramtype type: str or ~azure.search.documents.indexes.models.DataType
     :keyword fields: A list of sub-fields
-    :paramtype fields: list[~search_service_client.models.Field]
+    :paramtype fields: list[~azure.search.documents.indexes.models.Field]
 
     """
     typ = Collection(ComplexType) if kw.get("collection", False) else ComplexType
@@ -502,6 +508,8 @@ class SearchIndex(_serialization.Model):
     :vartype token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
     :ivar char_filters: The character filters for the index.
     :vartype char_filters: list[~azure.search.documents.indexes.models.CharFilter]
+    :ivar normalizers: The normalizers for the index.
+    :vartype normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
      want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
@@ -540,6 +548,7 @@ class SearchIndex(_serialization.Model):
         "tokenizers": {"key": "tokenizers", "type": "[LexicalTokenizer]"},
         "token_filters": {"key": "tokenFilters", "type": "[TokenFilter]"},
         "char_filters": {"key": "charFilters", "type": "[CharFilter]"},
+        "normalizers": {"key": "normalizers", "type": "[LexicalNormalizer]"},
         "encryption_key": {
             "key": "encryptionKey",
             "type": "SearchResourceEncryptionKey",
@@ -657,6 +666,7 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
         assert field_type is not None  # Hint for mypy
         key = search_field.get("key")
         hidden = search_field.get("hidden")
+        retrievable = not hidden if hidden is not None else None
         searchable = search_field.get("searchable")
         filterable = search_field.get("filterable")
         sortable = search_field.get("sortable")
@@ -674,7 +684,7 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
             name=name,
             type=field_type,
             key=key,
-            retrievable=not hidden,
+            retrievable=retrievable,
             searchable=searchable,
             filterable=filterable,
             sortable=sortable,
