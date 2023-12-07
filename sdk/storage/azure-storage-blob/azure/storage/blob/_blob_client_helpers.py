@@ -47,10 +47,9 @@ from ._shared.request_handlers import (
     add_metadata_headers,
     get_length,
     read_length,
-    return_headers_and_deserialized,
-    return_response_headers,
     validate_and_format_range_headers
 )
+from ._shared.response_handlers import return_headers_and_deserialized, return_response_headers
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
 from ._upload_helpers import _any_conditions
