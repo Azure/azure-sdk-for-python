@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Store global instance of `StatsbeatMetric`
+    ([#33163](https://github.com/Azure/azure-sdk-for-python/pull/33163))
+
 ## 1.0.0b19 (2023-11-20)
 
 ### Bugs Fixed

@@ -103,7 +103,8 @@ class _StatsbeatMetrics:
         if has_credential:
             self._feature |= _StatsbeatFeature.AAD
         self._ikey = instrumentation_key
-        self._meter = meter_provider.get_meter(__name__)
+        self._meter_provider = meter_provider
+        self._meter = self._meter_provider.get_meter(__name__)
         self._long_interval_threshold = long_interval_threshold
         # Start internal count at the max size for initial statsbeat export
         self._long_interval_count_map = {
@@ -392,7 +393,6 @@ class _StatsbeatMetrics:
                     _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0 # type: ignore
         return observations
 
-# cSpell:enable
 
 def _shorten_host(host: str) -> str:
     if not host:
@@ -401,3 +401,5 @@ def _shorten_host(host: str) -> str:
     if match:
         host = match.group(1)
     return host
+
+# cSpell:enable
