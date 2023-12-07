@@ -8,7 +8,7 @@ import os
 import sys
 from urllib3 import PoolManager, Retry
 
-from azure_devtools.scenario_tests.config import TestConfig
+from .config import TestConfig
 
 
 # we store recording IDs in a module-level variable so that sanitizers can access them
