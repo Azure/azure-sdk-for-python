@@ -68,7 +68,7 @@ def sphinx_build(target_dir, output_dir, fail_on_warning=False, package_name=Non
                 args.working_directory, e.returncode
             )
         )
-        if fail_on_warning and in_ci():
+        if args.strict and in_ci():
             create_vnext_issue(package_name, "sphinx")
         exit(1)
 
