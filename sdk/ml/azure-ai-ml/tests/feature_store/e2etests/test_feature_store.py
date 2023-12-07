@@ -20,11 +20,10 @@ from azure.core.polling import LROPoller
     "mock_workspace_dependent_resource_name_generator",
 )
 class TestFeatureStore(AzureRecordedTestCase):
-    # @pytest.mark.skipif(
-    #    condition=not is_live(),
-    #    reason="ARM template makes playback complex, so the test is flaky when run against recording",
-    # )
-    @pytest.mark.skip
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
     @pytest.mark.nofixdeploymentname
     @pytest.mark.nofixresourcename
     def test_feature_store_create_and_delete(
