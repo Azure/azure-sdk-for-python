@@ -3,7 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import base64
 import inspect
+import math
 import os
 import sys
 from urllib3 import PoolManager, Retry
@@ -84,6 +86,22 @@ def is_live_and_not_recording():
 
 def is_preparer_func(fn):
     return getattr(fn, "__is_preparer", False)
+
+
+def create_random_name(prefix="aztest", length=24):
+    if len(prefix) > length:
+        raise ValueError("The length of the prefix must not be longer than random name length")
+
+    padding_size = length - len(prefix)
+    if padding_size < 4:
+        raise ValueError(
+            "The randomized part of the name is shorter than 4, which may not be able to offer enough randomness"
+        )
+
+    random_bytes = os.urandom(int(math.ceil(float(padding_size) / 8) * 5))
+    random_padding = base64.b32encode(random_bytes)[:padding_size]
+
+    return str(prefix + random_padding.decode().lower())
 
 
 def trim_kwargs_from_test_function(fn, kwargs):
