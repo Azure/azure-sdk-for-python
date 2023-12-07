@@ -112,6 +112,7 @@ def create_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
         template = (
             f"**ACTION NEEDED:** All {check_type} errors and warnings must be fixed by **{merge_date}**. "
             f"The build will begin to fail for this library if errors are not fixed."
+            f"\n\nThis issue indicates that your library reference documentation is rendering with errors. To avoid customer issues, please ensure you take care of these errors and warnings ASAP."
             f"\n\n**Library name:** {package_name}"
             f"\n**{check_type.capitalize()} build:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
             f"\n**How to fix:** Run the `strict-{check_type}` tox command at the library package-level and resolve "
