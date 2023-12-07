@@ -123,7 +123,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             user_agent="SDK/Integration",
             secret_resolver=secret_resolver,
             on_refresh_success=on_refresh_success,
-                feature_flag_enabled=feature_flag_enabled,
+            feature_flag_enabled=feature_flag_enabled,
         )
 
 
