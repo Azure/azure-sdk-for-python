@@ -767,7 +767,12 @@ class FADProductionData(RestTranslatableMixin):
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         default_data_window_size = kwargs.get("default")
-        if self.data_window.lookback_window_size is None:
+        if self.data_window is None:
+            self.data_window = BaselineDataRange(
+                lookback_window_size=default_data_window_size,
+                lookback_window_offset="P0D"
+            )
+        if self.data_window.lookback_window_size == 'default':
             self.data_window.lookback_window_size = default_data_window_size
         uri = self.input_data.path
         job_type = self.input_data.type
