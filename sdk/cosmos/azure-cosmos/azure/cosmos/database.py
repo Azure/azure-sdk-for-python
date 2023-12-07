@@ -223,7 +223,9 @@ class DatabaseProxy(object):
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
-
+        computed_properties = kwargs.pop('computed_properties', None)
+        if computed_properties:
+            definition["computedProperties"] = computed_properties
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
