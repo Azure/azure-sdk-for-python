@@ -71,7 +71,13 @@ steps:
         --injected-packages="${{ parameters.InjectedPackages }}"
         ${{ parameters.ToxEnvParallel }}
     env: ${{ parameters.EnvVars }}
-    timeoutInMinutes: 45
+    timeoutInMinutes: 40
+
+  - pwsh: |
+      Get-Childitem -Path $(Build.SourcesDirectory)/sdk/storage/azure-storage-blob/.tox/mindependency/log | % { Write-Host "Dumping mindep $($_.FullName)"; cat $_.FullName }
+      Get-Childitem -Path $(Build.SourcesDirectory)/sdk/storage/azure-storage-blob/.tox/whl/log | % { Write-Host "Dumping whl $($_.FullName)"; cat $_.FullName }
+      Get-Childitem -Path $(Build.SourcesDirectory)/sdk/storage/azure-storage-blob/.tox/sdist/log | % { Write-Host "Dumping sdist $($_.FullName)"; cat $_.FullName }
+    condition: failed()
 
   - ${{if eq(parameters.TestProxy, true) }}:
     - pwsh: |
