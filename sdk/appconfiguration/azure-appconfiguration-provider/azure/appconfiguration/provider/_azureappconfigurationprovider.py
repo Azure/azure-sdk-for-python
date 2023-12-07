@@ -528,11 +528,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         return configuration_settings, sentinel_keys, need_refresh or updated_feature_flags
 
     def _check_configuration_settings(self, key, label, etag, headers, configuration_settings, **kwargs) -> None:
-        is_feature_flag = not isinstance(updated_config, FeatureFlagConfigurationSetting)
+        is_feature_flag = False
         try:
             updated_config = self._client.get_configuration_setting(
                 key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
             )
+            is_feature_flag = not isinstance(updated_config, FeatureFlagConfigurationSetting)
             if updated_config is not None:
                 if not is_feature_flag:
                     logging.debug("Refresh all triggered by key: %s label %s.", key, label)
