@@ -96,7 +96,7 @@ class CommunicationUserIdentifier:
         :param str id: ID of the Communication user as returned from Azure Communication Identity.
         :keyword str raw_id: The raw ID of the identifier. If not specified, the 'id' value will be used.
         """
-        self.raw_id = kwargs.get("raw_id")
+        self.raw_id = kwargs.get("raw_id", id)
         self.properties = CommunicationUserProperties(id=id)
         if self.raw_id is None:
             self.raw_id = _communication_user_raw_id(self)
