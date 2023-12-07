@@ -6,56 +6,60 @@
 
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncGenerator, AsyncIterable, cast, Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
+    Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
-from urllib.parse import urlparse, quote, unquote
+from urllib.parse import quote, unquote, urlparse
 
+from ._deserialize import deserialize_blob_stream
+from ._encryption import modify_user_agent_for_encryption, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from ._generated.models import (
+    AppendPositionAccessConditions,
+    BlobHTTPHeaders,
+    BlockLookupList,
+    CpkInfo,
+    DeleteSnapshotsOptionType,
+    QueryRequest,
+    SequenceNumberAccessConditions
+)
+from ._models import (
+    BlobBlock,
+    BlobProperties,
+    BlobType,
+    DelimitedJsonDialect,
+    DelimitedTextDialect,
+    PremiumPageBlobTier,
+    QuickQueryDialect
+)
+from ._serialize import (
+    get_access_conditions,
+    get_cpk_scope_info,
+    get_modify_conditions,
+    get_source_conditions,
+    serialize_blob_tags_header,
+    serialize_blob_tags,
+    serialize_query_format
+)
 from ._shared import encode_base64
 from ._shared.base_client import parse_query
-from ._shared.uploads import IterStreamer
-from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers,
     get_length,
     read_length,
-    validate_and_format_range_headers)
-from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
-from ._generated.models import (
-    DeleteSnapshotsOptionType,
-    BlobHTTPHeaders,
-    BlockLookupList,
-    AppendPositionAccessConditions,
-    SequenceNumberAccessConditions,
-    QueryRequest,
-    CpkInfo)
-from ._serialize import (
-    get_modify_conditions,
-    get_source_conditions,
-    get_cpk_scope_info,
-    serialize_blob_tags_header,
-    serialize_blob_tags,
-    serialize_query_format, get_access_conditions
+    return_headers_and_deserialized,
+    return_response_headers,
+    validate_and_format_range_headers
 )
-from ._deserialize import deserialize_blob_stream
-
-from ._encryption import modify_user_agent_for_encryption, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
-from ._models import (
-    BlobType,
-    BlobBlock,
-    BlobProperties,
-    PremiumPageBlobTier,
-    QuickQueryDialect,
-    DelimitedJsonDialect,
-    DelimitedTextDialect,
-)
+from ._shared.uploads import IterStreamer
+from ._shared.uploads_async import AsyncIterStreamer
 from ._upload_helpers import _any_conditions
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
+    from ._generated import AzureBlobStorage
     from ._models import ContentSettings
     from ._shared.models import StorageConfiguration
-    from ._generated import AzureBlobStorage
 
 
 def _parse_url(
