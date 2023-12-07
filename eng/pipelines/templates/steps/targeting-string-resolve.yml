@@ -14,12 +14,5 @@ steps:
 
       Write-Host "Setting TargetingString to $setting"
       Write-Host "##vso[task.setvariable variable=TargetingString]$setting"
-
-      Write-Host "Build reason: $(Build.Reason)"
-      if ("$(Build.Reason)" -eq 'PullRequest') {
-          $public = $true
-          Write-Host "Setting PULLREQUEST to $public"
-          Write-Host "##vso[task.setvariable variable=PULLREQUEST]$public"
-      }
     displayName: Check override of targeting string
     condition: and(succeededOrFailed(), eq(variables['TargetingString'],''))

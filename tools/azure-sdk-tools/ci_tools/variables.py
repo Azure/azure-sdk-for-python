@@ -62,7 +62,7 @@ def in_ci() -> int:
 def in_public() -> int:
     # PULLREQUEST is set to `True` for PRs, return 3
     # 0 otherwise
-    if os.getenv("PULLREQUEST"):
+    if os.getenv("BUILD_REASON") == "PullRequest" or os.getenv("GITHUB_EVENT_NAME") == "pull_request":
         return 3
 
     return 0

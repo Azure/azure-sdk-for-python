@@ -89,7 +89,8 @@ steps:
   - pwsh: |
       $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
       Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
-
+    displayName: Check if docs directory exists
+  
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
