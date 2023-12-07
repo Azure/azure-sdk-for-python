@@ -11,7 +11,7 @@ from typing import Optional, Any, cast, Mapping, Dict, Union, List, Iterable, Tu
 from ._amqp_utils import normalized_data_body, normalized_sequence_body
 from ._constants import AmqpMessageBodyType
 
-AnyStr = TypeVar("AnyStr", str, bytes)
+AnyStr = TypeVar("AnyStr", bound=Union[str, bytes])
 
 if TYPE_CHECKING:
     import uuid
@@ -115,9 +115,9 @@ class AmqpAnnotatedMessage(object):
         header: Optional[Union["AmqpMessageHeader", Mapping[str, Any]]] = None,
         footer: Optional[Dict[str, Any]] = None,
         properties: Optional[Union["AmqpMessageProperties", Mapping[str, Any]]] = None,
-        application_properties: Optional[Dict[AnyStr, Any]] = None,
-        annotations: Optional[Dict[AnyStr, Any]] = None,
-        delivery_annotations: Optional[Dict[AnyStr, Any]] = None,
+        application_properties: Optional[Dict[Union[str, bytes], Any]] = None,
+        annotations: Optional[Dict[Union[str, bytes], Any]] = None,
+        delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
         **kwargs: Any
     ) -> None:
         self._encoding = kwargs.pop("encoding", "UTF-8")
