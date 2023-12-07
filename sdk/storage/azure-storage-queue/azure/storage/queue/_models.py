@@ -309,7 +309,7 @@ class AccessPolicy(GenAccessPolicy):
     both in the Shared Access Signature URL and in the stored access policy, the
     request will fail with status code 400 (Bad Request).
 
-    :param Optional[QueueSasPermissions] permission:
+    :param Optional[Union[QueueSasPermissions, str]] permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless an id is given referencing a stored access policy
@@ -330,7 +330,7 @@ class AccessPolicy(GenAccessPolicy):
         be UTC.
     """
 
-    permission: Optional[QueueSasPermissions] #type: ignore [assignment]
+    permission: Optional[Union[QueueSasPermissions, str]] #type: ignore [assignment]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
     expiry: Optional[Union["datetime", str]] #type: ignore [assignment]
@@ -339,7 +339,7 @@ class AccessPolicy(GenAccessPolicy):
     """The time at which the shared access signature becomes valid."""
 
     def __init__(
-        self, permission: Optional[QueueSasPermissions] = None,
+        self, permission: Optional[Union[QueueSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None
     ) -> None:
@@ -455,12 +455,11 @@ class MessagesPaged(PageIterator):
 class QueueProperties(DictMixin):
     """Queue Properties.
 
-    :keyword str name:
-        The name of the queue.
-    :keyword Optional[Dict[str, str]] metadata:
+    :keyword metadata:
         A dict containing name-value pairs associated with the queue as metadata.
         This var is set to None unless the include=metadata param was included
         for the list queues operation.
+    :paramtype metadata: Optional[Dict[str, str]]
     """
 
     name: str
@@ -471,6 +470,8 @@ class QueueProperties(DictMixin):
     """The approximate number of messages contained in the queue."""
 
     def __init__(self, **kwargs: Any) -> None:
+        # The name property will always be set to a non-None value after construction.
+        self.name = None #type: ignore [assignment]
         self.metadata = kwargs.get('metadata')
         self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count')
 

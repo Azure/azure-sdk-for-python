@@ -536,17 +536,6 @@
                 "description": "Resource Id of Hub used for lean workspace."
             }
         },
-        "set_up_feature_store" : {
-            "type": "string",
-            "defaultValue": "false",
-            "allowedValues": [
-                "false",
-                "true"
-            ],
-            "metadata": {
-                "description": "A flag to determine whether to set up feature store"
-            }
-        },
         "serverless_compute_settings": {
             "type": "object",
             "defaultValue": {},
@@ -578,6 +567,7 @@
     },
     "variables": {
         "tenantId": "[subscription().tenantId]",
+        "provisionedStorageAccountName": "[if(equals(parameters('storageAccountOption'), 'new'), parameters('storageAccountName'), concat('osa', uniqueString(parameters('resourceGroupName'), parameters('workspaceName'))))]",
         "storageAccount": "[resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
         "keyVault": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
         "containerRegistry": "[resourceId(parameters('containerRegistryResourceGroupName'), 'Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
@@ -609,7 +599,7 @@
         "offlineStoreContainerName": "[concat('offlinestore', guid(variables('storageAccount')))]",
         "offlineStoreConnectionName": "[if(empty(parameters('offline_store_connection_name')), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
         "onlineStoreConnectionName": "[if(empty(parameters('online_store_connection_name')), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
-        "offlineStoreConnectionTarget": "[if(empty(parameters('offline_store_target')), resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName')), parameters('offline_store_target'))]",
+        "offlineStoreConnectionTarget": "[if(empty(parameters('offline_store_target')), resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', variables('provisionedStorageAccountName'), 'default', variables('offlineStoreContainerName')), parameters('offline_store_target'))]",
         "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]"
     },
     "resources": [
@@ -654,24 +644,24 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(equals(parameters('materialization_identity_name'), 'empty')))]",
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), not(equals(parameters('materialization_identity_name'), 'empty')))]",
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "apiVersion": "2018-11-30",
             "name": "[parameters('materialization_identity_name')]",
             "location": "[parameters('location')]"
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), or(equals(parameters('storageAccountOption'), 'new'), and(equals(parameters('kind'), 'featurestore'), empty(parameters('offline_store_target')))))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
-            "name": "[parameters('storageAccountName')]",
+            "name": "[variables('provisionedStorageAccountName')]",
             "tags": "[parameters('tagValues')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
             ],
-            "location": "[parameters('storageAccountLocation')]",
+            "location": "[if(equals(parameters('kind'), 'featurestore'), parameters('location'), parameters('storageAccountLocation'))]",
             "sku": {
-                "name": "[parameters('storageAccountType')]"
+                "name": "[if(equals(parameters('kind'), 'featurestore'), 'Standard_LRS', parameters('storageAccountType'))]"
             },
             "kind": "StorageV2",
             "properties": {
@@ -688,18 +678,19 @@
                 },
                 "supportsHttpsTrafficOnly": true,
                 "allowBlobPublicAccess": false,
-                "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]",
-                "isHnsEnabled": "[equals(parameters('set_up_feature_store'), 'true')]",
-                "minimumTlsVersion": "[if(equals(parameters('set_up_feature_store'), 'true'), 'TLS1_2', 'TLS1_0')]"
+                "networkAcls": "[if(and(equals(parameters('storageAccountBehindVNet'), 'true'), equals(parameters('storageAccountOption'), 'new')), variables('networkRuleSetBehindVNet'), json('null'))]",
+                "isHnsEnabled": "[equals(parameters('kind'), 'featurestore')]",
+                "minimumTlsVersion": "[if(equals(parameters('kind'), 'featurestore'), 'TLS1_2', 'TLS1_0')]"
             }
         },
+
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('set_up_feature_store'), 'true'), empty(parameters('offline_store_target')), equals(parameters('storageAccountOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('kind'), 'featurestore'), empty(parameters('offline_store_target')))]",
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2021-04-01",
-            "name": "[concat(parameters('storageAccountName'), '/default/', variables('offlineStoreContainerName'))]",
+            "name": "[concat(variables('provisionedStorageAccountName'), '/default/', variables('offlineStoreContainerName'))]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('provisionedStorageAccountName'))]"
             ]
         },
         {
@@ -778,7 +769,7 @@
             "kind": "[parameters('kind')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('provisionedStorageAccountName'))]",
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
                 "[resourceId('Microsoft.Insights/components', parameters('applicationInsightsName'))]",
                 "[resourceId('Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]"
@@ -820,14 +811,14 @@
             },
             "resources":[
                 {
-                    "condition": "[equals(parameters('set_up_feature_store'), 'true')]",
+                    "condition": "[equals(parameters('kind'), 'featurestore')]",
                     "type": "connections",
                     "apiVersion": "2022-05-01",
                     "name": "[variables('offlineStoreConnectionName')]",
                     "location": "[parameters('location')]",
                     "dependsOn": [
                         "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
-                        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]"
+                        "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', variables('provisionedStorageAccountName'), 'default', variables('offlineStoreContainerName'))]"
                     ],
                     "identity": {
                         "type": "SystemAssigned"
@@ -843,7 +834,7 @@
                     }
                 },
                 {
-                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(empty(parameters('online_store_target'))))]",
+                    "condition": "[and(equals(parameters('kind'), 'featurestore'), not(empty(parameters('online_store_target'))))]",
                     "type": "connections",
                     "apiVersion": "2022-05-01",
                     "name": "[variables('onlineStoreConnectionName')]",
@@ -909,7 +900,7 @@
             ]
         },
         {
-            "condition":"[equals(parameters('set_up_feature_store'), 'true')]",
+            "condition":"[equals(parameters('kind'), 'featurestore')]",
 			"type": "Microsoft.Resources/deployments",
 			"apiVersion": "2022-05-01",
 			"name": "[concat(parameters('workspaceName'), '-deploy-feature-store')]",
@@ -977,7 +968,7 @@
 			}
 		},
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'))]",
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'))]",
             "type": "Microsoft.MachineLearningServices/workspaces/providers/roleAssignments",
             "apiVersion": "2019-04-01-preview",
             "name": "[concat(parameters('workspaceName'), '/Microsoft.Authorization/', guid(variables('materialization_identity_resource_id'), parameters('workspaceName'), 'azureml ds role'))]",
@@ -991,12 +982,12 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'))]",
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'))]",
             "type": "Microsoft.Resources/deployments",
             "name": "offline-store-role-assignment",
             "apiVersion": "2020-06-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]",
+                "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', variables('provisionedStorageAccountName'), 'default', variables('offlineStoreContainerName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
             ],
             "resourceGroup": "[If(empty(parameters('offline_store_resource_group_name')), resourceGroup().name, parameters('offline_store_resource_group_name'))]",
@@ -1023,7 +1014,7 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'), not(empty(parameters('online_store_target'))))]",
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'), not(empty(parameters('online_store_target'))))]",
             "type": "Microsoft.Resources/deployments",
             "name": "online-store-role-assignment",
             "apiVersion": "2020-06-01",

@@ -35,7 +35,7 @@ def build_get_service_statistics_request(*, x_ms_client_request_id: Optional[str
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

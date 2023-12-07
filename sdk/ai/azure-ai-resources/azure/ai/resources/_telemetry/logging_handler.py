@@ -9,7 +9,7 @@
 import logging
 import platform
 import traceback
-import sys
+import os
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure.common import utils
@@ -30,7 +30,7 @@ from azure.ai.resources._version import VERSION
 USER_AGENT = "{}/{}".format("azure-ai-resources", VERSION)
 
 
-GEN_AI_INTERNAL_LOGGER_NAMESPACE = "azure.ai.resources._telemetry"
+AI_RESOURCES_INTERNAL_LOGGER_NAMESPACE = "azure.ai.resources._telemetry"
 
 test_subscriptions = [
     "b17253fa-f327-42d6-9686-f3e553e24763",
@@ -43,22 +43,21 @@ test_subscriptions = [
 
 # activate operation id tracking
 config_integration.trace_integrations(["logging"])
-logging.basicConfig(
-    format="%(asctime)s traceId=%(traceId)s spanId=%(spanId)s %(message)s"
-)
 
 
-class OpsLogger:
+class ActivityLogger:
     def __init__(self, name: str):
-        self.package_logger: logging.Logger = logging.getLogger(GEN_AI_INTERNAL_LOGGER_NAMESPACE + name)
+        self.package_logger: logging.Logger = logging.getLogger(AI_RESOURCES_INTERNAL_LOGGER_NAMESPACE + name)
         self.package_logger.propagate = False
         self.module_logger = logging.getLogger(name)
         self.custom_dimensions = {}
 
-    def update_info(self, data: dict) -> None:
-        if "app_insights_handler" in data:
-            self.package_logger.addHandler(data.pop("app_insights_handler"))
-
+    def update_info(self, data: dict = None) -> None:
+        if data and "app_insights_handler" in data:
+            handler = data.pop("app_insights_handler")
+        else:
+            handler = get_appinsights_log_handler(USER_AGENT)
+        self.package_logger.addHandler(handler)
 
 
 # cspell:ignore overriden
@@ -67,7 +66,6 @@ def get_appinsights_log_handler(
     *args,  # pylint: disable=unused-argument
     instrumentation_key=None,
     component_name=None,
-    enable_telemetry=True,
     **kwargs,
 ):
     """Enable the OpenCensus logging handler for specified logger and instrumentation key to send info to AppInsights.
@@ -80,8 +78,6 @@ def get_appinsights_log_handler(
     :paramtype instrumentation_key: str
     :keyword component_name: The component name.
     :paramtype component_name: str
-    :keyword enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
-    :paramtype enable_telemetry: bool
     :keyword kwargs: Optional keyword arguments for adding additional information to messages.
     :paramtype kwargs: dict
     :return: The logging handler.
@@ -91,7 +87,8 @@ def get_appinsights_log_handler(
         if instrumentation_key is None:
             instrumentation_key = INSTRUMENTATION_KEY
 
-        if not in_jupyter_notebook() or not enable_telemetry:
+        enable_telemetry = os.getenv("AZURE_AI_RESOURCES_ENABLE_LOGGING", "True")
+        if not in_jupyter_notebook() or enable_telemetry == "False":
             return logging.NullHandler()
 
         if not user_agent or not user_agent.lower() == USER_AGENT.lower():
@@ -102,7 +99,7 @@ def get_appinsights_log_handler(
                 return logging.NullHandler()
 
         child_namespace = component_name or __name__
-        current_logger = logging.getLogger(GEN_AI_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
+        current_logger = logging.getLogger(AI_RESOURCES_INTERNAL_LOGGER_NAMESPACE).getChild(child_namespace)
         current_logger.propagate = False
         current_logger.setLevel(logging.CRITICAL)
 

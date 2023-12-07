@@ -7,7 +7,7 @@
 import uuid
 import os
 from azure.communication.phonenumbers.siprouting import SipRoutingClient
-from _shared.utils import get_http_logging_policy
+from _shared.utils import get_http_logging_policy, get_header_policy
 
 from devtools_testutils import is_live
 
@@ -40,7 +40,10 @@ def assert_routes_are_equal(response_routes, request_routes):
 
 def setup_configuration(connection_str,trunks=[],routes=[]):
     if is_live():
-        client = SipRoutingClient.from_connection_string(connection_str, http_logging_policy=get_http_logging_policy())
+        client = SipRoutingClient.from_connection_string(
+            connection_str,
+            http_logging_policy=get_http_logging_policy(),
+            header_policy=get_header_policy())
         client.set_routes(routes)
         client.set_trunks(trunks)
 

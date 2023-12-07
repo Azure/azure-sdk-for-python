@@ -10,7 +10,6 @@ import io
 import pytest
 
 from corehttp.rest import HttpRequest, AsyncHttpResponse
-from corehttp.rest._aiohttp import RestAioHttpTransportResponse
 from corehttp.exceptions import HttpResponseError
 from utils import ASYNC_TRANSPORTS, readonly_checks
 

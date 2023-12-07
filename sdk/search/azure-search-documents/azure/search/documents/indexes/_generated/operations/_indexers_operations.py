@@ -38,7 +38,7 @@ def build_reset_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -60,11 +60,44 @@ def build_reset_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_reset_docs_request(
+    indexer_name: str, *, overwrite: bool = False, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/indexers('{indexerName}')/search.resetdocs")
+    path_format_arguments = {
+        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if overwrite is not None:
+        _params["overwrite"] = _SERIALIZER.query("overwrite", overwrite, "bool")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if x_ms_client_request_id is not None:
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_run_request(indexer_name: str, *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -93,12 +126,14 @@ def build_create_or_update_request(
     x_ms_client_request_id: Optional[str] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
+    skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+    disable_cache_reprocessing_change_detection: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -112,6 +147,14 @@ def build_create_or_update_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if skip_indexer_reset_requirement_for_cache is not None:
+        _params["ignoreResetRequirements"] = _SERIALIZER.query(
+            "skip_indexer_reset_requirement_for_cache", skip_indexer_reset_requirement_for_cache, "bool"
+        )
+    if disable_cache_reprocessing_change_detection is not None:
+        _params["disableCacheReprocessingChangeDetection"] = _SERIALIZER.query(
+            "disable_cache_reprocessing_change_detection", disable_cache_reprocessing_change_detection, "bool"
+        )
 
     # Construct headers
     if x_ms_client_request_id is not None:
@@ -139,7 +182,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -169,7 +212,7 @@ def build_get_request(indexer_name: str, *, x_ms_client_request_id: Optional[str
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -197,7 +240,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -220,7 +263,7 @@ def build_create_request(*, x_ms_client_request_id: Optional[str] = None, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -246,7 +289,7 @@ def build_get_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01-Preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -294,7 +337,7 @@ class IndexersOperations:
         """Resets the change tracking state associated with an indexer.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Reset-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Reset-Indexer
 
         :param indexer_name: The name of the indexer to reset. Required.
         :type indexer_name: str
@@ -351,6 +394,166 @@ class IndexersOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @overload
+    def reset_docs(  # pylint: disable=inconsistent-return-statements
+        self,
+        indexer_name: str,
+        overwrite: bool = False,
+        request_options: Optional[_models.RequestOptions] = None,
+        keys_or_ids: Optional[_models.DocumentKeysOrIds] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
+
+        .. seealso::
+           - https://aka.ms/reset-documents
+
+        :param indexer_name: The name of the indexer to reset documents for. Required.
+        :type indexer_name: str
+        :param overwrite: If false, keys or ids will be appended to existing ones. If true, only the
+         keys or ids in this payload will be queued to be re-ingested. Default value is False.
+        :type overwrite: bool
+        :param request_options: Parameter group. Default value is None.
+        :type request_options: ~search_service_client.models.RequestOptions
+        :param keys_or_ids: Default value is None.
+        :type keys_or_ids: ~search_service_client.models.DocumentKeysOrIds
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def reset_docs(  # pylint: disable=inconsistent-return-statements
+        self,
+        indexer_name: str,
+        overwrite: bool = False,
+        request_options: Optional[_models.RequestOptions] = None,
+        keys_or_ids: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
+
+        .. seealso::
+           - https://aka.ms/reset-documents
+
+        :param indexer_name: The name of the indexer to reset documents for. Required.
+        :type indexer_name: str
+        :param overwrite: If false, keys or ids will be appended to existing ones. If true, only the
+         keys or ids in this payload will be queued to be re-ingested. Default value is False.
+        :type overwrite: bool
+        :param request_options: Parameter group. Default value is None.
+        :type request_options: ~search_service_client.models.RequestOptions
+        :param keys_or_ids: Default value is None.
+        :type keys_or_ids: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def reset_docs(  # pylint: disable=inconsistent-return-statements
+        self,
+        indexer_name: str,
+        overwrite: bool = False,
+        request_options: Optional[_models.RequestOptions] = None,
+        keys_or_ids: Optional[Union[_models.DocumentKeysOrIds, IO]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
+
+        .. seealso::
+           - https://aka.ms/reset-documents
+
+        :param indexer_name: The name of the indexer to reset documents for. Required.
+        :type indexer_name: str
+        :param overwrite: If false, keys or ids will be appended to existing ones. If true, only the
+         keys or ids in this payload will be queued to be re-ingested. Default value is False.
+        :type overwrite: bool
+        :param request_options: Parameter group. Default value is None.
+        :type request_options: ~search_service_client.models.RequestOptions
+        :param keys_or_ids: Is either a DocumentKeysOrIds type or a IO type. Default value is None.
+        :type keys_or_ids: ~search_service_client.models.DocumentKeysOrIds or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _x_ms_client_request_id = None
+        if request_options is not None:
+            _x_ms_client_request_id = request_options.x_ms_client_request_id
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(keys_or_ids, (IOBase, bytes)):
+            _content = keys_or_ids
+        else:
+            if keys_or_ids is not None:
+                _json = self._serialize.body(keys_or_ids, "DocumentKeysOrIds")
+            else:
+                _json = None
+
+        _request = build_reset_docs_request(
+            indexer_name=indexer_name,
+            overwrite=overwrite,
+            x_ms_client_request_id=_x_ms_client_request_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request = _convert_request(_request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.SearchError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
     @distributed_trace
     def run(  # pylint: disable=inconsistent-return-statements
         self, indexer_name: str, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
@@ -358,7 +561,7 @@ class IndexersOperations:
         """Runs an indexer on-demand.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Run-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Run-Indexer
 
         :param indexer_name: The name of the indexer to run. Required.
         :type indexer_name: str
@@ -423,6 +626,8 @@ class IndexersOperations:
         indexer: _models.SearchIndexer,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -431,7 +636,7 @@ class IndexersOperations:
         """Creates a new indexer or updates an indexer if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Indexer
 
         :param indexer_name: The name of the indexer to create or update. Required.
         :type indexer_name: str
@@ -446,6 +651,12 @@ class IndexersOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
+        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -465,6 +676,8 @@ class IndexersOperations:
         indexer: IO,
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         *,
         content_type: str = "application/json",
@@ -473,7 +686,7 @@ class IndexersOperations:
         """Creates a new indexer or updates an indexer if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Indexer
 
         :param indexer_name: The name of the indexer to create or update. Required.
         :type indexer_name: str
@@ -488,6 +701,12 @@ class IndexersOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
+        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -507,13 +726,15 @@ class IndexersOperations:
         indexer: Union[_models.SearchIndexer, IO],
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
+        skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
+        disable_cache_reprocessing_change_detection: Optional[bool] = None,
         request_options: Optional[_models.RequestOptions] = None,
         **kwargs: Any
     ) -> _models.SearchIndexer:
         """Creates a new indexer or updates an indexer if it already exists.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Indexer
 
         :param indexer_name: The name of the indexer to create or update. Required.
         :type indexer_name: str
@@ -529,6 +750,12 @@ class IndexersOperations:
         :param if_none_match: Defines the If-None-Match condition. The operation will be performed only
          if the ETag on the server does not match this value. Default value is None.
         :type if_none_match: str
+        :param skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default
+         value is None.
+        :type skip_indexer_reset_requirement_for_cache: bool
+        :param disable_cache_reprocessing_change_detection: Disables cache reprocessing change
+         detection. Default value is None.
+        :type disable_cache_reprocessing_change_detection: bool
         :param request_options: Parameter group. Default value is None.
         :type request_options: ~search_service_client.models.RequestOptions
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -571,6 +798,8 @@ class IndexersOperations:
             x_ms_client_request_id=_x_ms_client_request_id,
             if_match=if_match,
             if_none_match=if_none_match,
+            skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
+            disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -619,7 +848,7 @@ class IndexersOperations:
         """Deletes an indexer.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Delete-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Delete-Indexer
 
         :param indexer_name: The name of the indexer to delete. Required.
         :type indexer_name: str
@@ -691,7 +920,7 @@ class IndexersOperations:
         """Retrieves an indexer definition.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Get-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Get-Indexer
 
         :param indexer_name: The name of the indexer to retrieve. Required.
         :type indexer_name: str
@@ -759,10 +988,10 @@ class IndexersOperations:
         """Lists all indexers available for a search service.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/List-Indexers
+           - https://docs.microsoft.com/rest/api/searchservice/List-Indexers
 
         :param select: Selects which top-level properties of the indexers to retrieve. Specified as a
-         comma-separated list of JSON property names, or ``*`` for all properties. The default is all
+         comma-separated list of JSON property names, or '*' for all properties. The default is all
          properties. Default value is None.
         :type select: str
         :param request_options: Parameter group. Default value is None.
@@ -834,7 +1063,7 @@ class IndexersOperations:
         """Creates a new indexer.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Indexer
 
         :param indexer: The definition of the indexer to create. Required.
         :type indexer: ~search_service_client.models.SearchIndexer
@@ -861,7 +1090,7 @@ class IndexersOperations:
         """Creates a new indexer.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Indexer
 
         :param indexer: The definition of the indexer to create. Required.
         :type indexer: IO
@@ -886,7 +1115,7 @@ class IndexersOperations:
         """Creates a new indexer.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Create-Indexer
+           - https://docs.microsoft.com/rest/api/searchservice/Create-Indexer
 
         :param indexer: The definition of the indexer to create. Is either a SearchIndexer type or a IO
          type. Required.
@@ -968,7 +1197,7 @@ class IndexersOperations:
         """Returns the current status and execution history of an indexer.
 
         .. seealso::
-           - https://learn.microsoft.com/rest/api/searchservice/Get-Indexer-Status
+           - https://docs.microsoft.com/rest/api/searchservice/Get-Indexer-Status
 
         :param indexer_name: The name of the indexer for which to retrieve status. Required.
         :type indexer_name: str

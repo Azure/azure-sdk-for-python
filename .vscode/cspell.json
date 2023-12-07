@@ -68,6 +68,8 @@
     "sdk/healthinsights/azure-healthinsights-clinicalmatching/azure/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/**",
     "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
@@ -127,6 +129,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "spinup",
     "cibuildwheel",
     "aoai",
     "pyprojects",
@@ -157,6 +160,7 @@
     "alru",
     "amqp",
     "amqps",
+    "anyio",
     "apim",
     "Asal",
     "asgi",
@@ -757,6 +761,26 @@
     },
     {
       "filename": "sdk/formrecognizer/azure-ai-formrecognizer/**",
+      "words": [
+        "allinone",
+        "dmac",
+        "ierr",
+        "mymodel",
+        "heif",
+        "racwd",
+        "rrggbb",
+        "UPCA",
+        "UPCE"
+      ]
+    },
+    {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/tests/*.py",
+      "words": [
+        "WDLABCD"
+      ]
+    },
+    {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/**",
       "words": [
         "allinone",
         "dmac",
@@ -1380,6 +1404,12 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-resources/**",
+      "words": [
+        "etest"
       ]
     },
     {

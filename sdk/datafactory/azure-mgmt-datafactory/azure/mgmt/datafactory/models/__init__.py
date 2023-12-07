@@ -134,6 +134,9 @@ from ._models_py3 import CassandraLinkedService
 from ._models_py3 import CassandraSource
 from ._models_py3 import CassandraTableDataset
 from ._models_py3 import ChainingTrigger
+from ._models_py3 import ChangeDataCaptureFolder
+from ._models_py3 import ChangeDataCaptureListResponse
+from ._models_py3 import ChangeDataCaptureResource
 from ._models_py3 import CloudError
 from ._models_py3 import CmdkeySetup
 from ._models_py3 import CommonDataServiceForAppsEntityDataset
@@ -197,6 +200,7 @@ from ._models_py3 import DataFlowSource
 from ._models_py3 import DataFlowSourceSetting
 from ._models_py3 import DataFlowStagingInfo
 from ._models_py3 import DataLakeAnalyticsUSQLActivity
+from ._models_py3 import DataMapperMapping
 from ._models_py3 import DatabricksNotebookActivity
 from ._models_py3 import DatabricksSparkJarActivity
 from ._models_py3 import DatabricksSparkPythonActivity
@@ -351,6 +355,7 @@ from ._models_py3 import IntegrationRuntimeConnectionInfo
 from ._models_py3 import IntegrationRuntimeCustomSetupScriptProperties
 from ._models_py3 import IntegrationRuntimeCustomerVirtualNetwork
 from ._models_py3 import IntegrationRuntimeDataFlowProperties
+from ._models_py3 import IntegrationRuntimeDataFlowPropertiesCustomPropertiesItem
 from ._models_py3 import IntegrationRuntimeDataProxyProperties
 from ._models_py3 import IntegrationRuntimeDebugResource
 from ._models_py3 import IntegrationRuntimeListResponse
@@ -379,6 +384,13 @@ from ._models_py3 import JsonReadSettings
 from ._models_py3 import JsonSink
 from ._models_py3 import JsonSource
 from ._models_py3 import JsonWriteSettings
+from ._models_py3 import LakeHouseLinkedService
+from ._models_py3 import LakeHouseLocation
+from ._models_py3 import LakeHouseReadSettings
+from ._models_py3 import LakeHouseTableDataset
+from ._models_py3 import LakeHouseTableSink
+from ._models_py3 import LakeHouseTableSource
+from ._models_py3 import LakeHouseWriteSettings
 from ._models_py3 import LinkedIntegrationRuntime
 from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
 from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
@@ -410,6 +422,18 @@ from ._models_py3 import ManagedVirtualNetwork
 from ._models_py3 import ManagedVirtualNetworkListResponse
 from ._models_py3 import ManagedVirtualNetworkReference
 from ._models_py3 import ManagedVirtualNetworkResource
+from ._models_py3 import MapperAttributeMapping
+from ._models_py3 import MapperAttributeMappings
+from ._models_py3 import MapperAttributeReference
+from ._models_py3 import MapperConnection
+from ._models_py3 import MapperConnectionReference
+from ._models_py3 import MapperDslConnectorProperties
+from ._models_py3 import MapperPolicy
+from ._models_py3 import MapperPolicyRecurrence
+from ._models_py3 import MapperSourceConnectionsInfo
+from ._models_py3 import MapperTable
+from ._models_py3 import MapperTableSchema
+from ._models_py3 import MapperTargetConnectionsInfo
 from ._models_py3 import MappingDataFlow
 from ._models_py3 import MariaDBLinkedService
 from ._models_py3 import MariaDBSource
@@ -477,10 +501,12 @@ from ._models_py3 import OrcFormat
 from ._models_py3 import OrcSink
 from ._models_py3 import OrcSource
 from ._models_py3 import OrcWriteSettings
+from ._models_py3 import OutputColumn
 from ._models_py3 import PackageStore
 from ._models_py3 import ParameterSpecification
 from ._models_py3 import ParquetDataset
 from ._models_py3 import ParquetFormat
+from ._models_py3 import ParquetReadSettings
 from ._models_py3 import ParquetSink
 from ._models_py3 import ParquetSource
 from ._models_py3 import ParquetWriteSettings
@@ -595,6 +621,7 @@ from ._models_py3 import ScriptActivityParameter
 from ._models_py3 import ScriptActivityScriptBlock
 from ._models_py3 import ScriptActivityTypePropertiesLogSettings
 from ._models_py3 import SecretBase
+from ._models_py3 import SecureInputOutputPolicy
 from ._models_py3 import SecureString
 from ._models_py3 import SelfDependencyTumblingWindowTriggerReference
 from ._models_py3 import SelfHostedIntegrationRuntime
@@ -730,6 +757,8 @@ from ._models_py3 import ZohoLinkedService
 from ._models_py3 import ZohoObjectDataset
 from ._models_py3 import ZohoSource
 
+from ._data_factory_management_client_enums import ActivityOnInactiveMarkAs
+from ._data_factory_management_client_enums import ActivityState
 from ._data_factory_management_client_enums import AmazonRdsForOraclePartitionOption
 from ._data_factory_management_client_enums import AvroCompressionCodec
 from ._data_factory_management_client_enums import AzureFunctionActivityMethod
@@ -740,9 +769,9 @@ from ._data_factory_management_client_enums import BlobEventTypes
 from ._data_factory_management_client_enums import CassandraSourceReadConsistencyLevels
 from ._data_factory_management_client_enums import CompressionCodec
 from ._data_factory_management_client_enums import ConfigurationType
+from ._data_factory_management_client_enums import ConnectionType
 from ._data_factory_management_client_enums import CopyBehaviorType
 from ._data_factory_management_client_enums import CosmosDbConnectionMode
-from ._data_factory_management_client_enums import CosmosDbServicePrincipalCredentialType
 from ._data_factory_management_client_enums import CredentialReferenceType
 from ._data_factory_management_client_enums import DataFlowComputeType
 from ._data_factory_management_client_enums import DataFlowDebugCommandType
@@ -759,6 +788,7 @@ from ._data_factory_management_client_enums import DynamicsSinkWriteBehavior
 from ._data_factory_management_client_enums import EventSubscriptionStatus
 from ._data_factory_management_client_enums import ExpressionType
 from ._data_factory_management_client_enums import FactoryIdentityType
+from ._data_factory_management_client_enums import FrequencyType
 from ._data_factory_management_client_enums import FtpAuthenticationType
 from ._data_factory_management_client_enums import GlobalParameterType
 from ._data_factory_management_client_enums import GoogleAdWordsAuthenticationType
@@ -786,6 +816,7 @@ from ._data_factory_management_client_enums import JsonFormatFilePattern
 from ._data_factory_management_client_enums import JsonWriteFilePattern
 from ._data_factory_management_client_enums import ManagedIntegrationRuntimeNodeStatus
 from ._data_factory_management_client_enums import ManagedVirtualNetworkReferenceType
+from ._data_factory_management_client_enums import MappingType
 from ._data_factory_management_client_enums import MongoDbAuthenticationType
 from ._data_factory_management_client_enums import NetezzaPartitionOption
 from ._data_factory_management_client_enums import NotebookParameterType
@@ -980,6 +1011,9 @@ __all__ = [
     "CassandraSource",
     "CassandraTableDataset",
     "ChainingTrigger",
+    "ChangeDataCaptureFolder",
+    "ChangeDataCaptureListResponse",
+    "ChangeDataCaptureResource",
     "CloudError",
     "CmdkeySetup",
     "CommonDataServiceForAppsEntityDataset",
@@ -1043,6 +1077,7 @@ __all__ = [
     "DataFlowSourceSetting",
     "DataFlowStagingInfo",
     "DataLakeAnalyticsUSQLActivity",
+    "DataMapperMapping",
     "DatabricksNotebookActivity",
     "DatabricksSparkJarActivity",
     "DatabricksSparkPythonActivity",
@@ -1197,6 +1232,7 @@ __all__ = [
     "IntegrationRuntimeCustomSetupScriptProperties",
     "IntegrationRuntimeCustomerVirtualNetwork",
     "IntegrationRuntimeDataFlowProperties",
+    "IntegrationRuntimeDataFlowPropertiesCustomPropertiesItem",
     "IntegrationRuntimeDataProxyProperties",
     "IntegrationRuntimeDebugResource",
     "IntegrationRuntimeListResponse",
@@ -1225,6 +1261,13 @@ __all__ = [
     "JsonSink",
     "JsonSource",
     "JsonWriteSettings",
+    "LakeHouseLinkedService",
+    "LakeHouseLocation",
+    "LakeHouseReadSettings",
+    "LakeHouseTableDataset",
+    "LakeHouseTableSink",
+    "LakeHouseTableSource",
+    "LakeHouseWriteSettings",
     "LinkedIntegrationRuntime",
     "LinkedIntegrationRuntimeKeyAuthorization",
     "LinkedIntegrationRuntimeRbacAuthorization",
@@ -1256,6 +1299,18 @@ __all__ = [
     "ManagedVirtualNetworkListResponse",
     "ManagedVirtualNetworkReference",
     "ManagedVirtualNetworkResource",
+    "MapperAttributeMapping",
+    "MapperAttributeMappings",
+    "MapperAttributeReference",
+    "MapperConnection",
+    "MapperConnectionReference",
+    "MapperDslConnectorProperties",
+    "MapperPolicy",
+    "MapperPolicyRecurrence",
+    "MapperSourceConnectionsInfo",
+    "MapperTable",
+    "MapperTableSchema",
+    "MapperTargetConnectionsInfo",
     "MappingDataFlow",
     "MariaDBLinkedService",
     "MariaDBSource",
@@ -1323,10 +1378,12 @@ __all__ = [
     "OrcSink",
     "OrcSource",
     "OrcWriteSettings",
+    "OutputColumn",
     "PackageStore",
     "ParameterSpecification",
     "ParquetDataset",
     "ParquetFormat",
+    "ParquetReadSettings",
     "ParquetSink",
     "ParquetSource",
     "ParquetWriteSettings",
@@ -1441,6 +1498,7 @@ __all__ = [
     "ScriptActivityScriptBlock",
     "ScriptActivityTypePropertiesLogSettings",
     "SecretBase",
+    "SecureInputOutputPolicy",
     "SecureString",
     "SelfDependencyTumblingWindowTriggerReference",
     "SelfHostedIntegrationRuntime",
@@ -1575,6 +1633,8 @@ __all__ = [
     "ZohoLinkedService",
     "ZohoObjectDataset",
     "ZohoSource",
+    "ActivityOnInactiveMarkAs",
+    "ActivityState",
     "AmazonRdsForOraclePartitionOption",
     "AvroCompressionCodec",
     "AzureFunctionActivityMethod",
@@ -1585,9 +1645,9 @@ __all__ = [
     "CassandraSourceReadConsistencyLevels",
     "CompressionCodec",
     "ConfigurationType",
+    "ConnectionType",
     "CopyBehaviorType",
     "CosmosDbConnectionMode",
-    "CosmosDbServicePrincipalCredentialType",
     "CredentialReferenceType",
     "DataFlowComputeType",
     "DataFlowDebugCommandType",
@@ -1604,6 +1664,7 @@ __all__ = [
     "EventSubscriptionStatus",
     "ExpressionType",
     "FactoryIdentityType",
+    "FrequencyType",
     "FtpAuthenticationType",
     "GlobalParameterType",
     "GoogleAdWordsAuthenticationType",
@@ -1631,6 +1692,7 @@ __all__ = [
     "JsonWriteFilePattern",
     "ManagedIntegrationRuntimeNodeStatus",
     "ManagedVirtualNetworkReferenceType",
+    "MappingType",
     "MongoDbAuthenticationType",
     "NetezzaPartitionOption",
     "NotebookParameterType",

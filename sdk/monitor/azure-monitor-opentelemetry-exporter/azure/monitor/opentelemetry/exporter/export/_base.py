@@ -18,7 +18,16 @@ from azure.core.pipeline.policies import (
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.models import (
+    MessageData,
+    MetricsData,
+    MonitorDomain,
+    RemoteDependencyData,
+    RequestData,
+    TelemetryEventData,
+    TelemetryExceptionData,
+    TelemetryItem,
+)
 from azure.monitor.opentelemetry.exporter._constants import (
     _REACHED_INGESTION_STATUS_CODES,
     _REDIRECT_STATUS_CODES,
@@ -136,8 +145,8 @@ class BaseExporter:
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
-                envelopes = [TelemetryItem.from_dict(x) for x in blob.get()]
-                result = self._transmit(list(envelopes))
+                envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob.get()]
+                result = self._transmit(envelopes)
                 if result == ExportResult.FAILED_RETRYABLE:
                     blob.lease(1)
                 else:
@@ -205,9 +214,8 @@ class BaseExporter:
                                             for x in resend_envelopes]
                         self.storage.put(envelopes_to_store, 0)
                         self._consecutive_redirects = 0
-                        result = ExportResult.FAILED_RETRYABLE
-                    else:
-                        result = ExportResult.FAILED_NOT_RETRYABLE
+                    # Mark as not retryable because we already write to storage here
+                    result = ExportResult.FAILED_NOT_RETRYABLE
             except HttpResponseError as response_error:
                 # HttpResponseError is raised when a response is received
                 if _reached_ingestion_code(response_error.status_code):
@@ -392,3 +400,30 @@ def _update_requests_map(type_name, value=None):
             else:
                 _REQUESTS_MAP[type_name] = {}
             _REQUESTS_MAP[type_name][value] = prev + 1
+
+
+_MONITOR_DOMAIN_MAPPING = {
+    "EventData": TelemetryEventData,
+    "ExceptionData": TelemetryExceptionData,
+    "MessageData": MessageData,
+    "MetricData": MetricsData,
+    "RemoteDependencyData": RemoteDependencyData,
+    "RequestData": RequestData,
+}
+
+
+# from_dict() deserializes incorrectly, format TelemetryItem correctly after it
+# is called
+def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
+    # After TelemetryItem.from_dict, all base_data fields are stored in
+    # additional_properties as a dict instead of in item.data.base_data itself
+    # item.data.base_data is also of type MonitorDomain instead of a child class
+    if hasattr(item, "data") and item.data is not None:
+        if hasattr(item.data, "base_data") and isinstance(item.data.base_data, MonitorDomain):
+            if hasattr(item.data, "base_type") and isinstance(item.data.base_type, str):
+                base_type = _MONITOR_DOMAIN_MAPPING.get(item.data.base_type)
+                # Apply deserialization of additional_properties and store that as base_data
+                if base_type:
+                    item.data.base_data = base_type.from_dict(item.data.base_data.additional_properties) # type: ignore
+                    item.data.base_data.additional_properties = None # type: ignore
+    return item

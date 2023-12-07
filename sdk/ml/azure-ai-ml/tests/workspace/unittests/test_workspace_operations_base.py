@@ -44,12 +44,15 @@ def mock_workspace_operation_base(
     mock_aml_services_2023_06_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperationsBase:
     yield WorkspaceOperationsBase(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2023_06_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -348,7 +351,7 @@ class TestWorkspaceOperation:
             workspace=feature_store, grant_materialization_permissions=True
         )
 
-        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["kind"] == {"value": "featurestore"}
         assert param["grant_materialization_permissions"] == {"value": "true"}
         assert param["materialization_identity_name"] == {"value": "materialization-uai-rg-name"}
         assert param["materialization_identity_resource_id"] == {"value": ""}
@@ -359,7 +362,7 @@ class TestWorkspaceOperation:
             grant_materialization_permissions=False,
         )
 
-        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["kind"] == {"value": "featurestore"}
         assert param["grant_materialization_permissions"] == {"value": "false"}
         assert param["materialization_identity_name"] == {"value": "empty"}
         assert param["materialization_identity_resource_id"] == {"value": "resource_id"}

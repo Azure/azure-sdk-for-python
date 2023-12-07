@@ -26,8 +26,8 @@ class SearchIndexClient:  # pylint: disable=client-accepts-api-version-keyword
     :type endpoint: str
     :param index_name: The name of the index. Required.
     :type index_name: str
-    :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-10-01-Preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
