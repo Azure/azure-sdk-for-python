@@ -9,6 +9,6 @@ def template_main() -> bool:
     print("Package code.")
     return True
 
-def template_main3() -> bool:
+def template_main4() -> bool:
     print("Package code.")
     return True
