@@ -53,7 +53,12 @@ class SharedTokenCacheCredential:
 
     @log_get_token("SharedTokenCacheCredential")
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
@@ -77,7 +82,7 @@ class SharedTokenCacheCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
         """
-        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     @staticmethod
     def supported() -> bool:
@@ -102,7 +107,12 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
             self._client.__exit__(*args)
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
@@ -110,7 +120,7 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         if not self._client_initialized:
             self._initialize_client()
 
-        is_cae = bool(kwargs.get("enable_cae", False))
+        is_cae = enable_cae
         token_cache = self._cae_cache if is_cae else self._cache
 
         # Try to load the cache if it is None.
