@@ -96,8 +96,10 @@ class CommunicationUserIdentifier:
         :param str id: ID of the Communication user as returned from Azure Communication Identity.
         :keyword str raw_id: The raw ID of the identifier. If not specified, the 'id' value will be used.
         """
+        self.raw_id = kwargs.get("raw_id")
         self.properties = CommunicationUserProperties(id=id)
-        self.raw_id = kwargs.get("raw_id") or id
+        if self.raw_id is None:
+            self.raw_id = _communication_user_raw_id(self)
 
     def __eq__(self, other):
         try:
@@ -107,7 +109,7 @@ class CommunicationUserIdentifier:
 
 
 def _communication_user_raw_id(identifier: CommunicationUserIdentifier) -> str:
-    if hasattr(identifier, "raw_id"):
+    if identifier.raw_id:
         return identifier.raw_id
     return identifier.properties["id"]
 
@@ -133,8 +135,10 @@ class PhoneNumberIdentifier:
         :keyword str raw_id: The raw ID of the identifier. If not specified, this will be constructed from
           the 'value' parameter.
         """
+        self.raw_id = kwargs.get("raw_id")
         self.properties = PhoneNumberProperties(value=value)
-        self.raw_id = kwargs.get("raw_id") or _phone_number_raw_id(self)
+        if self.raw_id is None:
+            self.raw_id = _phone_number_raw_id(self)
 
     def __eq__(self, other):
         try:
@@ -144,7 +148,7 @@ class PhoneNumberIdentifier:
 
 
 def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
-    if hasattr(identifier, "raw_id"):
+    if identifier.raw_id:
         return identifier.raw_id
     value = identifier.properties["value"]
     # We just assume correct E.164 format here because
@@ -212,12 +216,14 @@ class MicrosoftTeamsUserIdentifier:
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed from
          the other properties.
         """
+        self.raw_id = kwargs.get("raw_id")
         self.properties = MicrosoftTeamsUserProperties(
             user_id=user_id,
             is_anonymous=kwargs.get("is_anonymous", False),
             cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
         )
-        self.raw_id = kwargs.get("raw_id") or _microsoft_teams_user_raw_id(self)
+        if self.raw_id is None:
+            self.raw_id = _microsoft_teams_user_raw_id(self)
 
     def __eq__(self, other):
         try:
@@ -227,7 +233,7 @@ class MicrosoftTeamsUserIdentifier:
 
 
 def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
-    if hasattr(identifier, "raw_id"):
+    if identifier.raw_id:
         return identifier.raw_id
     user_id = identifier.properties["user_id"]
     if identifier.properties["is_anonymous"]:
@@ -280,11 +286,13 @@ class MicrosoftTeamsAppIdentifier:
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed
          from the other properties.
         """
+        self.raw_id = kwargs.get("raw_id")
         self.properties = cast(MicrosoftTeamsAppProperties, _botbackcompatdict(
             app_id=app_id,
             cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
         ))
-        self.raw_id = kwargs.get("raw_id") or _microsoft_teams_app_raw_id(self)
+        if self.raw_id is None:
+            self.raw_id = _microsoft_teams_app_raw_id(self)
 
     def __eq__(self, other):
         try:
@@ -315,7 +323,7 @@ class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
 
 
 def _microsoft_teams_app_raw_id(identifier: MicrosoftTeamsAppIdentifier) -> str:
-    if hasattr(identifier, "raw_id"):
+    if identifier.raw_id:
         return identifier.raw_id
     app_id = identifier.properties["app_id"]
     cloud = identifier.properties["cloud"]
