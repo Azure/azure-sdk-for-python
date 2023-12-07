@@ -416,6 +416,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             or self._keyvault_client_configs is not None
             or self._secret_resolver is not None
         )
+        self._refresh_lock = Lock()
         self._update_lock = Lock()
 
     def refresh(self, **kwargs) -> None:
@@ -429,44 +430,45 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         success = False
         need_refresh = False
         try:
-            with self._update_lock:
-                updated_sentinel_keys = dict(self._refresh_on)
-                headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
-                for (key, label), etag in updated_sentinel_keys.items():
-                    try:
-                        updated_sentinel = self._client.get_configuration_setting(
-                            key=key,
-                            label=label,
-                            etag=etag,
-                            match_condition=MatchConditions.IfModified,
-                            headers=headers,
-                            **kwargs
+            self._refresh_lock.acquire(blocking=False)
+            updated_sentinel_keys = dict(self._refresh_on)
+            headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+            for (key, label), etag in updated_sentinel_keys.items():
+                try:
+                    updated_sentinel = self._client.get_configuration_setting(
+                        key=key,
+                        label=label,
+                        etag=etag,
+                        match_condition=MatchConditions.IfModified,
+                        headers=headers,
+                        **kwargs
+                    )
+                    if updated_sentinel is not None:
+                        logging.debug(
+                            "Refresh all triggered by key: %s label %s.",
+                            key,
+                            label,
                         )
-                        if updated_sentinel is not None:
-                            logging.debug(
-                                "Refresh all triggered by key: %s label %s.",
-                                key,
-                                label,
-                            )
-                            need_refresh = True
+                        need_refresh = True
 
-                            updated_sentinel_keys[(key, label)] = updated_sentinel.etag
-                    except HttpResponseError as e:
-                        if e.status_code == 404:
-                            if etag is not None:
-                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                                need_refresh = True
-                                updated_sentinel_keys[(key, label)] = None
-                        else:
-                            raise e
-                # Need to only update once, no matter how many sentinels are updated
-                if need_refresh:
+                        updated_sentinel_keys[(key, label)] = updated_sentinel.etag
+                except HttpResponseError as e:
+                    if e.status_code == 404:
+                        if etag is not None:
+                            # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                            need_refresh = True
+                            updated_sentinel_keys[(key, label)] = None
+                    else:
+                        raise e
+            # Need to only update once, no matter how many sentinels are updated
+            if need_refresh:
+                with self._update_lock:
                     self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
-                # Even if we don't need to refresh, we should reset the timer
-                self._refresh_timer.reset()
-                success = True
-                return
+            # Even if we don't need to refresh, we should reset the timer
+            self._refresh_timer.reset()
+            success = True
+            return
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
             if self._on_refresh_error:
@@ -474,6 +476,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return
             raise
         finally:
+            self._refresh_lock.release()
             if not success:
                 self._refresh_timer.backoff()
             elif need_refresh and self._on_refresh_success:
@@ -554,8 +557,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: A list of keys loaded from Azure App Configuration.
         :rtype: Iterable[str]
         """
-        with self._update_lock:
-            return self._dict.keys()
+        if self._update_lock.locked():
+            with self._update_lock:
+                return self._dict.keys()
+        return self._dict.keys()
 
     def items(self) -> Iterable[Tuple[str, str]]:
         """
@@ -565,8 +570,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: A list of key-value pairs loaded from Azure App Configuration.
         :rtype: Iterable[Tuple[str, str]]
         """
-        with self._update_lock:
-            return self._dict.items()
+        if self._update_lock.locked():
+            with self._update_lock:
+                return self._dict.items()
+        return self._dict.items()
 
     def values(self) -> Iterable[str]:
         """
@@ -576,8 +583,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: A list of values loaded from Azure App Configuration.
         :rtype: Iterable[str]
         """
-        with self._update_lock:
-            return self._dict.values()
+        if self._update_lock.locked():
+            with self._update_lock:
+                return self._dict.values()
+        return self._dict.values()
 
     def get(self, key: str, default: Optional[str] = None) -> str:
         """
@@ -589,8 +598,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: The value of the specified key.
         :rtype: str
         """
-        with self._update_lock:
-            return self._dict.get(key, default)
+        if self._update_lock.locked():
+            with self._update_lock:
+                return self._dict.get(key, default)
+        return self._dict.get(key, default)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
