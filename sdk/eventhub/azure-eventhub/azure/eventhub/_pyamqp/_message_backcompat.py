@@ -16,6 +16,7 @@ from typing import (
     Dict,
     Union,
     Protocol,
+    Type
 )
 
 from ._encode import encode_payload
@@ -34,7 +35,7 @@ if TYPE_CHECKING:
             delivery_id: Optional[int],
             outcome: str,
             *,
-            error: AMQPError = AMQPError,
+            error: Union[Type[AMQPError], AMQPError] = AMQPError,
             **kwargs: Any
         ) -> None:
             ...

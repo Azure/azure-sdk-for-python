@@ -344,7 +344,8 @@ class ClientBaseAsync(ClientBase):
                 await mgmt_client.open_async(connection=conn)
                 while not await mgmt_client.client_ready_async():
                     await asyncio.sleep(0.05)
-                mgmt_msg.application_properties[
+            
+                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)[
                     "security_token"
                 ] = await self._amqp_transport.get_updated_token_async(mgmt_auth)
                 status_code, description, response = await self._amqp_transport.mgmt_client_request_async(

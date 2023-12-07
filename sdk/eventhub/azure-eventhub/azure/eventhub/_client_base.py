@@ -421,7 +421,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
 
-                mgmt_msg.application_properties[
+                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)[
                     "security_token"
                 ] = self._amqp_transport.get_updated_token(mgmt_auth)
                 status_code, description, response = self._amqp_transport.mgmt_client_request(

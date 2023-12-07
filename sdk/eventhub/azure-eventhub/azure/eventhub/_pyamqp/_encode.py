@@ -1034,7 +1034,6 @@ def encode_frame(frame, frame_type=_FRAME_TYPE):
     frame_data = bytearray()
     encode_value(frame_data, frame_description)
     if isinstance(frame, performatives.TransferFrame):
-        frame.payload = cast(Buffer, frame.payload)
         frame_data += frame.payload
 
     size = len(frame_data) + 8
