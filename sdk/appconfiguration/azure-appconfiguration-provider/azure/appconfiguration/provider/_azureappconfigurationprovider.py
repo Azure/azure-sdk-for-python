@@ -99,11 +99,14 @@ def load(
     :paramtype feature_flag_enabled: bool
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
     :paramtype feature_flag_selectors: List[SettingSelector]
-    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all feature flags without a label.
+    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
+    feature flags without a label.
     :paramtype feature_flag_refresh_enabled: bool
-    :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is False.
+    :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
+     False.
     :paramtype feature_flag_trim_prefixes: List[str]
-    :keyword feature_flag_trim_prefixes: Optional list of prefixes to trim from feature flag keys. By default will trim the FEATURE_FLAG_PREFIX.
+    :keyword feature_flag_trim_prefixes: Optional list of prefixes to trim from feature flag keys. By default will trim
+     the FEATURE_FLAG_PREFIX.
     """
 
 
@@ -151,11 +154,14 @@ def load(
     :paramtype feature_flag_enabled: bool
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
     :paramtype feature_flag_selectors: List[SettingSelector]
-    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all feature flags without a label..
+    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
+    feature flags without a label.
     :paramtype feature_flag_refresh_enabled: bool
-    :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is False.
+    :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
+     False.
     :paramtype feature_flag_trim_prefixes: List[str]
-    :keyword feature_flag_trim_prefixes: Optional list of prefixes to trim from feature flag keys. By default will trim the FEATURE_FLAG_PREFIX.
+    :keyword feature_flag_trim_prefixes: Optional list of prefixes to trim from feature flag keys. By default will trim
+     the FEATURE_FLAG_PREFIX.
     """
 
 
@@ -513,14 +519,14 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             updated_feature_flags = True
                 except HttpResponseError as e:
                     if e.status_code == 404:
-                        if etag is not None:
-                            sentinel_keys[(key, label)] = None
-                            if not isinstance(updated_config, FeatureFlagConfigurationSetting):
-                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
-                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
-                                need_refresh = True
-                            elif isinstance(updated_config, FeatureFlagConfigurationSetting):
-                                configuration_settings[key] = None
+                        sentinel_keys[(key, label)] = None
+                        if etag is not None and not isinstance(updated_config, FeatureFlagConfigurationSetting):
+                            # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                            need_refresh = True
+                        elif etag is not None and isinstance(updated_config, FeatureFlagConfigurationSetting):
+                            configuration_settings[key] = None
+                            updated_feature_flags = True
                         continue
                     raise e
             # Need to only update once, no matter how many sentinels are updated
@@ -537,10 +543,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         finally:
             if not success:
                 timer.backoff()
-                return
-            # Even if we don't need to refresh, we should reset the timer
-            timer.reset()
-            return configuration_settings, sentinel_keys, need_refresh or updated_feature_flags
+            else:
+                # Even if we don't need to refresh, we should reset the timer
+                timer.reset()
+        return configuration_settings, sentinel_keys, need_refresh or updated_feature_flags
 
     def _load_all(self, **kwargs):
         configuration_settings, sentinel_keys = self._load_configuration_settings(**kwargs)
