@@ -7,7 +7,7 @@
 import time
 from functools import partial
 
-from typing import Any, Callable, NamedTuple, Optional, Tuple, Union, cast
+from typing import Any, Callable, NamedTuple, Optional, Tuple, Union
 from .sasl import SASLAnonymousCredential, SASLPlainCredential
 from .utils import generate_sas_token
 
@@ -91,10 +91,10 @@ class _CBSAuth:
     def _set_expiry(expires_in: Optional[float] = None, expires_on: Optional[float] = None) -> Tuple[float, float]:
         if not expires_on and not expires_in:
             raise ValueError("Must specify either 'expires_on' or 'expires_in'.")
-        
+
         expires_in_interval: float = 0
         expires_on_time: float = 0
-        
+
         if not expires_on and expires_in:
             expires_on_time = time.time() + expires_in
         elif expires_on and not expires_in:
