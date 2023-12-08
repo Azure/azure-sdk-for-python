@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-lines
 
 from io import BytesIO
 from typing import (
@@ -154,7 +155,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
         Number of bytes to read from the stream. This is optional, but should be supplied for optimal performance.
     :param Optional[Dict[str, str]] metadata:
         Name-value pairs associated with the blob as metadata.
-    :param Dict[str, Any] encryption_options: 
+    :param Dict[str, Any] encryption_options:
         The options for encryption, if enabled.
     :param StorageConfiguration config:
         The Storage configuration options.
@@ -325,7 +326,7 @@ def _download_blob_options(
         Number of bytes to read from the stream. This is optional, but should be supplied for optimal performance.
     :param int encoding:
         Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
-    :param Dict[str, Any] encryption_options: 
+    :param Dict[str, Any] encryption_options:
         The options for encryption, if enabled.
     :param StorageConfiguration config:
         The Storage configuration options.
@@ -733,7 +734,7 @@ def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs
     options.update(kwargs)
     return options
 
-def _start_copy_from_url_options(
+def _start_copy_from_url_options(  # pylint:disable=too-many-statements
     source_url: str,
     metadata: Optional[Dict[str, str]] = None,
     incremental_copy: bool = False,
@@ -868,6 +869,7 @@ def _stage_block_options(
         The string should be less than or equal to 64 bytes in size.
         For a given blob, the block_id must be the same size for each block.
     :param data: The blob data.
+    :paramtype data: Union[Iterable[AnyStr], IO[AnyStr]]
     :param int length: Size of the block.
     :returns: A dictionary containing the options for a stage block operation.
     :rtype: Dict[str, Any]
@@ -1066,6 +1068,7 @@ def _set_blob_tags_options(version_id: str, tags: Optional[Dict[str, str]] = Non
         and tag values must be between 0 and 256 characters.
         Valid tag key and value characters include: lowercase and uppercase letters, digits (0-9),
         space (` `), plus (+), minus (-), period (.), solidus (/), colon (:), equals (=), underscore (_)
+    :paramtype tags: Optional[Dict[str, str]]
     :returns: A dictionary containing the options for a set blob tags operation.
     :rtype: Dict[str, Any]
     """
@@ -1563,7 +1566,10 @@ def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
     options.update(kwargs)
     return options
 
-def _from_blob_url(blob_url: str, snapshot: Optional[Union[BlobProperties, str, Dict[str, Any]]]) -> Tuple[str, str, str, Optional[str]]:
+def _from_blob_url(
+    blob_url: str,
+    snapshot: Optional[Union[BlobProperties, str, Dict[str, Any]]]
+) -> Tuple[str, str, str, Optional[str]]:
     """Creates a blob URL to interact with a specific Blob.
 
     :param str blob_url:
