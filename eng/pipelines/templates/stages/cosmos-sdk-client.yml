@@ -14,169 +14,60 @@ parameters:
 - name: EmulatorStartParameters
   type: string
   default: ''
-- name: BeforeTestSteps
-  type: object
-  default: []
-- name: AfterTestSteps
-  type: object
-  default: []
-- name: BeforePublishSteps
-  type: object
-  default: []
-- name: TestMarkArgument
-  type: string
-  default: ''
-- name: BuildTargetingString
-  type: string
-  default: azure-*
-- name: TestTimeoutInMinutes
-  type: number
-  default: 60
-- name: ToxEnvParallel
-  type: string
-  default: --tenvparallel
-- name: BuildDocs
-  type: boolean
-  default: true
-- name: DevFeedName
-  type: string
-  default: public/azure-sdk-for-python
-- name: MatrixConfigs
-  type: object
-  default:
-    - Name: Python_ci_test_base
-      Path: eng/pipelines/templates/stages/platform-matrix.json
-      Selection: sparse
-      GenerateVMJobs: true
-- name: AdditionalMatrixConfigs
-  type: object
-  default: []
-- name: MatrixFilters
-  type: object
-  default: []
-- name: MatrixReplace
-  type: object
-  default: []
-- name: VerifyAutorest
-  type: boolean
-  default: false
-- name: ValidateFormatting
-  type: boolean
-  default: false
 - name: TestProxy
   type: boolean
   default: false
-- name: GenerateApiReviewForManualOnly
-  type: boolean
-  default: false
-- name: AdvancedBuild
-  type: boolean
-  default: false
+
+extends:
+  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: ${{ parameters.ServiceDirectory }}
+    # Skip emulator tests in the CI run
+    # TestMarkArgument: not cosmosEmulator
+    InjectedPackages: ${{parameters.InjectedPackages}}
+    Artifacts: ${{parameters.Artifacts}}
 
 stages:
-  - stage: Build
-    jobs:
-    - template: /eng/pipelines/templates/jobs/ci.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        Artifacts: ${{ parameters.Artifacts }}
-        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-          TestPipeline: true
-        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-        AfterTestSteps: ${{ parameters.AfterTestSteps }}
-        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        BuildTargetingString: '${{ parameters.BuildTargetingString }}'
-        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
-        InjectedPackages: ${{ parameters.InjectedPackages }}
-        BuildDocs: ${{ parameters.BuildDocs }}
-        DevFeedName: ${{ parameters.DevFeedName }}
-        MatrixConfigs:
-          - ${{ each config in parameters.MatrixConfigs }}:
-            -  ${{ config }}
-          - ${{ each config in parameters.AdditionalMatrixConfigs }}:
-            -  ${{ config }}
-        MatrixFilters: ${{ parameters.MatrixFilters }}
-        MatrixReplace: ${{ parameters.MatrixReplace }}
-        VerifyAutorest: ${{ parameters.VerifyAutorest }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
-        TestProxy: ${{ parameters.TestProxy }}
-        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
-        AdvancedBuild: ${{ parameters.AdvancedBuild }}
-
   - stage: Test_Emulator
-    displayName: Test Emulator
     dependsOn: []
     jobs:
     - job: Emulator
       strategy:
         matrix:
-          Windows_Python36:
+          Windows_Python3_7:
             OSVmImage: 'windows-2022'
             PythonVersion: '3.7'
+          Windows_Python3_8:
+            OSVmImage: 'windows-2022'
+            PythonVersion: '3.8'
+          Windows_Python3_9:
+            OSVmImage: 'windows-2022'
+            PythonVersion: '3.9'
+          Windows_Python3_10:
+            OSVmImage: 'windows-2022'
+            PythonVersion: '3.10'
+          Windows_Python3_11:
+            OSVmImage: 'windows-2022'
+            PythonVersion: '3.11'
+          Windows_Python3_12:
+            OSVmImage: 'windows-2022'
+            PythonVersion: '3.12'
+
       pool:
         vmImage: $(OSVmImage)
 
       steps:
         - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
           parameters:
-            JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
-            MatrixConfigs:
-              - Name: Cosmos_emulator_integration
-                Path: eng/pipelines/templates/stages/cosmos-emulator-matrix.json
-                Selection: all
-                GenerateVMJobs: true
-            MatrixFilters:
-              - ${{ parameters.MatrixFilters }}
-            AdditionalParameters:
-              BuildParallelization: 1
-              DisableAzureResourceCreation: true
-              ServiceDirectory: cosmos
-              Artifacts: ${{ parameters.Artifacts }}
-              ACCOUNT_HOST: 'https://localhost:8081/'
-              ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-              # Increased timeout to 90 because of cosmos emulator taking 25-30 mins to download emulator
-              # Issue filed to improve download speed: https://github.com/Azure/azure-sdk-for-java/issues/12970
-              TimeoutInMinutes: 90
+            StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
 
-              PreSteps:
-              - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-                parameters:
-                  StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
-              - powershell: |
-                  $Key = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-                  $password = ConvertTo-SecureString -String $Key -Force -AsPlainText
-                  $cert = Get-ChildItem cert:\LocalMachine\My | Where-Object { $_.FriendlyName -eq "DocumentDbEmulatorCertificate" }
-                  Export-PfxCertificate -Cert $cert -FilePath ".\CosmosDbEmulatorCert.pfx" -Password $password | Out-Null
-                  $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
-                  $cert.Import(".\CosmosDbEmulatorCert.pfx", $Key, "DefaultKeySet")
-                  $cert | Export-Certificate -FilePath "$env:temp\CosmosDbEmulatorCert.cer" -Type CERT
-                displayName: 'Export Cosmos DB Emulator Certificate'
-              - powershell: |
-                  if (Test-Path $env:JAVA_HOME\jre\lib\security) {
-                    cd $env:JAVA_HOME\jre\lib\security
-                  } elseif (Test-Path $env:JAVA_HOME\lib\security) {
-                    cd $env:JAVA_HOME\lib\security
-                  } else {
-                    Write-Error "JDK directory structure is unknown and unsupported. JAVA_HOME is '$env:JAVA_HOME'"
-                    exit 1
-                  }
-                  cp $env:temp\CosmosDbEmulatorCert.cer .
-                  keytool -keystore cacerts -importcert -noprompt -trustcacerts -alias CosmosDbEmulatorCert -file CosmosDbEmulatorCert.cer -storepass changeit
-                displayName: 'Create Java TrustStore'
-
-  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
-  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
-    - template: archetype-python-release.yml
-      parameters:
-        DependsOn: Build
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        Artifacts: ${{ parameters.Artifacts }}
-        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-          TestPipeline: true
-        ArtifactName: packages_extended
-        DocArtifact: documentation
-        TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
-        TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
-        DevFeedName: ${{ parameters.DevFeedName }}
+        - template: /eng/pipelines/templates/steps/build-test.yml
+          parameters:
+            TestMarkArgument: not globaldb
+            EnvVars:
+              ACCOUNT_HOST: https://localhost:8081/
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            PythonVersion: $(PythonVersion)
+            OSVmImage: $(OSVmImage)
+            ToxTestEnv: 'whl,sdist'
+            InjectedPackages: ${{parameters.InjectedPackages}}
