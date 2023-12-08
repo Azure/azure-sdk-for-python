@@ -139,21 +139,21 @@ stages:
     pool:
       vmImage: $(OSVmImage)
 
-    steps:
-      - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-        parameters:
-          StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
+      steps:
+        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+          parameters:
+            StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
 
-      - template: /eng/pipelines/templates/steps/build-test.yml
-        parameters:
-          TestMarkArgument: not globaldb
-          EnvVars:
-            ACCOUNT_HOST: https://localhost:8081/
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          PythonVersion: $(PythonVersion)
-          OSVmImage: $(OSVmImage)
-          ToxTestEnv: 'whl,sdist'
-          InjectedPackages: ${{parameters.InjectedPackages}}
+        - template: /eng/pipelines/templates/steps/build-test.yml
+          parameters:
+            TestMarkArgument: not globaldb
+            EnvVars:
+              ACCOUNT_HOST: https://localhost:8081/
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            PythonVersion: $(PythonVersion)
+            OSVmImage: $(OSVmImage)
+            ToxTestEnv: 'whl,sdist'
+            InjectedPackages: ${{parameters.InjectedPackages}}
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
