@@ -70,7 +70,15 @@ class AIResource:
         resource._workspace_hub = workspace_hub
         return resource
 
-    # TODO test all accessors/setters
+    @property
+    def id(self) -> str:
+        """The read-only id of the resource. Set by the backend.
+
+        :return: ID of the resource.
+        :rtype: str
+        """
+        return self._workspace_hub.id
+    
     @property
     def name(self) -> str:
         """The name of the resource.

@@ -28,3 +28,11 @@ class IndexInputType(object):
 class IndexType(object):
     ACS = "acs"
     FAISS = "faiss"
+
+class OperationScope:
+    """
+        Some AI Client Operations can be applied to either the client's AI resource,
+    or its project. For such operations, this is used to determine that scope.
+    """
+    AI_RESOURCE = "ai_resource"
+    PROJECT = "project"

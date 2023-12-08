@@ -11,6 +11,9 @@ from .connection_subtypes import (
     AzureOpenAIConnection,
     AzureAISearchConnection,
     AzureAIServiceConnection,
+    GitHubConnection,
+    CustomConnection,
+    ApiKeyConnection,
 )
 from .mlindex import Index
 from .project import Project
@@ -27,5 +30,8 @@ __all__ = [
     "AIResource",
     "Data",
     "AzureOpenAIModelConfiguration",
+    "GitHubConnection",
+    "CustomConnection",
+    "ApiKeyConnection",
 ]
 
