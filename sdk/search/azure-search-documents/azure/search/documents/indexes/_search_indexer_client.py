@@ -41,8 +41,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Search API version to use for requests.
     :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
-     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
-     will be assumed.
+        audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+        will be assumed.
     """
 
     _ODATA_ACCEPT: str = "application/json;odata.metadata=minimal"
@@ -77,7 +77,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return self._client.__exit__(*args)
 
     def close(self) -> None:
-        """Close the :class:`~azure.search.documents.indexes.SearchIndexerClient` session."""
+        """Close the session."""
         return self._client.close()
 
     @distributed_trace
@@ -119,7 +119,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
         :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection.
+            detection.
         :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created SearchIndexer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
@@ -160,8 +160,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """Lists all indexers available for a search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         list of JSON property names, or '*' for all properties. The default is all
-         properties.
+            list of JSON property names, or '*' for all properties. The default is all
+            properties.
         :paramtype select: list[str]
         :return: List of all the SearchIndexers.
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
@@ -220,9 +220,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
 
-        :return: None
-        :rtype: None
-
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_indexer_operations.py
@@ -248,9 +245,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :param name: The name of the indexer to run.
         :type name: str
 
-        :return: None
-        :rtype: None
-
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_indexer_operations.py
@@ -269,9 +263,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         :param name: The name of the indexer to reset.
         :type name: str
-
-        :return: None
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -297,7 +288,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type keys_or_ids: ~azure.search.documents.indexes.models.DocumentKeysOrIds
         :return: None, or the result of cls(response)
         :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. The default is false.
+            keys or ids in this payload will be queued to be re-ingested. The default is false.
         :paramtype overwrite: bool
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -421,8 +412,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """Lists all data source connections available for a search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         list of JSON property names, or '*' for all properties. The default is all
-         properties.
+            list of JSON property names, or '*' for all properties. The default is all
+            properties.
         :paramtype select: list[str]
         :return: List of all the data source connections.
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
@@ -473,8 +464,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type data_source_connection: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -500,8 +489,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """List the SearchIndexerSkillsets in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         list of JSON property names, or '*' for all properties. The default is all
-         properties.
+            list of JSON property names, or '*' for all properties. The default is all
+            properties.
         :paramtype select: list[str]
         :return: List of SearchIndexerSkillsets
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
@@ -546,7 +535,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type name: str
         :return: The retrieved SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         .. admonition:: Example:
 
@@ -644,7 +633,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
         :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
-         detection.
+            detection.
         :paramtype disable_cache_reprocessing_change_detection: bool
         :return: The created or updated SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset

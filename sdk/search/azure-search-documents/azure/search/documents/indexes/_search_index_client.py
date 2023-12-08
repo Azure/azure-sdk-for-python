@@ -74,7 +74,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return self._client.__exit__(*args)
 
     def close(self) -> None:
-        """Close the :class:`~azure.search.documents.indexes.SearchIndexClient` session."""
+        """Close the session."""
         return self._client.close()
 
     def get_search_client(self, index_name: str, **kwargs: Any) -> SearchClient:
@@ -234,20 +234,20 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :param index: The index object.
         :type index: ~azure.search.documents.indexes.models.SearchIndex
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
-         to be added to an index by taking the index offline for at least a few seconds. This
-         temporarily causes indexing and query requests to fail. Performance and write availability of
-         the index can be impaired for several minutes after the index is updated, or longer for very
-         large indexes.
+            to be added to an index by taking the index offline for at least a few seconds. This
+            temporarily causes indexing and query requests to fail. Performance and write availability of
+            the index can be impaired for several minutes after the index is updated, or longer for very
+            large indexes.
         :type allow_index_downtime: bool
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
-        :class:`~azure.core.exceptions.ResourceModifiedError`, \
-        :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
-        :class:`~azure.core.exceptions.ResourceNotFoundError`, \
-        :class:`~azure.core.exceptions.ResourceExistsError`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError or
+            ~azure.core.exceptions.ResourceModifiedError or
+            ~azure.core.exceptions.ResourceNotModifiedError or
+            ~azure.core.exceptions.ResourceNotFoundError or
+            ~azure.core.exceptions.ResourceExistsError
 
         .. admonition:: Example:
 
@@ -306,8 +306,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """List the Synonym Maps in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         list of JSON property names, or '*' for all properties. The default is all
-         properties.
+            list of JSON property names, or '*' for all properties. The default is all
+            properties.
         :paramtype select: list[str]
         :return: List of synonym maps
         :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
@@ -385,8 +385,6 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type name: str or ~azure.search.documents.indexes.models.SynonymMap
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -479,8 +477,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """List the aliases in an Azure Search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         list of JSON property names, or '*' for all properties. The default is all
-         properties.
+            list of JSON property names, or '*' for all properties. The default is all
+            properties.
         :paramtype select: list[str]
         :return: List of Aliases
         :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchAlias]
@@ -589,11 +587,11 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: The index created or updated
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`, \
-        :class:`~azure.core.exceptions.ResourceModifiedError`, \
-        :class:`~azure.core.exceptions.ResourceNotModifiedError`, \
-        :class:`~azure.core.exceptions.ResourceNotFoundError`, \
-        :class:`~azure.core.exceptions.ResourceExistsError`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError or
+            ~azure.core.exceptions.ResourceModifiedError or
+            ~azure.core.exceptions.ResourceNotModifiedError or
+            ~azure.core.exceptions.ResourceNotFoundError or
+            ~azure.core.exceptions.ResourceExistsError`
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
