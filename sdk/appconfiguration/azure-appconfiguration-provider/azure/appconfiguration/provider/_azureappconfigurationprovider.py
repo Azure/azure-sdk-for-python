@@ -7,6 +7,7 @@ import os
 import json
 import random
 import time
+import datetime
 from threading import Lock
 import logging
 from typing import (
@@ -50,6 +51,8 @@ if TYPE_CHECKING:
 JSON = Union[str, Mapping[str, Any]]  # pylint: disable=unsubscriptable-object
 
 logger = logging.getLogger(__name__)
+
+min_uptime = 5
 
 
 @overload
@@ -151,6 +154,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
+    start_time = datetime.datetime.now()
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -186,7 +190,11 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     provider = _buildprovider(
         connection_string, endpoint, credential, uses_key_vault="UsesKeyVault" in headers, **kwargs
     )
-    provider._load_all(headers=headers)
+    try:
+        provider._load_all(headers=headers)
+    except Exception as e:
+        _prekill(start_time)
+        raise e
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
@@ -203,8 +211,20 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                         label,
                     )
                 else:
+                    _prekill(start_time)
                     raise e
+            except Exception as e:
+                _prekill(start_time)
+                raise e
     return provider
+
+def _prekill(start_time: datetime.datetime) -> None:
+    # We want to make sure we are up a minimum amount of time before we kill the process. Otherwise, we could get stuck
+    # in a quick restart loop.
+    min_time = datetime.timedelta(seconds=min_uptime)
+    current_time = datetime.datetime.now()
+    if current_time - start_time < min_time:
+        time.sleep(min_time - (current_time - start_time))
 
 
 def _get_headers(request_type, **kwargs) -> str:

@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
+import datetime
 from asyncio.locks import Lock
 import logging
 from typing import (
@@ -42,6 +43,7 @@ from .._azureappconfigurationprovider import (
     _get_headers,
     _RefreshTimer,
     _build_sentinel,
+    _prekill,
 )
 from .._user_agent import USER_AGENT
 
@@ -153,6 +155,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     credential: Optional["AsyncTokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
+    start_time = datetime.datetime.now()
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -186,7 +189,13 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     headers = _get_headers("Startup", **kwargs)
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
-    await provider._load_all(headers=headers)
+    
+    try:
+        await provider._load_all(headers=headers)
+    except Exception as e:
+        _prekill(start_time)
+        raise e
+
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
@@ -204,9 +213,12 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                     )
                     provider._refresh_on[(key, label)] = None
                 else:
+                    _prekill(start_time)
                     raise e
+            except Exception as e:
+                _prekill(start_time)
+                raise e
     return provider
-
 
 def _buildprovider(
     connection_string: Optional[str], endpoint: Optional[str], credential: Optional["AsyncTokenCredential"], **kwargs
