@@ -14,9 +14,6 @@ parameters:
 - name: EmulatorStartParameters
   type: string
   default: ''
-- name: TestProxy
-  type: boolean
-  default: false
 - name: BeforeTestSteps
   type: object
   default: []
@@ -51,6 +48,30 @@ parameters:
       Path: eng/pipelines/templates/stages/platform-matrix.json
       Selection: sparse
       GenerateVMJobs: true
+- name: AdditionalMatrixConfigs
+  type: object
+  default: []
+- name: MatrixFilters
+  type: object
+  default: []
+- name: MatrixReplace
+  type: object
+  default: []
+- name: VerifyAutorest
+  type: boolean
+  default: false
+- name: ValidateFormatting
+  type: boolean
+  default: false
+- name: TestProxy
+  type: boolean
+  default: false
+- name: GenerateApiReviewForManualOnly
+  type: boolean
+  default: false
+- name: AdvancedBuild
+  type: boolean
+  default: false
 
 stages:
   - stage: Build
@@ -107,17 +128,14 @@ stages:
                 Selection: all
                 GenerateVMJobs: true
             MatrixFilters:
-              - ${{ parameters.LanguageFilter }}
               - ${{ parameters.MatrixFilters }}
             AdditionalParameters:
               BuildParallelization: 1
               DisableAzureResourceCreation: true
               ServiceDirectory: cosmos
               Artifacts: ${{ parameters.Artifacts }}
-              AdditionalModules: ${{ parameters.AdditionalModules }}
               ACCOUNT_HOST: 'https://localhost:8081/'
               ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
-              SECONDARY_ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
               # Increased timeout to 90 because of cosmos emulator taking 25-30 mins to download emulator
               # Issue filed to improve download speed: https://github.com/Azure/azure-sdk-for-java/issues/12970
               TimeoutInMinutes: 90
