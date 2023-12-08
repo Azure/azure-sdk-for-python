@@ -121,26 +121,6 @@ stages:
     - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
       parameters:
         JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
-        strategy:
-            matrix:
-              Windows_Python3_7:
-                OSVmImage: 'windows-2022'
-                PythonVersion: '3.7'
-              Windows_Python3_8:
-                OSVmImage: 'windows-2022'
-                PythonVersion: '3.8'
-              Windows_Python3_9:
-                OSVmImage: 'windows-2022'
-                PythonVersion: '3.9'
-              Windows_Python3_10:
-                OSVmImage: 'windows-2022'
-                PythonVersion: '3.10'
-              Windows_Python3_11:
-                OSVmImage: 'windows-2022'
-                PythonVersion: '3.11'
-              Windows_Python3_12:
-                OSVmImage: 'windows-2022'
-                PythonVersion: '3.12'
         DependsOn:
           - 'Build'
           - ${{ if eq(parameters['AdvancedBuild'], true) }}:
