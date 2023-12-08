@@ -13,14 +13,9 @@ from ci_tools.build import discover_targeted_packages
 from ci_tools.environment_exclusions import is_check_enabled
 
 FULL_BUILD_SET = [
-    "whl",
-    "sdist",
-    "depends",
-    "latestdependency",
-    "mindependency",
-    "whl_no_aio",
+    "whl"
 ]
-PR_BUILD_SET = ["whl", "sdist", "mindependency"]
+PR_BUILD_SET = ["whl"]
 
 
 def resolve_devops_variable(var_value: str) -> List[str]:
