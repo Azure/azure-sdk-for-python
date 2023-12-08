@@ -534,6 +534,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
         :raises: ~azure.core.exceptions.HttpResponseError
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
@@ -585,6 +586,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type alias: ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
+
         :return: The index created or updated
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises: ~azure.core.exceptions.ResourceNotFoundError or
@@ -592,6 +594,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             ~azure.core.exceptions.ResourceNotModifiedError or
             ~azure.core.exceptions.ResourceNotFoundError or
             ~azure.core.exceptions.ResourceExistsError`
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_index_alias_crud_operations.py

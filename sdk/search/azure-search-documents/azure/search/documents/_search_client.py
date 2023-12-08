@@ -395,7 +395,7 @@ class SearchClient(HeadersMixin):
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
-        character, and no more than 100 characters.
+            character, and no more than 100 characters.
         :param str suggester_name: Required. The name of the suggester as specified in the suggesters
             collection that's part of the index definition.
         :keyword str filter: An OData expression that filters the documents considered for suggestions.
@@ -424,6 +424,7 @@ class SearchClient(HeadersMixin):
             included in the results.
         :keyword int top: The number of suggestions to retrieve. The value must be a number between 1 and
             100. The default is 5.
+
         :return: List of documents.
         :rtype:  list[dict]
 
@@ -661,6 +662,7 @@ class SearchClient(HeadersMixin):
         :type batch: IndexDocumentsBatch
         :return: List of IndexingResult
         :rtype:  list[IndexingResult]
+
         :raises ~azure.search.documents.RequestEntityTooLargeError
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)

@@ -91,7 +91,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexer_operations.py
+            .. literalinclude:: ../samples/sample_indexers_operations.py
                 :start-after: [START create_indexer]
                 :end-before: [END create_indexer]
                 :language: python
@@ -144,7 +144,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexer_operations.py
+            .. literalinclude:: ../samples/sample_indexers_operations.py
                 :start-after: [START get_indexer]
                 :end-before: [END get_indexer]
                 :language: python
@@ -168,7 +168,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexer_operations.py
+            .. literalinclude:: ../samples/sample_indexers_operations.py
                 :start-after: [START list_indexer]
                 :end-before: [END list_indexer]
                 :language: python
@@ -191,7 +191,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexer_operations.py
+            .. literalinclude:: ../samples/sample_indexers_operations.py
                 :start-after: [START list_indexer]
                 :end-before: [END list_indexer]
                 :language: python
@@ -222,7 +222,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexer_operations.py
+            .. literalinclude:: ../samples/sample_indexers_operations.py
                 :start-after: [START delete_indexer]
                 :end-before: [END delete_indexer]
                 :language: python
@@ -247,7 +247,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexer_operations.py
+            .. literalinclude:: ../samples/sample_indexers_operations.py
                 :start-after: [START run_indexer]
                 :end-before: [END run_indexer]
                 :language: python
@@ -266,7 +266,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexer_operations.py
+            .. literalinclude:: ../samples/sample_indexers_operations.py
                 :start-after: [START reset_indexer]
                 :end-before: [END reset_indexer]
                 :language: python
@@ -313,7 +313,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexer_operations.py
+            .. literalinclude:: ../samples/sample_indexers_operations.py
                 :start-after: [START get_indexer_status]
                 :end-before: [END get_indexer_status]
                 :language: python
@@ -494,17 +494,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :paramtype select: list[str]
         :return: List of SearchIndexerSkillsets
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
+
         :raises: ~azure.core.exceptions.HttpResponseError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_skillset_operations.py
-                :start-after: [START get_skillsets]
-                :end-before: [END get_skillsets]
-                :language: python
-                :dedent: 4
-                :caption: List SearchIndexerSkillsets
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
@@ -536,16 +527,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :return: The retrieved SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises: ~azure.core.exceptions.ResourceNotFoundError
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_skillset_operations.py
-                :start-after: [START get_skillset]
-                :end-before: [END get_skillset]
-                :language: python
-                :dedent: 4
-                :caption: Get a SearchIndexerSkillset
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.skillsets.get(name, **kwargs)
@@ -567,16 +548,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_skillset_operations.py
-                :start-after: [START delete_skillset]
-                :end-before: [END delete_skillset]
-                :language: python
-                :dedent: 4
-                :caption: Delete a SearchIndexerSkillset
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(skillset, match_condition)
@@ -596,16 +567,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :return: The created SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sample_skillset_operations.py
-                :start-after: [START create_skillset]
-                :end-before: [END create_skillset]
-                :language: python
-                :dedent: 4
-                :caption: Create a SearchIndexerSkillset
-
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         _validate_skillset(skillset)
