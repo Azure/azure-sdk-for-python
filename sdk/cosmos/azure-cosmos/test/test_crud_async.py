@@ -111,6 +111,7 @@ class TestCRUDAsync:
             test_config._test_config.TEST_DATABASE_ID)
 
     async def _clear(self):
+        print("Clearing databases")
         async for db in self.client.list_databases():
             self.client.delete_database(db["id"])
 
