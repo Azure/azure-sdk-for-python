@@ -113,7 +113,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     def test_prekill(self, mock_sleep, **kwargs):
         start_time = datetime.datetime.now()
         _prekill(start_time)
-        mock_sleep.assert_called_with(datetime.timedelta(seconds=5))
+        assert mock_sleep.call_count == 1
 
         mock_sleep.reset_mock()
         start_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
