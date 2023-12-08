@@ -22,36 +22,82 @@ extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: ${{ parameters.ServiceDirectory }}
-    # Skip emulator tests in the CI run
-    TestMarkArgument: not cosmosEmulator
+    #TestMarkArgument: not cosmosEmulator
     InjectedPackages: ${{parameters.InjectedPackages}}
     Artifacts: ${{parameters.Artifacts}}
 
-#  - stage: Test_Emulator
-#    dependsOn: []
-#    jobs:
-#    - job: Emulator
-#      strategy:
-#        matrix:
-#          Windows_Python36:
-#            OSVmImage: 'windows-2022'
-#            PythonVersion: '3.6'
-#      pool:
-#        vmImage: $(OSVmImage)
-#
-#      steps:
-#        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-#          parameters:
-#            EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
-#            StartParameters: ${{ parameters.EmulatorStartParameters }}
-#
-#        - template: /eng/pipelines/templates/steps/build-test.yml
-#          parameters:
-#            TestMarkArgument: not globaldb
-#            EnvVars:
-#              ACCOUNT_HOST: https://localhost:8081/
-#            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-#            PythonVersion: $(PythonVersion)
-#            OSVmImage: $(OSVmImage)
-#            ToxTestEnv: 'whl,sdist'
-#            InjectedPackages: ${{parameters.InjectedPackages}}
+stages:
+  - stage: Test_Emulator
+    displayName: Test Emulator
+    dependsOn: []
+    jobs:
+    - job: Emulator
+      strategy:
+        matrix:
+          Windows_Python36:
+            OSVmImage: 'windows-2022'
+            PythonVersion: '3.7'
+      pool:
+        vmImage: $(OSVmImage)
+
+      steps:
+        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+          parameters:
+            JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
+            MatrixConfigs:
+              - Name: Cosmos_emulator_integration
+                Path: eng/pipelines/templates/stages/cosmos-emulator-matrix.json
+                Selection: all
+                GenerateVMJobs: true
+            MatrixFilters:
+              - ${{ parameters.LanguageFilter }}
+              - ${{ parameters.MatrixFilters }}
+            AdditionalParameters:
+              BuildParallelization: 1
+              DisableAzureResourceCreation: true
+              ServiceDirectory: cosmos
+              Artifacts: ${{ parameters.Artifacts }}
+              AdditionalModules: ${{ parameters.AdditionalModules }}
+              ACCOUNT_HOST: 'https://localhost:8081/'
+              ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
+              SECONDARY_ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
+              # Increased timeout to 90 because of cosmos emulator taking 25-30 mins to download emulator
+              # Issue filed to improve download speed: https://github.com/Azure/azure-sdk-for-java/issues/12970
+              TimeoutInMinutes: 90
+
+              PreSteps:
+              - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+                parameters:
+                  StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
+              - powershell: |
+                  $Key = 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
+                  $password = ConvertTo-SecureString -String $Key -Force -AsPlainText
+                  $cert = Get-ChildItem cert:\LocalMachine\My | Where-Object { $_.FriendlyName -eq "DocumentDbEmulatorCertificate" }
+                  Export-PfxCertificate -Cert $cert -FilePath ".\CosmosDbEmulatorCert.pfx" -Password $password | Out-Null
+                  $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
+                  $cert.Import(".\CosmosDbEmulatorCert.pfx", $Key, "DefaultKeySet")
+                  $cert | Export-Certificate -FilePath "$env:temp\CosmosDbEmulatorCert.cer" -Type CERT
+                displayName: 'Export Cosmos DB Emulator Certificate'
+              - powershell: |
+                  if (Test-Path $env:JAVA_HOME\jre\lib\security) {
+                    cd $env:JAVA_HOME\jre\lib\security
+                  } elseif (Test-Path $env:JAVA_HOME\lib\security) {
+                    cd $env:JAVA_HOME\lib\security
+                  } else {
+                    Write-Error "JDK directory structure is unknown and unsupported. JAVA_HOME is '$env:JAVA_HOME'"
+                    exit 1
+                  }
+                  cp $env:temp\CosmosDbEmulatorCert.cer .
+                  keytool -keystore cacerts -importcert -noprompt -trustcacerts -alias CosmosDbEmulatorCert -file CosmosDbEmulatorCert.cer -storepass changeit
+                displayName: 'Create Java TrustStore'
+
+        - template: /eng/pipelines/templates/steps/build-test.yml
+          parameters:
+            TestMarkArgument: not globaldb
+            EnvVars:
+              ACCOUNT_HOST: https://localhost:8081/
+            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            PythonVersion: $(PythonVersion)
+            OSVmImage: $(OSVmImage)
+            ToxTestEnv: 'whl,sdist'
+            InjectedPackages: ${{parameters.InjectedPackages}}
