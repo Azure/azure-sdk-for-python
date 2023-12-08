@@ -49,7 +49,7 @@ class BlobCheckpointStore(CheckpointStore):
         blob_account_url: str,
         container_name: str,
         *,
-        credential: Union[AsyncTokenCredential, AzureNamedKeyCredential, AzureSasCredential] = None,
+        credential: Optional[Union["AsyncTokenCredential", AzureNamedKeyCredential, AzureSasCredential]] = None,
         **kwargs: Any
     ):
         # type(str, str, Optional[Any], Any) -> None
@@ -69,7 +69,12 @@ class BlobCheckpointStore(CheckpointStore):
 
     @classmethod
     def from_connection_string(
-        cls, conn_str: str, container_name: str, *, credential: Optional[Any] = None, **kwargs: Any
+        cls,
+        conn_str: str,
+        container_name: str,
+        *,
+        credential: Optional[Union["AsyncTokenCredential", AzureNamedKeyCredential, AzureSasCredential]] = None,
+        **kwargs: Any
     ) -> "BlobCheckpointStore":
         """Create BlobCheckpointStore from a storage connection string.
 
