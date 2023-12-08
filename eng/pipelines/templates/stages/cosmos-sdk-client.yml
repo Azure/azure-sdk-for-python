@@ -38,9 +38,6 @@ parameters:
 - name: ToxEnvParallel
   type: string
   default: --tenvparallel
-- name: InjectedPackages
-  type: string
-  default: ''
 - name: BuildDocs
   type: boolean
   default: true
