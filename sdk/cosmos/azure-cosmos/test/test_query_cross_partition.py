@@ -22,6 +22,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
@@ -32,6 +34,7 @@ from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
 
+@pytest.mark.cosmosEmulator
 class CrossPartitionQueryTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 

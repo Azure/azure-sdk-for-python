@@ -30,6 +30,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import PartitionKey, DatabaseProxy, ContainerProxy
@@ -37,6 +39,7 @@ from azure.cosmos._routing import routing_range as routing_range
 from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 
 
+@pytest.mark.cosmosEmulator
 class TestRoutingMapEndToEnd(unittest.TestCase):
     """Routing Map Functionalities end-to-end Tests.
     """

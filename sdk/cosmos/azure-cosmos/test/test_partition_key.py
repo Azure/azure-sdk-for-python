@@ -22,12 +22,15 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.partition_key as partition_key
 import test_config
 from azure.cosmos import DatabaseProxy
 
 
+@pytest.mark.cosmosEmulator
 class PartitionKeyTests(unittest.TestCase):
     """Tests to verify if non-partitioned collections are properly accessed on migration with version 2018-12-31.
     """

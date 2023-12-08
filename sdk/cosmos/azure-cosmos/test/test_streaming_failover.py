@@ -1,6 +1,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.documents as documents
@@ -14,6 +16,7 @@ from azure.cosmos._request_object import RequestObject
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
+@pytest.mark.cosmosEmulator
 class TestStreamingFailOver(unittest.TestCase):
     DEFAULT_ENDPOINT = "https://geotest.documents.azure.com:443/"
     MASTER_KEY = "SomeKeyValue"

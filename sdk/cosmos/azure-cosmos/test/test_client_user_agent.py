@@ -25,11 +25,14 @@
 
 import unittest
 
+import pytest
+
 from azure.cosmos import CosmosClient as sync_client
 from azure.cosmos.aio import CosmosClient as async_client
 from test_config import _test_config
 
 
+@pytest.mark.cosmosEmulator
 class TestClientUserAgent(unittest.TestCase):
 
     async def test_client_user_agent(self):

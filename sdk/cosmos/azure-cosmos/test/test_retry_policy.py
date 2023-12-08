@@ -30,6 +30,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos._retry_options as retry_options
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -38,6 +40,7 @@ from azure.cosmos import _retry_utility, PartitionKey
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 
 
+@pytest.mark.cosmosEmulator
 class TestRetryPolicy(unittest.TestCase):
     TEST_DATABASE_ID = "Python SDK Test Throughput Database " + str(uuid.uuid4())
     TEST_CONTAINER_SINGLE_PARTITION_ID = "Single Partition Test Collection " + str(uuid.uuid4())

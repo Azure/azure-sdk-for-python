@@ -31,12 +31,15 @@ import random
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
 
+@pytest.mark.cosmosEmulator
 class MultiOrderbyTests(unittest.TestCase):
     """Multi Orderby and Composite Indexes Tests.
     """

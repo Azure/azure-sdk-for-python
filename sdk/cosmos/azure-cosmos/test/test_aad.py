@@ -25,6 +25,7 @@ import unittest
 import uuid
 from io import StringIO
 
+import pytest
 from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as cosmos_client
@@ -101,6 +102,7 @@ class CosmosEmulatorCredential(object):
         return AccessToken(first_encoded + "." + second_encoded + "." + emulator_key_encoded, int(time.time() + 7200))
 
 
+@pytest.mark.cosmosEmulator
 class TestAAD(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     database: DatabaseProxy = None

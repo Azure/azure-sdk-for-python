@@ -26,10 +26,13 @@ import unittest
 import uuid
 from unittest.mock import MagicMock
 
+import pytest
+
 import test_config
 from azure.cosmos import cosmos_client, PartitionKey, Offer, http_constants, CosmosClient, DatabaseProxy, ContainerProxy
 
 
+@pytest.mark.cosmosEmulator
 class TestBackwardsCompatibility(unittest.TestCase):
     TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
     TEST_CONTAINER_ID = "Single Partition Test Collection With Custom PK " + str(uuid.uuid4())

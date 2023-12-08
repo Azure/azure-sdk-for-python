@@ -19,9 +19,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# IMPORTANT NOTES:
+#  	Most test cases in this file create collections in your Azure Cosmos account.
+#  	Collections are billing entities. By running these test cases, you may incur monetary costs on your account.
+#  	To Run the test, replace the two member fields (masterKey and host) with values
+#   associated with your Azure Cosmos account.
+
 import time
 import unittest
 import uuid
+
+import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -30,11 +38,7 @@ from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
-# IMPORTANT NOTES:
-#  	Most test cases in this file create collections in your Azure Cosmos account.
-#  	Collections are billing entities. By running these test cases, you may incur monetary costs on your account.
-#  	To Run the test, replace the two member fields (masterKey and host) with values 
-#   associated with your Azure Cosmos account.
+@pytest.mark.cosmosEmulator
 class TestTimeToLive(unittest.TestCase):
     """TTL Unit Tests.
     """
@@ -172,8 +176,8 @@ class TestTimeToLive(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
             created_collection.read_item,
-            created_document['id'],
-            created_document['id']
+            document_definition['id'],
+            document_definition['id']
         )
 
         document_definition['id'] = 'doc4' + str(uuid.uuid4())
@@ -194,8 +198,8 @@ class TestTimeToLive(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
             created_collection.read_item,
-            created_document['id'],
-            created_document['id']
+            document_definition['id'],
+            document_definition['id']
         )
 
         self.created_db.delete_container(container=created_collection)
@@ -231,8 +235,8 @@ class TestTimeToLive(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
             created_collection.read_item,
-            created_document3['id'],
-            created_document3['id']
+            document_definition['id'],
+            document_definition['id']
         )
 
         # The documents with id doc1 and doc2 will never expire
@@ -280,7 +284,7 @@ class TestTimeToLive(unittest.TestCase):
                                'key': 'value'}
 
         created_collection.create_item(body=document_definition)
-        created_document = created_collection.read_item(document_definition['id'], document_definition['id'])
+        created_collection.read_item(document_definition['id'], document_definition['id'])
 
         time.sleep(10)
 
@@ -288,8 +292,8 @@ class TestTimeToLive(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
             created_collection.read_item,
-            created_document['id'],
-            created_document['id']
+            document_definition['id'],
+            document_definition['id']
         )
 
         # We can create a document with the same id after the ttl time has expired
@@ -318,8 +322,8 @@ class TestTimeToLive(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.NOT_FOUND,
             created_collection.read_item,
-            upserted_document['id'],
-            upserted_document['id']
+            document_definition['id'],
+            document_definition['id']
         )
 
         documents = list(created_collection.query_items(

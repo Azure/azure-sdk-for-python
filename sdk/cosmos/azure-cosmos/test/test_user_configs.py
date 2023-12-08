@@ -22,6 +22,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 from azure.cosmos import http_constants, exceptions, PartitionKey
 from test_config import _test_config
@@ -43,6 +45,7 @@ def get_test_item():
     return item
 
 
+@pytest.mark.cosmosEmulator
 class TestUserConfigs(unittest.TestCase):
 
     def test_invalid_connection_retry_configuration(self):

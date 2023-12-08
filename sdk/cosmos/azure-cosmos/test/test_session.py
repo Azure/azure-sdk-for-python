@@ -3,6 +3,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos._synchronized_request as synchronized_request
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
@@ -12,6 +14,7 @@ from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 
 
+@pytest.mark.cosmosEmulator
 class SessionTests(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 

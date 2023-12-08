@@ -35,6 +35,7 @@ import unittest
 import uuid
 from typing import Mapping
 
+import pytest
 import requests
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 
@@ -69,6 +70,7 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
+@pytest.mark.cosmosEmulator
 class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """

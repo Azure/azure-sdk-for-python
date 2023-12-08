@@ -1,6 +1,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos._constants as constants
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -9,6 +11,7 @@ from azure.cosmos.http_constants import HttpHeaders
 from azure.cosmos.partition_key import PartitionKey
 
 
+@pytest.mark.cosmosEmulator
 class MultiMasterTests(unittest.TestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey

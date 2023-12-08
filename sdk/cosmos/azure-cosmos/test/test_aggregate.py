@@ -24,6 +24,8 @@ from __future__ import print_function
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import test_config
@@ -44,6 +46,7 @@ class _config:
     sum = 0
 
 
+@pytest.mark.cosmosEmulator
 class TestAggregateQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())

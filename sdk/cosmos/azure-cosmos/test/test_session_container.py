@@ -21,12 +21,15 @@
 
 import unittest
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 
 
 # from types import *
 
+@pytest.mark.cosmosEmulator
 class TestSessionContainer(unittest.TestCase):
     # this test doesn't need real credentials, or connection to server
     host = test_config._test_config.host

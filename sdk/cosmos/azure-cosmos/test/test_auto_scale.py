@@ -3,6 +3,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import CosmosClient
@@ -26,6 +28,7 @@ from azure.cosmos import ThroughputProperties, PartitionKey
 # SOFTWARE.
 
 
+@pytest.mark.cosmosEmulator
 class TestAutoScale(unittest.TestCase):
     TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
     client: CosmosClient = None

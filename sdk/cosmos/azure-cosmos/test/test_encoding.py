@@ -3,11 +3,14 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, PartitionKey, ContainerProxy
 
 
+@pytest.mark.cosmosEmulator
 class EncodingTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 

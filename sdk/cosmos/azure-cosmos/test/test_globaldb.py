@@ -33,6 +33,8 @@ import unittest
 import uuid
 from urllib.parse import urlparse
 
+import pytest
+
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -64,6 +66,7 @@ def _mock_get_database_account(url_connection):
     return database_account
 
 
+@pytest.mark.cosmosEmulator
 class TestGlobalDB(unittest.TestCase):
     host = test_config._test_config.global_host
     write_location_host = test_config._test_config.write_location_host

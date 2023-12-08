@@ -18,6 +18,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos
 import test_config
 from azure.cosmos import exceptions, PartitionKey
@@ -33,6 +35,7 @@ def get_subpartition_item(item_id):
             'zipcode': '98052'}
 
 
+@pytest.mark.cosmosEmulator
 class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
     """Python Transactional Batch Tests.
     """

@@ -18,12 +18,15 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos
 import test_config
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
+@pytest.mark.cosmosEmulator
 class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config._test_config
     host = configs.host

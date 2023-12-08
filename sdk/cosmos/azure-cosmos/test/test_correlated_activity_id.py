@@ -23,6 +23,8 @@ import unittest
 import uuid
 from unittest.mock import MagicMock
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy, ContainerProxy
@@ -35,6 +37,7 @@ def side_effect_correlated_activity_id(*args):
     raise StopIteration
 
 
+@pytest.mark.cosmosEmulator
 class TestCorrelatedActivityId(unittest.TestCase):
     database: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None

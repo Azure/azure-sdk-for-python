@@ -21,11 +21,14 @@
 
 import unittest
 
+import pytest
+
 from azure.cosmos._routing import routing_range as routing_range
 from azure.cosmos._routing.routing_map_provider import CollectionRoutingMap
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 
 
+@pytest.mark.cosmosEmulator
 class TestRoutingMapProvider(unittest.TestCase):
     class MockedCosmosClientConnection(object):
 

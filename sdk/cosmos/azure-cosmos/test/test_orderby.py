@@ -30,6 +30,7 @@
 import unittest
 import uuid
 
+import pytest
 from azure.core.paging import ItemPaged
 
 import azure.cosmos._base as base
@@ -39,6 +40,7 @@ from azure.cosmos import _query_iterable as query_iterable, DatabaseProxy, Conta
 from azure.cosmos.partition_key import PartitionKey
 
 
+@pytest.mark.cosmosEmulator
 class CrossPartitionTopOrderByTest(unittest.TestCase):
     """Orderby Tests.
     """

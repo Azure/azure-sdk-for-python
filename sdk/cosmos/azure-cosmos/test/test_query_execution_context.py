@@ -30,6 +30,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
@@ -45,6 +47,7 @@ def get_document_collection_link(database, document_collection):
     return get_database_link(database) + '/colls/' + document_collection.id
 
 
+@pytest.mark.cosmosEmulator
 class QueryExecutionContextEndToEndTests(unittest.TestCase):
     """Routing Map Functionalities end-to-end Tests.
     """

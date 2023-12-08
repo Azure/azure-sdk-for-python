@@ -37,6 +37,7 @@ import unittest
 import urllib.parse as urllib
 import uuid
 
+import pytest
 import requests
 from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
@@ -72,6 +73,7 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
+@pytest.mark.cosmosEmulator
 class CRUDTests(unittest.TestCase):
     """Python CRUD Tests.
     """

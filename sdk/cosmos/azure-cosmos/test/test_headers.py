@@ -23,11 +23,14 @@ import unittest
 import uuid
 from unittest.mock import MagicMock
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import PartitionKey, DatabaseProxy
 
 
+@pytest.mark.cosmosEmulator
 class HeadersTest(unittest.TestCase):
     database: DatabaseProxy = None
     client: cosmos_client.CosmosClient = None

@@ -24,6 +24,8 @@
 import logging
 import unittest
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 
@@ -46,6 +48,7 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
+@pytest.mark.cosmosEmulator
 class TestCosmosHttpLogger(unittest.TestCase):
     mock_handler_diagnostic = None
     mock_handler_default = None

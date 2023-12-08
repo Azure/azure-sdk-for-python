@@ -31,11 +31,14 @@ import os
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import PartitionKey
 
 
+@pytest.mark.cosmosEmulator
 class EnvTest(unittest.TestCase):
     """Env Tests.
     """

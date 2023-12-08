@@ -3,6 +3,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import test_config
 from azure.cosmos import CosmosClient, exceptions, PartitionKey, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
@@ -33,6 +35,7 @@ def get_subpartition_item(item_id):
             'zipcode': '98052'}
 
 
+@pytest.mark.cosmosEmulator
 class TestTransactionalBatch(unittest.TestCase):
     """Python Transactional Batch Tests.
     """

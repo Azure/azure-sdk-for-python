@@ -22,6 +22,8 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos
 import azure.cosmos.aio._retry_utility_async as retry_utility
 import azure.cosmos.exceptions as exceptions
@@ -33,6 +35,7 @@ from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
 
+@pytest.mark.cosmosEmulator
 class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 

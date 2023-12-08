@@ -19,11 +19,14 @@
 import unittest
 import uuid
 
+import pytest
+
 import azure.cosmos
 import test_config
 from azure.cosmos import CosmosClient, PartitionKey
 
 
+@pytest.mark.cosmosEmulator
 class TestResourceIds(unittest.TestCase):
     client: azure.cosmos.CosmosClient = None
     configs = test_config._test_config

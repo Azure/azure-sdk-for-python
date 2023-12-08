@@ -24,6 +24,7 @@ import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
 
+import pytest
 from azure.core.exceptions import ServiceRequestError
 
 import azure.cosmos.cosmos_client as cosmos_client
@@ -65,6 +66,7 @@ class Server(Thread):
         self.httpd.shutdown()
 
 
+@pytest.mark.cosmosEmulator
 class ProxyTests(unittest.TestCase):
     """Proxy Tests.
     """

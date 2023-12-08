@@ -2,6 +2,8 @@ import threading
 import unittest
 from time import sleep
 
+import pytest
+
 import azure.cosmos._cosmos_client_connection as cosmos_client_connection
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
@@ -23,6 +25,7 @@ class RefreshThread(threading.Thread):
         self.endpoint_manager.force_refresh(None)
 
 
+@pytest.mark.cosmosEmulator
 class LocationCacheTest(unittest.TestCase):
     DEFAULT_ENDPOINT = "https://default.documents.azure.com"
     LOCATION_1_ENDPOINT = "https://location1.documents.azure.com"

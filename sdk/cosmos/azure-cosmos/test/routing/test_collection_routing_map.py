@@ -21,11 +21,14 @@
 
 import unittest
 
+import pytest
+
 import azure.cosmos._routing.routing_range as routing_range
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos._routing.routing_map_provider import PartitionKeyRangeCache
 
 
+@pytest.mark.cosmosEmulator
 class TestCollectionRoutingMap(unittest.TestCase):
 
     def test_advanced(self):

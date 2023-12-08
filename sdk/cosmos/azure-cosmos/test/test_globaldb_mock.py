@@ -22,6 +22,8 @@
 import json
 import unittest
 
+import pytest
+
 import azure.cosmos._constants as constants
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
@@ -130,6 +132,7 @@ class MockGlobalEndpointManager:
         return write_endpoint, read_endpoint
 
 
+@pytest.mark.cosmosEmulator
 class TestGlobalDBMock(unittest.TestCase):
     host = test_config._test_config.global_host
     write_location_host = test_config._test_config.write_location_host

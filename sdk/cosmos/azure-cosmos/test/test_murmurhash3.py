@@ -22,10 +22,13 @@
 import struct
 import unittest
 
+import pytest
+
 from azure.cosmos._cosmos_integers import UInt128
 from azure.cosmos._cosmos_murmurhash3 import murmurhash3_128
 
 
+@pytest.mark.cosmosEmulator
 class MurmurHash3Test(unittest.TestCase):
     """Python Murmurhash3 Tests and its compatibility with backend implementation..
         """
