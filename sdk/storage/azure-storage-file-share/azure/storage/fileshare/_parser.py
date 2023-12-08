@@ -42,7 +42,4 @@ def _parse_datetime_from_str(string_datetime):
 def _datetime_to_str(datetime_obj):
     if not datetime_obj:
         return None
-    if isinstance(datetime_obj, str):
-        return datetime_obj
-    ret = Serializer.serialize_iso(datetime_obj, decimals=7)
-    return ret
+    return datetime_obj if isinstance(datetime_obj, str) else Serializer.serialize_iso(datetime_obj, decimals=7)
