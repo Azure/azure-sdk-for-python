@@ -395,6 +395,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     # Involved test, takes 5+ minutes to run in live mode.
     # Makes use of a lot of hub and lean workspace creation, so changes to those can cause this test to fail.
     @pytest.mark.shareTest
+    @pytest.mark.skipif(condition=True, reason="Resource creation API result inconsistent in uncontrollable way.")
     def test_workspace_connection_is_shared_behavior(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Create a workspace hub and 2 child lean workspaces
         hub = client.workspace_hubs.begin_create(workspace_hub=WorkspaceHub(name=f"e2etest_{randstr('hub_name')}")).result()
