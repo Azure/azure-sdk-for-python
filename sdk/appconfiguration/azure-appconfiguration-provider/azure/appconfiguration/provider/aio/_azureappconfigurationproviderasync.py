@@ -189,13 +189,12 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     headers = _get_headers("Startup", **kwargs)
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
-    
+
     try:
         await provider._load_all(headers=headers)
     except Exception as e:
         _prekill(start_time)
         raise e
-
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
@@ -219,6 +218,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                 _prekill(start_time)
                 raise e
     return provider
+
 
 def _buildprovider(
     connection_string: Optional[str], endpoint: Optional[str], credential: Optional["AsyncTokenCredential"], **kwargs

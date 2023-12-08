@@ -7,6 +7,10 @@ from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurati
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
 from testcase import AppConfigTestCase
+import datetime
+from unittest.mock import patch
+
+from azure.appconfiguration.provider._azureappconfigurationprovider import _prekill
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
@@ -103,6 +107,18 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             appconfiguration_connection_string, selects=selects, key_vault_options=key_vault_options
         )
         assert client["secret"] == "Reslover Value"
+
+    # method: _prekill
+    @patch("time.sleep")
+    def test_prekill(self, mock_sleep, **kwargs):
+        start_time = datetime.datetime.now()
+        _prekill(start_time)
+        mock_sleep.assert_called_with(datetime.timedelta(seconds=5))
+
+        mock_sleep.reset_mock()
+        start_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
+        _prekill(start_time)
+        mock_sleep.assert_not_called()
 
 
 def secret_resolver(secret_id):

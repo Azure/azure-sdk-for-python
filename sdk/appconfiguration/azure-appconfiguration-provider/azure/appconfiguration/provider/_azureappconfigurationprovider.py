@@ -218,6 +218,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
                 raise e
     return provider
 
+
 def _prekill(start_time: datetime.datetime) -> None:
     # We want to make sure we are up a minimum amount of time before we kill the process. Otherwise, we could get stuck
     # in a quick restart loop.
