@@ -51,7 +51,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
             raise ValueError("HuggingFace embeddings require a model name.")
 
         class ActivitySafeHuggingFaceEmbeddings(Embedder):
-            """HuggingFaceEmbeddings with kwargs argument to embed_doceuments to support loggers being passed in."""
+            """HuggingFaceEmbeddings with kwargs argument to embed_documents to support loggers being passed in."""
 
             def __init__(self, embeddings):
                 """Initialize the ActivitySafeHuggingFaceEmbeddings."""
