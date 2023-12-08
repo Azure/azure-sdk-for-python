@@ -386,7 +386,7 @@ def SearchableField(**kw):
      'th.microsoft', 'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft',
      'vi.microsoft', 'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern',
      'simple', 'stop', 'whitespace'.
-    :paramtype analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
+    :paramtype analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :keyword search_analyzer_name: The name of the analyzer used at search time for the field. It must be
      set together with indexAnalyzer and it cannot be set together with the analyzer option. This
      property cannot be set to the name of a language analyzer; use the analyzer property instead
@@ -409,7 +409,7 @@ def SearchableField(**kw):
      'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
      'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
      'whitespace'.
-    :paramtype search_analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
+    :paramtype search_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :keyword index_analyzer_name: The name of the analyzer used at indexing time for the field.
      It must be set together with searchAnalyzer and it cannot be set together with the analyzer
      option.  This property cannot be set to the name of a language analyzer; use the analyzer
@@ -432,7 +432,7 @@ def SearchableField(**kw):
      'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
      'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
      'whitespace'.
-    :paramtype index_analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
+    :paramtype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
     :keyword synonym_map_names: A list of the names of synonym maps to associate with this field. Currently
      only one synonym map per field is supported. Assigning a synonym map to a field ensures that
      query terms targeting that field are expanded at query-time using the rules in the synonym map.
