@@ -95,7 +95,7 @@ setup(
             "azureml-fsspec>=1",
             "azureml-mlflow",
             "fsspec>=2023.3",
-            "openai>=0.27.8,<1",
+            "openai>=0.27.8",
             "tiktoken>=0.3,<1",
             "mmh3",
             "requests",
@@ -129,6 +129,9 @@ setup(
             "tiktoken>=0.3,<1",
             "websocket_client>=1,<2",
             "azure-keyvault-secrets>=1,<5",
+        ],
+        "validate_deployments": [
+            "azure-mgmt-cognitiveservices~=13.4.0"
         ],
     },
     project_urls={

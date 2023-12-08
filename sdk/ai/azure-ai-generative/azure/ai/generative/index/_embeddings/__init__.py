@@ -42,14 +42,17 @@ def _args_to_openai_embedder(arguments: dict):
 
     if langchain_version > "0.0.154":
         embedder = OpenAIEmbeddings(
-            openai_api_base=arguments.get("api_base", openai.api_base),
+            openai_api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             openai_api_type=arguments.get("api_type", openai.api_type),
             openai_api_version=arguments.get("api_version", openai.api_version),
             openai_api_key=arguments.get("api_key", openai.api_key),
             max_retries=100,  # TODO: Make this configurable
         )
     else:
-        openai.api_base = arguments.get("api_base", openai.api_base)
+        if hasattr(openai, "api_base"):
+            openai.api_base = arguments.get("api_base", openai.api_base)
+        else:
+            openai.base_url = arguments.get("api_base", openai.base_url)
         openai.api_type = arguments.get("api_type", openai.api_type)
         openai.api_version = arguments.get("api_version", openai.api_version)
         embedder = OpenAIEmbeddings(
@@ -85,9 +88,10 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
 
         arguments = init_open_ai_from_config(arguments, credential=credential)
 
+        # In openai v1.0.0 and above, openai.api_base is replaced by openai.base_url
         embedder = OpenAIEmbedder(
             model=arguments.get("model"),
-            api_base=arguments.get("api_base", openai.api_base),
+            api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
             api_key=arguments.get("api_key", openai.api_key),
@@ -171,9 +175,10 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
 
         arguments = init_open_ai_from_config(arguments, credential=credential)
 
+        # In openai v1.0.0 and above, openai.api_base is replaced by openai.base_url
         embedder = OpenAIEmbedder(
             model=arguments.get("model"),
-            api_base=arguments.get("api_base", openai.api_base),
+            api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
             api_key=arguments.get("api_key", openai.api_key),
@@ -228,7 +233,7 @@ def get_query_embed_fn(embedding_kind: str, arguments: dict, credential: Optiona
 
         embedder = OpenAIEmbedder(
             model=arguments.get("model"),
-            api_base=arguments.get("api_base", openai.api_base),
+            api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
             api_key=arguments.get("api_key", openai.api_key),
@@ -473,7 +478,7 @@ class EmbeddingsContainer:
         if "open_ai" in self.kind:
             if "api_base" not in arguments:
                 import openai
-                arguments["api_base"] = openai.api_base
+                arguments["api_base"] = openai.api_base if hasattr(openai, "api_base") else openai.base_url
             if "api_key" in arguments:
                 del arguments["api_key"]
             if "key" in arguments:

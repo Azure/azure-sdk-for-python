@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- openai v1.0.0+ support
 
 ## 1.0.0b2 (2023-11-30)
 
