@@ -20,8 +20,8 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 def send_data_message(producer):
     data_body = [b'aa', b'bb', b'cc']
-    application_properties: Dict[Union[str, bytes], Any] = {"body_type": "data"}
-    delivery_annotations: Dict[Union[str, bytes], Any] = {"delivery_annotation_key": "value"}
+    application_properties = {"body_type": "data"}
+    delivery_annotations = {"delivery_annotation_key": "value"}
     data_message = AmqpAnnotatedMessage(
         data_body=data_body,
         delivery_annotations=delivery_annotations,
@@ -37,7 +37,7 @@ def send_sequence_message(producer):
     sequence_body = [b'message', 123.456, True]
     footer = {'footer_key': 'footer_value'}
     properties = {"subject": "sequence"}
-    application_properties: Dict[Union[str, bytes], Any] = {"body_type": "sequence"}
+    application_properties = {"body_type": "sequence"}
     sequence_message = AmqpAnnotatedMessage(
         sequence_body=sequence_body,
         footer=footer,
