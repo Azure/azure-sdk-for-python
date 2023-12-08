@@ -30,3 +30,5 @@ class TestDeprecations:
             with pytest.raises(KeyError):
                 bot.properties["not_a_thing"]
             assert isinstance(bot, models.MicrosoftTeamsAppIdentifier)
+            assert isinstance(bot, models.CommunicationIdentifier)
+
