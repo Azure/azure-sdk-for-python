@@ -17,6 +17,43 @@ parameters:
 - name: TestProxy
   type: boolean
   default: false
+- name: BeforeTestSteps
+  type: object
+  default: []
+- name: AfterTestSteps
+  type: object
+  default: []
+- name: BeforePublishSteps
+  type: object
+  default: []
+- name: TestMarkArgument
+  type: string
+  default: ''
+- name: BuildTargetingString
+  type: string
+  default: azure-*
+- name: TestTimeoutInMinutes
+  type: number
+  default: 60
+- name: ToxEnvParallel
+  type: string
+  default: --tenvparallel
+- name: InjectedPackages
+  type: string
+  default: ''
+- name: BuildDocs
+  type: boolean
+  default: true
+- name: DevFeedName
+  type: string
+  default: public/azure-sdk-for-python
+- name: MatrixConfigs
+  type: object
+  default:
+    - Name: Python_ci_test_base
+      Path: eng/pipelines/templates/stages/platform-matrix.json
+      Selection: sparse
+      GenerateVMJobs: true
 
 stages:
   - stage: Build
