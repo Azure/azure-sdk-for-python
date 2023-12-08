@@ -12,6 +12,7 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection, Workspace, WorkspaceHub, ApiKeyConfiguration
 from azure.core.exceptions import ResourceNotFoundError
 
+
 @pytest.mark.xdist_group(name="workspace_connection")
 @pytest.mark.e2etest
 @pytest.mark.core_sdk_test
@@ -58,7 +59,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
-
 
     def test_workspace_connections_create_update_and_delete_git_pat(
         self,
@@ -141,7 +141,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-
     def test_workspace_connections_create_update_and_delete_git_user_pwd(
         self,
         client: MLClient,
@@ -185,7 +184,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         connection_list = client.connections.list(connection_type=camel_to_snake(ConnectionCategory.GIT))
 
-
     def test_workspace_connections_create_update_and_delete_snowflake_user_pwd(
         self,
         client: MLClient,
@@ -227,7 +225,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         connection_list = client.connections.list(connection_type=camel_to_snake(ConnectionCategory.SNOWFLAKE))
 
-
     def test_workspace_connections_create_update_and_delete_s3_access_key(
         self,
         client: MLClient,
@@ -267,7 +264,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-
     def test_workspace_connections_create_update_and_delete_open_ai_conn(
         self,
         client: MLClient,
@@ -293,7 +289,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
-
 
     def test_workspace_connections_create_update_and_delete_cog_search_conn(
         self,
@@ -343,7 +338,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
-
 
     def test_workspace_connections_create_update_and_delete_api_key_conn(
         self,
@@ -398,11 +392,17 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
     @pytest.mark.skipif(condition=True, reason="Resource creation API result inconsistent in uncontrollable way.")
     def test_workspace_connection_is_shared_behavior(self, client: MLClient, randstr: Callable[[], str]) -> None:
         # Create a workspace hub and 2 child lean workspaces
-        hub = client.workspace_hubs.begin_create(workspace_hub=WorkspaceHub(name=f"e2etest_{randstr('hub_name')}")).result()
-        poller1 = client.workspaces.begin_create(workspace= Workspace(name=f"e2etest_{randstr('lean_ws1')}", workspace_hub=hub.id))
+        hub = client.workspace_hubs.begin_create(
+            workspace_hub=WorkspaceHub(name=f"e2etest_{randstr('hub_name')}")
+        ).result()
+        poller1 = client.workspaces.begin_create(
+            workspace=Workspace(name=f"e2etest_{randstr('lean_ws1')}", workspace_hub=hub.id)
+        )
         lean_ws1 = poller1.result()
         # Lean workspaces can't be created in parallel sadly. Doing so risks parallel operation conflict errors.
-        poller2 = client.workspaces.begin_create(workspace= Workspace(name=f"e2etest_{randstr('lean_ws2')}", workspace_hub=hub.id))
+        poller2 = client.workspaces.begin_create(
+            workspace=Workspace(name=f"e2etest_{randstr('lean_ws2')}", workspace_hub=hub.id)
+        )
         lean_ws2 = poller2.result()
 
         # Create clients for the three workspaces
@@ -410,29 +410,26 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             credential=client._credential,
             subscription_id=client.subscription_id,
             resource_group_name=client.resource_group_name,
-            workspace_name=hub.name
+            workspace_name=hub.name,
         )
         lean_client1 = MLClient(
             credential=client._credential,
             subscription_id=client.subscription_id,
             resource_group_name=client.resource_group_name,
-            workspace_name=lean_ws1.name
+            workspace_name=lean_ws1.name,
         )
         lean_client2 = MLClient(
             credential=client._credential,
             subscription_id=client.subscription_id,
             resource_group_name=client.resource_group_name,
-            workspace_name=lean_ws2.name
+            workspace_name=lean_ws2.name,
         )
 
         # Create 4 connections, 2 in the hub, and 2 in one of the lean workspaces, toggling
         # the "is_shared" property.
         # Names don't need randomization since the containers are transient
         hub_conn_shared = WorkspaceConnection(
-            name="sharedHubConn",
-            type="custom_keys",
-            target="notReal",
-            credentials=ApiKeyConfiguration(key="1111")
+            name="sharedHubConn", type="custom_keys", target="notReal", credentials=ApiKeyConfiguration(key="1111")
         )
         # Hubs can't actually have is_shared be false, make sure this is overridden upon creation.
         hub_conn_closed = WorkspaceConnection(
@@ -440,20 +437,17 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             type="custom_keys",
             target="notReal",
             credentials=ApiKeyConfiguration(key="2222"),
-            is_shared=False
+            is_shared=False,
         )
         lean_conn_shared = WorkspaceConnection(
-            name="sharedLeanConn",
-            type="custom_keys",
-            target="notReal",
-            credentials=ApiKeyConfiguration(key="3333")
+            name="sharedLeanConn", type="custom_keys", target="notReal", credentials=ApiKeyConfiguration(key="3333")
         )
         lean_conn_closed = WorkspaceConnection(
             name="closedLeanConn",
             type="custom_keys",
             target="notReal",
             credentials=ApiKeyConfiguration(key="4444"),
-            is_shared=False
+            is_shared=False,
         )
         hub_conn_shared = hub_client.connections.create_or_update(workspace_connection=hub_conn_shared)
         assert hub_conn_shared.is_shared
@@ -473,7 +467,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert hub_client.connections.get(name=hub_conn_shared.name) is not None
         assert lean_client1.connections.get(name=hub_conn_shared.name) is not None
         assert lean_client2.connections.get(name=hub_conn_shared.name) is not None
-        
+
         assert hub_client.connections.get(name=lean_conn_shared.name) is not None
         assert lean_client1.connections.get(name=lean_conn_shared.name) is not None
         assert lean_client2.connections.get(name=lean_conn_shared.name) is not None

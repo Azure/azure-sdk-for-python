@@ -180,7 +180,6 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.tags["one"] == "two"
 
-
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/api_key.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.API_KEY)

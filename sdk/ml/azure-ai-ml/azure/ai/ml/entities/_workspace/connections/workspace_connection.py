@@ -101,7 +101,7 @@ class WorkspaceConnection(Resource):
             AccessKeyConfiguration,
             ApiKeyConfiguration,
         ],
-        is_shared: bool=True,
+        is_shared: bool = True,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -187,7 +187,7 @@ class WorkspaceConnection(Resource):
     def is_shared(self) -> Dict[str, Any]:
         """Get the Boolean describing if this connection is shared
             amongst its cohort within a workspace hub. Only applicable for connections created
-            within a workspace hub.
+            within a lean workspace.
         :rtype: bool
         """
         return self._is_shared
@@ -196,7 +196,8 @@ class WorkspaceConnection(Resource):
     def is_shared(self, value: bool):
         """Assign the is_shared property of the connection, determining if it is shared amongst other
             lean workspaces within its parent workspace hub. Only applicable for connections created
-            within a workspace hub.
+            within a lean workspace workspace.
+        :param value: The new is_shared value.
         :type value: bool
         """
         if not value:
