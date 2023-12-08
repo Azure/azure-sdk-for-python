@@ -18,15 +18,38 @@ parameters:
   type: boolean
   default: false
 
-extends:
-  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
-  parameters:
-    ServiceDirectory: ${{ parameters.ServiceDirectory }}
-    #TestMarkArgument: not cosmosEmulator
-    InjectedPackages: ${{parameters.InjectedPackages}}
-    Artifacts: ${{parameters.Artifacts}}
-
 stages:
+  - stage: Build
+    jobs:
+    - template: /eng/pipelines/templates/jobs/ci.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        Artifacts: ${{ parameters.Artifacts }}
+        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+          TestPipeline: true
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        BuildTargetingString: '${{ parameters.BuildTargetingString }}'
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
+        BuildDocs: ${{ parameters.BuildDocs }}
+        DevFeedName: ${{ parameters.DevFeedName }}
+        MatrixConfigs:
+          - ${{ each config in parameters.MatrixConfigs }}:
+            -  ${{ config }}
+          - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+            -  ${{ config }}
+        MatrixFilters: ${{ parameters.MatrixFilters }}
+        MatrixReplace: ${{ parameters.MatrixReplace }}
+        VerifyAutorest: ${{ parameters.VerifyAutorest }}
+        ValidateFormatting: ${{ parameters.ValidateFormatting }}
+        TestProxy: ${{ parameters.TestProxy }}
+        GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+        AdvancedBuild: ${{ parameters.AdvancedBuild }}
+
   - stage: Test_Emulator
     displayName: Test Emulator
     dependsOn: []
@@ -91,13 +114,17 @@ stages:
                   keytool -keystore cacerts -importcert -noprompt -trustcacerts -alias CosmosDbEmulatorCert -file CosmosDbEmulatorCert.cer -storepass changeit
                 displayName: 'Create Java TrustStore'
 
-        - template: /eng/pipelines/templates/steps/build-test.yml
-          parameters:
-            TestMarkArgument: not globaldb
-            EnvVars:
-              ACCOUNT_HOST: https://localhost:8081/
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            PythonVersion: $(PythonVersion)
-            OSVmImage: $(OSVmImage)
-            ToxTestEnv: 'whl,sdist'
-            InjectedPackages: ${{parameters.InjectedPackages}}
+  # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
+  - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
+    - template: archetype-python-release.yml
+      parameters:
+        DependsOn: Build
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        Artifacts: ${{ parameters.Artifacts }}
+        ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+          TestPipeline: true
+        ArtifactName: packages_extended
+        DocArtifact: documentation
+        TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
+        TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
+        DevFeedName: ${{ parameters.DevFeedName }}
