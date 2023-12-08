@@ -62,13 +62,11 @@ def _get_annotation_by_value(val: Any) -> Union["Input", Type["Input"]]:
         # Handle enum values
         annotation = EnumInput(enum=val.__class__)
     else:
-        _new_annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
-        if not _new_annotation:
+        annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
+        if not annotation:
             # Fall back to default
             annotation = Input._get_default_unknown_input()
-        else:
-            return _new_annotation
-    return annotation
+    return cast(Union["Input", Type["Input"]], annotation)
 
 
 def _get_annotation_cls_by_type(
