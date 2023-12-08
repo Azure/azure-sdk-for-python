@@ -155,6 +155,8 @@ class MLIndex:
             activity_logger.activity_info["embeddings_kind"] = self.embeddings_config.get("kind", "none")
             activity_logger.activity_info["embeddings_api_type"] = self.embeddings_config.get("api_type", "none")
 
+            langchain_pkg_version = pkg_version.parse(langchain_version)
+
             if index_kind == "acs":
                 from azure.ai.generative.index._indexes.azure_search import import_azure_search_or_so_help_me
 
@@ -251,6 +253,11 @@ class MLIndex:
                     embeddings = EmbeddingsContainer.from_metadata(
                         self.embeddings_config.copy()
                     ).as_langchain_embeddings(credential=credential)
+
+
+                    # langchain fix https://github.com/langchain-ai/langchain/pull/10823 released in 0.0.318
+                    if langchain_pkg_version >= pkg_version.parse("0.0.318"):
+                        embeddings = embeddings.embed_query
 
                     fs, uri = url_to_fs(self.base_uri)
 
