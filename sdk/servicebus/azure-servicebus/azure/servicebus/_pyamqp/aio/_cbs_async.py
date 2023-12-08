@@ -6,7 +6,7 @@
 
 import logging
 from datetime import datetime
-from typing import Any, Optional, Union, cast
+from typing import Any, Optional, Union
 
 from ..utils import utc_now, utc_from_timestamp
 from ._management_link_async import ManagementLink
@@ -31,11 +31,13 @@ from ._authentication_async import JWTTokenAuth, SASTokenAuth
 _LOGGER = logging.getLogger(__name__)
 
 
-class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
+class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=unused-argument
     def __init__(
             self,
             session: Session,
             auth: Union[JWTTokenAuth, SASTokenAuth],
+            *,
+            auth_timeout: float,
             **kwargs: Any
         ) -> None:
         self._session = session
@@ -53,7 +55,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
 
         self._auth = auth
         self._encoding = 'UTF-8'
-        self._auth_timeout: float = cast(float, kwargs.get('auth_timeout'))
+        self._auth_timeout: float = auth_timeout
         self._token_put_time: Optional[int] = None
         self._expires_on: Optional[int] = None
         self._token: Optional[str] = None
@@ -134,7 +136,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
         status_code: int,
         status_description: str,
         _,
-        error_condition=None
+        error_condition: Optional[str] = None
     ) -> None:
         if error_condition:
             _LOGGER.info(
@@ -225,18 +227,18 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
         self._expires_on = access_token.expires_on
         expires_in = self._expires_on - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
-        try:
-            self._token = cast(bytes, access_token.token).decode()
-        except AttributeError:
-            self._token = cast(str, access_token.token)
-        try:
-            token_type = cast(bytes, self._auth.token_type).decode()
-        except AttributeError:
-            token_type = cast(str, self._auth.token_type)
+        if isinstance(access_token.token, bytes):
+            self._token = access_token.token.decode()
+        else:
+            self._token = access_token.token
+        if isinstance(self._auth.token_type, bytes):
+            token_type = self._auth.token_type.decode()
+        else:
+            token_type = self._auth.token_type
 
         self._token_put_time = int(utc_now().timestamp())
         await self._put_token(
-            cast(str, self._token), token_type, self._auth.audience, utc_from_timestamp(self._expires_on)
+            self._token, token_type, self._auth.audience, utc_from_timestamp(self._expires_on)
         )
 
     async def handle_token(self) -> Optional[bool]:

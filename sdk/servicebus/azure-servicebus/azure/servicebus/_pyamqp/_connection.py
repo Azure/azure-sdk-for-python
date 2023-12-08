@@ -303,11 +303,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :param NamedTuple frame: The outgoing frame.
         :rtype: None
         """
-        try:
-            if self._error:
-                raise self._error
-        except TypeError:
-            pass
+        if self._error:
+            raise self._error
 
         if self._can_write():
             try:
@@ -342,11 +339,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """Send an empty frame to prevent the connection from reaching an idle timeout."""
         if self._network_trace:
             _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
-        try:
-            if self._error:
-                raise self._error
-        except TypeError:
-            pass
+
+        if self._error:
+            raise self._error
+
         try:
             if self._can_write():
                 self._transport.write(EMPTY_FRAME)
@@ -746,11 +742,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
          and is processing incoming Transfer frames.
         :rtype: None
         """
-        try:
-            if self._error:
-                raise self._error
-        except TypeError:
-            pass
+
+        if self._error:
+            raise self._error
+
         try:
             if self.state not in _CLOSING_STATES:
                 now = time.time()

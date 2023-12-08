@@ -48,11 +48,13 @@ def check_put_timeout_status(auth_timeout: float, token_put_time: int) -> bool:
     return False
 
 
-class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
+class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=unused-argument
     def __init__(
             self,
             session: Session,
             auth: Union[JWTTokenAuth, SASTokenAuth],
+            *,
+            auth_timeout: float,
             **kwargs: Any
         ) -> None:
         self._session = session
@@ -70,7 +72,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
 
         self._auth = auth
         self._encoding = "UTF-8"
-        self._auth_timeout: float = cast(float, kwargs.get("auth_timeout"))
+        self._auth_timeout: float = auth_timeout
         self._token_put_time: Optional[int] = None
         self._expires_on: Optional[int] = None
         self._token: Optional[str] = None
@@ -153,7 +155,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
         status_code: int,
         status_description: str,
         _,
-        error_condition=None,
+        error_condition: Optional[str] = None,
     ) -> None:
         if error_condition:
             _LOGGER.info(
@@ -238,7 +240,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
 
     def update_token(self) -> None:
         self.auth_state = CbsAuthState.IN_PROGRESS
-        access_token = self._auth.get_token() # type: ignore
+        access_token = self._auth.get_token()
         if not access_token:
             _LOGGER.info(
                 "Token refresh function received an empty token object.",
@@ -252,14 +254,14 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes
         self._expires_on = access_token.expires_on
         expires_in = cast(int, self._expires_on) - int(utc_now().timestamp())
         self._refresh_window = int(float(expires_in) * 0.1)
-        try:
-            self._token = cast(bytes, access_token.token).decode()
-        except AttributeError:
-            self._token = cast(str, access_token.token)
-        try:
-            token_type = cast(bytes, self._auth.token_type).decode()
-        except AttributeError:
-            token_type = cast(str, self._auth.token_type)
+        if isinstance(access_token.token, bytes):
+            self._token = access_token.token.decode()
+        else:
+            self._token = access_token.token
+        if isinstance(self._auth.token_type, bytes):
+            token_type = self._auth.token_type.decode()
+        else:
+            token_type = self._auth.token_type
 
         self._token_put_time = int(utc_now().timestamp())
         self._put_token(

@@ -214,7 +214,7 @@ def _decode_array_large(buffer: memoryview) -> Tuple[memoryview, List[Any]]:
     return buffer[8:], []
 
 
-def _decode_described(buffer: memoryview) -> Tuple[memoryview, Any]:
+def _decode_described(buffer: memoryview) -> Tuple[memoryview, object]:
     # TODO: to move the cursor of the buffer to the described value based on size of the
     #  descriptor without decoding descriptor value
     composite_type = buffer[0]

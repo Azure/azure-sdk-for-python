@@ -82,6 +82,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         return new_session
 
     def _set_state(self, new_state):
+        # type: (SessionState) -> None
         """Update the session state.
         :param ~pyamqp.constants.SessionState new_state: The new state to set.
         """

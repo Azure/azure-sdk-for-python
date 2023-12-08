@@ -37,7 +37,7 @@ def _generate_sas_access_token(
     )
 
 
-class SASLPlainAuth():
+class SASLPlainAuth:
     # TODO:
     #  1. naming decision, suffix with Auth vs Credential
     auth_type = AUTH_TYPE_SASL_PLAIN
@@ -46,7 +46,7 @@ class SASLPlainAuth():
         self.sasl = SASLPlainCredential(authcid, passwd, authzid)
 
 
-class _CBSAuth():
+class _CBSAuth:
     # TODO:
     #  1. naming decision, suffix with Auth vs Credential
     auth_type = AUTH_TYPE_CBS

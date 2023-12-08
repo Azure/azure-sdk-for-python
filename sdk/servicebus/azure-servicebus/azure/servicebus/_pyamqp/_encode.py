@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines
+# pylint: disable=unused-argument
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 import calendar
 import struct
@@ -76,7 +77,7 @@ def _construct(byte: bytes, construct: bool) -> bytes:
     return byte if construct else b""
 
 
-def encode_null(output: bytearray, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
+def encode_null(output: bytearray, *args: Any, **kwargs: Any) -> None:
     """
     encoding code="0x40" category="fixed" width="0" label="the null value"
 
@@ -87,7 +88,7 @@ def encode_null(output: bytearray, *args: Any, **kwargs: Any) -> None:  # pylint
 
 
 def encode_boolean(
-    output: bytearray, value: bool, with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: bool, with_constructor: bool = True, **kwargs: Any
 ) -> None:
     """
     <encoding name="true" code="0x41" category="fixed" width="0" label="the boolean value true"/>
@@ -109,7 +110,7 @@ def encode_boolean(
 
 
 def encode_ubyte(
-    output: bytearray, value: Union[int, bytes], with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: Union[int, bytes], with_constructor: bool = True, **kwargs: Any
 ):
     """
     <encoding code="0x50" category="fixed" width="1" label="8-bit unsigned integer"/>
@@ -131,7 +132,7 @@ def encode_ubyte(
 
 
 def encode_ushort(
-    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any
 ) -> None:
     """
     <encoding code="0x60" category="fixed" width="2" label="16-bit unsigned integer in network byte order"/>
@@ -203,7 +204,7 @@ def encode_ulong(output: bytearray, value: int, with_constructor: bool = True, u
 
 
 def encode_byte(
-    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any
 ):
     """
     <encoding code="0x51" category="fixed" width="1" label="8-bit two's-complement integer"/>
@@ -221,7 +222,7 @@ def encode_byte(
 
 
 def encode_short(
-    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: int, with_constructor: bool = True, **kwargs: Any
 ) -> None:
     """
     <encoding code="0x61" category="fixed" width="2" label="16-bit two's-complement integer in network byte order"/>
@@ -238,7 +239,7 @@ def encode_short(
         raise ValueError("Short value must be -32768-32767") from exc
 
 
-def encode_int(output: bytearray, value: int, with_constructor: bool = True, use_smallest: bool = True):
+def encode_int(output: bytearray, value: int, with_constructor: bool = True, use_smallest: bool = True) -> None:
     """
     <encoding name="smallint" code="0x54" category="fixed" width="1" label="8-bit two's-complement integer"/>
     <encoding code="0x71" category="fixed" width="4" label="32-bit two's-complement integer in network byte order"/>
@@ -291,7 +292,7 @@ def encode_long(
 
 
 def encode_float(
-    output: bytearray, value: float, with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: float, with_constructor: bool = True, **kwargs: Any
 ) -> None:
     """
     <encoding name="ieee-754" code="0x72" category="fixed" width="4" label="IEEE 754-2008 binary32"/>
@@ -306,7 +307,7 @@ def encode_float(
 
 
 def encode_double(
-    output: bytearray, value: float, with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: float, with_constructor: bool = True, **kwargs: Any
 ) -> None:
     """
     <encoding name="ieee-754" code="0x82" category="fixed" width="8" label="IEEE 754-2008 binary64"/>
@@ -321,7 +322,7 @@ def encode_double(
 
 
 def encode_timestamp(
-    output: bytearray, value: Union[int, datetime], with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: Union[int, datetime], with_constructor: bool = True, **kwargs: Any
 ) -> None:
     """
     <encoding name="ms64" code="0x83" category="fixed" width="8"
@@ -331,19 +332,16 @@ def encode_timestamp(
     :param int or datetime value: The timestamp to encode.
     :param bool with_constructor: Whether to include the constructor byte.
     """
-    value = cast(datetime, value)
     if isinstance(value, datetime):
-        value = cast(
-            int,
-            (calendar.timegm(value.utctimetuple()) * 1000) + (value.microsecond / 1000),
-        )
-    value = int(cast(int, value))
+        value = int((calendar.timegm(value.utctimetuple()) * 1000) + (value.microsecond / 1000))
+
+    value = int(value)
     output.extend(_construct(ConstructorBytes.timestamp, with_constructor))
     output.extend(struct.pack(">q", value))
 
 
 def encode_uuid(
-    output: bytearray, value: Union[uuid.UUID, str, bytes], with_constructor: bool = True, **kwargs: Any  # pylint: disable=unused-argument
+    output: bytearray, value: Union[uuid.UUID, str, bytes], with_constructor: bool = True, **kwargs: Any
 ) -> None:
     """
     <encoding code="0x98" category="fixed" width="16" label="UUID as defined in section 4.1.2 of RFC-4122"/>
@@ -461,7 +459,7 @@ def encode_symbol(
 
 def encode_list(
         output: bytearray,
-        value: Iterable[Any],
+        value: Sequence[Any],
         with_constructor: bool = True,
         use_smallest: bool = True
     ) -> None:
@@ -474,7 +472,7 @@ def encode_list(
         label="up to 2^32 - 1 list elements with total size less than 2^32 octets"/>
 
     :param bytearray output: The output buffer to write to.
-    :param iterable value: The list to encode.
+    :param sequence value: The list to encode.
     :param bool with_constructor: Whether to include the constructor in the output.
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
@@ -560,7 +558,7 @@ def _check_element_type(item: Dict[str, Any], element_type: Any) -> Any:
 
 def encode_array(
         output: bytearray,
-        value: Iterable[Any],
+        value: Sequence[Any],
         with_constructor: bool = True,
         use_smallest: bool = True
     ) -> None:
@@ -571,7 +569,7 @@ def encode_array(
         label="up to 2^32 - 1 array elements with total size less than 2^32 octets"/>
 
     :param bytearray output: The output buffer to write to.
-    :param iterable value: The array to encode.
+    :param sequence value: The array to encode.
     :param bool with_constructor: Whether to include the constructor in the output.
     :param bool use_smallest: Whether to use the smallest possible encoding.
     """
@@ -633,7 +631,7 @@ def encode_fields(value: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     return fields
 
 
-def encode_annotations(value: Optional[Dict[Union[str, bytes], Any]]) -> Dict[str, Any]:
+def encode_annotations(value: Optional[Dict[Union[int, bytes], Any]]) -> Dict[str, Any]:
     """The annotations type is a map where the keys are restricted to be of type symbol or of type ulong.
 
     All ulong keys, and all symbolic keys except those beginning with "x-" are reserved.
@@ -795,7 +793,7 @@ def encode_filter_set(value: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     return fields
 
 
-def encode_unknown(output: bytearray, value: Optional[Any], **kwargs: Any) -> None:
+def encode_unknown(output: bytearray, value: Optional[object], **kwargs: Any) -> None:
     """
     Dynamic encoding according to the type of `value`.
     :param bytearray output: The output buffer.

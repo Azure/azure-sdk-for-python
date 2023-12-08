@@ -100,7 +100,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._is_closed = False
         self._on_link_state_change = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
-        self._error: Union[AMQPLinkRedirect, AMQPLinkError]
+        self._error: Optional[Union[AMQPLinkRedirect, AMQPLinkError]] = None
 
     async def __aenter__(self) -> "Link":
         await self.attach()
@@ -115,18 +115,16 @@ class Link:  # pylint: disable=too-many-instance-attributes
         raise NotImplementedError("Pending")  # TODO: Assuming we establish all links for now...
 
     def get_state(self) -> LinkState:
-        try:
+        if self._error:
             raise self._error
-        except TypeError:
-            pass
+
         return self.state
 
     def _check_if_closed(self) -> None:
         if self._is_closed:
-            try:
+            if self._error:
                 raise self._error
-            except TypeError:
-                raise AMQPConnectionError(condition=ErrorCondition.InternalError,
+            raise AMQPConnectionError(condition=ErrorCondition.InternalError,
                                           description="Link already closed.") from None
 
     async def _set_state(self, new_state: LinkState) -> None:
@@ -143,8 +141,6 @@ class Link:  # pylint: disable=too-many-instance-attributes
         try:
             if self._on_link_state_change is not None:
                 await self._on_link_state_change(previous_state, new_state)
-        except TypeError:
-            pass
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
 
