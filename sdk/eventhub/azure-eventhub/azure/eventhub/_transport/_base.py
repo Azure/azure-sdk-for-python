@@ -3,8 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Tuple, Union, TYPE_CHECKING, Optional, Any, Dict, Callable
+from typing import Tuple, Union, TYPE_CHECKING, Optional, Any, Dict, Callable, TypeVar
 from abc import ABC, abstractmethod
+
+S = TypeVar("S", bound=Union[str, bytes, Union[str, bytes]])
 
 if TYPE_CHECKING:
     from logging import Logger

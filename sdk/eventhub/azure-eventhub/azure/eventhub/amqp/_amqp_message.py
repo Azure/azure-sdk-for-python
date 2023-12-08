@@ -11,7 +11,7 @@ from typing import Optional, Any, cast, Mapping, Dict, Union, List, Iterable, Tu
 from ._amqp_utils import normalized_data_body, normalized_sequence_body
 from ._constants import AmqpMessageBodyType
 
-AnyStr = TypeVar("AnyStr", bound=Union[str, bytes])
+S = TypeVar("S", bound=Union[str, bytes, Union[str, bytes]])
 
 if TYPE_CHECKING:
     import uuid
@@ -115,9 +115,9 @@ class AmqpAnnotatedMessage(object):
         header: Optional[Union["AmqpMessageHeader", Mapping[str, Any]]] = None,
         footer: Optional[Dict[str, Any]] = None,
         properties: Optional[Union["AmqpMessageProperties", Mapping[str, Any]]] = None,
-        application_properties: Optional[Dict[Union[str, bytes], Any]] = None,
-        annotations: Optional[Dict[Union[str, bytes], Any]] = None,
-        delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = None,
+        application_properties: Optional[Dict[S, Any]] = None,
+        annotations: Optional[Dict[S, Any]] = None,
+        delivery_annotations: Optional[Dict[S, Any]] = None,
         **kwargs: Any
     ) -> None:
         self._encoding = kwargs.pop("encoding", "UTF-8")
@@ -155,9 +155,9 @@ class AmqpAnnotatedMessage(object):
         self._footer = footer
         properties_dict = cast(Mapping, properties)
         self._properties = AmqpMessageProperties(**properties_dict) if properties else None
-        self._application_properties: Optional[Dict[Union[str, bytes], Any]] = application_properties
-        self._annotations: Optional[Dict[Union[str, bytes], Any]] = annotations
-        self._delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = delivery_annotations
+        self._application_properties: Optional[Dict[S, Any]] = application_properties
+        self._annotations: Optional[Dict[S, Any]] = annotations
+        self._delivery_annotations: Optional[Dict[S, Any]] = delivery_annotations
 
     def __str__(self) -> str:
         if self._body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
@@ -273,7 +273,7 @@ class AmqpAnnotatedMessage(object):
         self._properties = value
 
     @property
-    def application_properties(self) -> Optional[Dict[Union[str, bytes], Any]]:
+    def application_properties(self) -> Optional[Dict[S, Any]]:
         """
         Service specific application properties.
 
@@ -282,11 +282,11 @@ class AmqpAnnotatedMessage(object):
         return self._application_properties
 
     @application_properties.setter
-    def application_properties(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
+    def application_properties(self, value: Optional[Dict[S, Any]]) -> None:
         self._application_properties = value
 
     @property
-    def annotations(self) -> Optional[Dict[Union[str, bytes], Any]]:
+    def annotations(self) -> Optional[Dict[S, Any]]:
         """
         Service specific message annotations.
 
@@ -295,11 +295,11 @@ class AmqpAnnotatedMessage(object):
         return self._annotations
 
     @annotations.setter
-    def annotations(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
+    def annotations(self, value: Optional[Dict[S, Any]]) -> None:
         self._annotations = value
 
     @property
-    def delivery_annotations(self) -> Optional[Dict[Union[str, bytes], Any]]:
+    def delivery_annotations(self) -> Optional[Dict[S, Any]]:
         """
         Delivery-specific non-standard properties at the head of the message.
         Delivery annotations convey information from the sending peer to the receiving peer.
@@ -309,7 +309,7 @@ class AmqpAnnotatedMessage(object):
         return self._delivery_annotations
 
     @delivery_annotations.setter
-    def delivery_annotations(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
+    def delivery_annotations(self, value: Optional[Dict[S, Any]]) -> None:
         self._delivery_annotations = value
 
     @property

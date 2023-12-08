@@ -16,7 +16,9 @@ from typing import (
     Dict,
     Union,
     Protocol,
-    Type
+    Type,
+    TypeVar,
+    Generic
 )
 
 from ._encode import encode_payload
@@ -24,6 +26,7 @@ from .utils import get_message_encoded_size
 from .error import AMQPError
 from .message import Header, Properties
 
+S = TypeVar("S", bound=Union[str, bytes, Union[str, bytes]])
 
 if TYPE_CHECKING:
     from ..amqp._amqp_message import AmqpAnnotatedMessage, AmqpMessageProperties, AmqpMessageHeader
@@ -106,7 +109,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
             LegacyMessageHeader(self._message.header) if self._message.header else None
         )
         self.footer: Optional[Dict[Any, Any]]  = self._message.footer
-        self.delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = self._message.delivery_annotations
+        self.delivery_annotations: Optional[Dict[S, Any]] = self._message.delivery_annotations
         if self._settler:
             self.state = MessageState.ReceivedUnsettled
         elif self.delivery_no:
