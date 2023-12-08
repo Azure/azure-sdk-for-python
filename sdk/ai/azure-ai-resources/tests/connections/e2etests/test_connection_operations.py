@@ -21,6 +21,7 @@ from azure.core.exceptions import ResourceNotFoundError
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestConnections:
+    @pytest.mark.noCreate
     def test_get_and_list(self, ai_client: AIClient):
         connection_count = 0
         for listed_conn in ai_client.connections.list():
@@ -29,7 +30,7 @@ class TestConnections:
             assert listed_conn.name == getted_conn.name
         assert connection_count > 0
 
-
+    @pytest.mark.noCreate
     def test_get_default_connections(self, ai_client: AIClient):
         aoai_conn = ai_client.get_default_aoai_connection()
         assert aoai_conn is not None
@@ -138,7 +139,7 @@ class TestConnections:
 
     def test_custom_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions
-        name = "e2eTestGitConn" + rand_num()
+        name = "e2eTestCustomConn" + rand_num()
         cred = ApiKeyConfiguration(key="1234567")
         target = "test-target"
 
@@ -157,7 +158,7 @@ class TestConnections:
 
     def test_api_key_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions
-        name = "e2eTestGitConn" + rand_num()
+        name = "e2eTestApiConn" + rand_num()
         cred = ApiKeyConfiguration(key="1234567")
         target = "test-target"
 
@@ -174,10 +175,10 @@ class TestConnections:
         with pytest.raises(ResourceNotFoundError):
             ai_client.connections.get(name)
 
-
     # Involved test, takes 5+ minutes to run in live mode.
     # Makes use of a lot of AI resource and Projects, so changes to those can cause this test to fail.
     @pytest.mark.shareTest
+    @pytest.mark.skipif(condition=True, reason="Resource creation API result inconsistent in uncontrollable way.")
     def test_is_shared_and_scoping_behavior(self, ai_client: AIClient, rand_num: Callable[[], str]) -> None:
         # Create a AI resource and 2 child projects
         resource = ai_client.ai_resources.begin_create(ai_resource=AIResource(name=f"e2etest_resource_{rand_num()}")).result()

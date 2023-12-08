@@ -61,14 +61,15 @@ class ConnectionOperations:
         connection = BaseConnection._from_v2_workspace_connection(workspace_connection)
 
         # It's by design that both API and V2 SDK don't include the secrets from API response, the following
-        # code fills the gap
+        # code fills the gap when possible
         if not connection.credentials.key:
             list_secrets_response = client.connections._operation.list_secrets(
                 connection_name=name,
                 resource_group_name=client.resource_group_name,
                 workspace_name=client.workspace_name,
             )
-            connection.credentials.key = list_secrets_response.properties.credentials.key
+            if list_secrets_response.properties.credentials is not None:
+                connection.credentials.key = list_secrets_response.properties.credentials.key
         return connection
 
     @distributed_trace
