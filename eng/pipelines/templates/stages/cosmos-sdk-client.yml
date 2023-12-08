@@ -91,7 +91,7 @@ stages:
         BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        TestMarkArgument: not cosmosEmulator
         BuildTargetingString: '${{ parameters.BuildTargetingString }}'
         TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
@@ -112,48 +112,60 @@ stages:
         AdvancedBuild: ${{ parameters.AdvancedBuild }}
       
   - stage: Test_Emulator
+    displayName: Test Emulator
     dependsOn: []
     jobs:
-    - job: Emulator
-      strategy:
-        matrix:
-          Windows_Python3_7:
-            OSVmImage: 'windows-2022'
-            PythonVersion: '3.7'
-          Windows_Python3_8:
-            OSVmImage: 'windows-2022'
-            PythonVersion: '3.8'
-          Windows_Python3_9:
-            OSVmImage: 'windows-2022'
-            PythonVersion: '3.9'
-          Windows_Python3_10:
-            OSVmImage: 'windows-2022'
-            PythonVersion: '3.10'
-          Windows_Python3_11:
-            OSVmImage: 'windows-2022'
-            PythonVersion: '3.11'
-          Windows_Python3_12:
-            OSVmImage: 'windows-2022'
-            PythonVersion: '3.12'
+    - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+      parameters:
+        JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+        strategy:
+            matrix:
+              Windows_Python3_7:
+                OSVmImage: 'windows-2022'
+                PythonVersion: '3.7'
+              Windows_Python3_8:
+                OSVmImage: 'windows-2022'
+                PythonVersion: '3.8'
+              Windows_Python3_9:
+                OSVmImage: 'windows-2022'
+                PythonVersion: '3.9'
+              Windows_Python3_10:
+                OSVmImage: 'windows-2022'
+                PythonVersion: '3.10'
+              Windows_Python3_11:
+                OSVmImage: 'windows-2022'
+                PythonVersion: '3.11'
+              Windows_Python3_12:
+                OSVmImage: 'windows-2022'
+                PythonVersion: '3.12'
+      DependsOn:
+        - 'Build'
+        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
+          - 'CoalesceBuildArtifacts'
+      MatrixConfigs: ${{ parameters.MatrixConfigs }}
+      MatrixFilters: ${{ parameters.MatrixFilters }}
+      MatrixReplace: ${{ parameters.MatrixReplace }}
+      CloudConfig:
+        Cloud: Public
+      AdditionalParameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        TestMarkArgument: cosmosEmulator
+        BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+        AfterTestSteps: ${{ parameters.AfterTestSteps }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        InjectedPackages: ${{ parameters.InjectedPackages }}
+        UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
+        TestProxy: ${{ parameters.TestProxy }}
+        ACCOUNT_HOST: https://localhost:8081/
+        ACCOUNT_KEY: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw=='
 
-    pool:
-      vmImage: $(OSVmImage)
-
-      steps:
-        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-          parameters:
-            StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
-
-        - template: /eng/pipelines/templates/steps/build-test.yml
-          parameters:
-            TestMarkArgument: not globaldb
-            EnvVars:
-              ACCOUNT_HOST: https://localhost:8081/
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            PythonVersion: $(PythonVersion)
-            OSVmImage: $(OSVmImage)
-            ToxTestEnv: 'whl,sdist'
-            InjectedPackages: ${{parameters.InjectedPackages}}
+        PreSteps:
+          - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+            parameters:
+              StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Strong'
 
   # The Prerelease and Release stages are conditioned on whether we are building a pull request and the branch.
   - ${{if and(ne(variables['Build.Reason'], 'PullRequest'), eq(variables['System.TeamProject'], 'internal'))}}:
