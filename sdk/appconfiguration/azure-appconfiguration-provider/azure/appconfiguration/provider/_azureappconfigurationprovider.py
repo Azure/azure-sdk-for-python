@@ -570,8 +570,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def items(self) -> Iterable[Tuple[str, Union[str, JSON]]]:
         """
-        Returns a set-like of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault references
-        will be resolved.
+        Returns a set-like of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault
+         references will be resolved.
 
         :return: A set-like of key-value pairs loaded from Azure App Configuration.
         :rtype: Iterable[Tuple[str, Union[str, JSON]]]
