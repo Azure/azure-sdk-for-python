@@ -27,7 +27,7 @@ def get_langchain_embeddings(embedding_kind: str, arguments: dict, credential: O
 
         embedder = OpenAIEmbedder(
             model=arguments.get("model"),
-            api_base=arguments.get("api_base", openai.api_base),
+            api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
             api_key=arguments.get("api_key", openai.api_key),
@@ -113,7 +113,7 @@ def get_embed_fn(embedding_kind: str, arguments: dict, credential: Optional[Toke
 
         embedder = OpenAIEmbedder(
             model=arguments.get("model"),
-            api_base=arguments.get("api_base", openai.api_base),
+            api_base=arguments.get("api_base", openai.api_base if hasattr(openai, "api_base") else openai.base_url),
             api_type=arguments.get("api_type", openai.api_type),
             api_version=arguments.get("api_version", openai.api_version),
             api_key=arguments.get("api_key", openai.api_key),
