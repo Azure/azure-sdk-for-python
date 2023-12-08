@@ -37,7 +37,7 @@ class CertificateClient(KeyVaultClientBase):
         for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.certificates.ApiVersion or str
@@ -64,7 +64,7 @@ class CertificateClient(KeyVaultClientBase):
         If this is the first version, the certificate resource is created. This operation requires the
         certificates/create permission. Waiting on the returned poller requires the certificates/get permission and
         gives you the certificate if creation is successful, or the CertificateOperation if not -- otherwise, it raises
-        an :class:`~azure.core.exceptions.HttpResponseError`.
+        an azure.core.exceptions.HttpResponseError.
 
         :param str certificate_name: The name of the certificate.
         :param policy: The management policy for the certificate. Either subject or one of the subject alternative
@@ -82,7 +82,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :raises:
             :class:`ValueError` if the certificate policy is invalid,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors.
+            azure.core.exceptions.HttpResponseError for other errors.
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -143,8 +143,8 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -173,8 +173,8 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -200,15 +200,15 @@ class CertificateClient(KeyVaultClientBase):
         :param str certificate_name: The name of the certificate to delete.
 
         :returns: A poller for the delete certificate operation. The poller's `result` method returns the
-            :class:`~azure.keyvault.certificates.DeletedCertificate` without waiting for deletion to complete. If the
+            azure.keyvault.certificates.DeletedCertificate without waiting for deletion to complete. If the
             vault has soft-delete enabled and you want to immediately, permanently delete the certificate with
             :func:`purge_deleted_certificate`, call the poller's `wait` method first. It will block until the deletion
             is complete. The `wait` method requires certificates/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.DeletedCertificate]
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -249,8 +249,8 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.certificates.DeletedCertificate
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -280,7 +280,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: None
         :rtype: None
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         self._client.purge_deleted_certificate(
             vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
@@ -298,12 +298,12 @@ class CertificateClient(KeyVaultClientBase):
         :param str certificate_name: The name of the deleted certificate to recover
 
         :returns: A poller for the recovery operation. The poller's `result` method returns the recovered
-            :class:`~azure.keyvault.certificates.KeyVaultCertificate` without waiting for recovery to complete. If you
+            azure.keyvault.certificates.KeyVaultCertificate without waiting for recovery to complete. If you
             want to use the recovered certificate immediately, call the poller's `wait` method, which blocks until the
             certificate is ready to use. The `wait` method requires certificate/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.KeyVaultCertificate]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -355,7 +355,7 @@ class CertificateClient(KeyVaultClientBase):
         :returns: The imported KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
 
         enabled = kwargs.pop("enabled", None)
@@ -391,7 +391,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: The certificate policy
         :rtype: ~azure.keyvault.certificates.CertificatePolicy
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         bundle = self._client.get_certificate_policy(
             vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
@@ -413,7 +413,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: The certificate policy
         :rtype: ~azure.keyvault.certificates.CertificatePolicy
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         bundle = self._client.update_certificate_policy(
             vault_base_url=self.vault_url,
@@ -439,7 +439,7 @@ class CertificateClient(KeyVaultClientBase):
         :returns: The updated KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -485,8 +485,8 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: bytes
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -514,7 +514,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: The restored KeyVaultCertificate
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -547,7 +547,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: An iterator-like instance of DeletedCertificate
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.DeletedCertificate]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -592,7 +592,7 @@ class CertificateClient(KeyVaultClientBase):
         :returns: An iterator-like instance of CertificateProperties
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateProperties]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -633,7 +633,7 @@ class CertificateClient(KeyVaultClientBase):
         :returns: An iterator-like instance of CertificateProperties
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateProperties]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -662,7 +662,7 @@ class CertificateClient(KeyVaultClientBase):
         :returns: The created list of contacts
         :rtype: list[~azure.keyvault.certificates.CertificateContact]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -688,7 +688,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: The certificate contacts for the key vault.
         :rtype: list[~azure.keyvault.certificates.CertificateContact]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -708,7 +708,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: The deleted contacts for the key vault.
         :rtype: list[~azure.keyvault.certificates.CertificateContact]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -731,8 +731,8 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.certificates.CertificateOperation
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
         """
 
         bundle = self._client.get_certificate_operation(
@@ -751,7 +751,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: The deleted CertificateOperation
         :rtype: ~azure.keyvault.certificates.CertificateOperation
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         bundle = self._client.delete_certificate_operation(
             vault_base_url=self.vault_url, certificate_name=certificate_name, **kwargs
@@ -767,7 +767,7 @@ class CertificateClient(KeyVaultClientBase):
         :returns: The cancelled certificate operation
         :rtype: ~azure.keyvault.certificates.CertificateOperation
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         bundle = self._client.update_certificate_operation(
             vault_base_url=self.vault_url,
@@ -800,7 +800,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: The merged certificate
         :rtype: ~azure.keyvault.certificates.KeyVaultCertificate
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
 
         enabled = kwargs.pop("enabled", None)
@@ -829,8 +829,8 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the issuer doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the issuer doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -863,7 +863,7 @@ class CertificateClient(KeyVaultClientBase):
         :returns: The created CertificateIssuer
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -934,7 +934,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
 
         enabled = kwargs.pop("enabled", None)
@@ -991,7 +991,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: CertificateIssuer
         :rtype: ~azure.keyvault.certificates.CertificateIssuer
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -1015,7 +1015,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: An iterator-like instance of Issuers
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateIssuer]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py

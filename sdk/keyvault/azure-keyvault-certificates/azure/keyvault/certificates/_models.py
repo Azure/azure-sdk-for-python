@@ -131,7 +131,7 @@ class CertificateOperationError(object):
         """The error itself.
 
         :returns: The error itself.
-        :rtype: :class:`~azure.keyvault.certificates.CertificateOperationError`
+        :rtype: ~azure.keyvault.certificates.CertificateOperationError
         """
         return self._inner_error
 
@@ -619,7 +619,7 @@ class CertificateOperation(object):
         """Any error associated with the certificate operation.
 
         :returns: Any error associated with the operation, as a
-            :class:`~azure.keyvault.certificates.CertificateOperationError`.
+            azure.keyvault.certificates.CertificateOperationError.
         :rtype: ~azure.keyvault.certificates.CertificateOperationError or None"""
         return self._error
 
@@ -1371,10 +1371,10 @@ class LifetimeAction(object):
 
     @property
     def action(self) -> "Union[str, CertificatePolicyAction, None]":
-        """The type of action that will be executed; see :class:`~azure.keyvault.certificates.CertificatePolicyAction`.
+        """The type of action that will be executed; see azure.keyvault.certificates.CertificatePolicyAction.
 
         :returns: The type of action that will be executed; see
-            :class:`~azure.keyvault.certificates.CertificatePolicyAction`.
+            azure.keyvault.certificates.CertificatePolicyAction.
         :rtype: str or ~azure.keyvault.certificates.CertificatePolicyAction or None
         """
         return self._action
