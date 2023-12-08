@@ -17,6 +17,7 @@ from ._encryption import modify_user_agent_for_encryption, _ERROR_UNSUPPORTED_ME
 from ._generated.models import (
     AppendPositionAccessConditions,
     BlobHTTPHeaders,
+    BlockList,
     BlockLookupList,
     CpkInfo,
     DeleteSnapshotsOptionType,
@@ -75,7 +76,7 @@ def _parse_url(
     :param str blob_name:
         The name of the blob.
     :returns: The parsed URL, SAS token, and path snapshot.
-    :rtype: Tuple["ParseResult", Optional[str], Optional[str]]
+    :rtype: Tuple[ParseResult, Optional[str], Optional[str]]
     """
     try:
         if not account_url.lower().startswith('http'):
@@ -136,7 +137,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     blob_type: Union[str, BlobType],
     length: Optional[int],
     metadata: Optional[Dict[str, str]],
-    encryption_options: Dict[str, str],
+    encryption_options: Dict[str, Any],
     config: "StorageConfiguration",
     sdk_moniker: str,
     client: "AzureBlobStorage",
@@ -153,7 +154,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
         Number of bytes to read from the stream. This is optional, but should be supplied for optimal performance.
     :param Optional[Dict[str, str]] metadata:
         Name-value pairs associated with the blob as metadata.
-    :param Dict[str, str] encryption_options: 
+    :param Dict[str, Any] encryption_options: 
         The options for encryption, if enabled.
     :param StorageConfiguration config:
         The Storage configuration options.
@@ -304,7 +305,7 @@ def _download_blob_options(
     offset: int,
     length: int,
     encoding: str,
-    encryption_options: Dict[str, str],
+    encryption_options: Dict[str, Any],
     config: "StorageConfiguration",
     sdk_moniker: str,
     client: "AzureBlobStorage",
@@ -324,7 +325,7 @@ def _download_blob_options(
         Number of bytes to read from the stream. This is optional, but should be supplied for optimal performance.
     :param int encoding:
         Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
-    :param Dict[str, str] encryption_options: 
+    :param Dict[str, Any] encryption_options: 
         The options for encryption, if enabled.
     :param StorageConfiguration config:
         The Storage configuration options.
@@ -833,25 +834,20 @@ def _start_copy_from_url_options(
     options.update(kwargs)
     return options
 
-def _abort_copy_options(copy_id: Union[BlobProperties, str], **kwargs: Any) -> Dict[str, Any]:
+def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any) -> Dict[str, Any]:
     """Creates a dictionary containing the options for aborting a copy.
 
     :param copy_id:
         The copy operation to abort. This can be either an ID string, or an instance of BlobProperties.
-    :paramtype copy_id: Union[BlobProperties, str]
+    :paramtype copy_id: Union[str, Dict[str, Any], BlobProperties]
     :returns: A dictionary containing the options for an abort copy operation.
     :rtype: Dict[str, Any]
     """
     access_conditions = get_access_conditions(kwargs.pop('lease', None))
-    if hasattr(copy_id, 'copy'):
-        try:
-            copy_id = copy_id.copy.id
-        except AttributeError:
-            if isinstance(copy_id, BlobProperties):
-                try:
-                    copy_id = copy_id['copy_id']
-                except TypeError:
-                    pass
+    if isinstance(copy_id, BlobProperties):
+        copy_id = copy_id.copy.id
+    elif isinstance(copy_id, dict):
+        copy_id = copy_id['copy_id']
     options = {
         'copy_id': copy_id,
         'lease_access_conditions': access_conditions,
@@ -966,10 +962,10 @@ def _stage_block_from_url_options(
     options.update(kwargs)
     return options
 
-def _get_block_list_result(blocks: Any) -> Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]:
+def _get_block_list_result(blocks: BlockList) -> Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]:
     """Gets the block list results from the provided blocks.
 
-    :param Any blocks:
+    :param BlockList blocks:
         The blocks returned from generated code.
     :returns: A list of blocks.
     :rtype: Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]
@@ -1002,18 +998,15 @@ def _commit_block_list_options(
     """
     block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
     for block in block_list:
-        try:
+        if isinstance(block, BlobBlock):
             if block.state.value == 'committed' and block_lookup.committed is not None:
-                if hasattr(block_lookup.committed, 'append'):
-                    block_lookup.committed.append(encode_base64(str(block.id)))
+                block_lookup.committed.append(encode_base64(str(block.id)))
             elif block.state.value == 'uncommitted' and block_lookup.uncommitted is not None:
-                if hasattr(block_lookup.uncommitted, 'append'):
-                    block_lookup.uncommitted.append(encode_base64(str(block.id)))
-            elif hasattr(block_lookup.latest, 'append') and block_lookup.latest is not None:
+                block_lookup.uncommitted.append(encode_base64(str(block.id)))
+            elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
-        except AttributeError:
-            if block_lookup.latest is not None and hasattr(block_lookup.latest, 'append'):
-                block_lookup.latest.append(encode_base64(str(block)))
+        else:
+            block_lookup.latest.append(encode_base64(str(block)))
     headers = kwargs.pop('headers', {})
     headers.update(add_metadata_headers(metadata))
     blob_headers = None
@@ -1570,7 +1563,7 @@ def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
     options.update(kwargs)
     return options
 
-def _from_blob_url(blob_url: str, snapshot: Optional[Union[str, Dict[str, Any]]]) -> Tuple[str, str, str, Optional[str]]:
+def _from_blob_url(blob_url: str, snapshot: Optional[Union[BlobProperties, str, Dict[str, Any]]]) -> Tuple[str, str, str, Optional[str]]:
     """Creates a blob URL to interact with a specific Blob.
 
     :param str blob_url:
@@ -1617,11 +1610,10 @@ def _from_blob_url(blob_url: str, snapshot: Optional[Union[str, Dict[str, Any]]]
 
     path_snapshot, _ = parse_query(parsed_url.query)
     if snapshot:
-        try:
-            path_snapshot = snapshot.snapshot # type: ignore
-        except AttributeError:
-            try:
-                path_snapshot = snapshot['snapshot'] # type: ignore
-            except TypeError:
-                path_snapshot = snapshot # type: ignore
+        if isinstance(snapshot, BlobProperties):
+            path_snapshot = snapshot.snapshot
+        elif isinstance(snapshot, dict):
+            path_snapshot = snapshot['snapshot']
+        else:
+            path_snapshot = snapshot
     return (account_url, container_name, blob_name, path_snapshot)
