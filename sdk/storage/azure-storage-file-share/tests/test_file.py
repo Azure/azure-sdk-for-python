@@ -7,7 +7,7 @@ import base64
 import os
 import tempfile
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 import requests
@@ -848,7 +848,9 @@ class TestStorageFile(StorageRecordedTestCase):
             datetime(3005, 5, 11, 12, 24, 7, 123),
             datetime(3005, 5, 11, 12, 24, 7, 1234),
             datetime(3005, 5, 11, 12, 24, 7, 12345),
-            datetime(3005, 5, 11, 12, 24, 7, 123456)
+            datetime(3005, 5, 11, 12, 24, 7, 123456),
+            datetime(2023, 12, 8, tzinfo=timezone(-timedelta(hours=7))),
+            datetime(2023, 12, 8, tzinfo=timezone(-timedelta(hours=8))),
         ]
 
         # Act / Assert
