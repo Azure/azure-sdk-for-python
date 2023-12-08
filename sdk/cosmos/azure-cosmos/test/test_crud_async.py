@@ -1805,7 +1805,7 @@ class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
             end_time = time.time()
             return end_time - start_time
 
-    # TODO: @kuthapar Skipping this test to debug later
+    # TODO: Skipping this test to debug later
     @unittest.skip
     async def test_absolute_client_timeout_async(self):
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
