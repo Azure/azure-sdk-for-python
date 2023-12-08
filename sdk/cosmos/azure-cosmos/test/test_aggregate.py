@@ -23,7 +23,6 @@ from __future__ import print_function
 
 import unittest
 import uuid
-import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
@@ -31,7 +30,6 @@ import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
-pytestmark = pytest.mark.cosmosEmulator
 
 class _config:
     host = test_config._test_config.host
@@ -46,8 +44,11 @@ class _config:
     sum = 0
 
 
-@pytest.mark.usefixtures("teardown")
-class AggregationQueryTest(unittest.TestCase):
+class TestAggregateQuery(unittest.TestCase):
+    client: cosmos_client.CosmosClient = None
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
+
     @classmethod
     def setUpClass(cls):
         cls._all_tests = []
@@ -55,8 +56,12 @@ class AggregationQueryTest(unittest.TestCase):
         cls._generate_test_configs()
 
     @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
+
+    @classmethod
     def _setup(cls):
-        if (not _config.master_key or not _config.host):
+        if not _config.master_key or not _config.host:
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
@@ -64,7 +69,7 @@ class AggregationQueryTest(unittest.TestCase):
 
         cls.client = cosmos_client.CosmosClient(
             _config.host, {'masterKey': _config.master_key}, "Session", connection_policy=_config.connection_policy)
-        created_db = test_config._test_config.create_database_if_not_exist(cls.client)
+        created_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
         cls.created_collection = cls._create_collection(created_db)
 
         # test documents

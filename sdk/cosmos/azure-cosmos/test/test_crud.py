@@ -19,43 +19,38 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-
-"""End to end test.
-"""
-
-import json
-import logging
-import os.path
-import unittest
-import time
-from typing import Mapping
-
-import urllib.parse as urllib
-import uuid
-import pytest
-from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
-from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
-import azure.cosmos.documents as documents
-import azure.cosmos.exceptions as exceptions
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
-import test_config
-import azure.cosmos._base as base
-import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos import _retry_utility
-import requests
-from urllib3.util.retry import Retry
-
-pytestmark = pytest.mark.cosmosEmulator
-
 # IMPORTANT NOTES:
 #  	Most test cases in this file create collections in your Azure Cosmos account.
 #  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
 
 #  	To Run the test, replace the two member fields (masterKey and host) with values
 #   associated with your Azure Cosmos account.
+
+"""End-to-end test.
+"""
+
+import json
+import logging
+import os.path
+import time
+import unittest
+import urllib.parse as urllib
+import uuid
+
+import requests
+from azure.core import MatchConditions
+from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
+from urllib3.util.retry import Retry
+
+import azure.cosmos._base as base
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.documents as documents
+import azure.cosmos.exceptions as exceptions
+import test_config
+from azure.cosmos import _retry_utility
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.partition_key import PartitionKey
 
 
 class TimeoutTransport(RequestsTransport):
@@ -77,7 +72,6 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
-@pytest.mark.usefixtures("teardown")
 class CRUDTests(unittest.TestCase):
     """Python CRUD Tests.
     """
@@ -87,6 +81,8 @@ class CRUDTests(unittest.TestCase):
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    client: cosmos_client.CosmosClient = None
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -104,14 +100,17 @@ class CRUDTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                    cls.host == '[YOUR_ENDPOINT_HERE]'):
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.databaseForTest = cls.configs.create_database_if_not_exist(cls.client)
+        cls.databaseForTest = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_database_crud(self):
         # read databases.
@@ -155,7 +154,6 @@ class CRUDTests(unittest.TestCase):
 
         self.client.delete_database(database_id)
 
-    @pytest.mark.skip("skipping as the TestResources subscription doesn't support this offer")
     def test_database_level_offer_throughput(self):
         # Create a database with throughput
         offer_throughput = 1000
@@ -197,7 +195,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(0, len(databases), 'Unexpected number of query results.')
 
         # query with a string.
-        databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))   # nosec
+        databases = list(self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"'))  # nosec
         self.assertEqual(1, len(databases), 'Unexpected number of query results.')
         self.client.delete_database(db1.id)
         self.client.delete_database(db2.id)
@@ -239,11 +237,13 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
 
-        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id, partition_key=PartitionKey(path='/id', kind='Hash'))
+        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
+                                                                    partition_key=PartitionKey(path='/id', kind='Hash'))
         self.assertEqual(created_collection.id, container_proxy.id)
         self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
 
-        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id, partition_key=created_properties['partitionKey'])
+        container_proxy = created_db.create_container_if_not_exists(id=created_collection.id,
+                                                                    partition_key=created_properties['partitionKey'])
         self.assertEqual(created_container.id, container_proxy.id)
         self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
 
@@ -262,8 +262,8 @@ class CRUDTests(unittest.TestCase):
 
         offer_throughput = 10100
         created_collection = created_db.create_container(id=collection_definition['id'],
-                                                        partition_key=collection_definition['partitionKey'],
-                                                        offer_throughput=offer_throughput)
+                                                         partition_key=collection_definition['partitionKey'],
+                                                         offer_throughput=offer_throughput)
 
         self.assertEqual(collection_definition.get('id'), created_collection.id)
 
@@ -338,7 +338,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(self.last_headers[1], [{}])
         del self.last_headers[:]
 
-        #self.assertEqual(options['partitionKey'], documents.Undefined)
+        # self.assertEqual(options['partitionKey'], documents.Undefined)
 
         collection_id = 'test_partitioned_collection_partition_key_extraction2 ' + str(uuid.uuid4())
         created_collection2 = created_db.create_container(
@@ -354,7 +354,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(self.last_headers[1], [{}])
         del self.last_headers[:]
 
-        #self.assertEqual(options['partitionKey'], documents.Undefined)
+        # self.assertEqual(options['partitionKey'], documents.Undefined)
 
         created_db.delete_container(created_collection.id)
         created_db.delete_container(created_collection1.id)
@@ -387,7 +387,7 @@ class CRUDTests(unittest.TestCase):
                     'paths': ['/\'level\" 1*()\'/\'le/vel2\''],
                     'kind': documents.PartitionKind.Hash
                 }
-            }
+        }
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4())
 
@@ -491,7 +491,7 @@ class CRUDTests(unittest.TestCase):
         try:
             list(created_collection.query_items(
                 {
-                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''    # nosec
+                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''  # nosec
                 }))
         except Exception:
             pass
@@ -552,7 +552,8 @@ class CRUDTests(unittest.TestCase):
         resource_tokens = {}
         # storing the resource tokens based on Resource IDs
         resource_tokens["dbs/" + created_db.id + "/colls/" + all_collection.id] = (all_permission.properties['_token'])
-        resource_tokens["dbs/" + created_db.id + "/colls/" + read_collection.id] = (read_permission.properties['_token'])
+        resource_tokens["dbs/" + created_db.id + "/colls/" + read_collection.id] = (
+            read_permission.properties['_token'])
 
         restricted_client = cosmos_client.CosmosClient(
             CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
@@ -582,7 +583,8 @@ class CRUDTests(unittest.TestCase):
 
         document_definition['key'] = 1
         # Delete document should succeed since the partitionKey is 1 which is what specified as resourcePartitionKey in permission object
-        created_document = all_collection.delete_item(item=created_document['id'], partition_key=document_definition['key'])
+        created_document = all_collection.delete_item(item=created_document['id'],
+                                                      partition_key=document_definition['key'])
 
         # Delete document in read_collection should fail since it has only read permissions for this collection
         self.__AssertHTTPFailureWithStatus(
@@ -603,14 +605,14 @@ class CRUDTests(unittest.TestCase):
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
             'body': (
-                'function () {' +
-                '   var client = getContext().getCollection();' +
-                '   client.createDocument(client.getSelfLink(), { id: \'testDoc\', pk : 2}, {}, function(err, docCreated, options) { ' +
-                '   if(err) throw new Error(\'Error while creating document: \' + err.message);' +
-                '   else {' +
-                '   getContext().getResponse().setBody(1);' +
-                '        }' +
-                '   });}')
+                    'function () {' +
+                    '   var client = getContext().getCollection();' +
+                    '   client.createDocument(client.getSelfLink(), { id: \'testDoc\', pk : 2}, {}, function(err, docCreated, options) { ' +
+                    '   if(err) throw new Error(\'Error while creating document: \' + err.message);' +
+                    '   else {' +
+                    '   getContext().getResponse().setBody(1);' +
+                    '        }' +
+                    '   });}')
         }
 
         created_sproc = created_collection.scripts.create_stored_procedure(body=sproc)
@@ -722,15 +724,16 @@ class CRUDTests(unittest.TestCase):
         # query conflicts on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
         try:
             list(created_collection.query_conflicts(
-                    query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get( # nosec
-                        'resourceType') + '\''
-                ))
+                query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get(  # nosec
+                    'resourceType') + '\''
+            ))
         except Exception:
             pass
 
         conflictlist = list(created_collection.query_conflicts(
-                query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',  # nosec
-                enable_cross_partition_query=True
+            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',
+            # nosec
+            enable_cross_partition_query=True
         ))
 
         self.assertEqual(0, len(conflictlist))
@@ -738,7 +741,8 @@ class CRUDTests(unittest.TestCase):
         # query conflicts by providing the partitionKey value
         options = {'partitionKey': conflict_definition.get('id')}
         conflictlist = list(created_collection.query_conflicts(
-            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',  # nosec
+            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',
+            # nosec
             partition_key=conflict_definition['id']
         ))
 
@@ -868,11 +872,11 @@ class CRUDTests(unittest.TestCase):
 
         # should pass for most recent etag
         replaced_document_conditional = created_collection.replace_item(
-                match_condition=MatchConditions.IfNotModified,
-                etag=replaced_document['_etag'],
-                item=replaced_document['id'],
-                body=replaced_document
-            )
+            match_condition=MatchConditions.IfNotModified,
+            etag=replaced_document['_etag'],
+            item=replaced_document['id'],
+            body=replaced_document
+        )
         self.assertEqual(replaced_document_conditional['name'],
                          'replaced document based on condition',
                          'document id property should change')
@@ -925,7 +929,7 @@ class CRUDTests(unittest.TestCase):
                          document_definition['id'])
 
         # test error for non-string id
-        with pytest.raises(TypeError):
+        with self.assertRaises(TypeError):
             document_definition['id'] = 7
             created_collection.upsert_item(body=document_definition)
 
@@ -971,7 +975,7 @@ class CRUDTests(unittest.TestCase):
         # Test modified access conditions
         created_document['spam'] = 'more eggs'
         created_collection.upsert_item(body=created_document)
-        with pytest.raises(exceptions.CosmosHttpResponseError):
+        with self.assertRaises(exceptions.CosmosHttpResponseError):
             created_collection.upsert_item(
                 body=created_document,
                 match_condition=MatchConditions.IfNotModified,
@@ -1000,37 +1004,36 @@ class CRUDTests(unittest.TestCase):
             before_create_documents_count,
             'number of documents should remain same')
 
-
     def _test_spatial_index(self):
         db = self.databaseForTest
         # partial policy specified
         collection = db.create_container(
             id='collection with spatial index ' + str(uuid.uuid4()),
             indexing_policy={
-                            'includedPaths': [
-                                {
-                                    'path': '/"Location"/?',
-                                    'indexes': [
-                                        {
-                                        'kind': 'Spatial',
-                                        'dataType': 'Point'
-                                        }
-                                    ]
-                                },
-                                {
-                                'path': '/'
-                                }
-                            ]
-                        },
+                'includedPaths': [
+                    {
+                        'path': '/"Location"/?',
+                        'indexes': [
+                            {
+                                'kind': 'Spatial',
+                                'dataType': 'Point'
+                            }
+                        ]
+                    },
+                    {
+                        'path': '/'
+                    }
+                ]
+            },
             partition_key=PartitionKey(path='/id', kind='Hash')
-            )
+        )
         collection.create_item(
             body={
-                 'id': 'loc1',
-                 'Location': {
+                'id': 'loc1',
+                'Location': {
                     'type': 'Point',
                     'coordinates': [20.0, 20.0]
-                 }
+                }
             }
         )
         collection.create_item(
@@ -1068,10 +1071,10 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(len(users), before_create_count + 1)
         # query users
         results = list(db.query_users(
-                query='SELECT * FROM root r WHERE r.id=@id',
-                parameters=[
-                    {'name': '@id', 'value': user_id}
-                ]
+            query='SELECT * FROM root r WHERE r.id=@id',
+            parameters=[
+                {'name': '@id', 'value': user_id}
+            ]
         ))
         self.assertTrue(results)
 
@@ -1174,10 +1177,10 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(len(permissions), before_create_count + 1)
         # query permissions
         results = list(user.query_permissions(
-                query='SELECT * FROM root r WHERE r.id=@id',
-                parameters=[
-                    {'name': '@id', 'value': permission.id}
-                ]
+            query='SELECT * FROM root r WHERE r.id=@id',
+            parameters=[
+                {'name': '@id', 'value': permission.id}
+            ]
         ))
         self.assertTrue(results)
 
@@ -1302,9 +1305,9 @@ class CRUDTests(unittest.TestCase):
             )
             # create document1
             document = collection.create_item(
-                            body={'id': 'doc1',
-                                  'spam': 'eggs',
-                                  'key': 'value'},
+                body={'id': 'doc1',
+                      'spam': 'eggs',
+                      'key': 'value'},
             )
 
             # create user
@@ -1318,7 +1321,7 @@ class CRUDTests(unittest.TestCase):
             }
             permission_on_coll = user.create_permission(body=permission)
             self.assertIsNotNone(permission_on_coll.properties['_token'],
-                            'permission token is invalid')
+                                 'permission token is invalid')
 
             # create permission for document
             permission = {
@@ -1328,7 +1331,7 @@ class CRUDTests(unittest.TestCase):
             }
             permission_on_doc = user.create_permission(body=permission)
             self.assertIsNotNone(permission_on_doc.properties['_token'],
-                            'permission token is invalid')
+                                 'permission token is invalid')
 
             entities = {
                 'db': db,
@@ -1355,9 +1358,9 @@ class CRUDTests(unittest.TestCase):
         # setup entities
         entities = __SetupEntities(client)
         resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
-                           entities['permissionOnColl'].properties['_token']}
+                               entities['permissionOnColl'].properties['_token']}
         col_client = cosmos_client.CosmosClient(
-            CRUDTests.host, resource_tokens,"Session", connection_policy=CRUDTests.connectionPolicy)
+            CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
         db = entities['db']
 
         old_client_connection = db.client_connection
@@ -1388,22 +1391,22 @@ class CRUDTests(unittest.TestCase):
             entities['doc']['id'],
             'Expected to read children using parent permissions')
 
-        #5. Failure-- Use Col Permission to Delete Doc
+        # 5. Failure-- Use Col Permission to Delete Doc
         self.__AssertHTTPFailureWithStatus(StatusCodes.FORBIDDEN,
                                            success_coll.delete_item,
                                            docId, docId)
 
-        resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id + "/docs/" + docId :
-            entities['permissionOnDoc'].properties['_token']}
+        resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id + "/docs/" + docId:
+                               entities['permissionOnDoc'].properties['_token']}
 
         doc_client = cosmos_client.CosmosClient(
-            CRUDTests.host, resource_tokens,"Session", connection_policy=CRUDTests.connectionPolicy)
+            CRUDTests.host, resource_tokens, "Session", connection_policy=CRUDTests.connectionPolicy)
 
-        #6. Success-- Use Doc permission to read doc
+        # 6. Success-- Use Doc permission to read doc
         read_doc = doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(docId, docId)
         self.assertEqual(read_doc["id"], docId)
 
-        #6. Success-- Use Doc permission to delete doc
+        # 6. Success-- Use Doc permission to delete doc
         doc_client.get_database_client(db.id).get_container_client(success_coll.id).delete_item(docId, docId)
         self.assertEqual(read_doc["id"], docId)
 
@@ -1443,10 +1446,10 @@ class CRUDTests(unittest.TestCase):
                          'create should increase the number of triggers')
         # query triggers
         triggers = list(collection.scripts.query_triggers(
-                query='SELECT * FROM root r WHERE r.id=@id',
-                parameters=[
-                    {'name': '@id', 'value': trigger_definition['id']}
-                ]
+            query='SELECT * FROM root r WHERE r.id=@id',
+            parameters=[
+                {'name': '@id', 'value': trigger_definition['id']}
+            ]
         ))
         self.assertTrue(triggers)
 
@@ -1501,10 +1504,10 @@ class CRUDTests(unittest.TestCase):
                          'create should increase the number of udfs')
         # query udfs
         results = list(collection.scripts.query_user_defined_functions(
-                query='SELECT * FROM root r WHERE r.id=@id',
-                parameters=[
-                    {'name': '@id', 'value': udf_definition['id']}
-                ]
+            query='SELECT * FROM root r WHERE r.id=@id',
+            parameters=[
+                {'name': '@id', 'value': udf_definition['id']}
+            ]
         ))
         self.assertTrue(results)
         # replace udf
@@ -1556,10 +1559,10 @@ class CRUDTests(unittest.TestCase):
                          'create should increase the number of sprocs')
         # query sprocs
         sprocs = list(collection.scripts.query_stored_procedures(
-                query='SELECT * FROM root r WHERE r.id=@id',
-                parameters=[
-                    {'name': '@id', 'value': sproc_definition['id']}
-                ]
+            query='SELECT * FROM root r WHERE r.id=@id',
+            parameters=[
+                {'name': '@id', 'value': sproc_definition['id']}
+            ]
         ))
         self.assertIsNotNone(sprocs)
         # replace sproc
@@ -1593,17 +1596,17 @@ class CRUDTests(unittest.TestCase):
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
             'body': (
-                'function () {' +
-                '   var mytext = \'x\';' +
-                '   var myval = 1;' +
-                '   try {' +
-                '       console.log(\'The value of %s is %s.\', mytext, myval);' +
-                '       getContext().getResponse().setBody(\'Success!\');' +
-                '   }' +
-                '   catch (err) {' +
-                '       getContext().getResponse().setBody(\'inline err: [\' + err.number + \'] \' + err);' +
-                '   }'
-                '}')
+                    'function () {' +
+                    '   var mytext = \'x\';' +
+                    '   var myval = 1;' +
+                    '   try {' +
+                    '       console.log(\'The value of %s is %s.\', mytext, myval);' +
+                    '       getContext().getResponse().setBody(\'Success!\');' +
+                    '   }' +
+                    '   catch (err) {' +
+                    '       getContext().getResponse().setBody(\'inline err: [\' + err.number + \'] \' + err);' +
+                    '   }'
+                    '}')
         }
 
         created_sproc = created_collection.scripts.create_stored_procedure(body=sproc)
@@ -1614,7 +1617,8 @@ class CRUDTests(unittest.TestCase):
         )
 
         self.assertEqual(result, 'Success!')
-        self.assertFalse(HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
+        self.assertFalse(
+            HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
 
         result = created_collection.scripts.execute_stored_procedure(
             sproc=created_sproc['id'],
@@ -1624,7 +1628,8 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(result, 'Success!')
         self.assertEqual(urllib.quote('The value of x is 1.'),
-                         created_collection.scripts.client_connection.last_response_headers.get(HttpHeaders.ScriptLogResults))
+                         created_collection.scripts.client_connection.last_response_headers.get(
+                             HttpHeaders.ScriptLogResults))
 
         result = created_collection.scripts.execute_stored_procedure(
             sproc=created_sproc['id'],
@@ -1633,7 +1638,8 @@ class CRUDTests(unittest.TestCase):
         )
 
         self.assertEqual(result, 'Success!')
-        self.assertFalse(HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
+        self.assertFalse(
+            HttpHeaders.ScriptLogResults in created_collection.scripts.client_connection.last_response_headers)
 
     def test_collection_indexing_policy(self):
         # create database
@@ -1718,8 +1724,8 @@ class CRUDTests(unittest.TestCase):
         collection = db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
             indexing_policy={
-                    'indexingMode': documents.IndexingMode.Consistent, 'automatic': True
-                },
+                'indexingMode': documents.IndexingMode.Consistent, 'automatic': True
+            },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         collection_properties = collection.read()
@@ -1740,12 +1746,12 @@ class CRUDTests(unittest.TestCase):
         collection = db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy04' + str(uuid.uuid4()),
             indexing_policy={
-                    'includedPaths': [
-                        {
-                            'path': '/*'
-                        }
-                    ]
-                },
+                'includedPaths': [
+                    {
+                        'path': '/*'
+                    }
+                ]
+            },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         collection_properties = collection.read()
@@ -1756,22 +1762,22 @@ class CRUDTests(unittest.TestCase):
         collection = db.create_container(
             id='test_create_default_indexing_policy TestCreateDefaultPolicy05' + str(uuid.uuid4()),
             indexing_policy={
-                    'includedPaths': [
-                        {
-                            'path': '/*',
-                            'indexes': [
-                                {
-                                    'kind': documents.IndexKind.Hash,
-                                    'dataType': documents.DataType.String
-                                },
-                                {
-                                    'kind': documents.IndexKind.Range,
-                                    'dataType': documents.DataType.Number
-                                }
-                            ]
-                        }
-                    ]
-                },
+                'includedPaths': [
+                    {
+                        'path': '/*',
+                        'indexes': [
+                            {
+                                'kind': documents.IndexKind.Hash,
+                                'dataType': documents.DataType.String
+                            },
+                            {
+                                'kind': documents.IndexKind.Range,
+                                'dataType': documents.DataType.Number
+                            }
+                        ]
+                    }
+                ]
+            },
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
         collection_properties = collection.read()
@@ -1840,7 +1846,7 @@ class CRUDTests(unittest.TestCase):
             id='composite_index_spatial_index' + str(uuid.uuid4()),
             indexing_policy=indexing_policy,
             partition_key=PartitionKey(path='/id', kind='Hash'),
-            headers={"Foo":"bar"},
+            headers={"Foo": "bar"},
             user_agent="blah",
             user_agent_overwrite=True,
             logging_enable=True,
@@ -1876,35 +1882,36 @@ class CRUDTests(unittest.TestCase):
 
     def test_client_request_timeout(self):
         # Test is flaky on Emulator
-        if not('localhost' in self.host or '127.0.0.1' in self.host):
+        if not ('localhost' in self.host or '127.0.0.1' in self.host):
             connection_policy = documents.ConnectionPolicy()
             # making timeout 0 ms to make sure it will throw
-            connection_policy.RequestTimeout =  0.000000000001
+            connection_policy.RequestTimeout = 0.000000000001
 
             with self.assertRaises(Exception):
                 # client does a getDatabaseAccount on initialization, which will time out
-                cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
+                cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session",
+                                           connection_policy=connection_policy)
 
     def test_client_request_timeout_when_connection_retry_configuration_specified(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout =  0.000000000001
+        connection_policy.RequestTimeout = 0.000000000001
         connection_policy.ConnectionRetryConfiguration = Retry(
-                                                            total=3,
-                                                            read=3,
-                                                            connect=3,
-                                                            backoff_factor=0.3,
-                                                            status_forcelist=(500, 502, 504)
-                                                        )
+            total=3,
+            read=3,
+            connect=3,
+            backoff_factor=0.3,
+            status_forcelist=(500, 502, 504)
+        )
         with self.assertRaises(AzureError):
             # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy=connection_policy)
+            cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session",
+                                       connection_policy=connection_policy)
 
     def test_client_connection_retry_configuration(self):
         total_time_for_two_retries = self.initialize_client_with_connection_core_retry_config(2)
         total_time_for_three_retries = self.initialize_client_with_connection_core_retry_config(3)
         self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
-
 
     def initialize_client_with_connection_core_retry_config(self, retries):
         start_time = time.time()
@@ -2033,25 +2040,25 @@ class CRUDTests(unittest.TestCase):
             {
                 'id': 't1',
                 'body': (
-                    'function() {' +
-                    '    var item = getContext().getRequest().getBody();' +
-                    '    item.id = item.id.toUpperCase() + \'t1\';' +
-                    '    getContext().getRequest().setBody(item);' +
-                    '}'),
+                        'function() {' +
+                        '    var item = getContext().getRequest().getBody();' +
+                        '    item.id = item.id.toUpperCase() + \'t1\';' +
+                        '    getContext().getRequest().setBody(item);' +
+                        '}'),
                 'triggerType': documents.TriggerType.Pre,
                 'triggerOperation': documents.TriggerOperation.All
             },
             {
                 'id': 'response1',
                 'body': (
-                    'function() {' +
-                    '    var prebody = getContext().getRequest().getBody();' +
-                    '    if (prebody.id != \'TESTING POST TRIGGERt1\')'
-                    '        throw \'id mismatch\';' +
-                    '    var postbody = getContext().getResponse().getBody();' +
-                    '    if (postbody.id != \'TESTING POST TRIGGERt1\')'
-                    '        throw \'id mismatch\';'
-                    '}'),
+                        'function() {' +
+                        '    var prebody = getContext().getRequest().getBody();' +
+                        '    if (prebody.id != \'TESTING POST TRIGGERt1\')'
+                        '        throw \'id mismatch\';' +
+                        '    var postbody = getContext().getResponse().getBody();' +
+                        '    if (postbody.id != \'TESTING POST TRIGGERt1\')'
+                        '        throw \'id mismatch\';'
+                        '}'),
                 'triggerType': documents.TriggerType.Post,
                 'triggerOperation': documents.TriggerOperation.All
             },
@@ -2059,14 +2066,14 @@ class CRUDTests(unittest.TestCase):
                 'id': 'response2',
                 # can't be used because setValue is currently disabled
                 'body': (
-                    'function() {' +
-                    '    var predoc = getContext().getRequest().getBody();' +
-                    '    var postdoc = getContext().getResponse().getBody();' +
-                    '    getContext().getResponse().setValue(' +
-                    '        \'predocname\', predoc.id + \'response2\');' +
-                    '    getContext().getResponse().setValue(' +
-                    '        \'postdocname\', postdoc.id + \'response2\');' +
-                    '}'),
+                        'function() {' +
+                        '    var predoc = getContext().getRequest().getBody();' +
+                        '    var postdoc = getContext().getResponse().getBody();' +
+                        '    getContext().getResponse().setValue(' +
+                        '        \'predocname\', predoc.id + \'response2\');' +
+                        '    getContext().getResponse().setValue(' +
+                        '        \'postdocname\', postdoc.id + \'response2\');' +
+                        '}'),
                 'triggerType': documents.TriggerType.Post,
                 'triggerOperation': documents.TriggerOperation.All,
             }]
@@ -2080,11 +2087,11 @@ class CRUDTests(unittest.TestCase):
             {
                 'id': "t3",
                 'body': (
-                    'function() {' +
-                    '    var item = getContext().getRequest().getBody();' +
-                    '    item.id = item.id.toLowerCase() + \'t3\';' +
-                    '    getContext().getRequest().setBody(item);' +
-                    '}'),
+                        'function() {' +
+                        '    var item = getContext().getRequest().getBody();' +
+                        '    item.id = item.id.toLowerCase() + \'t3\';' +
+                        '    getContext().getRequest().setBody(item);' +
+                        '}'),
                 'triggerType': documents.TriggerType.Pre,
                 'triggerOperation': documents.TriggerOperation.All
             }]
@@ -2116,9 +2123,12 @@ class CRUDTests(unittest.TestCase):
         db = self.databaseForTest
         # create collections
         pkd = PartitionKey(path='/id', kind='Hash')
-        collection1 = db.create_container(id='test_trigger_functionality 1 ' + str(uuid.uuid4()), partition_key=PartitionKey(path='/key', kind='Hash'))
-        collection2 = db.create_container(id='test_trigger_functionality 2 ' + str(uuid.uuid4()), partition_key=PartitionKey(path='/key', kind='Hash'))
-        collection3 = db.create_container(id='test_trigger_functionality 3 ' + str(uuid.uuid4()), partition_key=PartitionKey(path='/key', kind='Hash'))
+        collection1 = db.create_container(id='test_trigger_functionality 1 ' + str(uuid.uuid4()),
+                                          partition_key=PartitionKey(path='/key', kind='Hash'))
+        collection2 = db.create_container(id='test_trigger_functionality 2 ' + str(uuid.uuid4()),
+                                          partition_key=PartitionKey(path='/key', kind='Hash'))
+        collection3 = db.create_container(id='test_trigger_functionality 3 ' + str(uuid.uuid4()),
+                                          partition_key=PartitionKey(path='/key', kind='Hash'))
         # create triggers
         __CreateTriggers(collection1, triggers_in_collection1)
         __CreateTriggers(collection2, triggers_in_collection2)
@@ -2186,13 +2196,13 @@ class CRUDTests(unittest.TestCase):
         sproc1 = {
             'id': 'storedProcedure1' + str(uuid.uuid4()),
             'body': (
-                'function () {' +
-                '  for (var i = 0; i < 1000; i++) {' +
-                '    var item = getContext().getResponse().getBody();' +
-                '    if (i > 0 && item != i - 1) throw \'body mismatch\';' +
-                '    getContext().getResponse().setBody(i);' +
-                '  }' +
-                '}')
+                    'function () {' +
+                    '  for (var i = 0; i < 1000; i++) {' +
+                    '    var item = getContext().getResponse().getBody();' +
+                    '    if (i > 0 && item != i - 1) throw \'body mismatch\';' +
+                    '    getContext().getResponse().setBody(i);' +
+                    '  }' +
+                    '}')
         }
 
         retrieved_sproc = collection.scripts.create_stored_procedure(body=sproc1)
@@ -2204,11 +2214,11 @@ class CRUDTests(unittest.TestCase):
         sproc2 = {
             'id': 'storedProcedure2' + str(uuid.uuid4()),
             'body': (
-                'function () {' +
-                '  for (var i = 0; i < 10; i++) {' +
-                '    getContext().getResponse().appendValue(\'Body\', i);' +
-                '  }' +
-                '}')
+                    'function () {' +
+                    '  for (var i = 0; i < 10; i++) {' +
+                    '    getContext().getResponse().appendValue(\'Body\', i);' +
+                    '  }' +
+                    '}')
         }
         retrieved_sproc2 = collection.scripts.create_stored_procedure(body=sproc2)
         result = collection.scripts.execute_stored_procedure(
@@ -2219,10 +2229,10 @@ class CRUDTests(unittest.TestCase):
         sproc3 = {
             'id': 'storedProcedure3' + str(uuid.uuid4()),
             'body': (
-                'function (input) {' +
-                '  getContext().getResponse().setBody(' +
-                '      \'a\' + input.temp);' +
-                '}')
+                    'function (input) {' +
+                    '  getContext().getResponse().setBody(' +
+                    '      \'a\' + input.temp);' +
+                    '}')
         }
         retrieved_sproc3 = collection.scripts.create_stored_procedure(body=sproc3)
         result = collection.scripts.execute_stored_procedure(
@@ -2437,7 +2447,7 @@ class CRUDTests(unittest.TestCase):
         read_container = created_db.get_container_client(created_properties)
         self.assertEqual(read_container.id, created_container.id)
 
-        created_item = created_container.create_item({'id':'1' + str(uuid.uuid4())})
+        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4())})
 
         # read item with id
         read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['id'])
@@ -2524,7 +2534,7 @@ class CRUDTests(unittest.TestCase):
         read_permission = created_user.get_permission(created_permission.properties)
         self.assertEqual(read_permission.id, created_permission.id)
 
-    #Commenting out delete items by pk until test pipelines support it
+    # Commenting out delete items by pk until test pipelines support it
     # def test_delete_all_items_by_partition_key(self):
     #     # create database
     #     created_db = self.databaseForTest
@@ -2570,9 +2580,10 @@ class CRUDTests(unittest.TestCase):
     #     created_db.delete_container(created_collection)
 
     def test_patch_operations(self):
-        created_container = self.databaseForTest.create_container_if_not_exists(id="patch_container", partition_key=PartitionKey(path="/pk"))
+        created_container = self.databaseForTest.create_container_if_not_exists(id="patch_container",
+                                                                                partition_key=PartitionKey(path="/pk"))
 
-        #Create item to patch
+        # Create item to patch
         item = {
             "id": "patch_item",
             "pk": "patch_item_pk",
@@ -2583,7 +2594,7 @@ class CRUDTests(unittest.TestCase):
             "company": "Microsoft",
             "number": 3}
         created_container.create_item(item)
-        #Define and run patch operations
+        # Define and run patch operations
         operations = [
             {"op": "add", "path": "/color", "value": "yellow"},
             {"op": "remove", "path": "/prop"},
@@ -2592,8 +2603,9 @@ class CRUDTests(unittest.TestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        patched_item = created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
-        #Verify results from patch operations
+        patched_item = created_container.patch_item(item="patch_item", partition_key="patch_item_pk",
+                                                    patch_operations=operations)
+        # Verify results from patch operations
         self.assertTrue(patched_item.get("color") is None)
         self.assertTrue(patched_item.get("prop") is None)
         self.assertEqual(patched_item.get("company"), "CosmosDB")
@@ -2601,28 +2613,28 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(patched_item.get("number"), 10)
         self.assertEqual(patched_item.get("favorite_color"), "yellow")
 
-        #Negative test - attempt to replace non-existent field
+        # Negative test - attempt to replace non-existent field
         operations = [{"op": "replace", "path": "/wrong_field", "value": "wrong_value"}]
         try:
             created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
-        #Negative test - attempt to remove non-existent field
+        # Negative test - attempt to remove non-existent field
         operations = [{"op": "remove", "path": "/wrong_field"}]
         try:
             created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
-        #Negative test - attempt to increment non-number field
+        # Negative test - attempt to increment non-number field
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         try:
             created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
-        #Negative test - attempt to move from non-existent field
+        # Negative test - attempt to move from non-existent field
         operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
         try:
             created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
@@ -2630,8 +2642,9 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
     def test_conditional_patching(self):
-        created_container = self.databaseForTest.create_container_if_not_exists(id="patch_filter_container", partition_key=PartitionKey(path="/pk"))
-        #Create item to patch
+        created_container = self.databaseForTest.create_container_if_not_exists(id="patch_filter_container",
+                                                                                partition_key=PartitionKey(path="/pk"))
+        # Create item to patch
         item = {
             "id": "conditional_patch_item",
             "pk": "patch_item_pk",
@@ -2643,7 +2656,7 @@ class CRUDTests(unittest.TestCase):
             "number": 3}
         created_container.create_item(item)
 
-        #Define patch operations
+        # Define patch operations
         operations = [
             {"op": "add", "path": "/color", "value": "yellow"},
             {"op": "remove", "path": "/prop"},
@@ -2653,7 +2666,7 @@ class CRUDTests(unittest.TestCase):
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
 
-        #Run patch operations with wrong filter
+        # Run patch operations with wrong filter
         num_false = item.get("number") + 1
         filter_predicate = "from root where root.number = " + str(num_false)
         try:
@@ -2662,11 +2675,11 @@ class CRUDTests(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.PRECONDITION_FAILED)
 
-        #Run patch operations with correct filter
+        # Run patch operations with correct filter
         filter_predicate = "from root where root.number = " + str(item.get("number"))
         patched_item = created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
                                                     patch_operations=operations, filter_predicate=filter_predicate)
-        #Verify results from patch operations
+        # Verify results from patch operations
         self.assertTrue(patched_item.get("color") is None)
         self.assertTrue(patched_item.get("prop") is None)
         self.assertEqual(patched_item.get("company"), "CosmosDB")
@@ -2749,6 +2762,7 @@ class CRUDTests(unittest.TestCase):
         item2 = {"id": "item2", "pk": "pk2"}
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         priority_level_headers = []
+
         # mock execute function to check if priority level set in headers
 
         def priority_mock_execute_function(function, *args, **kwargs):
@@ -2756,6 +2770,7 @@ class CRUDTests(unittest.TestCase):
                 priority_level_headers.append(args[4].headers[HttpHeaders.PriorityLevel]
                                               if HttpHeaders.PriorityLevel in args[4].headers else '')
             return self.OriginalExecuteFunction(function, *args, **kwargs)
+
         _retry_utility.ExecuteFunction = priority_mock_execute_function
         # upsert item with high priority
         created_container.upsert_item(body=item1, priority_level="High")
@@ -2780,15 +2795,11 @@ class CRUDTests(unittest.TestCase):
         self.assertNotEqual(priority_level_headers[-1], "Medium")
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
-
-
-
-
-
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
-                                    if HttpHeaders.PartitionKey in args[4].headers else '')
+                                 if HttpHeaders.PartitionKey in args[4].headers else '')
         return self.OriginalExecuteFunction(function, *args, **kwargs)
+
 
 if __name__ == '__main__':
     try:

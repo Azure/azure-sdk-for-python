@@ -19,21 +19,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import unittest
-import pytest
-from azure.cosmos import cosmos_client, PartitionKey, Offer, http_constants
-import test_config
-from unittest.mock import MagicMock
-
 # This class tests the backwards compatibility of features being deprecated to ensure users are not broken before
 # properly removing the methods marked for deprecation.
 
-pytestmark = pytest.mark.cosmosEmulator
+import unittest
+import uuid
+from unittest.mock import MagicMock
+
+import test_config
+from azure.cosmos import cosmos_client, PartitionKey, Offer, http_constants, CosmosClient, DatabaseProxy, ContainerProxy
 
 
-@pytest.mark.usefixtures("teardown")
 class TestBackwardsCompatibility(unittest.TestCase):
-
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_CONTAINER_ID = "Single Partition Test Collection With Custom PK " + str(uuid.uuid4())
+    databaseForTest: DatabaseProxy = None
+    client: CosmosClient = None
+    containerForTest: ContainerProxy = None
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
@@ -48,10 +50,14 @@ class TestBackwardsCompatibility(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session")
-        cls.databaseForTest = cls.client.create_database_if_not_exists("Offer_Test_DB",
+        cls.databaseForTest = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID,
                                                                        offer_throughput=500)
         cls.containerForTest = cls.databaseForTest.create_container_if_not_exists(
-            cls.configs.TEST_COLLECTION_SINGLE_PARTITION_ID, PartitionKey(path="/id"), offer_throughput=400)
+            cls.TEST_CONTAINER_ID, PartitionKey(path="/id"), offer_throughput=400)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_offer_methods(self):
         database_offer = self.databaseForTest.get_throughput()

@@ -1,5 +1,13 @@
 # The MIT License (MIT)
 # Copyright (c) 2022 Microsoft Corporation
+import unittest
+import uuid
+
+import azure.cosmos.exceptions as exceptions
+import test_config
+from azure.cosmos import CosmosClient
+from azure.cosmos import ThroughputProperties, PartitionKey
+
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -7,10 +15,8 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,23 +25,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from azure.cosmos import CosmosClient
-import azure.cosmos.exceptions as exceptions
-from azure.cosmos import ThroughputProperties, PartitionKey
-import pytest
-import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
-
-
-@pytest.mark.usefixtures("teardown")
-class TestAutoScale:
+class TestAutoScale(unittest.TestCase):
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    client: CosmosClient = None
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
 
     @classmethod
-    def _set_up(cls):
+    def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -44,10 +43,13 @@ class TestAutoScale:
                 "tests.")
 
         cls.client = CosmosClient(cls.host, cls.masterKey, consistency_level="Session")
-        cls.created_database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.created_database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_autoscale_create_container(self):
-        self._set_up()
         created_container = self.created_database.create_container(
             id='auto_scale',
             partition_key=PartitionKey(path="/id"),
@@ -63,12 +65,12 @@ class TestAutoScale:
         self.created_database.delete_container(created_container)
 
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
-        with pytest.raises(exceptions.CosmosHttpResponseError) as e:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as e:
             self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
                 offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0))
-        assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.value)
+        assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.exception)
 
         # Testing auto_scale_settings for the create_container_if_not_exists method
         created_container = self.created_database.create_container_if_not_exists(
@@ -81,11 +83,9 @@ class TestAutoScale:
         assert created_container_properties.auto_scale_max_throughput == 1000
         # Testing the input value of the increment_percentage
         assert created_container_properties.auto_scale_increment_percent == 3
-
         self.created_database.delete_container(created_container.id)
 
     def test_autoscale_create_database(self):
-        self._set_up()
         # Testing auto_scale_settings for the create_database method
         created_database = self.client.create_database("db_auto_scale", offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
@@ -112,8 +112,6 @@ class TestAutoScale:
         self.client.delete_database("db_auto_scale_2")
 
     def test_autoscale_replace_throughput(self):
-        self._set_up()
-
         created_database = self.client.create_database("replace_db", offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
             auto_scale_increment_percent=2))
@@ -138,3 +136,7 @@ class TestAutoScale:
         assert created_container_properties.auto_scale_increment_percent == 20
 
         self.created_database.delete_container(created_container.id)
+
+
+if __name__ == '__main__':
+    unittest.main()

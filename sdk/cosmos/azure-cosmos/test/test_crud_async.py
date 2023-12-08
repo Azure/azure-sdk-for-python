@@ -20,38 +20,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""End to end test.
-"""
-import json
-import logging
-import os.path
-import time
-from typing import Mapping
-import test_config
-import urllib.parse as urllib
-import uuid
-import pytest
-from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
-from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
-import azure.cosmos.documents as documents
-import azure.cosmos.exceptions as exceptions
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
-import azure.cosmos._base as base
-from azure.cosmos.aio import CosmosClient, _retry_utility_async
-from azure.cosmos.partition_key import PartitionKey
-import requests
-from urllib3.util.retry import Retry
-
-pytestmark = pytest.mark.cosmosEmulator
-
-
 # IMPORTANT NOTES:
 #  	Most test cases in this file create collections in your Azure Cosmos account.
 #  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
 
 #  	To Run the test, replace the two member fields (masterKey and host) with values
 #   associated with your Azure Cosmos account.
+
+"""End-to-end test.
+"""
+import json
+import logging
+import os.path
+import time
+import unittest
+import urllib.parse as urllib
+import uuid
+
+import requests
+from azure.core import MatchConditions
+from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
+
+import azure.cosmos
+import azure.cosmos._base as base
+import azure.cosmos.documents as documents
+import azure.cosmos.exceptions as exceptions
+import test_config
+from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.partition_key import PartitionKey
 
 
 class TimeoutTransport(AsyncioRequestsTransport):
@@ -74,15 +72,19 @@ class TimeoutTransport(AsyncioRequestsTransport):
         return response
 
 
-@pytest.mark.usefixtures("teardown")
-class TestCRUDAsync:
+class TestCRUDAsync(unittest.IsolatedAsyncioTestCase):
     """Python CRUD Tests.
     """
+    sync_client: azure.cosmos.CosmosClient = None
+    client: CosmosClient = None
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
+    database_for_test: DatabaseProxy = None
+
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -93,12 +95,12 @@ class TestCRUDAsync:
         """
         try:
             await func(*args, **kwargs)
-            pytest.fail('function should fail.')
+            self.fail('function should fail.')
         except exceptions.CosmosHttpResponseError as inst:
             assert inst.status_code == status_code
 
     @classmethod
-    async def _set_up(cls):
+    def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -106,17 +108,21 @@ class TestCRUDAsync:
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.database_for_test = await cls.client.create_database_if_not_exists(
-            test_config._test_config.TEST_DATABASE_ID)
+        cls.sync_client = CosmosClient(cls.host, cls.masterKey)
+        cls.sync_client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
 
-    async def _clear(self):
-        async for db in self.client.list_databases():
-            self.client.delete_database(db["id"])
+    @classmethod
+    def tearDownClass(cls):
+        cls.sync_client.delete_database(cls.TEST_DATABASE_ID)
 
-    @pytest.mark.asyncio
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        self.database_for_test = self.client.get_database_client(self.TEST_DATABASE_ID)
+
+    async def asyncTearDown(self):
+        await self.client.close()
+
     async def test_database_crud_async(self):
-        await self._set_up()
         # read databases.
         databases = [database async for database in self.client.list_databases()]
         # create a database.
@@ -156,12 +162,8 @@ class TestCRUDAsync:
         assert database_id == database_proxy.id
         db_throughput = await database_proxy.get_throughput()
         assert 10000 == db_throughput.offer_throughput
-        await self._clear()
 
-    # @pytest.mark.skip("skipping as the TestResources subscription doesn't support this offer")
-    @pytest.mark.asyncio
     async def test_database_level_offer_throughput_async(self):
-        await self._set_up()
         # Create a database with throughput
         offer_throughput = 1000
         database_id = str(uuid.uuid4())
@@ -179,11 +181,8 @@ class TestCRUDAsync:
         new_offer_throughput = 2000
         offer = await created_db.replace_throughput(new_offer_throughput)
         assert offer.offer_throughput == new_offer_throughput
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_sql_query_crud_async(self):
-        await self._set_up()
         # create two databases.
         db1 = await self.client.create_database('database 1' + str(uuid.uuid4()))
         db2 = await self.client.create_database('database 2' + str(uuid.uuid4()))
@@ -208,11 +207,8 @@ class TestCRUDAsync:
         databases = [database async for database in
                      self.client.query_databases(query=query_string)]
         assert 1 == len(databases)
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_collection_crud_async(self):
-        await self._set_up()
         created_db = self.database_for_test
         collections = [collection async for collection in created_db.list_containers()]
         # create a collection
@@ -259,11 +255,7 @@ class TestCRUDAsync:
         assert created_container.id == container_proxy.id
         assert PartitionKey(path='/id', kind='Hash') == container_proxy._properties['partitionKey']
 
-        await self._clear()
-
-    @pytest.mark.asyncio
     async def test_partitioned_collection_async(self):
-        await self._set_up()
         created_db = self.database_for_test
 
         collection_definition = {'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
@@ -295,9 +287,7 @@ class TestCRUDAsync:
 
         await created_db.delete_container(created_collection.id)
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_quota_async(self):
-        await self._set_up()
         created_db = self.database_for_test
 
         created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
@@ -311,11 +301,8 @@ class TestCRUDAsync:
             populate_quota_info=True)
         assert retrieved_collection_properties.get("statistics") is not None
         assert created_db.client_connection.last_response_headers.get("x-ms-resource-usage") is not None
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_partition_key_extraction_async(self):
-        await self._set_up()
         created_db = self.database_for_test
 
         collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
@@ -371,11 +358,7 @@ class TestCRUDAsync:
         assert self.last_headers[1] == [{}]
         del self.last_headers[:]
 
-        await self._clear()
-
-    @pytest.mark.asyncio
     async def test_partitioned_collection_partition_key_extraction_special_chars_async(self):
-        await self._set_up()
         created_db = self.database_for_test
 
         collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
@@ -413,7 +396,6 @@ class TestCRUDAsync:
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
         assert self.last_headers[1] == '["val2"]'
         del self.last_headers[:]
-        await self._clear()
 
     def test_partitioned_collection_path_parser(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -431,10 +413,7 @@ class TestCRUDAsync:
         parts = ["Ke \\ \\\" \\\' \\? \\a \\\b \\\f \\\n \\\r \\\t \\v y1", "*"]
         assert parts == base.ParsePaths(paths)
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_document_crud_and_query_async(self):
-        await self._set_up()
-
         created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
 
         document_definition = {'id': 'document',
@@ -502,11 +481,8 @@ class TestCRUDAsync:
         )]
 
         assert len(document_list) == 1
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_permissions_async(self):
-        await self._set_up()
         created_db = self.database_for_test
 
         collection_id = 'test_partitioned_collection_permissions all collection' + str(uuid.uuid4())
@@ -588,11 +564,7 @@ class TestCRUDAsync:
                 document_definition['id']
             )
 
-            await self._clear()
-
-    @pytest.mark.asyncio
     async def test_partitioned_collection_execute_stored_procedure_async(self):
-        await self._set_up()
 
         created_collection = await self.database_for_test.create_container(
             test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY,
@@ -622,11 +594,9 @@ class TestCRUDAsync:
             StatusCodes.BAD_REQUEST,
             created_collection.scripts.execute_stored_procedure,
             created_sproc['id'])
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_partitioned_collection_partition_key_value_types_async(self):
-        await self._set_up()
+
         created_db = self.database_for_test
 
         created_collection = await created_db.create_container(
@@ -686,11 +656,7 @@ class TestCRUDAsync:
             document_definition
         )
 
-        await self._clear()
-
-    @pytest.mark.asyncio
     async def test_partitioned_collection_conflict_crud_and_query_async(self):
-        await self._set_up()
 
         created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
                                                                                          PartitionKey(path="/id"))
@@ -735,11 +701,9 @@ class TestCRUDAsync:
         )]
 
         assert len(conflict_list) == 0
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_document_crud_async(self):
-        await self._set_up()
+
         # create collection
         created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
         # read documents
@@ -818,7 +782,7 @@ class TestCRUDAsync:
                 etag=replaced_document['_etag'],
                 item=replaced_document['id'],
                 body=replaced_document)
-            pytest.fail("should fail if only etag specified")
+            self.fail("should fail if only etag specified")
         except ValueError:
             pass
 
@@ -828,7 +792,7 @@ class TestCRUDAsync:
                 match_condition=MatchConditions.IfNotModified,
                 item=replaced_document['id'],
                 body=replaced_document)
-            pytest.fail("should fail if only match condition specified")
+            self.fail("should fail if only match condition specified")
         except ValueError:
             pass
 
@@ -837,7 +801,7 @@ class TestCRUDAsync:
                 match_condition=MatchConditions.IfModified,
                 item=replaced_document['id'],
                 body=replaced_document)
-            pytest.fail("should fail if only match condition specified")
+            self.fail("should fail if only match condition specified")
         except ValueError:
             pass
 
@@ -847,7 +811,7 @@ class TestCRUDAsync:
                 match_condition=replaced_document['_etag'],
                 item=replaced_document['id'],
                 body=replaced_document)
-            pytest.fail("should fail if invalid match condition specified")
+            self.fail("should fail if invalid match condition specified")
         except TypeError:
             pass
 
@@ -878,11 +842,8 @@ class TestCRUDAsync:
                                                      created_collection.read_item,
                                                      replaced_document['id'],
                                                      replaced_document['id'])
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_document_upsert_async(self):
-        await self._set_up()
 
         # create collection
         created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
@@ -905,7 +866,7 @@ class TestCRUDAsync:
         assert created_document['id'] == document_definition['id']
 
         # test error for non-string id
-        with pytest.raises(TypeError):
+        with self.assertRaises(TypeError):
             document_definition['id'] = 7
             await created_collection.upsert_item(body=document_definition)
 
@@ -939,7 +900,7 @@ class TestCRUDAsync:
         # Test modified access conditions
         created_document['spam'] = 'more eggs'
         await created_collection.upsert_item(body=created_document)
-        with pytest.raises(exceptions.CosmosHttpResponseError):
+        with self.assertRaises(exceptions.CosmosHttpResponseError):
             await created_collection.upsert_item(
                 body=created_document,
                 match_condition=MatchConditions.IfNotModified,
@@ -959,11 +920,9 @@ class TestCRUDAsync:
         # read documents after delete and verify count is same as original
         document_list = [document async for document in created_collection.read_all_items()]
         assert len(document_list) == before_create_documents_count
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def _test_spatial_index(self):
-        await self._set_up()
+
         db = self.database_for_test
         # partial policy specified
         collection = await db.create_container(
@@ -1009,12 +968,10 @@ class TestCRUDAsync:
         assert len(results) == 1
         assert 'loc1' == results[0]['id']
 
-        await self._clear()
-
     # CRUD test for User resource
-    @pytest.mark.asyncio
+
     async def test_user_crud_async(self):
-        await self._set_up()
+
         # Should do User CRUD operations successfully.
         # create database
         db = self.database_for_test
@@ -1056,11 +1013,9 @@ class TestCRUDAsync:
         deleted_user = db.get_user_client(user.id)
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      deleted_user.read)
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_user_upsert_async(self):
-        await self._set_up()
+
         # create database
         db = self.database_for_test
 
@@ -1111,11 +1066,9 @@ class TestCRUDAsync:
         # read users after delete and verify count remains the same
         users = [user async for user in db.list_users()]
         assert len(users) == before_create_count
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_permission_crud_async(self):
-        await self._set_up()
+
         # create database
         db = self.database_for_test
         # create user
@@ -1159,11 +1112,9 @@ class TestCRUDAsync:
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      user.get_permission,
                                                      permission.id)
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_permission_upsert_async(self):
-        await self._set_up()
+
         # create database
         db = self.database_for_test
 
@@ -1231,11 +1182,8 @@ class TestCRUDAsync:
         # read permissions and verify count remains the same
         permissions = [permission async for permission in user.list_permissions()]
         assert len(permissions) == before_create_count
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_authorization_async(self):
-        await self._set_up()
 
         async def __setup_entities():
             """
@@ -1357,11 +1305,9 @@ class TestCRUDAsync:
 
             db.client_connection = old_client_connection
             await db.delete_container(entities['coll'])
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_trigger_crud_async(self):
-        await self._set_up()
+
         # create collection
         collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
                                                                                  PartitionKey(path="/id"))
@@ -1413,11 +1359,9 @@ class TestCRUDAsync:
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      collection.scripts.delete_trigger,
                                                      replaced_trigger['id'])
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_udf_crud_async(self):
-        await self._set_up()
+
         # create collection
         collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
                                                                                  PartitionKey(path="/id"))
@@ -1458,11 +1402,9 @@ class TestCRUDAsync:
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      collection.scripts.get_user_defined_function,
                                                      replaced_udf['id'])
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_sproc_crud_async(self):
-        await self._set_up()
+
         # create collection
         collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
         # read sprocs
@@ -1509,11 +1451,8 @@ class TestCRUDAsync:
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      collection.scripts.get_stored_procedure,
                                                      replaced_sproc['id'])
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_script_logging_execute_stored_procedure_async(self):
-        await self._set_up()
 
         created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
 
@@ -1561,11 +1500,9 @@ class TestCRUDAsync:
 
         assert result == 'Success!'
         assert HttpHeaders.ScriptLogResults not in created_collection.scripts.client_connection.last_response_headers
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_collection_indexing_policy_async(self):
-        await self._set_up()
+
         # create database
         db = self.database_for_test
         # create collection
@@ -1621,11 +1558,9 @@ class TestCRUDAsync:
         collection_with_indexing_policy_properties = await collection_with_indexing_policy.read()
         assert 1 == len(collection_with_indexing_policy_properties['indexingPolicy']['includedPaths'])
         assert 2 == len(collection_with_indexing_policy_properties['indexingPolicy']['excludedPaths'])
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_create_default_indexing_policy_async(self):
-        await self._set_up()
+
         # create database
         db = self.database_for_test
 
@@ -1700,11 +1635,9 @@ class TestCRUDAsync:
         )
         collection_properties = await collection.read()
         await self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_create_indexing_policy_with_composite_and_spatial_indexes_async(self):
-        await self._set_up()
+
         # create database
         db = self.database_for_test
 
@@ -1782,7 +1715,6 @@ class TestCRUDAsync:
             assert indexing_policy['spatialIndexes'] == read_indexing_policy['spatialIndexes']
 
         assert indexing_policy['compositeIndexes'] == read_indexing_policy['compositeIndexes']
-        await self._clear()
 
     async def _check_default_indexing_policy_paths(self, indexing_policy):
         def __get_first(array):
@@ -1800,7 +1732,6 @@ class TestCRUDAsync:
                                           if included_path['path'] == '/*'])
         assert root_included_path.get('indexes') is None
 
-    @pytest.mark.asyncio
     async def test_client_request_timeout_async(self):
         # Test is flaky on Emulator
         if not ('localhost' in self.host or '127.0.0.1' in self.host):
@@ -1808,18 +1739,17 @@ class TestCRUDAsync:
             # making timeout 0 ms to make sure it will throw
             connection_policy.RequestTimeout = 0.000000000001
 
-            with pytest.raises(Exception):
+            with self.assertRaises(Exception):
                 # client does a getDatabaseAccount on initialization, which will time out
                 async with CosmosClient(TestCRUDAsync.host, TestCRUDAsync.masterKey,
                                         connection_policy=connection_policy) as client:
                     print('Async initialization')
 
-    @pytest.mark.asyncio
     async def test_client_request_timeout_when_connection_retry_configuration_specified_async(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
         connection_policy.RequestTimeout = 0.000000000001
-        with pytest.raises(AzureError):
+        with self.assertRaises(AzureError):
             # client does a getDatabaseAccount on initialization, which will time out
             async with CosmosClient(TestCRUDAsync.host, TestCRUDAsync.masterKey,
                                     connection_policy=connection_policy,
@@ -1827,7 +1757,6 @@ class TestCRUDAsync:
                                     retry_on_status_codes=[500, 502, 504]) as client:
                 print('Async Initialization')
 
-    @pytest.mark.asyncio
     async def test_client_connection_retry_configuration_async(self):
         total_time_for_two_retries = await self.initialize_client_with_connection_urllib_retry_config(2)
         total_time_for_three_retries = await self.initialize_client_with_connection_urllib_retry_config(3)
@@ -1844,7 +1773,7 @@ class TestCRUDAsync:
                                     retry_total=retries, retry_connect=retries, retry_read=retries,
                                     retry_backoff_max=0.3, retry_on_status_codes=[500, 502, 504]) as client:
                 print('Async initialization')
-            pytest.fail()
+            self.fail()
         except AzureError as e:
             end_time = time.time()
             return end_time - start_time
@@ -1860,14 +1789,13 @@ class TestCRUDAsync:
                     retry_connect=retries,
                     retry_status=retries) as client:
                 print('Async initialization')
-            pytest.fail()
+            self.fail()
         except AzureError as e:
             end_time = time.time()
             return end_time - start_time
 
-    @pytest.mark.skip("coroutine object has no attribute status_code - need to look into custom timeout transports")
     async def test_absolute_client_timeout_async(self):
-        with pytest.raises(exceptions.CosmosClientTimeoutError):
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
             async with CosmosClient(
                     "https://localhost:9999",
                     TestCRUDAsync.masterKey,
@@ -1882,7 +1810,7 @@ class TestCRUDAsync:
                 passthrough=True) as client:
             print('Async initialization')
 
-            with pytest.raises(exceptions.CosmosClientTimeoutError):
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 await client.create_database_if_not_exists("test", timeout=2)
 
         status_response = 500  # Users connection level retry
@@ -1891,11 +1819,11 @@ class TestCRUDAsync:
                 self.host, self.masterKey, transport=timeout_transport,
                 passthrough=True) as client:
             print('Async initialization')
-            with pytest.raises(exceptions.CosmosClientTimeoutError):
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 await client.create_database("test", timeout=2)
 
             databases = client.list_databases(timeout=2)
-            with pytest.raises(exceptions.CosmosClientTimeoutError):
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 databases = [database async for database in databases]
 
         status_response = 429  # Uses Cosmos custom retry
@@ -1904,16 +1832,14 @@ class TestCRUDAsync:
                 self.host, self.masterKey, transport=timeout_transport,
                 passthrough=True) as client:
             print('Async initialization')
-            with pytest.raises(exceptions.CosmosClientTimeoutError):
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 await client.create_database_if_not_exists("test", timeout=2)
 
             databases = client.list_databases(timeout=2)
-            with pytest.raises(exceptions.CosmosClientTimeoutError):
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 databases = [database async for database in databases]
 
-    @pytest.mark.asyncio
     async def test_query_iterable_functionality_async(self):
-        await self._set_up()
 
         async def __create_resources():
             """Creates resources for this test.
@@ -1971,13 +1897,11 @@ class TestCRUDAsync:
         assert resources['doc1']['id'] == first_block[0]['id']
         assert resources['doc2']['id'] == first_block[1]['id']
         assert 1 == len([page async for page in await page_iter.__anext__()])
-        with pytest.raises(StopAsyncIteration):
+        with self.assertRaises(StopAsyncIteration):
             await page_iter.__anext__()
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_trigger_functionality_async(self):
-        await self._set_up()
+
         triggers_in_collection1 = [
             {
                 'id': 't1',
@@ -2111,17 +2035,14 @@ class TestCRUDAsync:
 
         triggers_3 = [trigger async for trigger in collection3.scripts.list_triggers()]
         assert len(triggers_3) == 1
-        with pytest.raises(Exception):
+        with self.assertRaises(Exception):
             await collection3.create_item(
                 body={'id': 'Docoptype', 'key': 'value2'},
                 post_trigger_include='triggerOpType'
             )
 
-        await self._clear()
-
-    @pytest.mark.asyncio
     async def test_stored_procedure_functionality_async(self):
-        await self._set_up()
+
         # create collection
         collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
 
@@ -2173,7 +2094,6 @@ class TestCRUDAsync:
             partition_key=1
         )
         assert result == 'aso'
-        await self._clear()
 
     def __validate_offer_response_body(self, offer, expected_coll_link, expected_offer_type):
         # type: (Offer, str, Any) -> None
@@ -2186,9 +2106,8 @@ class TestCRUDAsync:
         if expected_offer_type:
             assert expected_offer_type == offer.properties.get('offerType')
 
-    @pytest.mark.asyncio
     async def test_offer_read_and_query_async(self):
-        await self._set_up()
+
         # Create database.
         db = self.database_for_test
 
@@ -2206,11 +2125,9 @@ class TestCRUDAsync:
         await db.delete_container(container=collection)
         # Reading fails.
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, collection.get_throughput)
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_offer_replace_async(self):
-        await self._set_up()
+
         # Create collection.
         container_id = str(uuid.uuid4())
         partition_key = PartitionKey(path="/id")
@@ -2227,11 +2144,9 @@ class TestCRUDAsync:
         assert expected_offer.properties.get('content').get('offerThroughput') + 100 == replaced_offer.properties.get(
             'content').get('offerThroughput')
         assert expected_offer.offer_throughput + 100 == replaced_offer.offer_throughput
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_database_account_functionality_async(self):
-        await self._set_up()
+
         # Validate database account functionality.
         database_account = await self.client._get_database_account()
         assert database_account.DatabasesLink == '/dbs/'
@@ -2245,11 +2160,9 @@ class TestCRUDAsync:
             assert database_account.CurrentMediaStorageUsageInMB == self.client.client_connection.last_response_headers[
                 HttpHeaders.CurrentMediaStorageUsageInMB]
         assert database_account.ConsistencyPolicy['defaultConsistencyLevel'] is not None
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_index_progress_headers_async(self):
-        await self._set_up()
+
         created_db = self.database_for_test
         consistent_coll = await created_db.create_container(
             id='test_index_progress_headers consistent_coll ' + str(uuid.uuid4()),
@@ -2273,11 +2186,8 @@ class TestCRUDAsync:
         assert HttpHeaders.LazyIndexingProgress not in created_db.client_connection.last_response_headers
         assert HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers
 
-        await self._clear()
-
-    @pytest.mark.asyncio
     async def test_get_resource_with_dictionary_and_object_async(self):
-        await self._set_up()
+
         created_db = self.database_for_test
 
         # read database with id
@@ -2392,10 +2302,9 @@ class TestCRUDAsync:
         # read permission with properties
         read_permission = await created_user.get_permission(created_permission.properties)
         assert read_permission.id == created_permission.id
-        await self._clear()
 
     # Commenting out delete all items by pk until pipelines support it
-    # @pytest.mark.asyncio
+    #
     # async def test_delete_all_items_by_partition_key(self):
     #     # create database
     #     created_db = self.database_for_test
@@ -2439,9 +2348,8 @@ class TestCRUDAsync:
     #
     #     await created_db.delete_container(created_collection)
 
-    @pytest.mark.asyncio
     async def test_patch_operations_async(self):
-        await self._set_up()
+
         created_container = await self.database_for_test.create_container_if_not_exists(id="patch_container",
                                                                                         partition_key=PartitionKey(
                                                                                             path="/pk"))
@@ -2508,11 +2416,9 @@ class TestCRUDAsync:
                                                patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
-        await self._clear()
 
-    @pytest.mark.asyncio
     async def test_conditional_patching_async(self):
-        await self._set_up()
+
         created_container = await self.database_for_test.create_container_if_not_exists(id="patch_filter_container",
                                                                                         partition_key=PartitionKey(
                                                                                             path="/pk"))
@@ -2560,10 +2466,9 @@ class TestCRUDAsync:
         assert patched_item.get("address").get("new_city") == "Atlanta"
         assert patched_item.get("number") == 10
         assert patched_item.get("favorite_color") == "yellow"
-        await self._clear()
 
     # Temporarily commenting analytical storage tests until emulator support comes.
-    # @pytest.mark.asyncio
+    #
     # async def test_create_container_with_analytical_store_off(self):
     #     # don't run test, for the time being, if running against the emulator
     #     if 'localhost' in self.host or '127.0.0.1' in self.host:
@@ -2627,18 +2532,20 @@ class TestCRUDAsync:
     #     properties = created_collection.read()
     #     ttl_key = "analyticalStorageTtl"
     #     self.assertTrue(ttl_key in properties and properties[ttl_key] == -1)
-    @pytest.mark.asyncio
+
     async def test_priority_level_async(self):
         # These test verify if headers for priority level are sent
         # Feature must be enabled at the account level
         # If feature is not enabled the test will still pass as we just verify the headers were sent
-        await self._set_up()
-        created_container = await self.database_for_test.create_container_if_not_exists(id="priority_level_container_async",
-                                                                                        partition_key=PartitionKey(path="/pk"))
+
+        created_container = await self.database_for_test.create_container_if_not_exists(
+            id="priority_level_container_async",
+            partition_key=PartitionKey(path="/pk"))
         item1 = {"id": "item1", "pk": "pk1"}
         item2 = {"id": "item2", "pk": "pk2"}
         self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
         priority_level_headers = []
+
         # mock execute function to check if priority level set in headers
 
         async def priority_mock_execute_function(function, *args, **kwargs):
@@ -2646,6 +2553,7 @@ class TestCRUDAsync:
                 priority_level_headers.append(args[4].headers[HttpHeaders.PriorityLevel]
                                               if HttpHeaders.PriorityLevel in args[4].headers else '')
             return await self.OriginalExecuteFunction(function, *args, **kwargs)
+
         _retry_utility_async.ExecuteFunctionAsync = priority_mock_execute_function
         # upsert item with high priority
         await created_container.upsert_item(body=item1, priority_level="High")
@@ -2670,9 +2578,12 @@ class TestCRUDAsync:
         item2_read = await created_container.read_item("item2", "pk2", priority_level="Medium")
         assert priority_level_headers[-1] != "Medium"
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        await self._clear()
 
     async def _mock_execute_function(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
                                  if HttpHeaders.PartitionKey in args[4].headers else '')
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
+
+
+if __name__ == '__main__':
+    unittest.main()

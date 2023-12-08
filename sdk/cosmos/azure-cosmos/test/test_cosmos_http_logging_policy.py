@@ -21,9 +21,9 @@
 # SOFTWARE.
 
 """Tests for the CosmosHttpLoggingPolicy."""
-import pytest
 import logging
 import unittest
+
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 
@@ -31,8 +31,6 @@ try:
     from unittest.mock import Mock
 except ImportError:  # python < 3.3
     from mock import Mock  # type: ignore
-
-pytestmark = pytest.mark.cosmosEmulator
 
 
 class MockHandler(logging.Handler):
@@ -48,8 +46,11 @@ class MockHandler(logging.Handler):
         self.messages.append(record)
 
 
-@pytest.mark.usefixtures("teardown")
 class TestCosmosHttpLogger(unittest.TestCase):
+    mock_handler_diagnostic = None
+    mock_handler_default = None
+    logger_diagnostic = None
+    logger_default = None
     config = test_config._test_config
     host = config.host
     masterKey = config.masterKey
@@ -78,7 +79,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
         cls.client_diagnostic = cosmos_client.CosmosClient(cls.host, cls.masterKey,
                                                            consistency_level="Session",
                                                            connection_policy=cls.connectionPolicy,
-                                                           logger=cls.logger_diagnostic, enable_diagnostics_logging=True)
+                                                           logger=cls.logger_diagnostic,
+                                                           enable_diagnostics_logging=True)
 
     def test_default_http_logging_policy(self):
         # Test if we can log into from creating a database

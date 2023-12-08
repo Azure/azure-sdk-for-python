@@ -20,40 +20,48 @@
 # SOFTWARE.
 
 import unittest
-import pytest
 import uuid
-import azure.cosmos.partition_key as partition_key
+
 import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.partition_key as partition_key
 import test_config
+from azure.cosmos import DatabaseProxy
 
-pytestmark = pytest.mark.cosmosEmulator
 
-@pytest.mark.usefixtures("teardown")
 class PartitionKeyTests(unittest.TestCase):
-    """Tests to verify if non partitioned collections are properly accessed on migration with version 2018-12-31.
+    """Tests to verify if non-partitioned collections are properly accessed on migration with version 2018-12-31.
     """
 
+    client: cosmos_client.CosmosClient = None
+    created_db: DatabaseProxy = None
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
-        cls.created_collection = cls.created_db.create_container_if_not_exists(id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID,
-                                                                               partition_key=partition_key.PartitionKey(path="/pk"))
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
+                                                connection_policy=cls.connectionPolicy)
+        cls.created_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
+        cls.created_collection = cls.created_db.create_container_if_not_exists(
+            id=cls.TEST_CONTAINER_ID,
+            partition_key=partition_key.PartitionKey(path="/pk"),
+            offer_throughput=test_config._test_config.THROUGHPUT_FOR_5_PARTITIONS)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_multi_partition_collection_read_document_with_no_pk(self):
         document_definition = {'id': str(uuid.uuid4())}
         self.created_collection.create_item(body=document_definition)
-        read_item = self.created_collection.read_item(item=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
+        read_item = self.created_collection.read_item(item=document_definition['id'],
+                                                      partition_key=partition_key.NonePartitionKeyValue)
         self.assertEqual(read_item['id'], document_definition['id'])
-        self.created_collection.delete_item(item=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
+        self.created_collection.delete_item(item=document_definition['id'],
+                                            partition_key=partition_key.NonePartitionKeyValue)
 
     def test_hash_v2_partition_key_definition(self):
         created_container = self.created_db.create_container(
@@ -80,3 +88,7 @@ class PartitionKeyTests(unittest.TestCase):
         created_container_properties = created_container.read()
         self.assertEqual(created_container_properties['partitionKey']['version'], 1)
         self.created_db.delete_container(created_container)
+
+
+if __name__ == '__main__':
+    unittest.main()

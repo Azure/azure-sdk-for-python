@@ -18,15 +18,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import unittest
-import pytest
+
 import struct
+import unittest
 
-pytestmark = pytest.mark.cosmosEmulator
-from azure.cosmos._cosmos_murmurhash3 import murmurhash3_128
 from azure.cosmos._cosmos_integers import UInt128
+from azure.cosmos._cosmos_murmurhash3 import murmurhash3_128
 
-@pytest.mark.usefixtures("teardown")
+
 class MurmurHash3Test(unittest.TestCase):
     """Python Murmurhash3 Tests and its compatibility with backend implementation..
         """

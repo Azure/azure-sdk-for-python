@@ -20,33 +20,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""End-to-end test.
-"""
-
-import unittest
-import time
-import uuid
-import pytest
-from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
-import azure.cosmos.documents as documents
-import azure.cosmos.exceptions as exceptions
-from azure.cosmos._routing import routing_range
-from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
-import test_config
-import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos import _retry_utility
-import requests
-
-pytestmark = pytest.mark.cosmosEmulator
-
 # IMPORTANT NOTES:
 #  	Most test cases in this file create collections in your Azure Cosmos account.
 #  	Collections are billing entities.  By running these test cases, you may incur monetary costs on your account.
 
 #  	To Run the test, replace the two member fields (masterKey and host) with values
 #   associated with your Azure Cosmos account.
+
+"""End-to-end test.
+"""
+
+import time
+import unittest
+import uuid
+
+import requests
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
+
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.documents as documents
+import azure.cosmos.exceptions as exceptions
+import test_config
+from azure.cosmos import _retry_utility
+from azure.cosmos._routing import routing_range
+from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.partition_key import PartitionKey
 
 
 class TimeoutTransport(RequestsTransport):
@@ -67,8 +66,7 @@ class TimeoutTransport(RequestsTransport):
         return response
 
 
-@pytest.mark.usefixtures("teardown")
-class CRUDTests(unittest.TestCase):
+class TestSubpartitionCrud(unittest.TestCase):
     """Python CRUD Tests.
     """
     configs = test_config._test_config
@@ -76,6 +74,8 @@ class CRUDTests(unittest.TestCase):
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
+    client: cosmos_client.CosmosClient = None
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
 
     def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -93,13 +93,17 @@ class CRUDTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                    cls.host == '[YOUR_ENDPOINT_HERE]'):
+                cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.databaseForTest = cls.configs.create_database_if_not_exist(cls.client)
+        cls.databaseForTest = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_collection_crud(self):
         created_db = self.databaseForTest
@@ -189,11 +193,11 @@ class CRUDTests(unittest.TestCase):
         # Negative test, check that user can't make a subpartition higher than 3 levels
         collection_definition2 = {'id': 'test_partitioned_collection2_MH ' + str(uuid.uuid4()),
                                   'partitionKey':
-                                  {
-                                         'paths': ['/id', '/pk', '/id2', "/pk2"],
-                                         'kind': documents.PartitionKind.MultiHash,
-                                         'version': 2
-                                     }
+                                      {
+                                          'paths': ['/id', '/pk', '/id2', "/pk2"],
+                                          'kind': documents.PartitionKind.MultiHash,
+                                          'version': 2
+                                      }
                                   }
         try:
             created_collection = created_db.create_container(id=collection_definition['id'],
@@ -303,7 +307,7 @@ class CRUDTests(unittest.TestCase):
                               '/\'second level\" 1*()\'/\'second le/vel2\''],
                     'kind': documents.PartitionKind.MultiHash
                 }
-            }
+        }
 
         created_collection2 = created_db.create_container(
             id=collection_definition2['id'],
@@ -399,7 +403,9 @@ class CRUDTests(unittest.TestCase):
         # enableCrossPartitionQuery or passing in the partitionKey value
         documentlist = list(created_collection.query_items(
             {
-                'query': 'SELECT * FROM root r WHERE r.city=\'' + replaced_document.get('city') + '\' and r.zipcode=\'' + replaced_document.get('zipcode') + '\''  # pylint: disable=line-too-long
+                'query': 'SELECT * FROM root r WHERE r.city=\'' + replaced_document.get(
+                    'city') + '\' and r.zipcode=\'' + replaced_document.get('zipcode') + '\''
+                # pylint: disable=line-too-long
             }))
         self.assertEqual(1, len(documentlist))
 
@@ -408,7 +414,7 @@ class CRUDTests(unittest.TestCase):
         try:
             list(created_collection.query_items(
                 {
-                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''    # nosec
+                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''  # nosec
                 }))
         except Exception:
             pass
@@ -430,9 +436,9 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(1, len(documentlist))
 
         # Using incomplete extracted partition key in item body
-        incomplete_document ={'id': 'document3',
-                              'key': 'value3',
-                              'city': 'Vancouver'}
+        incomplete_document = {'id': 'document3',
+                               'key': 'value3',
+                               'city': 'Vancouver'}
 
         try:
             created_collection.create_item(body=incomplete_document)
@@ -452,10 +458,10 @@ class CRUDTests(unittest.TestCase):
                             in error.message)
 
         # using mix value types for partition key
-        doc_mixed_types={'id': "doc4",
-                         'key': 'value4',
-                         'city': None,
-                         'zipcode': 1000}
+        doc_mixed_types = {'id': "doc4",
+                           'key': 'value4',
+                           'city': None,
+                           'zipcode': 1000}
         created_mixed_type_doc = created_collection.create_item(body=doc_mixed_types)
         self.assertEqual(doc_mixed_types.get('city'), created_mixed_type_doc.get('city'))
         self.assertEqual(doc_mixed_types.get('zipcode'), created_mixed_type_doc.get('zipcode'))
@@ -610,7 +616,7 @@ class CRUDTests(unittest.TestCase):
 
         # Case 1: EPK range matches a single entire physical partition
         EPK_range_1 = routing_range.Range(range_min="0000000030", range_max="0000000050",
-                                                    isMinInclusive=True, isMaxInclusive=False)
+                                          isMinInclusive=True, isMaxInclusive=False)
         over_lapping_ranges_1 = crm.get_overlapping_ranges([EPK_range_1])
         # Should only have 1 over lapping range
         self.assertEqual(len(over_lapping_ranges_1), 1)

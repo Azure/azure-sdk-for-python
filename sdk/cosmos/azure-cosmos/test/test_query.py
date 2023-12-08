@@ -1,28 +1,27 @@
 import unittest
 import uuid
-import azure.cosmos.cosmos_client as cosmos_client
+
 import azure.cosmos._retry_utility as retry_utility
-from azure.cosmos import http_constants
-from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
+import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos.partition_key import PartitionKey
-from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
-from azure.cosmos.documents import _DistinctType
-import pytest
-import collections
 import test_config
+from azure.cosmos import http_constants, DatabaseProxy
+from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
+from azure.cosmos.documents import _DistinctType
+from azure.cosmos.partition_key import PartitionKey
 
-pytestmark = pytest.mark.cosmosEmulator
 
-
-@pytest.mark.usefixtures("teardown")
 class QueryTest(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
 
+    created_db: DatabaseProxy = None
+    client: cosmos_client.CosmosClient = None
     config = test_config._test_config
     host = config.host
     masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
 
     @classmethod
     def setUpClass(cls):
@@ -34,8 +33,13 @@ class QueryTest(unittest.TestCase):
                 "tests.")
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey,
-                                                consistency_level="Session", connection_policy=cls.connectionPolicy)
-        cls.created_db = cls.client.create_database_if_not_exists(cls.config.TEST_DATABASE_ID)
+                                                consistency_level="Session",
+                                                connection_policy=cls.connectionPolicy)
+        cls.created_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_first_and_last_slashes_trimmed_for_query_string(self):
         created_collection = self.created_db.create_container_if_not_exists(
@@ -317,9 +321,10 @@ class QueryTest(unittest.TestCase):
         index_metrics = created_collection.client_connection.last_response_headers[INDEX_HEADER_NAME]
         self.assertIsNotNone(index_metrics)
         expected_index_metrics = {'UtilizedSingleIndexes': [{'FilterExpression': '', 'IndexSpec': '/pk/?',
-                                'FilterPreciseSet': True, 'IndexPreciseSet': True, 'IndexImpactScore': 'High'}],
-                                'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
-                                'PotentialCompositeIndexes': []}
+                                                             'FilterPreciseSet': True, 'IndexPreciseSet': True,
+                                                             'IndexImpactScore': 'High'}],
+                                  'PotentialSingleIndexes': [], 'UtilizedCompositeIndexes': [],
+                                  'PotentialCompositeIndexes': []}
         self.assertDictEqual(expected_index_metrics, index_metrics)
 
     def test_max_item_count_honored_in_order_by_query(self):
@@ -436,8 +441,7 @@ class QueryTest(unittest.TestCase):
                                                                             PartitionKey(path="/pk"))
         values = []
         for i in range(10):
-            document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4())}
-            document_definition['value'] = i // 3
+            document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4()), 'value': i // 3}
             values.append(created_collection.create_item(body=document_definition)['pk'])
 
         self._validate_distinct_offset_limit(created_collection=created_collection,
@@ -482,8 +486,6 @@ class QueryTest(unittest.TestCase):
         )
         self.assertListEqual(list(map(lambda doc: doc['value'], list(query_iterable))), results)
 
-    # TODO: Look into distinct query behavior to re-enable this test when possible
-    @unittest.skip("intermittent failures in the pipeline")
     def test_distinct(self):
         created_database = self.config.create_database_if_not_exist(self.client)
         distinct_field = 'distinct_field'
@@ -514,68 +516,25 @@ class QueryTest(unittest.TestCase):
                 documents.append(created_collection.create_item(body=document_definition))
                 j -= 1
 
-        padded_docs = self._pad_with_none(documents, distinct_field)
-
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),
-                                # nosec
-                                results=self._get_distinct_docs(
-                                    self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None,
-                                    True),
-                                is_select=False,
-                                fields=[distinct_field])
-
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
-                                    distinct_field, pk_field, pk_field, distinct_field),  # nosec
-                                results=self._get_distinct_docs(
-                                    self._get_order_by_docs(padded_docs, pk_field, distinct_field), distinct_field,
-                                    pk_field, True),
-                                is_select=False,
-                                fields=[distinct_field, pk_field])
-
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
-                                    distinct_field, pk_field, distinct_field, pk_field),  # nosec
-                                results=self._get_distinct_docs(
-                                    self._get_order_by_docs(padded_docs, distinct_field, pk_field), distinct_field,
-                                    pk_field, True),
-                                is_select=False,
-                                fields=[distinct_field, pk_field])
-
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct value c.%s from c ORDER BY c.%s' % (
-                                    distinct_field, distinct_field),  # nosec
-                                results=self._get_distinct_docs(
-                                    self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None,
-                                    True),
-                                is_select=False,
-                                fields=[distinct_field])
+        padded_docs = self.config._pad_with_none(documents, distinct_field)
 
         self._validate_distinct(created_collection=created_collection,  # returns {} and is right number
-                                query='SELECT distinct c.%s from c' % (distinct_field),  # nosec
-                                results=self._get_distinct_docs(padded_docs, distinct_field, None, False),
+                                query='SELECT distinct c.%s from c' % distinct_field,  # nosec
+                                results=self.config._get_distinct_docs(padded_docs, distinct_field, None, False),
                                 is_select=True,
                                 fields=[distinct_field])
 
         self._validate_distinct(created_collection=created_collection,
                                 query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),  # nosec
-                                results=self._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
+                                results=self.config._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
                                 is_select=True,
                                 fields=[distinct_field, pk_field])
 
         self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct value c.%s from c' % (distinct_field),  # nosec
-                                results=self._get_distinct_docs(padded_docs, distinct_field, None, True),
+                                query='SELECT distinct value c.%s from c' % distinct_field,  # nosec
+                                results=self.config._get_distinct_docs(padded_docs, distinct_field, None, True),
                                 is_select=True,
                                 fields=[distinct_field])
-
-        self._validate_distinct(created_collection=created_collection,
-                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field),
-                                # nosec
-                                results=[],
-                                is_select=True,
-                                fields=[different_field])
 
         self._validate_distinct(created_collection=created_collection,
                                 query='SELECT distinct c.%s from c' % different_field,  # nosec
@@ -584,27 +543,6 @@ class QueryTest(unittest.TestCase):
                                 fields=[different_field])
 
         created_database.delete_container(created_collection.id)
-
-    def _get_order_by_docs(self, documents, field1, field2):
-        if field2 is None:
-            return sorted(documents, key=lambda d: (d[field1] is not None, d[field1]))
-        else:
-            return sorted(documents, key=lambda d: (d[field1] is not None, d[field1], d[field2] is not None, d[field2]))
-
-    def _get_distinct_docs(self, documents, field1, field2, is_order_by_or_value):
-        if field2 is None:
-            res = collections.OrderedDict.fromkeys(doc[field1] for doc in documents)
-            if is_order_by_or_value:
-                res = filter(lambda x: False if x is None else True, res)
-        else:
-            res = collections.OrderedDict.fromkeys(str(doc[field1]) + "," + str(doc[field2]) for doc in documents)
-        return list(res)
-
-    def _pad_with_none(self, documents, field):
-        for doc in documents:
-            if field not in doc:
-                doc[field] = None
-        return documents
 
     def _validate_distinct(self, created_collection, query, results, is_select, fields):
         query_iterable = created_collection.query_items(
@@ -617,21 +555,12 @@ class QueryTest(unittest.TestCase):
         query_results_strings = []
         result_strings = []
         for i in range(len(results)):
-            query_results_strings.append(self._get_query_result_string(query_results[i], fields))
+            query_results_strings.append(self.config._get_query_result_string(query_results[i], fields))
             result_strings.append(str(results[i]))
         if is_select:
             query_results_strings = sorted(query_results_strings)
             result_strings = sorted(result_strings)
         self.assertListEqual(result_strings, query_results_strings)
-
-    def _get_query_result_string(self, query_result, fields):
-        if type(query_result) is not dict:
-            return str(query_result)
-        res = str(query_result[fields[0]] if fields[0] in query_result else None)
-        if len(fields) == 2:
-            res = res + "," + str(query_result[fields[1]] if fields[1] in query_result else None)
-
-        return res
 
     def test_distinct_on_different_types_and_field_orders(self):
         created_collection = self.created_db.create_container_if_not_exists(

@@ -7,10 +7,8 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,23 +17,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from azure.cosmos.aio import CosmosClient
+import unittest
+import uuid
+
+import azure.cosmos
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos import ThroughputProperties, PartitionKey
-import pytest
 import test_config
+from azure.cosmos import ThroughputProperties, PartitionKey
+from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
-pytestmark = pytest.mark.cosmosEmulator
 
-
-@pytest.mark.usefixtures("teardown")
-class TestAutoScaleAsync:
+class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
 
+    client: CosmosClient = None
+    created_database: DatabaseProxy = None
+    sync_client: azure.cosmos.CosmosClient = None
+
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+
     @classmethod
-    async def _set_up(cls):
+    def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -43,12 +47,21 @@ class TestAutoScaleAsync:
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.created_database = await cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.sync_client = azure.cosmos.CosmosClient(cls.host, cls.masterKey)
+        cls.sync_client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
 
-    @pytest.mark.asyncio
+    @classmethod
+    def tearDownClass(cls):
+        cls.sync_client.delete_database(cls.TEST_DATABASE_ID)
+
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+
+    async def tearDown(self):
+        await self.client.close()
+
     async def test_autoscale_create_container_async(self):
-        await self._set_up()
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
@@ -64,12 +77,12 @@ class TestAutoScaleAsync:
         await self.created_database.delete_container(created_container)
 
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
-        with pytest.raises(exceptions.CosmosHttpResponseError) as e:
+        with self.assertRaises(exceptions.CosmosHttpResponseError) as e:
             await self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
                 offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0))
-        assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.value)
+        assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.exception)
 
         # Testing auto_scale_settings for the create_container_if_not_exists method
         created_container = await self.created_database.create_container_if_not_exists(
@@ -85,9 +98,7 @@ class TestAutoScaleAsync:
 
         await self.created_database.delete_container(created_container.id)
 
-    @pytest.mark.asyncio
     async def test_autoscale_create_database_async(self):
-        await self._set_up()
         # Testing auto_scale_settings for the create_database method
         created_database = await self.client.create_database("db1", offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
@@ -112,10 +123,7 @@ class TestAutoScaleAsync:
 
         await self.client.delete_database("db2")
 
-    @pytest.mark.asyncio
     async def test_replace_throughput_async(self):
-        await self._set_up()
-
         created_database = await self.client.create_database("replace_db", offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
             auto_scale_increment_percent=0))
@@ -131,7 +139,7 @@ class TestAutoScaleAsync:
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)        )
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
         await created_container.replace_throughput(
             throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20))
         created_container_properties = await created_container.get_throughput()
@@ -139,4 +147,6 @@ class TestAutoScaleAsync:
         assert created_container_properties.auto_scale_max_throughput == 7000
         assert created_container_properties.auto_scale_increment_percent == 20
 
-        await self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
+
+if __name__ == '__main__':
+    unittest.main()

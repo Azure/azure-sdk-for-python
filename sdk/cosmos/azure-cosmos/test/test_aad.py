@@ -11,6 +11,9 @@
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
 
+import base64
+import json
+import time
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,19 +22,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import unittest
-
-import pytest
-import base64
-import time
-import json
+import uuid
 from io import StringIO
 
-import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos import exceptions, PartitionKey
 from azure.core.credentials import AccessToken
-import test_config
 
-pytestmark = pytest.mark.cosmosEmulator
+import azure.cosmos.cosmos_client as cosmos_client
+import test_config
+from azure.cosmos import exceptions, PartitionKey, DatabaseProxy, ContainerProxy
 
 
 def _remove_padding(encoded_string):
@@ -103,19 +101,28 @@ class CosmosEmulatorCredential(object):
         return AccessToken(first_encoded + "." + second_encoded + "." + emulator_key_encoded, int(time.time() + 7200))
 
 
-@pytest.mark.usefixtures("teardown")
-class AadTest(unittest.TestCase):
+class TestAAD(unittest.TestCase):
+    client: cosmos_client.CosmosClient = None
+    database: DatabaseProxy = None
+    container: ContainerProxy = None
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
 
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_CONTAINER_ID = "Single Partition Test Collection With Custom PK " + str(uuid.uuid4())
+
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
         cls.container = cls.database.create_container_if_not_exists(
-            id=test_config._test_config.TEST_COLLECTION_SINGLE_PARTITION_ID,
+            id=cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_emulator_aad_credentials(self):
         if self.host != 'https://localhost:8081/':

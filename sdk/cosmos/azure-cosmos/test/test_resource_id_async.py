@@ -1,16 +1,13 @@
 # The MIT License (MIT)
 # Copyright (c) 2023 Microsoft Corporation
-
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,38 +15,42 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
+import unittest
 import uuid
-import pytest
+
+import azure.cosmos
 import test_config
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
-
-pytestmark = pytest.mark.cosmosEmulator
+from azure.cosmos.aio import CosmosClient, DatabaseProxy
 
 
-@pytest.mark.usefixtures("teardown")
-class TestResourceIdsAsync:
+class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
     connectionPolicy = configs.connectionPolicy
     last_headers = []
+    client: CosmosClient = None
+    created_database: DatabaseProxy = None
+    sync_client: azure.cosmos.CosmosClient = None
 
     @classmethod
-    async def _set_up(cls):
+    def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.created_database = await cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
+        cls.sync_client = azure.cosmos.CosmosClient(cls.host, cls.masterKey)
 
-    @pytest.mark.asyncio
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+
+    async def asyncTearDown(self):
+        await self.client.close()
+
     async def test_id_unicode_validation_async(self):
-        await self._set_up()
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
         resource_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है'  # cspell:disable-line
 
@@ -81,9 +82,10 @@ class TestResourceIdsAsync:
         assert resource_id1 == item1.get("id")
         assert resource_id2 == item2.get("id")
 
-    @pytest.mark.asyncio
+        await self.client.delete_database(resource_id1)
+        await self.client.delete_database(resource_id2)
+
     async def test_create_illegal_characters_async(self):
-        await self._set_up()
         database_id = str(uuid.uuid4())
         container_id = str(uuid.uuid4())
         partition_key = PartitionKey(path="/id")
@@ -110,24 +112,29 @@ class TestResourceIdsAsync:
         for resource_id in illegal_strings:
             try:
                 await self.client.create_database(resource_id)
-                pytest.fail("Database create should have failed for id {}".format(resource_id))
+                self.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
 
             try:
                 await created_database.create_container(id=resource_id, partition_key=partition_key)
-                pytest.fail("Container create should have failed for id {}".format(resource_id))
+                self.fail("Container create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
 
             try:
                 await created_container.create_item({"id": resource_id})
-                pytest.fail("Item create should have failed for id {}".format(resource_id))
+                self.fail("Item create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
             try:
                 await created_container.upsert_item({"id": resource_id})
-                pytest.fail("Item upsert should have failed for id {}".format(resource_id))
+                self.fail("Item upsert should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
 
+        await self.client.delete_database(created_database)
+
+
+if __name__ == '__main__':
+    unittest.main()

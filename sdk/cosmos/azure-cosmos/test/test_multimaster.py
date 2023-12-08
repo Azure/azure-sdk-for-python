@@ -1,18 +1,15 @@
 import unittest
 import uuid
-import azure.cosmos.cosmos_client as cosmos_client
-import pytest
+
 import azure.cosmos._constants as constants
-from azure.cosmos.http_constants import HttpHeaders
-from azure.cosmos import _retry_utility
+import azure.cosmos.cosmos_client as cosmos_client
 import test_config
+from azure.cosmos import _retry_utility
+from azure.cosmos.http_constants import HttpHeaders
 from azure.cosmos.partition_key import PartitionKey
 
-pytestmark = pytest.mark.cosmosEmulator
 
-@pytest.mark.usefixtures("teardown")
 class MultiMasterTests(unittest.TestCase):
-
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
@@ -23,30 +20,31 @@ class MultiMasterTests(unittest.TestCase):
         self.last_headers = []
         self.EnableMultipleWritableLocations = True
         self._validate_tentative_write_headers()
-        
+
     def test_tentative_writes_header_not_present(self):
         self.last_headers = []
         self.EnableMultipleWritableLocations = False
         self._validate_tentative_write_headers()
 
-    
     def _validate_tentative_write_headers(self):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
         connectionPolicy = MultiMasterTests.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
-        client = cosmos_client.CosmosClient(MultiMasterTests.host, MultiMasterTests.masterKey, consistency_level="Session",
+        client = cosmos_client.CosmosClient(MultiMasterTests.host, MultiMasterTests.masterKey,
+                                            consistency_level="Session",
                                             connection_policy=connectionPolicy)
 
         created_db = client.create_database(id='multi_master_tests ' + str(uuid.uuid4()))
 
-        created_collection = created_db.create_container(id='test_db', partition_key=PartitionKey(path='/pk', kind='Hash'))
+        created_collection = created_db.create_container(id='test_db',
+                                                         partition_key=PartitionKey(path='/pk', kind='Hash'))
 
-        document_definition = { 'id': 'doc' + str(uuid.uuid4()),
-                                'pk': 'pk',
-                                'name': 'sample document',
-                                'operation': 'insertion'}
+        document_definition = {'id': 'doc' + str(uuid.uuid4()),
+                               'pk': 'pk',
+                               'name': 'sample document',
+                               'operation': 'insertion'}
         created_document = created_collection.create_item(body=document_definition)
 
         sproc_definition = {

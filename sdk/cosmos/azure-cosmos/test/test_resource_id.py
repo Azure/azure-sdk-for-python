@@ -7,10 +7,8 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,17 +16,16 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
+import unittest
 import uuid
-import pytest
+
+import azure.cosmos
 import test_config
 from azure.cosmos import CosmosClient, PartitionKey
 
-pytestmark = pytest.mark.cosmosEmulator
 
-
-@pytest.mark.usefixtures("teardown")
-class TestResourceIds:
+class TestResourceIds(unittest.TestCase):
+    client: azure.cosmos.CosmosClient = None
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
@@ -36,7 +33,7 @@ class TestResourceIds:
     last_headers = []
 
     @classmethod
-    def _set_up(cls):
+    def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -44,10 +41,8 @@ class TestResourceIds:
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.created_database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
     def test_id_unicode_validation(self):
-        self._set_up()
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
         resource_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है'  # cspell:disable-line
 
@@ -79,8 +74,10 @@ class TestResourceIds:
         assert resource_id1 == item1.get("id")
         assert resource_id2 == item2.get("id")
 
+        self.client.delete_database(resource_id1)
+        self.client.delete_database(resource_id2)
+
     def test_create_illegal_characters_async(self):
-        self._set_up()
         database_id = str(uuid.uuid4())
         container_id = str(uuid.uuid4())
         partition_key = PartitionKey(path="/id")
@@ -107,24 +104,29 @@ class TestResourceIds:
         for resource_id in illegal_strings:
             try:
                 self.client.create_database(resource_id)
-                pytest.fail("Database create should have failed for id {}".format(resource_id))
+                self.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
 
             try:
                 created_database.create_container(id=resource_id, partition_key=partition_key)
-                pytest.fail("Container create should have failed for id {}".format(resource_id))
+                self.fail("Container create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
 
             try:
                 created_container.create_item({"id": resource_id})
-                pytest.fail("Item create should have failed for id {}".format(resource_id))
+                self.fail("Item create should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
             try:
                 created_container.upsert_item({"id": resource_id})
-                pytest.fail("Item upsert should have failed for id {}".format(resource_id))
+                self.fail("Item upsert should have failed for id {}".format(resource_id))
             except ValueError as e:
                 assert str(e) in error_strings
 
+        self.client.delete_database(database_id)
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -19,22 +19,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import unittest
-
-from azure.cosmos import CosmosClient as sync_client
-from azure.cosmos.aio import CosmosClient as async_client
-import pytest
-import asyncio
-from test_config import _test_config
-
 # This test class serves to test user-configurable options and verify they are
 # properly set and saved into the different object instances that use these
 # user-configurable settings.
 
-pytestmark = pytest.mark.cosmosEmulator
+import unittest
+
+from azure.cosmos import CosmosClient as sync_client
+from azure.cosmos.aio import CosmosClient as async_client
+from test_config import _test_config
 
 
-@pytest.mark.usefixtures("teardown")
 class TestClientUserAgent(unittest.TestCase):
 
     async def test_client_user_agent(self):
@@ -45,7 +40,8 @@ class TestClientUserAgent(unittest.TestCase):
             self.assertTrue(client_async.client_connection._user_agent.startswith("azsdk-python-cosmos-async/"))
             self.assertTrue(client_async.client_connection._user_agent != client_sync.client_connection._user_agent)
 
+            await client_async.close()
+
 
 if __name__ == "__main__":
-    event_loop = asyncio.get_event_loop()
-    event_loop.run_until_complete(unittest.main())
+    unittest.main()

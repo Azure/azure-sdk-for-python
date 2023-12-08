@@ -20,41 +20,51 @@
 # SOFTWARE.
 
 import unittest
+import uuid
 from unittest.mock import MagicMock
-
-import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
+from azure.cosmos import DatabaseProxy, ContainerProxy
 from azure.cosmos.partition_key import PartitionKey
 
-pytestmark = pytest.mark.cosmosEmulator
+
+def side_effect_correlated_activity_id(*args):
+    # Extract request headers from args
+    assert args[2]["x-ms-cosmos-correlated-activityid"]  # cspell:disable-line
+    raise StopIteration
 
 
-@pytest.mark.usefixtures("teardown")
-class CorrelatedActivityIdTest(unittest.TestCase):
+class TestCorrelatedActivityId(unittest.TestCase):
+    database: DatabaseProxy = None
+    client: cosmos_client.CosmosClient = None
+    container: ContainerProxy = None
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
 
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+    TEST_CONTAINER_ID = "Multi Partition Test Collection With Custom PK " + str(uuid.uuid4())
+
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
-        cls.container = cls.database.create_container(id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_ID,
-                                                      partition_key=PartitionKey(path="/id"))
+        cls.database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
+        cls.container = cls.database.create_container(
+            id=cls.TEST_CONTAINER_ID,
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=cls.configs.THROUGHPUT_FOR_5_PARTITIONS)
 
-    def side_effect_correlated_activity_id(self, *args):
-        # Extract request headers from args
-        assert args[2]["x-ms-cosmos-correlated-activityid"]  # cspell:disable-line
-        raise StopIteration
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_correlated_activity_id(self):
         query = 'SELECT * from c ORDER BY c._ts'
 
         cosmos_client_connection = self.container.client_connection
         cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
-            side_effect=self.side_effect_correlated_activity_id)
+            side_effect=side_effect_correlated_activity_id)
         try:
             self.container.query_items(query=query, partition_key="pk-1")
         except StopIteration:

@@ -19,20 +19,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import unittest
-import pytest
 import platform
-import azure.cosmos.documents as documents
-import azure.cosmos.cosmos_client as cosmos_client
-import test_config
+import unittest
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
+
 from azure.core.exceptions import ServiceRequestError
 
-pytestmark = pytest.mark.cosmosEmulator
+import azure.cosmos.cosmos_client as cosmos_client
+import azure.cosmos.documents as documents
+import test_config
 
 
-@pytest.mark.usefixtures("teardown")
 class CustomRequestHandler(BaseHTTPRequestHandler):
     database_name = None
 
@@ -91,7 +89,7 @@ class ProxyTests(unittest.TestCase):
 
     def test_success_with_correct_proxy(self):
         if platform.system() == 'Darwin':
-            pytest.skip("TODO: Connection error raised on OSX")
+            self.skipTest("TODO: Connection error raised on OSX")
         connection_policy.ProxyConfiguration.Port = self.serverPort
         client = cosmos_client.CosmosClient(self.host, self.masterKey, consistency_level="Session",
                                             connection_policy=connection_policy)

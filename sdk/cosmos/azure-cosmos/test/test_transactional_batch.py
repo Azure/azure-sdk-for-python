@@ -1,5 +1,12 @@
 # The MIT License (MIT)
 # Copyright (c) 2023 Microsoft Corporation
+import unittest
+import uuid
+
+import test_config
+from azure.cosmos import CosmosClient, exceptions, PartitionKey, DatabaseProxy
+from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -7,10 +14,8 @@
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,15 +23,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-import uuid
-import pytest
-import test_config
-
-from azure.cosmos import CosmosClient, exceptions, PartitionKey
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
-
-pytestmark = pytest.mark.cosmosEmulator
 
 
 def get_subpartition_item(item_id):
@@ -37,17 +33,19 @@ def get_subpartition_item(item_id):
             'zipcode': '98052'}
 
 
-@pytest.mark.usefixtures("teardown")
-class TestTransactionalBatch:
+class TestTransactionalBatch(unittest.TestCase):
     """Python Transactional Batch Tests.
     """
 
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
+    client: CosmosClient = None
+    test_database: DatabaseProxy = None
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
 
     @classmethod
-    def _set_up(cls):
+    def setUpClass(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -55,17 +53,20 @@ class TestTransactionalBatch:
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.test_database = cls.client.create_database_if_not_exists(cls.configs.TEST_DATABASE_ID)
+        cls.test_database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def test_invalid_batch_sizes(self):
-        self._set_up()
         container = self.test_database.create_container_if_not_exists(id="invalid_batch_size" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
 
         # empty batch
         try:
             container.execute_item_batch(batch_operations=[], partition_key="Microsoft")
-            pytest.fail("Operation should have failed.")
+            self.fail("Operation should have failed.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
             assert "Batch request has no operations." in e.message
@@ -76,7 +77,7 @@ class TestTransactionalBatch:
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("Operation should have failed.")
+            self.fail("Operation should have failed.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
             assert "Batch request has more operations than what is supported." in e.message
@@ -90,13 +91,12 @@ class TestTransactionalBatch:
         batch = [("create", (massive_item,))]
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("test should have failed")
+            self.fail("test should have failed")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.REQUEST_ENTITY_TOO_LARGE
             assert e.message.startswith("(RequestEntityTooLarge)")
 
     def test_batch_create(self):
-        self._set_up()
         container = self.test_database.create_container_if_not_exists(id="batch_create" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
         batch = []
@@ -113,7 +113,7 @@ class TestTransactionalBatch:
 
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("Request should have failed.")
+            self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.CONFLICT
             assert e.error_index == 1
@@ -128,7 +128,7 @@ class TestTransactionalBatch:
 
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("Request should have failed.")
+            self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
             assert e.error_index == 1
@@ -143,7 +143,7 @@ class TestTransactionalBatch:
 
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("Request should have failed.")
+            self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
             assert e.error_index == 1
@@ -153,7 +153,6 @@ class TestTransactionalBatch:
             assert operation_results[1].get("statusCode") == StatusCodes.BAD_REQUEST
 
     def test_batch_read(self):
-        self._set_up()
         container = self.test_database.create_container_if_not_exists(id="batch_read" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
         batch = []
@@ -172,7 +171,7 @@ class TestTransactionalBatch:
 
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("Request should have failed.")
+            self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.NOT_FOUND
             assert e.error_index == 0
@@ -182,7 +181,6 @@ class TestTransactionalBatch:
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     def test_batch_replace(self):
-        self._set_up()
         container = self.test_database.create_container_if_not_exists(id="batch_replace" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
         batch = [("create", ({"id": "new-item", "company": "Microsoft"},)),
@@ -197,7 +195,7 @@ class TestTransactionalBatch:
 
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("Request should have failed.")
+            self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.NOT_FOUND
             assert e.error_index == 0
@@ -215,7 +213,7 @@ class TestTransactionalBatch:
 
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("Request should have failed.")
+            self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.PRECONDITION_FAILED
             assert e.error_index == 1
@@ -226,7 +224,6 @@ class TestTransactionalBatch:
             assert operation_results[2].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     def test_batch_upsert(self):
-        self._set_up()
         container = self.test_database.create_container_if_not_exists(id="batch_upsert" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
@@ -239,7 +236,6 @@ class TestTransactionalBatch:
         assert batch_response[1].get("resourceBody").get("message") == "item was upsert"
 
     def test_batch_patch(self):
-        self._set_up()
         container = self.test_database.create_container_if_not_exists(id="batch_patch" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
@@ -282,7 +278,7 @@ class TestTransactionalBatch:
 
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("Request should have failed.")
+            self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.PRECONDITION_FAILED
             assert e.error_index == 1
@@ -306,7 +302,6 @@ class TestTransactionalBatch:
         assert len(batch_response) == 2
 
     def test_batch_delete(self):
-        self._set_up()
         container = self.test_database.create_container_if_not_exists(id="batch_delete" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
         create_batch = []
@@ -330,7 +325,7 @@ class TestTransactionalBatch:
 
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-            pytest.fail("Request should have failed.")
+            self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.NOT_FOUND
             assert e.error_index == 0
@@ -400,9 +395,13 @@ class TestTransactionalBatch:
         # try to use incomplete key
         try:
             container.execute_item_batch(batch_operations=batch, partition_key=["WA", "Redmond"])
-            pytest.fail("Request should have failed.")
+            self.fail("Request should have failed.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
             assert "Partition key provided either doesn't correspond to " \
                    "definition in the collection or doesn't match partition key " \
                    "field values specified in the document." in e.message
+
+
+if __name__ == '__main__':
+    unittest.main()

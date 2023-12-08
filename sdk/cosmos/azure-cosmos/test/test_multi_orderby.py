@@ -19,16 +19,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import unittest
-import uuid
-import pytest
-import random
-import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.partition_key import PartitionKey
-import test_config
-
-pytestmark = pytest.mark.cosmosEmulator
-
 # IMPORTANT NOTES:
 
 #      Most test cases in this file create collections in your Azure Cosmos account.
@@ -37,7 +27,16 @@ pytestmark = pytest.mark.cosmosEmulator
 #      To Run the test, replace the two member fields (masterKey and host) with values
 #   associated with your Azure Cosmos account.
 
-@pytest.mark.usefixtures("teardown")
+import random
+import unittest
+import uuid
+
+import azure.cosmos.cosmos_client as cosmos_client
+import test_config
+from azure.cosmos import DatabaseProxy
+from azure.cosmos.partition_key import PartitionKey
+
+
 class MultiOrderbyTests(unittest.TestCase):
     """Multi Orderby and Composite Indexes Tests.
     """
@@ -59,26 +58,30 @@ class MultiOrderbyTests(unittest.TestCase):
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
 
+    client: cosmos_client.CosmosClient = None
+    database: DatabaseProxy = None
+
+    TEST_DATABASE_ID = "Python SDK Test Database " + str(uuid.uuid4())
+
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session", connection_policy=cls.connectionPolicy)
-        cls.database = test_config._test_config.create_database_if_not_exist(cls.client)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
+                                                connection_policy=cls.connectionPolicy)
+        cls.database = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.delete_database(cls.TEST_DATABASE_ID)
 
     def generate_multi_orderby_item(self):
-        item = {}
-        item['id'] = str(uuid.uuid4())
-        item[self.NUMBER_FIELD] = random.randint(0, 5)
-        item[self.NUMBER_FIELD_2] = random.randint(0, 5)
-        item[self.BOOL_FIELD] = random.randint(0, 2) % 2 == 0
-        item[self.STRING_FIELD] = str(random.randint(0, 5))
-        item[self.STRING_FIELD_2] = str(random.randint(0, 5))
-        item[self.NULL_FIELD] = None
-        item[self.OBJECT_FIELD] = ""
-        item[self.ARRAY_FIELD] = []
-        item[self.SHORT_STRING_FIELD] = "a" + str(random.randint(0, 100))
-        item[self.MEDIUM_STRING_FIELD] = "a" + str(random.randint(0, 128) + 100)
-        item[self.LONG_STRING_FIELD] = "a" + str(random.randint(0, 255) + 128)
-        item[self.PARTITION_KEY] = random.randint(0, 5)
+        item = {'id': str(uuid.uuid4()), self.NUMBER_FIELD: random.randint(0, 5),
+                self.NUMBER_FIELD_2: random.randint(0, 5), self.BOOL_FIELD: random.randint(0, 2) % 2 == 0,
+                self.STRING_FIELD: str(random.randint(0, 5)), self.STRING_FIELD_2: str(random.randint(0, 5)),
+                self.NULL_FIELD: None, self.OBJECT_FIELD: "", self.ARRAY_FIELD: [],
+                self.SHORT_STRING_FIELD: "a" + str(random.randint(0, 100)),
+                self.MEDIUM_STRING_FIELD: "a" + str(random.randint(0, 128) + 100),
+                self.LONG_STRING_FIELD: "a" + str(random.randint(0, 255) + 128),
+                self.PARTITION_KEY: random.randint(0, 5)}
         return item
 
     def create_random_items(self, container, number_of_items, number_of_duplicates):
@@ -253,9 +256,11 @@ class MultiOrderbyTests(unittest.TestCase):
                                 "FROM root " + where_string + " " + \
                                 "ORDER BY " + orderby_item_builder  # nosec
 
-                        expected_ordered_list = self.top(self.sort(self.filter(self.items, has_filter), composite_index, invert), has_top, top_count)
+                        expected_ordered_list = self.top(
+                            self.sort(self.filter(self.items, has_filter), composite_index, invert), has_top, top_count)
 
-                        result_ordered_list = list(created_container.query_items(query=query, enable_cross_partition_query=True))
+                        result_ordered_list = list(
+                            created_container.query_items(query=query, enable_cross_partition_query=True))
 
                         self.validate_results(expected_ordered_list, result_ordered_list, composite_index)
 
@@ -270,7 +275,8 @@ class MultiOrderbyTests(unittest.TestCase):
                 order = "ascending" if order == "descending" else "descending"
             path = composite_path['path'].replace("/", "")
             if self.NULL_FIELD not in path:
-                current_docs = sorted(current_docs, key=lambda x: x[path], reverse=True if order == "descending" else False)
+                current_docs = sorted(current_docs, key=lambda x: x[path],
+                                      reverse=True if order == "descending" else False)
         return current_docs
 
     def filter(self, items, has_filter):
@@ -290,3 +296,7 @@ class MultiOrderbyTests(unittest.TestCase):
                     self.assertIsNone(result_values[j])
                 else:
                     self.assertEqual(expected_ordered_list[i][path], result_values[j])
+
+
+if __name__ == '__main__':
+    unittest.main()
