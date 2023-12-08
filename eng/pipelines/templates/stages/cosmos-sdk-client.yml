@@ -75,6 +75,9 @@ parameters:
 - name: AdvancedBuild
   type: boolean
   default: false
+- name: UnsupportedToxEnvironments
+  type: string
+  default: ''
 
 variables:
   - template: /eng/pipelines/templates/variables/globals.yml
