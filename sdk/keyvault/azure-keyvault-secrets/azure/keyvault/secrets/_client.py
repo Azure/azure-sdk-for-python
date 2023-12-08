@@ -26,7 +26,7 @@ class SecretClient(KeyVaultClientBase):
         for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: :class:`~azure.core.credentials.TokenCredential`
+    :type credential: ~azure.core.credentials.TokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.secrets.ApiVersion or str
@@ -55,8 +55,8 @@ class SecretClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -93,7 +93,7 @@ class SecretClient(KeyVaultClientBase):
         :returns: The created or updated secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -151,8 +151,8 @@ class SecretClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -252,8 +252,8 @@ class SecretClient(KeyVaultClientBase):
         :rtype: bytes
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -277,8 +277,8 @@ class SecretClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceExistsError` if the secret's name is already in use,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceExistsError if the secret's name is already in use,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -306,15 +306,15 @@ class SecretClient(KeyVaultClientBase):
         :param str name: Name of the secret to delete.
 
         :returns: A poller for the delete operation. The poller's `result` method returns the
-            :class:`~azure.keyvault.secrets.DeletedSecret` without waiting for deletion to complete. If the vault has
+            azure.keyvault.secrets.DeletedSecret without waiting for deletion to complete. If the vault has
             soft-delete enabled and you want to permanently delete the secret with :func:`purge_deleted_secret`, call
             the poller's `wait` method first. It will block until the deletion is complete. The `wait` method requires
             secrets/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.DeletedSecret]
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -352,8 +352,8 @@ class SecretClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the deleted secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the deleted secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -407,7 +407,7 @@ class SecretClient(KeyVaultClientBase):
 
         :returns: None
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. code-block:: python
@@ -433,12 +433,12 @@ class SecretClient(KeyVaultClientBase):
         :param str name: Name of the deleted secret to recover
 
         :returns: A poller for the recovery operation. The poller's `result` method returns the recovered secret's
-            :class:`~azure.keyvault.secrets.SecretProperties` without waiting for recovery to complete. If you want to
+            azure.keyvault.secrets.SecretProperties without waiting for recovery to complete. If you want to
             use the recovered secret immediately, call the poller's `wait` method, which blocks until the secret is
             ready to use. The `wait` method requires secrets/get permission.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.secrets.SecretProperties]
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py

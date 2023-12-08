@@ -22,7 +22,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.secrets.ApiVersion or str
@@ -51,8 +51,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -84,7 +84,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The created or updated secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -141,8 +141,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -237,8 +237,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :rtype: bytes
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -261,8 +261,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceExistsError` if the secret's name is already in use,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceExistsError if the secret's name is already in use,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -291,8 +291,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -330,8 +330,8 @@ class SecretClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the deleted secret doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the deleted secret doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -383,7 +383,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :returns: None
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. code-block:: python
@@ -408,7 +408,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :returns: The recovered secret's properties.
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
