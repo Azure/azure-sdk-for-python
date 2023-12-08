@@ -685,7 +685,7 @@ def encode_application_properties(value: Optional[Dict[Union[str, bytes], Any]])
     return fields
 
 
-def encode_message_id(value: Any) -> Dict[str, Union[int, uuid.UUID, bytes, str]]:
+def encode_message_id(value: Union[int, uuid.UUID, bytes, str]) -> Dict[str, Union[int, uuid.UUID, bytes, str]]:
     """
     <type name="message-id-ulong" class="restricted" source="ulong" provides="message-id"/>
     <type name="message-id-uuid" class="restricted" source="uuid" provides="message-id"/>

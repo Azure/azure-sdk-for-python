@@ -88,16 +88,21 @@ class _CBSAuth:
         self.expires_on = expires_on
 
     @staticmethod
-    def _set_expiry(expires_in: Optional[float] = None, expires_on: Optional[float] = None) -> Tuple[float,float]:
+    def _set_expiry(expires_in: Optional[float] = None, expires_on: Optional[float] = None) -> Tuple[float, float]:
         if not expires_on and not expires_in:
             raise ValueError("Must specify either 'expires_on' or 'expires_in'.")
+        
+        expires_in_interval: float = 0
+        expires_on_time: float = 0
+        
         if not expires_on and expires_in:
-            expires_on = time.time() + expires_in
+            expires_on_time = time.time() + expires_in
         elif expires_on and not expires_in:
-            expires_in = expires_on - time.time()
-            if expires_in < 1:
+            expires_in_interval = expires_on - time.time()
+            if expires_in_interval < 1:
                 raise ValueError("Token has already expired.")
-        return cast(float, expires_in), cast(float, expires_on)
+
+        return expires_in_interval, expires_on_time
 
 
 class JWTTokenAuth(_CBSAuth):
