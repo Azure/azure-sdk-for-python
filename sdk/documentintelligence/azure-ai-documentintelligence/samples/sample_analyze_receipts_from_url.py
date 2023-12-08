@@ -14,7 +14,7 @@ DESCRIPTION:
     using a pre-trained receipt model.
 
     See fields found on a receipt here:
-    https://aka.ms/azsdk/formrecognizer/receiptfieldschema
+    https://aka.ms/azsdk/documentintelligence/receiptfieldschema
 
 USAGE:
     python sample_analyze_receipts_from_url.py
@@ -25,7 +25,10 @@ USAGE:
 """
 
 import os
-from utils import format_price
+
+
+def format_price(price_dict):
+    return "".join([f"{p}" for p in price_dict.values()])
 
 
 def analyze_receipts_from_url():
@@ -37,10 +40,11 @@ def analyze_receipts_from_url():
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
 
-    document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/receipt/contoso-receipt.png"
-    poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
+    document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/receipt/contoso-receipt.png"
+    poller = document_intelligence_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
     receipts = poller.result()
+    # [END analyze_receipts_from_url]
 
     for idx, receipt in enumerate(receipts.documents):
         print(f"--------Analysis of receipt #{idx + 1}--------")
@@ -89,7 +93,6 @@ def analyze_receipts_from_url():
         if total:
             print(f"Total: {format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
         print("--------------------------------------")
-    # [END analyze_receipts_from_url]
 
 
 if __name__ == "__main__":
@@ -100,10 +103,6 @@ if __name__ == "__main__":
         load_dotenv(find_dotenv())
         analyze_receipts_from_url()
     except HttpResponseError as error:
-        print(
-            "For more information about troubleshooting errors, see the following guide: "
-            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
-        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:
