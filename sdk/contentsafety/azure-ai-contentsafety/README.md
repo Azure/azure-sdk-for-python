@@ -20,7 +20,7 @@ Various documentation is available to help you get started
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing [Azure AI Content Safety][contentsafety_overview] instance.
+- An [Azure AI Content Safety][contentsafety_overview] resource, if no existing resource, you could [create a new one](https://aka.ms/acs-create).
 
 ### Install the package
 
@@ -93,8 +93,8 @@ There are different types of analysis available from this service. The following
 
 |Feature  |Description  |
 |---------|---------|
-|Text Analysis API|Scans text for sexual content, violence, hate, and self harm with multi-severity levels.|
-|Image Analysis API|Scans images for sexual content, violence, hate, and self harm with multi-severity levels.|
+|Text Analysis API|Scans text for sexual content, violence, hate, and self-harm with multi-severity levels.|
+|Image Analysis API|Scans images for sexual content, violence, hate, and self-harm with multi-severity levels.|
 | Text Blocklist Management APIs|The default AI classifiers are sufficient for most content safety needs. However, you might need to screen for terms that are specific to your use case. You can create blocklists of terms to use with the Text API.|
 
 ### Harm categories
