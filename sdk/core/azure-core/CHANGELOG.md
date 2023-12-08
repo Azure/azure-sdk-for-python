@@ -8,7 +8,12 @@
 
 ### Bugs Fixed
 
+- Adjusted `AsyncBearerTokenCredentialPolicy` to work properly with `trio` concurrency mechanisms.   ([#33307](https://github.com/Azure/azure-sdk-for-python/pull/33307))
+
 ### Other Changes
+
+- Added dependency on `anyio` >=3.0,<5.0
+- Bumped minimum dependency on `requests` to 2.21.0.
 
 ## 1.29.5 (2023-10-19)
 

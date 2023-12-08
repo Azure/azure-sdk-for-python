@@ -28,6 +28,7 @@ from azure.monitor.opentelemetry.exporter.export.metrics._exporter import (
     AzureMonitorMetricExporter,
     _get_metric_export_result,
 )
+from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import (
     azure_monitor_context,
     ns_to_iso_str,
@@ -182,15 +183,15 @@ class TestAzureMetricExporter(unittest.TestCase):
 
         self.assertEqual(envelope.instrumentation_key, exporter._instrumentation_key)
         self.assertIsNotNone(envelope.tags)
-        self.assertEqual(envelope.tags.get("ai.device.id"), azure_monitor_context["ai.device.id"])
-        self.assertEqual(envelope.tags.get("ai.device.locale"), azure_monitor_context["ai.device.locale"])
-        self.assertEqual(envelope.tags.get("ai.device.osVersion"), azure_monitor_context["ai.device.osVersion"])
-        self.assertEqual(envelope.tags.get("ai.device.type"), azure_monitor_context["ai.device.type"])
-        self.assertEqual(envelope.tags.get("ai.internal.sdkVersion"), azure_monitor_context["ai.internal.sdkVersion"])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_ID), azure_monitor_context[ContextTagKeys.AI_DEVICE_ID])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_LOCALE), azure_monitor_context[ContextTagKeys.AI_DEVICE_LOCALE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_OS_VERSION), azure_monitor_context[ContextTagKeys.AI_DEVICE_OS_VERSION])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_DEVICE_TYPE), azure_monitor_context[ContextTagKeys.AI_DEVICE_TYPE])
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_SDK_VERSION), azure_monitor_context[ContextTagKeys.AI_INTERNAL_SDK_VERSION])
 
-        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceNamespace.testServiceName")
-        self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), "testServiceInstanceId")
-        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), "testServiceInstanceId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceNamespace.testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), "testServiceInstanceId")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), "testServiceInstanceId")
 
     def test_point_to_envelope_partA_default(self):
         exporter = self._exporter
@@ -205,9 +206,9 @@ class TestAzureMetricExporter(unittest.TestCase):
             value=10,
         )
         envelope = exporter._point_to_envelope(point, "test name", resource)
-        self.assertEqual(envelope.tags.get("ai.cloud.role"), "testServiceName")
-        self.assertEqual(envelope.tags.get("ai.cloud.roleInstance"), platform.node())
-        self.assertEqual(envelope.tags.get("ai.internal.nodeName"), envelope.tags.get("ai.cloud.roleInstance"))
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE), "testServiceName")
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE), platform.node())
+        self.assertEqual(envelope.tags.get(ContextTagKeys.AI_INTERNAL_NODE_NAME), envelope.tags.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE))
 
     def test_point_to_envelope_number(self):
         exporter = self._exporter
