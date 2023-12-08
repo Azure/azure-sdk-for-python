@@ -97,7 +97,10 @@ class SearchClient(HeadersMixin):
         return "<SearchClient [endpoint={}, index={}]>".format(repr(self._endpoint), repr(self._index_name))[:1024]
 
     def close(self) -> None:
-        """Close the session."""
+        """Close the session.
+        :return: None
+        :rtype: None
+        """
         return self._client.close()
 
     @distributed_trace

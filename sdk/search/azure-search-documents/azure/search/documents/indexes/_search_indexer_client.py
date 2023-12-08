@@ -77,7 +77,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return self._client.__exit__(*args)
 
     def close(self) -> None:
-        """Close the session."""
+        """Close the session.
+        :return: None
+        :rtype: None
+        """
         return self._client.close()
 
     @distributed_trace

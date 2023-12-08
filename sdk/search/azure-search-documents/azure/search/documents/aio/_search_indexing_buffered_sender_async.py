@@ -109,7 +109,10 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
 
     @distributed_trace_async
     async def close(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        """Close the session."""
+        """Close the session.
+        :return: None
+        :rtype: None
+        """
         await self._cleanup(flush=True)
         return await self._client.close()
 

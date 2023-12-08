@@ -74,7 +74,10 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return self._client.__exit__(*args)
 
     def close(self) -> None:
-        """Close the session."""
+        """Close the session.
+        :return: None
+        :rtype: None
+        """
         return self._client.close()
 
     def get_search_client(self, index_name: str, **kwargs: Any) -> SearchClient:

@@ -75,7 +75,10 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return await self._client.__aexit__(*args)
 
     async def close(self) -> None:
-        """Close the session."""
+        """Close the session.
+        :return: None
+        :rtype: None
+        """
         return await self._client.close()
 
     def get_search_client(self, index_name: str, **kwargs: Any) -> SearchClient:
@@ -237,9 +240,9 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: The index created or updated
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.ResourceNotFoundError or
-            ~azure.core.exceptions.ResourceModifiedError or 
+            ~azure.core.exceptions.ResourceModifiedError or
             ~azure.core.exceptions.ResourceNotModifiedError or
-            ~azure.core.exceptions.ResourceNotFoundError or 
+            ~azure.core.exceptions.ResourceNotFoundError or
             ~azure.core.exceptions.ResourceExistsError
 
         .. admonition:: Example:
@@ -579,7 +582,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :return: The index created or updated
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises: ~azure.core.exceptions.ResourceNotFoundError
-            ~azure.core.exceptions.ResourceModifiedError or 
+            ~azure.core.exceptions.ResourceModifiedError or
             ~azure.core.exceptions.ResourceNotModifiedError or
             ~azure.core.exceptions.ResourceNotFoundError or
             ~azure.core.exceptions.ResourceExistsError
