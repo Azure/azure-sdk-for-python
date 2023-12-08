@@ -34,13 +34,13 @@ class CryptographyClient(AsyncKeyVaultClientBase):
     that material from Key Vault. When the required key material is unavailable, cryptographic operations are performed
     by the Key Vault service.
 
-    :param key: Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
+    :param key: Either a azure.keyvault.keys.KeyVaultKey instance as returned by
         :func:`~azure.keyvault.keys.aio.KeyClient.get_key`, or a string.
         If a string, the value must be the identifier of an Azure Key Vault key. Including a version is recommended.
-    :type key: str or :class:`~azure.keyvault.keys.KeyVaultKey`
+    :type key: str or azure.keyvault.keys.KeyVaultKey
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.keys.ApiVersion or str
@@ -169,7 +169,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         the key and encryption algorithm.
 
         :param algorithm: Encryption algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.EncryptionAlgorithm
         :param bytes plaintext: Bytes to encrypt
 
         :keyword iv: Initialization vector. Required for only AES-CBC(PAD) encryption. If you pass your own IV,
@@ -182,7 +182,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :paramtype additional_authenticated_data: bytes or None
 
         :returns: The result of the encryption operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
+        :rtype: ~azure.keyvault.keys.crypto.EncryptResult
 
         :raises ValueError: if parameters that are incompatible with the specified algorithm are provided, or if
             generating an IV fails on the current platform.
@@ -245,7 +245,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         the key and encryption algorithm.
 
         :param algorithm: Encryption algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.EncryptionAlgorithm
         :param bytes ciphertext: Encrypted bytes to decrypt. Microsoft recommends you not use CBC without first ensuring
             the integrity of the ciphertext using, for example, an HMAC. See
             https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
@@ -260,7 +260,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :paramtype additional_authenticated_data: bytes or None
 
         :returns: The result of the decryption operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
+        :rtype: ~azure.keyvault.keys.crypto.DecryptResult
 
         :raises ValueError: If parameters that are incompatible with the specified algorithm are provided.
 
@@ -308,11 +308,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         Requires the keys/wrapKey permission.
 
         :param algorithm: wrapping algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.KeyWrapAlgorithm
         :param bytes key: key to wrap
 
         :returns: The result of the wrapping operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.WrapResult`
+        :rtype: ~azure.keyvault.keys.crypto.WrapResult
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
             :start-after: [START wrap_key]
@@ -352,11 +352,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         Requires the keys/unwrapKey permission.
 
         :param algorithm: wrapping algorithm to use
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.KeyWrapAlgorithm
         :param bytes encrypted_key: the wrapped key
 
         :returns: The result of the unwrapping operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapResult`
+        :rtype: ~azure.keyvault.keys.crypto.UnwrapResult
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
             :start-after: [START unwrap_key]
@@ -395,11 +395,11 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         Requires the keys/sign permission.
 
         :param algorithm: signing algorithm
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.SignatureAlgorithm
         :param bytes digest: hashed bytes to sign
 
         :returns: The result of the signing operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.SignResult`
+        :rtype: ~azure.keyvault.keys.crypto.SignResult
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
             :start-after: [START sign]
@@ -441,13 +441,13 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         Requires the keys/verify permission.
 
         :param algorithm: verification algorithm
-        :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
+        :type algorithm: ~azure.keyvault.keys.crypto.SignatureAlgorithm
         :param bytes digest: Pre-hashed digest corresponding to **signature**. The hash algorithm used must be
             compatible with ``algorithm``.
         :param bytes signature: signature to verify
 
         :returns: The result of the verifying operation.
-        :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
+        :rtype: ~azure.keyvault.keys.crypto.VerifyResult
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
             :start-after: [START verify]

@@ -38,7 +38,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         See https://aka.ms/azsdk/blog/vault-uri for details.
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.keys.ApiVersion or str
@@ -83,18 +83,24 @@ class KeyClient(AsyncKeyVaultClientBase):
             )
         return None
 
-    def get_cryptography_client(self, key_name: str, **kwargs) -> CryptographyClient:
-        """Gets a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` for the given key.
+    def get_cryptography_client(
+            self,
+            key_name: str,
+            *,
+            key_version: "Optional[str]" = None,
+        ) -> CryptographyClient:
+        """Gets a azure.keyvault.keys.crypto.aio.CryptographyClient for the given key.
 
         :param str key_name: The name of the key used to perform cryptographic operations.
 
-        :keyword str key_version: Optional version of the key used to perform cryptographic operations.
+        :keyword key_version: Optional version of the key used to perform cryptographic operations.
+        :paramtype key_version: str or None
 
-        :returns: A :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` using the same options, credentials, and
-            HTTP client as this :class:`~azure.keyvault.keys.aio.KeyClient`.
+        :returns: A azure.keyvault.keys.crypto.aio.CryptographyClient using the same options, credentials, and
+            HTTP client as this azure.keyvault.keys.aio.KeyClient.
         :rtype: ~azure.keyvault.keys.crypto.aio.CryptographyClient
         """
-        key_id = _get_key_id(self._vault_url, key_name, kwargs.get("key_version"))
+        key_id = _get_key_id(self._vault_url, key_name, key_version)
 
         # We provide a fake credential because the generated client already has the KeyClient's real credential
         return CryptographyClient(
@@ -137,7 +143,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -212,7 +218,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -256,7 +262,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -300,7 +306,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :returns: The created key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -326,8 +332,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.DeletedKey
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the key doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -370,8 +376,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the key doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -399,8 +405,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.DeletedKey
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the key doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -503,7 +509,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :returns: None
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. code-block:: python
@@ -528,7 +534,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :returns: The recovered key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -580,8 +586,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the key doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -631,8 +637,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :rtype: bytes
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceNotFoundError if the key doesn't exist,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -659,8 +665,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
         :raises:
-            :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.ResourceExistsError if the backed up key's name is already in use,
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -705,7 +711,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         enabled = kwargs.pop("enabled", None)
         not_before = kwargs.pop("not_before", None)
@@ -753,7 +759,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :return: The result of the key release.
         :rtype: ~azure.keyvault.keys.ReleaseKeyResult
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         version = kwargs.pop("version", None)
         result = await self._client.release(
@@ -780,7 +786,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :raises:
             :class:`ValueError` if less than one random byte is requested,
-            :class:`~azure.core.exceptions.HttpResponseError` for other errors
+            azure.core.exceptions.HttpResponseError for other errors
 
         Example:
             .. literalinclude:: ../tests/test_keys_async.py
@@ -805,7 +811,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :return: The key rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         policy = await self._client.get_key_rotation_policy(vault_base_url=self._vault_url, key_name=key_name, **kwargs)
         return KeyRotationPolicy._from_generated(policy)
@@ -821,7 +827,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :return: The new version of the rotated key.
         :rtype: ~azure.keyvault.keys.KeyVaultKey
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         bundle = await self._client.rotate_key(vault_base_url=self._vault_url, key_name=name, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
@@ -849,7 +855,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :return: The updated rotation policy.
         :rtype: ~azure.keyvault.keys.KeyRotationPolicy
 
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises: azure.core.exceptions.HttpResponseError
         """
         lifetime_actions = kwargs.pop("lifetime_actions", policy.lifetime_actions)
         if lifetime_actions:

@@ -66,7 +66,7 @@ class KeyProperties(object):
     :keyword bool managed: Whether the key's lifetime is managed by Key Vault.
     :keyword tags: Application specific metadata in the form of key-value pairs.
     :paramtype tags: dict[str, str]
-    :keyword release_policy: The :class:`~azure.keyvault.keys.KeyReleasePolicy` specifying the rules under which the key
+    :keyword release_policy: The azure.keyvault.keys.KeyReleasePolicy specifying the rules under which the key
         can be exported.
     :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
     """
@@ -247,7 +247,7 @@ class KeyProperties(object):
 
     @property
     def release_policy(self) -> "Optional[KeyReleasePolicy]":
-        """The :class:`~azure.keyvault.keys.KeyReleasePolicy` specifying the rules under which the key can be exported.
+        """The azure.keyvault.keys.KeyReleasePolicy specifying the rules under which the key can be exported.
 
         :returns: The key's release policy specifying the rules for exporting.
         :rtype: ~azure.keyvault.keys.KeyReleasePolicy or None
@@ -378,7 +378,7 @@ class KeyVaultKey(object):
     :param str key_id: Key Vault's identifier for the key. Typically a URI, e.g.
         https://myvault.vault.azure.net/keys/my-key/version
     :param jwk: The key's cryptographic material as a JSON Web Key (https://tools.ietf.org/html/rfc7517). This may be
-        provided as a dictionary or keyword arguments. See :class:`~azure.keyvault.keys.models.JsonWebKey` for field
+        provided as a dictionary or keyword arguments. See azure.keyvault.keys.models.JsonWebKey for field
         names.
     :type jwk: Dict[str, Any]
 
@@ -466,9 +466,9 @@ class KeyVaultKey(object):
 
     @property
     def key_type(self) -> "Union[str, KeyType]":
-        """The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values.
+        """The key's type. See azure.keyvault.keys.KeyType for possible values.
 
-        :returns: The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values.
+        :returns: The key's type. See azure.keyvault.keys.KeyType for possible values.
         :rtype: ~azure.keyvault.keys.KeyType or str
         """
         # pylint:disable=no-member
@@ -476,9 +476,9 @@ class KeyVaultKey(object):
 
     @property
     def key_operations(self) -> "List[Union[str, KeyOperation]]":
-        """Permitted operations. See :class:`~azure.keyvault.keys.KeyOperation` for possible values.
+        """Permitted operations. See azure.keyvault.keys.KeyOperation for possible values.
 
-        :returns: Permitted operations. See :class:`~azure.keyvault.keys.KeyOperation` for possible values.
+        :returns: Permitted operations. See azure.keyvault.keys.KeyOperation for possible values.
         :rtype: List[~azure.keyvault.keys.KeyOperation or str]
         """
         # pylint:disable=no-member

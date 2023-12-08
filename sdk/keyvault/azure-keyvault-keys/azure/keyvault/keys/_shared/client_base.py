@@ -47,11 +47,11 @@ def _format_api_version(request: "HttpRequest", api_version: str) -> "HttpReques
     """Returns a request copy that includes an api-version query parameter if one wasn't originally present.
 
     :param request: The HTTP request being sent.
-    :type request: :class:`~azure.core.rest.HttpRequest`
+    :type request: ~azure.core.rest.HttpRequest
     :param str api_version: The service API version that the request should include.
 
     :returns: A copy of the request that includes an api-version query parameter.
-    :rtype: :class:`~azure.core.rest.HttpRequest`
+    :rtype: ~azure.core.rest.HttpRequest
     """
     request_copy = deepcopy(request)
     params = {"api-version": api_version}  # By default, we want to use the client's API version
