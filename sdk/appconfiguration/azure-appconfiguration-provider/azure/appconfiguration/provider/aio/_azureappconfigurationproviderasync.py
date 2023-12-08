@@ -327,7 +327,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             logging.debug("Refresh called but no refresh options set.")
             return
 
-        with self._refresh_lock:
+        async with self._refresh_lock:
             if self._current_refresh_check:
                 return
             self._current_refresh_check = True
@@ -410,7 +410,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 if (config.key, config.label) in self._refresh_on:
                     sentinel_keys[(config.key, config.label)] = config.etag
         self._refresh_on = sentinel_keys
-        with self._update_lock:
+        async with self._update_lock:
             self._dict = configuration_settings
 
     def _process_key_name(self, config):
