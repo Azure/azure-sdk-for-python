@@ -410,8 +410,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 if (config.key, config.label) in self._refresh_on:
                     sentinel_keys[(config.key, config.label)] = config.etag
         self._refresh_on = sentinel_keys
-        async with self._update_lock:
-            self._dict = configuration_settings
+        self._dict = configuration_settings
 
     def _process_key_name(self, config):
         trimmed_key = config.key
@@ -463,8 +462,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: A list of keys loaded from Azure App Configuration.
         :rtype: Iterable[str]
         """
-        with self._update_lock:
-            return list(self._dict.keys())
+        return list(self._dict.keys())
 
     def items(self) -> Iterable[Tuple[str, Union[str, JSON]]]:
         """
@@ -474,8 +472,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: A set-like of key-value pairs loaded from Azure App Configuration.
         :rtype: Iterable[Tuple[str, Union[str, JSON]]]
         """
-        with self._update_lock:
-            return copy.deepcopy(self._dict.items())
+        return copy.deepcopy(self._dict.items())
 
     def values(self) -> Iterable[Union[str, JSON]]:
         """
@@ -486,8 +483,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         based on there content type.
         :rtype: Iterable[[str], [JSON]]
         """
-        with self._update_lock:
-            return copy.deepcopy(list((self._dict.values())))
+        return copy.deepcopy(list((self._dict.values())))
 
     def get(self, key: str, default: Optional[str] = None) -> Union[str, JSON]:
         """
@@ -499,8 +495,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         :return: The value of the specified key.
         :rtype: Union[str, JSON]
         """
-        with self._update_lock:
-            return copy.deepcopy(self._dict.get(key, default))
+        return copy.deepcopy(self._dict.get(key, default))
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
