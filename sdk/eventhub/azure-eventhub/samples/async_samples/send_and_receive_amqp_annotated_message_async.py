@@ -11,7 +11,6 @@ Example to show sending, receiving and parsing amqp annotated message(s) to Even
 
 import os
 import asyncio
-from typing import Dict, Union, Any
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
 

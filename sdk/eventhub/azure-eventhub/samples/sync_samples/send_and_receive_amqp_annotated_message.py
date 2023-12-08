@@ -10,7 +10,6 @@ Example to show sending, receiving and parsing amqp annotated message(s) to Even
 """
 
 import os
-from typing import Dict, Union, Any
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
 
@@ -51,8 +50,8 @@ def send_sequence_message(producer):
 def send_value_message(producer):
     value_body = {b"key": [-123, b'data', False]}
     header = {"priority": 10}
-    annotations: Dict[Union[str, bytes], Any] = {"annotation_key": "value"}
-    application_properties: Dict[Union[str, bytes], Any] = {"body_type": "value"}
+    annotations = {"annotation_key": "value"}
+    application_properties = {"body_type": "value"}
     value_message = AmqpAnnotatedMessage(
         value_body=value_body,
         header=header,
