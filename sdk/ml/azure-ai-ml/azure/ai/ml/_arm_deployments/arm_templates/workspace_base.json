@@ -440,7 +440,7 @@
             "type": "string",
             "defaultValue": "[concat('sa', uniqueString('featurestore', parameters('resourceGroupName'), parameters('workspaceName')))]",
             "metadata": {
-                "description": "Name of the feature store storage account."
+                "description": "Name of the feature store offline store storage account."
             }
         },
         "offline_store_container_name": {
@@ -934,35 +934,35 @@
                     "dependsOn": [
                       "[parameters('workspaceName')]"
                     ]
-                  },
-                  {
+                },
+                {
                     "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
                     "type": "endpoints",
                     "apiVersion": "2023-08-01-preview",
                     "name": "Azure.ContentSafety",
                     "properties": {
-                      "name": "Azure.ContentSafety",
-                      "endpointType": "Azure.ContentSafety",
-                      "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
+                        "name": "Azure.ContentSafety",
+                        "endpointType": "Azure.ContentSafety",
+                        "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
                     },
                     "dependsOn": [
-                      "[parameters('workspaceName')]"
+                        "[parameters('workspaceName')]"
                     ]
-                  },
-                  {
+                },
+                {
                     "condition": "[and(equals(parameters('endpoint_kind'), 'AIServices'), equals(parameters('endpoint_option'), 'new'), variables('isWorkspaceHub'))]",
                     "type": "endpoints",
                     "apiVersion": "2023-08-01-preview",
                     "name": "Azure.Speech",
                     "properties": {
-                      "name": "Azure.Speech",
-                      "endpointType": "Azure.Speech",
-                      "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
+                        "name": "Azure.Speech",
+                        "endpointType": "Azure.Speech",
+                        "associatedResourceId": "[if(equals(parameters('endpoint_resource_id'), 'null'), null(), parameters('endpoint_resource_id'))]"
                     },
                     "dependsOn": [
-                      "[parameters('workspaceName')]"
+                        "[parameters('workspaceName')]"
                     ]
-                  }
+                }
             ]
         },
         {
@@ -1064,7 +1064,7 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'))]",
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'), not(equals(parameters('materializationIdentityOption'), 'none')))]",
             "type": "Microsoft.Resources/deployments",
             "name": "[concat('offline-store-role-assign-', guid(variables('materializationIdentity'), variables('offlineStore'), 'storage blob data contributor'))]",
             "apiVersion": "2020-06-01",
@@ -1096,7 +1096,7 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'), not(empty(parameters('online_store_resource_id'))))]",
+            "condition": "[and(equals(parameters('kind'), 'featurestore'), equals(parameters('grant_materialization_permissions'), 'true'), not(equals(parameters('materializationIdentityOption'), 'none')), not(empty(parameters('online_store_resource_id'))))]",
             "type": "Microsoft.Resources/deployments",
             "name": "[concat('online-store-role-assign-', guid(variables('materializationIdentity'), parameters('online_store_resource_id'), 'contributor'))]",
             "apiVersion": "2020-06-01",
