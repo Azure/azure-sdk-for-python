@@ -26,9 +26,9 @@
 from __future__ import annotations
 import asyncio
 import abc
-from collections.abc import AsyncIterator
 from typing import (
     AsyncIterator as AsyncIteratorType,
+    AsyncIterable,
     TypeVar,
     Generic,
     Any,
@@ -94,7 +94,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         """
         raise NotImplementedError("stream_download is not implemented.")
 
-    def parts(self) -> AsyncIterator["AsyncHttpResponse"]:
+    def parts(self) -> AsyncIterable["AsyncHttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
 
         :return: An async iterator of the parts

@@ -24,7 +24,9 @@
 #
 # --------------------------------------------------------------------------
 from json import loads
-from typing import Any, Optional, Iterator, MutableMapping, Callable
+from socket import socket
+from email.message import Message
+from typing import Any, Optional, Iterator, MutableMapping, Callable, List, Type, Sequence, TypeVar, Iterable, cast
 from http.client import HTTPResponse as _HTTPResponse
 from ._helpers import (
     get_charset_encoding,
@@ -49,6 +51,9 @@ from ..utils._pipeline_transport_rest_shared import (
     _get_raw_parts_helper,
     _parts_helper,
 )
+
+# The only thing we need is make sure this is callable
+HTTPResponseType = TypeVar("HTTPResponseType", bound=Callable)
 
 
 class _HttpResponseBackcompatMixinBase:
@@ -93,7 +98,9 @@ class _HttpResponseBackcompatMixinBase:
         self.read()
         return self.content  # pylint: disable=no-member
 
-    def _decode_parts(self, message, http_response_type, requests):
+    def _decode_parts(
+        self, message: Message, http_response_type: Type[HTTPResponseType], requests: Sequence[_HttpRequest]
+    ) -> List[HTTPResponseType]:
         """Helper for _decode_parts.
 
         Rebuild an HTTP response from pure string.
@@ -108,8 +115,12 @@ class _HttpResponseBackcompatMixinBase:
         :rtype: list[~azure.core.rest.HttpResponse]
         """
 
-        def _deserialize_response(http_response_as_bytes, http_request, http_response_type):
-            local_socket = BytesIOSocket(http_response_as_bytes)
+        def _deserialize_response(
+            http_response_as_bytes: bytes, http_request: _HttpRequest, http_response_type: HTTPResponseType
+        ):
+            # Duck type a socket, so HTTPResponse can parse those bytes
+            # If someone finds a way to get an HTTPResponse from bytes in a less hacky way, please update this code
+            local_socket = cast(socket, BytesIOSocket(http_response_as_bytes))
             response = _HTTPResponse(local_socket, method=http_request.method)
             response.begin()
             return http_response_type(request=http_request, internal_response=response)
@@ -117,12 +128,12 @@ class _HttpResponseBackcompatMixinBase:
         return _decode_parts_helper(
             self,
             message,
-            http_response_type or RestHttpClientTransportResponse,
+            http_response_type,
             requests,
             _deserialize_response,
         )
 
-    def _get_raw_parts(self, http_response_type=None):
+    def _get_raw_parts(self, http_response_type: Optional[Type[HTTPResponseType]] = None) -> List[HTTPResponseType]:
         """Helper for get_raw_parts
 
         Assuming this body is multipart, return the iterator or parts.
@@ -135,7 +146,12 @@ class _HttpResponseBackcompatMixinBase:
         :return: An iterator of responses
         :rtype: Iterator[~azure.core.rest.HttpResponse]
         """
-        return _get_raw_parts_helper(self, http_response_type or RestHttpClientTransportResponse)
+        # FIXME I'm unclear why the cast is needed TBH.
+        final_type: Type[HTTPResponseType] = http_response_type or cast(
+            Type[HTTPResponseType], RestHttpClientTransportResponse
+        )
+        # Casting self, as this mixin is used only by _HttpResponseBaseImpl
+        return _get_raw_parts_helper(cast(_HttpResponseBaseImpl, self), final_type)
 
     def _stream_download(self, pipeline, **kwargs):
         """DEPRECATED: Generator for streaming request body data.
@@ -158,7 +174,7 @@ class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
         attr = _pad_attr_name(attr, backcompat_attrs)
         return super(HttpResponseBackcompatMixin, self).__getattr__(attr)
 
-    def parts(self):
+    def parts(self) -> Iterable[_HttpResponse]:
         """DEPRECATED: Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
         This is deprecated and will be removed in a later release.
 
@@ -166,7 +182,9 @@ class HttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
         :return: The parts of the response
         :raises ValueError: If the content is not multipart/mixed
         """
-        return _parts_helper(self)
+        # Casting self and result, as this mixin is used only by _HttpResponseBaseImpl
+        result: List[_HttpResponse] = cast(List[_HttpResponse], _parts_helper(cast(_HttpResponseBaseImpl, self)))
+        return result
 
 
 class _HttpResponseBaseImpl(

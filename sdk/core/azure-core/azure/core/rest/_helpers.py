@@ -219,7 +219,9 @@ class HttpRequestBackcompatMixin:
         super(HttpRequestBackcompatMixin, self).__setattr__(attr, value)
 
     @property
-    def _multipart_mixed_info(self) -> Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]]:
+    def _multipart_mixed_info(
+        self,
+    ) -> Optional[Tuple[Sequence["HttpRequestBackcompatMixin"], Sequence[Any], str, Dict[str, Any]]]:
         """DEPRECATED: Information used to make multipart mixed requests.
         This is deprecated and will be removed in a later release.
 
@@ -232,7 +234,9 @@ class HttpRequestBackcompatMixin:
             return None
 
     @_multipart_mixed_info.setter
-    def _multipart_mixed_info(self, val: Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]]):
+    def _multipart_mixed_info(
+        self, val: Optional[Tuple[Sequence["HttpRequestBackcompatMixin"], Sequence[Any], str, Dict[str, Any]]]
+    ):
         """DEPRECATED: Set information to make multipart mixed requests.
         This is deprecated and will be removed in a later release.
 
@@ -382,7 +386,7 @@ class HttpRequestBackcompatMixin:
             kwargs,
         )
 
-    def _prepare_multipart_body(self, content_index=0):
+    def _prepare_multipart_body(self, content_index: int = 0) -> int:
         """DEPRECATED: Prepare your request body for multipart requests.
         This is deprecated and will be removed in a later release.
 
@@ -390,16 +394,18 @@ class HttpRequestBackcompatMixin:
         :returns: The updated index after all parts in this request have been added.
         :rtype: int
         """
-        return _prepare_multipart_body_helper(self, content_index)
+        # This mixin is only use on the HttpRequest object
+        return _prepare_multipart_body_helper(cast(HttpRequest, self), content_index)
 
-    def _serialize(self):
+    def _serialize(self) -> bytes:
         """DEPRECATED: Serialize this request using application/http spec.
         This is deprecated and will be removed in a later release.
 
         :rtype: bytes
         :return: The serialized request
         """
-        return _serialize_request(self)
+        # This mixin is only use on the HttpRequest object
+        return _serialize_request(cast(HttpRequest, self))
 
     def _add_backcompat_properties(self, request, memo):
         """While deepcopying, we also need to add the private backcompat attrs.

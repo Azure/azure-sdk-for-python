@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from __future__ import absolute_import
+from __future__ import annotations
 
 from io import BytesIO
 from email.message import Message
@@ -20,9 +20,11 @@ from typing import (
     Optional,
     Callable,
     Type,
-    Iterator,
     List,
     Sequence,
+    TypeVar,
+    overload,
+    Any,
 )
 from http.client import HTTPConnection
 from urllib.parse import urlparse
@@ -42,6 +44,7 @@ if TYPE_CHECKING:
     )
 
     HTTPRequestType = Union[RestHttpRequestPy3, PipelineTransportHttpRequest]
+
     from ..pipeline.policies import SansIOHTTPPolicy
     from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
         HttpResponse as PipelineTransportHttpResponse,
@@ -51,7 +54,14 @@ if TYPE_CHECKING:
         _HttpResponseBase as PipelineTransportHttpResponseBase,
     )
 
+    # For backcompat type
+    from azure.core.rest._http_response_impl import _HttpResponseBaseImpl, _HttpResponseBackcompatMixinBase
+
+    BackCompatResponseType = Union[_HttpResponseBaseImpl, PipelineTransportHttpResponse]
+
+
 binary_type = str
+HttpResponseType = TypeVar("HttpResponseType")
 
 
 class BytesIOSocket:
@@ -62,10 +72,10 @@ class BytesIOSocket:
     :param bytes bytes_data: The bytes to use to mock the socket.
     """
 
-    def __init__(self, bytes_data):
+    def __init__(self, bytes_data: bytes):
         self.bytes_data = bytes_data
 
-    def makefile(self, *_):
+    def makefile(self, *_) -> BytesIO:
         return BytesIO(self.bytes_data)
 
 
@@ -119,7 +129,7 @@ def _pad_attr_name(attr: str, backcompat_attrs: Sequence[str]) -> str:
     return "_{}".format(attr) if attr in backcompat_attrs else attr
 
 
-def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_index: int = 0) -> int:
+def _prepare_multipart_body_helper(http_request: HTTPRequestType, content_index: int = 0) -> int:
     """Helper for prepare_multipart_body.
 
     Will prepare the body of this request according to the multipart information.
@@ -138,7 +148,7 @@ def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_inde
     if not http_request.multipart_mixed_info:
         return 0
 
-    requests: Sequence["HTTPRequestType"] = http_request.multipart_mixed_info[0]
+    requests: Sequence[HTTPRequestType] = http_request.multipart_mixed_info[0]
     boundary: Optional[str] = http_request.multipart_mixed_info[2]
 
     # Update the main request with the body
@@ -194,7 +204,7 @@ class _HTTPSerializer(HTTPConnection):
         self.buffer += data
 
 
-def _serialize_request(http_request: "HTTPRequestType") -> bytes:
+def _serialize_request(http_request: HTTPRequestType) -> bytes:
     """Helper for serialize.
 
     Serialize a request using the application/http spec/
@@ -217,13 +227,35 @@ def _serialize_request(http_request: "HTTPRequestType") -> bytes:
     return serializer.buffer
 
 
+@overload
 def _decode_parts_helper(
-    response: "PipelineTransportHttpResponseBase",
+    response: _HttpResponseBackcompatMixinBase,
     message: Message,
-    http_response_type: Type["PipelineTransportHttpResponseBase"],
-    requests: Sequence["PipelineTransportHttpRequest"],
+    http_response_type: Type[HttpResponseType],
+    requests: Sequence[RestHttpRequestPy3],
     deserialize_response: Callable,
-) -> List["PipelineTransportHttpResponse"]:
+) -> List[HttpResponseType]:
+    ...
+
+
+@overload
+def _decode_parts_helper(
+    response: PipelineTransportHttpResponseBase,
+    message: Message,
+    http_response_type: Type[HttpResponseType],
+    requests: Sequence[PipelineTransportHttpRequest],
+    deserialize_response: Callable,
+) -> List[HttpResponseType]:
+    ...
+
+
+def _decode_parts_helper(
+    response: Any,
+    message: Message,
+    http_response_type: Type[HttpResponseType],
+    requests: Sequence[Any],
+    deserialize_response: Callable,
+) -> List[HttpResponseType]:
     """Helper for _decode_parts.
 
     Rebuild an HTTP response from pure string.
@@ -271,7 +303,21 @@ def _decode_parts_helper(
     return responses
 
 
-def _get_raw_parts_helper(response, http_response_type: Type):
+@overload
+def _get_raw_parts_helper(
+    response: _HttpResponseBaseImpl, http_response_type: Type[HttpResponseType]
+) -> List[HttpResponseType]:
+    ...
+
+
+@overload
+def _get_raw_parts_helper(
+    response: PipelineTransportHttpResponseBase, http_response_type: Type[HttpResponseType]
+) -> List[HttpResponseType]:
+    ...
+
+
+def _get_raw_parts_helper(response: Any, http_response_type: Type[HttpResponseType]) -> List[HttpResponseType]:
     """Helper for _get_raw_parts
 
     Assuming this body is multipart, return the iterator or parts.
@@ -287,16 +333,38 @@ def _get_raw_parts_helper(response, http_response_type: Type):
     :return: The parts of the response
     """
     body_as_bytes = response.body()
+    content_type = response.content_type
+    if body_as_bytes is None or content_type is None:
+        raise ValueError("You can't get parts if the response is not multipart/mixed")
+
     # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
-    http_body = b"Content-Type: " + response.content_type.encode("ascii") + b"\r\n\r\n" + body_as_bytes
+    http_body = b"Content-Type: " + content_type.encode("ascii") + b"\r\n\r\n" + body_as_bytes
     message: Message = message_parser(http_body)
+
+    if not response.request.multipart_mixed_info:
+        raise ValueError("You can't get parts if the request is not multipart/mixed")
     requests = response.request.multipart_mixed_info[0]
+
     return response._decode_parts(message, http_response_type, requests)  # pylint: disable=protected-access
 
 
+@overload
 def _parts_helper(
-    response: "PipelineTransportHttpResponse",
-) -> Iterator["PipelineTransportHttpResponse"]:
+    response: _HttpResponseBackcompatMixinBase,
+) -> List[_HttpResponseBackcompatMixinBase]:
+    ...
+
+
+@overload
+def _parts_helper(
+    response: PipelineTransportHttpResponse,
+) -> List[PipelineTransportHttpResponse]:
+    ...
+
+
+def _parts_helper(
+    response: Any,
+) -> List[Any]:
     """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
     :param response: The response to decode
