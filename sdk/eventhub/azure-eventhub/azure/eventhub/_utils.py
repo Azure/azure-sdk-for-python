@@ -148,7 +148,7 @@ def set_event_partition_key(
     if annotations is None:
         annotations = {}
     annotations[
-        cast(S, amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL)
+        amqp_transport.PROP_PARTITION_KEY_AMQP_SYMBOL
     ] = partition_key  # pylint:disable=protected-access
     if not raw_message.header:
         raw_message.header = AmqpMessageHeader(header=True)

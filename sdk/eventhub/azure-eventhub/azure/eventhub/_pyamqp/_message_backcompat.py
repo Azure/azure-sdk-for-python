@@ -85,7 +85,10 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         self.state: "MessageState" = MessageState.SendComplete
         self.idle_time: int = 0
         self.retries: int = 0
-        self._settler: "Settler" = kwargs.pop("settler")
+        try:
+            self._settler: "Settler" = kwargs.pop("settler")
+        except KeyError:
+            pass
         self._encoding = kwargs.get("encoding")
         self.delivery_no: Optional[int] = kwargs.get("delivery_no")
         self.delivery_tag: Optional[str] = kwargs.get("delivery_tag") or None
@@ -109,7 +112,8 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
             LegacyMessageHeader(self._message.header) if self._message.header else None
         )
         self.footer: Optional[Dict[Any, Any]]  = self._message.footer
-        self.delivery_annotations: Optional[Dict[S, Any]] = self._message.delivery_annotations
+        # Cast --- cannot assign type S as it is unbound
+        self.delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = cast(Optional[Dict[Union[str, bytes], Any]], self._message.delivery_annotations)
         if self._settler:
             self.state = MessageState.ReceivedUnsettled
         elif self.delivery_no:
