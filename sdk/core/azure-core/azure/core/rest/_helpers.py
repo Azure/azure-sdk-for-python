@@ -57,6 +57,8 @@ from ..utils._pipeline_transport_rest_shared import (
 if TYPE_CHECKING:
     # This avoid a circular import
     from ._rest_py3 import HttpRequest
+else:
+    HttpRequest = Any
 
 ################################### TYPES SECTION #########################
 
