@@ -60,7 +60,7 @@ def in_ci() -> int:
 
 
 def in_public() -> int:
-    # PULLREQUEST is set to `True` for PRs, return 3
+    # Returns 3 if the build originates from a pull request
     # 0 otherwise
     if os.getenv("BUILD_REASON") == "PullRequest" or os.getenv("GITHUB_EVENT_NAME") == "pull_request":
         return 3
