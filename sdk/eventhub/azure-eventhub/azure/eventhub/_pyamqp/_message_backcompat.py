@@ -85,10 +85,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         self.state: "MessageState" = MessageState.SendComplete
         self.idle_time: int = 0
         self.retries: int = 0
-        try:
-            self._settler: "Settler" = kwargs.pop("settler")
-        except KeyError:
-            pass
+        self._settler: Optional["Settler"] = kwargs.pop("settler", None)
         self._encoding = kwargs.get("encoding")
         self.delivery_no: Optional[int] = kwargs.get("delivery_no")
         self.delivery_tag: Optional[str] = kwargs.get("delivery_tag") or None
@@ -167,7 +164,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         return self._to_outgoing_amqp_message(self._message)
 
     def accept(self) -> bool:
-        if self._can_settle_message():
+        if self._can_settle_message() and self._settler:
             self._settler.settle_messages(self.delivery_no, "accepted")
             self.state = MessageState.ReceivedSettled
             return True
@@ -179,7 +176,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         info: Optional[Dict[Any, Any]] = None
     ) -> bool:
-        if self._can_settle_message():
+        if self._can_settle_message() and self._settler:
             self._settler.settle_messages(
                 self.delivery_no,
                 "rejected",
@@ -192,7 +189,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         return False
 
     def release(self) -> bool:
-        if self._can_settle_message():
+        if self._can_settle_message() and self._settler:
             self._settler.settle_messages(self.delivery_no, "released")
             self.state = MessageState.ReceivedSettled
             return True
@@ -204,7 +201,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         deliverable: bool,
         annotations: Optional[Dict[Union[str, bytes], Any]] = None
     ) -> bool:
-        if self._can_settle_message():
+        if self._can_settle_message() and self._settler:
             self._settler.settle_messages(
                 self.delivery_no,
                 "modified",
