@@ -461,6 +461,33 @@ class TestWorkspaceOperation:
         assert param["offline_store_connection_name"]["value"] == "OfflineStoreConnectionName"
         assert param["online_store_connection_name"]["value"] == "OnlineStoreConnectionName"
 
+    def test_generate_materialization_identity_name(self) -> None:
+        from azure.ai.ml.operations._workspace_operations_base import _generate_materialization_identity
+
+        # case1
+        ws = Workspace(name="workspace_name", resource_group="rG", location="eastus")
+        name = _generate_materialization_identity(workspace=ws, subscription_id="sUb", resources_being_deployed={})
+        ws1 = Workspace(name="Workspace_Name", resource_group="Rg", location="eastus")
+        name1 = _generate_materialization_identity(workspace=ws1, subscription_id="suB", resources_being_deployed={})
+        assert name == name1
+
+        # case2
+        ws1 = Workspace(name="workspace_name", resource_group="rg", location="westus")
+        name1 = _generate_materialization_identity(workspace=ws1, subscription_id="sub", resources_being_deployed={})
+        assert name != name1
+
+        # case3
+        ws1 = Workspace(name="workspaceName", resource_group="rg", location="eastus")
+        name1 = _generate_materialization_identity(workspace=ws1, subscription_id="sub", resources_being_deployed={})
+        assert name != name1
+
+        # case4
+        ws = Workspace(name="longWorkspace-12Name345", resource_group="resourceGroup")
+        name = _generate_materialization_identity(
+            workspace=ws, subscription_id="Subscription", resources_being_deployed={}
+        )
+        assert name is not None
+
     def test_populate_feature_store_role_assignments_paramaters(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
