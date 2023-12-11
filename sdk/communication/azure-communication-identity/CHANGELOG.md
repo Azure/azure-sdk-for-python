@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -13,7 +15,6 @@
 ## 1.4.0 (2023-11-30)
 
 ### Features Added
-- Added support for a new communication identifier `MicrosoftTeamsAppIdentifier`.
 
 - Introduction of new scopes for token generation.
     - `CHAT_JOIN` (Access to Chat APIs but without the authorization to create, delete or update chat threads)
