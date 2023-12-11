@@ -255,11 +255,11 @@ class MicrosoftTeamsAppProperties(TypedDict):
 class _botbackcompatdict(dict):
     """Backwards compatible properties."""
     def __getitem__(self, __key: Any) -> Any:
-        if __key == "bot_id":
-            __key = "app_id"
         try:
             return super().__getitem__(__key)
         except KeyError:
+            if __key == "bot_id":
+                return super().__getitem__("app_id")
             if __key == "is_resource_account_configured":
                 return True
             raise
@@ -317,7 +317,7 @@ class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
         """
         :param str bot_id: Microsoft bot id.
         :keyword bool is_resource_account_configured: `False` if the identifier is global.
-        Default value is `True` for tennantzed bots.
+         Default value is `True` for tennantzed bots.
         :keyword cloud: Cloud environment that the bot belongs to. Default value is `PUBLIC`.
         :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
         """
