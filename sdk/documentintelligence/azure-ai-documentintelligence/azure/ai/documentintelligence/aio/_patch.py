@@ -6,9 +6,48 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+from typing import Any, List, Union
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+
+from ._client import(
+    DocumentIntelligenceClient as GeneratedDocumentIntelligenceClient,
+    DocumentIntelligenceAdministrationClient as GeneratedDocumentIntelligenceAdministrationClient,
+)
+
+
+class DocumentIntelligenceClient(GeneratedDocumentIntelligenceClient):
+    __doc__ = GeneratedDocumentIntelligenceClient.__doc__
+
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+        # The default polling interval should be 5 seconds.
+        polling_interval = kwargs.pop("polling_interval", 5)
+        super().__init__(
+            endpoint=endpoint,
+            credential=credential,
+            polling_interval=polling_interval,
+            **kwargs,
+        )
+
+
+class DocumentIntelligenceAdministrationClient(GeneratedDocumentIntelligenceAdministrationClient):
+    __doc__ = GeneratedDocumentIntelligenceAdministrationClient.__doc__
+
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+        # The default polling interval should be 5 seconds.
+        polling_interval = kwargs.pop("polling_interval", 5)
+        super().__init__(
+            endpoint=endpoint,
+            credential=credential,
+            polling_interval=polling_interval,
+            **kwargs,
+        )
+        
+
+__all__: List[str] = [
+    "DocumentIntelligenceClient",
+    "DocumentIntelligenceAdministrationClient",
+]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
