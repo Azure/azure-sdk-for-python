@@ -19,7 +19,7 @@ class TestModelPackage(AzureRecordedTestCase):
         package_config = ModelPackage(
             target_environment="my-package-name",
             inferencing_server=AzureMLOnlineInferencingServer(),
-            model_configuration=ModelConfiguration(mode="copy"),
+            model_configuration=ModelConfiguration(mode="Copy"),
         )
 
-        client.models.package("test-model2", "1", package_config)
+        client.models.package("test-model-1", "1", package_config)

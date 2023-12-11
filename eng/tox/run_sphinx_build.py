@@ -105,6 +105,12 @@ if __name__ == "__main__":
         default=False
     )
 
+    parser.add_argument(
+        "--strict",
+        dest="strict",
+        default=False
+    )
+
     args = parser.parse_args()
 
     output_dir = os.path.abspath(args.output_directory)
@@ -114,7 +120,7 @@ if __name__ == "__main__":
     pkg_details = ParsedSetup.from_path(package_dir)
 
     if should_build_docs(pkg_details.name):
-        fail_on_warning = get_config_setting(args.package_root, "strict_sphinx", default=False)
+        fail_on_warning = args.strict or get_config_setting(args.package_root, "strict_sphinx", default=False)
 
         sphinx_build(target_dir, output_dir, fail_on_warning=fail_on_warning)
 

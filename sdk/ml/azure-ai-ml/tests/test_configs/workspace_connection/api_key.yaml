@@ -1,0 +1,8 @@
+name: test_ws_conn_api_key
+type: api_key
+target: my_endpoint
+tags:
+  one: two
+credentials:
+  type: api_key
+  key: "7777"
