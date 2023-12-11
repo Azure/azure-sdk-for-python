@@ -339,29 +339,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-    def test_workspace_connections_create_update_and_delete_api_key_conn(
-        self,
-        client: MLClient,
-        randstr: Callable[[], str],
-    ) -> None:
-        wps_connection_name = f"e2etest_wps_conn_{randstr('wps_connection_name')}"
-
-        wps_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/api_key.yaml")
-
-        wps_connection.name = wps_connection_name
-
-        wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
-
-        assert wps_connection.name == wps_connection_name
-        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
-        assert wps_connection.type == camel_to_snake(ConnectionCategory.API_KEY)
-        assert wps_connection.tags is not None
-
-        client.connections.delete(name=wps_connection_name)
-
-        with pytest.raises(Exception):
-            client.connections.get(name=wps_connection_name)
-
     def test_workspace_connections_create_update_and_delete_custom_conn(
         self,
         client: MLClient,

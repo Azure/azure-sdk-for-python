@@ -180,16 +180,6 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "my_endpoint"
         assert ws_connection.tags["one"] == "two"
 
-        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/api_key.yaml")
-
-        assert ws_connection.type == camel_to_snake(ConnectionCategory.API_KEY)
-        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
-        assert ws_connection.credentials.key == "7777"
-        assert ws_connection.name == "test_ws_conn_api_key"
-        assert ws_connection.target == "my_endpoint"
-        assert ws_connection.tags["one"] == "two"
-        assert ws_connection.is_shared
-
     def test_ws_conn_rest_conversion(self):
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/open_ai.yaml")
         rest_conn = ws_connection._to_rest_object()

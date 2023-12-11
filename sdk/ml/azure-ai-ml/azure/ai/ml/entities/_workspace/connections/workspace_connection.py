@@ -72,7 +72,7 @@ class WorkspaceConnection(Resource):
     :param type: The category of external resource for this connection.
     :type type: The type of workspace connection, possible values are: "git", "python_feed", "container_registry",
         "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db",
-        "azure_postgres_db", "custom_keys", "api_key".
+        "azure_postgres_db", "custom_keys".
     :param credentials: The credentials for authenticating to the external resource. Note that certain connection
         types (as defined by the type input) only accept certain types of credentials.
     :type credentials: Union[

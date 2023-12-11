@@ -37,7 +37,6 @@ class WorkspaceConnectionSchema(ResourceSchema):
             ConnectionCategory.AZURE_MY_SQL_DB,
             ConnectionCategory.AZURE_POSTGRES_DB,
             ConnectionCategory.CUSTOM_KEYS,
-            ConnectionCategory.API_KEY,
         ],
         casing_transform=camel_to_snake,
         required=True,
