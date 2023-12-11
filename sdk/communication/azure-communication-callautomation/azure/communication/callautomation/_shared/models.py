@@ -12,7 +12,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
-    def __getattribute__(self, item):
+    def __getattribute__(cls, item):
         if item.upper() == "MICROSOFT_BOT":
             warnings.warn("MICROSOFT_BOT is deprecated and has been replaced by \
                           MICROSOFT_TEAMS_APP identifier.", DeprecationWarning)
