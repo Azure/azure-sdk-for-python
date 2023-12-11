@@ -3,14 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import Mapping, Union, Any, cast
-try:
-    from typing import Literal
-except ImportError:
-    from typing_extensions import Literal
 import warnings
-from typing_extensions import TypedDict, Protocol, runtime_checkable
+from typing import Mapping, Optional, Union, Any, cast
+from typing_extensions import Literal, TypedDict, Protocol, runtime_checkable
+
 from azure.core import CaseInsensitiveEnumMeta
+
 
 class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
 
@@ -45,15 +43,22 @@ class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta
     DOD = "DOD"
     GCCH = "GCCH"
 
+
 @runtime_checkable
 class CommunicationIdentifier(Protocol):
     """Communication Identifier."""
-    raw_id: str
-    """The raw ID of the identifier."""
-    kind: CommunicationIdentifierKind
-    """The type of identifier."""
-    properties: Mapping[str, Any]
-    """The properties of the identifier."""
+    @property
+    def raw_id(self) -> str:
+        """The raw ID of the identifier."""
+        ...
+    @property
+    def kind(self) -> CommunicationIdentifierKind:
+        """The type of identifier."""
+        ...
+    @property
+    def properties(self) -> Mapping[str, Any]:
+        """The properties of the identifier."""
+        ...
 
 
 PHONE_NUMBER_PREFIX = "4:"
@@ -96,22 +101,17 @@ class CommunicationUserIdentifier:
         :param str id: ID of the Communication user as returned from Azure Communication Identity.
         :keyword str raw_id: The raw ID of the identifier. If not specified, the 'id' value will be used.
         """
-        self.raw_id = kwargs.get("raw_id", id)
         self.properties = CommunicationUserProperties(id=id)
-        if self.raw_id is None:
-            self.raw_id = _communication_user_raw_id(self)
+        raw_id: Optional[str] = kwargs.get("raw_id")
+        self.raw_id = raw_id if raw_id is not None else id
 
     def __eq__(self, other):
         try:
-            return self.raw_id == _communication_user_raw_id(other)
-        except (AttributeError, TypeError, IndexError):
+            if other.raw_id:
+                return self.raw_id == other.raw_id
+            return self.raw_id == other.properties["id"]
+        except Exception:  # pylint: disable=broad-except
             return False
-
-
-def _communication_user_raw_id(identifier: CommunicationUserIdentifier) -> str:
-    if identifier.raw_id:
-        return identifier.raw_id
-    return identifier.properties["id"]
 
 
 class PhoneNumberProperties(TypedDict):
@@ -135,25 +135,23 @@ class PhoneNumberIdentifier:
         :keyword str raw_id: The raw ID of the identifier. If not specified, this will be constructed from
           the 'value' parameter.
         """
-        self.raw_id = kwargs.get("raw_id")
         self.properties = PhoneNumberProperties(value=value)
-        if self.raw_id is None:
-            self.raw_id = _phone_number_raw_id(self)
+        raw_id: Optional[str] = kwargs.get("raw_id")
+        self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
 
     def __eq__(self, other):
         try:
-            return self.raw_id == _phone_number_raw_id(other)
-        except (AttributeError, TypeError, IndexError):
+            if other.raw_id:
+                return self.raw_id == other.raw_id
+            return self.raw_id == self._format_raw_id(other.properties)
+        except Exception:  # pylint:disable=broad-except
             return False
 
-
-def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
-    if identifier.raw_id:
-        return identifier.raw_id
-    value = identifier.properties["value"]
-    # We just assume correct E.164 format here because
-    # validation should only happen server-side, not client-side.
-    return f"{PHONE_NUMBER_PREFIX}{value}"
+    def _format_raw_id(self, properties: PhoneNumberProperties) -> str:
+        # We just assume correct E.164 format here because
+        # validation should only happen server-side, not client-side.
+        value = properties["value"]
+        return f"{PHONE_NUMBER_PREFIX}{value}"
 
 
 class UnknownIdentifier:
@@ -216,36 +214,34 @@ class MicrosoftTeamsUserIdentifier:
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed from
          the other properties.
         """
-        self.raw_id = kwargs.get("raw_id")
         self.properties = MicrosoftTeamsUserProperties(
             user_id=user_id,
             is_anonymous=kwargs.get("is_anonymous", False),
             cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
         )
-        if self.raw_id is None:
-            self.raw_id = _microsoft_teams_user_raw_id(self)
+        raw_id: Optional[str] = kwargs.get("raw_id")
+        self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
 
     def __eq__(self, other):
         try:
-            return self.raw_id == _microsoft_teams_user_raw_id(other)
+            if other.raw_id:
+                return self.raw_id == other.raw_id
+            return self.raw_id == self._format_raw_id(other.properties)
         except Exception:  # pylint: disable=broad-except
             return False
 
-
-def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
-    if identifier.raw_id:
-        return identifier.raw_id
-    user_id = identifier.properties["user_id"]
-    if identifier.properties["is_anonymous"]:
-        return f"{TEAMS_USER_ANONYMOUS_PREFIX}{user_id}"
-    cloud = identifier.properties["cloud"]
-    if cloud == CommunicationCloudEnvironment.DOD:
-        return f"{TEAMS_USER_DOD_CLOUD_PREFIX}{user_id}"
-    if cloud == CommunicationCloudEnvironment.GCCH:
-        return f"{TEAMS_USER_GCCH_CLOUD_PREFIX}{user_id}"
-    if cloud == CommunicationCloudEnvironment.PUBLIC:
+    def _format_raw_id(self, properties: MicrosoftTeamsUserProperties) -> str:
+        user_id = properties["user_id"]
+        if properties["is_anonymous"]:
+            return f"{TEAMS_USER_ANONYMOUS_PREFIX}{user_id}"
+        cloud = properties["cloud"]
+        if cloud == CommunicationCloudEnvironment.DOD:
+            return f"{TEAMS_USER_DOD_CLOUD_PREFIX}{user_id}"
+        if cloud == CommunicationCloudEnvironment.GCCH:
+            return f"{TEAMS_USER_GCCH_CLOUD_PREFIX}{user_id}"
+        if cloud == CommunicationCloudEnvironment.PUBLIC:
+            return f"{TEAMS_USER_PUBLIC_CLOUD_PREFIX}{user_id}"
         return f"{TEAMS_USER_PUBLIC_CLOUD_PREFIX}{user_id}"
-    return f"{TEAMS_USER_PUBLIC_CLOUD_PREFIX}{user_id}"
 
 
 class MicrosoftTeamsAppProperties(TypedDict):
@@ -259,11 +255,11 @@ class MicrosoftTeamsAppProperties(TypedDict):
 class _botbackcompatdict(dict):
     """Backwards compatible properties."""
     def __getitem__(self, __key: Any) -> Any:
-        if __key == "bot_id":
-            __key = "app_id"
         try:
             return super().__getitem__(__key)
         except KeyError:
+            if __key == "bot_id":
+                return super().__getitem__("app_id")
             if __key == "is_resource_account_configured":
                 return True
             raise
@@ -286,19 +282,29 @@ class MicrosoftTeamsAppIdentifier:
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed
          from the other properties.
         """
-        self.raw_id = kwargs.get("raw_id")
         self.properties = cast(MicrosoftTeamsAppProperties, _botbackcompatdict(
             app_id=app_id,
             cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
         ))
-        if self.raw_id is None:
-            self.raw_id = _microsoft_teams_app_raw_id(self)
+        raw_id: Optional[str] = kwargs.get("raw_id")
+        self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
 
     def __eq__(self, other):
         try:
-            return self.raw_id == _microsoft_teams_app_raw_id(other)
-        except (AttributeError, IndexError, TypeError):
+            if other.raw_id:
+                return self.raw_id == other.raw_id
+            return self.raw_id == self._format_raw_id(other.properties)
+        except Exception:  # pylint: disable=broad-except
             return False
+
+    def _format_raw_id(self, properties: MicrosoftTeamsAppProperties) -> str:
+        app_id = properties["app_id"]
+        cloud = properties["cloud"]
+        if cloud == CommunicationCloudEnvironment.DOD:
+            return f"{TEAMS_APP_DOD_CLOUD_PREFIX}{app_id}"
+        if cloud == CommunicationCloudEnvironment.GCCH:
+            return f"{TEAMS_APP_GCCH_CLOUD_PREFIX}{app_id}"
+        return f"{TEAMS_APP_PUBLIC_CLOUD_PREFIX}{app_id}"
 
 
 class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
@@ -311,7 +317,7 @@ class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
         """
         :param str bot_id: Microsoft bot id.
         :keyword bool is_resource_account_configured: `False` if the identifier is global.
-        Default value is `True` for tennantzed bots.
+         Default value is `True` for tennantzed bots.
         :keyword cloud: Cloud environment that the bot belongs to. Default value is `PUBLIC`.
         :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
         """
@@ -320,19 +326,6 @@ class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
             DeprecationWarning
         )
         super().__init__(bot_id, **kwargs)
-
-
-def _microsoft_teams_app_raw_id(identifier: MicrosoftTeamsAppIdentifier) -> str:
-    if identifier.raw_id:
-        return identifier.raw_id
-    app_id = identifier.properties["app_id"]
-    cloud = identifier.properties["cloud"]
-
-    if cloud == CommunicationCloudEnvironment.DOD:
-        return f"{TEAMS_APP_DOD_CLOUD_PREFIX}{app_id}"
-    if cloud == CommunicationCloudEnvironment.GCCH:
-        return f"{TEAMS_APP_GCCH_CLOUD_PREFIX}{app_id}"
-    return f"{TEAMS_APP_PUBLIC_CLOUD_PREFIX}{app_id}"
 
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
@@ -348,62 +341,62 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
         return PhoneNumberIdentifier(
             value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id
-        )  # type: ignore[return-value]
+        )
 
     segments = raw_id.split(":", maxsplit=2)
     if len(segments) < 3:
-        return UnknownIdentifier(identifier=raw_id)  # type: ignore[return-value]
+        return UnknownIdentifier(identifier=raw_id)
 
     prefix = f"{segments[0]}:{segments[1]}:"
     suffix = segments[2]
     if prefix == TEAMS_USER_ANONYMOUS_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix, is_anonymous=True, raw_id=raw_id
-        )  # type: ignore[return-value]
+        )
     if prefix == TEAMS_USER_PUBLIC_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
-        )  # type: ignore[return-value]
+        )
     if prefix == TEAMS_USER_DOD_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
-        )  # type: ignore[return-value]
+        )
     if prefix == TEAMS_USER_GCCH_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
-        )  # type: ignore[return-value]
+        )
     if prefix == TEAMS_APP_PUBLIC_CLOUD_PREFIX:
         return MicrosoftTeamsAppIdentifier(
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.PUBLIC,
             raw_id=raw_id,
-        )  # type: ignore[return-value]
+        )
     if prefix == TEAMS_APP_DOD_CLOUD_PREFIX:
         return MicrosoftTeamsAppIdentifier(
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.DOD,
             raw_id=raw_id,
-        )  # type: ignore[return-value]
+        )
     if prefix == TEAMS_APP_GCCH_CLOUD_PREFIX:
         return MicrosoftTeamsAppIdentifier(
             app_id=suffix,
             cloud=CommunicationCloudEnvironment.GCCH,
             raw_id=raw_id,
-        )  # type: ignore[return-value]
+        )
     if prefix in [
         ACS_USER_PREFIX,
         ACS_USER_DOD_CLOUD_PREFIX,
         ACS_USER_GCCH_CLOUD_PREFIX,
         SPOOL_USER_PREFIX,
     ]:
-        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)  # type: ignore[return-value]
-    return UnknownIdentifier(identifier=raw_id)  # type: ignore[return-value]
+        return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)
+    return UnknownIdentifier(identifier=raw_id)
