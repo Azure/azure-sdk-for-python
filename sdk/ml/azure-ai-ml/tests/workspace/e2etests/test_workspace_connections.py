@@ -10,8 +10,8 @@ from azure.ai.ml import MLClient, load_workspace_connection
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection, Workspace, WorkspaceHub, ApiKeyConfiguration
+from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 from azure.core.exceptions import ResourceNotFoundError
-
 
 @pytest.mark.xdist_group(name="workspace_connection")
 @pytest.mark.e2etest
@@ -354,7 +354,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
 
         assert wps_connection.name == wps_connection_name
         assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
-        assert wps_connection.type == camel_to_snake(ConnectionCategory.CUSTOM_KEYS)
+        assert wps_connection.type == camel_to_snake(WorkspaceConnectionTypes.CUSTOM)
         assert wps_connection.tags is not None
         assert wps_connection.is_shared
 
@@ -406,22 +406,22 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         # the "is_shared" property.
         # Names don't need randomization since the containers are transient
         hub_conn_shared = WorkspaceConnection(
-            name="sharedHubConn", type="custom_keys", target="notReal", credentials=ApiKeyConfiguration(key="1111")
+            name="sharedHubConn", type=WorkspaceConnectionTypes.CUSTOM, target="notReal", credentials=ApiKeyConfiguration(key="1111")
         )
         # Hubs can't actually have is_shared be false, make sure this is overridden upon creation.
         hub_conn_closed = WorkspaceConnection(
             name="closedHubConn",
-            type="custom_keys",
+            type=WorkspaceConnectionTypes.CUSTOM,
             target="notReal",
             credentials=ApiKeyConfiguration(key="2222"),
             is_shared=False,
         )
         lean_conn_shared = WorkspaceConnection(
-            name="sharedLeanConn", type="custom_keys", target="notReal", credentials=ApiKeyConfiguration(key="3333")
+            name="sharedLeanConn", type=WorkspaceConnectionTypes.CUSTOM, target="notReal", credentials=ApiKeyConfiguration(key="3333")
         )
         lean_conn_closed = WorkspaceConnection(
             name="closedLeanConn",
-            type="custom_keys",
+            type=WorkspaceConnectionTypes.CUSTOM,
             target="notReal",
             credentials=ApiKeyConfiguration(key="4444"),
             is_shared=False,

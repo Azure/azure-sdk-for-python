@@ -37,6 +37,7 @@ from azure.ai.ml.constants._common import (
     CONNECTION_API_TYPE_KEY,
     CONNECTION_API_VERSION_KEY,
     CONNECTION_KIND_KEY,
+    WorkspaceConnectionTypes,
 )
 from azure.ai.ml.entities._credentials import (
     AccessKeyConfiguration,
@@ -72,7 +73,7 @@ class WorkspaceConnection(Resource):
     :param type: The category of external resource for this connection.
     :type type: The type of workspace connection, possible values are: "git", "python_feed", "container_registry",
         "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db",
-        "azure_postgres_db", "custom_keys".
+        "azure_postgres_db", "custom".
     :param credentials: The credentials for authenticating to the external resource. Note that certain connection
         types (as defined by the type input) only accept certain types of credentials.
     :type credentials: Union[
@@ -273,6 +274,9 @@ class WorkspaceConnection(Resource):
             popped_tags = [CONNECTION_API_VERSION_KEY, CONNECTION_KIND_KEY]
 
         rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
+        # Renaming for client clarity
+        if rest_kwargs["type"] == camel_to_snake(ConnectionCategory.CUSTOM_KEYS):
+            rest_kwargs["type"] = WorkspaceConnectionTypes.CUSTOM
         workspace_connection = conn_class(**rest_kwargs)
         return workspace_connection
 
@@ -300,11 +304,16 @@ class WorkspaceConnection(Resource):
         elif auth_type is None:
             workspace_connection_properties_class = NoneAuthTypeWorkspaceConnectionProperties
 
+        # Convert from human readable to api enums if needed.
+        conn_type = self.type
+        if conn_type == WorkspaceConnectionTypes.CUSTOM:
+            conn_type = ConnectionCategory.CUSTOM_KEYS
+
         properties = workspace_connection_properties_class(
             target=self.target,
             credentials=self.credentials._to_workspace_connection_rest_object(),
             metadata=self.tags,
-            category=_snake_to_camel(self.type),
+            category=_snake_to_camel(conn_type),
             is_shared_to_all=self.is_shared,
         )
 

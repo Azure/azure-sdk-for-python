@@ -8,6 +8,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIWorkspaceConnection
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
+from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 
 
 @pytest.mark.unittest
@@ -173,7 +174,7 @@ class TestWorkspaceConnectionEntity:
 
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/custom.yaml")
 
-        assert ws_connection.type == camel_to_snake(ConnectionCategory.CUSTOM_KEYS)
+        assert ws_connection.type == camel_to_snake(WorkspaceConnectionTypes.CUSTOM)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert ws_connection.credentials.key == "4444"
         assert ws_connection.name == "test_ws_conn_custom_keys"

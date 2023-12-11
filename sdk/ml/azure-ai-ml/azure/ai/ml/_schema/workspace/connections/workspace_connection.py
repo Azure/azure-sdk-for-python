@@ -20,6 +20,7 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     ApiKeyConfigurationSchema,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 
 
 class WorkspaceConnectionSchema(ResourceSchema):
@@ -36,7 +37,7 @@ class WorkspaceConnectionSchema(ResourceSchema):
             ConnectionCategory.AZURE_SYNAPSE_ANALYTICS,
             ConnectionCategory.AZURE_MY_SQL_DB,
             ConnectionCategory.AZURE_POSTGRES_DB,
-            ConnectionCategory.CUSTOM_KEYS,
+            WorkspaceConnectionTypes.CUSTOM,
         ],
         casing_transform=camel_to_snake,
         required=True,
