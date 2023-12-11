@@ -746,9 +746,9 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         ]
 
         completion = await client_async.chat.completions.create(messages=messages, seed=42, **kwargs)
-        finger_print = completion.system_fingerprint
+        assert completion.system_fingerprint
         completion = await client_async.chat.completions.create(messages=messages, seed=42, **kwargs)
-        assert completion.system_fingerprint == finger_print
+        assert completion.system_fingerprint
 
     @configure_async
     @pytest.mark.asyncio

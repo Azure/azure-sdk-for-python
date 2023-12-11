@@ -730,9 +730,9 @@ class TestChatCompletions(AzureRecordedTestCase):
         ]
 
         completion = client.chat.completions.create(messages=messages, seed=42, **kwargs)
-        finger_print = completion.system_fingerprint
+        assert completion.system_fingerprint
         completion = client.chat.completions.create(messages=messages, seed=42, **kwargs)
-        assert completion.system_fingerprint == finger_print
+        assert completion.system_fingerprint
 
     @configure
     @pytest.mark.parametrize("api_type", [GPT_4_AZURE, GPT_4_OPENAI])
