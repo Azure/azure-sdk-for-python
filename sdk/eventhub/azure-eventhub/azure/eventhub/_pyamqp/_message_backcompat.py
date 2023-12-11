@@ -15,11 +15,10 @@ from typing import (
     Optional,
     Dict,
     Union,
-    Protocol,
     Type,
     TypeVar,
-    Generic
 )
+from typing_extensions import Protocol
 
 from ._encode import encode_payload
 from .utils import get_message_encoded_size
@@ -110,7 +109,8 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         )
         self.footer: Optional[Dict[Any, Any]]  = self._message.footer
         # Cast --- cannot assign type S as it is unbound
-        self.delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = cast(Optional[Dict[Union[str, bytes], Any]], self._message.delivery_annotations)
+        self.delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = \
+            cast(Optional[Dict[Union[str, bytes], Any]], self._message.delivery_annotations)
         if self._settler:
             self.state = MessageState.ReceivedUnsettled
         elif self.delivery_no:
