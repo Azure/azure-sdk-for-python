@@ -1,6 +1,6 @@
 -e ../../../tools/azure-devtools
 -e ../../core/azure-core
--e ../../appconfiguration/azure-appconfiguration
+../../appconfiguration/azure-appconfiguration
 -e ../../identity/azure-identity
 -e ../../keyvault/azure-keyvault-secrets
 aiohttp>=3.0

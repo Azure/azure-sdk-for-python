@@ -102,7 +102,7 @@ To the show the code snippets for the change:
     from azure.identity import ClientSecretCredential
 
     credential = ClientSecretCredential(
-        client_secret=client_secret,
+        tenant_id=tenant_id,
         client_id=client_id,
         client_secret=client_secret
     )

@@ -7,6 +7,7 @@
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, TYPE_CHECKING
 )
+from urllib.parse import parse_qs
 
 from ._shared import sign_string, url_quote
 from ._shared.constants import X_MS_VERSION
@@ -311,7 +312,7 @@ def generate_account_sas(
         account_key,  # type: str
         resource_types,  # type: Union[ResourceTypes, str]
         permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Optional[Union[datetime, str]]
+        expiry,  # type: Union[datetime, str]
         start=None,  # type: Optional[Union[datetime, str]]
         ip=None,  # type: Optional[str]
         **kwargs # type: Any
@@ -331,17 +332,11 @@ def generate_account_sas(
     :param permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has been
-        specified in an associated stored access policy.
     :type permission: str or ~azure.storage.blob.AccountSasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC.
+        Azure will always convert values to UTC. If a date is passed in
+        without timezone info, it is assumed to be UTC.
     :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
@@ -481,6 +476,11 @@ def generate_container_sas(
             :dedent: 12
             :caption: Generating a sas token.
     """
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
     if isinstance(account_key, UserDelegationKey):
@@ -602,6 +602,11 @@ def generate_blob_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    if not policy_id:
+        if not expiry:
+            raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
+        if not permission:
+            raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
     if isinstance(account_key, UserDelegationKey):
@@ -625,3 +630,13 @@ def generate_blob_sas(
         ip=ip,
         **kwargs
     )
+
+def _is_credential_sastoken(credential: Any) -> bool:
+    if not credential or not isinstance(credential, str):
+        return False
+
+    sas_values = QueryStringConstants.to_list()
+    parsed_query = parse_qs(credential.lstrip("?"))
+    if parsed_query and all(k in sas_values for k in parsed_query):
+        return True
+    return False

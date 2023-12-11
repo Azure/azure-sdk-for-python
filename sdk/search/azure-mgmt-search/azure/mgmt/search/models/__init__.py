@@ -30,6 +30,9 @@ from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceProperties
 from ._models_py3 import PrivateLinkResourcesResult
 from ._models_py3 import QueryKey
+from ._models_py3 import QuotaUsageResult
+from ._models_py3 import QuotaUsageResultName
+from ._models_py3 import QuotaUsagesListResult
 from ._models_py3 import Resource
 from ._models_py3 import SearchManagementRequestOptions
 from ._models_py3 import SearchService
@@ -53,6 +56,7 @@ from ._search_management_client_enums import ProvisioningState
 from ._search_management_client_enums import PublicNetworkAccess
 from ._search_management_client_enums import SearchEncryptionComplianceStatus
 from ._search_management_client_enums import SearchEncryptionWithCmk
+from ._search_management_client_enums import SearchSemanticSearch
 from ._search_management_client_enums import SearchServiceStatus
 from ._search_management_client_enums import SharedPrivateLinkResourceAsyncOperationResult
 from ._search_management_client_enums import SharedPrivateLinkResourceProvisioningState
@@ -88,6 +92,9 @@ __all__ = [
     "PrivateLinkResourceProperties",
     "PrivateLinkResourcesResult",
     "QueryKey",
+    "QuotaUsageResult",
+    "QuotaUsageResultName",
+    "QuotaUsagesListResult",
     "Resource",
     "SearchManagementRequestOptions",
     "SearchService",
@@ -110,6 +117,7 @@ __all__ = [
     "PublicNetworkAccess",
     "SearchEncryptionComplianceStatus",
     "SearchEncryptionWithCmk",
+    "SearchSemanticSearch",
     "SearchServiceStatus",
     "SharedPrivateLinkResourceAsyncOperationResult",
     "SharedPrivateLinkResourceProvisioningState",

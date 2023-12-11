@@ -37,6 +37,8 @@ from ._models_py3 import AzureFirstPartyManagedCertificateParameters
 from ._models_py3 import CacheConfiguration
 from ._models_py3 import CacheExpirationActionParameters
 from ._models_py3 import CacheKeyQueryStringActionParameters
+from ._models_py3 import CanMigrateParameters
+from ._models_py3 import CanMigrateResult
 from ._models_py3 import CdnCertificateSourceParameters
 from ._models_py3 import CdnEndpoint
 from ._models_py3 import CdnManagedHttpsParameters
@@ -134,12 +136,17 @@ from ._models_py3 import ManagedRuleSet
 from ._models_py3 import ManagedRuleSetDefinition
 from ._models_py3 import ManagedRuleSetDefinitionList
 from ._models_py3 import ManagedRuleSetList
+from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import MatchCondition
 from ._models_py3 import MetricAvailability
 from ._models_py3 import MetricSpecification
 from ._models_py3 import MetricsResponse
 from ._models_py3 import MetricsResponseSeriesItem
 from ._models_py3 import MetricsResponseSeriesPropertiesItemsItem
+from ._models_py3 import MigrateResult
+from ._models_py3 import MigrationErrorType
+from ._models_py3 import MigrationParameters
+from ._models_py3 import MigrationWebApplicationFirewallMapping
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationsListResult
@@ -159,8 +166,10 @@ from ._models_py3 import OriginUpdatePropertiesParameters
 from ._models_py3 import PolicySettings
 from ._models_py3 import PostArgsMatchConditionParameters
 from ._models_py3 import Profile
+from ._models_py3 import ProfileChangeSkuWafMapping
 from ._models_py3 import ProfileListResult
 from ._models_py3 import ProfileUpdateParameters
+from ._models_py3 import ProfileUpgradeParameters
 from ._models_py3 import ProxyResource
 from ._models_py3 import PurgeParameters
 from ._models_py3 import QueryStringMatchConditionParameters
@@ -235,6 +244,7 @@ from ._models_py3 import UrlSigningParamIdentifier
 from ._models_py3 import Usage
 from ._models_py3 import UsageName
 from ._models_py3 import UsagesListResult
+from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import UserManagedHttpsParameters
 from ._models_py3 import ValidateCustomDomainInput
 from ._models_py3 import ValidateCustomDomainOutput
@@ -261,6 +271,7 @@ from ._cdn_management_client_enums import CacheBehavior
 from ._cdn_management_client_enums import CacheExpirationActionParametersTypeName
 from ._cdn_management_client_enums import CacheKeyQueryStringActionParametersTypeName
 from ._cdn_management_client_enums import CacheType
+from ._cdn_management_client_enums import CanMigrateDefaultSku
 from ._cdn_management_client_enums import CdnCertificateSourceParametersTypeName
 from ._cdn_management_client_enums import CertificateSource
 from ._cdn_management_client_enums import CertificateType
@@ -303,10 +314,11 @@ from ._cdn_management_client_enums import LogMetricsGroupBy
 from ._cdn_management_client_enums import LogRanking
 from ._cdn_management_client_enums import LogRankingMetric
 from ._cdn_management_client_enums import ManagedRuleEnabledState
+from ._cdn_management_client_enums import ManagedServiceIdentityType
 from ._cdn_management_client_enums import MatchProcessingBehavior
 from ._cdn_management_client_enums import MatchVariable
-from ._cdn_management_client_enums import MetricsResponseGranularity
-from ._cdn_management_client_enums import MetricsResponseSeriesItemUnit
+from ._cdn_management_client_enums import MetricsGranularity
+from ._cdn_management_client_enums import MetricsSeriesUnit
 from ._cdn_management_client_enums import MinimumTlsVersion
 from ._cdn_management_client_enums import Operator
 from ._cdn_management_client_enums import OptimizationType
@@ -383,13 +395,13 @@ from ._cdn_management_client_enums import WafAction
 from ._cdn_management_client_enums import WafGranularity
 from ._cdn_management_client_enums import WafMatchVariable
 from ._cdn_management_client_enums import WafMetric
-from ._cdn_management_client_enums import WafMetricsResponseGranularity
-from ._cdn_management_client_enums import WafMetricsResponseSeriesItemUnit
+from ._cdn_management_client_enums import WafMetricsGranularity
+from ._cdn_management_client_enums import WafMetricsSeriesUnit
 from ._cdn_management_client_enums import WafRankingGroupBy
 from ._cdn_management_client_enums import WafRankingType
 from ._cdn_management_client_enums import WafRuleType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -424,6 +436,8 @@ __all__ = [
     "CacheConfiguration",
     "CacheExpirationActionParameters",
     "CacheKeyQueryStringActionParameters",
+    "CanMigrateParameters",
+    "CanMigrateResult",
     "CdnCertificateSourceParameters",
     "CdnEndpoint",
     "CdnManagedHttpsParameters",
@@ -521,12 +535,17 @@ __all__ = [
     "ManagedRuleSetDefinition",
     "ManagedRuleSetDefinitionList",
     "ManagedRuleSetList",
+    "ManagedServiceIdentity",
     "MatchCondition",
     "MetricAvailability",
     "MetricSpecification",
     "MetricsResponse",
     "MetricsResponseSeriesItem",
     "MetricsResponseSeriesPropertiesItemsItem",
+    "MigrateResult",
+    "MigrationErrorType",
+    "MigrationParameters",
+    "MigrationWebApplicationFirewallMapping",
     "Operation",
     "OperationDisplay",
     "OperationsListResult",
@@ -546,8 +565,10 @@ __all__ = [
     "PolicySettings",
     "PostArgsMatchConditionParameters",
     "Profile",
+    "ProfileChangeSkuWafMapping",
     "ProfileListResult",
     "ProfileUpdateParameters",
+    "ProfileUpgradeParameters",
     "ProxyResource",
     "PurgeParameters",
     "QueryStringMatchConditionParameters",
@@ -622,6 +643,7 @@ __all__ = [
     "Usage",
     "UsageName",
     "UsagesListResult",
+    "UserAssignedIdentity",
     "UserManagedHttpsParameters",
     "ValidateCustomDomainInput",
     "ValidateCustomDomainOutput",
@@ -647,6 +669,7 @@ __all__ = [
     "CacheExpirationActionParametersTypeName",
     "CacheKeyQueryStringActionParametersTypeName",
     "CacheType",
+    "CanMigrateDefaultSku",
     "CdnCertificateSourceParametersTypeName",
     "CertificateSource",
     "CertificateType",
@@ -689,10 +712,11 @@ __all__ = [
     "LogRanking",
     "LogRankingMetric",
     "ManagedRuleEnabledState",
+    "ManagedServiceIdentityType",
     "MatchProcessingBehavior",
     "MatchVariable",
-    "MetricsResponseGranularity",
-    "MetricsResponseSeriesItemUnit",
+    "MetricsGranularity",
+    "MetricsSeriesUnit",
     "MinimumTlsVersion",
     "Operator",
     "OptimizationType",
@@ -769,8 +793,8 @@ __all__ = [
     "WafGranularity",
     "WafMatchVariable",
     "WafMetric",
-    "WafMetricsResponseGranularity",
-    "WafMetricsResponseSeriesItemUnit",
+    "WafMetricsGranularity",
+    "WafMetricsSeriesUnit",
     "WafRankingGroupBy",
     "WafRankingType",
     "WafRuleType",

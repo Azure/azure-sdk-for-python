@@ -21,6 +21,7 @@ from ._credentials import (
     ClientAssertionCredential,
     WorkloadIdentityCredential,
 )
+from ._bearer_token_provider import get_bearer_token_provider
 
 
 __all__ = [
@@ -39,4 +40,5 @@ __all__ = [
     "VisualStudioCodeCredential",
     "ClientAssertionCredential",
     "WorkloadIdentityCredential",
+    "get_bearer_token_provider",
 ]

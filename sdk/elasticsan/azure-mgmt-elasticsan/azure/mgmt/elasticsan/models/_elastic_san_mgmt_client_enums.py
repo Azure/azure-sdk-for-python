@@ -10,6 +10,12 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class Action(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action of virtual network rule."""
+
+    ALLOW = "Allow"
+
+
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
@@ -30,6 +36,17 @@ class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ENCRYPTION_AT_REST_WITH_PLATFORM_KEY = "EncryptionAtRestWithPlatformKey"
     """Volume is encrypted at rest with Platform managed key. It is the default encryption type."""
+    ENCRYPTION_AT_REST_WITH_CUSTOMER_MANAGED_KEY = "EncryptionAtRestWithCustomerManagedKey"
+    """Volume is encrypted at rest with Customer managed key that can be changed and revoked by a
+    #: customer."""
+
+
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The identity type."""
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
 
 
 class OperationalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -77,6 +94,15 @@ class ProvisioningStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
 
 
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allow or disallow public network access to ElasticSan. Value is optional but if passed in, must
+    be 'Enabled' or 'Disabled'.
+    """
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name."""
 
@@ -93,18 +119,32 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Premium Tier"""
 
 
-class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the state of virtual network rule."""
-
-    PROVISIONING = "provisioning"
-    DEPROVISIONING = "deprovisioning"
-    SUCCEEDED = "succeeded"
-    FAILED = "failed"
-    NETWORK_SOURCE_DELETED = "networkSourceDeleted"
-
-
 class StorageTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage Target type."""
 
     ISCSI = "Iscsi"
     NONE = "None"
+
+
+class VolumeCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This enumerates the possible sources of a volume creation."""
+
+    NONE = "None"
+    VOLUME_SNAPSHOT = "VolumeSnapshot"
+    DISK_SNAPSHOT = "DiskSnapshot"
+    DISK = "Disk"
+    DISK_RESTORE_POINT = "DiskRestorePoint"
+
+
+class XMsDeleteSnapshots(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """XMsDeleteSnapshots."""
+
+    TRUE = "true"
+    FALSE = "false"
+
+
+class XMsForceDelete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """XMsForceDelete."""
+
+    TRUE = "true"
+    FALSE = "false"

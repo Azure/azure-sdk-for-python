@@ -22,8 +22,8 @@ class ManagedIdentityCredential(AsyncContextManager):
     """Authenticates with an Azure managed identity in any hosting environment which supports managed identities.
 
     This credential defaults to using a system-assigned identity. To configure a user-assigned identity, use one of
-    the keyword arguments. See `Azure Active Directory documentation
-    <https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for more
+    the keyword arguments. See `Microsoft Entra ID documentation
+    <https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for more
     information about configuring managed identity for applications.
 
     :keyword str client_id: a user-assigned identity's client ID or, when using Pod Identity, the client ID of an Azure

@@ -221,6 +221,15 @@ def load_workspace(
 
     :return: Loaded workspace object.
     :rtype: Workspace
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START load_workspace]
+            :end-before: [END load_workspace]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Workspace from a YAML config file.
     """
     return load_common(Workspace, source, relative_origin, **kwargs)
 
@@ -717,6 +726,15 @@ def load_workspace_connection(
 
     :return: Constructed workspace connection object.
     :rtype: WorkspaceConnection
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START load_workspace_connection]
+            :end-before: [END load_workspace_connection]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Workspace Connection from a YAML config file.
     """
     return load_common(WorkspaceConnection, source, relative_origin, **kwargs)
 
@@ -866,6 +884,15 @@ def load_workspace_hub(
     :paramtype params_override: List[Dict]
     :return: Loaded WorkspaceHub object.
     :rtype: WorkspaceHub
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START load_workspace_hub]
+            :end-before: [END load_workspace_hub]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Workspace Hub from a YAML config file.
     """
     return load_common(WorkspaceHub, source, relative_origin, **kwargs)
 

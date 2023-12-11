@@ -5,13 +5,13 @@ parameters:
 
 steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.7'
+    displayName: 'Use Python 3.8'
     inputs:
-     versionSpec: '3.7'
+     versionSpec: '3.8'
     condition: succeededOrFailed()
 
   - script: |
-      python -m pip install tools/azure-sdk-tools["build"]
+      python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: succeededOrFailed()
 
@@ -20,6 +20,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/validate_formatting.py'
       arguments: >-
+        "$(TargetingString)"
         --service_directory="${{ parameters.ServiceDirectory }}"
         --validate="${{ parameters.ValidateFormatting }}"
     env: ${{ parameters.EnvVars }}

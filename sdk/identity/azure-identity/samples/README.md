@@ -12,7 +12,7 @@ urlFragment: identity-samples
 
 ## Prerequisites
 
-You must have an [Azure subscription](https://azure.microsoft.com/free) and an
+You must have an [Azure subscription](https://azure.microsoft.com/free/python) and an
 [Azure Key Vault](https://azure.microsoft.com/services/key-vault/) to run
 these samples. You can create a Key Vault in the
 [Azure Portal](https://portal.azure.com/#create/Microsoft.KeyVault) or with the

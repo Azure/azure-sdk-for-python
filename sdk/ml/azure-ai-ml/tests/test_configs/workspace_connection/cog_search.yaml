@@ -1,9 +1,7 @@
 name: test_ws_conn_cog_search
 type: cognitive_search
-target: dummy
-metadata:
-  ApiVersion: dummy
+target: a_base
+api_version: dummy
 credentials:
-  type: username_password
-  username: dummy
-  password: dummy
+  type: api_key
+  key: some_key

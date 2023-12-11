@@ -133,10 +133,20 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @property
     def type(self) -> str:
+        """
+        Type of deployment.
+
+        :rtype: str
+        """
         return self._type
 
     @property
     def code_path(self) -> Union[str, PathLike]:
+        """
+        The code directory containing the scoring script.
+
+        :rtype: Union[str, PathLike]
+        """
         return self.code_configuration.code if self.code_configuration and self.code_configuration.code else None
 
     @code_path.setter
@@ -148,6 +158,11 @@ class Deployment(Resource, RestTranslatableMixin):
 
     @property
     def scoring_script(self) -> Union[str, PathLike]:
+        """
+        The scoring script file path relative to the code directory.
+
+        :rtype: Union[str, PathLike]
+        """
         return self.code_configuration.scoring_script if self.code_configuration else None
 
     @scoring_script.setter

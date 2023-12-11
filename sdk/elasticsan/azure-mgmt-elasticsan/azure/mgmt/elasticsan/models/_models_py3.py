@@ -8,15 +8,9 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -164,6 +158,10 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
     :ivar private_endpoint_connections: The list of Private Endpoint Connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.elasticsan.models.PrivateEndpointConnection]
+    :ivar public_network_access: Allow or disallow public network access to ElasticSan. Value is
+     optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled" and
+     "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.elasticsan.models.PublicNetworkAccess
     """
 
     _validation = {
@@ -205,6 +203,7 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
     }
 
     def __init__(
@@ -216,6 +215,7 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
         extended_capacity_size_ti_b: int,
         tags: Optional[Dict[str, str]] = None,
         availability_zones: Optional[List[str]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -232,6 +232,10 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
         :keyword extended_capacity_size_ti_b: Extended size of the Elastic San appliance in TiB.
          Required.
         :paramtype extended_capacity_size_ti_b: int
+        :keyword public_network_access: Allow or disallow public network access to ElasticSan. Value is
+         optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.elasticsan.models.PublicNetworkAccess
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
@@ -245,6 +249,7 @@ class ElasticSan(TrackedResource):  # pylint: disable=too-many-instance-attribut
         self.total_m_bps = None
         self.total_size_ti_b = None
         self.private_endpoint_connections = None
+        self.public_network_access = public_network_access
 
 
 class ElasticSanList(_serialization.Model):
@@ -286,12 +291,17 @@ class ElasticSanUpdate(_serialization.Model):
     :vartype base_size_ti_b: int
     :ivar extended_capacity_size_ti_b: Extended size of the Elastic San appliance in TiB.
     :vartype extended_capacity_size_ti_b: int
+    :ivar public_network_access: Allow or disallow public network access to ElasticSan Account.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.elasticsan.models.PublicNetworkAccess
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
         "base_size_ti_b": {"key": "properties.baseSizeTiB", "type": "int"},
         "extended_capacity_size_ti_b": {"key": "properties.extendedCapacitySizeTiB", "type": "int"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
     }
 
     def __init__(
@@ -300,6 +310,7 @@ class ElasticSanUpdate(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         base_size_ti_b: Optional[int] = None,
         extended_capacity_size_ti_b: Optional[int] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -309,11 +320,70 @@ class ElasticSanUpdate(_serialization.Model):
         :paramtype base_size_ti_b: int
         :keyword extended_capacity_size_ti_b: Extended size of the Elastic San appliance in TiB.
         :paramtype extended_capacity_size_ti_b: int
+        :keyword public_network_access: Allow or disallow public network access to ElasticSan Account.
+         Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.elasticsan.models.PublicNetworkAccess
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.base_size_ti_b = base_size_ti_b
         self.extended_capacity_size_ti_b = extended_capacity_size_ti_b
+        self.public_network_access = public_network_access
+
+
+class EncryptionIdentity(_serialization.Model):
+    """Encryption identity for the volume group.
+
+    :ivar encryption_user_assigned_identity: Resource identifier of the UserAssigned identity to be
+     associated with server-side encryption on the volume group.
+    :vartype encryption_user_assigned_identity: str
+    """
+
+    _attribute_map = {
+        "encryption_user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
+    }
+
+    def __init__(self, *, encryption_user_assigned_identity: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword encryption_user_assigned_identity: Resource identifier of the UserAssigned identity to
+         be associated with server-side encryption on the volume group.
+        :paramtype encryption_user_assigned_identity: str
+        """
+        super().__init__(**kwargs)
+        self.encryption_user_assigned_identity = encryption_user_assigned_identity
+
+
+class EncryptionProperties(_serialization.Model):
+    """The encryption settings on the volume group.
+
+    :ivar key_vault_properties: Properties provided by key vault.
+    :vartype key_vault_properties: ~azure.mgmt.elasticsan.models.KeyVaultProperties
+    :ivar encryption_identity: The identity to be used with service-side encryption at rest.
+    :vartype encryption_identity: ~azure.mgmt.elasticsan.models.EncryptionIdentity
+    """
+
+    _attribute_map = {
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "KeyVaultProperties"},
+        "encryption_identity": {"key": "identity", "type": "EncryptionIdentity"},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
+        encryption_identity: Optional["_models.EncryptionIdentity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault_properties: Properties provided by key vault.
+        :paramtype key_vault_properties: ~azure.mgmt.elasticsan.models.KeyVaultProperties
+        :keyword encryption_identity: The identity to be used with service-side encryption at rest.
+        :paramtype encryption_identity: ~azure.mgmt.elasticsan.models.EncryptionIdentity
+        """
+        super().__init__(**kwargs)
+        self.key_vault_properties = key_vault_properties
+        self.encryption_identity = encryption_identity
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -408,6 +478,64 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
+class Identity(_serialization.Model):
+    """Identity for the resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The principal ID of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of resource.
+    :vartype tenant_id: str
+    :ivar type: The identity type. Required. Known values are: "None", "SystemAssigned", and
+     "UserAssigned".
+    :vartype type: str or ~azure.mgmt.elasticsan.models.IdentityType
+    :ivar user_assigned_identities: Gets or sets a list of key value pairs that describe the set of
+     User Assigned identities that will be used with this volume group. The key is the ARM resource
+     identifier of the identity.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.elasticsan.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.IdentityType"],
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: The identity type. Required. Known values are: "None", "SystemAssigned", and
+         "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.elasticsan.models.IdentityType
+        :keyword user_assigned_identities: Gets or sets a list of key value pairs that describe the set
+         of User Assigned identities that will be used with this volume group. The key is the ARM
+         resource identifier of the identity.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.elasticsan.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
 class IscsiTargetInfo(_serialization.Model):
     """Iscsi target information.
 
@@ -456,6 +584,92 @@ class IscsiTargetInfo(_serialization.Model):
         self.target_portal_port = None
         self.provisioning_state = None
         self.status = status
+
+
+class KeyVaultProperties(_serialization.Model):
+    """Properties of key vault.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar key_name: The name of KeyVault key.
+    :vartype key_name: str
+    :ivar key_version: The version of KeyVault key.
+    :vartype key_version: str
+    :ivar key_vault_uri: The Uri of KeyVault.
+    :vartype key_vault_uri: str
+    :ivar current_versioned_key_identifier: The object identifier of the current versioned Key
+     Vault Key in use.
+    :vartype current_versioned_key_identifier: str
+    :ivar last_key_rotation_timestamp: Timestamp of last rotation of the Key Vault Key.
+    :vartype last_key_rotation_timestamp: ~datetime.datetime
+    :ivar current_versioned_key_expiration_timestamp: This is a read only property that represents
+     the expiration time of the current version of the customer managed key used for encryption.
+    :vartype current_versioned_key_expiration_timestamp: ~datetime.datetime
+    """
+
+    _validation = {
+        "current_versioned_key_identifier": {"readonly": True},
+        "last_key_rotation_timestamp": {"readonly": True},
+        "current_versioned_key_expiration_timestamp": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "key_name": {"key": "keyName", "type": "str"},
+        "key_version": {"key": "keyVersion", "type": "str"},
+        "key_vault_uri": {"key": "keyVaultUri", "type": "str"},
+        "current_versioned_key_identifier": {"key": "currentVersionedKeyIdentifier", "type": "str"},
+        "last_key_rotation_timestamp": {"key": "lastKeyRotationTimestamp", "type": "iso-8601"},
+        "current_versioned_key_expiration_timestamp": {
+            "key": "currentVersionedKeyExpirationTimestamp",
+            "type": "iso-8601",
+        },
+    }
+
+    def __init__(
+        self,
+        *,
+        key_name: Optional[str] = None,
+        key_version: Optional[str] = None,
+        key_vault_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_name: The name of KeyVault key.
+        :paramtype key_name: str
+        :keyword key_version: The version of KeyVault key.
+        :paramtype key_version: str
+        :keyword key_vault_uri: The Uri of KeyVault.
+        :paramtype key_vault_uri: str
+        """
+        super().__init__(**kwargs)
+        self.key_name = key_name
+        self.key_version = key_version
+        self.key_vault_uri = key_vault_uri
+        self.current_versioned_key_identifier = None
+        self.last_key_rotation_timestamp = None
+        self.current_versioned_key_expiration_timestamp = None
+
+
+class ManagedByInfo(_serialization.Model):
+    """Parent resource information.
+
+    :ivar resource_id: Resource ID of the resource managing the volume, this is a restricted field
+     and can only be set for internal use.
+    :vartype resource_id: str
+    """
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+    }
+
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_id: Resource ID of the resource managing the volume, this is a restricted
+         field and can only be set for internal use.
+        :paramtype resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
 
 
 class NetworkRuleSet(_serialization.Model):
@@ -1081,36 +1295,163 @@ class SkuLocationInfo(_serialization.Model):
         self.zones = None
 
 
+class Snapshot(ProxyResource):
+    """Response for Volume Snapshot request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
+    :ivar creation_data: Data used when creating a volume snapshot. Required.
+    :vartype creation_data: ~azure.mgmt.elasticsan.models.SnapshotCreationData
+    :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
+     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
+    :ivar source_volume_size_gi_b: Size of Source Volume.
+    :vartype source_volume_size_gi_b: int
+    :ivar volume_name: Source Volume Name of a snapshot.
+    :vartype volume_name: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "creation_data": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "source_volume_size_gi_b": {"readonly": True},
+        "volume_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "creation_data": {"key": "properties.creationData", "type": "SnapshotCreationData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "source_volume_size_gi_b": {"key": "properties.sourceVolumeSizeGiB", "type": "int"},
+        "volume_name": {"key": "properties.volumeName", "type": "str"},
+    }
+
+    def __init__(self, *, creation_data: "_models.SnapshotCreationData", **kwargs: Any) -> None:
+        """
+        :keyword creation_data: Data used when creating a volume snapshot. Required.
+        :paramtype creation_data: ~azure.mgmt.elasticsan.models.SnapshotCreationData
+        """
+        super().__init__(**kwargs)
+        self.creation_data = creation_data
+        self.provisioning_state = None
+        self.source_volume_size_gi_b = None
+        self.volume_name = None
+
+
+class SnapshotCreationData(_serialization.Model):
+    """Data used when creating a volume snapshot.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar source_id: Fully qualified resource ID of the volume. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ElasticSan/elasticSans/{elasticSanName}/volumegroups/{volumeGroupName}/volumes/{volumeName}".
+     Required.
+    :vartype source_id: str
+    """
+
+    _validation = {
+        "source_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "source_id": {"key": "sourceId", "type": "str"},
+    }
+
+    def __init__(self, *, source_id: str, **kwargs: Any) -> None:
+        """
+        :keyword source_id: Fully qualified resource ID of the volume. E.g.
+         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ElasticSan/elasticSans/{elasticSanName}/volumegroups/{volumeGroupName}/volumes/{volumeName}".
+         Required.
+        :paramtype source_id: str
+        """
+        super().__init__(**kwargs)
+        self.source_id = source_id
+
+
+class SnapshotList(_serialization.Model):
+    """List of Snapshots.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: An array of Snapshot objects.
+    :vartype value: list[~azure.mgmt.elasticsan.models.Snapshot]
+    :ivar next_link: URI to fetch the next section of the paginated response.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Snapshot]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.Snapshot"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: An array of Snapshot objects.
+        :paramtype value: list[~azure.mgmt.elasticsan.models.Snapshot]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
 class SourceCreationData(_serialization.Model):
     """Data source used when creating the volume.
 
-    :ivar create_source: This enumerates the possible sources of a volume creation. Default value
-     is "None".
-    :vartype create_source: str
-    :ivar source_uri: If createOption is Copy, this is the ARM id of the source snapshot or disk.
-     If createOption is Restore, this is the ARM-like id of the source disk restore point.
-    :vartype source_uri: str
+    :ivar create_source: This enumerates the possible sources of a volume creation. Known values
+     are: "None", "VolumeSnapshot", "DiskSnapshot", "Disk", and "DiskRestorePoint".
+    :vartype create_source: str or ~azure.mgmt.elasticsan.models.VolumeCreateOption
+    :ivar source_id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype source_id: str
     """
 
     _attribute_map = {
         "create_source": {"key": "createSource", "type": "str"},
-        "source_uri": {"key": "sourceUri", "type": "str"},
+        "source_id": {"key": "sourceId", "type": "str"},
     }
 
     def __init__(
-        self, *, create_source: Optional[Literal["None"]] = None, source_uri: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        create_source: Optional[Union[str, "_models.VolumeCreateOption"]] = None,
+        source_id: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
-        :keyword create_source: This enumerates the possible sources of a volume creation. Default
-         value is "None".
-        :paramtype create_source: str
-        :keyword source_uri: If createOption is Copy, this is the ARM id of the source snapshot or
-         disk. If createOption is Restore, this is the ARM-like id of the source disk restore point.
-        :paramtype source_uri: str
+        :keyword create_source: This enumerates the possible sources of a volume creation. Known values
+         are: "None", "VolumeSnapshot", "DiskSnapshot", "Disk", and "DiskRestorePoint".
+        :paramtype create_source: str or ~azure.mgmt.elasticsan.models.VolumeCreateOption
+        :keyword source_id: Fully qualified resource ID for the resource. E.g.
+         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+        :paramtype source_id: str
         """
         super().__init__(**kwargs)
         self.create_source = create_source
-        self.source_uri = source_uri
+        self.source_id = source_id
 
 
 class SystemData(_serialization.Model):
@@ -1177,10 +1518,36 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class VirtualNetworkRule(_serialization.Model):
-    """Virtual Network rule.
+class UserAssignedIdentity(_serialization.Model):
+    """UserAssignedIdentity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
+class VirtualNetworkRule(_serialization.Model):
+    """Virtual Network rule.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1188,37 +1555,33 @@ class VirtualNetworkRule(_serialization.Model):
      /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
      Required.
     :vartype virtual_network_resource_id: str
-    :ivar action: The action of virtual network rule. Default value is "Allow".
-    :vartype action: str
-    :ivar state: Gets the state of virtual network rule. Known values are: "provisioning",
-     "deprovisioning", "succeeded", "failed", and "networkSourceDeleted".
-    :vartype state: str or ~azure.mgmt.elasticsan.models.State
+    :ivar action: The action of virtual network rule. "Allow"
+    :vartype action: str or ~azure.mgmt.elasticsan.models.Action
     """
 
     _validation = {
         "virtual_network_resource_id": {"required": True},
-        "state": {"readonly": True},
     }
 
     _attribute_map = {
         "virtual_network_resource_id": {"key": "id", "type": "str"},
         "action": {"key": "action", "type": "str"},
-        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(self, *, virtual_network_resource_id: str, action: Literal["Allow"] = "Allow", **kwargs: Any) -> None:
+    def __init__(
+        self, *, virtual_network_resource_id: str, action: Union[str, "_models.Action"] = "Allow", **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
          /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
          Required.
         :paramtype virtual_network_resource_id: str
-        :keyword action: The action of virtual network rule. Default value is "Allow".
-        :paramtype action: str
+        :keyword action: The action of virtual network rule. "Allow"
+        :paramtype action: str or ~azure.mgmt.elasticsan.models.Action
         """
         super().__init__(**kwargs)
         self.virtual_network_resource_id = virtual_network_resource_id
         self.action = action
-        self.state = None
 
 
 class Volume(ProxyResource):
@@ -1247,6 +1610,11 @@ class Volume(ProxyResource):
     :vartype size_gi_b: int
     :ivar storage_target: Storage target information.
     :vartype storage_target: ~azure.mgmt.elasticsan.models.IscsiTargetInfo
+    :ivar managed_by: Parent resource information.
+    :vartype managed_by: ~azure.mgmt.elasticsan.models.ManagedByInfo
+    :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
+     "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     """
 
     _validation = {
@@ -1257,6 +1625,7 @@ class Volume(ProxyResource):
         "volume_id": {"readonly": True},
         "size_gi_b": {"required": True},
         "storage_target": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1268,25 +1637,36 @@ class Volume(ProxyResource):
         "creation_data": {"key": "properties.creationData", "type": "SourceCreationData"},
         "size_gi_b": {"key": "properties.sizeGiB", "type": "int"},
         "storage_target": {"key": "properties.storageTarget", "type": "IscsiTargetInfo"},
+        "managed_by": {"key": "properties.managedBy", "type": "ManagedByInfo"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
-        self, *, size_gi_b: int, creation_data: Optional["_models.SourceCreationData"] = None, **kwargs: Any
+        self,
+        *,
+        size_gi_b: int,
+        creation_data: Optional["_models.SourceCreationData"] = None,
+        managed_by: Optional["_models.ManagedByInfo"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword creation_data: State of the operation on the resource.
         :paramtype creation_data: ~azure.mgmt.elasticsan.models.SourceCreationData
         :keyword size_gi_b: Volume size. Required.
         :paramtype size_gi_b: int
+        :keyword managed_by: Parent resource information.
+        :paramtype managed_by: ~azure.mgmt.elasticsan.models.ManagedByInfo
         """
         super().__init__(**kwargs)
         self.volume_id = None
         self.creation_data = creation_data
         self.size_gi_b = size_gi_b
         self.storage_target = None
+        self.managed_by = managed_by
+        self.provisioning_state = None
 
 
-class VolumeGroup(ProxyResource):
+class VolumeGroup(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Response for Volume Group request.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1302,13 +1682,19 @@ class VolumeGroup(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.elasticsan.models.SystemData
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.elasticsan.models.Identity
     :ivar provisioning_state: State of the operation on the resource. Known values are: "Invalid",
      "Succeeded", "Failed", "Canceled", "Pending", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.elasticsan.models.ProvisioningStates
     :ivar protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
     :vartype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
-    :ivar encryption: Type of encryption. "EncryptionAtRestWithPlatformKey"
+    :ivar encryption: Type of encryption. Known values are: "EncryptionAtRestWithPlatformKey" and
+     "EncryptionAtRestWithCustomerManagedKey".
     :vartype encryption: str or ~azure.mgmt.elasticsan.models.EncryptionType
+    :ivar encryption_properties: Encryption Properties describing Key Vault and Identity
+     information.
+    :vartype encryption_properties: ~azure.mgmt.elasticsan.models.EncryptionProperties
     :ivar network_acls: A collection of rules governing the accessibility from specific network
      locations.
     :vartype network_acls: ~azure.mgmt.elasticsan.models.NetworkRuleSet
@@ -1331,9 +1717,11 @@ class VolumeGroup(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "Identity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "protocol_type": {"key": "properties.protocolType", "type": "str"},
         "encryption": {"key": "properties.encryption", "type": "str"},
+        "encryption_properties": {"key": "properties.encryptionProperties", "type": "EncryptionProperties"},
         "network_acls": {"key": "properties.networkAcls", "type": "NetworkRuleSet"},
         "private_endpoint_connections": {
             "key": "properties.privateEndpointConnections",
@@ -1344,24 +1732,34 @@ class VolumeGroup(ProxyResource):
     def __init__(
         self,
         *,
+        identity: Optional["_models.Identity"] = None,
         protocol_type: Optional[Union[str, "_models.StorageTargetType"]] = None,
         encryption: Optional[Union[str, "_models.EncryptionType"]] = None,
+        encryption_properties: Optional["_models.EncryptionProperties"] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.elasticsan.models.Identity
         :keyword protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
         :paramtype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
-        :keyword encryption: Type of encryption. "EncryptionAtRestWithPlatformKey"
+        :keyword encryption: Type of encryption. Known values are: "EncryptionAtRestWithPlatformKey"
+         and "EncryptionAtRestWithCustomerManagedKey".
         :paramtype encryption: str or ~azure.mgmt.elasticsan.models.EncryptionType
+        :keyword encryption_properties: Encryption Properties describing Key Vault and Identity
+         information.
+        :paramtype encryption_properties: ~azure.mgmt.elasticsan.models.EncryptionProperties
         :keyword network_acls: A collection of rules governing the accessibility from specific network
          locations.
         :paramtype network_acls: ~azure.mgmt.elasticsan.models.NetworkRuleSet
         """
         super().__init__(**kwargs)
+        self.identity = identity
         self.provisioning_state = None
         self.protocol_type = protocol_type
         self.encryption = encryption
+        self.encryption_properties = encryption_properties
         self.network_acls = network_acls
         self.private_endpoint_connections = None
 
@@ -1399,41 +1797,59 @@ class VolumeGroupList(_serialization.Model):
 class VolumeGroupUpdate(_serialization.Model):
     """Volume Group request.
 
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.elasticsan.models.Identity
     :ivar protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
     :vartype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
-    :ivar encryption: Type of encryption. "EncryptionAtRestWithPlatformKey"
+    :ivar encryption: Type of encryption. Known values are: "EncryptionAtRestWithPlatformKey" and
+     "EncryptionAtRestWithCustomerManagedKey".
     :vartype encryption: str or ~azure.mgmt.elasticsan.models.EncryptionType
+    :ivar encryption_properties: Encryption Properties describing Key Vault and Identity
+     information.
+    :vartype encryption_properties: ~azure.mgmt.elasticsan.models.EncryptionProperties
     :ivar network_acls: A collection of rules governing the accessibility from specific network
      locations.
     :vartype network_acls: ~azure.mgmt.elasticsan.models.NetworkRuleSet
     """
 
     _attribute_map = {
+        "identity": {"key": "identity", "type": "Identity"},
         "protocol_type": {"key": "properties.protocolType", "type": "str"},
         "encryption": {"key": "properties.encryption", "type": "str"},
+        "encryption_properties": {"key": "properties.encryptionProperties", "type": "EncryptionProperties"},
         "network_acls": {"key": "properties.networkAcls", "type": "NetworkRuleSet"},
     }
 
     def __init__(
         self,
         *,
+        identity: Optional["_models.Identity"] = None,
         protocol_type: Optional[Union[str, "_models.StorageTargetType"]] = None,
         encryption: Optional[Union[str, "_models.EncryptionType"]] = None,
+        encryption_properties: Optional["_models.EncryptionProperties"] = None,
         network_acls: Optional["_models.NetworkRuleSet"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.elasticsan.models.Identity
         :keyword protocol_type: Type of storage target. Known values are: "Iscsi" and "None".
         :paramtype protocol_type: str or ~azure.mgmt.elasticsan.models.StorageTargetType
-        :keyword encryption: Type of encryption. "EncryptionAtRestWithPlatformKey"
+        :keyword encryption: Type of encryption. Known values are: "EncryptionAtRestWithPlatformKey"
+         and "EncryptionAtRestWithCustomerManagedKey".
         :paramtype encryption: str or ~azure.mgmt.elasticsan.models.EncryptionType
+        :keyword encryption_properties: Encryption Properties describing Key Vault and Identity
+         information.
+        :paramtype encryption_properties: ~azure.mgmt.elasticsan.models.EncryptionProperties
         :keyword network_acls: A collection of rules governing the accessibility from specific network
          locations.
         :paramtype network_acls: ~azure.mgmt.elasticsan.models.NetworkRuleSet
         """
         super().__init__(**kwargs)
+        self.identity = identity
         self.protocol_type = protocol_type
         self.encryption = encryption
+        self.encryption_properties = encryption_properties
         self.network_acls = network_acls
 
 
@@ -1472,16 +1888,24 @@ class VolumeUpdate(_serialization.Model):
 
     :ivar size_gi_b: Volume size.
     :vartype size_gi_b: int
+    :ivar managed_by: Parent resource information.
+    :vartype managed_by: ~azure.mgmt.elasticsan.models.ManagedByInfo
     """
 
     _attribute_map = {
         "size_gi_b": {"key": "properties.sizeGiB", "type": "int"},
+        "managed_by": {"key": "properties.managedBy", "type": "ManagedByInfo"},
     }
 
-    def __init__(self, *, size_gi_b: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, size_gi_b: Optional[int] = None, managed_by: Optional["_models.ManagedByInfo"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword size_gi_b: Volume size.
         :paramtype size_gi_b: int
+        :keyword managed_by: Parent resource information.
+        :paramtype managed_by: ~azure.mgmt.elasticsan.models.ManagedByInfo
         """
         super().__init__(**kwargs)
         self.size_gi_b = size_gi_b
+        self.managed_by = managed_by

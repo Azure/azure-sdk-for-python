@@ -31,6 +31,8 @@
     "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
+    "sdk/ai/**/index/**",
+    "sdk/ai/azure-ai-generative/tests/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -55,6 +57,7 @@
     "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
+    "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
@@ -65,6 +68,8 @@
     "sdk/healthinsights/azure-healthinsights-clinicalmatching/azure/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/samples/sample_forms/**",
+    "sdk/documentintelligence/azure-ai-documentintelligence/tests/sample_forms/**",
     "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
@@ -97,6 +102,10 @@
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
     "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_model_base.py",
     "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
@@ -120,6 +129,14 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "spinup",
+    "cibuildwheel",
+    "aoai",
+    "pyprojects",
+    "certifi",
+    "cffi",
+    "tomlw",
+    "xdist",
     "pyprojecttoml",
     "tomli",
     "sdkrel",
@@ -143,6 +160,7 @@
     "alru",
     "amqp",
     "amqps",
+    "anyio",
     "apim",
     "Asal",
     "asgi",
@@ -201,6 +219,7 @@
     "ekus",
     "encryptor",
     "engsys",
+    "entra",
     "envname",
     "evals",
     "fileno",
@@ -271,6 +290,7 @@
     "mhsm",
     "mipsle",
     "mktime",
+    "mlindex",
     "msal",
     "msrest",
     "msrestazure",
@@ -295,6 +315,8 @@
     "oidc",
     "onboarded",
     "onmicrosoft",
+    "openai",
+    "OPENAI",
     "owasp",
     "ownerid",
     "PBYTE",
@@ -420,9 +442,44 @@
     "dacl",
     "whls",
     "aiter",
-    "solft"
+    "solft",
+    "amltmp",
+    "amltemp"
   ],
   "overrides": [
+    {
+      "filename": "sdk/ai/**",
+      "words": [
+        "azureml",
+        "mlflow",
+        "tika",
+        "pypdf",
+        "fsspec",
+        "openai",
+        "tiktoken",
+        "vectordb",
+        "pybase",
+        "mlindex",
+        "mlindexes",
+        "aoai",
+        "faiss",
+        "mlmodel",
+        "openmpi",
+        "vcpu",
+        "vcpus",
+        "levelno",
+        "miniconda",
+        "runsvdir",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "roups",
+        "mltable",
+        "wsid",
+        "runid"
+      ]
+    },
     {
       "filename": "doc/sphinx/generate_doc.py",
       "words": [
@@ -493,7 +550,7 @@
       "words": [
         "wammsa"
       ]
-    },    
+    },
     {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
@@ -598,7 +655,7 @@
         "engelska",
         "fhir",
         "FHIR",
-        "naam",
+        "naam"
       ]
     },
     {
@@ -704,6 +761,26 @@
     },
     {
       "filename": "sdk/formrecognizer/azure-ai-formrecognizer/**",
+      "words": [
+        "allinone",
+        "dmac",
+        "ierr",
+        "mymodel",
+        "heif",
+        "racwd",
+        "rrggbb",
+        "UPCA",
+        "UPCE"
+      ]
+    },
+    {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/tests/*.py",
+      "words": [
+        "WDLABCD"
+      ]
+    },
+    {
+      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/**",
       "words": [
         "allinone",
         "dmac",
@@ -828,7 +905,8 @@
     {
       "filename": "sdk/keyvault/**",
       "words": [
-        "eddsa"
+        "eddsa",
+        "Thawte"
       ]
     },
     {
@@ -848,7 +926,9 @@
       "filename": "sdk/monitor/azure-monitor-*/**/*",
       "words": [
         "ctxt",
-        "wday"
+        "wday",
+        "percentilesw",
+        "plotly"
       ]
     },
     {
@@ -1216,7 +1296,8 @@
         "Fdirectory",
         "Ffile",
         "Fsubdir",
-        "Fdir"
+        "Fdir",
+        "adal"
       ]
     },
     {
@@ -1323,6 +1404,12 @@
         "adreadonly",
         "Shenzen",
         "myusername"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-resources/**",
+      "words": [
+        "etest"
       ]
     },
     {
@@ -1554,7 +1641,9 @@
         "mros",
         "deserializers",
         "ctxt",
-        "wday"
+        "wday",
+        "JSONify",
+        "Nify"
       ]
     },
     {

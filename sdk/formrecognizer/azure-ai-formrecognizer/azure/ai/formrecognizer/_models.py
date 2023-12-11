@@ -3237,7 +3237,7 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
             if barcodes
             else [],
             formulas=[
-                DocumentBarcode._from_generated(formula)
+                DocumentFormula._from_generated(formula)
                 for formula in formulas
             ]
             if formulas

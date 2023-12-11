@@ -51,7 +51,7 @@ class UserProxy(object):
     ) -> None:
         self.client_connection = client_connection
         self.id = id
-        self.user_link = u"{}/users/{}".format(database_link, id)
+        self.user_link = "{}/users/{}".format(database_link, id)
         self._properties = properties
 
     def __repr__(self) -> str:
@@ -59,12 +59,12 @@ class UserProxy(object):
 
     def _get_permission_link(self, permission_or_id: Union[Permission, str, Dict[str, Any]]) -> str:
         if isinstance(permission_or_id, str):
-            return u"{}/permissions/{}".format(self.user_link, permission_or_id)
+            return "{}/permissions/{}".format(self.user_link, permission_or_id)
         try:
             return cast("Permission", permission_or_id).permission_link
         except AttributeError:
             pass
-        return u"{}/permissions/{}".format(self.user_link, cast("Dict[str, str]", permission_or_id)["id"])
+        return "{}/permissions/{}".format(self.user_link, cast("Dict[str, str]", permission_or_id)["id"])
 
     async def _get_properties(self) -> Dict[str, Any]:
         if self._properties is None:
@@ -269,9 +269,9 @@ class UserProxy(object):
         :type body: Dict[str, Any]
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the permission
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the permission
             with given id does not exist.
-        :returns: A permission object representing the permission after the replace went through.
+        :returns: A permission object representing the permission after the replace operation went through.
         :rtype: ~azure.cosmos.Permission
         """
         request_options = build_options(kwargs)

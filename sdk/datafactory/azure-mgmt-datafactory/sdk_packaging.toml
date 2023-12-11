@@ -3,6 +3,6 @@ package_name = "azure-mgmt-datafactory"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Data Factory Management"
 package_doc_id = "datafactory"
-is_stable = false
+is_stable = true
 is_arm = true
 title = "DataFactoryManagementClient"

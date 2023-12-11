@@ -204,8 +204,8 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
     ) -> AsyncIterator["ServiceBusReceivedMessage"]:
         while True:
+            # pylint: disable=protected-access
             try:
-                # pylint: disable=protected-access
                 message = await receiver._inner_anext(wait_time=max_wait_time)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
@@ -241,6 +241,18 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         frame: "AttachFrame",
         message: "Message"
     ) -> None:
+        """Callback run on receipt of every message.
+
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
+        :param ~azure.servicebus.aio.ServiceBusReceiver receiver: The receiver object.
+        :param ~pyamqp.performatives.AttachFrame frame: The attach frame.
+        :param ~pyamqp.message.Message message: The received message.
+        """
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():

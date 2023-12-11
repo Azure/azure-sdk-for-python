@@ -24,6 +24,9 @@ from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
+from azure.ai.ml._restclient.workspace_dataplane import (
+    AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
+)
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
@@ -32,6 +35,10 @@ from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_04_01 import AzureMachineLearningWorkspaces as ServiceClient042023
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
+
+# Same object, but was renamed starting in v2023_08_01_preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
@@ -286,6 +293,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_workspace_dataplane = ServiceClientWorkspaceDataplane(
+            subscription_id=self._operation_scope._subscription_id,
+            credential=self._credential,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._service_client_02_2022_preview = ServiceClient022022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
@@ -310,6 +324,20 @@ class MLClient:
         )
 
         self._service_client_06_2023_preview = ServiceClient062023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_08_2023_preview = ServiceClient082023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_10_2023 = ServiceClient102023(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
             base_url=base_url,
@@ -361,18 +389,38 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_08_2023_preview = ServiceClient082023Preview(
+            credential=self._credential,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_10_2023 = ServiceClient102023(
+            credential=self._credential,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
+            requests_pipeline=self._requests_pipeline,
+            dataplane_client=self._service_client_workspace_dataplane,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -420,11 +468,11 @@ class MLClient:
             self._operation_config,
             self._service_client_10_2021_dataplanepreview
             if registry_name or registry_reference
-            else self._service_client_04_2023_preview,
+            else self._service_client_08_2023_preview,
             self._datastores,
             self._operation_container,
             requests_pipeline=self._requests_pipeline,
-            control_plane_client=self._service_client_04_2023_preview,
+            control_plane_client=self._service_client_08_2023_preview,
             workspace_rg=self._ws_rg,
             workspace_sub=self._ws_sub,
             registry_reference=registry_reference,
@@ -520,6 +568,7 @@ class MLClient:
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
+            service_client_08_2023_preview=self._service_client_08_2023_preview,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
@@ -549,7 +598,7 @@ class MLClient:
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -558,7 +607,8 @@ class MLClient:
         self._featuresets = FeatureSetOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2023_preview,
+            self._service_client_10_2023,
+            self._service_client_08_2023_preview,
             self._datastores,
             **ops_kwargs,
         )
@@ -566,13 +616,13 @@ class MLClient:
         self._featurestoreentities = FeatureStoreEntityOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2023_preview,
+            self._service_client_10_2023,
             **ops_kwargs,
         )
 
         self._workspace_hubs = WorkspaceHubOperations(
             self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -748,7 +798,6 @@ class MLClient:
         return self._registries
 
     @property
-    @experimental
     def feature_stores(self) -> FeatureStoreOperations:
         """A collection of feature store related operations.
 
@@ -758,7 +807,6 @@ class MLClient:
         return self._featurestores
 
     @property
-    @experimental
     def feature_sets(self) -> FeatureSetOperations:
         """A collection of feature set related operations.
 
@@ -778,7 +826,6 @@ class MLClient:
         return self._workspace_hubs
 
     @property
-    @experimental
     def feature_store_entities(self) -> FeatureStoreEntityOperations:
         """A collection of feature store entity related operations.
 

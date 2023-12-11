@@ -14,7 +14,12 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
     """Protocol for classes able to provide OAuth tokens."""
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
     ) -> _AccessToken:
         """Request an access token for `scopes`.
 

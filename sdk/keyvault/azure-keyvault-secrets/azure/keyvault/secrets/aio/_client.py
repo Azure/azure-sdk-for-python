@@ -25,7 +25,7 @@ class SecretClient(AsyncKeyVaultClientBase):
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
-    :paramtype api_version: ~azure.keyvault.secrets.ApiVersion
+    :paramtype api_version: ~azure.keyvault.secrets.ApiVersion or str
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault domain. Defaults to True.
 

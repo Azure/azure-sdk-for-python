@@ -4,6 +4,7 @@
 An example to show an application using custom events. Events are added
 to the span and exported via the AzureMonitorTraceExporter.
 """
+# mypy: disable-error-code="attr-defined"
 import os
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider

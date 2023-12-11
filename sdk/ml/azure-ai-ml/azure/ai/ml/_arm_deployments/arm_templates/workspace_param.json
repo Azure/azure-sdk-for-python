@@ -176,10 +176,16 @@
     "enable_data_isolation": {
         "value": "false"
     },
-    "set_up_feature_store": {
-        "value": "false"
+    "serverless_compute_settings": {
+        "value": {}
     },
-    "byo_open_ai_resource_id": {
-        "value": ""
+    "endpoint_resource_id": {
+        "value": "null"
+    },
+    "endpoint_kind": {
+        "value": "AIServices"
+    },
+    "endpoint_option": {
+        "value": "new"
     }
 }

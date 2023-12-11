@@ -109,6 +109,22 @@ for item in discontinued_items:
     print(json.dumps(item, indent=True))
 # [END query_items_param]
 
+# [START priority_level option]
+# Priority-based execution is a capability which allows users to specify priority
+# for the request sent to Azure Cosmos DB. Based on the priority specified by the user,
+# if there are more requests than the configured RU/s in a second,
+# then Azure Cosmos DB will throttle low priority requests to allow high priority requests to execute.
+# Can be used for Read, Write, and Query operations. This is specified with the priority_level keyword.
+# the value can either be low or high.
+for item in container.query_items(
+    query='SELECT * FROM products p WHERE p.productModel <> "DISCONTINUED"',
+    enable_cross_partition_query=True,
+    priority_level="High"
+):
+    print(json.dumps(item, indent=True))
+
+# [END priority_level option]
+
 # Delete items from the container.
 # The Cosmos DB SQL API does not support 'DELETE' queries,
 # so deletes must be done with the delete_item method
@@ -165,3 +181,50 @@ items = container.read_all_items()
 for item in items:
     print(json.dumps(item, indent=True))
 # [END delete_all_items_by_partition_key]
+
+# Subpartitioning Samples Similar samples that show how to use subpartitioning
+# [START create_container]
+location_container_name = "locations"
+try:
+    container = database.create_container(
+        id=location_container_name, partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash")
+    )
+except exceptions.CosmosResourceExistsError:
+    container = database.get_container_client(container_name)
+# [END create_container]
+
+# insert items in a subpartitioned container
+# [START upsert_items]
+for i in range(1, 10):
+    container.upsert_item(
+        dict(id="item{}".format(i), state="WA", city="Redmond", zipcode=98052)
+    )
+# [END upsert_items]
+
+# Modify an existing item in the container
+# [START update_item]
+item = container.read_item("item2", partition_key=["WA", "Redmond", 98052])
+item["state"] = "GA"
+item["city"] = "Atlanta"
+item["zipcode"] = 30363
+updated_item = container.upsert_item(item)
+# [END update_item]
+
+# Query the items in a container using SQL-like syntax. This example
+# gets all items whose product model hasn't been discontinued.
+# [START query_items]
+import json
+
+for item in container.query_items(
+    query='SELECT * FROM products p WHERE p.state = "WA"',
+    enable_cross_partition_query=True,
+):
+    print(json.dumps(item, indent=True))
+# [END query_items]
+
+# [START delete_items]
+for item in container.query_items(
+    query='SELECT * FROM products p WHERE p.state = "GA"'
+):
+    container.delete_item(item, partition_key=["GA", "Atlanta", 30363])
+# [END delete_items]

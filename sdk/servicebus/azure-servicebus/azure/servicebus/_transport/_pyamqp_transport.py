@@ -666,13 +666,19 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._receive_context.clear()
 
     @staticmethod
-    def enhanced_message_received(
+    def enhanced_message_received(  # pylint: disable=arguments-differ
         receiver: "ServiceBusReceiver",
         frame: "AttachFrame",
         message: "Message"
     ) -> None:
-        """
-        Receiver enhanced_message_received callback.
+        """Callback run on receipt of every message.
+
+        Releases messages from the internal buffer when there is no active receive call. In PEEKLOCK mode,
+        this helps avoid messages from expiring in the buffer and incrementing the delivery count of a message.
+
+        Should not be used with RECEIVE_AND_DELETE mode, since those messages are settled right away and removed
+        from the Service Bus entity.
+
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
         :param ~pyamqp.performatives.AttachFrame frame: The attach frame.
         :param ~pyamqp.message.Message message: The received message.
@@ -682,6 +688,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if receiver._receive_context.is_set():
             receiver._handler._received_messages.put((frame, message))
         else:
+            # If receive_message or receive iterator is not being called, release message passed to callback.
             receiver._handler.settle_messages(frame[1], 'released')
 
     @staticmethod

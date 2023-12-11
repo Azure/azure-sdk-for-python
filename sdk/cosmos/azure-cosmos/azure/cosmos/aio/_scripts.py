@@ -61,7 +61,7 @@ class ScriptsProxy(object):
 
     def _get_resource_link(self, script_or_id: Union[Dict[str, Any], str], typ: str) -> str:
         if isinstance(script_or_id, str):
-            return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
+            return "{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
     @distributed_trace
@@ -159,7 +159,7 @@ class ScriptsProxy(object):
         :param sproc: The ID (name) or dict representing stored procedure to be replaced.
         :type sproc: Union[str, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the stored procedure to replace.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the stored
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the stored
             procedure with given id does not exist.
         :returns: A dict representing the stored procedure after replace went through.
         :rtype: Dict[str, Any]
@@ -329,8 +329,8 @@ class ScriptsProxy(object):
         :param trigger: The ID (name) or dict representing trigger to be replaced.
         :type trigger: Union[str, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the trigger to replace.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the trigger with given
-            id does not exist.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the trigger with
+            given id does not exist.
         :returns: A dict representing the trigger after replace went through.
         :rtype: Dict[str, Any]
         """
@@ -457,8 +457,8 @@ class ScriptsProxy(object):
         :param udf: The ID (name) or dict representing user-defined function to be replaced.
         :type udf: Union[str, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the udf to replace.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user-defined function
-            with the given id does not exist.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the user-defined
+            function with the given id does not exist.
         :returns: A dict representing the user-defined function after replace went through.
         :rtype: Dict[str, Any]
         """

@@ -117,15 +117,15 @@ Each set of metric values is a time series with the following characteristics:
 
 ### Logs query
 
-This example shows how to query a Log Analytics workspace. To handle the response and view it in a tabular form, the [pandas](https://pypi.org/project/pandas/) library is used. See the [samples][samples] if you choose not to use pandas.
+This example shows how to query a Log Analytics workspace. To handle the response and view it in a tabular form, the [`pandas`](https://pypi.org/project/pandas/) library is used. See the [samples][samples] if you choose not to use `pandas`.
 
 #### Specify timespan
 
 The `timespan` parameter specifies the time duration for which to query the data. This value can be one of the following:
 
 - a `timedelta`
-- a `timedelta` and a start datetime
-- a start datetime/end datetime
+- a `timedelta` and a start `datetime`
+- a start `datetime`/end `datetime`
 
 For example:
 
@@ -194,7 +194,7 @@ LogsQueryPartialResult
     |---columns_types
 ```
 
-The `LogsQueryResult` directly iterates over the table as a convenience. For example, to handle a logs query response with tables and display it using pandas:
+The `LogsQueryResult` directly iterates over the table as a convenience. For example, to handle a logs query response with tables and display it using `pandas`:
 
 ```python
 response = client.query(...)
@@ -310,6 +310,7 @@ The following example shows setting a server timeout in seconds. A gateway timeo
 
 ```python
 import os
+from datetime import timedelta
 from azure.monitor.query import LogsQueryClient
 from azure.identity import DefaultAzureCredential
 

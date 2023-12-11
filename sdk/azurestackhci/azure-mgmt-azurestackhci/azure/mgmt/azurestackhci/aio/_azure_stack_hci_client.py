@@ -16,21 +16,17 @@ from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import AzureStackHCIClientConfiguration
 from .operations import (
-    ArcSettingsOperations,
-    ClustersOperations,
-    ExtensionsOperations,
-    GalleryimagesOperations,
+    GalleryImagesOperations,
     GuestAgentOperations,
     GuestAgentsOperations,
     HybridIdentityMetadataOperations,
-    MachineExtensionsOperations,
-    MarketplacegalleryimagesOperations,
-    NetworkinterfacesOperations,
+    LogicalNetworksOperations,
+    MarketplaceGalleryImagesOperations,
+    NetworkInterfacesOperations,
     Operations,
-    StoragecontainersOperations,
-    VirtualharddisksOperations,
-    VirtualmachinesOperations,
-    VirtualnetworksOperations,
+    StorageContainersOperations,
+    VirtualHardDisksOperations,
+    VirtualMachineInstancesOperations,
 )
 
 if TYPE_CHECKING:
@@ -41,46 +37,40 @@ if TYPE_CHECKING:
 class AzureStackHCIClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure Stack HCI management service.
 
-    :ivar arc_settings: ArcSettingsOperations operations
-    :vartype arc_settings: azure.mgmt.azurestackhci.aio.operations.ArcSettingsOperations
-    :ivar clusters: ClustersOperations operations
-    :vartype clusters: azure.mgmt.azurestackhci.aio.operations.ClustersOperations
-    :ivar extensions: ExtensionsOperations operations
-    :vartype extensions: azure.mgmt.azurestackhci.aio.operations.ExtensionsOperations
-    :ivar galleryimages: GalleryimagesOperations operations
-    :vartype galleryimages: azure.mgmt.azurestackhci.aio.operations.GalleryimagesOperations
-    :ivar marketplacegalleryimages: MarketplacegalleryimagesOperations operations
-    :vartype marketplacegalleryimages:
-     azure.mgmt.azurestackhci.aio.operations.MarketplacegalleryimagesOperations
-    :ivar networkinterfaces: NetworkinterfacesOperations operations
-    :vartype networkinterfaces: azure.mgmt.azurestackhci.aio.operations.NetworkinterfacesOperations
+    :ivar gallery_images: GalleryImagesOperations operations
+    :vartype gallery_images: azure.mgmt.azurestackhci.aio.operations.GalleryImagesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.azurestackhci.aio.operations.Operations
-    :ivar storagecontainers: StoragecontainersOperations operations
-    :vartype storagecontainers: azure.mgmt.azurestackhci.aio.operations.StoragecontainersOperations
-    :ivar virtualharddisks: VirtualharddisksOperations operations
-    :vartype virtualharddisks: azure.mgmt.azurestackhci.aio.operations.VirtualharddisksOperations
-    :ivar virtualmachines: VirtualmachinesOperations operations
-    :vartype virtualmachines: azure.mgmt.azurestackhci.aio.operations.VirtualmachinesOperations
+    :ivar logical_networks: LogicalNetworksOperations operations
+    :vartype logical_networks: azure.mgmt.azurestackhci.aio.operations.LogicalNetworksOperations
+    :ivar marketplace_gallery_images: MarketplaceGalleryImagesOperations operations
+    :vartype marketplace_gallery_images:
+     azure.mgmt.azurestackhci.aio.operations.MarketplaceGalleryImagesOperations
+    :ivar network_interfaces: NetworkInterfacesOperations operations
+    :vartype network_interfaces:
+     azure.mgmt.azurestackhci.aio.operations.NetworkInterfacesOperations
+    :ivar storage_containers: StorageContainersOperations operations
+    :vartype storage_containers:
+     azure.mgmt.azurestackhci.aio.operations.StorageContainersOperations
+    :ivar virtual_hard_disks: VirtualHardDisksOperations operations
+    :vartype virtual_hard_disks: azure.mgmt.azurestackhci.aio.operations.VirtualHardDisksOperations
+    :ivar virtual_machine_instances: VirtualMachineInstancesOperations operations
+    :vartype virtual_machine_instances:
+     azure.mgmt.azurestackhci.aio.operations.VirtualMachineInstancesOperations
     :ivar hybrid_identity_metadata: HybridIdentityMetadataOperations operations
     :vartype hybrid_identity_metadata:
      azure.mgmt.azurestackhci.aio.operations.HybridIdentityMetadataOperations
-    :ivar machine_extensions: MachineExtensionsOperations operations
-    :vartype machine_extensions:
-     azure.mgmt.azurestackhci.aio.operations.MachineExtensionsOperations
     :ivar guest_agent: GuestAgentOperations operations
     :vartype guest_agent: azure.mgmt.azurestackhci.aio.operations.GuestAgentOperations
     :ivar guest_agents: GuestAgentsOperations operations
     :vartype guest_agents: azure.mgmt.azurestackhci.aio.operations.GuestAgentsOperations
-    :ivar virtualnetworks: VirtualnetworksOperations operations
-    :vartype virtualnetworks: azure.mgmt.azurestackhci.aio.operations.VirtualnetworksOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-09-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-09-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -97,39 +87,37 @@ class AzureStackHCIClient:  # pylint: disable=client-accepts-api-version-keyword
         self._config = AzureStackHCIClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.arc_settings = ArcSettingsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.galleryimages = GalleryimagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.marketplacegalleryimages = MarketplacegalleryimagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.networkinterfaces = NetworkinterfacesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.storagecontainers = StoragecontainersOperations(
+        self.logical_networks = LogicalNetworksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.virtualharddisks = VirtualharddisksOperations(
+        self.marketplace_gallery_images = MarketplaceGalleryImagesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.virtualmachines = VirtualmachinesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.network_interfaces = NetworkInterfacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.storage_containers = StorageContainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_hard_disks = VirtualHardDisksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_instances = VirtualMachineInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.hybrid_identity_metadata = HybridIdentityMetadataOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.machine_extensions = MachineExtensionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.guest_agent = GuestAgentOperations(self._client, self._config, self._serialize, self._deserialize)
         self.guest_agents = GuestAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtualnetworks = VirtualnetworksOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
@@ -160,5 +148,5 @@ class AzureStackHCIClient:  # pylint: disable=client-accepts-api-version-keyword
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

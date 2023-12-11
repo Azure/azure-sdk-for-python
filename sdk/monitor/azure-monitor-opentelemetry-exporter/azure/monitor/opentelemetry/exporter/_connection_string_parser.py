@@ -28,7 +28,7 @@ class ConnectionStringParser:
 
     def __init__(
         self,
-        connection_string: str = None
+        connection_string: typing.Optional[str] = None
     ) -> None:
         self.instrumentation_key = None
         self.endpoint = ""
@@ -51,7 +51,7 @@ class ConnectionStringParser:
         # 3. Key from connection string in environment variable
         # 4. Key from instrumentation key in environment variable
         self.instrumentation_key = (
-            code_cs.get(INSTRUMENTATION_KEY)
+            code_cs.get(INSTRUMENTATION_KEY) # type: ignore
             or code_ikey
             or env_cs.get(INSTRUMENTATION_KEY)
             or env_ikey

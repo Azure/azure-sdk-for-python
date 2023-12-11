@@ -1,0 +1,7 @@
+trigger: none
+
+# NOTE: Service live tests are NOT enabled. This file only enables the analyze stage currently.
+stages:
+  - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
+    parameters:
+      ServiceDirectory: ai

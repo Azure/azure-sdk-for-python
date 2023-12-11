@@ -22,8 +22,9 @@ from ._generated.models import (
     QueryType,
     SearchMode,
     ScoringStatistics,
-    Vector,
-    SemanticErrorHandling,
+    VectorFilterMode,
+    VectorQuery,
+    SemanticErrorMode,
     QueryDebugMode,
     SuggestRequest,
 )
@@ -136,7 +137,7 @@ class SearchClient(HeadersMixin):
     @distributed_trace
     def search(
         self,
-        search_text: str,
+        search_text: Optional[str] = None,
         *,
         include_total_count: Optional[bool] = None,
         facets: Optional[List[str]] = None,
@@ -149,6 +150,7 @@ class SearchClient(HeadersMixin):
         query_type: Optional[Union[str, QueryType]] = None,
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
+        semantic_query: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         search_mode: Optional[Union[str, SearchMode]] = None,
         query_language: Optional[Union[str, QueryLanguage]] = None,
@@ -157,7 +159,7 @@ class SearchClient(HeadersMixin):
         query_answer_count: Optional[int] = None,
         query_answer_threshold: Optional[float] = None,
         query_caption: Optional[Union[str, QueryCaptionType]] = None,
-        query_caption_highlight: Optional[bool] = None,
+        query_caption_highlight_enabled: Optional[bool] = None,
         semantic_fields: Optional[List[str]] = None,
         semantic_configuration_name: Optional[str] = None,
         select: Optional[List[str]] = None,
@@ -165,8 +167,9 @@ class SearchClient(HeadersMixin):
         top: Optional[int] = None,
         scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
         session_id: Optional[str] = None,
-        vectors: Optional[List[Vector]] = None,
-        semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
+        vector_queries: Optional[List[VectorQuery]] = None,
+        vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
+        semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
         **kwargs: Any
@@ -209,6 +212,10 @@ class SearchClient(HeadersMixin):
          "mylocation--122.2,44.8" (without the quotes).
         :keyword str scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
+        :keyword str semantic_query: Allows setting a separate search query that will be solely used for
+         semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+         is a need to use different queries between the base retrieval and ranking phase, and the L2
+         semantic phase.
         :keyword list[str] search_fields: The list of field names to which to scope the full-text search. When
          using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
          each fielded search expression take precedence over any field names listed in this parameter.
@@ -239,7 +246,7 @@ class SearchClient(HeadersMixin):
          query returns captions extracted from key passages in the highest ranked documents.
          Defaults to 'None'. Possible values include: "none", "extractive".
         :paramtype query_caption: str or ~azure.search.documents.models.QueryCaptionType
-        :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
+        :keyword bool query_caption_highlight_enabled: This parameter is only valid if the query type is 'semantic' when
          query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
         :keyword list[str] semantic_fields: The list of field names used for semantic search.
@@ -267,18 +274,21 @@ class SearchClient(HeadersMixin):
          interfere with the load balancing of the requests across replicas and adversely affect the
          performance of the search service. The value used as sessionId cannot start with a '_'
          character.
-        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
+        :keyword semantic_error_mode: Allows the user to choose whether a semantic call should fail
          completely (default / current behavior), or to return partial results. Known values are:
          "partial" and "fail".
-        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorHandling
+        :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
          time it takes for semantic enrichment to finish processing before the request fails.
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
          results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword vectors: The query parameters for multi-vector search queries.
-        :paramtype vectors: list[Vector]
-        :rtype:  SearchItemPaged[Dict]
+        :keyword vector_queries: The query parameters for vector and hybrid search queries.
+        :paramtype vector_queries: list[VectorQuery]
+        :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
+          vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
+        :paramtype vector_filter_mode: str or VectorFilterMode
+        :rtype:  SearchItemPaged[dict]
 
         .. admonition:: Example:
 
@@ -316,8 +326,8 @@ class SearchClient(HeadersMixin):
 
         captions = (
             query_caption
-            if not query_caption_highlight
-            else "{}|highlight-{}".format(query_caption, query_caption_highlight)
+            if not query_caption_highlight_enabled
+            else "{}|highlight-{}".format(query_caption, query_caption_highlight_enabled)
         )
 
         semantic_configuration = semantic_configuration_name
@@ -335,6 +345,7 @@ class SearchClient(HeadersMixin):
             query_type=query_type,
             scoring_parameters=scoring_parameters,
             scoring_profile=scoring_profile,
+            semantic_query=semantic_query,
             search_fields=search_fields_str,
             search_mode=search_mode,
             query_language=query_language,
@@ -348,8 +359,9 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vectors=vectors,
-            semantic_error_handling=semantic_error_handling,
+            vector_queries=vector_queries,
+            vector_filter_mode=vector_filter_mode,
+            semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
         )
@@ -369,6 +381,7 @@ class SearchClient(HeadersMixin):
         search_text: str,
         suggester_name: str,
         *,
+        filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
@@ -412,7 +425,7 @@ class SearchClient(HeadersMixin):
         :keyword int top: The number of suggestions to retrieve. The value must be a number between 1 and
          100. The default is 5.
         :return: List of documents.
-        :rtype:  list[Dict]
+        :rtype:  list[dict]
 
         .. admonition:: Example:
 
@@ -423,7 +436,7 @@ class SearchClient(HeadersMixin):
                 :dedent: 4
                 :caption: Get search suggestions.
         """
-        filter_arg = kwargs.pop("filter", None)
+        filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
         query = SuggestQuery(
             search_text=search_text,
@@ -492,7 +505,7 @@ class SearchClient(HeadersMixin):
          terms. Target fields must be included in the specified suggester.
         :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1 and
          100. The default is 5.
-        :rtype:  List[Dict]
+        :rtype:  list[dict]
 
         .. admonition:: Example:
 

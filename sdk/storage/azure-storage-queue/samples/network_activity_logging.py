@@ -63,6 +63,6 @@ for queue in queues:
     messages = queue_client.peek_messages(max_messages=20, logging_enable=True)
     for message in messages:
         try:
-            print('  Message: {}'.format(base64.b64decode(message.content)))
+            print('  Message: {!r}'.format(base64.b64decode(message.content)))
         except binascii.Error:
             print('  Message: {}'.format(message.content))

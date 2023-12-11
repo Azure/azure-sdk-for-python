@@ -12,7 +12,7 @@ from opentelemetry._logs import get_logger_provider, set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
 )
-from opentelemetry.instrumentation.instrumentor import (
+from opentelemetry.instrumentation.instrumentor import ( # type: ignore
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
@@ -29,11 +29,13 @@ from pkg_resources import iter_entry_points  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._constants import (
-    DISABLE_AZURE_CORE_TRACING_ARG,
+    _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
+    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
+    _AZURE_SDK_INSTRUMENTATION_NAME,
+    _AZURE_VM_RESOURCE_DETECTOR_NAME,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
-    DISABLED_INSTRUMENTATIONS_ARG,
     LOGGER_NAME_ARG,
     SAMPLING_RATIO_ARG,
 )
@@ -44,24 +46,18 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
 )
-from azure.monitor.opentelemetry._util.configurations import _get_configurations
-
-_logger = getLogger(__name__)
-
-_SUPPORTED_INSTRUMENTED_LIBRARIES = (
-    "django",
-    "fastapi",
-    "flask",
-    "psycopg2",
-    "requests",
-    "urllib",
-    "urllib3",
+from azure.monitor.opentelemetry._util.configurations import (
+    _get_configurations,
+    _is_instrumentation_enabled,
 )
+
 
 _SUPPORTED_RESOURCE_DETECTORS = (
-    "azure_app_service",
-    "azure_vm",
+    _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
+    _AZURE_VM_RESOURCE_DETECTOR_NAME,
 )
+
+_logger = getLogger(__name__)
 
 
 def configure_azure_monitor(**kwargs) -> None:
@@ -108,11 +104,10 @@ def configure_azure_monitor(**kwargs) -> None:
     _setup_instrumentations(configurations)
 
 def _setup_resources():
-    detectors = os.environ.get(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, "")
-    if detectors:
-        detectors = detectors + ","
-    detectors += ",".join(_SUPPORTED_RESOURCE_DETECTORS)
-    os.environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS] = detectors
+    os.environ.setdefault(
+        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+        ",".join(_SUPPORTED_RESOURCE_DETECTORS)
+    )
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
@@ -125,9 +120,8 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     span_processor = BatchSpanProcessor(
         trace_exporter,
     )
-    get_tracer_provider().add_span_processor(span_processor)
-    disable_azure_core_tracing = configurations[DISABLE_AZURE_CORE_TRACING_ARG]
-    if not disable_azure_core_tracing:
+    get_tracer_provider().add_span_processor(span_processor) # type: ignore
+    if _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         settings.tracing_implementation = OpenTelemetrySpan
 
 
@@ -138,9 +132,9 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     log_record_processor = BatchLogRecordProcessor(
         log_exporter,
     )
-    get_logger_provider().add_log_record_processor(log_record_processor)
+    get_logger_provider().add_log_record_processor(log_record_processor) # type: ignore
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    logger_name = configurations[LOGGER_NAME_ARG]
+    logger_name = configurations[LOGGER_NAME_ARG] # type: ignore
     getLogger(logger_name).addHandler(handler)
 
 
@@ -154,16 +148,14 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
-    disabled_instrumentations = configurations[DISABLED_INSTRUMENTATIONS_ARG]
-
     # use pkg_resources for now until https://github.com/open-telemetry/opentelemetry-python/pull/3168 is merged
     for entry_point in iter_entry_points(
         "opentelemetry_instrumentor"
     ):
         lib_name = entry_point.name
-        if lib_name not in _SUPPORTED_INSTRUMENTED_LIBRARIES:
+        if lib_name not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
             continue
-        if entry_point.name in disabled_instrumentations:
+        if not _is_instrumentation_enabled(configurations, lib_name):
             _logger.debug(
                 "Instrumentation skipped for library %s", entry_point.name
             )

@@ -20,6 +20,7 @@ from ._models_py3 import EventListener
 from ._models_py3 import EventListenerEndpoint
 from ._models_py3 import EventListenerFilter
 from ._models_py3 import EventNameFilter
+from ._models_py3 import IPRule
 from ._models_py3 import LiveTraceCategory
 from ._models_py3 import LiveTraceConfiguration
 from ._models_py3 import LogSpecification
@@ -106,6 +107,7 @@ __all__ = [
     "EventListenerEndpoint",
     "EventListenerFilter",
     "EventNameFilter",
+    "IPRule",
     "LiveTraceCategory",
     "LiveTraceConfiguration",
     "LogSpecification",

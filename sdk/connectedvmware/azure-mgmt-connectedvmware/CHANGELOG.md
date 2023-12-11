@@ -1,5 +1,37 @@
 # Release History
 
+## 1.0.0 (2023-10-23)
+
+### Features Added
+
+  - Added operation group VMInstanceGuestAgentsOperations
+  - Added operation group VirtualMachineInstancesOperations
+  - Added operation group VmInstanceHybridIdentityMetadataOperations
+  - Model Cluster has a new parameter total_cpu_m_hz
+  - Model Cluster has a new parameter total_memory_gb
+  - Model Cluster has a new parameter used_cpu_m_hz
+  - Model Cluster has a new parameter used_memory_gb
+  - Model GuestAgent has a new parameter private_link_scope_resource_id
+  - Model Host has a new parameter cpu_mhz
+  - Model Host has a new parameter memory_size_gb
+  - Model Host has a new parameter overall_cpu_usage_m_hz
+  - Model Host has a new parameter overall_memory_usage_gb
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model ResourcePool has a new parameter cpu_capacity_m_hz
+  - Model ResourcePool has a new parameter cpu_overall_usage_m_hz
+  - Model ResourcePool has a new parameter mem_capacity_gb
+  - Model ResourcePool has a new parameter mem_overall_usage_gb
+
+### Breaking Changes
+
+  - Client name is changed from `AzureArcVMwareManagementServiceAPI` to `ConnectedVMwareMgmtClient`
+  - Removed operation group AzureArcVMwareManagementServiceAPIOperationsMixin
+  - Removed operation group GuestAgentsOperations
+  - Removed operation group HybridIdentityMetadataOperations
+  - Removed operation group MachineExtensionsOperations
+  - Removed operation group VirtualMachinesOperations
+
 ## 1.0.0b3 (2022-12-26)
 
 ### Features Added

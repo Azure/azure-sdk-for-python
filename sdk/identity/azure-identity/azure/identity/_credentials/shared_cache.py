@@ -22,10 +22,10 @@ class SharedTokenCacheCredential:
     :param str username: Username (typically an email address) of the user to authenticate as. This is used when the
         local cache contains tokens for multiple identities.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: an Azure Active Directory tenant ID. Used to select an account when the cache contains
+    :keyword str tenant_id: a Microsoft Entra tenant ID. Used to select an account when the cache contains
         tokens for multiple identities.
     :keyword AuthenticationRecord authentication_record: an authentication record returned by a user credential such as
         :class:`DeviceCodeCredential` or :class:`InteractiveBrowserCredential`
@@ -53,7 +53,12 @@ class SharedTokenCacheCredential:
 
     @log_get_token("SharedTokenCacheCredential")
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
@@ -77,7 +82,7 @@ class SharedTokenCacheCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
         """
-        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     @staticmethod
     def supported() -> bool:
@@ -102,7 +107,12 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
             self._client.__exit__(*args)
 
     def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any
     ) -> AccessToken:
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
@@ -110,7 +120,7 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         if not self._client_initialized:
             self._initialize_client()
 
-        is_cae = bool(kwargs.get("enable_cae", False))
+        is_cae = enable_cae
         token_cache = self._cae_cache if is_cae else self._cache
 
         # Try to load the cache if it is None.

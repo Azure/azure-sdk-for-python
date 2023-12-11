@@ -556,7 +556,7 @@ class MiscConfigurationOptions(object):
 
         from random import randint
 
-        data_asset_name = f"data-asset-name-{randint(0, 1000)}"
+        data_asset_name = f"data_asset_name_{randint(0, 1000)}"
         # [START data_operations_create_or_update]
         from azure.ai.ml.entities import Data
 
@@ -591,11 +591,11 @@ class MiscConfigurationOptions(object):
         # [END code_operations_get]
 
         # [START data_operations_list]
-        ml_client.data.list(name="data-asset-name")
+        ml_client.data.list(name="data_asset_name")
         # [END data_operations_list]
 
         # [START data_operations_get]
-        ml_client.data.get(name="data-asset-name", version="2.0")
+        ml_client.data.get(name="data_asset_name", version="2.0")
         # [END data_operations_get]
 
         # [START data_operations_import_data]
@@ -604,27 +604,27 @@ class MiscConfigurationOptions(object):
 
         database_example = Database(query="SELECT ID FROM DataTable", connection="azureml:my_azuresqldb_connection")
         data_import_example = DataImport(
-            name="data-asset-name", path="azureml://datastores/workspaceblobstore/paths/", source=database_example
+            name="data_asset_name", path="azureml://datastores/workspaceblobstore/paths/", source=database_example
         )
         ml_client.data.import_data(data_import_example)
         # [END data_operations_import_data]
 
         # [START data_operations_list_materialization_status]
-        ml_client.data.list_materialization_status("data-asset-name")
+        ml_client.data.list_materialization_status("data_asset_name")
         # [END data_operations_list_materialization_status]
 
         # [START data_operations_archive]
-        ml_client.data.archive("data-asset-name")
+        ml_client.data.archive("data_asset_name")
         # [END data_operations_archive]
 
         # [START data_operations_restore]
-        ml_client.data.restore("data-asset-name")
+        ml_client.data.restore("data_asset_name")
         # [END data_operations_restore]
 
         try:
             # [START data_operations_share]
             ml_client.data.share(
-                name="data-asset-name",
+                name="data_asset_name",
                 version="2.0",
                 registry_name="my-registry",
                 share_with_name="transformed-nyc-taxi-data-shared-from-ws",

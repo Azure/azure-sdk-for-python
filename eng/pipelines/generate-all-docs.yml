@@ -28,7 +28,7 @@ jobs:
       - task: PythonScript@0
         displayName: 'Generate Docs'
         inputs:
-          scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+          scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
           arguments: >-
             "$(BuildTargetingString)"
             --toxenv=sphinx

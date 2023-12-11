@@ -1,9 +1,27 @@
 # Release History
 
-## 12.14.0b1 (Unreleased)
+## 12.15.0b1 (Unreleased)
 
 ### Features Added
 
+
+## 12.14.0 (2023-11-07)
+
+### Features Added
+- Stable release of features from 12.14.0b1
+
+## 12.14.0b1 (2023-10-17)
+
+### Features Added
+- Added support for service version 2023-11-03.
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
+
+## 12.13.2 (2023-10-10)
+
+### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
 
 ## 12.13.1 (2023-09-13)
 

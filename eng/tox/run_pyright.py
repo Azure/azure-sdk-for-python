@@ -17,6 +17,7 @@ import json
 from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
 )
+from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
 from gh_tools.vnext_issue_creator import create_vnext_issue
 
@@ -26,7 +27,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 
 
 def get_pyright_config_path(args):
-    """Give pyright an execution environment when running with tox. Otherwise 
+    """Give pyright an execution environment when running with tox. Otherwise
     we use pyright's default for import resolution which doesn't work well
     in our monorepo.
 
@@ -77,7 +78,8 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    package_name = os.path.basename(os.path.abspath(args.target_package))
+    package_dir = os.path.abspath(args.target_package)
+    package_name = os.path.basename(package_dir)
 
     if not args.next and in_ci():
         if not is_check_enabled(args.target_package, "pyright") or is_typing_ignored(package_name):
@@ -86,8 +88,10 @@ if __name__ == "__main__":
             )
             exit(0)
 
+    pkg_details = ParsedSetup.from_path(package_dir)
+    top_level_module = pkg_details.namespace.split(".")[0]
     paths = [
-        os.path.join(args.target_package, "azure"),
+        os.path.join(args.target_package, top_level_module),
         os.path.join(args.target_package, "samples"),
     ]
 

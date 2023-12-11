@@ -19,31 +19,6 @@ import re
 
 logging.getLogger().setLevel(logging.INFO)
 
-
-def get_pip_list_output():
-    """Uses the invoking python executable to get the output from pip list."""
-    out = subprocess.Popen(
-        [sys.executable, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-
-    stdout, stderr = out.communicate()
-
-    collected_output = {}
-
-    if stdout and (stderr is None):
-        # this should be compatible with py27 https://docs.python.org/2.7/library/stdtypes.html#str.decode
-        for line in stdout.decode("utf-8").split(os.linesep)[2:]:
-            if line:
-                package, version = re.split("==", line)
-                collected_output[package] = version
-    else:
-        raise Exception(stderr)
-
-    return collected_output
-
-
 def unzip_sdist_to_directory(containing_folder: str) -> str:
     zips = glob.glob(os.path.join(containing_folder, "*.zip"))
 

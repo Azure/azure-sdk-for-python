@@ -30,6 +30,6 @@ def print_snapshot(snapshot):
     print(f"expires: {snapshot.expires}")
     print(f"retention_period: {snapshot.retention_period}")
     print(f"size: {snapshot.size}")
-    print(f"item_count: {snapshot.item_count}")
+    print(f"items_count: {snapshot.items_count}")
     print(f"tags: {snapshot.tags}")
     print(f"etag: {snapshot.etag}")

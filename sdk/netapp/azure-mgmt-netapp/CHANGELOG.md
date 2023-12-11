@@ -1,5 +1,32 @@
 # Release History
 
+## 11.0.0 (2023-10-23)
+
+### Features Added
+
+  - Added operation NetAppResourceOperations.begin_update_network_sibling_set
+  - Added operation NetAppResourceOperations.query_network_sibling_set
+  - Added operation VolumesOperations.begin_populate_availability_zone
+  - Model Volume has a new parameter cool_access_retrieval_policy
+  - Model VolumeGroupVolumeProperties has a new parameter cool_access_retrieval_policy
+  - Model VolumeGroupVolumeProperties has a new parameter zones
+  - Model VolumePatch has a new parameter cool_access_retrieval_policy
+  - Model VolumePatch has a new parameter smb_access_based_enumeration
+  - Model VolumePatch has a new parameter smb_non_browsable
+
+### Breaking Changes
+
+  - Model VolumePatchPropertiesDataProtection no longer has parameter backup
+  - Model VolumePropertiesDataProtection no longer has parameter backup
+  - Removed operation BackupsOperations.begin_create
+  - Removed operation BackupsOperations.begin_delete
+  - Removed operation BackupsOperations.begin_restore_files
+  - Removed operation BackupsOperations.begin_update
+  - Removed operation BackupsOperations.get
+  - Removed operation BackupsOperations.get_status
+  - Removed operation BackupsOperations.list
+  - Removed operation group AccountBackupsOperations
+
 ## 10.1.0 (2023-07-21)
 
 ### Features Added

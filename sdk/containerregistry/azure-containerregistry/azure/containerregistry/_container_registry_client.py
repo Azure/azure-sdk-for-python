@@ -70,7 +70,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         *,
         api_version: Optional[str] = None,
         audience: str = DEFAULT_AUDIENCE,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
@@ -163,7 +163,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def prepare_request(next_link=None):
             # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters: Dict[str, Any] = {}
             header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
                 "accept", accept, "str"
             )
@@ -181,7 +181,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 if last is not None:
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
@@ -196,7 +196,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             else:
                 url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._config.url",
@@ -288,7 +288,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def prepare_request(next_link=None):
             # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters: Dict[str, Any] = {}
             header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
                 "accept", accept, "str"
             )
@@ -307,7 +307,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 if last is not None:
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
@@ -326,7 +326,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             else:
                 url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
@@ -425,7 +425,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository, tag_or_digest, **kwargs
         )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            manifest_properties.manifest,  # type: ignore
+            manifest_properties.manifest,  # type: ignore[arg-type] # The property "manifest" is required in response
             repository_name=repository,
             registry=self._endpoint,
         )
@@ -453,8 +453,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         tag_properties = self._client.container_registry.get_tag_properties(repository, tag, **kwargs)
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            tag_properties.tag,  # type: ignore
-            repository=repository,
+            tag_properties.tag,  # type: ignore[arg-type] # The property "tag" is required in response
+            repository_name=repository,
         )
 
     @distributed_trace
@@ -489,7 +489,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactTagProperties._from_generated(o, repository=repository)  # pylint: disable=protected-access
+                ArtifactTagProperties._from_generated(o, repository_name=repository)  # pylint: disable=protected-access
                 for o in objs
             ],
         )
@@ -500,7 +500,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def prepare_request(next_link=None):
             # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters: Dict[str, Any] = {}
             header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
                 "accept", accept, "str"
             )
@@ -519,7 +519,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 if last is not None:
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
@@ -542,7 +542,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             else:
                 url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
@@ -589,7 +589,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_manifest_properties(
-        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs
+        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -632,7 +632,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -690,12 +690,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository, tag_or_digest, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            manifest_properties.manifest, repository_name=repository, registry=self._endpoint  # type: ignore
+            manifest_properties.manifest,  # type: ignore[arg-type] # The property "manifest" is required in response
+            repository_name=repository,
+            registry=self._endpoint,
         )
 
     @overload
     def update_tag_properties(
-        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs
+        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -735,7 +737,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -787,12 +789,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            tag_attributes.tag, repository=repository  # type: ignore
+            tag_attributes.tag,  # type: ignore[arg-type] # The property "tag" is required in response
+            repository_name=repository,
         )
 
     @overload
     def update_repository_properties(
-        self, repository: str, properties: RepositoryProperties, **kwargs
+        self, repository: str, properties: RepositoryProperties, **kwargs: Any
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
@@ -815,7 +818,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 

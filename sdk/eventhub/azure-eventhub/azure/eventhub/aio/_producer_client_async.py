@@ -184,9 +184,9 @@ class EventHubProducerClient(
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs
         )
-        self._producers = {
+        self._producers: Dict[str, Optional[EventHubProducer]] = {
             ALL_PARTITIONS: self._create_producer()
-        }  # type: Dict[str, Optional[EventHubProducer]]
+        }
         self._lock = asyncio.Lock(
             **self._internal_kwargs
         )  # sync the creation of self._producers
@@ -801,7 +801,8 @@ class EventHubProducerClient(
         Buffered mode only.
         Flush events in the buffer to be sent immediately if the client is working in buffered mode.
 
-        :keyword float or None timeout: Timeout to flush the buffered events, default is None which means no timeout.
+        :keyword timeout: Timeout to flush the buffered events, default is None which means no timeout.
+        :paramtype timeout: float or None
         :rtype: None
         :raises EventDataSendError: If the producer fails to flush the buffer within the given timeout
          in buffered mode.
@@ -819,8 +820,9 @@ class EventHubProducerClient(
 
         :keyword bool flush: Buffered mode only. If set to True, events in the buffer will be sent
          immediately. Default is True.
-        :keyword float or None timeout: Buffered mode only. Timeout to close the producer.
+        :keyword timeout: Buffered mode only. Timeout to close the producer.
          Default is None which means no timeout.
+        :paramtype timeout: float or None
         :rtype: None
         :raises EventHubError: If an error occurred when flushing the buffer if `flush` is set to True or closing the
          underlying AMQP connections in buffered mode.

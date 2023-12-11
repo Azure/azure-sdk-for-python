@@ -32,7 +32,7 @@ from utilities import get_authority, get_credential
 class SetGetImage(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority)
 
@@ -167,7 +167,9 @@ class SetGetImage(object):
                 "schemaVersion": 2,
             }
             # Set the image with one custom media type
-            client.set_manifest(repository_name, docker_manifest, tag="sample", media_type=docker_manifest["mediaType"])
+            client.set_manifest(
+                repository_name, docker_manifest, tag="sample", media_type=str(docker_manifest["mediaType"])
+            )
 
             # Get the image
             get_manifest_result = client.get_manifest(repository_name, "sample")

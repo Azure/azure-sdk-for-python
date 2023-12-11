@@ -81,7 +81,7 @@ setup(
         "azure-storage-blob<13.0.0,>=12.10.0",
         "azure-storage-file-share<13.0.0",
         "azure-storage-file-datalake<13.0.0",
-        "pydash<6.0.0",
+        "pydash<7.0.6,>=6.0.0",
         "isodate",
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",

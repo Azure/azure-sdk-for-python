@@ -39,9 +39,9 @@ workspace_name = "test-ws1"
 credential = DefaultAzureCredential()
 ml_client = MLClient(credential, subscription_id, resource_group, workspace_name=workspace_name)
 
-compute_name_1 = f"compute-{randint(1, 1000)}"
-compute_name_2 = f"compute-{randint(1, 1000)}"
-ci_name = f"ci-{randint(1, 1000)}"
+compute_name_1 = f"compute-{randint(1, 1000)}-sample"
+compute_name_2 = f"compute-{randint(1, 1000)}-sample"
+ci_name = f"ci-{randint(1, 1000)}-sample"
 
 
 class ComputeConfigurationOptions(object):

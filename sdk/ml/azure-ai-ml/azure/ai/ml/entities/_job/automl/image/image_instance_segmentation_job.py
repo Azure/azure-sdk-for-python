@@ -24,7 +24,22 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
-    """Configuration for AutoML Image Instance Segmentation job."""
+    """Configuration for AutoML Image Instance Segmentation job.
+
+    :keyword primary_metric: The primary metric to use for optimization.
+    :paramtype primary_metric: Optional[str, ~azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
+    :keyword kwargs: Job-specific arguments.
+    :paramtype kwargs: Dict[str, Any]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_instance_segmentation_job]
+            :end-before: [END automl.automl_image_job.image_instance_segmentation_job]
+            :language: python
+            :dedent: 8
+            :caption: creating an automl image instance segmentation job
+    """
 
     _DEFAULT_PRIMARY_METRIC = InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION
 
@@ -34,11 +49,6 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         primary_metric: Optional[Union[str, InstanceSegmentationPrimaryMetrics]] = None,
         **kwargs,
     ) -> None:
-        """Initialize a new AutoML Image Instance Segmentation job.
-
-        :param primary_metric: The primary metric to use for optimization
-        :param kwargs: Job-specific arguments
-        """
         # Extract any super class init settings
         limits = kwargs.pop("limits", None)
         sweep = kwargs.pop("sweep", None)

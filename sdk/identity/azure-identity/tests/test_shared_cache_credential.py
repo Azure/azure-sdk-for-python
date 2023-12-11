@@ -718,7 +718,7 @@ def test_writes_to_cache():
         requests=[Request(required_data={"refresh_token": first_refresh_token})],  # credential redeems refresh token
         responses=[
             mock_response(
-                json_payload=build_aad_response(  # AAD responds with an access token and new refresh token
+                json_payload=build_aad_response(  # Microsoft Entra ID responds with an access token and new refresh token
                     uid=uid,
                     utid=utid,
                     access_token=expected_access_token,

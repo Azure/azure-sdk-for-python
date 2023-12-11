@@ -2,18 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, EXCLUDE
+from marshmallow import EXCLUDE, fields
 
+from azure.ai.ml._schema import ExperimentalField
 from azure.ai.ml._schema._utils.utils import validate_arm_str
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.workspace.customer_managed_key import CustomerManagedKeySchema
 from azure.ai.ml._schema.workspace.identity import IdentitySchema
+from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
+from azure.ai.ml._schema.workspace.serverless_compute import ServerlessComputeSettingsSchema
 from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
-from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
-
-from azure.ai.ml._schema import ExperimentalField
 
 
 class WorkspaceSchema(PathAwareSchema):
@@ -42,3 +42,4 @@ class WorkspaceSchema(PathAwareSchema):
     workspace_hub = fields.Str(validate=validate_arm_str)
     managed_network = ExperimentalField(NestedField(ManagedNetworkSchema, unknown=EXCLUDE))
     enable_data_isolation = fields.Bool()
+    serverless_compute = NestedField(ServerlessComputeSettingsSchema)

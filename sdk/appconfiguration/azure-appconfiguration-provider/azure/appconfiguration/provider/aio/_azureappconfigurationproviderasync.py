@@ -42,7 +42,6 @@ from .._azureappconfigurationprovider import (
     _get_headers,
     _RefreshTimer,
     _build_sentinel,
-    _is_retryable_error,
 )
 from .._user_agent import USER_AGENT
 
@@ -62,6 +61,7 @@ async def load(
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
@@ -89,6 +89,9 @@ async def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :paramtype on_refresh_success: Optional[Callable]
+    :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
+    happened.
     :paramtype on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
@@ -104,6 +107,7 @@ async def load(
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
@@ -129,6 +133,9 @@ async def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :paramtype on_refresh_success: Optional[Callable]
+    :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
+    happened.
     :paramtype on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
@@ -172,19 +179,32 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
             )
         kwargs["keyvault_credential"] = key_vault_options.credential
         kwargs["secret_resolver"] = key_vault_options.secret_resolver
-        kwargs["keyvault_client_configs"] = key_vault_options.client_options
+        kwargs["keyvault_client_configs"] = key_vault_options.client_configs
 
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
+    headers = _get_headers("Startup", **kwargs)
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
-    await provider._load_all()
+    await provider._load_all(headers=headers)
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
-            sentinel = await provider._client.get_configuration_setting(key, label)
-            provider._refresh_on[(key, label)] = sentinel.etag
+            try:
+                sentinel = await provider._client.get_configuration_setting(key, label, headers=headers)
+                provider._refresh_on[(key, label)] = sentinel.etag
+            except HttpResponseError as e:
+                if e.status_code == 404:
+                    # If the sentinel is not found a refresh should be triggered when it is created.
+                    logging.debug(
+                        "WatchKey key: %s label %s was configured but not found. Refresh will be triggered if created.",
+                        key,
+                        label,
+                    )
+                    provider._refresh_on[(key, label)] = None
+                else:
+                    raise e
     return provider
 
 
@@ -193,7 +213,6 @@ def _buildprovider(
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider(**kwargs)
-    headers = _get_headers(**kwargs)
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
@@ -206,7 +225,6 @@ def _buildprovider(
         provider._client = AzureAppConfigurationClient.from_connection_string(
             connection_string,
             user_agent=user_agent,
-            headers=headers,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
             **kwargs
@@ -216,7 +234,6 @@ def _buildprovider(
         endpoint,
         credential,
         user_agent=user_agent,
-        headers=headers,
         retry_total=retry_total,
         retry_backoff_max=retry_backoff_max,
         **kwargs
@@ -290,63 +307,84 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
         self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
+        self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
         self._keyvault_client_configs = kwargs.pop("keyvault_client_configs", {})
+        self._uses_key_vault = (
+            self._keyvault_credential is not None
+            or self._keyvault_client_configs is not None
+            or self._secret_resolver is not None
+        )
         self._update_lock = Lock()
 
     async def refresh(self, **kwargs) -> None:
         if not self._refresh_on:
             logging.debug("Refresh called but no refresh options set.")
             return
-
+        success = False
+        need_refresh = False
         try:
             async with self._update_lock:
                 if not self._refresh_timer.needs_refresh():
                     logging.debug("Refresh called but refresh interval not elapsed.")
                     return
-                for (key, label), etag in self._refresh_on.items():
-                    updated_sentinel = await self._client.get_configuration_setting(
-                        key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
-                    )
-                    if updated_sentinel is not None:
-                        logging.debug(
-                            "Refresh all triggered by key: %s label %s.",
-                            key,
-                            label,
+                updated_sentinel_keys = dict(self._refresh_on)
+                headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
+                for (key, label), etag in updated_sentinel_keys.items():
+                    try:
+                        updated_sentinel = await self._client.get_configuration_setting(
+                            key=key,
+                            label=label,
+                            etag=etag,
+                            match_condition=MatchConditions.IfModified,
+                            headers=headers,
+                            **kwargs
                         )
-                        await self._load_all(**kwargs)
-                        self._refresh_on[(key, label)] = updated_sentinel.etag
-                        self._refresh_timer.reset()
-                        return
-        except (ServiceRequestError, ServiceResponseError) as e:
-            logging.debug("Failed to refresh, retrying: %r", e)
-            self._refresh_timer.retry()
-        except HttpResponseError as e:
+                        if updated_sentinel is not None:
+                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                            need_refresh = True
+
+                            updated_sentinel_keys[(key, label)] = updated_sentinel.etag
+                    except HttpResponseError as e:
+                        if e.status_code == 404:
+                            if etag is not None:
+                                # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                                logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                                need_refresh = True
+                                updated_sentinel_keys[(key, label)] = None
+                        else:
+                            raise e
+                # Need to only update once, no matter how many sentinels are updated
+                if need_refresh:
+                    await self._load_all(headers=headers, sentinel_keys=updated_sentinel_keys, **kwargs)
+                # Even if we don't need to refresh, we should reset the timer
+                self._refresh_timer.reset()
+                success = True
+                return
+        except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
-            self._refresh_timer.retry()
-            if _is_retryable_error(e):
-                return
             if self._on_refresh_error:
                 await self._on_refresh_error(e)
                 return
             raise
-        except Exception as e:
-            if self._on_refresh_error:
-                await self._on_refresh_error(e)
-                return
-            raise
+        finally:
+            if not success:
+                self._refresh_timer.backoff()
+            elif need_refresh and self._on_refresh_success:
+                await self._on_refresh_success()
 
     async def _load_all(self, **kwargs):
         configuration_settings = {}
+        sentinel_keys = kwargs.pop("sentinel_keys", self._refresh_on)
         for select in self._selects:
             configurations = self._client.list_configuration_settings(
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
             )
             async for config in configurations:
                 key = self._process_key_name(config)
-                value = await self._process_key_value(config, **kwargs)
+                value = await self._process_key_value(config)
 
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     feature_management = configuration_settings.get(FEATURE_MANAGEMENT_KEY, {})
@@ -359,7 +397,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 # so they stay up-to-date.
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
                 if (config.key, config.label) in self._refresh_on:
-                    self._refresh_on[(config.key, config.label)] = config.etag
+                    sentinel_keys[(config.key, config.label)] = config.etag
+        self._refresh_on = sentinel_keys
         self._dict = configuration_settings
 
     def _process_key_name(self, config):
@@ -373,9 +412,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
         return trimmed_key
 
-    async def _process_key_value(self, config, **kwargs):
+    async def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return await _resolve_keyvault_reference(config, self, **kwargs)
+            return await _resolve_keyvault_reference(config, self)
         if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
