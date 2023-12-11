@@ -299,7 +299,6 @@ class ArmConstants:
     APP_INSIGHTS_PARAMETER_NAME = "components"
     CONTAINER_REGISTRY_PARAMETER_NAME = "registries"
     USER_ASSIGNED_IDENTITIES = "userAssignedIdentities"
-    USER_ASSIGNED_IDENTITIES_UUID_NAMESPACE = "7c606f34-dba3-4fac-898b-23ae76f4f83e"
 
     CODE_TYPE = "code"
     CODE_VERSION_TYPE = "code_version"

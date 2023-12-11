@@ -995,10 +995,9 @@ def _generate_materialization_identity(
     """
     import uuid
 
-    id = f"{subscription_id}_{workspace.resource_group}_{workspace.name}_{workspace.location}"
-    materialization_identity = (
-        f"materialization-uai-" f"{uuid.uuid3(uuid.UUID(ArmConstants.USER_ASSIGNED_IDENTITIES_UUID_NAMESPACE), id).hex}"
-    )
+    namespace = f"{subscription_id}_{workspace.resource_group}_{workspace.location}"
+    namespace = uuid.UUID(namespace[:32].replace("-", "").ljust(32, "0"))
+    materialization_identity = f"materialization-uai-" f"{uuid.uuid3(namespace, workspace.name).hex}"
     resources_being_deployed[materialization_identity] = (
         ArmConstants.USER_ASSIGNED_IDENTITIES,
         None,
