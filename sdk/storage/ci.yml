@@ -32,6 +32,8 @@ extends:
     BuildTargetingString: azure-storage-blob
     TestProxy: true
     TestTimeoutInMinutes: 120
+    EnvVars:
+      LOGGING__LOGLEVEL__DEFAULT: "debug"
     # Override the base matrix due to the issues with building cryptography on unsupported platforms
     # https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
