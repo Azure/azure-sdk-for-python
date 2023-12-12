@@ -26,7 +26,16 @@
 from collections.abc import AsyncIterator
 import functools
 import logging
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, Type, Mapping
+from typing import (
+    Any,
+    Optional,
+    AsyncIterator as AsyncIteratorType,
+    TYPE_CHECKING,
+    cast,
+    overload,
+    Type,
+    MutableMapping,
+)
 from types import TracebackType
 from urllib3.exceptions import (
     ProtocolError,
@@ -181,7 +190,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload  # type: ignore
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: HttpRequest, *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+        self, request: HttpRequest, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
@@ -195,7 +204,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: "RestHttpRequest", *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+        self, request: "RestHttpRequest", *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send an `azure.core.rest` request using this HTTP sender.
 
@@ -208,7 +217,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         """
 
     async def send(
-        self, request, *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+        self, request, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ):  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
@@ -220,6 +229,9 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
+        # Type narrowing doesn't work with "open()""
+        session: requests.Session = cast(requests.Session, self.session)
+
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
         error: Optional[AzureErrorUnion] = None
@@ -228,7 +240,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
             try:
                 response = await trio.to_thread.run_sync(
                     functools.partial(
-                        self.session.request,
+                        session.request,
                         request.method,
                         request.url,
                         headers=request.headers,
@@ -246,7 +258,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
             except AttributeError:  # trio < 0.12.1
                 response = await trio.run_sync_in_worker_thread(  # type: ignore # pylint: disable=no-member
                     functools.partial(
-                        self.session.request,
+                        session.request,
                         request.method,
                         request.url,
                         headers=request.headers,

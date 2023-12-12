@@ -34,7 +34,7 @@ from typing import (
     cast,
     Union,
     Type,
-    Mapping,
+    MutableMapping,
 )
 from types import TracebackType
 from collections.abc import AsyncIterator
@@ -195,7 +195,7 @@ class AioHttpTransport(AsyncHttpTransport):
         request: HttpRequest,
         *,
         stream: bool = False,
-        proxies: Optional[Mapping[str, str]] = None,
+        proxies: Optional[MutableMapping[str, str]] = None,
         proxy: Optional[str] = None,
         **config: Any,
     ) -> AsyncHttpResponse:
@@ -220,7 +220,7 @@ class AioHttpTransport(AsyncHttpTransport):
         request: RestHttpRequest,
         *,
         stream: bool = False,
-        proxies: Optional[Mapping[str, str]] = None,
+        proxies: Optional[MutableMapping[str, str]] = None,
         proxy: Optional[str] = None,
         **config: Any,
     ) -> RestAsyncHttpResponse:
@@ -244,7 +244,7 @@ class AioHttpTransport(AsyncHttpTransport):
         request: Union[HttpRequest, RestHttpRequest],
         *,
         stream: bool = False,
-        proxies: Optional[Mapping[str, str]] = None,
+        proxies: Optional[MutableMapping[str, str]] = None,
         proxy: Optional[str] = None,
         **config,
     ) -> Union[AsyncHttpResponse, RestAsyncHttpResponse]:

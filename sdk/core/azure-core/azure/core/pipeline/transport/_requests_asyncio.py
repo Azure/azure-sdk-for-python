@@ -34,8 +34,9 @@ from typing import (
     Union,
     TYPE_CHECKING,
     overload,
+    cast,
     Type,
-    Mapping,
+    MutableMapping,
 )
 from types import TracebackType
 from urllib3.exceptions import (
@@ -113,7 +114,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload  # type: ignore
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: HttpRequest, *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+        self, request: HttpRequest, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
@@ -127,7 +128,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: "RestHttpRequest", *, proxies: Optional[Mapping[str, str]] = None, **kwargs: Any
+        self, request: "RestHttpRequest", *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send a `azure.core.rest` request using this HTTP sender.
 
@@ -140,7 +141,11 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         """
 
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: Union[HttpRequest, "RestHttpRequest"], *, proxies: Optional[Mapping[str, str]] = None, **kwargs
+        self,
+        request: Union[HttpRequest, "RestHttpRequest"],
+        *,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs
     ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
         """Send the request using this HTTP sender.
 
@@ -152,6 +157,9 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
+        # Type narrowing doesn't work with "open()""
+        session: requests.Session = cast(requests.Session, self.session)
+
         loop = kwargs.get("loop", _get_running_loop())
         response = None
         error: Optional[AzureErrorUnion] = None
@@ -160,7 +168,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
             response = await loop.run_in_executor(
                 None,
                 functools.partial(
-                    self.session.request,
+                    session.request,
                     request.method,
                     request.url,
                     headers=request.headers,
