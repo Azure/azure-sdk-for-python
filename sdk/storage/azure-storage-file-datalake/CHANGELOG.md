@@ -4,6 +4,8 @@
 
 ### Features Added
 
+### Bugs Fixed
+- Bumped dependency of `typing-extensions` to `>=4.6.0` to avoid potential `TypeError` with `typing.TypeVar`.
 
 ## 12.14.0 (2023-11-07)
 
