@@ -1,6 +1,13 @@
 # Release History
 
-## 1.12.0 (unreleased)
+## 1.13.0 (2023-12-15)
+
+### Features Added
+- Workspace Connections support custom connection types.
+- Workspace Connections have a new field "is_shared" to control if lean workspace connections are visible to
+  other lean workspaces within the same hub.
+
+## 1.12.0 (2023-11-13)
 
 ### Features Added
 - Workspace Connections had 3 child classes added for open AI, cog search, and cog service connections.
