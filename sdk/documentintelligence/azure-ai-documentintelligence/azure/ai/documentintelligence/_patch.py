@@ -17,7 +17,8 @@ from ._client import(
 
 
 class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
-    __doc__ = DIClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
+    # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
+    __doc__ = DIClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention
 
     def __init__(
         self,
@@ -36,7 +37,8 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
 
 
 class DocumentIntelligenceAdministrationClient(DIAClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
-    __doc__ = DIAClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
+    # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
+    __doc__ = DIAClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention
 
     def __init__(
         self,
