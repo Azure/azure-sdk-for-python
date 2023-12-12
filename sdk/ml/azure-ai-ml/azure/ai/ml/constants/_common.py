@@ -789,6 +789,12 @@ class InputOutputModes:
     """Direct asset type."""
 
 
+class WorkspaceConnectionTypes:
+    """Names for workspace connection types that are different from that underlying api enum values."""
+
+    CUSTOM = "custom"
+
+
 class LegacyAssetTypes:
     """LegacyAssetTypes is an enumeration of values for the legacy asset types.
 
