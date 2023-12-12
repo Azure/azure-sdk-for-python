@@ -17,7 +17,7 @@ from ._client import(
 
 
 class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
-    __doc__ = DIClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker
+    __doc__ = DIClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         # The default polling interval should be 5 seconds.
@@ -31,7 +31,7 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
 
 
 class DocumentIntelligenceAdministrationClient(DIAClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
-    __doc__ = DIAClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker
+    __doc__ = DIAClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         # The default polling interval should be 5 seconds.
