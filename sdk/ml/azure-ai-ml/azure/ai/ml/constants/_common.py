@@ -330,6 +330,7 @@ class ArmConstants:
     DEFAULT_VALUE = "defaultValue"
 
     STORAGE = "StorageAccount"
+    STORAGE_CONTAINER = "StorageContainer"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
     LOG_ANALYTICS = "LogAnalytics"
