@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
@@ -19,9 +19,14 @@ from ._client import(
 class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
     __doc__ = DIClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        # The default polling interval should be 5 seconds.
-        polling_interval = kwargs.pop("polling_interval", 5)
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        *,
+        polling_interval: Optional[str] = 5, # The default polling interval should be 5 seconds
+        **kwargs: Any,
+    ) -> None:
         super().__init__(
             endpoint=endpoint,
             credential=credential,
@@ -33,9 +38,14 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
 class DocumentIntelligenceAdministrationClient(DIAClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
     __doc__ = DIAClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
-        # The default polling interval should be 5 seconds.
-        polling_interval = kwargs.pop("polling_interval", 5)
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        *,
+        polling_interval: Optional[str] = 5, # The default polling interval should be 5 seconds
+        **kwargs: Any,
+    ) -> None:
         super().__init__(
             endpoint=endpoint,
             credential=credential,
