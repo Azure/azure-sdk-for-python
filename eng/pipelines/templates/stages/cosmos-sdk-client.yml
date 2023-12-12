@@ -24,7 +24,7 @@ extends:
     MatrixConfigs:
       - Name: Python_cosmos_emulator
         Path: sdk/cosmos/cosmos-emulator-matrix.json
-        Selection: sparse
+        Selection: all
         GenerateVMJobs: true
     Artifacts:
     - name: azure-cosmos
