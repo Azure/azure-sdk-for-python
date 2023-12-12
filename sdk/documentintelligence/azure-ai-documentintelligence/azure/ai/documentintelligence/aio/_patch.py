@@ -16,7 +16,7 @@ from ._client import(
 )
 
 
-class DocumentIntelligenceClient(GeneratedDocumentIntelligenceClient):
+class DocumentIntelligenceClient(GeneratedDocumentIntelligenceClient):  # pylint: disable=client-accepts-api-version-keyword
     __doc__ = GeneratedDocumentIntelligenceClient.__doc__
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
@@ -30,7 +30,7 @@ class DocumentIntelligenceClient(GeneratedDocumentIntelligenceClient):
         )
 
 
-class DocumentIntelligenceAdministrationClient(GeneratedDocumentIntelligenceAdministrationClient):
+class DocumentIntelligenceAdministrationClient(GeneratedDocumentIntelligenceAdministrationClient):  # pylint: disable=client-accepts-api-version-keyword
     __doc__ = GeneratedDocumentIntelligenceAdministrationClient.__doc__
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
@@ -42,7 +42,7 @@ class DocumentIntelligenceAdministrationClient(GeneratedDocumentIntelligenceAdmi
             polling_interval=polling_interval,
             **kwargs,
         )
-        
+
 
 __all__: List[str] = [
     "DocumentIntelligenceClient",
