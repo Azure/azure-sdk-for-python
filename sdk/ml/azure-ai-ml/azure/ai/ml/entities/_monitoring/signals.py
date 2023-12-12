@@ -192,7 +192,7 @@ class ProductionData(RestTranslatableMixin):
             self.data_window = BaselineDataRange(
                 lookback_window_size=default_data_window_size, lookback_window_offset="P0D"
             )
-        if self.data_window.lookback_window_size == "default" or self.data_window.lookback_window_size == None:
+        if self.data_window.lookback_window_size in ["default", None]:
             self.data_window.lookback_window_size = default_data_window_size
         uri = self.input_data.path
         job_type = self.input_data.type
@@ -902,8 +902,8 @@ class ModelPerformanceSignal(ModelSignal):
 
     def _to_rest_object(self, **kwargs) -> RestModelPerformanceSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.data_window is None:
-            self.data_window = BaselineDataRange(
+        if self.production_data.data_window is None:
+            self.production_data.data_window = BaselineDataRange(
                 lookback_window_size=default_data_window_size,
             )
         return RestModelPerformanceSignal(
