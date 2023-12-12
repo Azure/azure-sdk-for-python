@@ -8,6 +8,7 @@ import shutil
 import tempfile
 import time
 import logging
+from json import JSONDecodeError
 from pathlib import Path
 from typing import Callable, Optional, Dict, List, Mapping
 
@@ -286,15 +287,28 @@ def _evaluate(
 
             row_level_metrics = custom_metric["artifacts"].pop(metric._name, None)
             score_list = []
+            reason_list = []
             for value in row_level_metrics:
+                score = None
+                reason = None
                 try:
                     value_json = json.loads(value)
                     score = value_json["score"]
+                    reason = value_json["reason"]
                     score_list.append(score)
-                except Exception as ex:
-                    print(ex)
+                    reason_list.append(reason)
+                except JSONDecodeError as json_parse_error:
+                    LOGGER.debug(f"Error parsing metric {metric._name} value as returned json from LLM is not a valid json : {value}")
+                    if score is not None:
+                        score_list.append(score)
+                        reason_list.append(f"Error parsing reason. Output from LLM : {value}")
+                    if score is None:
+                        score_list.append(None)
+                        reason_list.append(f"Error parsing LLM response. Output from LLM : {value}")
+
 
             custom_metric["artifacts"].update({metric._name: score_list})
+            custom_metric["artifacts"].update({"reason_" + metric._name: reason_list})
             custom_metric.pop("metrics")
             custom_metric.update({"metrics": {f"mean_{metric._name}": np.mean(score_list)}})
 
