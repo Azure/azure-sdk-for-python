@@ -11,13 +11,13 @@ from typing import Any, List, Union
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 from ._client import(
-    DocumentIntelligenceClient as GeneratedDocumentIntelligenceClient,
-    DocumentIntelligenceAdministrationClient as GeneratedDocumentIntelligenceAdministrationClient,
+    DocumentIntelligenceClient as DIClientGenerated,
+    DocumentIntelligenceAdministrationClient as DIAClientGenerated,
 )
 
 
-class DocumentIntelligenceClient(GeneratedDocumentIntelligenceClient):  # pylint: disable=client-accepts-api-version-keyword
-    __doc__ = GeneratedDocumentIntelligenceClient.__doc__
+class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+    __doc__ = DIClientGenerated.__doc__
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         # The default polling interval should be 5 seconds.
@@ -30,8 +30,8 @@ class DocumentIntelligenceClient(GeneratedDocumentIntelligenceClient):  # pylint
         )
 
 
-class DocumentIntelligenceAdministrationClient(GeneratedDocumentIntelligenceAdministrationClient):  # pylint: disable=client-accepts-api-version-keyword
-    __doc__ = GeneratedDocumentIntelligenceAdministrationClient.__doc__
+class DocumentIntelligenceAdministrationClient(DIAClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
+    __doc__ = DIAClientGenerated.__doc__
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         # The default polling interval should be 5 seconds.
