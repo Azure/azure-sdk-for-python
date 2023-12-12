@@ -5,43 +5,16 @@
 # --------------------------------------------------------------------------
 
 # pylint: disable=too-many-lines
+from typing import Callable, cast, TYPE_CHECKING
 from enum import Enum
-from typing import (
-    Callable,
-    cast,
-    TYPE_CHECKING,
-    Any,
-    List,
-    Optional,
-    Dict,
-    Union,
-    Type,
-    TypeVar,
-)
-from typing_extensions import Protocol
 
 from ._encode import encode_payload
 from .utils import get_message_encoded_size
 from .error import AMQPError
 from .message import Header, Properties
 
-S = TypeVar("S", bound=Union[str, bytes, Union[str, bytes]])
-
 if TYPE_CHECKING:
-    from ..amqp._amqp_message import AmqpAnnotatedMessage, AmqpMessageProperties, AmqpMessageHeader
-    from .message import Message
-    from .error import ErrorCondition
-    class Settler(Protocol):
-        def settle_messages(
-            self,
-            delivery_id: Optional[int],
-            outcome: str,
-            *,
-            error: Union[Type[AMQPError], AMQPError] = AMQPError,
-            **kwargs: Any
-        ) -> None:
-            ...
-
+    from ..amqp._amqp_message import AmqpAnnotatedMessage
 
 def _encode_property(value):
     try:
@@ -75,51 +48,45 @@ PENDING_STATES = (MessageState.WaitingForSendAck, MessageState.WaitingToBeSent)
 
 
 class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
-    def __init__(
-        self,
-        message: "AmqpAnnotatedMessage",
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, message, **kwargs):
         self._message: "AmqpAnnotatedMessage" = message
-        self.state: "MessageState" = MessageState.SendComplete
-        self.idle_time: int = 0
-        self.retries: int = 0
-        self._settler: Optional["Settler"] = kwargs.pop("settler", None)
+        self.state = MessageState.SendComplete
+        self.idle_time = 0
+        self.retries = 0
+        self._settler = kwargs.get("settler")
         self._encoding = kwargs.get("encoding")
-        self.delivery_no: Optional[int] = kwargs.get("delivery_no")
-        self.delivery_tag: Optional[str] = kwargs.get("delivery_tag") or None
-        self.on_send_complete: Optional[Callable] = None
-        self.properties: Optional[LegacyMessageProperties] = (
+        self.delivery_no = kwargs.get("delivery_no")
+        self.delivery_tag = kwargs.get("delivery_tag") or None
+        self.on_send_complete = None
+        self.properties = (
             LegacyMessageProperties(self._message.properties)
             if self._message.properties
             else None
         )
-        self.application_properties: Optional[Dict[Union[str, bytes], Any]] = (
+        self.application_properties = (
             self._message.application_properties
             if self._message.application_properties and any(self._message.application_properties)
             else None
         )
-        self.annotations: Optional[Dict[Union[str, bytes], Any]] = (
+        self.annotations = (
             self._message.annotations
             if self._message.annotations and any(self._message.annotations)
             else None
         )
-        self.header: Optional[LegacyMessageHeader] = (
+        self.header = (
             LegacyMessageHeader(self._message.header) if self._message.header else None
         )
-        self.footer: Optional[Dict[Any, Any]]  = self._message.footer
-        # Cast --- cannot assign type S as it is unbound
-        self.delivery_annotations: Optional[Dict[Union[str, bytes], Any]] = \
-            cast(Optional[Dict[Union[str, bytes], Any]], self._message.delivery_annotations)
+        self.footer = self._message.footer
+        self.delivery_annotations = self._message.delivery_annotations
         if self._settler:
             self.state = MessageState.ReceivedUnsettled
         elif self.delivery_no:
             self.state = MessageState.ReceivedSettled
-        self._to_outgoing_amqp_message: Callable = cast(Callable, kwargs.get(
+        self._to_outgoing_amqp_message: Callable = kwargs.get(
             "to_outgoing_amqp_message"
-        ))
+        )
 
-    def __str__(self) -> str:
+    def __str__(self):
         return str(self._message)
 
     def _can_settle_message(self):
@@ -130,28 +97,25 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         return True
 
     @property
-    def settled(self) -> bool:
+    def settled(self):
         if self.state == MessageState.ReceivedUnsettled:
             return False
         return True
 
-    def get_message_encoded_size(self) -> int:
+    def get_message_encoded_size(self):
         return get_message_encoded_size(self._to_outgoing_amqp_message(self._message))
 
-    def encode_message(self) -> bytes:
+    def encode_message(self):
         output = bytearray()
         # to maintain the same behavior as uamqp, app prop values will not be decoded
-        self.application_properties = cast(
-            Dict[Union[str, bytes], Any],
-            cast(Dict[Union[str, bytes], Any], self._message.application_properties).copy()
-        )
+        self.application_properties = self._message.application_properties.copy()
         encode_payload(output, self._to_outgoing_amqp_message(self._message))
         return bytes(output)
 
-    def get_data(self) -> Any:
+    def get_data(self):
         return self._message.body
 
-    def gather(self) -> List["LegacyMessage"]:
+    def gather(self):
         if self.state in RECEIVE_STATES:
             raise TypeError("Only new messages can be gathered.")
         if not self._message:
@@ -160,23 +124,18 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
             raise MessageAlreadySettled()
         return [self]
 
-    def get_message(self) -> "Message":
+    def get_message(self):
         return self._to_outgoing_amqp_message(self._message)
 
-    def accept(self) -> bool:
-        if self._can_settle_message() and self._settler:
+    def accept(self):
+        if self._can_settle_message():
             self._settler.settle_messages(self.delivery_no, "accepted")
             self.state = MessageState.ReceivedSettled
             return True
         return False
 
-    def reject(
-        self,
-        condition: Optional[Union[bytes, "ErrorCondition"]] = None,
-        description: Optional[str] = None,
-        info: Optional[Dict[Any, Any]] = None
-    ) -> bool:
-        if self._can_settle_message() and self._settler:
+    def reject(self, condition=None, description=None, info=None):
+        if self._can_settle_message():
             self._settler.settle_messages(
                 self.delivery_no,
                 "rejected",
@@ -188,20 +147,15 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
             return True
         return False
 
-    def release(self) -> bool:
-        if self._can_settle_message() and self._settler:
+    def release(self):
+        if self._can_settle_message():
             self._settler.settle_messages(self.delivery_no, "released")
             self.state = MessageState.ReceivedSettled
             return True
         return False
 
-    def modify(
-        self,
-        failed: bool,
-        deliverable: bool,
-        annotations: Optional[Dict[Union[str, bytes], Any]] = None
-    ) -> bool:
-        if self._can_settle_message() and self._settler:
+    def modify(self, failed, deliverable, annotations=None):
+        if self._can_settle_message():
             self._settler.settle_messages(
                 self.delivery_no,
                 "modified",
@@ -221,22 +175,22 @@ class LegacyBatchMessage(LegacyMessage):
 
 
 class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attributes
-    def __init__(self, properties: "AmqpMessageProperties"):
-        self.message_id: Optional[bytes] = _encode_property(properties.message_id)
-        self.user_id: Optional[bytes] = _encode_property(properties.user_id)
-        self.to: Optional[bytes] = _encode_property(properties.to)
-        self.subject: Optional[bytes] = _encode_property(properties.subject)
-        self.reply_to: Optional[bytes] = _encode_property(properties.reply_to)
-        self.correlation_id: Optional[bytes] = _encode_property(properties.correlation_id)
-        self.content_type: Optional[bytes] = _encode_property(properties.content_type)
-        self.content_encoding: Optional[bytes] = _encode_property(properties.content_encoding)
-        self.absolute_expiry_time: Optional[int] = properties.absolute_expiry_time
-        self.creation_time: Optional[int] = properties.creation_time
-        self.group_id: Optional[bytes] = _encode_property(properties.group_id)
-        self.group_sequence: Optional[int] = properties.group_sequence
-        self.reply_to_group_id: Optional[bytes] = _encode_property(properties.reply_to_group_id)
+    def __init__(self, properties):
+        self.message_id = _encode_property(properties.message_id)
+        self.user_id = _encode_property(properties.user_id)
+        self.to = _encode_property(properties.to)
+        self.subject = _encode_property(properties.subject)
+        self.reply_to = _encode_property(properties.reply_to)
+        self.correlation_id = _encode_property(properties.correlation_id)
+        self.content_type = _encode_property(properties.content_type)
+        self.content_encoding = _encode_property(properties.content_encoding)
+        self.absolute_expiry_time = properties.absolute_expiry_time
+        self.creation_time = properties.creation_time
+        self.group_id = _encode_property(properties.group_id)
+        self.group_sequence = properties.group_sequence
+        self.reply_to_group_id = _encode_property(properties.reply_to_group_id)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return str(
             {
                 "message_id": self.message_id,
@@ -255,7 +209,7 @@ class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attr
             }
         )
 
-    def get_properties_obj(self) -> Properties:
+    def get_properties_obj(self):
         return Properties(
             self.message_id,
             self.user_id,
@@ -274,14 +228,14 @@ class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attr
 
 
 class LegacyMessageHeader(object):
-    def __init__(self, header: "AmqpMessageHeader") -> None:
-        self.delivery_count: Optional[int] = header.delivery_count or 0
-        self.time_to_live: Optional[int] = header.time_to_live
-        self.first_acquirer: Optional[bool] = header.first_acquirer
-        self.durable: Optional[bool] = header.durable
-        self.priority: Optional[int] = header.priority
+    def __init__(self, header):
+        self.delivery_count = header.delivery_count or 0
+        self.time_to_live = header.time_to_live
+        self.first_acquirer = header.first_acquirer
+        self.durable = header.durable
+        self.priority = header.priority
 
-    def __str__(self) -> str:
+    def __str__(self):
         return str(
             {
                 "delivery_count": self.delivery_count,
@@ -292,7 +246,7 @@ class LegacyMessageHeader(object):
             }
         )
 
-    def get_header_obj(self) -> Header:
+    def get_header_obj(self):
         # TODO: uamqp returned object has property: `time_to_live`.
         # This Header has `ttl`.
         return Header(
