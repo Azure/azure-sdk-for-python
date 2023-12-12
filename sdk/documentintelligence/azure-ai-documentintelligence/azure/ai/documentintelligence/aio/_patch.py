@@ -8,7 +8,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, List, Union
 
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from ._client import(
     DocumentIntelligenceClient as DIClientGenerated,
@@ -19,7 +20,7 @@ from ._client import(
 class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
     __doc__ = DIClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any) -> None:
         # The default polling interval should be 5 seconds.
         polling_interval = kwargs.pop("polling_interval", 5)
         super().__init__(
@@ -33,7 +34,7 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
 class DocumentIntelligenceAdministrationClient(DIAClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
     __doc__ = DIAClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any) -> None:
         # The default polling interval should be 5 seconds.
         polling_interval = kwargs.pop("polling_interval", 5)
         super().__init__(
