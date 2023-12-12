@@ -1055,7 +1055,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [OPENAI])
+    @pytest.mark.parametrize("api_type", [OPENAI, GPT_4_AZURE])
     async def test_chat_completion_vision(self, client_async, azure_openai_creds, api_type, **kwargs):
         completion = await client_async.chat.completions.create(
             model="gpt-4-vision-preview",

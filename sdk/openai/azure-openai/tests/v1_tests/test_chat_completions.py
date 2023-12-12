@@ -1033,7 +1033,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert tool_completion.choices[0].message.role == "assistant"
 
     @configure
-    @pytest.mark.parametrize("api_type", [OPENAI])
+    @pytest.mark.parametrize("api_type", [OPENAI, GPT_4_AZURE])
     def test_chat_completion_vision(self, client, azure_openai_creds, api_type, **kwargs):
         completion = client.chat.completions.create(
             model="gpt-4-vision-preview",
