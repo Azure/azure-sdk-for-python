@@ -13,6 +13,7 @@ from azure.ai.ml.entities import WorkspaceConnection, Workspace, WorkspaceHub, A
 from azure.ai.ml.constants._common import WorkspaceConnectionTypes
 from azure.core.exceptions import ResourceNotFoundError
 
+
 @pytest.mark.xdist_group(name="workspace_connection")
 @pytest.mark.e2etest
 @pytest.mark.core_sdk_test
@@ -406,7 +407,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         # the "is_shared" property.
         # Names don't need randomization since the containers are transient
         hub_conn_shared = WorkspaceConnection(
-            name="sharedHubConn", type=WorkspaceConnectionTypes.CUSTOM, target="notReal", credentials=ApiKeyConfiguration(key="1111")
+            name="sharedHubConn",
+            type=WorkspaceConnectionTypes.CUSTOM,
+            target="notReal",
+            credentials=ApiKeyConfiguration(key="1111"),
         )
         # Hubs can't actually have is_shared be false, make sure this is overridden upon creation.
         hub_conn_closed = WorkspaceConnection(
@@ -417,7 +421,10 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
             is_shared=False,
         )
         lean_conn_shared = WorkspaceConnection(
-            name="sharedLeanConn", type=WorkspaceConnectionTypes.CUSTOM, target="notReal", credentials=ApiKeyConfiguration(key="3333")
+            name="sharedLeanConn",
+            type=WorkspaceConnectionTypes.CUSTOM,
+            target="notReal",
+            credentials=ApiKeyConfiguration(key="3333"),
         )
         lean_conn_closed = WorkspaceConnection(
             name="closedLeanConn",
