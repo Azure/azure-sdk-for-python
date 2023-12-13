@@ -171,6 +171,9 @@
 # PRLabel: %Event Grid
 /sdk/eventgrid/                                                      @lmazuel @l0lawrence
 
+# PRLabel: %Image Analysis
+/sdk/vision/azure-ai-vision-imageanalysis/                           @dargilco @rhurey
+
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
 
