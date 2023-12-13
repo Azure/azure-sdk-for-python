@@ -15,9 +15,8 @@ from typing import (
     Optional,
     Dict,
     Union,
-    Protocol,
-    Tuple,
 )
+from typing_extensions import Protocol
 
 from ._encode import encode_payload
 from .utils import get_message_encoded_size
@@ -81,7 +80,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         self.state: "MessageState" = MessageState.SendComplete
         self.idle_time: int = 0
         self.retries: int = 0
-        self._settler: "Settler" = kwargs.pop("settler")
+        self._settler: Optional["Settler"] = kwargs.pop("settler")
         self._encoding = kwargs.get("encoding")
         self.delivery_no: Optional[int] = kwargs.get("delivery_no")
         self.delivery_tag: Optional[str] = kwargs.get("delivery_tag") or None
@@ -120,7 +119,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
     def _can_settle_message(self):
         if self.state not in RECEIVE_STATES:
             raise TypeError("Only received messages can be settled.")
-        if self.settled:
+        if self.settled or not self._settler:
             return False
         return True
 
