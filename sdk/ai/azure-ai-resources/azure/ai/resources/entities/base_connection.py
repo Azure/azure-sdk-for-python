@@ -235,7 +235,7 @@ class BaseConnection:
         self._workspace_connection.tags = value
 
     @property
-    def is_shared(self) -> Dict[str, Any]:
+    def is_shared(self) -> bool:
         """Get the Boolean describing if this connection is shared
             amongst its cohort within a workspace hub. Only applicable for connections
             that are project-scoped on creation.

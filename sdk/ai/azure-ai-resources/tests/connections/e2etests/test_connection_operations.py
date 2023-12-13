@@ -8,7 +8,6 @@ from azure.ai.resources.entities import (
     AzureAIServiceConnection,
     GitHubConnection,
     CustomConnection,
-    ApiKeyConnection,
     AIResource,
     Project
 )
@@ -148,25 +147,6 @@ class TestConnections:
 
         assert first_created_conn.name == name
         assert first_created_conn.type == "custom_keys"
-        assert first_created_conn.target == target
-        assert first_created_conn.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
-
-        ai_client.connections.get(name)
-        ai_client.connections.delete(name)
-        with pytest.raises(ResourceNotFoundError):
-            ai_client.connections.get(name)
-
-    def test_api_key_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
-        # randomize name to avoid stale key name collisions
-        name = "e2eTestApiConn" + rand_num()
-        cred = ApiKeyConfiguration(key="1234567")
-        target = "test-target"
-
-        local_conn = ApiKeyConnection(name=name, credentials=cred, target=target)
-        first_created_conn = ai_client.connections.create_or_update(local_conn)
-
-        assert first_created_conn.name == name
-        assert first_created_conn.type == "api_key"
         assert first_created_conn.target == target
         assert first_created_conn.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
 

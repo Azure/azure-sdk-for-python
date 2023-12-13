@@ -13,7 +13,6 @@ from .connection_subtypes import (
     AzureAIServiceConnection,
     GitHubConnection,
     CustomConnection,
-    ApiKeyConnection,
 )
 from .mlindex import Index
 from .project import Project
@@ -32,6 +31,5 @@ __all__ = [
     "AzureOpenAIModelConfiguration",
     "GitHubConnection",
     "CustomConnection",
-    "ApiKeyConnection",
 ]
 

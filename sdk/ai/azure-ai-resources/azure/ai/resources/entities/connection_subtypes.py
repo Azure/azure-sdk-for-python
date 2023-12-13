@@ -328,31 +328,3 @@ class CustomConnection(BaseConnection):
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="custom_keys", credentials=credentials, **kwargs)
-
-class ApiKeyConnection(BaseConnection):
-    """A simplistic connection that is only known to contain an api key.
-
-    :param name: Name of the connection.
-    :type name: str
-    :param target: The URL or ARM resource ID of the external resource.
-    :type target: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
-    :param credentials: The credentials for authenticating the external resource.
-    :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
-    :param is_shared: For connections created for a project, this determines if the connection
-        is shared amongst other connections with that project's parent AI resource.
-        Defaults to true.
-    :type is_shared: bool
-    """
-    def __init__(
-        self,
-        *,
-        target: str,
-        credentials: ApiKeyConfiguration,
-        **kwargs,
-    ):
-        kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(target=target, type="api_key", credentials=credentials, **kwargs)
-
- 
