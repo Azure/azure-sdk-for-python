@@ -1044,7 +1044,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                         {"type": "text", "text": "What's in this image?"},
                         {
                             "type": "image_url",
-                            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg",
+                            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Rainier20200906.jpg/1920px-Rainier20200906.jpg",
                         },
                     ],
                 }
