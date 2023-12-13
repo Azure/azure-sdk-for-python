@@ -13,6 +13,7 @@ from ._models import (
     SendMessageError,
     StartClientError,
     WebPubSubConnectionError,
+    AckMessageError,
 )
 
 from ._enums import WebPubSubDataType, WebPubSubProtocolType, CallbackType
@@ -30,4 +31,5 @@ __all__ = [
     "SendMessageError",
     "StartClientError",
     "WebPubSubConnectionError",
+    "AckMessageError",
 ]

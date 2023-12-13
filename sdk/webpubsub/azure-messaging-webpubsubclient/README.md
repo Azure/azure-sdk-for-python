@@ -93,7 +93,7 @@ client.subscribe("connected", lambda e: print(f"Connection {e.connection_id} is 
 client.subscribe("disconnected", lambda e: print(f"Connection disconnected: {e.message}"))
 ```
 
-3. The `stopped` event will be triggered when the client is disconnected *and* the client stops trying to reconnect. This usually happens after the `client.stop()` is called, or `auto_reconnect` is disabled or a specified limit to trying to reconnect has reached. If you want to restart the client, you can call `client.start()` in the stopped event.
+3. The `stopped` event will be triggered when the client is disconnected *and* the client stops trying to reconnect. This usually happens after the `client.close()` is called, or `auto_reconnect` is disabled or a specified limit to trying to reconnect has reached. If you want to restart the client, you can call `client.open()` in the stopped event.
 
 ```python
 client.subscribe("stopped", lambda : print("Client has stopped"))

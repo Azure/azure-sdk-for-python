@@ -80,7 +80,7 @@ class AckMessage:
     :ivar success: Whether the message is successfully processed. Required.
     :vartype success: bool
     :ivar error: The error details of the message.
-    :vartype error: AckMessageError
+    :vartype error: ~azure.messaging.webpubsubclient.AckMessageError
     """
 
     def __init__(
@@ -99,7 +99,7 @@ class SendEventMessage:
     """Message to send an event
 
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar event: The event name. Required.
@@ -194,7 +194,7 @@ class SendEventData(_model_base.Model):
     :ivar type: The type of the message. Required. Default value is "event".
     :vartype type: str
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar event: The event name. Required.
@@ -237,7 +237,7 @@ class SendToGroupData(_model_base.Model):
     :ivar group: The group name to send. Required.
     :vartype group: str
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar no_echo: Whether to send message to the sender. Required.
@@ -357,7 +357,7 @@ class GroupDataMessage:
     """Message for group data
 
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar group: The group name. Required.
@@ -389,7 +389,7 @@ class ServerDataMessage:
     """Message for server data
 
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar sequence_id: The sequence id.
@@ -412,7 +412,7 @@ class SendToGroupMessage:
     """Message for send to group
 
     :ivar data_type: The data type of the message. Required.
-    :vartype data_type: WebPubSubDataType or str
+    :vartype data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
     :ivar data: The data of the message. Required.
     :vartype data: Any
     :ivar group: The group name. Required.
@@ -460,7 +460,7 @@ def get_pay_load(data: Any, data_type: Union[WebPubSubDataType, str]) -> Any:
     :param data: The data of pay load. Required.
     :type data: Any
     :param data_type: The data type of the data. Required.
-    :type data_type: WebPubSubDataType or str
+    :type data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
     :return: The payload.
     :rtype: Any
     :raises TypeError: If data_type is not supported.
@@ -485,7 +485,7 @@ def parse_payload(data: Any, data_type: Union[WebPubSubDataType, str]) -> Any:
     :param data: The data of pay load. Required.
     :type data: Any
     :param data_type: The data type of the data. Required.
-    :type data_type: WebPubSubDataType or str
+    :type data_type: ~azure.messaging.webpubsubclient.WebPubSubDataType or str
     :return: The payload.
     :rtype: Any
     """
@@ -637,7 +637,7 @@ class SendMessageErrorOptions:
     :ivar ack_id: The ack id of the message.
     :vartype ack_id: int
     :ivar error_detail: The error details of the message.
-    :vartype error_detail: AckMessageError
+    :vartype error_detail: ~azure.messaging.webpubsubclient.AckMessageError
     """
 
     def __init__(
@@ -658,7 +658,7 @@ class SendMessageError(AzureError):
     :ivar ack_id: The ack id of the message.
     :vartype ack_id: int
     :ivar error_detail: The error details of the message.
-    :vartype error_detail: AckMessageError
+    :vartype error_detail: ~azure.messaging.webpubsubclient.AckMessageError
     """
 
     def __init__(
@@ -795,7 +795,7 @@ class RetryPolicy:
     :ivar retry_backoff_max: The max backoff. Required.
     :vartype retry_backoff_max: float
     :ivar mode: The retry mode. Required.
-    :vartype mode: RetryMode
+    :vartype mode: ~azure.core.pipeline.policies.RetryMode
     """
 
     def __init__(
@@ -941,4 +941,4 @@ class StartClientError(AzureError):
 
 
 class WebPubSubConnectionError(AzureError):
-    """Exception raised when fail to open the websocket"""
+    """Exception raised when fail to open the websocket or connection is closed"""
