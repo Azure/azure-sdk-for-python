@@ -17,8 +17,21 @@ from ._client import(
 
 
 class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
-    # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
-    __doc__ = DIClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention
+    """DocumentIntelligenceClient.
+
+    :param endpoint: The Document Intelligence service endpoint. Required.
+    :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
+    """
 
     def __init__(
         self,
@@ -37,8 +50,21 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
 
 
 class DocumentIntelligenceAdministrationClient(DIAClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
-    # It's a bug in Pylint checker: https://github.com/Azure/azure-sdk-tools/issues/7437
-    __doc__ = DIAClientGenerated.__doc__  # pylint: disable=client-incorrect-naming-convention
+    """DocumentIntelligenceAdministrationClient.
+
+    :param endpoint: The Document Intelligence service endpoint. Required.
+    :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is
+     "2023-10-31-preview". Note that overriding this default value may result in unsupported
+     behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
+    """
 
     def __init__(
         self,
