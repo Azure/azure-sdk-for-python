@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Any, Union, cast
+from typing import Any, Union
 
 from azure.core.exceptions import AzureError
 

@@ -7,7 +7,7 @@ import functools
 import time
 import datetime
 from datetime import timezone
-from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type, Mapping
+from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type
 
 from .._pyamqp import (
     utils,
