@@ -12,16 +12,26 @@ class EventHubConnectionStringProperties(DictMixin):
     Properties of a connection string.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self._fully_qualified_namespace: Optional[str] = kwargs.pop("fully_qualified_namespace", None)
-        self._endpoint: Optional[str] = kwargs.pop("endpoint", None)
-        self._eventhub_name: Optional[str] = kwargs.pop("eventhub_name", None)
-        self._shared_access_signature: Optional[str] = kwargs.pop("shared_access_signature", None)
-        self._shared_access_key_name: Optional[str] = kwargs.pop("shared_access_key_name", None)
-        self._shared_access_key: Optional[str] = kwargs.pop("shared_access_key", None)
+    def __init__(
+        self,
+        *,
+        fully_qualified_namespace: str,
+        endpoint: str,
+        eventhub_name: str,
+        shared_access_signature: str,
+        shared_access_key_name: str,
+        shared_access_key: str,
+        **kwargs: Any
+    ) -> None:
+        self._fully_qualified_namespace: str = fully_qualified_namespace
+        self._endpoint: str = endpoint
+        self._eventhub_name: str = eventhub_name
+        self._shared_access_signature: str = shared_access_signature
+        self._shared_access_key_name: str = shared_access_key_name
+        self._shared_access_key: str = shared_access_key
 
     @property
-    def fully_qualified_namespace(self) -> Optional[str]:
+    def fully_qualified_namespace(self) -> str:
         """The fully qualified host name for the Event Hubs namespace.
         The namespace format is: `<yournamespace>.servicebus.windows.net`.
 
@@ -30,7 +40,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._fully_qualified_namespace
 
     @property
-    def endpoint(self) -> Optional[str]:
+    def endpoint(self) -> str:
         """The endpoint for the Event Hubs resource. In the format sb://<FQDN>/
 
         :rtype: str
@@ -38,7 +48,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._endpoint
 
     @property
-    def eventhub_name(self) -> Optional[str]:
+    def eventhub_name(self) -> str:
         """Optional. The name of the Event Hub, represented by `EntityPath` in the connection string.
 
         :rtype: str
@@ -46,7 +56,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._eventhub_name
 
     @property
-    def shared_access_signature(self) -> Optional[str]:
+    def shared_access_signature(self) -> str:
         """
         This can be provided instead of the shared_access_key_name and the shared_access_key.
 
@@ -55,7 +65,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._shared_access_signature
 
     @property
-    def shared_access_key_name(self) -> Optional[str]:
+    def shared_access_key_name(self) -> str:
         """
         The name of the shared_access_key. This must be used along with the shared_access_key.
 
@@ -64,7 +74,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._shared_access_key_name
 
     @property
-    def shared_access_key(self) -> Optional[str]:
+    def shared_access_key(self) -> str:
         """
         The shared_access_key can be used along with the shared_access_key_name as a credential.
 

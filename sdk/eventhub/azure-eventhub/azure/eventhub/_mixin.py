@@ -10,7 +10,7 @@ from typing import (
     Tuple
 )
 
-class DictMixin(object):
+class DictMixin():
     def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
 

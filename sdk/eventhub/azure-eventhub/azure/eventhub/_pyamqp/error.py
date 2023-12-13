@@ -209,10 +209,10 @@ class AMQPException(Exception):
             str(condition) if isinstance(condition, ErrorCondition) else condition.decode()
         )
         if self.description:
-            try:
-                message += "\n Error Description: {}".format(cast(bytes, self.description).decode())
-            except (TypeError, AttributeError):
-                message += "\n Error Description: {}".format(cast(str, self.description))
+            if isinstance(self.description, bytes):
+                message += "\n Error Description: {}".format(self.description.decode())
+            else:
+                message += "\n Error Description: {}".format(self.description)
         super(AMQPException, self).__init__(message)
 
 

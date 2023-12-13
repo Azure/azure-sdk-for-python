@@ -189,7 +189,7 @@ class EventHubConsumer(
     async def receive(
         self,
         batch: Union[Optional[int], bool] = False,
-        max_batch_size: Optional[int]=300,
+        max_batch_size: int = 300,
         max_wait_time: Optional[float] = None
     ) -> None:
         await self._amqp_transport.receive_messages_async(

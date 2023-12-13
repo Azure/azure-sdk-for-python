@@ -50,6 +50,7 @@ class BlobCheckpointStore(CheckpointStore):
         container_name: str,
         *,
         credential: Optional[Union["AsyncTokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"]] = None,
+        api_version: str = '2019-07-07',
         **kwargs: Any
     ):
         # type(str, str, Optional[Any], Any) -> None

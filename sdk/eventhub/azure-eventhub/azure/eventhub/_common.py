@@ -571,7 +571,7 @@ class EventDataBatch(object):
             self._message, self._partition_key
         )
         self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
-        self.max_size_in_bytes: Optional[int] = (
+        self.max_size_in_bytes: int = (
             max_size_in_bytes or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
         )
 

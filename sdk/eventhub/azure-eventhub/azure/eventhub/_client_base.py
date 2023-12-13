@@ -517,7 +517,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
         self._conn_manager.close_connection()
 
 
-class ConsumerProducerMixin(object):
+class ConsumerProducerMixin():
 
     def __init__(self) -> None:
         self._handler: Union[

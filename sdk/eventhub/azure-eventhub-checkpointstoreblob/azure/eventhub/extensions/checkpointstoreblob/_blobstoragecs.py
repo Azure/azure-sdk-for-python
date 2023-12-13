@@ -71,6 +71,7 @@ class BlobCheckpointStore(CheckpointStore):
             blob_account_url: str,
             container_name: str,
             credential: Optional[Union["AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,
+            api_version: str = '2019-07-07',
             **kwargs: Any
     ) -> None:
         self._container_client = kwargs.pop("container_client", None)
@@ -284,7 +285,7 @@ class BlobCheckpointStore(CheckpointStore):
                 pass
         return gathered_results
 
-    def update_checkpoint(self, checkpoint: Dict[str, Any], **kwargs: Any) -> None:
+    def update_checkpoint(self, checkpoint: Dict[str, Union[str, int]], **kwargs: Any) -> None:
         """Updates the checkpoint using the given information for the offset, associated partition and
         consumer group in the storage blob.
 
