@@ -72,8 +72,8 @@ def collect_statsbeat_metrics(exporter) -> None:
 def shutdown_statsbeat_metrics() -> None:
     global _STATSBEAT_METRICS
     shutdown_success = False
-    if _STATSBEAT_METRICS is not None:
-        with _STATSBEAT_LOCK:
+    with _STATSBEAT_LOCK:
+        if _STATSBEAT_METRICS is not None:
             try:
                 if _STATSBEAT_METRICS._meter_provider is not None:
                     _STATSBEAT_METRICS._meter_provider.shutdown()
@@ -81,9 +81,9 @@ def shutdown_statsbeat_metrics() -> None:
                     shutdown_success = True
             except:  # pylint: disable=bare-except
                 pass
-        if shutdown_success:
-            with _STATSBEAT_STATE_LOCK:
-                _STATSBEAT_STATE["SHUTDOWN"] = True
+    if shutdown_success:
+        with _STATSBEAT_STATE_LOCK:
+            _STATSBEAT_STATE["SHUTDOWN"] = True
 
 
 def _get_stats_connection_string(endpoint: str) -> str:
