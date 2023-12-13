@@ -17,36 +17,36 @@ class EventHubError(Exception):
     :vartype error: str
     :ivar details: The error details, if included in the
      service response.
-    :vartype details: list[str]
+    :vartype details: list[str] or AMQPException
     """
 
     def __init__(self, message: str, details: Optional[Union[List[str], "AMQPException"]] = None) -> None:
         self.error: Optional[str] = None
         self.message: str = message
         self.details: Union[List[str], "AMQPException"]
-        details = cast("AMQPException", details)
         if details and isinstance(details, Exception):
             self.details = details
-            try:
-                details.condition = cast(Enum, details.condition)
-                condition = details.condition.value.decode("UTF-8")
-            except AttributeError:
+            if isinstance(self.details, AMQPException):
                 try:
-                    details.condition = cast(bytes, details.condition)
-                    condition = details.condition.decode("UTF-8")
+                    details.condition = cast(Enum, details.condition)
+                    condition = details.condition.value.decode("UTF-8")
                 except AttributeError:
-                    condition = None
-            if condition:
-                _, _, self.error = condition.partition(":")
-                self.message += "\nError: {}".format(self.error)
-            try:
-                details.description = cast(str, details.description)
-                self._parse_error(details.description)
-                self.details = cast(List[str], self.details)
-                for detail in self.details:
-                    self.message += "\n{}".format(detail)
-            except:  # pylint: disable=bare-except
-                self.message += "\n{}".format(details)
+                    try:
+                        details.condition = cast(bytes, details.condition)
+                        condition = details.condition.decode("UTF-8")
+                    except AttributeError:
+                        condition = None
+                if condition:
+                    _, _, self.error = condition.partition(":")
+                    self.message += "\nError: {}".format(self.error)
+            elif isinstance(self.details, list):
+                try:
+                    details.description = cast(str, details.description)
+                    self._parse_error(details.description)
+                    for detail in self.details:
+                        self.message += "\n{}".format(detail)
+                except:  # pylint: disable=bare-except
+                    self.message += "\n{}".format(details)
         super(EventHubError, self).__init__(self.message)
 
     def _parse_error(self, error_list: Union[str, bytes]) -> None:
