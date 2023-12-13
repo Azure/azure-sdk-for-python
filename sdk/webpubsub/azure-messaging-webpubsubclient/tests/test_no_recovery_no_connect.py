@@ -66,7 +66,7 @@ class TestWebpubsubClientNoRecoveryNoReconnect(WebpubsubClientTest):
             all_threads = []
             for i in range(100):
                 t = SafeThread(target=send, args=(i,))
-                t.open()
+                t.start()
                 all_threads.append(t)
                 if i == 50:
                     client._ws.sock.close(1001)  # close connection

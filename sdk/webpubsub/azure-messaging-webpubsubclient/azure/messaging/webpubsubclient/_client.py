@@ -39,7 +39,7 @@ from .models._models import (
     LeaveGroupMessage,
     AckMessageError,
     AckMap,
-    StartClientError,
+    OpenClientError,
     WebPubSubConnectionError,
 )
 from .models._enums import (
@@ -214,7 +214,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def _send_message(self, message: WebPubSubMessage, **kwargs: Any) -> None:
         pay_load = self._protocol.write_message(message)
         if not self._ws or not self._ws.sock:
-            raise WebPubSubConnectionError("The websocket connection is not connected.")
+            raise SendMessageError("The websocket connection is not connected.")
 
         self._ws.send(pay_load)
         if kwargs.pop("logging_enable", False) or self._logging_enable:
@@ -542,7 +542,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                     if self._ws:
                         self._ws.close()
                 finally:
-                    raise StartClientError("Can't open a client during stopping")
+                    raise OpenClientError("Can't open a client during stopping")
 
             _LOGGER.debug("WebSocket connection has opened")
             self._state = WebPubSubClientState.CONNECTED
@@ -711,7 +711,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 )
 
         if self._is_stopping:
-            raise StartClientError("Can't open a client during closing")
+            raise OpenClientError("Can't open a client during closing")
 
         self._ws = websocket.WebSocketApp(
             url=url,
@@ -728,7 +728,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         with self._cv:
             self._cv.wait(timeout=self._start_timeout)
         if not self._is_connected():
-            raise StartClientError("Fail to open client")
+            raise OpenClientError("Fail to open client")
 
         # set thread to check sequence id if needed
         if self._protocol.is_reliable_sub_protocol and (
@@ -772,9 +772,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """open the client and connect to service"""
 
         if self._is_stopping:
-            raise StartClientError("Can't open a client during stopping")
+            raise OpenClientError("Can't open a client during stopping")
         if self._state != WebPubSubClientState.STOPPED:
-            raise StartClientError("Client can be only started when it's Stopped")
+            raise OpenClientError("Client can be only started when it's Stopped")
 
         try:
             self._start_core()

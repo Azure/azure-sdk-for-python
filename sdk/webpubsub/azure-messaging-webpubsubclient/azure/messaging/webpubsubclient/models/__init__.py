@@ -11,7 +11,7 @@ from ._models import (
     OnGroupDataMessageArgs,
     OnRejoinGroupFailedArgs,
     SendMessageError,
-    StartClientError,
+    OpenClientError,
     WebPubSubConnectionError,
     AckMessageError,
 )
@@ -29,7 +29,7 @@ __all__ = [
     "OnRejoinGroupFailedArgs",
     "CallbackType",
     "SendMessageError",
-    "StartClientError",
+    "OpenClientError",
     "WebPubSubConnectionError",
     "AckMessageError",
 ]

@@ -25,7 +25,7 @@ class TestWebpubsubClientSendConcurrently(WebpubsubClientTest):
             all_threads = []
             for i in range(100):
                 t = SafeThread(target=send, args=(i,))
-                t.open()
+                t.start()
                 all_threads.append(t)
             for t in all_threads:
                 t.join()

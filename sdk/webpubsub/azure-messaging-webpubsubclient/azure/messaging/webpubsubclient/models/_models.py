@@ -257,7 +257,9 @@ class SendToGroupData(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Literal["sendToGroup"] = "sendToGroup",  # pylint: disable=redefined-builtin
+        type: Literal[
+            "sendToGroup"
+        ] = "sendToGroup",  # pylint: disable=redefined-builtin
         group: str,
         data_type: Union[WebPubSubDataType, str],
         data: Any,
@@ -290,7 +292,9 @@ class SequenceAckData(_model_base.Model):
     def __init__(
         self,
         *,
-        type: Literal["sequenceAck"] = "sequenceAck",  # pylint: disable=redefined-builtin
+        type: Literal[
+            "sequenceAck"
+        ] = "sequenceAck",  # pylint: disable=redefined-builtin
         sequence_id: int,
     ) -> None:
         ...
@@ -516,7 +520,14 @@ class WebPubSubClientProtocol:
     @staticmethod
     def parse_messages(
         raw_message: str,
-    ) -> Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage, None,]:
+    ) -> Union[
+        ConnectedMessage,
+        DisconnectedMessage,
+        GroupDataMessage,
+        ServerDataMessage,
+        AckMessage,
+        None,
+    ]:
         """Parse messages from raw message
 
         :param raw_message: The raw message. Required.
@@ -735,7 +746,9 @@ class OnDisconnectedArgs:
     :vartype message: str
     """
 
-    def __init__(self, connection_id: Optional[str] = None, message: Optional[str] = None) -> None:
+    def __init__(
+        self, connection_id: Optional[str] = None, message: Optional[str] = None
+    ) -> None:
         self.connection_id = connection_id
         self.message = message
 
@@ -936,7 +949,7 @@ class AckMap:
             self.ack_map.clear()
 
 
-class StartClientError(AzureError):
+class OpenClientError(AzureError):
     """Exception raised when fail to start the client"""
 
 

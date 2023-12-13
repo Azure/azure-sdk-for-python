@@ -16,7 +16,7 @@ from testcase import (
 )
 from azure.messaging.webpubsubclient.models import (
     OnGroupDataMessageArgs,
-    StartClientError,
+    OpenClientError,
 )
 
 
@@ -78,7 +78,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
     @recorded_by_proxy
     def test_duplicated_start(self, webpubsubclient_connection_string):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
-        with pytest.raises(StartClientError):
+        with pytest.raises(OpenClientError):
             with client:
                 client.open()
         assert not client._is_connected()
