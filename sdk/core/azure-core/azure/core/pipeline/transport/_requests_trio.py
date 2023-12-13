@@ -217,9 +217,9 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    async def send(
+    async def send(  # pylint:disable=invalid-overridden-method
         self, request, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
-    ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:  # pylint:disable=invalid-overridden-method
+    ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
