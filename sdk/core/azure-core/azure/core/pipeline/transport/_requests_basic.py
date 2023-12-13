@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Union, TypeVar, overload, cast, Tuple, TYPE_CHECKING, MutableMapping
+from typing import Iterator, Optional, Union, overload, cast, Tuple, TYPE_CHECKING, MutableMapping
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
@@ -45,7 +45,7 @@ from azure.core.exceptions import (
 )
 from . import HttpRequest  # pylint: disable=unused-import
 
-from ._base import HttpTransport, HttpResponse, _HttpResponseBase
+from ._base import HttpTransport, HttpResponse, _HttpResponseBase, Pipeline
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
 from .._tools import (
     is_rest as _is_rest,
@@ -62,7 +62,6 @@ AzureErrorUnion = Union[
     HttpResponseError,
 ]
 
-PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -206,7 +205,7 @@ class StreamDownloadGenerator:
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response."""
 
-    def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
+    def stream_download(self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         :param pipeline: The pipeline object
