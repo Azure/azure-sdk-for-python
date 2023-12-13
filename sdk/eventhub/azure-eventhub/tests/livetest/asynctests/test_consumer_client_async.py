@@ -305,3 +305,27 @@ async def test_receive_batch_tracing_async(connstr_senders, uamqp_transport, fak
     assert root_receive.children[1].links[1].headers['traceparent'] == traceparent2
 
     settings.tracing_implementation.set_value(None)
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_receive_batch_large_event_async(connstr_senders, uamqp_transport):
+    connection_str, senders = connstr_senders
+    senders[0].send(EventData("A" * 15700))
+    client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
+
+    async def on_event(partition_context, event):
+        assert partition_context.partition_id == "0"
+        assert partition_context.consumer_group == "$default"
+        assert partition_context.fully_qualified_namespace in connection_str
+        assert partition_context.eventhub_name == senders[0]._client.eventhub_name
+        on_event.received += 1
+        assert client._event_processors[0]._consumers[0]._handler._link.current_link_credit == 1
+
+    on_event.received = 0
+    async with client:
+        task = asyncio.ensure_future(
+            client.receive(on_event, partition_id="0", starting_position="-1", prefetch=2))
+        await asyncio.sleep(10)
+        assert on_event.received == 1
+    await task

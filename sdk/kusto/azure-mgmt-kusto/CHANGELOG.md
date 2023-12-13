@@ -1,5 +1,15 @@
 # Release History
 
+## 3.3.0 (2023-10-23)
+
+### Features Added
+
+  - Added operation group SandboxCustomImagesOperations
+  - Model ClusterUpdate has a new parameter zones
+  - Model EndpointDetail has a new parameter ip_address
+  - Model LanguageExtension has a new parameter language_extension_custom_image_name
+  - Model VirtualNetworkConfiguration has a new parameter state
+
 ## 3.2.0 (2023-07-21)
 
 ### Features Added

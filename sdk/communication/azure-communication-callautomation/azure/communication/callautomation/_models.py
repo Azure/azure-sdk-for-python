@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Optional, Union, TYPE_CHECKING, Dict
+from typing import List, Optional, Union, TYPE_CHECKING
 from ._generated.models import (
     CallLocator,
     MediaStreamingConfiguration as MediaStreamingConfigurationRest,
+    TranscriptionConfiguration as TranscriptionConfigurationRest,
     FileSource as FileSourceInternal,
     TextSource as TextSourceInternal,
     SsmlSource as SsmlSourceInternal,
@@ -31,9 +32,10 @@ if TYPE_CHECKING:
         MediaStreamingTransportType,
         MediaStreamingContentType,
         MediaStreamingAudioChannelType,
+        TranscriptionTransportType,
         CallConnectionState,
         RecordingState,
-        Gender,
+        VoiceKind,
         DtmfTone
     )
     from ._generated.models  import (
@@ -43,13 +45,17 @@ if TYPE_CHECKING:
         RemoveParticipantResponse as RemoveParticipantResultRest,
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
-        MuteParticipantsResponse as MuteParticipantsResultRest,
+        MuteParticipantsResult as MuteParticipantsResultRest,
+        SendDtmfTonesResult as SendDtmfTonesResultRest,
         CancelAddParticipantResponse as CancelAddParticipantResultRest,
     )
 
 
 class CallInvite:
     """Details of call invitation for outgoing call.
+
+    **DEPRECATED**: This model has been deprecated and will be removed from future releases.
+    Please pass in the target `CommunicateIdentifier` directly.
 
     :param target: Target's identity.
     :type target: ~azure.communication.callautomation.CommunicationIdentifier
@@ -58,10 +64,6 @@ class CallInvite:
     :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier
     :keyword source_display_name: Set display name for caller
     :paramtype source_display_name: str
-    :keyword sip_headers: Custom context for PSTN
-    :paramtype sip_headers: dict[str, str]
-    :keyword voip_headers: Custom context for VOIP
-    :paramtype voip_headers: dict[str, str]
     """
     target: CommunicationIdentifier
     """Target's identity."""
@@ -69,10 +71,6 @@ class CallInvite:
     """ Caller's phone number identifier. Required for PSTN outbound call."""
     source_display_name: Optional[str]
     """Display name for caller"""
-    sip_headers: Optional[Dict[str, str]]
-    """Custom context for PSTN"""
-    voip_headers: Optional[Dict[str, str]]
-    """Custom context for VOIP"""
 
     def __init__(  # pylint: disable=unused-argument
         self,
@@ -80,19 +78,18 @@ class CallInvite:
         *,
         source_caller_id_number: Optional[PhoneNumberIdentifier] = None,
         source_display_name: Optional[str] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
-        voip_headers: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         self.target = target
         self.source_caller_id_number = source_caller_id_number
         self.source_display_name = source_display_name
-        self.sip_headers = sip_headers
-        self.voip_headers = voip_headers
 
 
 class ServerCallLocator:
     """The locator to locate ongoing call, using server call id.
+
+    **DEPRECATED**: This model has been deprecated and will be removed from future releases.
+    Please pass in the `server_call_id` directly.
 
     :param server_call_id: The server call id of ongoing call.
     :type server_call_id: str
@@ -116,6 +113,9 @@ class ServerCallLocator:
 
 class GroupCallLocator:
     """The locator to locate ongoing call, using group call id.
+
+    **DEPRECATED**: This model has been deprecated and will be removed from future releases.
+    Please pass in the `group_call_id` directly.
 
     :param group_call_id: The group call id of ongoing call.
     :type group_call_id: str
@@ -193,27 +193,29 @@ class FileSource:
 
     def _to_generated(self):
         return PlaySourceInternal(
-            source_type=PlaySourceType.FILE,
-            file_source=FileSourceInternal(uri=self.url),
-            play_source_id=self.play_source_cache_id
+            kind=PlaySourceType.FILE,
+            file=FileSourceInternal(uri=self.url),
+            play_source_cache_id=self.play_source_cache_id
         )
 
 
 class TextSource:
     """TextSource to be played in actions such as Play media.
 
-    :param text: Text for the cognitive service to be played.
-    :type text: str
+    :keyword text: Text for the cognitive service to be played. Required.
+    :paramtype text: str
     :keyword source_locale: Source language locale to be played. Refer to available locales here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :paramtype source_locale: str
-    :keyword voice_gender: Voice gender type. Known values are: "male" and "female".
-    :paramtype voice_gender: str or 'azure.communication.callautomation.Gender'
+    :keyword voice_kind: Voice kind type. Known values are: "male" and "female".
+    :paramtype voice_kind: str or ~azure.communication.callautomation.VoiceKind
     :keyword voice_name: Voice name to be played. Refer to available Text-to-speech voices here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :paramtype voice_name: str
     :keyword play_source_cache_id: Cached source id of the play media, if it exists.
     :paramtype play_source_cache_id: str
+    :keyword custom_voice_endpoint_id: Endpoint where the custom voice was deployed.
+    :paramtype custom_voice_endpoint_id: str
     """
 
     text: str
@@ -221,54 +223,54 @@ class TextSource:
     source_locale: Optional[str]
     """Source language locale to be played. Refer to available locales here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
-    voice_gender: Optional[Union[str, 'Gender']]
-    """Voice gender type. Known values are: "male" and "female"."""
+    voice_kind: Optional[Union[str, 'VoiceKind']]
+    """Voice kind type. Known values are: "male" and "female"."""
     voice_name: Optional[str]
     """Voice name to be played. Refer to available Text-to-speech voices here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts"""
     play_source_cache_id: Optional[str]
     """Cached source id of the play media, if it exists."""
     custom_voice_endpoint_id: Optional[str]
-    """Endpoint where the custom voice was deployed"""
+    """Endpoint where the custom voice was deployed."""
 
     def __init__(
         self,
-        text: str,
         *,
+        text: str,
         source_locale: Optional[str] = None,
-        voice_gender: Optional[Union[str, 'Gender']] = None,
+        voice_kind: Optional[Union[str, 'VoiceKind']] = None,
         voice_name: Optional[str] = None,
         play_source_cache_id: Optional[str] = None,
         custom_voice_endpoint_id: Optional[str] = None
     ):
         self.text = text
         self.source_locale = source_locale
-        self.voice_gender = voice_gender
+        self.voice_kind = voice_kind
         self.voice_name = voice_name
         self.play_source_cache_id = play_source_cache_id
         self.custom_voice_endpoint_id = custom_voice_endpoint_id
 
     def _to_generated(self):
         return PlaySourceInternal(
-            source_type=PlaySourceType.TEXT,
-            text_source=TextSourceInternal(
-            text=self.text,
-            source_locale=self.source_locale,
-            voice_gender=self.voice_gender,
-            voice_name=self.voice_name,
-            custom_voice_endpoint_id=self.custom_voice_endpoint_id),
-            play_source_id=self.play_source_cache_id
+            kind=PlaySourceType.TEXT,
+            text=TextSourceInternal(
+                text=self.text,
+                source_locale=self.source_locale,
+                voice_kind=self.voice_kind,
+                voice_name=self.voice_name,
+                custom_voice_endpoint_id=self.custom_voice_endpoint_id),
+            play_source_cache_id=self.play_source_cache_id
         )
 
 class SsmlSource:
     """SsmlSource to be played in actions such as Play media.
 
-    :param ssml_text: Ssml string for the cognitive service to be played.
-    :type ssml_text: str
+    :keyword ssml_text: Ssml string for the cognitive service to be played. Required.
+    :paramtype ssml_text: str
     :keyword play_source_cache_id: Cached source id of the play media, if it exists.
     :paramtype play_source_cache_id: str
-    :ivar custom_voice_endpoint_id: Endpoint id where the custom voice model is deployed.
-    :vartype custom_voice_endpoint_id: str
+    :keyword custom_voice_endpoint_id: Endpoint id where the custom voice model is deployed.
+    :paramtype custom_voice_endpoint_id: str
     """
 
     ssml_text: str
@@ -280,8 +282,8 @@ class SsmlSource:
 
     def __init__(
         self,
-        ssml_text: str,
         *,
+        ssml_text: str,
         play_source_cache_id: Optional[str] = None,
         custom_voice_endpoint_id: Optional[str] = None
     ):
@@ -291,11 +293,11 @@ class SsmlSource:
 
     def _to_generated(self):
         return PlaySourceInternal(
-            source_type=PlaySourceType.SSML,
-            ssml_source=SsmlSourceInternal(
+            kind=PlaySourceType.SSML,
+            ssml=SsmlSourceInternal(
                 ssml_text=self.ssml_text,
                 custom_voice_endpoint_id=self.custom_voice_endpoint_id),
-            play_source_id=self.play_source_cache_id
+            play_source_cache_id=self.play_source_cache_id
         )
 
 class MediaStreamingConfiguration:
@@ -340,6 +342,49 @@ class MediaStreamingConfiguration:
             audio_channel_type=self.audio_channel_type
         )
 
+class TranscriptionConfiguration:
+    """Configuration of live transcription.
+
+    :param transport_url: Transport URL for live transcription. Required.
+    :type transport_url: str
+    :param transport_type: The type of transport to be used for live transcription, eg. Websocket.
+     Required. "websocket"
+    :type transport_type: str or ~azure.communication.callautomation.TranscriptionTransportType
+    :param locale: Defines the locale for the data e.g en-CA, en-AU. Required.
+    :type locale: str
+    :param start_transcription: Determines if the transcription should be started immediately after
+     call is answered or not. Required.
+    :type start_transcription: bool
+    """
+
+    transport_url: str
+    """Transport URL for live transcription."""
+    transport_type: Union[str, 'TranscriptionTransportType']
+    """The type of transport to be used for live transcription."""
+    locale: str
+    """Defines the locale for the data."""
+    start_transcription: bool
+    """Determines if the transcription should be started immediately after call is answered or not."""
+
+    def __init__(
+        self,
+        transport_url: str,
+        transport_type: Union[str, 'TranscriptionTransportType'],
+        locale: str,
+        start_transcription: bool
+    ):
+        self.transport_url = transport_url
+        self.transport_type = transport_type
+        self.locale = locale
+        self.start_transcription = start_transcription
+
+    def to_generated(self):
+        return TranscriptionConfigurationRest(
+            transport_url=self.transport_url,
+            transport_type=self.transport_type,
+            locale=self.locale,
+            start_transcription=self.start_transcription
+        )
 
 class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
     """ Detailed properties of the call.
@@ -441,13 +486,13 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             if call_connection_properties_generated.source_caller_id_number
             else None,
             source_display_name=call_connection_properties_generated.source_display_name,
-            source=deserialize_identifier(call_connection_properties_generated.source_identity)
-            if call_connection_properties_generated.source_identity
+            source=deserialize_identifier(call_connection_properties_generated.source)
+            if call_connection_properties_generated.source
             else None,
             correlation_id=call_connection_properties_generated.correlation_id,
             answered_by=deserialize_comm_user_identifier(
-                call_connection_properties_generated.answered_by_identifier)
-            if call_connection_properties_generated.answered_by_identifier
+                call_connection_properties_generated.answered_by)
+            if call_connection_properties_generated.answered_by
             else None
         )
 
@@ -595,15 +640,14 @@ class TransferCallResult:
     def _from_generated(cls, transfer_result_generated: 'TransferParticipantResultRest'):
         return cls(operation_context=transfer_result_generated.operation_context)
 
-
-class Choice:
+class RecognitionChoice:
     """
     An IVR choice for the recognize operation.
 
-    :param label: Identifier for a given choice.
-    :type label: str
-    :param phrases: List of phrases to recognize.
-    :type phrases: list[str]
+    :keyword label: Identifier for a given choice. Required.
+    :paramtype label: str
+    :keyword phrases: List of phrases to recognize. Required.
+    :paramtype phrases: list[str]
     :keyword tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
      "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
     :paramtype tone: str or ~azure.communication.callautomation.DtmfTone
@@ -619,9 +663,9 @@ class Choice:
 
     def __init__(
         self,
+        *,
         label: str,
         phrases: List[str],
-        *,
         tone: Optional[Union[str, 'DtmfTone']] = None
     ):
         self.label = label
@@ -631,9 +675,8 @@ class Choice:
     def _to_generated(self):
         return ChoiceInternal(label=self.label, phrases=self.phrases, tone=self.tone)
 
-
-class MuteParticipantsResult:
-    """The response payload for muting participants from the call.
+class MuteParticipantResult:
+    """The result payload for muting participant from the call.
 
     :keyword operation_context: The operation context provided by client.
     :paramtype operation_context: str
@@ -650,12 +693,31 @@ class MuteParticipantsResult:
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, mute_participants_result_generated: 'MuteParticipantsResultRest'):
-        return cls(operation_context=mute_participants_result_generated.operation_context)
+    def _from_generated(cls, mute_participant_result_generated: 'MuteParticipantsResultRest'):
+        return cls(operation_context=mute_participant_result_generated.operation_context)
 
-class CancelAddParticipantResult:
+class SendDtmfTonesResult:
+    """The result payload for send Dtmf tones.
+    :keyword operation_context: The operation context provided by client.
+    :paramtype operation_context: str
+    """
+
+    operation_context: Optional[str]
+    """The operation context provided by client."""
+
+    def __init__(
+        self,
+        *,
+        operation_context: Optional[str] = None
+    ) -> None:
+        self.operation_context = operation_context
+
+    @classmethod
+    def _from_generated(cls, send_dtmf_tones_result_generated: 'SendDtmfTonesResultRest'):
+        return cls(operation_context=send_dtmf_tones_result_generated.operation_context)
+
+class CancelAddParticipantOperationResult:
     """ The result payload for cancelling add participant request for a participant.
-
     :keyword invitation_id: Invitation ID that was used to add the participant to the call.
     :paramtype participant: str
     :keyword operation_context: The operation context provided by client.
@@ -677,8 +739,8 @@ class CancelAddParticipantResult:
         self.operation_context = operation_context
 
     @classmethod
-    def _from_generated(cls, cancel_add_participant_result_generated: 'CancelAddParticipantResultRest'):
+    def _from_generated(cls, cancel_add_participant_operation_result_generated: 'CancelAddParticipantResultRest'):
         return cls(
-            invitation_id=cancel_add_participant_result_generated.invitation_id,
-            operation_context=cancel_add_participant_result_generated.operation_context
+            invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
+            operation_context=cancel_add_participant_operation_result_generated.operation_context
         )

@@ -195,11 +195,12 @@ def check_certificate_location(repo_root: str) -> None:
             write_dev_cert_bundle()
 
     _LOGGER.info(
-        "Setting SSL_CERT_DIR and REQUESTS_CA_BUNDLE environment variables for the current session.\n"
+        "Setting SSL_CERT_DIR, SSL_CERT_FILE, and REQUESTS_CA_BUNDLE environment variables for the current session.\n"
         f"SSL_CERT_DIR={combined_folder}\n"
-        f"REQUESTS_CA_BUNDLE={combined_location}"
+        f"SSL_CERT_FILE=REQUESTS_CA_BUNDLE={combined_location}"
     )
     os.environ["SSL_CERT_DIR"] = combined_folder
+    os.environ["SSL_CERT_FILE"] = combined_location
     os.environ["REQUESTS_CA_BUNDLE"] = combined_location
 
 

@@ -5,7 +5,7 @@
 
 import os
 import datetime
-from azure_devtools.perfstress_tests import PerfStressTest
+from devtools_testutils.perfstress_tests import PerfStressTest
 
 from azure.ai.metricsadvisor import MetricsAdvisorClient as SyncClient, MetricsAdvisorKeyCredential
 from azure.ai.metricsadvisor.aio import MetricsAdvisorClient as AsyncClient

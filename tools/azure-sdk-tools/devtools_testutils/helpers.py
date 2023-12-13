@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import inspect
 import os
 import sys
 from urllib3 import PoolManager, Retry
@@ -79,6 +80,24 @@ def is_live():
 
 def is_live_and_not_recording():
     return is_live() and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "").lower() == "true"
+
+
+def is_preparer_func(fn):
+    return getattr(fn, "__is_preparer", False)
+
+
+def trim_kwargs_from_test_function(fn, kwargs):
+    # the next function is the actual test function. the kwargs need to be trimmed so
+    # that parameters which are not required will not be passed to it.
+    if not is_preparer_func(fn):
+        try:
+            args, _, kw, _, _, _, _ = inspect.getfullargspec(fn)
+        except AttributeError:
+            args, _, kw, _ = inspect.getargspec(fn)  # pylint: disable=deprecated-method
+        if kw is None:
+            args = set(args)
+            for key in [k for k in kwargs if k not in args]:
+                del kwargs[key]
 
 
 class RetryCounter(object):

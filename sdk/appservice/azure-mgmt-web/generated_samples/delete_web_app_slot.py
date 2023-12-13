@@ -29,14 +29,13 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.web_apps.delete_slot(
+    client.web_apps.delete_slot(
         resource_group_name="testrg123",
         name="sitef6141",
         slot="staging",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/DeleteWebAppSlot.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/DeleteWebAppSlot.json
 if __name__ == "__main__":
     main()

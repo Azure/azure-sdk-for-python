@@ -248,6 +248,27 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_exists(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        async with ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key) as file_client:
+
+            # Act / Assert
+            assert not await file_client.exists()
+
+            await file_client.create_file(1024)
+            assert await file_client.exists()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_file(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1472,7 +1493,10 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             source_file_client.account_name,
             source_file_client.share_name,
             source_file_client.file_path,
-            source_file_client.credential.account_key)
+            source_file_client.credential.account_key,
+            FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
 
         source_file_url = source_file_client.url + '?' + sas_token_for_source_file
 

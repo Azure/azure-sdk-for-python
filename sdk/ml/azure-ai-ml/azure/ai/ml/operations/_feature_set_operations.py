@@ -21,7 +21,6 @@ from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersion,
     FeaturesetVersionBackfillRequest,
     FeatureWindow,
-    ListViewType,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -33,7 +32,9 @@ from azure.ai.ml._utils._feature_store_utils import (
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import is_url
+from azure.ai.ml.constants import ListViewType
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._feature_set.data_availability_status import DataAvailabilityStatus
 from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.ai.ml.entities._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
@@ -159,6 +160,11 @@ class FeatureSetOperations(_ScopeDependentOperations):
         featureset_copy.properties["featuresetProperties"] = json.dumps(featureset_spec._to_dict())
 
         sas_uri = None
+
+        if not is_url(featureset_copy.path):
+            with open(os.path.join(featureset_copy.path, ".amlignore"), mode="w", encoding="utf-8") as f:
+                f.write(".*\n*.amltmp\n*.amltemp")
+
         featureset_copy, _ = _check_and_upload_path(
             artifact=featureset_copy, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURE_SET
         )
@@ -189,7 +195,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         tags: Optional[Dict[str, str]] = None,
         compute_resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
-        data_status: Optional[List[str]] = None,
+        data_status: Optional[List[Union[str, DataAvailabilityStatus]]] = None,
         job_id: Optional[str] = None,
         **kwargs: Dict,
     ) -> LROPoller[FeatureSetBackfillMetadata]:
@@ -213,6 +219,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :paramtype compute_resource: ~azure.ai.ml.entities.MaterializationComputeResource
         :keyword spark_configuration: Specifies the spark compute settings.
         :paramtype spark_configuration: dict[str, str]
+        :keyword data_status: Specifies the data status that you want to backfill.
+        :paramtype data_status: list[str or ~azure.ai.ml.entities.DataAvailabilityStatus]
         :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]
         """

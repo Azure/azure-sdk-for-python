@@ -186,7 +186,8 @@ class AvroEncoder(object):
         :keyword message_type: The message class to construct the message. Must be a subtype of the
          azure.schemaregistry.encoder.avroencoder.MessageType protocol.
         :paramtype message_type: Type[MessageType] or None
-        :keyword request_options: The keyword arguments for http requests to be passed to the client.
+        :keyword request_options: The keyword arguments for http requests to be passed to
+         the client.
         :paramtype request_options: dict[str, Any] or None
         :return: The Message object or the TypedDict containing encoded content and content type.
         :rtype: MessageType or MessageContent

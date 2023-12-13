@@ -33,13 +33,13 @@ def main():
         resource_group_name="resourcegroupname",
         elastic_san_name="elasticsanname",
         parameters={
-            "properties": {"baseSizeTiB": 10, "extendedCapacitySizeTiB": 22},
-            "tags": {"key4212": "cqvcnwfefljntgeio"},
+            "properties": {"baseSizeTiB": 13, "extendedCapacitySizeTiB": 29, "publicNetworkAccess": "Enabled"},
+            "tags": {"key1931": "yhjwkgmrrwrcoxblgwgzjqusch"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2022-12-01-preview/examples/ElasticSans_Update_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/ElasticSans_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

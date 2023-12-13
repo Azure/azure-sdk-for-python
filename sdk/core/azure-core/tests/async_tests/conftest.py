@@ -31,7 +31,7 @@ import subprocess
 import sys
 import random
 import urllib
-from rest_client_async import AsyncTestRestClient
+from rest_client_async import AsyncMockRestClient
 
 
 def is_port_available(port_num):
@@ -91,4 +91,4 @@ def testserver():
 
 @pytest.fixture
 def client(port):
-    return AsyncTestRestClient(port)
+    return AsyncMockRestClient(port)

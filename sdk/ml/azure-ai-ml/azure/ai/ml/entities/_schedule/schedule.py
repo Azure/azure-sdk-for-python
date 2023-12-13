@@ -20,8 +20,10 @@ from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
+from azure.ai.ml.entities._job.command_job import CommandJob
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
+from azure.ai.ml.entities._job.spark_job import SparkJob
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
@@ -29,7 +31,6 @@ from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
-from .. import CommandJob, SparkJob
 from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 

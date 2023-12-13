@@ -56,17 +56,17 @@ if TYPE_CHECKING:
         uamqp_AMQPClientAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
 
-    CredentialTypes = Union[
+    try:
+        from typing_extensions import TypeAlias, Protocol
+    except ImportError:
+        Protocol = object  # type: ignore
+
+    CredentialTypes: TypeAlias = Union[
         "EventHubSharedKeyCredential",
         AsyncTokenCredential,
         AzureSasCredential,
         AzureNamedKeyCredential,
     ]
-
-    try:
-        from typing_extensions import Protocol
-    except ImportError:
-        Protocol = object  # type: ignore
 
     class AbstractConsumerProducer(Protocol):
         @property
@@ -100,8 +100,7 @@ if TYPE_CHECKING:
             pass
 
         @property
-        def running(self):
-            # type: () -> bool
+        def running(self) -> bool:
             """Whether the consumer or producer is running"""
 
         @running.setter
@@ -211,7 +210,7 @@ class EventhubAzureSasTokenCredentialAsync(object):
         :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
-        return AccessToken(signature, expiry)
+        return AccessToken(signature, cast(int, expiry))
 
 
 class ClientBaseAsync(ClientBase):
@@ -421,8 +420,8 @@ class ClientBaseAsync(ClientBase):
         response = await self._management_request_async(
             mgmt_msg, op_type=MGMT_PARTITION_OPERATION
         )
-        partition_info = response.value  # type: Dict[bytes, Union[bytes, int]]
-        output = {}  # type: Dict[str, Any]
+        partition_info: Dict[bytes, Union[bytes, int]] = response.value
+        output: Dict[str, Any] = {}
         if partition_info:
             output["eventhub_name"] = cast(bytes, partition_info[b"name"]).decode(
                 "utf-8"

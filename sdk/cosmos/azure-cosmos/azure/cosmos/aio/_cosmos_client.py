@@ -292,7 +292,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
-        offer_throughput = kwargs.pop("offerThroughput", None)
+        offer_throughput = kwargs.pop("offer_throughput", None)
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)

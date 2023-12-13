@@ -9,7 +9,7 @@ import logging
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import VersionField, NestedField
+from azure.ai.ml._schema.core.fields import UnionField, NestedField, StringTransformedEnum
 from .inference_server import InferenceServerSchema
 from .model_configuration import ModelConfigurationSchema
 from .model_package_input import ModelPackageInputSchema
@@ -19,8 +19,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class ModelPackageSchema(PathAwareSchema):
-    target_environment_name = fields.Str(required=True, dump_default="packaged-env")
-    target_environment_version = VersionField()
+    target_environment = UnionField(
+        union_fields=[
+            fields.Dict(keys=StringTransformedEnum(allowed_values=["name"]), values=fields.Str()),
+            fields.Str(required=True),
+        ]
+    )  # pylint: disable=line-too-long
     base_environment_source = NestedField(BaseEnvironmentSourceSchema)
     inferencing_server = NestedField(InferenceServerSchema)
     model_configuration = NestedField(ModelConfigurationSchema)

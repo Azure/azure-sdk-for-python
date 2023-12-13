@@ -11,13 +11,12 @@ parameters:
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
   - task: UsePythonVersion@0
-    displayName: 'Use Python 3.7'
+    displayName: 'Use Python 3.8'
     inputs:
-     versionSpec: '3.7'
+     versionSpec: '3.8'
     condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
 
   - script: |
-      python -m pip install setuptools==58.3.0
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))

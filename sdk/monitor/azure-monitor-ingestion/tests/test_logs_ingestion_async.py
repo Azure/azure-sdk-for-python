@@ -122,13 +122,11 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
         os.remove(temp_file)
         await credential.close()
 
-
     @pytest.mark.asyncio
     async def test_abort_error_handler(self, monitor_info):
         credential = self.get_credential(LogsIngestionClient, is_async=True)
         client = self.create_client_from_credential(
             LogsIngestionClient, credential, endpoint=monitor_info['dce'])
-        body = [{"foo": "bar"}]
 
         class TestException(Exception):
             pass
@@ -165,4 +163,15 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
                         on_error=on_error)
 
             assert on_error.called
+        await credential.close()
+
+    @pytest.mark.asyncio
+    async def test_invalid_logs_format(self, monitor_info):
+        credential = self.get_credential(LogsIngestionClient, is_async=True)
+        client = self.create_client_from_credential(LogsIngestionClient, credential, endpoint=monitor_info['dce'])
+
+        body = {"foo": "bar"}
+        async with client:
+            with pytest.raises(ValueError):
+                await client.upload(rule_id="rule", stream_name="stream", logs=body)
         await credential.close()

@@ -1,14 +1,25 @@
 # Release History
 
-## 1.29.5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.29.6 (2023-12-12)
 
 ### Bugs Fixed
 
+- Adjusted `AsyncBearerTokenCredentialPolicy` to work properly with `trio` concurrency mechanisms.   ([#33307](https://github.com/Azure/azure-sdk-for-python/pull/33307))
+
 ### Other Changes
+
+- Added dependency on `anyio` >=3.0,<5.0
+- Bumped minimum dependency on `requests` to 2.21.0.
+
+## 1.29.5 (2023-10-19)
+
+### Bugs Fixed
+
+- Fixed an issue with `multipart/form-data` in the async transport where `data` was not getting encoded into the request body. #32473
+
+### Other Changes
+
+- Use ssl context from aiohttp by default.
 
 ## 1.29.4 (2023-09-07)
 

@@ -70,8 +70,8 @@ class QueryOperations:
 
         Executes an Analytics query for data.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :keyword query: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
@@ -148,18 +148,18 @@ class QueryOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_query_get_request(
+        _request = build_query_get_request(
             workspace_id=workspace_id,
             query=query,
             timespan=timespan,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -176,9 +176,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def execute(
@@ -193,11 +193,11 @@ class QueryOperations:
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/request-format>`_ is an example for
+        using POST with an Analytics query.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
@@ -223,8 +223,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -289,11 +289,11 @@ class QueryOperations:
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/request-format>`_ is an example for
+        using POST with an Analytics query.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
@@ -367,11 +367,11 @@ class QueryOperations:
         """Execute an Analytics query.
 
         Executes an Analytics query for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/request-format>`_ is an example for
+        using POST with an Analytics query.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
@@ -397,8 +397,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -471,7 +471,7 @@ class QueryOperations:
         else:
             _json = body
 
-        request = build_query_execute_request(
+        _request = build_query_execute_request(
             workspace_id=workspace_id,
             prefer=prefer,
             content_type=content_type,
@@ -480,11 +480,11 @@ class QueryOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -501,9 +501,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
     async def resource_get(
@@ -512,7 +512,7 @@ class QueryOperations:
         """Execute an Analytics query using resource URI.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -592,18 +592,18 @@ class QueryOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_query_resource_get_request(
+        _request = build_query_resource_get_request(
             resource_id=resource_id,
             query=query,
             timespan=timespan,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -620,9 +620,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def resource_execute(
@@ -637,7 +637,7 @@ class QueryOperations:
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -666,8 +666,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -732,7 +732,7 @@ class QueryOperations:
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -809,7 +809,7 @@ class QueryOperations:
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -838,8 +838,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -912,7 +912,7 @@ class QueryOperations:
         else:
             _json = body
 
-        request = build_query_resource_execute_request(
+        _request = build_query_resource_execute_request(
             resource_id=resource_id,
             prefer=prefer,
             content_type=content_type,
@@ -921,11 +921,11 @@ class QueryOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -942,17 +942,17 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def batch(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/batch-queries>`_ is an example for
+        using POST with an Analytics query.
 
         :param body: The batch request body. Required.
         :type body: JSON
@@ -977,21 +977,24 @@ class QueryOperations:
                                   value.  This timespan is applied in addition to any that are
                                   specified in the query expression.
                                 "workspaces": [
-                                    "str"  # Optional. A list of workspaces that
-                                      are included in the query.
+                                    "str"  # Optional. A list of workspaces to
+                                      query in addition to the primary workspace.
                                 ]
                             },
-                            "id": "str",  # The error details. Required.
-                            "workspace": "str",  # Workspace Id to be included in the
-                              query. Required.
+                            "id": "str",  # Unique ID corresponding to each request in
+                              the batch. Required.
+                            "workspace": "str",  # Primary Workspace ID of the query.
+                              This is the Workspace ID from the Properties blade in the Azure portal.
+                              Required.
                             "headers": {
-                                "str": "str"  # Optional. Dictionary of
-                                  :code:`<string>`.
+                                "str": "str"  # Optional. Headers of the request. Can
+                                  use prefer header to set server timeout and to query statistics and
+                                  visualization information.
                             },
-                            "method": "POST",  # Optional. Default value is "POST". An
-                              single request in a batch. Required.
-                            "path": "/query"  # Optional. Default value is "/query". An
-                              single request in a batch. Required.
+                            "method": "POST",  # Optional. Default value is "POST". The
+                              method of a single request in a batch, defaults to POST.
+                            "path": "/query"  # Optional. Default value is "/query". The
+                              query path of a single request in a batch, defaults to /query.
                         }
                     ]
                 }
@@ -1072,8 +1075,8 @@ class QueryOperations:
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/batch-queries>`_ is an example for
+        using POST with an Analytics query.
 
         :param body: The batch request body. Required.
         :type body: IO
@@ -1163,8 +1166,8 @@ class QueryOperations:
         """Execute a batch of Analytics queries.
 
         Executes a batch of Analytics queries for data. `Here
-        <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
-        an Analytics query.
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/batch-queries>`_ is an example for
+        using POST with an Analytics query.
 
         :param body: The batch request body. Is either a JSON type or a IO type. Required.
         :type body: JSON or IO
@@ -1189,21 +1192,24 @@ class QueryOperations:
                                   value.  This timespan is applied in addition to any that are
                                   specified in the query expression.
                                 "workspaces": [
-                                    "str"  # Optional. A list of workspaces that
-                                      are included in the query.
+                                    "str"  # Optional. A list of workspaces to
+                                      query in addition to the primary workspace.
                                 ]
                             },
-                            "id": "str",  # The error details. Required.
-                            "workspace": "str",  # Workspace Id to be included in the
-                              query. Required.
+                            "id": "str",  # Unique ID corresponding to each request in
+                              the batch. Required.
+                            "workspace": "str",  # Primary Workspace ID of the query.
+                              This is the Workspace ID from the Properties blade in the Azure portal.
+                              Required.
                             "headers": {
-                                "str": "str"  # Optional. Dictionary of
-                                  :code:`<string>`.
+                                "str": "str"  # Optional. Headers of the request. Can
+                                  use prefer header to set server timeout and to query statistics and
+                                  visualization information.
                             },
-                            "method": "POST",  # Optional. Default value is "POST". An
-                              single request in a batch. Required.
-                            "path": "/query"  # Optional. Default value is "/query". An
-                              single request in a batch. Required.
+                            "method": "POST",  # Optional. Default value is "POST". The
+                              method of a single request in a batch, defaults to POST.
+                            "path": "/query"  # Optional. Default value is "/query". The
+                              query path of a single request in a batch, defaults to /query.
                         }
                     ]
                 }
@@ -1300,18 +1306,18 @@ class QueryOperations:
         else:
             _json = body
 
-        request = build_query_batch_request(
+        _request = build_query_batch_request(
             content_type=content_type,
             json=_json,
             content=_content,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1328,9 +1334,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
     async def resource_get_xms(
@@ -1339,7 +1345,7 @@ class QueryOperations:
         """Execute an Analytics query using resource URI.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -1419,18 +1425,18 @@ class QueryOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_query_resource_get_xms_request(
+        _request = build_query_resource_get_xms_request(
             resource_id=resource_id,
             query=query,
             timespan=timespan,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1447,9 +1453,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     async def resource_execute_xms(
@@ -1464,7 +1470,7 @@ class QueryOperations:
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -1493,8 +1499,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -1559,7 +1565,7 @@ class QueryOperations:
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -1636,7 +1642,7 @@ class QueryOperations:
         """Execute an Analytics query using resource ID.
 
         Executes an Analytics query for data in the context of a resource. `Here
-        <https://docs.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
+        <https://learn.microsoft.com/azure/azure-monitor/logs/api/azure-resource-queries>`_ is an
         example for using POST with an Analytics query.
 
         :param resource_id: The identifier of the resource. Required.
@@ -1665,8 +1671,8 @@ class QueryOperations:
                       data. This is an ISO8601 time period value.  This timespan is applied in addition
                       to any that are specified in the query expression.
                     "workspaces": [
-                        "str"  # Optional. A list of workspaces that are included in the
-                          query.
+                        "str"  # Optional. A list of workspaces to query in addition to the
+                          primary workspace.
                     ]
                 }
 
@@ -1739,7 +1745,7 @@ class QueryOperations:
         else:
             _json = body
 
-        request = build_query_resource_execute_xms_request(
+        _request = build_query_resource_execute_xms_request(
             resource_id=resource_id,
             prefer=prefer,
             content_type=content_type,
@@ -1748,11 +1754,11 @@ class QueryOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1769,9 +1775,9 @@ class QueryOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
 
 class MetadataOperations:
@@ -1798,8 +1804,8 @@ class MetadataOperations:
         Retrieve the metadata information for the workspace, including its schema, functions, workspace
         info, categories etc.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :return: JSON object
         :rtype: JSON
@@ -2162,16 +2168,16 @@ class MetadataOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_metadata_get_request(
+        _request = build_metadata_get_request(
             workspace_id=workspace_id,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2188,9 +2194,9 @@ class MetadataOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace_async
     async def post(self, workspace_id: str, **kwargs: Any) -> JSON:
@@ -2199,8 +2205,8 @@ class MetadataOperations:
         Retrieve the metadata information for the workspace, including its schema, functions, workspace
         info, categories etc.
 
-        :param workspace_id: ID of the workspace. This is Workspace ID from the Properties blade in the
-         Azure portal. Required.
+        :param workspace_id: Primary Workspace ID of the query. This is the Workspace ID from the
+         Properties blade in the Azure portal. Required.
         :type workspace_id: str
         :return: JSON object
         :rtype: JSON
@@ -2563,16 +2569,16 @@ class MetadataOperations:
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_metadata_post_request(
+        _request = build_metadata_post_request(
             workspace_id=workspace_id,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2589,6 +2595,6 @@ class MetadataOperations:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore

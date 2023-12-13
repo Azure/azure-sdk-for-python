@@ -27,7 +27,9 @@ class LiftrResourceCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ManagedIdentityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Identity type."""
+    """Specifies the identity type of the Datadog Monitor. At this time the only allowed value is
+    'SystemAssigned'.
+    """
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
@@ -51,6 +53,16 @@ class MonitoringStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
 
 
+class Operation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operation for the patch on the resource."""
+
+    ADD_BEGIN = "AddBegin"
+    ADD_COMPLETE = "AddComplete"
+    DELETE_BEGIN = "DeleteBegin"
+    DELETE_COMPLETE = "DeleteComplete"
+    ACTIVE = "Active"
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ProvisioningState."""
 
@@ -72,6 +84,15 @@ class SingleSignOnStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLE = "Enable"
     DISABLE = "Disable"
     EXISTING = "Existing"
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of monitoring."""
+
+    IN_PROGRESS = "InProgress"
+    ACTIVE = "Active"
+    FAILED = "Failed"
+    DELETING = "Deleting"
 
 
 class TagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):

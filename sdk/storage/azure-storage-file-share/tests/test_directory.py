@@ -212,6 +212,28 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_create_subdirectory_in_root(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        share_client.create_directory('dir1')
+
+        # Act
+        rooted_directory = share_client.get_directory_client()
+        sub_dir_client = rooted_directory.get_subdirectory_client('dir2')
+        sub_dir_client.create_directory()
+
+        list_dir = list(share_client.list_directories_and_files())
+
+        # Assert
+        assert len(list_dir) == 2
+        assert list_dir[0]['name'] == 'dir1'
+        assert list_dir[1]['name'] == 'dir2'
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_file_in_directory(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

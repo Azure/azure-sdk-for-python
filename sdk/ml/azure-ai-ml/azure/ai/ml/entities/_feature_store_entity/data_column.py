@@ -6,8 +6,7 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import FeatureDataType, IndexColumn
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2023_10_01.models import FeatureDataType, IndexColumn
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -36,7 +35,6 @@ FeatureDataTypeMap: Dict[str, DataColumnType] = {
 }
 
 
-@experimental
 class DataColumn(RestTranslatableMixin):
     """A dataframe column
 

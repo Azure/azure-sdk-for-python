@@ -16,6 +16,7 @@ from typing import IO, AnyStr, Dict, Optional, Type, Union
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, JobService
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -278,7 +279,9 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         return job
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[JobBase, Run]) -> "Job":  # pylint: disable=too-many-return-statements
+    def _from_rest_object(  # pylint: disable=too-many-return-statements
+        cls, obj: Union[JobBase, JobBase_2308, Run]
+    ) -> "Job":  # pylint: disable=too-many-return-statements
         from azure.ai.ml.entities import PipelineJob
         from azure.ai.ml.entities._builders.command import Command
         from azure.ai.ml.entities._builders.spark import Spark

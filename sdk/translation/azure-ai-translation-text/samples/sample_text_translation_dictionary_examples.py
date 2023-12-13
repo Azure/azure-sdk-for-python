@@ -24,12 +24,13 @@ USAGE:
         3) AZURE_TEXT_TRANSLATION_REGION - the Azure Region of your Text Translation resource.
 """
 from azure.core.exceptions import HttpResponseError
-from azure.ai.translation.text.models import (DictionaryExampleTextItem)
+from azure.ai.translation.text.models import DictionaryExampleTextItem
 
 # -------------------------------------------------------------------------
 # Text translation client
 # -------------------------------------------------------------------------
 import sample_text_translation_client
+
 text_translator = sample_text_translation_client.create_text_translation_client_with_credential()
 
 # -------------------------------------------------------------------------
@@ -40,14 +41,18 @@ def get_text_translation_dictionary_examples():
     try:
         source_language = "en"
         target_language = "es"
-        input_text_elements = [ DictionaryExampleTextItem(text = "fly", translation = "volar") ]
+        input_text_elements = [DictionaryExampleTextItem(text="fly", translation="volar")]
 
-        response = text_translator.lookup_dictionary_examples(content = input_text_elements, from_parameter = source_language, to = target_language)
+        response = text_translator.lookup_dictionary_examples(
+            content=input_text_elements, from_parameter=source_language, to=target_language
+        )
         dictionary_entry = response[0] if response else None
 
         if dictionary_entry:
             print(f"For the given input {len(dictionary_entry.examples)} entries were found in the dictionary.")
-            print(f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'.")
+            print(
+                f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'."
+            )
 
     except HttpResponseError as exception:
         if exception.error is not None:
@@ -55,4 +60,3 @@ def get_text_translation_dictionary_examples():
             print(f"Message: {exception.error.message}")
     raise
     # [END get_text_translation_dictionary_examples]
-

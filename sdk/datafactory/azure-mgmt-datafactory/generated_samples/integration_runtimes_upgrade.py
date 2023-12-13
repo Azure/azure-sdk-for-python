@@ -29,12 +29,11 @@ def main():
         subscription_id="12345678-1234-1234-1234-12345678abc",
     )
 
-    response = client.integration_runtimes.upgrade(
+    client.integration_runtimes.upgrade(
         resource_group_name="exampleResourceGroup",
         factory_name="exampleFactoryName",
         integration_runtime_name="exampleIntegrationRuntime",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/datafactory/resource-manager/Microsoft.DataFactory/stable/2018-06-01/examples/IntegrationRuntimes_Upgrade.json

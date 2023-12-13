@@ -31,6 +31,7 @@ from ._models_py3 import EncryptedSimUploadList
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import EventHubConfiguration
 from ._models_py3 import HttpsServerCertificate
 from ._models_py3 import IdentityAndTagsObject
 from ._models_py3 import Installation
@@ -41,6 +42,7 @@ from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import MobileNetwork
 from ._models_py3 import MobileNetworkListResult
 from ._models_py3 import MobileNetworkResourceId
+from ._models_py3 import NASRerouteConfiguration
 from ._models_py3 import NaptConfiguration
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
@@ -70,6 +72,7 @@ from ._models_py3 import Service
 from ._models_py3 import ServiceDataFlowTemplate
 from ._models_py3 import ServiceListResult
 from ._models_py3 import ServiceResourceId
+from ._models_py3 import SignalingConfiguration
 from ._models_py3 import Sim
 from ._models_py3 import SimDeleteList
 from ._models_py3 import SimGroup
@@ -155,6 +158,7 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "EventHubConfiguration",
     "HttpsServerCertificate",
     "IdentityAndTagsObject",
     "Installation",
@@ -165,6 +169,7 @@ __all__ = [
     "MobileNetwork",
     "MobileNetworkListResult",
     "MobileNetworkResourceId",
+    "NASRerouteConfiguration",
     "NaptConfiguration",
     "Operation",
     "OperationDisplay",
@@ -194,6 +199,7 @@ __all__ = [
     "ServiceDataFlowTemplate",
     "ServiceListResult",
     "ServiceResourceId",
+    "SignalingConfiguration",
     "Sim",
     "SimDeleteList",
     "SimGroup",

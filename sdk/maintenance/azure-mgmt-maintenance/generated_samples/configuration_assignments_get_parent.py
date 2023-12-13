@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/stable/2023-04-01/examples/ConfigurationAssignments_GetParent.json
+# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/preview/2023-09-01-preview/examples/ConfigurationAssignments_GetParent.json
 if __name__ == "__main__":
     main()

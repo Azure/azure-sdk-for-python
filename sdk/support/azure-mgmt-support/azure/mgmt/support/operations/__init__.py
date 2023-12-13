@@ -10,10 +10,24 @@ from ._operations import Operations
 from ._services_operations import ServicesOperations
 from ._problem_classifications_operations import ProblemClassificationsOperations
 from ._support_tickets_operations import SupportTicketsOperations
+from ._support_tickets_no_subscription_operations import SupportTicketsNoSubscriptionOperations
 from ._communications_operations import CommunicationsOperations
+from ._communications_no_subscription_operations import CommunicationsNoSubscriptionOperations
+from ._support_ticket_communications_no_subscription_operations import (
+    SupportTicketCommunicationsNoSubscriptionOperations,
+)
+from ._chat_transcripts_operations import ChatTranscriptsOperations
+from ._support_ticket_chat_transcripts_no_subscription_operations import (
+    SupportTicketChatTranscriptsNoSubscriptionOperations,
+)
+from ._chat_transcripts_no_subscription_operations import ChatTranscriptsNoSubscriptionOperations
+from ._file_workspaces_operations import FileWorkspacesOperations
+from ._file_workspaces_no_subscription_operations import FileWorkspacesNoSubscriptionOperations
+from ._files_operations import FilesOperations
+from ._files_no_subscription_operations import FilesNoSubscriptionOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -21,7 +35,17 @@ __all__ = [
     "ServicesOperations",
     "ProblemClassificationsOperations",
     "SupportTicketsOperations",
+    "SupportTicketsNoSubscriptionOperations",
     "CommunicationsOperations",
+    "CommunicationsNoSubscriptionOperations",
+    "SupportTicketCommunicationsNoSubscriptionOperations",
+    "ChatTranscriptsOperations",
+    "SupportTicketChatTranscriptsNoSubscriptionOperations",
+    "ChatTranscriptsNoSubscriptionOperations",
+    "FileWorkspacesOperations",
+    "FileWorkspacesNoSubscriptionOperations",
+    "FilesOperations",
+    "FilesNoSubscriptionOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

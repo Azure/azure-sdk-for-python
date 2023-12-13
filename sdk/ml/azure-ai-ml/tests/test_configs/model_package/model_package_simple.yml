@@ -1,4 +1,4 @@
-target_environment_name: diabetes-online-mlflow
+target_environment: diabetes-online-mlflow
 inferencing_server: 
     type: azureml_online
 model_configuration:

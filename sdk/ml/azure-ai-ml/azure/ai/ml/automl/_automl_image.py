@@ -37,13 +37,13 @@ def _create_image_job(
     :param job_cls: The job class
     :type job_cls: TImageJob
     :param training_data: The training input data
-    :type training_data: Input
+    :type training_data: ~azure.ai.ml.entities.Input
     :param target_column_name: The target column name
     :type target_column_name: str
     :param primary_metric: The primary metric
-    :type primary_metric: Optional[Union[str, ClassificationPrimaryMetrics]]
+    :type primary_metric: Optional[Union[str, ~azure.ai.ml.automl.ClassificationPrimaryMetrics]]
     :param validation_data: The validation data
-    :type validation_data: Optional[Input]
+    :type validation_data: Optional[~azure.ai.ml.entities.Input]
     :param validation_data_size: The validation data size
     :type validation_data_size: Optional[float]
     :return: An AutoML Image Job
@@ -72,8 +72,8 @@ def image_classification(
 ) -> ImageClassificationJob:
     """Creates an object for AutoML Image multi-class Classification job.
 
-    :keyword training_data:  The training data to be used within the experiment.
-    :paramtype training_data: Input
+    :keyword training_data: The training data to be used within the experiment.
+    :paramtype training_data: ~azure.ai.ml.entities.Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :paramtype target_column_name: str
@@ -85,10 +85,10 @@ def image_classification(
             Acceptable values: accuracy, AUC_weighted, norm_macro_recall, average_precision_score_weighted,
             and precision_score_weighted
             Defaults to accuracy.
-    :type primary_metric: Union[str, ClassificationPrimaryMetrics]
+    :paramtype primary_metric: Union[str, ~azure.ai.ml.automl.ClassificationPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :paramtype validation_data: Input
-    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
+    :paramtype validation_data: Optional[~azure.ai.ml.entities.Input]
+    :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
@@ -100,7 +100,16 @@ def image_classification(
     :paramtype kwargs: dict
 
     :return: Image classification job object that can be submitted to an Azure ML compute for execution.
-    :rtype: ImageClassificationJob
+    :rtype: ~azure.ai.ml.automl.ImageClassificationJob
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+                :start-after: [START automl.image_classification]
+                :end-before: [END automl.image_classification]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl image classification job
     """
     return _create_image_job(
         job_cls=ImageClassificationJob,
@@ -125,8 +134,8 @@ def image_classification_multilabel(
 ) -> ImageClassificationMultilabelJob:
     """Creates an object for AutoML Image multi-label Classification job.
 
-    :keyword training_data:  The training data to be used within the experiment.
-    :paramtype training_data: Input
+    :keyword training_data: The training data to be used within the experiment.
+    :paramtype training_data: ~azure.ai.ml.entities.Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :paramtype target_column_name: str
@@ -138,11 +147,11 @@ def image_classification_multilabel(
             Acceptable values: accuracy, AUC_weighted, norm_macro_recall, average_precision_score_weighted,
             precision_score_weighted, and Iou
             Defaults to Iou.
-    :type primary_metric: Union[str, ClassificationMultilabelPrimaryMetrics]
+    :paramtype primary_metric: Union[str, ~azure.ai.ml.automl.ClassificationMultilabelPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :paramtype validation_data: Input
-    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
-            is not specified. This should be between 0.0 and 1.0 non-inclusive.
+    :paramtype validation_data: Optional[~azure.ai.ml.entities.Input]
+    :keyword validation_data_size: The fraction of the training data to hold out for validation when user does not
+            provide the validation data. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
             to extract validation data out of the specified training data.
@@ -153,7 +162,16 @@ def image_classification_multilabel(
     :paramtype kwargs: dict
 
     :return: Image multi-label classification job object that can be submitted to an Azure ML compute for execution.
-    :rtype: ImageClassificationMultilabelJob
+    :rtype: ~azure.ai.ml.automl.ImageClassificationMultilabelJob
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+                :start-after: [START automl.image_classification_multilabel]
+                :end-before: [END automl.image_classification_multilabel]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl image multilabel classification job
     """
     return _create_image_job(
         job_cls=ImageClassificationMultilabelJob,
@@ -178,8 +196,8 @@ def image_object_detection(
 ) -> ImageObjectDetectionJob:
     """Creates an object for AutoML Image Object Detection job.
 
-    :keyword training_data:  The training data to be used within the experiment.
-    :paramtype training_data: Input
+    :keyword training_data: The training data to be used within the experiment.
+    :paramtype training_data: ~azure.ai.ml.entities.Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :paramtype target_column_name: str
@@ -190,11 +208,11 @@ def image_object_detection(
 
             Acceptable values: MeanAveragePrecision
             Defaults to MeanAveragePrecision.
-    :type primary_metric: Union[str, ObjectDetectionPrimaryMetrics]
+    :paramtype primary_metric: Union[str, ~azure.ai.ml.automl.ObjectDetectionPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :paramtype validation_data: Input
-    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
-            is not specified. This should be between 0.0 and 1.0 non-inclusive.
+    :paramtype validation_data: Optional[~azure.ai.ml.entities.Input]
+    :keyword validation_data_size: The fraction of the training data to hold out for validation when user does not
+            provide the validation data. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
             to extract validation data out of the specified training data.
@@ -205,7 +223,16 @@ def image_object_detection(
     :paramtype kwargs: dict
 
     :return: Image object detection job object that can be submitted to an Azure ML compute for execution.
-    :rtype: ImageObjectDetectionJob
+    :rtype: ~azure.ai.ml.automl.ImageObjectDetectionJob
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+                :start-after: [START automl.image_object_detection]
+                :end-before: [END automl.image_object_detection]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl image object detection job
     """
     return _create_image_job(
         job_cls=ImageObjectDetectionJob,
@@ -230,8 +257,8 @@ def image_instance_segmentation(
 ) -> ImageInstanceSegmentationJob:
     """Creates an object for AutoML Image Instance Segmentation job.
 
-    :keyword training_data:  The training data to be used within the experiment.
-    :paramtype training_data: Input
+    :keyword training_data: The training data to be used within the experiment.
+    :paramtype training_data: ~azure.ai.ml.entities.Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :paramtype target_column_name: str
@@ -242,11 +269,11 @@ def image_instance_segmentation(
 
             Acceptable values: MeanAveragePrecision
             Defaults to MeanAveragePrecision.
-    :type primary_metric: Union[str, InstanceSegmentationPrimaryMetrics]
+    :paramtype primary_metric: Union[str, ~azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :paramtype validation_data: Input
-    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
-            is not specified. This should be between 0.0 and 1.0 non-inclusive.
+    :paramtype validation_data: Optional[~azure.ai.ml.entities.Input]
+    :keyword validation_data_size: The fraction of the training data to hold out for validation when user does not
+            provide the validation data. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
             to extract validation data out of the specified training data.
@@ -257,7 +284,16 @@ def image_instance_segmentation(
     :paramtype kwargs: dict
 
     :return: Image instance segmentation job
-    :rtype: ImageInstanceSegmentationJob
+    :rtype: ~azure.ai.ml.automl.ImageInstanceSegmentationJob
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+                :start-after: [START automl.image_instance_segmentation]
+                :end-before: [END automl.image_instance_segmentation]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl image instance segmentation job
     """
     return _create_image_job(
         job_cls=ImageInstanceSegmentationJob,
