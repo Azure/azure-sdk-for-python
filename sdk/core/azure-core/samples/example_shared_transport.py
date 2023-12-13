@@ -49,7 +49,7 @@ def shared_transport():
 
 def shared_transport_with_pooling():
     # [START shared_transport_with_pooling]
-    import requests
+    import requests.adapters
 
     session = requests.Session()
     adapter = requests.adapters.HTTPAdapter(pool_connections=100, pool_maxsize=100)
