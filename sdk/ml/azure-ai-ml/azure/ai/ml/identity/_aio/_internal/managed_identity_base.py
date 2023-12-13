@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import abc
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 from ..._exceptions import CredentialUnavailableError
 from . import AsyncContextManager
@@ -11,22 +11,18 @@ from .get_token_mixin import GetTokenMixin
 from .managed_identity_client import AsyncManagedIdentityClient
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
-
     from azure.core.credentials import AccessToken
 
 
 class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
     """Base class for internal credentials using AsyncManagedIdentityClient."""
 
-    from typing import Any
-
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__()
         self._client = self.get_client(**kwargs)
 
     @abc.abstractmethod
-    def get_client(self, **kwargs: "Any") -> "Optional[AsyncManagedIdentityClient]":
+    def get_client(self, **kwargs: Any) -> "Optional[AsyncManagedIdentityClient]":
         pass
 
     @abc.abstractmethod
