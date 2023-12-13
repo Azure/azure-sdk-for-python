@@ -201,7 +201,10 @@ class _HTTPSerializer(HTTPConnection):
         super(_HTTPSerializer, self).putheader(header, *values)
 
     def send(self, data):
-        self.buffer += data
+        # I'm hacking the super type that is wider than bytes
+        # As long as "request" called later in this file is inputing
+        # bytes as "body", we know we will receive bytes here.
+        self.buffer += cast(bytes, data)
 
 
 def _serialize_request(http_request: HTTPRequestType) -> bytes:
