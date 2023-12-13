@@ -19,7 +19,7 @@ from ci_tools.environment_exclusions import (
 )
 from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
-from gh_tools.vnext_issue_creator import create_vnext_issue
+from gh_tools.vnext_issue_creator import create_vnext_issue, close_vnext_issue
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -120,3 +120,6 @@ if __name__ == "__main__":
 
         print("See https://aka.ms/python/typing-guide for information.\n\n")
         raise error
+
+    if args.next and in_ci() and not is_typing_ignored(package_name):
+        close_vnext_issue(package_name, "pyright")

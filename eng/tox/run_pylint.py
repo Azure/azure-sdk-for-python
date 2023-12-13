@@ -17,7 +17,7 @@ import sys
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
-from gh_tools.vnext_issue_creator import create_vnext_issue
+from gh_tools.vnext_issue_creator import create_vnext_issue, close_vnext_issue
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -77,3 +77,6 @@ if __name__ == "__main__":
             create_vnext_issue(pkg_details.name, "pylint")
 
         exit(1)
+
+    if args.next and in_ci():
+        close_vnext_issue(pkg_details.name, "pylint")
