@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 from ._mixin import DictMixin
 from ._client_base import _parse_conn_str
 
@@ -12,7 +12,7 @@ class EventHubConnectionStringProperties(DictMixin):
     Properties of a connection string.
     """
 
-    def __init__(
+    def __init__( # pylint: disable=unused-argument
         self,
         *,
         fully_qualified_namespace: str,

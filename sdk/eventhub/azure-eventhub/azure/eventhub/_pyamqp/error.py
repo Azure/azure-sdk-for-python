@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
-from typing import Any, Union, Optional, cast
+from typing import Any, Union, Optional
 from enum import Enum
 from collections import namedtuple
 

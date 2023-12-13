@@ -2,11 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Union, List, Optional, TYPE_CHECKING, cast
+from typing import Union, List, Optional, cast
 from enum import Enum
+from ._pyamqp.error import AMQPException
 
-if TYPE_CHECKING:
-    from ._pyamqp.error import AMQPException
 
 class EventHubError(Exception):
     """Represents an error occurred in the client.
