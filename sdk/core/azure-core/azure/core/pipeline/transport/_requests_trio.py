@@ -35,6 +35,7 @@ from typing import (
     overload,
     Type,
     MutableMapping,
+    Union,
 )
 from types import TracebackType
 from urllib3.exceptions import (
@@ -218,7 +219,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
 
     async def send(
         self, request, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
-    ):  # pylint:disable=invalid-overridden-method
+    ) -> Union[AsyncHttpResponse, "RestAsyncHttpResponse"]:  # pylint:disable=invalid-overridden-method
         """Send the request using this HTTP sender.
 
         :param request: The HttpRequest
