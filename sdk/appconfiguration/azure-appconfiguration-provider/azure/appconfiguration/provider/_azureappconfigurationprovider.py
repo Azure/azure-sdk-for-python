@@ -480,10 +480,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             raise
         finally:
             self._refresh_lock.release()
-            if not success:
+            if not success and need_refresh:
                 self._refresh_timer.backoff()
-            elif need_refresh and self._on_refresh_success:
-                self._on_refresh_success()
+            elif success and need_refresh and self._on_refresh_success:
+                await self._on_refresh_success()
 
     def _load_all(self, **kwargs):
         configuration_settings = {}

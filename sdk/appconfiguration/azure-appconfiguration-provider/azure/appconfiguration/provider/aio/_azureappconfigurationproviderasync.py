@@ -379,7 +379,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return
             raise
         finally:
-            self._refresh_lock.release()
+            await self._refresh_lock.release()
             if not success and need_refresh:
                 self._refresh_timer.backoff()
             elif success and need_refresh and self._on_refresh_success:
