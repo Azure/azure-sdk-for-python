@@ -327,4 +327,4 @@ class CustomConnection(BaseConnection):
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
-        super().__init__(target=target, type="custom_keys", credentials=credentials, **kwargs)
+        super().__init__(target=target, type="custom", credentials=credentials, **kwargs)
