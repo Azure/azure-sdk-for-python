@@ -20,6 +20,8 @@ from azure.core.exceptions import ResourceNotFoundError
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 class TestConnections:
+    @pytest.mark.skipif(condition=True, reason="""Updates cannot be done in parallel with v2 SDK.
+        "Remove when 1.13.0 v2 sdk release complete and minimum version is upgraded.""")
     @pytest.mark.noCreate
     def test_get_and_list(self, ai_client: AIClient):
         connection_count = 0
@@ -29,6 +31,8 @@ class TestConnections:
             assert listed_conn.name == getted_conn.name
         assert connection_count > 0
 
+    @pytest.mark.skipif(condition=True, reason="""Updates cannot be done in parallel with v2 SDK.
+        "Remove when 1.13.0 v2 sdk release complete and minimum version is upgraded.""")
     @pytest.mark.noCreate
     def test_get_default_connections(self, ai_client: AIClient):
         aoai_conn = ai_client.get_default_aoai_connection()
@@ -37,7 +41,8 @@ class TestConnections:
         content_safety_conn = ai_client.get_default_content_safety_connection()
         assert content_safety_conn is not None
 
-
+    @pytest.mark.skipif(condition=True, reason="""Updates cannot be done in parallel with v2 SDK.
+        "Remove when 1.13.0 v2 sdk release complete and minimum version is upgraded.""")
     def test_aoai_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions
         name = "testAOAIConn" + rand_num()
@@ -63,6 +68,8 @@ class TestConnections:
         with pytest.raises(ResourceNotFoundError):
             ai_client.connections.get(name)
 
+    @pytest.mark.skipif(condition=True, reason="""Updates cannot be done in parallel with v2 SDK.
+        "Remove when 1.13.0 v2 sdk release complete and minimum version is upgraded.""")
     def test_search_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions
         name = "e2eTestSearchConn" + rand_num()
@@ -89,6 +96,8 @@ class TestConnections:
         with pytest.raises(ResourceNotFoundError):
             ai_client.connections.get(name)
 
+    @pytest.mark.skipif(condition=True, reason="""Updates cannot be done in parallel with v2 SDK.
+        "Remove when 1.13.0 v2 sdk release complete and minimum version is upgraded.""")
     def test_service_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions
         name = "e2eTestServiceConn" + rand_num()
@@ -117,6 +126,8 @@ class TestConnections:
         with pytest.raises(ResourceNotFoundError):
             ai_client.connections.get(name)
 
+    @pytest.mark.skipif(condition=True, reason="""Updates cannot be done in parallel with v2 SDK.
+        "Remove when 1.13.0 v2 sdk release complete and minimum version is upgraded.""")
     def test_git_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions
         name = "e2eTestGitConn" + rand_num()
@@ -136,6 +147,8 @@ class TestConnections:
         with pytest.raises(ResourceNotFoundError):
             ai_client.connections.get(name)
 
+    @pytest.mark.skipif(condition=True, reason="""Updates cannot be done in parallel with v2 SDK.
+        "Remove when 1.13.0 v2 sdk release complete and minimum version is upgraded.""")
     def test_custom_create_and_delete(self, ai_client: AIClient, rand_num: Callable[[], str]):
         # randomize name to avoid stale key name collisions
         name = "e2eTestCustomConn" + rand_num()
