@@ -41,7 +41,6 @@ from .._container_client_helpers import (
     _format_url,
     _generate_delete_blobs_options,
     _generate_set_tiers_options,
-    _get_blob_name,
     _parse_url
 )
 from ._lease_async import BlobLeaseClient
@@ -139,13 +138,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._api_version = get_api_version(kwargs)
-        self._client = self._build_generated_client()
+        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
+        self._client._config.version = self._api_version # pylint: disable=protected-access
         self._configure_encryption(kwargs)
-
-    def _build_generated_client(self):
-        client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        client._config.version = self._api_version # pylint: disable=protected-access
-        return client
 
     def _format_url(self, hostname):
         return _format_url(
@@ -1317,6 +1312,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                     key: 'name', value type: str
                 snapshot you want to delete:
                     key: 'snapshot', value type: str
+                version id:
+                    key: 'version_id', value type: str
                 whether to delete snapshots when deleting blob:
                     key: 'delete_snapshots', value: 'include' or 'only'
                 if the blob modified or not:
@@ -1332,7 +1329,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 timeout for subrequest:
                     key: 'timeout', value type: int
 
-        :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
+        :paramtype blobs: Union[str, Dict[str, Any], BlobProperties]
         :keyword str delete_snapshots:
             Required if a blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1561,7 +1558,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 "Please use 'BlobProperties.name' or any other str input type instead.",
                 DeprecationWarning
             )
-        blob_name = _get_blob_name(blob)
+        try:
+            blob_name = blob.get('name')
+        except AttributeError:
+            blob_name = blob
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
             policies=self._pipeline._impl_policies # pylint: disable = protected-access

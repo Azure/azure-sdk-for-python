@@ -4,19 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 from urllib.parse import quote, urlparse
 
 from azure.core import MatchConditions
 from azure.core.pipeline.transport import HttpRequest
-from ._shared.base_client import parse_query
 from ._blob_client_helpers import _generic_delete_blob_options
 from ._generated import AzureBlobStorage
 from ._models import BlobProperties
+from ._shared.base_client import parse_query
 
 if TYPE_CHECKING:
+    from azure.storage.blob import RehydratePriority
     from urllib.parse import ParseResult
-    from ._models import StandardBlobTier, PremiumPageBlobTier
+    from ._generated.models import LeaseAccessConditions, ModifiedAccessConditions
+    from ._models import PremiumPageBlobTier, StandardBlobTier
 
 
 def _parse_url(
@@ -44,25 +46,20 @@ def _parse_url(
 
     return parsed_url, sas_token
 
-def _get_blob_name(blob):
-    """Return the blob name.
+def _format_url(container_name: Union[bytes, str], hostname: str, scheme: str, query_str: str) -> str:
+    """Format the endpoint URL according to the current location mode hostname.
 
-    :param blob: A blob string or BlobProperties
-    :paramtype blob: str or BlobProperties
-    :returns: The name of the blob.
+    :param Union[bytes, str] container_name:
+        The name of the container.
+    :param str hostname:
+        The current location mode hostname.
+    :param str scheme:
+        The scheme for the current location mode hostname.
+    :param str query_str:
+        The query string of the endpoint URL being formatted.
+    :returns: The formatted endpoint URL according to the specified location mode hostname.
     :rtype: str
     """
-    try:
-        return blob.get('name')
-    except AttributeError:
-        return blob
-
-def _build_generated_client(base_url, pipeline, api_version):
-    client = AzureBlobStorage(base_url, base_url=base_url, pipeline=pipeline)
-    client._config.version = api_version # pylint: disable=protected-access
-    return client
-
-def _format_url(container_name, hostname, scheme, query_str):
     if isinstance(container_name, str):
         container_name = container_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(container_name)}{query_str}"
@@ -70,14 +67,35 @@ def _format_url(container_name, hostname, scheme, query_str):
 # This code is a copy from _generated.
 # Once Autorest is able to provide request preparation this code should be removed.
 def _generate_delete_blobs_subrequest_options(
-    client,
-    snapshot=None,
-    version_id=None,
-    delete_snapshots=None,
-    lease_access_conditions=None,
-    modified_access_conditions=None,
+    client: AzureBlobStorage,
+    snapshot: Optional[str] = None,
+    version_id: Optional[str] = None,
+    delete_snapshots: Optional[str] = None,
+    lease_access_conditions: Optional["LeaseAccessConditions"] = None,
+    modified_access_conditions: Optional["ModifiedAccessConditions"] = None,
     **kwargs
-):
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """Creates a dictionary containing the options for a delete blob sub-request operation.
+
+    :param AzureBlobStorage client:
+        The generated Blob Storage client.
+    :param Optional[str] snapshot:
+        The snapshot data of the blob.
+    :param Optional[str] version_id:
+        The version id parameter is a value that, when present, specifies the version of the blob to delete.
+    :param Optional[str] delete_snapshots:
+        Required if the blob has associated snapshots. Values include:
+         - "only": Deletes only the blobs snapshots.
+         - "include": Deletes the blob along with all snapshots.
+    :param lease_access_conditions:
+        The access conditions associated with the lease.
+    :paramtype lease_access_conditions: Optional[LeaseAccessConditions]
+    :param modified_access_conditions:
+        The modified access conditions associated with the lease.
+    :paramtype modified_access_conditions: Optional[LeaseAccessConditions]
+    :returns: A dictionary containing the delete blobs sub-request options.
+    :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
+    """
     lease_id = None
     if lease_access_conditions is not None:
         lease_id = lease_access_conditions.lease_id
@@ -133,12 +151,52 @@ def _generate_delete_blobs_subrequest_options(
     return query_parameters, header_parameters
 
 def _generate_delete_blobs_options(
-    query_str,
-    container_name,
-    client,
+    query_str: str,
+    container_name: str,
+    client: AzureBlobStorage,
     *blobs: Union[str, Dict[str, Any], BlobProperties],
     **kwargs: Any
-):
+) -> Tuple[List[HttpRequest], Dict[str, Any]]:
+    """Creates a dictionary containing the options for a delete blob operation.
+
+    :param str query_str:
+        The query string of the endpoint URL.
+    :param str container_name:
+        The name of the container.
+    :param AzureBlobStorage client:
+        The generated Blob Storage client.
+    :param blobs:
+            The blobs to delete. This can be a single blob, or multiple values can
+            be supplied, where each value is either the name of the blob (str) or BlobProperties.
+
+            .. note::
+                When the blob type is dict, here's a list of keys, value rules.
+
+                blob name:
+                    key: 'name', value type: str
+                snapshot you want to delete:
+                    key: 'snapshot', value type: str
+                version id:
+                    key: 'version_id', value type: str
+                whether to delete snapshots when deleting blob:
+                    key: 'delete_snapshots', value: 'include' or 'only'
+                if the blob modified or not:
+                    key: 'if_modified_since', 'if_unmodified_since', value type: datetime
+                etag:
+                    key: 'etag', value type: str
+                match the etag or not:
+                    key: 'match_condition', value type: MatchConditions
+                tags match condition:
+                    key: 'if_tags_match_condition', value type: str
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
+
+    :paramtype blobs: Union[str, Dict[str, Any], BlobProperties]
+    :returns: A tuple containing the list of HttpRequests and the delete blobs options.
+    :rtype: Tuple[List[HttpRequest], Dict[str, Any]]
+    """
     timeout = kwargs.pop('timeout', None)
     raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
     delete_snapshots = kwargs.pop('delete_snapshots', None)
@@ -154,9 +212,8 @@ def _generate_delete_blobs_options(
 
     reqs = []
     for blob in blobs:
-        blob_name = _get_blob_name(blob)
-
-        try:
+        if isinstance(blob, BlobProperties):
+            blob_name = blob.get('name')
             options = _generic_delete_blob_options(  # pylint: disable=protected-access
                 snapshot=blob.get('snapshot'),
                 version_id=blob.get('version_id'),
@@ -170,7 +227,8 @@ def _generate_delete_blobs_options(
                 else None,
                 timeout=blob.get('timeout'),
             )
-        except AttributeError:
+        else:
+            blob_name = blob
             options = _generic_delete_blob_options(  # pylint: disable=protected-access
                 delete_snapshots=delete_snapshots,
                 if_modified_since=if_modified_since,
@@ -193,14 +251,33 @@ def _generate_delete_blobs_options(
 # This code is a copy from _generated.
 # Once Autorest is able to provide request preparation this code should be removed.
 def _generate_set_tiers_subrequest_options(
-    client,
-    tier,
-    snapshot=None,
-    version_id=None,
-    rehydrate_priority=None,
-    lease_access_conditions=None,
-    **kwargs
-):
+    client: AzureBlobStorage,
+    tier: Optional[Union["PremiumPageBlobTier", "StandardBlobTier", str]],
+    snapshot: Optional[str] = None,
+    version_id: Optional[str] = None,
+    rehydrate_priority: Optional["RehydratePriority"] = None,
+    lease_access_conditions: Optional["LeaseAccessConditions"] = None,
+    **kwargs: Any
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """Creates a dictionary containing the options for a set tiers sub-request operation.
+
+    :param AzureBlobStorage client:
+        The generated Blob Storage client.
+    :param tier:
+        Indicates the tier to be set on the blobs.
+    :paramtype tier: Optional[Union["PremiumPageBlobTier", "StandardBlobTier", str]]
+    :param Optional[str] snapshot:
+        The snapshot data of the blob.
+    :param Optional[str] version_id:
+        The version id parameter is a value that, when present, specifies the version of the blob to delete.
+    :param Optional[RehydratePriority] rehydrate_priority:
+        Indicates the priority with which to rehydrate an archived blob.
+    :param lease_access_conditions:
+        The access conditions associated with the lease.
+    :paramtype lease_access_conditions: Optional[LeaseAccessConditions]
+    :returns: A dictionary containing the set tiers sub-request options.
+    :rtype: Dict[str, Any]
+    """ 
     if not tier:
         raise ValueError("A blob tier must be specified")
     if snapshot and version_id:
@@ -237,13 +314,56 @@ def _generate_set_tiers_subrequest_options(
     return query_parameters, header_parameters
 
 def _generate_set_tiers_options(
-    query_str,
-    container_name,
-    blob_tier: Optional[Union[str, 'StandardBlobTier', 'PremiumPageBlobTier']],
-    client,
+    query_str: str,
+    container_name: str,
+    blob_tier: Optional[Union["PremiumPageBlobTier", "StandardBlobTier", str]],
+    client: AzureBlobStorage,
     *blobs: Union[str, Dict[str, Any], BlobProperties],
     **kwargs: Any
-):
+) -> Tuple[List[HttpRequest], Dict[str, Any]]:
+    """Creates a dictionary containing the options for a set tiers operation.
+
+    :param str query_str:
+        The query string of the endpoint URL.
+    :param str container_name:
+        The name of the container.
+    :param blob_tier:
+        Indicates the tier to be set on the blobs.
+    :paramtype blob_tier: Optional[Union["PremiumPageBlobTier", "StandardBlobTier", str]]
+    :param AzureBlobStorage client:
+        The generated Blob Storage client.
+    :param blobs:
+            The blobs to delete. This can be a single blob, or multiple values can
+            be supplied, where each value is either the name of the blob (str) or BlobProperties.
+
+            .. note::
+                When the blob type is dict, here's a list of keys, value rules.
+
+                blob name:
+                    key: 'name', value type: str
+                snapshot you want to delete:
+                    key: 'snapshot', value type: str
+                version id:
+                    key: 'version_id', value type: str
+                whether to delete snapshots when deleting blob:
+                    key: 'delete_snapshots', value: 'include' or 'only'
+                if the blob modified or not:
+                    key: 'if_modified_since', 'if_unmodified_since', value type: datetime
+                etag:
+                    key: 'etag', value type: str
+                match the etag or not:
+                    key: 'match_condition', value type: MatchConditions
+                tags match condition:
+                    key: 'if_tags_match_condition', value type: str
+                lease:
+                    key: 'lease_id', value type: Union[str, LeaseClient]
+                timeout for subrequest:
+                    key: 'timeout', value type: int
+
+    :paramtype blobs: Union[str, Dict[str, Any], BlobProperties]
+    :returns: A tuple containing the list of HttpRequests and the set tiers options.
+    :rtype: Tuple[List[HttpRequest], Dict[str, Any]]
+    """ 
     timeout = kwargs.pop('timeout', None)
     raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
     rehydrate_priority = kwargs.pop('rehydrate_priority', None)
@@ -257,9 +377,8 @@ def _generate_set_tiers_options(
 
     reqs = []
     for blob in blobs:
-        blob_name = _get_blob_name(blob)
-
-        try:
+        if isinstance(blob, BlobProperties):
+            blob_name = blob.get('name')
             tier = blob_tier or blob.get('blob_tier')
             query_parameters, header_parameters = _generate_set_tiers_subrequest_options(
                 client=client,
@@ -271,7 +390,8 @@ def _generate_set_tiers_options(
                 if_tags=if_tags or blob.get('if_tags_match_condition'),
                 timeout=timeout or blob.get('timeout')
             )
-        except AttributeError:
+        else:
+            blob_name = blob
             query_parameters, header_parameters = _generate_set_tiers_subrequest_options(
                 client, blob_tier, rehydrate_priority=rehydrate_priority, if_tags=if_tags)
 
