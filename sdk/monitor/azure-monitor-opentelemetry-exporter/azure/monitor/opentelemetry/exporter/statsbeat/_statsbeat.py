@@ -72,8 +72,8 @@ def collect_statsbeat_metrics(exporter) -> None:
 def shutdown_statsbeat_metrics() -> None:
     global _STATSBEAT_METRICS
     shutdown_success = False
-    with _STATSBEAT_LOCK:
-        if _STATSBEAT_METRICS is not None:
+    if _STATSBEAT_METRICS is not None:
+        with _STATSBEAT_LOCK:
             try:
                 if _STATSBEAT_METRICS._meter_provider is not None:
                     _STATSBEAT_METRICS._meter_provider.shutdown()
