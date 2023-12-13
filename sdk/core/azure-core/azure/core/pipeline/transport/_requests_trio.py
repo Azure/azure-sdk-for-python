@@ -274,7 +274,10 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
                     ),
                     limiter=trio_limiter,
                 )
-            response.raw.enforce_content_length = True
+            # It's unclear why mypy needs a cast without None here,
+            # as the try/except makes sure response is not None
+            # Type narrowing with try/except is not perfect.
+            cast(requests.Response, response).raw.enforce_content_length = True
 
         except (
             NewConnectionError,
