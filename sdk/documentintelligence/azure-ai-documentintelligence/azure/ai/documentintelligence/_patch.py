@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, List, Optional, Union
+from typing import Any, List, Union
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
