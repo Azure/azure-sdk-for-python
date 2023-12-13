@@ -64,7 +64,7 @@ class EventProcessor(
         ],
         *,
         batch: Optional[bool] = False,
-        max_batch_size: Optional[int] = 300,
+        max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
         partition_id: Optional[str] = None,
         checkpoint_store: Optional[CheckpointStore] = None,
