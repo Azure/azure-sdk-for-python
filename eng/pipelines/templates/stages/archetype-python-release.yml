@@ -47,6 +47,10 @@ stages:
                           ServiceName: ${{parameters.ServiceDirectory}}
                           ForRelease: true
 
+                    - bash: |
+                        which python
+                      displayName: What python is being used?
+
                     - task: PythonScript@0
                       displayName: Verify CI enabled
                       condition: succeeded()
