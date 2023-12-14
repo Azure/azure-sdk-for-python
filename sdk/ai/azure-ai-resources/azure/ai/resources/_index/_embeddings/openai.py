@@ -292,16 +292,6 @@ class OpenAIEmbedder:
         """Embed a single query."""
         return self.embed_documents([query])[0]
 
-    # # TODO: _aembed
-    # async def aembed_documents(self, documents: List[str]) -> List[List[float]]:
-    #     """Batch embed documents."""
-    #     return await self._aembed(documents)
-
-    # async def aembed_query(self, query: str) -> List[float]:
-    #     """Embed a single query."""
-    #     embeddings = await self.aembed_documents([query])
-    #     return embeddings[0]
-
     @property
     def statistics(self) -> Dict[str, Any]:
         """Return statistics about the last embedding request."""

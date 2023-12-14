@@ -32,7 +32,7 @@ def patch_openai_embedding_retries(logger, activity_logger, max_seconds_retrying
         activity_logger.activity_info["num_retries"] += 1
         activity_logger.activity_info["time_spent_sleeping"] += retry_state.idle_for
 
-        # This is a lot of data to send to telemetry, not sending by default for now due to fears of maxxing out daily ingress cap.
+        # This is a lot of data to send to telemetry, not sending by default for now due to fears of maxing out daily ingress cap.
         # if 'retries' not in activity_logger.activity_info:
         #     activity_logger.activity_info['retries'] = []
         #     activity_logger.activity_info['first_retry'] = datetime.utcnow()
