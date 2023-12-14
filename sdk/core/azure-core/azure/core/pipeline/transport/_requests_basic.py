@@ -293,7 +293,7 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
 
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     @overload
@@ -307,7 +307,7 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.rest.HttpResponse
 
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     def send(
@@ -324,7 +324,7 @@ class RequestsTransport(HttpTransport):
         :return: An HTTPResponse object.
         :rtype: ~azure.core.pipeline.transport.HttpResponse
 
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         # Type narrowing doesn't work with "open()""

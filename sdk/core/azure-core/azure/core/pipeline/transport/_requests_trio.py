@@ -200,7 +200,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     @overload
@@ -214,7 +214,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.rest.AsyncHttpResponse
 
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
     async def send(  # pylint:disable=invalid-overridden-method
@@ -227,7 +227,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
 
-        :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
+        :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         # Type narrowing doesn't work with "open()""
