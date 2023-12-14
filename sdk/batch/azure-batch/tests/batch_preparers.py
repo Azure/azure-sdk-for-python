@@ -101,10 +101,6 @@ class AccountPreparer(AzureMgmtPreparer):
                 keys.primary)
             if storage:
                 self._add_app_package(group.name, name)
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             # If using pilotprod, need to prefix the region with the environment.
             # IE: myaccount.pilotprod1.eastus.batch.azure.com
