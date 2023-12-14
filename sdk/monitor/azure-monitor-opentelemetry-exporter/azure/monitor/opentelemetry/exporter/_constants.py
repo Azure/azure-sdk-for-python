@@ -10,6 +10,10 @@ _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = \
 
 # Network
 
+_INVALID_STATUS_CODES = (
+    400, # Invalid Instrumentation Key/data
+)
+
 _REDIRECT_STATUS_CODES = (
     307,  # Temporary redirect
     308,  # Permanent redirect
