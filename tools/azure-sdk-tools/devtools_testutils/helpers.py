@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import base64
 import inspect
-import math
 import os
+import random
+import string
 import sys
 from urllib3 import PoolManager, Retry
 
@@ -88,7 +88,7 @@ def is_preparer_func(fn):
     return getattr(fn, "__is_preparer", False)
 
 
-def create_random_name(prefix="aztest", length=24):
+def create_random_name(prefix: str = "aztest", length: int = 24) -> str:
     if len(prefix) > length:
         raise ValueError("The length of the prefix must not be longer than random name length")
 
@@ -98,10 +98,8 @@ def create_random_name(prefix="aztest", length=24):
             "The randomized part of the name is shorter than 4, which may not be able to offer enough randomness"
         )
 
-    random_bytes = os.urandom(int(math.ceil(float(padding_size) / 8) * 5))
-    random_padding = base64.b32encode(random_bytes)[:padding_size]
-
-    return str(prefix + random_padding.decode().lower())
+    # return name composed of the prefix plus random letters to meet the length
+    return prefix + "".join(random.choice(string.ascii_lowercase) for _ in range(padding_size))
 
 
 def trim_kwargs_from_test_function(fn, kwargs):
