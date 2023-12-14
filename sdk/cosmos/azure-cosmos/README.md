@@ -153,7 +153,7 @@ Currently, the features below are **not supported**. For alternatives options, c
 
 * Group By queries
 * Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
-* Transactional batch processing
+* Bulk processing
 * Direct TCP Mode access
 * Continuation token support for aggregate cross-partition queries like sorting, counting, and distinct.
 Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.

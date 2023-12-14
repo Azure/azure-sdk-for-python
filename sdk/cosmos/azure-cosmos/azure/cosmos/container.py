@@ -1003,7 +1003,7 @@ class ContainerProxy(object):
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
 
-        result = self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
+        self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
                                                             options=request_options, **kwargs)
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, result)
+            response_hook(self.client_connection.last_response_headers, None)
