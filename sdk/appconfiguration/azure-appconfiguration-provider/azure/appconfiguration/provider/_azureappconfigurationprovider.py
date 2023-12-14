@@ -424,15 +424,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         if not self._refresh_on:
             logging.debug("Refresh called but no refresh options set.")
             return
-
+        if not self._refresh_timer.needs_refresh():
+            logging.debug("Refresh called but refresh interval not elapsed.")
+            return
+        if not self._refresh_lock.acquire(blocking=False):
+            logging.debug("Refresh called but refresh already in progress.")
+            return
         try:
-            if not self._refresh_lock.acquire(blocking=False):
-                logging.debug("Refresh called but refresh already in progress.")
-                return
-            if not self._refresh_timer.needs_refresh():
-                logging.debug("Refresh called but refresh interval not elapsed.")
-                return
-
             success = False
             need_refresh = False
             updated_sentinel_keys = dict(self._refresh_on)
@@ -479,11 +477,10 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return
             raise
         finally:
-            if self._refresh_lock.locked():
-                self._refresh_lock.release()
-            if not success and need_refresh:
+            self._refresh_lock.release()
+            if not success:
                 self._refresh_timer.backoff()
-            elif success and need_refresh and self._on_refresh_success:
+            elif success and self._on_refresh_success:
                 await self._on_refresh_success()
 
     def _load_all(self, **kwargs):
