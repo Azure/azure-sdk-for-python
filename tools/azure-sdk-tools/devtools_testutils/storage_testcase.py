@@ -26,9 +26,8 @@ try:
 except ImportError:
     pass
 
-from azure_devtools.scenario_tests.exceptions import AzureTestError
-
 from . import AzureMgmtPreparer, ResourceGroupPreparer, FakeResource
+from .exceptions import AzureTestError
 from .resource_testcase import RESOURCE_GROUP_PARAM
 from .sanitizers import add_general_string_sanitizer
 
