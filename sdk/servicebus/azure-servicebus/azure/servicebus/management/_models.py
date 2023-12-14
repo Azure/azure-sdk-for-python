@@ -23,6 +23,7 @@ from ._generated.models import (
     TrueFilter as InternalTrueFilter,
     FalseFilter as InternalFalseFilter,
     KeyValue,
+    KeyObjectValue,
     AuthorizationRule as InternalAuthorizationRule,
 )
 from ._model_workaround import adjust_attribute_map, avoid_timedelta_overflow
@@ -1291,23 +1292,23 @@ class CorrelationRuleFilter(object):
     """Represents the correlation filter expression.
 
     :keyword correlation_id: Identifier of the correlation.
-    :paramtype correlation_id: str
+    :paramtype correlation_id: str or None
     :keyword message_id: Identifier of the message.
-    :paramtype message_id: str
+    :paramtype message_id: str or None
     :keyword to: Address to send to.
-    :paramtype to: str
+    :paramtype to: str or None
     :keyword reply_to: Address of the queue to reply to.
-    :paramtype reply_to: str
+    :paramtype reply_to: str or None
     :keyword label: Application specific label.
-    :paramtype label: str
+    :paramtype label: str or None
     :keyword session_id: Session identifier.
-    :paramtype session_id: str
+    :paramtype session_id: str or None
     :keyword reply_to_session_id: Session identifier to reply to.
-    :paramtype reply_to_session_id: str
+    :paramtype reply_to_session_id: str or None
     :keyword content_type: Content type of the message.
-    :paramtype content_type: str
+    :paramtype content_type: str or None
     :keyword properties: dictionary object for custom filters
-    :paramtype properties: dict[str, Union[str, int, float, bool, datetime, timedelta]]
+    :paramtype properties: dict[str, Union[str, int, float, bool, datetime, timedelta]] or None
     """
 
     def __init__(
@@ -1373,7 +1374,7 @@ class CorrelationRuleFilter(object):
         internal_entity.reply_to_session_id = self.reply_to_session_id
         internal_entity.content_type = self.content_type
         internal_entity.properties = (
-            [KeyValue(key=key, value=value) for key, value in self.properties.items()]
+            [KeyObjectValue(key=key, value=value) for key, value in self.properties.items()]
             if self.properties
             else None
         )
