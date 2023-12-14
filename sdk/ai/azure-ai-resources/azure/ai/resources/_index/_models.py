@@ -24,10 +24,10 @@ def parse_model_uri(uri: str, **kwargs) -> dict:
 
     def split_details(details):
         details = details.split("/")
-        dets = {}
+        details_dict = {}
         for i in range(0, len(details), 2):
-            dets[details[i]] = details[i + 1]
-        return dets
+            details_dict[details[i]] = details[i + 1]
+        return details_dict
 
     config = {**kwargs}
     if scheme == "azure_open_ai":

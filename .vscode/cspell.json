@@ -33,6 +33,7 @@
     "sdk/batch/azure-batch/**",
     "sdk/ai/**/index/**",
     "sdk/ai/azure-ai-generative/tests/**",
+    "sdk/ai/azure-ai-resources/azure/ai/resources/_index/_langchain/vendor/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -170,7 +171,6 @@
     "avroencoder",
     "azcmagent",
     "azsdk",
-    "azuread",
     "azurecr",
     "azuremgmtcore",
     "azuremgmtcommunication",
@@ -382,7 +382,6 @@
     "Teradata",
     "timegm",
     "toxenv",
-    "tqdm",
     "tzname",
     "tzutc",
     "uamqp",
@@ -1411,7 +1410,16 @@
     {
       "filename": "sdk/ai/azure-ai-resources/**",
       "words": [
-        "etest"
+        "azuread",
+        "all-mpnet-base-v2",
+        "dtype",
+        "LLMRAG",
+        "pipelinerunid",
+        "pydantic",
+        "swigfaiss",
+        "tiktokens",
+        "tqdm",
+        "wasb"
       ]
     },
     {
