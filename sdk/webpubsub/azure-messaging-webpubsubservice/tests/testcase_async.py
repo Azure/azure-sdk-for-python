@@ -4,14 +4,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 from azure.messaging.webpubsubservice.aio import WebPubSubServiceClient
 
 
-class WebpubsubAsyncTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(WebpubsubAsyncTest, self).__init__(method_name, **kwargs)
-
+class WebpubsubAsyncTest(AzureRecordedTestCase):
     def create_client(self, endpoint=None, hub=None, reverse_proxy_endpoint=None, **kwargs):
         if kwargs.get("connection_string"):
             return WebPubSubServiceClient.from_connection_string(kwargs.pop("connection_string"), hub, **kwargs)

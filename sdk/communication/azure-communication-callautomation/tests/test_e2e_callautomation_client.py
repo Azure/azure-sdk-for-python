@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from datetime import timedelta
 import time
+
 from devtools_testutils import recorded_by_proxy
 
 from callautomation_test_case import CallAutomationRecordedTestCase
@@ -48,19 +49,18 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
             raise ValueError("Caller CallConnected event is None")
         if participant_updated_event is None:
             raise ValueError("Caller ParticipantsUpdated event is None")
-        
+
         add_participant_result = call_connection.add_participant(participant_to_add)
 
         # ensure invitation is sent
         time.sleep(3)
 
-        call_connection.cancel_add_participant(add_participant_result.invitation_id)
+        call_connection.cancel_add_participant_operation(add_participant_result.invitation_id)
 
-        add_participant_cancelled_event = self.check_for_event('AddParticipantCancelled', call_connection._call_connection_id, timedelta(seconds=15))
+        cancel_add_participant_succeeded_event = self.check_for_event('CancelAddParticipantSucceeded', call_connection._call_connection_id, timedelta(seconds=15))
 
-        if add_participant_cancelled_event is None:
-            raise ValueError("Caller AddParticipantCancelled event is None")
+        if cancel_add_participant_succeeded_event is None:
+            raise ValueError("Caller CancelAddParticipantSucceeded event is None")
 
         self.terminate_call(unique_id)
         return
-

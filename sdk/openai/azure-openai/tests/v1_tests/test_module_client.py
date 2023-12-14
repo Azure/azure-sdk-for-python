@@ -13,8 +13,8 @@ from conftest import (
     ENV_AZURE_OPENAI_ENDPOINT,
     ENV_AZURE_OPENAI_KEY,
     ENV_AZURE_OPENAI_API_VERSION,
-    ENV_AZURE_OPENAI_WHISPER_ENDPOINT,
-    ENV_AZURE_OPENAI_WHISPER_KEY,
+    ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT,
+    ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY,
     ENV_AZURE_OPENAI_COMPLETIONS_NAME,
     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
     ENV_AZURE_OPENAI_EMBEDDINGS_NAME,
@@ -221,8 +221,8 @@ class TestModuleClient(AzureRecordedTestCase):
     def test_module_client_audio(self, client, azure_openai_creds, api_type, **kwargs):
         with reload():
             openai.api_type= "azure"
-            openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT)
-            openai.api_key = os.getenv(ENV_AZURE_OPENAI_WHISPER_KEY)
+            openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT)
+            openai.api_key = os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_KEY)
             openai.api_version = ENV_AZURE_OPENAI_API_VERSION
 
             result = openai.audio.transcriptions.create(
