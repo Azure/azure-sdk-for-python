@@ -24,11 +24,9 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-import json
-# https://github.com/PyCQA/pylint/issues/3112
-# Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
-from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
+from typing import Dict, Any, Optional, TypeVar, Union
 from urllib.parse import urlparse
+
 from urllib3.util.retry import Retry
 from azure.core.async_paging import AsyncItemPaged
 from azure.core import AsyncPipelineClient
@@ -151,7 +149,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Keeps the latest response headers from the server.
         self.last_response_headers = None
 
-        self._useMultipleWriteLocations = False
+        self.UseMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager_async._GlobalEndpointManager(self)
 
         retry_policy = None
@@ -166,7 +164,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
                 retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
                 retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
-                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.BACKOFF_MAX,
+                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.DEFAULT_BACKOFF_MAX,
                 retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
                 retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
             )
@@ -185,8 +183,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         credentials_policy = None
         if self.aad_credentials:
-            scopes = base.create_scope_from_url(self.url_connection)
-            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scopes)
+            scope = base.create_scope_from_url(self.url_connection)
+            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scope)
 
         policies = [
             HeadersPolicy(**kwargs),
@@ -372,7 +370,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 Constants.EnableMultipleWritableLocations
             ]
 
-        self._useMultipleWriteLocations = (
+        self.UseMultipleWriteLocations = (
                 self.connection_policy.UseMultipleWriteLocations and database_account._EnableMultipleWritableLocations
         )
         return database_account
@@ -730,7 +728,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'POST' async http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Union[str, unicode, Dict[Any, Any]] body: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
@@ -964,7 +962,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'GET' async http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
         :rtype: tuple of (dict, dict)
@@ -1250,7 +1248,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'PUT' async http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Union[str, unicode, Dict[Any, Any]] body: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
@@ -1272,7 +1270,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'PATCH' http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Union[str, unicode, Dict[Any, Any]] request_data: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
@@ -1504,7 +1502,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """Azure Cosmos 'DELETE' async http request.
 
         :param str path: the url to be used for the request.
-        :param ~azure.cosmos.RequestObject request_params: the request parameters.
+        :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
         :rtype: tuple of (dict, dict)
@@ -2384,7 +2382,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 return __GetBodiesFromQueryResult(results)
 
         result, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
-
+        if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+            INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
+            index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
+            self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
         if response_hook:
             response_hook(self.last_response_headers, result)
 
@@ -2555,7 +2556,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
-                if val is _Undefined:
+                if isinstance(val, _Undefined):
                     break
                 ret.append(val)
             return ret
@@ -2628,10 +2629,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                                       **kwargs)
 
     @staticmethod
-    def _return_undefined_or_empty_partition_key(is_system_key):
+    def _return_undefined_or_empty_partition_key(is_system_key: bool) -> Union[_Empty, _Undefined]:
         if is_system_key:
-            return _Empty
-        return _Undefined
+            return _Empty()
+        return _Undefined()
 
     @staticmethod
     def __ValidateResource(resource):

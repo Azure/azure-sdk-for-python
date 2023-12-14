@@ -307,7 +307,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         assert wps_connection.tags is not None
         assert wps_connection.tags["hello"] == "world"
         assert wps_connection.api_type == "Azure"
-        assert wps_connection.api_version == "some_version"
+        assert wps_connection.api_version == None
 
         client.connections.delete(name=wps_connection_name)
 

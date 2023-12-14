@@ -27,7 +27,16 @@ class LocalCodeHandler(BaseHandler):
         prediction_data = []
         test_data = self.get_test_data_as_jsonl()
 
+        import inspect
+        is_asset_async = False
+        if inspect.iscoroutinefunction(self.asset):
+            is_asset_async = True
+            import asyncio
+
         for d in test_data:
-            prediction_data.append(self.asset(**d))
+            prediction_data.append(
+                asyncio.run(self.asset(**d)) if is_asset_async else self.asset(**d)
+            )
+
         
         return prediction_data

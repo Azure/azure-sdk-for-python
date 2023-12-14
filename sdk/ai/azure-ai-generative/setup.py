@@ -73,30 +73,15 @@ setup(
     python_requires="<4.0,>=3.8",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "azure-ai-resources!=0.0.0b0",
-        "azureml-telemetry~=1.0,>=1.43.0",
+        "azure-ai-resources<2.0.0,>=1.0.0b1",
+        "azureml-telemetry~=1.0,>=1.51.0",
         "mlflow-skinny<3",
         "opencensus-ext-azure~=1.0",
         "opencensus-ext-logging",
     ],
     extras_require={
-        "cognitive_search": [
-            "azure-search-documents==11.4.0b8",
-        ],
-        "document_parsing": [
-            "pandas>=1",
-            "nltk>=3.8,<4",
-            "markdown>=3.4,<4",
-            "beautifulsoup4>=4.11,<5",
-            "tika>=2.6,<3",
-            "pypdf>=3.7,<4",
-            "unstructured>=0.10,<1",
-            "GitPython>=3.1,<4"
-        ],
         "evaluate": [
-            "azureml-metrics[generative-ai]",
-            "promptflow>=0.1.0b7",
-            "promptflow-tools",
+            "azureml-metrics[generative-ai]>=0.0.33", # generative-ai extra doesn't exist before this version
         ],
         "faiss": [
             "faiss-cpu>=1.7,<1.8"
@@ -114,10 +99,19 @@ setup(
             "tiktoken>=0.3,<1",
             "mmh3",
             "requests",
+            "pandas>=1",
+            "nltk>=3.8,<4",
+            "markdown>=3.4,<4",
+            "beautifulsoup4>=4.11,<5",
+            "tika>=2.6,<3",
+            "pypdf>=3.7,<4",
+            "unstructured>=0.10,<1",
+            "GitPython>=3.1,<4",
+            "azure-search-documents==11.4.0b11"
         ],
         "promptflow": [
-            "promptflow[azure]",
-            "promptflow-tools",
+            "promptflow[azure]==0.1.0b8",
+            "promptflow-tools==0.1.0b15",
             "promptflow-vectordb"
         ],
         "qa_generation": [
@@ -134,7 +128,6 @@ setup(
             "PyYAML>=4.1,<7",
             "tiktoken>=0.3,<1",
             "websocket_client>=1,<2",
-            "azure-identity>=1,<2",
             "azure-keyvault-secrets>=1,<5",
         ],
     },

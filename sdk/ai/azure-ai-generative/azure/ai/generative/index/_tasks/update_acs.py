@@ -11,6 +11,21 @@ from pathlib import Path
 from typing import List, Optional
 
 import yaml
+from packaging import version as pkg_version
+
+from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument
+from azure.ai.generative.index._mlindex import MLIndex
+from azure.ai.generative.index._utils.connections import get_connection_credential
+from azure.ai.generative.index._utils.logging import (
+    _logger_factory,
+    enable_appinsights_logging,
+    enable_stdout_logging,
+    get_logger,
+    packages_versions_for_compatibility,
+    safe_mlflow_start_run,
+    track_activity,
+    version,
+)
 from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential
 from azure.search.documents import SearchClient
@@ -26,20 +41,6 @@ from azure.search.documents.indexes.models import (
     SemanticSettings,
     SimpleField,
 )
-from azure.ai.generative.index._embeddings import EmbeddingsContainer, ReferenceEmbeddedDocument
-from azure.ai.generative.index._mlindex import MLIndex
-from azure.ai.generative.index._utils.connections import get_connection_credential
-from azure.ai.generative.index._utils.logging import (
-    _logger_factory,
-    enable_appinsights_logging,
-    enable_stdout_logging,
-    get_logger,
-    packages_versions_for_compatibility,
-    safe_mlflow_start_run,
-    track_activity,
-    version,
-)
-from packaging import version as pkg_version
 
 logger = get_logger("update_acs")
 
@@ -131,7 +132,38 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
             and embeddings.kind != "none"
             and "embedding" in acs_config[MLIndex.INDEX_FIELD_MAPPING_KEY]
         ):
-            if current_version >= pkg_version.parse("11.4.0b8"):
+            if current_version >= pkg_version.parse("11.4.0b11"):
+                from azure.search.documents.indexes.models import (
+                    HnswParameters,
+                    HnswVectorSearchAlgorithmConfiguration,
+                    VectorSearch,
+                    VectorSearchAlgorithmKind,
+                    VectorSearchProfile,
+                )
+
+                vector_config_name = f"{acs_config[MLIndex.INDEX_FIELD_MAPPING_KEY]['embedding']}_config"
+                hnsw_name = "azureml_default_hnsw_config"
+                vector_search_args["vector_search"] = VectorSearch(
+                    algorithms=[
+                        HnswVectorSearchAlgorithmConfiguration(
+                            name=hnsw_name,
+                            kind=VectorSearchAlgorithmKind.HNSW,
+                            parameters=HnswParameters(
+                                m=4,
+                                ef_construction=400,
+                                ef_search=500,
+                                metric="cosine",
+                            ),
+                        )
+                    ],
+                    profiles=[
+                        VectorSearchProfile(
+                            name=vector_config_name,
+                            algorithm=hnsw_name,
+                        ),
+                    ],
+                )
+            elif current_version >= pkg_version.parse("11.4.0b8"):
                 from azure.search.documents.indexes.models import HnswVectorSearchAlgorithmConfiguration, VectorSearch
 
                 vector_search_args["vector_search"] = VectorSearch(
@@ -463,6 +495,7 @@ def main(args, logger, activity_logger):
         elif "endpoint_key_name" in acs_config:
             connection_args["connection_type"] = "workspace_keyvault"
             from azureml.core import Run
+
             run = Run.get_context()
             ws = run.experiment.workspace
             connection_args["connection"] = {
@@ -476,7 +509,7 @@ def main(args, logger, activity_logger):
         raw_embeddings_uri = args.embeddings
         logger.info(f"got embeddings uri as input: {raw_embeddings_uri}")
         splits = raw_embeddings_uri.split("/")
-        embeddings_dir_name = splits.pop(len(splits)-2)
+        embeddings_dir_name = splits.pop(len(splits) - 2)
         logger.info(f"extracted embeddings directory name: {embeddings_dir_name}")
         parent = "/".join(splits)
         logger.info(f"extracted embeddings container path: {parent}")

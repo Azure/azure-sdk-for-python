@@ -8,8 +8,10 @@ from pytest_mock import MockFixture
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
-    ServerlessComputeSettings as RestServerlessComputeSettings,
     ManagedNetworkSettings,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -17,15 +19,15 @@ from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.entities import (
     CustomerManagedKey,
     FeatureStore,
-    IdentityConfiguration,
-    ManagedIdentityConfiguration,
-    ServerlessComputeSettings,
-    Workspace,
-    ManagedNetwork,
-    IsolationMode,
     FqdnDestination,
-    ServiceTagDestination,
+    IdentityConfiguration,
+    IsolationMode,
+    ManagedIdentityConfiguration,
+    ManagedNetwork,
     PrivateEndpointDestination,
+    ServerlessComputeSettings,
+    ServiceTagDestination,
+    Workspace,
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
 from azure.core.polling import LROPoller
@@ -42,12 +44,15 @@ def mock_workspace_operation_base(
     mock_aml_services_2023_06_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
+    mock_aml_services_workspace_dataplane: Mock,
 ) -> WorkspaceOperationsBase:
     yield WorkspaceOperationsBase(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2023_06_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
+        dataplane_client=mock_aml_services_workspace_dataplane,
+        requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
 
@@ -346,7 +351,7 @@ class TestWorkspaceOperation:
             workspace=feature_store, grant_materialization_permissions=True
         )
 
-        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["kind"] == {"value": "featurestore"}
         assert param["grant_materialization_permissions"] == {"value": "true"}
         assert param["materialization_identity_name"] == {"value": "materialization-uai-rg-name"}
         assert param["materialization_identity_resource_id"] == {"value": ""}
@@ -357,7 +362,7 @@ class TestWorkspaceOperation:
             grant_materialization_permissions=False,
         )
 
-        assert param["set_up_feature_store"] == {"value": "true"}
+        assert param["kind"] == {"value": "featurestore"}
         assert param["grant_materialization_permissions"] == {"value": "false"}
         assert param["materialization_identity_name"] == {"value": "empty"}
         assert param["materialization_identity_resource_id"] == {"value": "resource_id"}
@@ -409,8 +414,8 @@ class TestWorkspaceOperation:
         "serverless_compute_settings",
         [
             None,
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
-            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(subnet_name="npip"), no_public_ip=True),
         ],
     )
     def test_create_workspace_with_serverless_custom_vnet(
@@ -437,8 +442,8 @@ class TestWorkspaceOperation:
         "serverless_compute_settings",
         [
             None,
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
-            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(subnet_name="npip"), no_public_ip=True),
         ],
     )
     def test_update_workspace_with_serverless_custom_vnet(
@@ -461,7 +466,7 @@ class TestWorkspaceOperation:
     @pytest.mark.parametrize(
         "new_settings",
         [
-            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
             ServerlessComputeSettings(no_public_ip=True),
         ],
     )
@@ -472,7 +477,7 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ) -> None:
         original_settings = ServerlessComputeSettings(
-            gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
+            custom_subnet=gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
         )
         wsname = "fake"
         ws = Workspace(name=wsname, location="test", serverless_compute=new_settings)

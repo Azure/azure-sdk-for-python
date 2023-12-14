@@ -11,6 +11,7 @@
 
 ### Other Changes
 * Refactored batching code to use latest Core models and improve typing.
+* Added a public type `EntityMetadata`, it is used in `TableEntity`'s metadata.
 
 ## 12.4.4 (2023-09-14)
 

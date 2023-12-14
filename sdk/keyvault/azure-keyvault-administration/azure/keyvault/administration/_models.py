@@ -7,7 +7,7 @@ from typing import Dict, Optional, Union
 from azure.core.rest import HttpResponse
 
 from ._enums import KeyVaultSettingType
-from ._generated_models import (
+from ._generated.models import (
     FullBackupOperation,
     Permission,
     RoleAssignment,

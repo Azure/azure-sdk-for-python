@@ -12,7 +12,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from _router_test_case_async import AsyncRouterRecordedTestCase
 from _decorators_async import RouterPreparersAsync
 from _validators import DistributionPolicyValidator
-from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
@@ -100,7 +99,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 mode_copy = copy.deepcopy(mode)
                 mode_copy.min_concurrent_offers = 2
                 mode_copy.max_concurrent_offers = 2
-                distribution_policy_response.mode = mode
+                distribution_policy_response.mode = mode_copy
 
                 updated_distribution_policy = await router_client.upsert_distribution_policy(
                     dp_identifier, distribution_policy_response

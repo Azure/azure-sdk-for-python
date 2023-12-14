@@ -29,7 +29,7 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.static_sites.begin_create_zip_deployment_for_static_site(
+    client.static_sites.begin_create_zip_deployment_for_static_site(
         resource_group_name="rg",
         name="testStaticSite0",
         static_site_zip_deployment_envelope={
@@ -42,9 +42,8 @@ def main():
             }
         },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/StaticSiteZipDeploy.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/StaticSiteZipDeploy.json
 if __name__ == "__main__":
     main()

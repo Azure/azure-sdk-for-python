@@ -131,7 +131,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :param name: The name of the index to retrieve.
         :type name: str
         :return: SearchIndex object
-        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -198,9 +198,9 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """Creates a new search index.
 
         :param index: The index object.
-        :type index: :class:`~azure.search.documents.indexes.models.SearchIndex`
+        :type index: ~azure.search.documents.indexes.models.SearchIndex
         :return: The index created
-        :rtype: :class:`~azure.search.documents.indexes.models.SearchIndex`
+        :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -349,8 +349,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :param name: The name of the Synonym Map to get
         :type name: str
         :return: The retrieved Synonym Map
-        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError`
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         .. admonition:: Example:
 
@@ -410,9 +410,9 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """Create a new Synonym Map in an Azure Search service
 
         :param synonym_map: The Synonym Map object
-        :type synonym_map: :class:`~azure.search.documents.indexes.models.SynonymMap`
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
         :return: The created Synonym Map
-        :rtype: :class:`~azure.search.documents.indexes.models.SynonymMap`
+        :rtype: ~azure.search.documents.indexes.models.SynonymMap
 
         .. admonition:: Example:
 

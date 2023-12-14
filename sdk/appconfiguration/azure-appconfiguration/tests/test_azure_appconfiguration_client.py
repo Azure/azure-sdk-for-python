@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 import pytest
 import copy
-import datetime
 import json
 import re
+from datetime import datetime, timezone
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
@@ -222,9 +222,35 @@ class TestAppConfigurationClient(AppConfigTestCase):
     @recorded_by_proxy
     def test_list_configuration_settings_key_label(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
-        items = list(self.client.list_configuration_settings(label_filter=LABEL, key_filter=KEY))
+        items = list(self.client.list_configuration_settings(KEY, LABEL))
         assert len(items) == 1
         assert all(x.label == LABEL and x.label == LABEL for x in items)
+
+        with pytest.raises(TypeError) as ex:
+            self.client.list_configuration_settings("MyKey1", key_filter="MyKey2")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'key_filter'"
+        )
+        with pytest.raises(TypeError) as ex:
+            self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        )
+        with pytest.raises(TypeError) as ex:
+            self.client.list_configuration_settings("None", key_filter="MyKey")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'key_filter'"
+        )
+        with pytest.raises(TypeError) as ex:
+            self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
+        assert (
+            str(ex.value)
+            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        )
+
         self.tear_down()
 
     @app_config_decorator
@@ -240,7 +266,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
     @recorded_by_proxy
     def test_list_configuration_settings_only_key(self, appconfiguration_connection_string):
         self.set_up(appconfiguration_connection_string)
-        items = list(self.client.list_configuration_settings(key_filter=KEY))
+        items = list(self.client.list_configuration_settings(KEY))
         assert len(items) == 2
         assert all(x.key == KEY for x in items)
         self.tear_down()
@@ -336,7 +362,7 @@ class TestAppConfigurationClient(AppConfigTestCase):
     @recorded_by_proxy
     def test_list_configuration_settings_only_accepttime(self, appconfiguration_connection_string, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_variables.setdefault("timestamp", str(datetime.datetime.utcnow()))
+        recorded_variables.setdefault("timestamp", str(datetime.utcnow()))
 
         with self.create_client(appconfiguration_connection_string) as client:
             # Confirm all configuration settings are cleaned up
@@ -347,6 +373,10 @@ class TestAppConfigurationClient(AppConfigTestCase):
 
             revision = client.list_configuration_settings(accept_datetime=recorded_variables.get("timestamp"))
             assert len(list(revision)) >= 0
+
+            accept_time = datetime(year=2000, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc)
+            revision = client.list_configuration_settings(accept_datetime=accept_time)
+            assert len(list(revision)) == 0
 
         return recorded_variables
 

@@ -42,7 +42,7 @@ sys.path.append("..")
 class RoomsSample(object):
 
     def setUp(self):
-        self.connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
+        self.connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_ROOMS")
 
         self.rooms_client = RoomsClient.from_connection_string(self.connection_string)
         self.identity_client = CommunicationIdentityClient.from_connection_string(

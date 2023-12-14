@@ -41,10 +41,6 @@ Use the Azure.Search.Documents client library to:
 | [Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
 | [Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 ## Getting started
 
 ### Install the package
@@ -58,7 +54,7 @@ pip install azure-search-documents
 ### Prerequisites
 
 * Python 3.7 or later is required to use this package.
-* You need an [Azure subscription][azure_sub] and a
+* You need an [Azure subscription][azure_sub] and an
 [Azure Cognitive Search service][search_resource] to use this package.
 
 To create a new search service, you can use the [Azure portal][create_search_service_docs], [Azure PowerShell][create_search_service_ps], or the [Azure CLI][create_search_service_cli].

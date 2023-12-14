@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b18 (Unreleased)
+## 1.0.0b20 (Unreleased)
 
 ### Features Added
 
@@ -8,12 +8,25 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.0.0b19 (2023-11-20)
+
+### Bugs Fixed
+
+- Fix deserialization of `TelemetryItem` from local storage
+    ([#33163](https://github.com/Azure/azure-sdk-for-python/pull/33163))
+
+## 1.0.0b18 (2023-11-06)
+
+### Bugs Fixed
+
 - Default exception type for blank exceptions
     ([#32327](https://github.com/Azure/azure-sdk-for-python/pull/32327))
 - Updated django samples with clearly artificial secret key
     ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
-
-### Other Changes
+- Remove metric namespace
+    ([#32897](https://github.com/Azure/azure-sdk-for-python/pull/32897))
 
 ## 1.0.0b17 (2023-09-12)
 

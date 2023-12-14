@@ -9,10 +9,15 @@ from corehttp.exceptions import HttpResponseError, ServiceRequestError
 from corehttp.rest import HttpRequest
 from corehttp.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 
+from rest_client_async import AsyncMockRestClient
+from utils import ASYNC_TRANSPORTS
+
 
 @pytest.mark.asyncio
-async def test_iter_raw(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_iter_raw(port, transport):
     request = HttpRequest("GET", "/streams/basic")
+    client = AsyncMockRestClient(port, transport=transport())
     async with client.send_request(request, stream=True) as response:
         raw = b""
         async for part in response.iter_raw():
@@ -21,9 +26,10 @@ async def test_iter_raw(client):
 
 
 @pytest.mark.asyncio
-async def test_iter_raw_on_iterable(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_iter_raw_on_iterable(port, transport):
     request = HttpRequest("GET", "/streams/iterable")
-
+    client = AsyncMockRestClient(port, transport=transport())
     async with client.send_request(request, stream=True) as response:
         raw = b""
         async for part in response.iter_raw():
@@ -32,9 +38,10 @@ async def test_iter_raw_on_iterable(client):
 
 
 @pytest.mark.asyncio
-async def test_iter_with_error(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_iter_with_error(port, transport):
     request = HttpRequest("GET", "/errors/403")
-
+    client = AsyncMockRestClient(port, transport=transport())
     async with client.send_request(request, stream=True) as response:
         try:
             response.raise_for_status()
@@ -58,9 +65,10 @@ async def test_iter_with_error(client):
 
 
 @pytest.mark.asyncio
-async def test_iter_bytes(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_iter_bytes(port, transport):
     request = HttpRequest("GET", "/streams/basic")
-
+    client = AsyncMockRestClient(port, transport=transport())
     async with client.send_request(request, stream=True) as response:
         raw = b""
         async for chunk in response.iter_bytes():
@@ -73,9 +81,10 @@ async def test_iter_bytes(client):
 
 
 @pytest.mark.asyncio
-async def test_streaming_response(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_streaming_response(port, transport):
     request = HttpRequest("GET", "/streams/basic")
-
+    client = AsyncMockRestClient(port, transport=transport())
     async with client.send_request(request, stream=True) as response:
         assert response.status_code == 200
         assert not response.is_closed
@@ -87,8 +96,10 @@ async def test_streaming_response(client):
 
 
 @pytest.mark.asyncio
-async def test_cannot_read_after_stream_consumed(port, client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_cannot_read_after_stream_consumed(port, transport):
     request = HttpRequest("GET", "/streams/basic")
+    client = AsyncMockRestClient(port, transport=transport())
     async with client.send_request(request, stream=True) as response:
         content = b""
         async for chunk in response.iter_bytes():
@@ -101,8 +112,10 @@ async def test_cannot_read_after_stream_consumed(port, client):
 
 
 @pytest.mark.asyncio
-async def test_cannot_read_after_response_closed(port, client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_cannot_read_after_response_closed(port, transport):
     request = HttpRequest("GET", "/streams/basic")
+    client = AsyncMockRestClient(port, transport=transport())
     async with client.send_request(request, stream=True) as response:
         pass
 
@@ -113,11 +126,13 @@ async def test_cannot_read_after_response_closed(port, client):
 
 
 @pytest.mark.asyncio
-async def test_decompress_plain_no_header(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_decompress_plain_no_header(port, transport):
     # thanks to Xiang Yan for this test!
     account_name = "coretests"
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     request = HttpRequest("GET", url)
+    client = AsyncMockRestClient(port, transport=transport())
     async with client:
         response = await client.send_request(request, stream=True)
         with pytest.raises(ResponseNotReadError):
@@ -127,11 +142,13 @@ async def test_decompress_plain_no_header(client):
 
 
 @pytest.mark.asyncio
-async def test_compress_plain_no_header(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_compress_plain_no_header(port, transport):
     # thanks to Xiang Yan for this test!
     account_name = "coretests"
     url = "https://{}.blob.core.windows.net/tests/test.txt".format(account_name)
     request = HttpRequest("GET", url)
+    client = AsyncMockRestClient(port, transport=transport())
     async with client:
         response = await client.send_request(request, stream=True)
         iter = response.iter_raw()
@@ -142,7 +159,8 @@ async def test_compress_plain_no_header(client):
 
 
 @pytest.mark.asyncio
-async def test_iter_read_back_and_forth(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_iter_read_back_and_forth(port, transport):
     # thanks to McCoy Patiño for this test!
 
     # while this test may look like it's exposing buggy behavior, this is httpx's behavior
@@ -150,7 +168,7 @@ async def test_iter_read_back_and_forth(client):
     # actually read the contents into the response, the output them. Once they're yielded,
     # the stream is closed, so you have to catch the output when you iterate through it
     request = HttpRequest("GET", "/basic/string")
-
+    client = AsyncMockRestClient(port, transport=transport())
     async with client.send_request(request, stream=True) as response:
         async for part in response.iter_bytes():
             assert part
@@ -163,8 +181,10 @@ async def test_iter_read_back_and_forth(client):
 
 
 @pytest.mark.asyncio
-async def test_error_reading(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_error_reading(port, transport):
     request = HttpRequest("GET", "/errors/403")
+    client = AsyncMockRestClient(port, transport=transport())
     async with client.send_request(request, stream=True) as response:
         await response.read()
         assert response.content == b""
@@ -179,25 +199,31 @@ async def test_error_reading(client):
 
 
 @pytest.mark.asyncio
-async def test_pass_kwarg_to_iter_bytes(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_pass_kwarg_to_iter_bytes(port, transport):
     request = HttpRequest("GET", "/basic/string")
+    client = AsyncMockRestClient(port, transport=transport())
     response = await client.send_request(request, stream=True)
     async for part in response.iter_bytes(chunk_size=5):
         assert part
 
 
 @pytest.mark.asyncio
-async def test_pass_kwarg_to_iter_raw(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_pass_kwarg_to_iter_raw(port, transport):
     request = HttpRequest("GET", "/basic/string")
+    client = AsyncMockRestClient(port, transport=transport())
     response = await client.send_request(request, stream=True)
     async for part in response.iter_raw(chunk_size=5):
         assert part
 
 
 @pytest.mark.asyncio
-async def test_decompress_compressed_header(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_decompress_compressed_header(port, transport):
     # expect plain text
     request = HttpRequest("GET", "/encoding/gzip")
+    client = AsyncMockRestClient(port, transport=transport())
     response = await client.send_request(request)
     content = await response.read()
     assert content == b"hello world"
@@ -206,9 +232,11 @@ async def test_decompress_compressed_header(client):
 
 
 @pytest.mark.asyncio
-async def test_deflate_decompress_compressed_header(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_deflate_decompress_compressed_header(port, transport):
     # expect plain text
     request = HttpRequest("GET", "/encoding/deflate")
+    client = AsyncMockRestClient(port, transport=transport())
     response = await client.send_request(request)
     content = await response.read()
     assert content == b"hi there"
@@ -217,9 +245,11 @@ async def test_deflate_decompress_compressed_header(client):
 
 
 @pytest.mark.asyncio
-async def test_decompress_compressed_header_stream(client):
+@pytest.mark.parametrize("transport", ASYNC_TRANSPORTS)
+async def test_decompress_compressed_header_stream(port, transport):
     # expect plain text
     request = HttpRequest("GET", "/encoding/gzip")
+    client = AsyncMockRestClient(port, transport=transport())
     response = await client.send_request(request, stream=True)
     content = await response.read()
     assert content == b"hello world"

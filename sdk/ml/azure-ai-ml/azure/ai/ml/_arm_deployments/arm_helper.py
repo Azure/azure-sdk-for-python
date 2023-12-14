@@ -49,6 +49,7 @@ deployment_message_mapping = {
     AzureMLResourceType.CONNECTIONS: "Creating connection: ({0})",
     ArmConstants.USER_ASSIGNED_IDENTITIES: "Creating User Assigned Identities: ({0})",
     ArmConstants.ROLE_ASSIGNMENTS: "Creating Role Assignment: ({0})",
+    ArmConstants.MULTIPLE_ENDPOINTS_TYPE: "Creating endpoints: ({0})",
 }
 
 

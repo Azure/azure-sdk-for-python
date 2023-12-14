@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.1 (2023-11-30)
+
+### Features Added
+
+- Add App Service Resource Detector to Auto-Instrumentation.
+    ([#33340](https://github.com/Azure/azure-sdk-for-python/pull/33340))
+- Remove VM Resource Detector while bug is investigated.
+    ([#33305](https://github.com/Azure/azure-sdk-for-python/pull/33305))
+    ([#33373](https://github.com/Azure/azure-sdk-for-python/pull/33373))
+
+## 1.1.0 (2023-11-08)
 
 ### Features Added
 
@@ -11,14 +21,10 @@
 - Allow OTEL_PYTHON_DISABLED_INSTRUMENTATIONS functionality for Azure Core Tracing in Auto-instrumentation
     ([#32331](https://github.com/Azure/azure-sdk-for-python/pull/32331))
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Updated django samples with clearly artificial secret key
     ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
-
-### Other Changes
 
 ## 1.0.0 (2023-09-12)
 

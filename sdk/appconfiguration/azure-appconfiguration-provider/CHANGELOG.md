@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- Added on_refresh_success callback to load method. This callback is called when the refresh method successfully refreshes the configuration.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixes issue where the refresh timer only reset after a change was found.
 
 ### Other Changes
 
