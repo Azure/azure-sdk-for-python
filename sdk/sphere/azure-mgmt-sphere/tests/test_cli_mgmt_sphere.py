@@ -5,32 +5,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 #--------------------------------------------------------------------------
-from azure.mgmt.sphere import SphereManagementClient
+from azure.mgmt.sphere import AzureSphereMgmtClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = 'eastus'
 
-class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
+class TestMgmtSphere(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(
-            SphereManagementClient
+            AzureSphereMgmtClient
         )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_subscrpition_and_rule(self, resource_group):
+    def test_catalogs(self, resource_group):
         catalog_name = "CatalogName"
         catalog = self.mgmt_client.catalogs.begin_create_or_update(
             resource_group_name=resource_group.name,
             catalog_name=catalog_name,
-            resource={"location": AZURE_LOCATION}).result().as_dict()
+            resource={"location": "global"}).result().as_dict()
         assert catalog["name"] == catalog_name
 
         catalog = self.mgmt_client.catalogs.get(
             resource_group_name=resource_group.name,
             catalog_name=catalog_name,
-        )
+        ).as_dict()
         assert catalog["name"] == catalog_name
 
         catalogs = list(self.mgmt_client.catalogs.list_by_resource_group(
@@ -38,7 +38,7 @@ class TestMgmtServiceBus(AzureMgmtRecordedTestCase):
         ))
         assert len(catalogs) == 1
 
-        catalog = self.mgmt_client.catalogs.begin_delete(
+        self.mgmt_client.catalogs.begin_delete(
             resource_group_name=resource_group.name,
             catalog_name=catalog_name,
         ).result()
