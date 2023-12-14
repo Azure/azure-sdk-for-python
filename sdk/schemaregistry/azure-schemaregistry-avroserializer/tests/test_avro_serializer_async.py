@@ -40,11 +40,11 @@ from azure.schemaregistry.serializer.avroserializer.exceptions import SchemaPars
 from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 
 SchemaRegistryPowerShellPreparer = functools.partial(PowerShellPreparer, "schemaregistry", schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/", schemaregistry_group="fakegroup")
 
-class AvroSerializerAsyncTests(AzureTestCase):
+class TestAvroSerializerAsync(AzureRecordedTestCase):
 
     def create_client(self, fully_qualified_namespace):
         credential = self.get_credential(SchemaRegistryClient, is_async=True)

@@ -47,7 +47,7 @@ from ...operations._operations import (
     build_call_media_cancel_all_media_operations_request,
     build_call_media_play_request,
     build_call_media_recognize_request,
-    build_call_media_send_dtmf_request,
+    build_call_media_send_dtmf_tones_request,
     build_call_media_start_continuous_dtmf_recognition_request,
     build_call_media_start_hold_music_request,
     build_call_media_start_transcription_request,
@@ -529,9 +529,9 @@ class CallConnectionOperations:
 
     @distributed_trace_async
     async def get_call(self, call_connection_id: str, **kwargs: Any) -> _models.CallConnectionProperties:
-        """Get call connection.
+        """Get the detail properties of an ongoing call.
 
-        Get call connection.
+        Get the detail properties of an ongoing call.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
@@ -588,9 +588,11 @@ class CallConnectionOperations:
     async def hangup_call(  # pylint: disable=inconsistent-return-statements
         self, call_connection_id: str, **kwargs: Any
     ) -> None:
-        """Hangup the call.
+        """Hang up call automation service from the call. This will make call automation service leave the
+        call, but does not terminate if there are more than 1 caller in the call.
 
-        Hangup the call.
+        Hang up call automation service from the call. This will make call automation service leave the
+        call, but does not terminate if there are more than 1 caller in the call.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
@@ -896,7 +898,7 @@ class CallConnectionOperations:
             deserialized = self._deserialize(
                 _models._models.GetParticipantsResponse, pipeline_response  # pylint: disable=protected-access
             )
-            list_of_elem = deserialized.values
+            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
@@ -930,9 +932,9 @@ class CallConnectionOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AddParticipantResponse:
-        """Add participants to the call.
+        """Add a participant to the call.
 
-        Add participants to the call.
+        Add a participant to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
@@ -955,9 +957,9 @@ class CallConnectionOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AddParticipantResponse:
-        """Add participants to the call.
+        """Add a participant to the call.
 
-        Add participants to the call.
+        Add a participant to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
@@ -975,9 +977,9 @@ class CallConnectionOperations:
     async def add_participant(
         self, call_connection_id: str, add_participant_request: Union[_models.AddParticipantRequest, IO], **kwargs: Any
     ) -> _models.AddParticipantResponse:
-        """Add participants to the call.
+        """Add a participant to the call.
 
-        Add participants to the call.
+        Add a participant to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
@@ -1057,9 +1059,9 @@ class CallConnectionOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RemoveParticipantResponse:
-        """Remove participant from the call using identifier.
+        """Remove a participant from the call using identifier.
 
-        Remove participant from the call using identifier.
+        Remove a participant from the call using identifier.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
@@ -1083,9 +1085,9 @@ class CallConnectionOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RemoveParticipantResponse:
-        """Remove participant from the call using identifier.
+        """Remove a participant from the call using identifier.
 
-        Remove participant from the call using identifier.
+        Remove a participant from the call using identifier.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
@@ -1106,9 +1108,9 @@ class CallConnectionOperations:
         remove_participant_request: Union[_models.RemoveParticipantRequest, IO],
         **kwargs: Any
     ) -> _models.RemoveParticipantResponse:
-        """Remove participant from the call using identifier.
+        """Remove a participant from the call using identifier.
 
-        Remove participant from the call using identifier.
+        Remove a participant from the call using identifier.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
@@ -1188,7 +1190,7 @@ class CallConnectionOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MuteParticipantsResponse:
+    ) -> _models.MuteParticipantsResult:
         """Mute participants from the call using identifier.
 
         Mute participants from the call using identifier.
@@ -1201,8 +1203,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
+        :return: MuteParticipantsResult
+        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1214,7 +1216,7 @@ class CallConnectionOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MuteParticipantsResponse:
+    ) -> _models.MuteParticipantsResult:
         """Mute participants from the call using identifier.
 
         Mute participants from the call using identifier.
@@ -1226,8 +1228,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
+        :return: MuteParticipantsResult
+        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1237,7 +1239,7 @@ class CallConnectionOperations:
         call_connection_id: str,
         mute_participants_request: Union[_models.MuteParticipantsRequest, IO],
         **kwargs: Any
-    ) -> _models.MuteParticipantsResponse:
+    ) -> _models.MuteParticipantsResult:
         """Mute participants from the call using identifier.
 
         Mute participants from the call using identifier.
@@ -1251,8 +1253,8 @@ class CallConnectionOperations:
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: MuteParticipantsResponse
-        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResponse
+        :return: MuteParticipantsResult
+        :rtype: ~azure.communication.callautomation.models.MuteParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1267,7 +1269,7 @@ class CallConnectionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MuteParticipantsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MuteParticipantsResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1298,14 +1300,14 @@ class CallConnectionOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("MuteParticipantsResponse", pipeline_response)
+        deserialized = self._deserialize("MuteParticipantsResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1430,7 +1432,7 @@ class CallConnectionOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             if _stream:
                 await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
@@ -2461,68 +2463,74 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def send_dtmf(  # pylint: disable=inconsistent-return-statements
+    async def send_dtmf_tones(
         self,
         call_connection_id: str,
-        send_dtmf_request: _models.SendDtmfRequest,
+        send_dtmf_tones_request: _models.SendDtmfTonesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
+    ) -> _models.SendDtmfTonesResult:
         """Send dtmf tones.
 
         Send dtmf tones.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param send_dtmf_request: The send dtmf request. Required.
-        :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest
+        :param send_dtmf_tones_request: The send dtmf tones request. Required.
+        :type send_dtmf_tones_request: ~azure.communication.callautomation.models.SendDtmfTonesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: SendDtmfTonesResult
+        :rtype: ~azure.communication.callautomation.models.SendDtmfTonesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def send_dtmf(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, send_dtmf_request: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
+    async def send_dtmf_tones(
+        self,
+        call_connection_id: str,
+        send_dtmf_tones_request: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SendDtmfTonesResult:
         """Send dtmf tones.
 
         Send dtmf tones.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param send_dtmf_request: The send dtmf request. Required.
-        :type send_dtmf_request: IO
+        :param send_dtmf_tones_request: The send dtmf tones request. Required.
+        :type send_dtmf_tones_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: SendDtmfTonesResult
+        :rtype: ~azure.communication.callautomation.models.SendDtmfTonesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def send_dtmf(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, send_dtmf_request: Union[_models.SendDtmfRequest, IO], **kwargs: Any
-    ) -> None:
+    async def send_dtmf_tones(
+        self, call_connection_id: str, send_dtmf_tones_request: Union[_models.SendDtmfTonesRequest, IO], **kwargs: Any
+    ) -> _models.SendDtmfTonesResult:
         """Send dtmf tones.
 
         Send dtmf tones.
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param send_dtmf_request: The send dtmf request. Is either a SendDtmfRequest type or a IO type.
-         Required.
-        :type send_dtmf_request: ~azure.communication.callautomation.models.SendDtmfRequest or IO
+        :param send_dtmf_tones_request: The send dtmf tones request. Is either a SendDtmfTonesRequest
+         type or a IO type. Required.
+        :type send_dtmf_tones_request: ~azure.communication.callautomation.models.SendDtmfTonesRequest
+         or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :return: SendDtmfTonesResult
+        :rtype: ~azure.communication.callautomation.models.SendDtmfTonesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2537,17 +2545,17 @@ class CallMediaOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SendDtmfTonesResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(send_dtmf_request, (IOBase, bytes)):
-            _content = send_dtmf_request
+        if isinstance(send_dtmf_tones_request, (IOBase, bytes)):
+            _content = send_dtmf_tones_request
         else:
-            _json = self._serialize.body(send_dtmf_request, "SendDtmfRequest")
+            _json = self._serialize.body(send_dtmf_tones_request, "SendDtmfTonesRequest")
 
-        _request = build_call_media_send_dtmf_request(
+        _request = build_call_media_send_dtmf_tones_request(
             call_connection_id=call_connection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2575,8 +2583,12 @@ class CallMediaOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
+        deserialized = self._deserialize("SendDtmfTonesResult", pipeline_response)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def update_transcription(  # pylint: disable=inconsistent-return-statements
@@ -2593,7 +2605,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param update_transcription_request: The updateTranscription request. Required.
+        :param update_transcription_request: The UpdateTranscription request. Required.
         :type update_transcription_request:
          ~azure.communication.callautomation.models.UpdateTranscriptionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -2619,7 +2631,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param update_transcription_request: The updateTranscription request. Required.
+        :param update_transcription_request: The UpdateTranscription request. Required.
         :type update_transcription_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2642,7 +2654,7 @@ class CallMediaOperations:
 
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
-        :param update_transcription_request: The updateTranscription request. Is either a
+        :param update_transcription_request: The UpdateTranscription request. Is either a
          UpdateTranscriptionRequest type or a IO type. Required.
         :type update_transcription_request:
          ~azure.communication.callautomation.models.UpdateTranscriptionRequest or IO
@@ -3117,7 +3129,7 @@ class CallDialogOperations:
 
     @distributed_trace_async
     async def stop_dialog(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, dialog_id: str, **kwargs: Any
+        self, call_connection_id: str, dialog_id: str, *, operation_callback_uri: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Stop a dialog.
 
@@ -3127,6 +3139,8 @@ class CallDialogOperations:
         :type call_connection_id: str
         :param dialog_id: The dialog id. Required.
         :type dialog_id: str
+        :keyword operation_callback_uri: Opeation callback URI. Default value is None.
+        :paramtype operation_callback_uri: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3147,6 +3161,7 @@ class CallDialogOperations:
         _request = build_call_dialog_stop_dialog_request(
             call_connection_id=call_connection_id,
             dialog_id=dialog_id,
+            operation_callback_uri=operation_callback_uri,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
