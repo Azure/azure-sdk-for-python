@@ -156,8 +156,8 @@ class AzureGenAILogHandler(AzureLogHandler):
             "process": record.processName,
             "module": record.module,
             "level": record.levelname,
-            "operation_id": envelope.tags["gen.ai.operation.id"],
-            "operation_parent_id": envelope.tags["gen.ai.operation.parentId"],
+            "operation_id": envelope.tags.get("ai.resources.operation.id"),
+            "operation_parent_id": envelope.tags.get("ai.resources.operation.parentId"),
         }
         if hasattr(record, "custom_dimensions") and isinstance(record.custom_dimensions, dict):
             properties.update(record.custom_dimensions)
@@ -221,13 +221,13 @@ def create_envelope(instrumentation_key, record):
         tags=dict(utils.azure_monitor_context),
         time=utils.timestamp_to_iso_str(record.created),
     )
-    envelope.tags["gen.ai.operation.id"] = getattr(
+    envelope.tags["ai.resources.operation.id"] = getattr(
         record,
         "traceId",
         "00000000000000000000000000000000",
     )
-    envelope.tags["gen.ai.operation.parentId"] = "|{}.{}.".format(
-        envelope.tags["gen.ai.operation.id"],
+    envelope.tags["ai.resources.operation.parentId"] = "|{}.{}.".format(
+        envelope.tags.get("ai.resources.operation.id"),
         getattr(record, "spanId", "0000000000000000"),
     )
 

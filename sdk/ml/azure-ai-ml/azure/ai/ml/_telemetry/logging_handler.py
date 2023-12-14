@@ -179,8 +179,8 @@ class AzureMLSDKLogHandler(AzureLogHandler):
             "process": record.processName,
             "module": record.module,
             "level": record.levelname,
-            "operation_id": envelope.tags["ai.ml.operation.id"],
-            "operation_parent_id": envelope.tags["ai.ml.operation.parentId"],
+            "operation_id": envelope.tags.get("ai.ml.operation.id"),
+            "operation_parent_id": envelope.tags.get("ai.ml.operation.parentId"),
         }
 
         if hasattr(record, "custom_dimensions") and isinstance(record.custom_dimensions, dict):
@@ -251,7 +251,7 @@ def create_envelope(instrumentation_key, record):
         "00000000000000000000000000000000",
     )
     envelope.tags["ai.ml.operation.parentId"] = "|{}.{}.".format(
-        envelope.tags["ai.ml.operation.id"],
+        envelope.tags.get("ai.ml.operation.id"),
         getattr(record, "spanId", "0000000000000000"),
     )
 
