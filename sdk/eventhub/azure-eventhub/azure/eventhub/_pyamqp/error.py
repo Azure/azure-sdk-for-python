@@ -5,6 +5,7 @@
 #--------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
+from typing import Any, Union, Optional
 from enum import Enum
 from collections import namedtuple
 
@@ -199,19 +200,19 @@ class AMQPException(Exception):
     :keyword str description: A description of the error.
     :keyword dict info: A dictionary of additional data associated with the error.
     """
-    def __init__(self, condition, **kwargs):
-        self.condition = condition or ErrorCondition.UnknownError
-        self.description = kwargs.get("description", None)
-        self.info = kwargs.get("info", None)
-        self.message = kwargs.get("message", None)
-        self.inner_error = kwargs.get("error", None)
+    def __init__(self, condition: bytes, **kwargs: Any):
+        self.condition: Union[bytes, Enum] = condition or ErrorCondition.UnknownError
+        self.description: Optional[Union[str, bytes]] = kwargs.get("description", None)
+        self.info: Optional[str] = kwargs.get("info", None)
+        self.message: Optional[str] = kwargs.get("message", None)
+        self.inner_error: Optional[str] = kwargs.get("error", None)
         message = self.message or "Error condition: {}".format(
             str(condition) if isinstance(condition, ErrorCondition) else condition.decode()
         )
         if self.description:
-            try:
+            if isinstance(self.description, bytes):
                 message += "\n Error Description: {}".format(self.description.decode())
-            except (TypeError, AttributeError):
+            else:
                 message += "\n Error Description: {}".format(self.description)
         super(AMQPException, self).__init__(message)
 
