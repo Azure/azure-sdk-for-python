@@ -576,6 +576,9 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs["hello_world"].resources.instance_count == "${{parent.inputs.instance_count}}"
+        assert created_job.jobs["hello_world"].mini_batch_size == "${{parent.inputs.mini_batch_size}}"
+        assert created_job.jobs["hello_world"].retry_settings.max_retries == "${{parent.inputs.run_max_retries}}"
+        assert created_job.jobs["hello_world"].retry_settings.timeout == "${{parent.inputs.run_timeout}}"
 
     @pytest.mark.skip(
         reason="The task for fixing this is tracked by "

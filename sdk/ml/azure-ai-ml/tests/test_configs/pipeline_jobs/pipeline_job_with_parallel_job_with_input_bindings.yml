@@ -14,12 +14,15 @@ inputs:
     path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
     mode: ro_mount
   instance_count: 1
+  mini_batch_size: 1000
+  run_max_retries: 10
+  run_timeout: 600
 
 outputs:
   job_out_path_1:
     mode: mount
 
-# here the jobs in the pipeline
+# here the jobs in the pipelinepipeline_job_with_parallel_job_with_input_bindings
 jobs:
   hello_world:
     # We pass the trained model from the train step to use to parallel inference
@@ -32,11 +35,14 @@ jobs:
 
     resources:
       instance_count: ${{parent.inputs.instance_count}}
-    mini_batch_size: "100kb"
+    mini_batch_size: ${{parent.inputs.mini_batch_size}}
     mini_batch_error_threshold: 5
     logging_level: "DEBUG"
     input_data: ${{inputs.job_data_path}}
     max_concurrency_per_instance: 2
+    retry_settings:
+      max_retries: ${{parent.inputs.run_max_retries}}
+      timeout: ${{parent.inputs.run_timeout}}
 
     task:
       type: run_function
