@@ -81,9 +81,9 @@ def shutdown_statsbeat_metrics() -> None:
                     shutdown_success = True
             except:  # pylint: disable=bare-except
                 pass
-    if shutdown_success:
-        with _STATSBEAT_STATE_LOCK:
-            _STATSBEAT_STATE["SHUTDOWN"] = True
+        if shutdown_success:
+            with _STATSBEAT_STATE_LOCK:
+                _STATSBEAT_STATE["SHUTDOWN"] = True
 
 
 def _get_stats_connection_string(endpoint: str) -> str:
