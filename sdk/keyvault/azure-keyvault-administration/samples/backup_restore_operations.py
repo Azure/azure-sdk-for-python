@@ -63,6 +63,9 @@ assert backup_result.folder_url
 # To restore a single key from the backed up vault instead, pass the key_name keyword argument.
 print("\n.. Restore the full vault")
 # [START begin_restore]
+SAS_TOKEN = os.environ["SAS_TOKEN"]
+
+# `backup_result` is the KeyVaultBackupResult returned by `begin_backup`
 client.begin_restore(backup_result.folder_url, sas_token=SAS_TOKEN).wait()
-# [END begin_restore]
 print("Vault restored successfully.")
+# [END begin_restore]

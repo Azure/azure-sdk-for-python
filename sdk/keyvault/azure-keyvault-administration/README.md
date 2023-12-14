@@ -300,7 +300,11 @@ to the library's [credential documentation][sas_docs]. Alternatively, it is poss
 <!-- SNIPPET:backup_restore_operations.begin_restore -->
 
 ```python
+SAS_TOKEN = os.environ["SAS_TOKEN"]
+
+# `backup_result` is the KeyVaultBackupResult returned by `begin_backup`
 client.begin_restore(backup_result.folder_url, sas_token=SAS_TOKEN).wait()
+print("Vault restored successfully.")
 ```
 
 <!-- END SNIPPET -->

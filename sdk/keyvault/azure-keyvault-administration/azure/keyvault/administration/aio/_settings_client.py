@@ -34,7 +34,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the account setting.
 
-        :returns: The account setting, as a azure.keyvault.administration.KeyVaultSetting.
+        :returns: The account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: azure.core.exceptions.HttpResponseError
         """
@@ -45,7 +45,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
     def list_settings(self, **kwargs) -> AsyncItemPaged[KeyVaultSetting]:
         """Lists all account settings.
 
-        :returns: A azure.keyvault.administration.GetSettingsResult object containing the account's settings.
+        :returns: A paged object containing the account's settings.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultSetting]
         :raises: azure.core.exceptions.HttpResponseError
         """
@@ -71,7 +71,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
             the provided name will be updated to have the provided value.
         :type setting: ~azure.keyvault.administration.KeyVaultSetting
 
-        :returns: The updated account setting, as a azure.keyvault.administration.KeyVaultSetting.
+        :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: azure.core.exceptions.HttpResponseError
         """

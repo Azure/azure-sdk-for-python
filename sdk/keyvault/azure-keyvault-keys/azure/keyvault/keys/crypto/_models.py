@@ -252,8 +252,8 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :rtype: bytes
         :raises:
             NotImplementedError if the local version of `cryptography` doesn't support this method.
-            cryptography.exceptions.InvalidSignature if the signature is invalid.
-            cryptography.exceptions.UnsupportedAlgorithm if the signature data recovery is not supported with
+            :class:`~cryptography.exceptions.InvalidSignature` if the signature is invalid.
+            :class:`~cryptography.exceptions.UnsupportedAlgorithm` if the signature data recovery is not supported with
                 the provided `padding` type.
         """
         public_key = self.public_numbers().public_key()

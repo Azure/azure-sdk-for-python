@@ -33,7 +33,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
 
         :param str name: The name of the account setting.
 
-        :returns: The account setting, as a azure.keyvault.administration.KeyVaultSetting.
+        :returns: The account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: azure.core.exceptions.HttpResponseError
         """
@@ -68,7 +68,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
             the provided name will be updated to have the provided value.
         :type setting: ~azure.keyvault.administration.KeyVaultSetting
 
-        :returns: The updated account setting, as a azure.keyvault.administration.KeyVaultSetting.
+        :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: azure.core.exceptions.HttpResponseError
         """
