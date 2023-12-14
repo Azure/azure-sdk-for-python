@@ -332,10 +332,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         if not self._refresh_lock.acquire(blocking=False):
             logging.debug("Refresh called but refresh already in progress.")
             return
+        success = False
+        need_refresh = False
         try:
-            success = False
-            need_refresh = False
-
             updated_sentinel_keys = dict(self._refresh_on)
             headers = _get_headers("Watch", uses_key_vault=self._uses_key_vault, **kwargs)
             for (key, label), etag in updated_sentinel_keys.items():
@@ -376,7 +375,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 return
             raise
         finally:
-            await self._refresh_lock.release()
+            self._refresh_lock.release()
             if not success:
                 self._refresh_timer.backoff()
             elif success and self._on_refresh_success:
