@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from typing import Union, List, Optional, cast, TYPE_CHECKING
-from enum import Enum
 from ._pyamqp.error import AMQPException
 
 if TYPE_CHECKING:
@@ -30,7 +29,7 @@ class EventHubError(Exception):
             self.details = details
             if isinstance(self.details, AMQPException):
                 try:
-                    details.condition = cast(ErrorCondition, details.condition)
+                    details.condition = cast("ErrorCondition", details.condition)
                     condition = details.condition.value.decode("UTF-8")
                 except AttributeError:
                     try:
