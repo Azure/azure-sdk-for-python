@@ -24,12 +24,13 @@ from typing import (
     Sequence,
     Collection,
 )
-from typing_extensions import Buffer
 
 try:
     from typing import TypeAlias  # type: ignore
 except ImportError:
     from typing_extensions import TypeAlias
+
+from typing_extensions import Buffer
 
 
 from .types import (
@@ -651,8 +652,7 @@ def encode_annotations(value):
     return fields
 
 
-def encode_application_properties(value):
-    # type: (Optional[Dict[Union[str, bytes], Any]]) -> Dict[str, Any]
+def encode_application_properties(value: Optional[Dict[Union[str, bytes], Any]]) -> Dict[Union[str, bytes], Any]:
     """The application-properties section is a part of the bare message used for structured application data.
 
     <type name="application-properties" class="restricted" source="map" provides="section">
@@ -669,7 +669,7 @@ def encode_application_properties(value):
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
-    fields = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
+    fields: Dict[Union[str, bytes], Any] = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
     for key, data in value.items():
         cast(List, fields[VALUE]).append(({TYPE: AMQPTypes.string, VALUE: key}, data))
     return fields
@@ -819,7 +819,7 @@ def encode_unknown(output, value, **kwargs):
         raise TypeError("Unable to encode unknown value: {}".format(value))
 
 
-_FIELD_DEFINITIONS: Dict[FieldDefinition, Callable] = {
+_FIELD_DEFINITIONS = {
     FieldDefinition.fields: encode_fields,
     FieldDefinition.annotations: encode_annotations,
     FieldDefinition.message_id: encode_message_id,
@@ -877,11 +877,11 @@ def describe_performative(performative):
                 body.append(
                     {
                         TYPE: AMQPTypes.array,
-                        VALUE: [_FIELD_DEFINITIONS[field.type](v) for v in value],
+                        VALUE: [_FIELD_DEFINITIONS[field.type](v) for v in value],  # type: ignore
                     }
                 )
             else:
-                body.append(_FIELD_DEFINITIONS[field.type](value))
+                body.append(_FIELD_DEFINITIONS[field.type](value))  # type: ignore
         elif isinstance(field.type, ObjDefinition):
             body.append(describe_performative(value))
         else:

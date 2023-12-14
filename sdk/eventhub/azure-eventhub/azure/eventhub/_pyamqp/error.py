@@ -5,12 +5,12 @@
 #--------------------------------------------------------------------------
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
-from typing import Any, Union, Optional
 from enum import Enum
 from collections import namedtuple
 
 from .constants import SECURE_PORT, FIELD
 from .types import AMQPTypes, FieldDefinition
+
 
 class ErrorCondition(bytes, Enum):
     # Shared error conditions:
@@ -199,19 +199,19 @@ class AMQPException(Exception):
     :keyword str description: A description of the error.
     :keyword dict info: A dictionary of additional data associated with the error.
     """
-    def __init__(self, condition: bytes, **kwargs: Any):
-        self.condition: Union[bytes, Enum] = condition or ErrorCondition.UnknownError
-        self.description: Optional[Union[str, bytes]] = kwargs.get("description", None)
-        self.info: Optional[str] = kwargs.get("info", None)
-        self.message: Optional[str] = kwargs.get("message", None)
-        self.inner_error: Optional[str] = kwargs.get("error", None)
+    def __init__(self, condition, **kwargs):
+        self.condition = condition or ErrorCondition.UnknownError
+        self.description = kwargs.get("description", None)
+        self.info = kwargs.get("info", None)
+        self.message = kwargs.get("message", None)
+        self.inner_error = kwargs.get("error", None)
         message = self.message or "Error condition: {}".format(
             str(condition) if isinstance(condition, ErrorCondition) else condition.decode()
         )
         if self.description:
-            if isinstance(self.description, bytes):
+            try:
                 message += "\n Error Description: {}".format(self.description.decode())
-            else:
+            except (TypeError, AttributeError):
                 message += "\n Error Description: {}".format(self.description)
         super(AMQPException, self).__init__(message)
 
