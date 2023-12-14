@@ -35,7 +35,7 @@ import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
-from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, Mapping
+from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, Mapping, TypeVar
 import urllib.parse
 
 from azure.core import __version__ as azcore_version
@@ -44,19 +44,23 @@ from azure.core.exceptions import DecodeError
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from ._base import SansIOHTTPPolicy
 
-from ..transport import HttpRequest as LegacyHttpRequest
-from ..transport._base import _HttpResponseBase as LegacySansIOHttpResponse
-from ...rest import HttpRequest
-from ...rest._rest_py3 import _HttpResponseBase as SansIOHttpResponse
+from azure.core.pipeline.transport import (
+    HttpResponse as LegacyHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+)
+from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 
-HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
-HTTPResponseType = Union[LegacySansIOHttpResponse, SansIOHttpResponse]
-PipelineResponseType = PipelineResponse[HTTPRequestType, HTTPResponseType]
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+AllHttpResponseType = TypeVar(
+    "AllHttpResponseType", HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse
+)
+PipelineResponseType = PipelineResponse[HTTPRequestType, AllHttpResponseType]
 
 
-class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class HeadersPolicy(SansIOHTTPPolicy[HTTPRequestType, AllHttpResponseType]):
     """A simple policy that sends the given headers with the request.
 
     This will overwrite any headers already defined in the request. Headers can be
@@ -114,7 +118,7 @@ class _Unset:
     pass
 
 
-class RequestIdPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class RequestIdPolicy(SansIOHTTPPolicy[HTTPRequestType, AllHttpResponseType]):
     """A simple policy that sets the given request id in the header.
 
     This will overwrite request id that is already defined in the request. Request id can be
@@ -181,7 +185,7 @@ class RequestIdPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
             request.http_request.headers.update(header)
 
 
-class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, AllHttpResponseType]):
     """User-Agent Policy. Allows custom values to be added to the User-Agent header.
 
     :param str base_user_agent: Sets the base user agent value.
@@ -262,7 +266,7 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
             http_request.headers[self._USERAGENT] = self.user_agent
 
 
-class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, AllHttpResponseType]):
 
     """The logging policy in the pipeline is used to output HTTP network trace to the configured logger.
 
@@ -331,7 +335,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTy
     def on_response(
         self,
         request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+        response: PipelineResponse[HTTPRequestType, AllHttpResponseType],
     ) -> None:
         """Logs HTTP response to the DEBUG logger.
 
@@ -388,7 +392,7 @@ class _HiddenClassProperties(type):
 
 
 class HttpLoggingPolicy(
-    SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType],
+    SansIOHTTPPolicy[HTTPRequestType, AllHttpResponseType],
     metaclass=_HiddenClassProperties,
 ):
     """The Pipeline policy that handles logging of HTTP requests and responses.
@@ -519,7 +523,7 @@ class HttpLoggingPolicy(
     def on_response(
         self,
         request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+        response: PipelineResponse[HTTPRequestType, AllHttpResponseType],
     ) -> None:
         http_response = response.http_response
 
@@ -552,7 +556,7 @@ class HttpLoggingPolicy(
             logger.warning("Failed to log response: %s", repr(err))
 
 
-class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, AllHttpResponseType]):
     """Policy for decoding unstreamed response content.
 
     :param response_encoding: The encoding to use if known for this service (will disable auto-detection)
@@ -575,7 +579,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         cls,
         data: Optional[Union[AnyStr, IO[AnyStr]]],
         mime_type: Optional[str] = None,
-        response: Optional[HTTPResponseType] = None,
+        response: Optional[AllHttpResponseType] = None,
     ) -> Any:
         """Decode response data according to content-type.
 
@@ -648,7 +652,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     @classmethod
     def deserialize_from_http_generics(
         cls,
-        response: HTTPResponseType,
+        response: AllHttpResponseType,
         encoding: Optional[str] = None,
     ) -> Any:
         """Deserialize from HTTP response.
@@ -694,7 +698,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     def on_response(
         self,
         request: PipelineRequest[HTTPRequestType],
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+        response: PipelineResponse[HTTPRequestType, AllHttpResponseType],
     ) -> None:
         """Extract data from the body of a REST response object.
         This will load the entire payload in memory.
@@ -721,7 +725,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         )
 
 
-class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class ProxyPolicy(SansIOHTTPPolicy[HTTPRequestType, AllHttpResponseType]):
     """A proxy policy.
 
     Dictionary mapping protocol or protocol and host to the URL of the proxy
