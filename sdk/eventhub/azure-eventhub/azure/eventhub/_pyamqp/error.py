@@ -6,9 +6,8 @@
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from typing import Any, Union, Optional
-from enum import Enum
 from collections import namedtuple
-
+from enum import Enum
 from .constants import SECURE_PORT, FIELD
 from .types import AMQPTypes, FieldDefinition
 
@@ -201,7 +200,7 @@ class AMQPException(Exception):
     :keyword dict info: A dictionary of additional data associated with the error.
     """
     def __init__(self, condition: bytes, **kwargs: Any):
-        self.condition: Union[bytes, Enum] = condition or ErrorCondition.UnknownError
+        self.condition: Union[bytes, ErrorCondition] = condition or ErrorCondition.UnknownError
         self.description: Optional[Union[str, bytes]] = kwargs.get("description", None)
         self.info: Optional[str] = kwargs.get("info", None)
         self.message: Optional[str] = kwargs.get("message", None)
