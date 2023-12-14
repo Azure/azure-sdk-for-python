@@ -277,7 +277,7 @@ def _generate_set_tiers_subrequest_options(
     :paramtype lease_access_conditions: Optional[LeaseAccessConditions]
     :returns: A dictionary containing the set tiers sub-request options.
     :rtype: Dict[str, Any]
-    """ 
+    """
     if not tier:
         raise ValueError("A blob tier must be specified")
     if snapshot and version_id:
@@ -363,7 +363,7 @@ def _generate_set_tiers_options(
     :paramtype blobs: Union[str, Dict[str, Any], BlobProperties]
     :returns: A tuple containing the list of HttpRequests and the set tiers options.
     :rtype: Tuple[List[HttpRequest], Dict[str, Any]]
-    """ 
+    """
     timeout = kwargs.pop('timeout', None)
     raise_on_any_failure = kwargs.pop('raise_on_any_failure', True)
     rehydrate_priority = kwargs.pop('rehydrate_priority', None)
