@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import json
 import copy
-from asyncio.locks import Lock
+from threading import Lock
 import logging
 from typing import (
     Any,
