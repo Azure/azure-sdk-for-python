@@ -370,7 +370,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_INPUTS,
-                                data_window_size="P7D",
+                                data_window=BaselineDataRange(
+                                    lookback_window_size="default", lookback_window_offset="P0D"
+                                ),
                             )
                         if not signal.reference_data:
                             signal.reference_data = ReferenceData(
@@ -379,7 +381,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_INPUTS,
-                                data_window=BaselineDataRange(trailing_window_size="P7D", trailing_window_offset="P7D"),
+                                data_window=BaselineDataRange(
+                                    lookback_window_size="P7D", lookback_window_offset="default"
+                                ),
                             )
                     elif not mdc_input_enabled and not (signal.production_data and signal.reference_data):
                         # if target or baseline dataset is absent and data collector for input is not enabled,
@@ -401,7 +405,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                                data_window_size="P7D",
+                                data_window=BaselineDataRange(
+                                    lookback_window_size="default", lookback_window_offset="P0D"
+                                ),
                             )
                         if not signal.reference_data:
                             signal.reference_data = ReferenceData(
@@ -410,7 +416,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
                                 ),
                                 data_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                                data_window=BaselineDataRange(trailing_window_size="P7D", trailing_window_offset="P7D"),
+                                data_window=BaselineDataRange(
+                                    lookback_window_size="P7D", lookback_window_offset="default"
+                                ),
                             )
                     elif not mdc_output_enabled and not (signal.production_data and signal.reference_data):
                         # if target dataset is absent and data collector for output is not enabled,
@@ -433,7 +441,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                         type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
                                     ),
                                     data_context=MonitorDatasetContext.MODEL_INPUTS,
-                                    data_window_size="P7D",
+                                    data_window=BaselineDataRange(
+                                        lookback_window_size="default", lookback_window_offset="P0D"
+                                    ),
                                 ),
                                 FADProductionData(
                                     input_data=Input(
@@ -441,7 +451,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                                         type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
                                     ),
                                     data_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                                    data_window_size="P7D",
+                                    data_window=BaselineDataRange(
+                                        lookback_window_size="default", lookback_window_offset="P0D"
+                                    ),
                                 ),
                             ]
                     elif not mdc_output_enabled and not signal.production_data:

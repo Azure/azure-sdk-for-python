@@ -26,12 +26,16 @@ class AzureOpenAIConnection(BaseConnection):
     :type target: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
-    :param credentials: The credentials for authenticating to the external resource.
+    :param credentials: The credentials for authenticating the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for.
     :type api_version: Optional[str]
     :param api_type: The api type that this connection was created for. Defaults to "Azure" and currently rarely changes.
     :type api_type: str
+    :param is_shared: For connections created for a project, this determines if the connection
+        is shared amongst other connections with that project's parent AI resource.
+        Defaults to true.
+    :type is_shared: bool
     """
 
     def __init__(
@@ -136,10 +140,14 @@ class AzureAISearchConnection(BaseConnection):
     :type target: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
-    :param credentials: The credentials for authenticating to the external resource.
+    :param credentials: The credentials for authenticating the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for. Only applies to certain connection types.
     :type api_version: Optional[str]
+    :param is_shared: For connections created for a project, this determines if the connection
+        is shared amongst other connections with that project's parent AI resource.
+        Defaults to true.
+    :type is_shared: bool
     """
 
     def __init__(
@@ -195,7 +203,7 @@ class AzureAISearchConnection(BaseConnection):
 class AzureAIServiceConnection(BaseConnection):
     """A Connection for an Azure Cognitive Service. Note: This object usually shouldn't be created manually by users.
     To get the default AzureOpenAIConnection for an AI Resource, use an AIClient object to call the
-    'get_default_aoai_connection' function.
+    'get_default_content_safety_connection' function.
 
     :param name: Name of the connection.
     :type name: str
@@ -203,13 +211,17 @@ class AzureAIServiceConnection(BaseConnection):
     :type target: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
-    :param credentials: The credentials for authenticating to the external resource.
+    :param credentials: The credentials for authenticating the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for.
     :type api_version: Optional[str]
     :param kind: The kind of ai service that this connection points to. Valid inputs include:
         "AzureOpenAI", "ContentSafety", and "Speech"
     :type kind: str
+    :param is_shared: For connections created for a project, this determines if the connection
+        is shared amongst other connections with that project's parent AI resource.
+        Defaults to true.
+    :type is_shared: bool
     """
 
     def __init__(
@@ -263,3 +275,56 @@ class AzureAIServiceConnection(BaseConnection):
         :rtype: str
         """
         self._workspace_connection.tags[CONNECTION_KIND_KEY] = value
+
+class GitHubConnection(BaseConnection):
+    """A Connection to GitHub.
+
+    :param name: Name of the connection.
+    :type name: str
+    :param target: The URL or ARM resource ID of the external resource.
+    :type target: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict
+    :param credentials: The credentials for authenticating the external resource.
+    :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
+    :param is_shared: For connections created for a project, this determines if the connection
+        is shared amongst other connections with that project's parent AI resource.
+        Defaults to true.
+    :type is_shared: bool
+    """
+
+    def __init__(
+        self,
+        *,
+        target: str,
+        credentials: ApiKeyConfiguration,
+        **kwargs,
+    ):
+        kwargs.pop("type", None)  # make sure we never somehow use wrong type
+        super().__init__(target=target, type="git", credentials=credentials, **kwargs)
+
+class CustomConnection(BaseConnection):
+    """A Connection to system that's not encapsulated by other connection types.
+
+    :param name: Name of the connection.
+    :type name: str
+    :param target: The URL or ARM resource ID of the external resource.
+    :type target: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict
+    :param credentials: The credentials for authenticating the external resource.
+    :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
+    :param is_shared: For connections created for a project, this determines if the connection
+        is shared amongst other connections with that project's parent AI resource.
+        Defaults to true.
+    :type is_shared: bool
+    """
+    def __init__(
+        self,
+        *,
+        target: str,
+        credentials: ApiKeyConfiguration,
+        **kwargs,
+    ):
+        kwargs.pop("type", None)  # make sure we never somehow use wrong type
+        super().__init__(target=target, type="custom", credentials=credentials, **kwargs)
