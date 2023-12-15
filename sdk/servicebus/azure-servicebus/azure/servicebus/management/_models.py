@@ -421,7 +421,7 @@ class QueueProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     ) -> InternalQueueDescription:
         kwargs = kwargs or {}
 
-        if not self._internal_qd:
+        if not hasattr(self, "_internal_qd"):
             internal_qd = InternalQueueDescription()
             self._internal_qd = internal_qd
 
@@ -746,7 +746,7 @@ class TopicProperties(DictMixin):  # pylint:disable=too-many-instance-attributes
     def _to_internal_entity(self, kwargs: Optional[Dict] = None) -> InternalTopicDescription:
         kwargs = kwargs or {}
 
-        if not self._internal_td:
+        if not hasattr(self, "_internal_td"):
             self._internal_td = InternalTopicDescription()
         self._internal_td.default_message_time_to_live = avoid_timedelta_overflow(  # type: ignore
             kwargs.pop(
@@ -1045,7 +1045,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
     ) -> InternalSubscriptionDescription:
         kwargs = kwargs or {}
 
-        if not self._internal_sd:
+        if not hasattr(self, "_internal_sd"):
             self._internal_sd = InternalSubscriptionDescription()
         self._internal_sd.lock_duration = kwargs.pop(
             "lock_duration", self.lock_duration
@@ -1269,7 +1269,7 @@ class RuleProperties(DictMixin):
         kwargs: Optional[Dict] = None
     ) -> InternalRuleDescription:
         kwargs = kwargs or {}
-        if not self._internal_rule:
+        if not hasattr(self, "_internal_rule"):
             self._internal_rule = InternalRuleDescription()
 
         rule_filter = kwargs.pop("filter", self.filter)
