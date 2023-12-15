@@ -28,14 +28,13 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 def generate_sas(
-    endpoint,
-    shared_access_key,
-    expiration_date_utc,
+    endpoint: str,
+    shared_access_key: str,
+    expiration_date_utc: datetime,
     *,
-    api_version = constants.DEFAULT_API_VERSION,
-    **kwargs # pylint: disable=unused-argument
-):
-    # type: (str, str, datetime, Any) -> str
+    api_version: str = constants.DEFAULT_API_VERSION,
+    **kwargs: Any # pylint: disable=unused-argument
+) -> str:
     """Helper method to generate shared access signature given hostname, key, and expiration date.
     :param str endpoint: The topic endpoint to send the events to.
         Similar to <YOUR-TOPIC-NAME>.<YOUR-REGION-NAME>-1.eventgrid.azure.net
