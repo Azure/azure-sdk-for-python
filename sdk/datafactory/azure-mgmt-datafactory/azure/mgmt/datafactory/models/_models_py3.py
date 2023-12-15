@@ -5889,6 +5889,9 @@ class StoreWriteSettings(_serialization.Model):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     """
 
     _validation = {
@@ -5901,6 +5904,7 @@ class StoreWriteSettings(_serialization.Model):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
     }
 
     _subtype_map = {
@@ -5922,6 +5926,7 @@ class StoreWriteSettings(_serialization.Model):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5936,6 +5941,9 @@ class StoreWriteSettings(_serialization.Model):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
@@ -5943,6 +5951,7 @@ class StoreWriteSettings(_serialization.Model):
         self.max_concurrent_connections = max_concurrent_connections
         self.disable_metrics_collection = disable_metrics_collection
         self.copy_behavior = copy_behavior
+        self.metadata = metadata
 
 
 class AzureBlobFSWriteSettings(StoreWriteSettings):
@@ -5963,6 +5972,9 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     :ivar block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type: integer
      (or Expression with resultType integer).
     :vartype block_size_in_mb: JSON
@@ -5978,6 +5990,7 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
         "block_size_in_mb": {"key": "blockSizeInMB", "type": "object"},
     }
 
@@ -5988,6 +6001,7 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         block_size_in_mb: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -6003,6 +6017,9 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         :keyword block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type:
          integer (or Expression with resultType integer).
         :paramtype block_size_in_mb: JSON
@@ -6012,6 +6029,7 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "AzureBlobFSWriteSettings"
@@ -6443,6 +6461,9 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     :ivar block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type: integer
      (or Expression with resultType integer).
     :vartype block_size_in_mb: JSON
@@ -6458,6 +6479,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
         "block_size_in_mb": {"key": "blockSizeInMB", "type": "object"},
     }
 
@@ -6468,6 +6490,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         block_size_in_mb: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -6483,6 +6506,9 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         :keyword block_size_in_mb: Indicates the block size(MB) when writing data to blob. Type:
          integer (or Expression with resultType integer).
         :paramtype block_size_in_mb: JSON
@@ -6492,6 +6518,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "AzureBlobStorageWriteSettings"
@@ -8960,6 +8987,9 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     :ivar expiry_date_time: Specifies the expiry time of the written files. The time is applied to
      the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type: string
      (or Expression with resultType string).
@@ -8976,6 +9006,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
         "expiry_date_time": {"key": "expiryDateTime", "type": "object"},
     }
 
@@ -8986,6 +9017,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         expiry_date_time: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -9001,6 +9033,9 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         :keyword expiry_date_time: Specifies the expiry time of the written files. The time is applied
          to the UTC time zone in the format of "2018-12-01T05:00:00Z". Default value is NULL. Type:
          string (or Expression with resultType string).
@@ -9011,6 +9046,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "AzureDataLakeStoreWriteSettings"
@@ -9387,6 +9423,9 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     """
 
     _validation = {
@@ -9399,6 +9438,7 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
     }
 
     def __init__(
@@ -9408,6 +9448,7 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9422,12 +9463,16 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         """
         super().__init__(
             additional_properties=additional_properties,
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "AzureFileStorageWriteSettings"
@@ -9470,7 +9515,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
     :vartype function_name: JSON
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
-     "application/json" }. Type: string (or Expression with resultType string).
+     "application/json" }. Type: dictionary (or Expression with resultType dictionary).
     :vartype headers: JSON
     :ivar body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
@@ -9550,7 +9595,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         :paramtype function_name: JSON
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
-         "application/json" }. Type: string (or Expression with resultType string).
+         "application/json" }. Type: dictionary (or Expression with resultType dictionary).
         :paramtype headers: JSON
         :keyword body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
          method, not allowed for GET method Type: string (or Expression with resultType string).
@@ -9594,7 +9639,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
     :ivar function_app_url: The endpoint of the Azure Function App. URL will be in the format
-     https://:code:`<accountName>`.azurewebsites.net. Required.
+     https://:code:`<accountName>`.azurewebsites.net. Type: string (or Expression with resultType
+     string). Required.
     :vartype function_app_url: JSON
     :ivar function_key: Function or Host key for Azure Function App.
     :vartype function_key: ~azure.mgmt.datafactory.models.SecretBase
@@ -9603,7 +9649,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
     :vartype encrypted_credential: str
     :ivar credential: The credential reference containing authentication information.
     :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
-    :ivar resource_id: Allowed token audiences for azure function.
+    :ivar resource_id: Allowed token audiences for azure function. Type: string (or Expression with
+     resultType string).
     :vartype resource_id: JSON
     :ivar authentication: Type of authentication (Required to specify MSI) used to connect to
      AzureFunction. Type: string (or Expression with resultType string).
@@ -9659,7 +9706,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
         :keyword function_app_url: The endpoint of the Azure Function App. URL will be in the format
-         https://:code:`<accountName>`.azurewebsites.net. Required.
+         https://:code:`<accountName>`.azurewebsites.net. Type: string (or Expression with resultType
+         string). Required.
         :paramtype function_app_url: JSON
         :keyword function_key: Function or Host key for Azure Function App.
         :paramtype function_key: ~azure.mgmt.datafactory.models.SecretBase
@@ -9668,7 +9716,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
         :paramtype encrypted_credential: str
         :keyword credential: The credential reference containing authentication information.
         :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
-        :keyword resource_id: Allowed token audiences for azure function.
+        :keyword resource_id: Allowed token audiences for azure function. Type: string (or Expression
+         with resultType string).
         :paramtype resource_id: JSON
         :keyword authentication: Type of authentication (Required to specify MSI) used to connect to
          AzureFunction. Type: string (or Expression with resultType string).
@@ -10343,7 +10392,7 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
     :vartype ml_pipeline_parameters: JSON
     :ivar data_path_assignments: Dictionary used for changing data path assignments without
      retraining. Values will be passed in the dataPathAssignments property of the published pipeline
-     execution request. Type: object with key value pairs (or Expression with resultType object).
+     execution request. Type: object (or Expression with resultType object).
     :vartype data_path_assignments: JSON
     :ivar ml_parent_run_id: The parent Azure ML Service pipeline run id. This information will be
      passed in the ParentRunId property of the published pipeline execution request. Type: string
@@ -10446,7 +10495,7 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
         :paramtype ml_pipeline_parameters: JSON
         :keyword data_path_assignments: Dictionary used for changing data path assignments without
          retraining. Values will be passed in the dataPathAssignments property of the published pipeline
-         execution request. Type: object with key value pairs (or Expression with resultType object).
+         execution request. Type: object (or Expression with resultType object).
         :paramtype data_path_assignments: JSON
         :keyword ml_parent_run_id: The parent Azure ML Service pipeline run id. This information will
          be passed in the ParentRunId property of the published pipeline execution request. Type: string
@@ -13064,7 +13113,8 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -13150,7 +13200,8 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -15679,9 +15730,9 @@ class CmdkeySetup(CustomSetupBase):
 
     :ivar type: The type of custom setup. Required.
     :vartype type: str
-    :ivar target_name: The server name of data source access. Required.
+    :ivar target_name: The server name of data source access. Type: string. Required.
     :vartype target_name: JSON
-    :ivar user_name: The user name of data source access. Required.
+    :ivar user_name: The user name of data source access. Type: string. Required.
     :vartype user_name: JSON
     :ivar password: The password of data source access. Required.
     :vartype password: ~azure.mgmt.datafactory.models.SecretBase
@@ -15703,9 +15754,9 @@ class CmdkeySetup(CustomSetupBase):
 
     def __init__(self, *, target_name: JSON, user_name: JSON, password: "_models.SecretBase", **kwargs: Any) -> None:
         """
-        :keyword target_name: The server name of data source access. Required.
+        :keyword target_name: The server name of data source access. Type: string. Required.
         :paramtype target_name: JSON
-        :keyword user_name: The user name of data source access. Required.
+        :keyword user_name: The user name of data source access. Type: string. Required.
         :paramtype user_name: JSON
         :keyword password: The password of data source access. Required.
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
@@ -27071,6 +27122,9 @@ class FileServerWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     """
 
     _validation = {
@@ -27083,6 +27137,7 @@ class FileServerWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
     }
 
     def __init__(
@@ -27092,6 +27147,7 @@ class FileServerWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -27106,12 +27162,16 @@ class FileServerWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         """
         super().__init__(
             additional_properties=additional_properties,
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "FileServerWriteSettings"
@@ -31334,8 +31394,8 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
     :vartype parameters: dict[str, ~azure.mgmt.datafactory.models.ParameterSpecification]
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
-    :ivar cluster_size: Number of worker/data nodes in the cluster. Suggestion value: 4. Type:
-     string (or Expression with resultType string). Required.
+    :ivar cluster_size: Number of worker/data nodes in the cluster. Suggestion value: 4. Type: int
+     (or Expression with resultType int). Required.
     :vartype cluster_size: JSON
     :ivar time_to_live: The allowed idle time for the on-demand HDInsight cluster. Specifies how
      long the on-demand HDInsight cluster stays alive after completion of an activity run if there
@@ -31552,7 +31612,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
         :keyword cluster_size: Number of worker/data nodes in the cluster. Suggestion value: 4. Type:
-         string (or Expression with resultType string). Required.
+         int (or Expression with resultType int). Required.
         :paramtype cluster_size: JSON
         :keyword time_to_live: The allowed idle time for the on-demand HDInsight cluster. Specifies how
          long the on-demand HDInsight cluster stays alive after completion of an activity run if there
@@ -32836,7 +32896,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
      authentication.
     :vartype password: ~azure.mgmt.datafactory.models.SecretBase
     :ivar auth_headers: The additional HTTP headers in the request to RESTful API used for
-     authorization. Type: object (or Expression with resultType object).
+     authorization. Type: key value pairs (value should be string type).
     :vartype auth_headers: JSON
     :ivar embedded_cert_data: Base64 encoded certificate data for ClientCertificate authentication.
      For on-premises copy with ClientCertificate authentication, either CertThumbprint or
@@ -32926,7 +32986,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
          EmbeddedCertData authentication.
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
         :keyword auth_headers: The additional HTTP headers in the request to RESTful API used for
-         authorization. Type: object (or Expression with resultType object).
+         authorization. Type: key value pairs (value should be string type).
         :paramtype auth_headers: JSON
         :keyword embedded_cert_data: Base64 encoded certificate data for ClientCertificate
          authentication. For on-premises copy with ClientCertificate authentication, either
@@ -37272,6 +37332,9 @@ class LakeHouseWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     """
 
     _validation = {
@@ -37284,6 +37347,7 @@ class LakeHouseWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
     }
 
     def __init__(
@@ -37293,6 +37357,7 @@ class LakeHouseWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -37307,12 +37372,16 @@ class LakeHouseWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         """
         super().__init__(
             additional_properties=additional_properties,
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "LakeHouseWriteSettings"
@@ -42611,7 +42680,7 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
     :ivar password: Password of the OData service.
     :vartype password: ~azure.mgmt.datafactory.models.SecretBase
     :ivar auth_headers: The additional HTTP headers in the request to RESTful API used for
-     authorization. Type: object (or Expression with resultType object).
+     authorization. Type: key value pairs (value should be string type).
     :vartype auth_headers: JSON
     :ivar tenant: Specify the tenant information (domain name or tenant ID) under which your
      application resides. Type: string (or Expression with resultType string).
@@ -42731,7 +42800,7 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         :keyword password: Password of the OData service.
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
         :keyword auth_headers: The additional HTTP headers in the request to RESTful API used for
-         authorization. Type: object (or Expression with resultType object).
+         authorization. Type: key value pairs (value should be string type).
         :paramtype auth_headers: JSON
         :keyword tenant: Specify the tenant information (domain name or tenant ID) under which your
          application resides. Type: string (or Expression with resultType string).
@@ -50553,7 +50622,7 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
      string (or Expression with resultType string).
     :vartype request_method: JSON
     :ivar additional_headers: The additional HTTP headers in the request to the RESTful API. Type:
-     string (or Expression with resultType string).
+     key value pairs (value should be string type).
     :vartype additional_headers: JSON
     :ivar http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the timeout
      to get a response, not the timeout to read response data. Default value: 00:01:40. Type: string
@@ -50563,7 +50632,8 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
     :ivar request_interval: The time to await before sending next request, in milliseconds.
     :vartype request_interval: JSON
     :ivar http_compression_type: Http Compression Type to Send data in compressed format with
-     Optimal Compression Level, Default is None. And The Only Supported option is Gzip.
+     Optimal Compression Level, Default is None. And The Only Supported option is Gzip. Type: string
+     (or Expression with resultType string).
     :vartype http_compression_type: JSON
     """
 
@@ -50630,7 +50700,7 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
          Type: string (or Expression with resultType string).
         :paramtype request_method: JSON
         :keyword additional_headers: The additional HTTP headers in the request to the RESTful API.
-         Type: string (or Expression with resultType string).
+         Type: key value pairs (value should be string type).
         :paramtype additional_headers: JSON
         :keyword http_request_timeout: The timeout (TimeSpan) to get an HTTP response. It is the
          timeout to get a response, not the timeout to read response data. Default value: 00:01:40.
@@ -50640,7 +50710,8 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
         :keyword request_interval: The time to await before sending next request, in milliseconds.
         :paramtype request_interval: JSON
         :keyword http_compression_type: Http Compression Type to Send data in compressed format with
-         Optimal Compression Level, Default is None. And The Only Supported option is Gzip.
+         Optimal Compression Level, Default is None. And The Only Supported option is Gzip. Type: string
+         (or Expression with resultType string).
         :paramtype http_compression_type: JSON
         """
         super().__init__(
@@ -50703,7 +50774,7 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
     :ivar request_interval: The time to await before sending next page request.
     :vartype request_interval: JSON
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
-     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+     key value pairs (value should be string type).
     :vartype additional_columns: JSON
     """
 
@@ -50780,7 +50851,7 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
         :keyword request_interval: The time to await before sending next page request.
         :paramtype request_interval: JSON
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
-         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+         key value pairs (value should be string type).
         :paramtype additional_columns: JSON
         """
         super().__init__(
@@ -57056,6 +57127,9 @@ class SftpWriteSettings(StoreWriteSettings):
     :vartype disable_metrics_collection: JSON
     :ivar copy_behavior: The type of copy behavior for copy sink.
     :vartype copy_behavior: JSON
+    :ivar metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+     (or Expression with resultType array of objects).
+    :vartype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
     :ivar operation_timeout: Specifies the timeout for writing each chunk to SFTP server. Default
      value: 01:00:00 (one hour). Type: string (or Expression with resultType string).
     :vartype operation_timeout: JSON
@@ -57075,6 +57149,7 @@ class SftpWriteSettings(StoreWriteSettings):
         "max_concurrent_connections": {"key": "maxConcurrentConnections", "type": "object"},
         "disable_metrics_collection": {"key": "disableMetricsCollection", "type": "object"},
         "copy_behavior": {"key": "copyBehavior", "type": "object"},
+        "metadata": {"key": "metadata", "type": "[MetadataItem]"},
         "operation_timeout": {"key": "operationTimeout", "type": "object"},
         "use_temp_file_rename": {"key": "useTempFileRename", "type": "object"},
     }
@@ -57086,6 +57161,7 @@ class SftpWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
+        metadata: Optional[List["_models.MetadataItem"]] = None,
         operation_timeout: Optional[JSON] = None,
         use_temp_file_rename: Optional[JSON] = None,
         **kwargs: Any
@@ -57102,6 +57178,9 @@ class SftpWriteSettings(StoreWriteSettings):
         :paramtype disable_metrics_collection: JSON
         :keyword copy_behavior: The type of copy behavior for copy sink.
         :paramtype copy_behavior: JSON
+        :keyword metadata: Specify the custom metadata to be added to sink data. Type: array of objects
+         (or Expression with resultType array of objects).
+        :paramtype metadata: list[~azure.mgmt.datafactory.models.MetadataItem]
         :keyword operation_timeout: Specifies the timeout for writing each chunk to SFTP server.
          Default value: 01:00:00 (one hour). Type: string (or Expression with resultType string).
         :paramtype operation_timeout: JSON
@@ -57115,6 +57194,7 @@ class SftpWriteSettings(StoreWriteSettings):
             max_concurrent_connections=max_concurrent_connections,
             disable_metrics_collection=disable_metrics_collection,
             copy_behavior=copy_behavior,
+            metadata=metadata,
             **kwargs
         )
         self.type: str = "SftpWriteSettings"
@@ -59145,7 +59225,8 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
      is ReadCommitted. Type: string (or Expression with resultType string).
     :vartype isolation_level: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -59228,7 +59309,8 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
          value is ReadCommitted. Type: string (or Expression with resultType string).
         :paramtype isolation_level: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -59332,8 +59414,8 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
     :ivar sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean (or
      Expression with resultType boolean).
     :vartype sql_writer_use_table_lock: JSON
-    :ivar write_behavior: White behavior when copying data into azure SQL MI. Type:
-     SqlWriteBehaviorEnum (or Expression with resultType SqlWriteBehaviorEnum).
+    :ivar write_behavior: White behavior when copying data into azure SQL MI. Type: string (or
+     Expression with resultType string).
     :vartype write_behavior: JSON
     :ivar upsert_settings: SQL upsert settings.
     :vartype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -59429,8 +59511,8 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
         :keyword sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean
          (or Expression with resultType boolean).
         :paramtype sql_writer_use_table_lock: JSON
-        :keyword write_behavior: White behavior when copying data into azure SQL MI. Type:
-         SqlWriteBehaviorEnum (or Expression with resultType SqlWriteBehaviorEnum).
+        :keyword write_behavior: White behavior when copying data into azure SQL MI. Type: string (or
+         Expression with resultType string).
         :paramtype write_behavior: JSON
         :keyword upsert_settings: SQL upsert settings.
         :paramtype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -59501,7 +59583,8 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -59587,7 +59670,8 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -59830,8 +59914,8 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
     :ivar sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean (or
      Expression with resultType boolean).
     :vartype sql_writer_use_table_lock: JSON
-    :ivar write_behavior: Write behavior when copying data into sql server. Type:
-     SqlWriteBehaviorEnum (or Expression with resultType SqlWriteBehaviorEnum).
+    :ivar write_behavior: Write behavior when copying data into sql server. Type: string (or
+     Expression with resultType string).
     :vartype write_behavior: JSON
     :ivar upsert_settings: SQL upsert settings.
     :vartype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -59927,8 +60011,8 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
         :keyword sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean
          (or Expression with resultType boolean).
         :paramtype sql_writer_use_table_lock: JSON
-        :keyword write_behavior: Write behavior when copying data into sql server. Type:
-         SqlWriteBehaviorEnum (or Expression with resultType SqlWriteBehaviorEnum).
+        :keyword write_behavior: Write behavior when copying data into sql server. Type: string (or
+         Expression with resultType string).
         :paramtype write_behavior: JSON
         :keyword upsert_settings: SQL upsert settings.
         :paramtype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -59999,7 +60083,8 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
     :ivar produce_additional_types: Which additional types to produce.
     :vartype produce_additional_types: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -60085,7 +60170,8 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
         :keyword produce_additional_types: Which additional types to produce.
         :paramtype produce_additional_types: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -60401,8 +60487,8 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
     :ivar sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean (or
      Expression with resultType boolean).
     :vartype sql_writer_use_table_lock: JSON
-    :ivar write_behavior: Write behavior when copying data into sql. Type: SqlWriteBehaviorEnum (or
-     Expression with resultType SqlWriteBehaviorEnum).
+    :ivar write_behavior: Write behavior when copying data into sql. Type: string (or Expression
+     with resultType string).
     :vartype write_behavior: JSON
     :ivar upsert_settings: SQL upsert settings.
     :vartype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -60498,8 +60584,8 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
         :keyword sql_writer_use_table_lock: Whether to use table lock during bulk copy. Type: boolean
          (or Expression with resultType boolean).
         :paramtype sql_writer_use_table_lock: JSON
-        :keyword write_behavior: Write behavior when copying data into sql. Type: SqlWriteBehaviorEnum
-         (or Expression with resultType SqlWriteBehaviorEnum).
+        :keyword write_behavior: Write behavior when copying data into sql. Type: string (or Expression
+         with resultType string).
         :paramtype write_behavior: JSON
         :keyword upsert_settings: SQL upsert settings.
         :paramtype upsert_settings: ~azure.mgmt.datafactory.models.SqlUpsertSettings
@@ -60568,7 +60654,8 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
      is ReadCommitted. Type: string (or Expression with resultType string).
     :vartype isolation_level: JSON
     :ivar partition_option: The partition mechanism that will be used for Sql read in parallel.
-     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+     Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+     Expression with resultType string).
     :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for Sql source partitioning.
     :vartype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -60650,7 +60737,8 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
          value is ReadCommitted. Type: string (or Expression with resultType string).
         :paramtype isolation_level: JSON
         :keyword partition_option: The partition mechanism that will be used for Sql read in parallel.
-         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange".
+         Possible values include: "None", "PhysicalPartitionsOfTable", "DynamicRange". Type: string (or
+         Expression with resultType string).
         :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for Sql source partitioning.
         :paramtype partition_settings: ~azure.mgmt.datafactory.models.SqlPartitionSettings
@@ -65657,7 +65745,7 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
     :vartype url: JSON
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
-     "application/json" }. Type: string (or Expression with resultType string).
+     "application/json" }. Type: dictionary (or Expression with resultType dictionary).
     :vartype headers: JSON
     :ivar body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
@@ -65666,6 +65754,15 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
     :vartype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
     :ivar disable_cert_validation: When set to true, Certificate validation will be disabled.
     :vartype disable_cert_validation: bool
+    :ivar http_request_timeout: Timeout for the HTTP request to get a response. Format is in
+     TimeSpan (hh:mm:ss). This value is the timeout to get a response, not the activity timeout. The
+     default value is 00:01:00 (1 minute). The range is from 1 to 10 minutes.
+    :vartype http_request_timeout: JSON
+    :ivar turn_off_async: Option to disable invoking HTTP GET on location given in response header
+     of a HTTP 202 Response. If set true, it stops invoking HTTP GET on http location given in
+     response header. If set false then continues to invoke HTTP GET call on location given in http
+     response headers.
+    :vartype turn_off_async: bool
     :ivar datasets: List of datasets passed to web endpoint.
     :vartype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
     :ivar linked_services: List of linked services passed to web endpoint.
@@ -65698,6 +65795,8 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         "body": {"key": "typeProperties.body", "type": "object"},
         "authentication": {"key": "typeProperties.authentication", "type": "WebActivityAuthentication"},
         "disable_cert_validation": {"key": "typeProperties.disableCertValidation", "type": "bool"},
+        "http_request_timeout": {"key": "typeProperties.httpRequestTimeout", "type": "object"},
+        "turn_off_async": {"key": "typeProperties.turnOffAsync", "type": "bool"},
         "datasets": {"key": "typeProperties.datasets", "type": "[DatasetReference]"},
         "linked_services": {"key": "typeProperties.linkedServices", "type": "[LinkedServiceReference]"},
         "connect_via": {"key": "typeProperties.connectVia", "type": "IntegrationRuntimeReference"},
@@ -65721,6 +65820,8 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         body: Optional[JSON] = None,
         authentication: Optional["_models.WebActivityAuthentication"] = None,
         disable_cert_validation: Optional[bool] = None,
+        http_request_timeout: Optional[JSON] = None,
+        turn_off_async: Optional[bool] = None,
         datasets: Optional[List["_models.DatasetReference"]] = None,
         linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
@@ -65757,7 +65858,7 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         :paramtype url: JSON
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
-         "application/json" }. Type: string (or Expression with resultType string).
+         "application/json" }. Type: dictionary (or Expression with resultType dictionary).
         :paramtype headers: JSON
         :keyword body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
          method, not allowed for GET method Type: string (or Expression with resultType string).
@@ -65766,6 +65867,15 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         :paramtype authentication: ~azure.mgmt.datafactory.models.WebActivityAuthentication
         :keyword disable_cert_validation: When set to true, Certificate validation will be disabled.
         :paramtype disable_cert_validation: bool
+        :keyword http_request_timeout: Timeout for the HTTP request to get a response. Format is in
+         TimeSpan (hh:mm:ss). This value is the timeout to get a response, not the activity timeout. The
+         default value is 00:01:00 (1 minute). The range is from 1 to 10 minutes.
+        :paramtype http_request_timeout: JSON
+        :keyword turn_off_async: Option to disable invoking HTTP GET on location given in response
+         header of a HTTP 202 Response. If set true, it stops invoking HTTP GET on http location given
+         in response header. If set false then continues to invoke HTTP GET call on location given in
+         http response headers.
+        :paramtype turn_off_async: bool
         :keyword datasets: List of datasets passed to web endpoint.
         :paramtype datasets: list[~azure.mgmt.datafactory.models.DatasetReference]
         :keyword linked_services: List of linked services passed to web endpoint.
@@ -65792,6 +65902,8 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         self.body = body
         self.authentication = authentication
         self.disable_cert_validation = disable_cert_validation
+        self.http_request_timeout = http_request_timeout
+        self.turn_off_async = turn_off_async
         self.datasets = datasets
         self.linked_services = linked_services
         self.connect_via = connect_via
@@ -66088,7 +66200,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
     :vartype timeout: str
     :ivar headers: Represents the headers that will be sent to the request. For example, to set the
      language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
-     "application/json" }. Type: string (or Expression with resultType string).
+     "application/json" }. Type: dictionary (or Expression with resultType dictionary).
     :vartype headers: JSON
     :ivar body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
      method, not allowed for GET method Type: string (or Expression with resultType string).
@@ -66180,7 +66292,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         :paramtype timeout: str
         :keyword headers: Represents the headers that will be sent to the request. For example, to set
          the language and type on a request: "headers" : { "Accept-Language": "en-us", "Content-Type":
-         "application/json" }. Type: string (or Expression with resultType string).
+         "application/json" }. Type: dictionary (or Expression with resultType dictionary).
         :paramtype headers: JSON
         :keyword body: Represents the payload that will be sent to the endpoint. Required for POST/PUT
          method, not allowed for GET method Type: string (or Expression with resultType string).
