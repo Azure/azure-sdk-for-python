@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from ._mixin import DictMixin
 from ._client_base import _parse_conn_str
 
@@ -17,18 +17,18 @@ class EventHubConnectionStringProperties(DictMixin):
         *,
         fully_qualified_namespace: str,
         endpoint: str,
-        eventhub_name: str,
-        shared_access_signature: str,
-        shared_access_key_name: str,
-        shared_access_key: str,
+        eventhub_name: Optional[str] = None,
+        shared_access_signature: Optional[str] = None,
+        shared_access_key_name: Optional[str] = None,
+        shared_access_key: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         self._fully_qualified_namespace: str = fully_qualified_namespace
         self._endpoint: str = endpoint
-        self._eventhub_name: str = eventhub_name
-        self._shared_access_signature: str = shared_access_signature
-        self._shared_access_key_name: str = shared_access_key_name
-        self._shared_access_key: str = shared_access_key
+        self._eventhub_name: Optional[str] = eventhub_name
+        self._shared_access_signature: Optional[str] = shared_access_signature
+        self._shared_access_key_name: Optional[str] = shared_access_key_name
+        self._shared_access_key: Optional[str] = shared_access_key
 
     @property
     def fully_qualified_namespace(self) -> str:
@@ -48,7 +48,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._endpoint
 
     @property
-    def eventhub_name(self) -> str:
+    def eventhub_name(self) -> Optional[str]:
         """Optional. The name of the Event Hub, represented by `EntityPath` in the connection string.
 
         :rtype: str
@@ -56,7 +56,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._eventhub_name
 
     @property
-    def shared_access_signature(self) -> str:
+    def shared_access_signature(self) -> Optional[str]:
         """
         This can be provided instead of the shared_access_key_name and the shared_access_key.
 
@@ -65,7 +65,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._shared_access_signature
 
     @property
-    def shared_access_key_name(self) -> str:
+    def shared_access_key_name(self) -> Optional[str]:
         """
         The name of the shared_access_key. This must be used along with the shared_access_key.
 
@@ -74,7 +74,7 @@ class EventHubConnectionStringProperties(DictMixin):
         return self._shared_access_key_name
 
     @property
-    def shared_access_key(self) -> str:
+    def shared_access_key(self) -> Optional[str]:
         """
         The shared_access_key can be used along with the shared_access_key_name as a credential.
 

@@ -20,8 +20,7 @@ from typing import (
     Iterable,
     Tuple,
     Mapping,
-    Callable,
-    TypeVar
+    Callable
 )
 
 from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
@@ -35,7 +34,6 @@ from ._constants import (
     PROP_LAST_ENQUEUED_OFFSET,
 )
 
-S = TypeVar("S", bound=Union[str, bytes, Union[str, bytes]])
 
 if TYPE_CHECKING:
     # pylint: disable=ungrouped-imports
