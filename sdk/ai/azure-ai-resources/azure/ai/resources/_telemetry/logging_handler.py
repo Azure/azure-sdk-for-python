@@ -21,7 +21,7 @@ from opencensus.ext.azure.common.protocol import (
 )
 from opencensus.trace import config_integration
 
-from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook, CustomDimensionsFilter
+from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook, CustomDimensionsFilter, INSTRUMENTATION_KEY
 from azure.ai.resources._version import VERSION
 
 
@@ -29,7 +29,6 @@ USER_AGENT = "{}/{}".format("azure-ai-resources", VERSION)
 
 
 AI_RESOURCES_INTERNAL_LOGGER_NAMESPACE = "azure.ai.resources._telemetry"
-INSTRUMENTATION_KEY = "71b954a8-6b7d-43f5-986c-3d3a6605d803"
 
 test_subscriptions = [
     "b17253fa-f327-42d6-9686-f3e553e24763",
