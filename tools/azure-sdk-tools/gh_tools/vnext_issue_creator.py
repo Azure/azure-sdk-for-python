@@ -160,7 +160,7 @@ def create_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
     )
 
 
-def close_vnext_issue(package_name: str, check_type: Literal["mypy", "pylint", "pyright"]) -> None:
+def close_vnext_issue(package_name: str, check_type: CHECK_TYPE) -> None:
     """This is called when a client library passes a vnext check. If an issue exists for the library, it is closed."""
 
     auth = Auth.Token(os.environ["GH_TOKEN"])
