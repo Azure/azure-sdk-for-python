@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 def generate_sas(
     endpoint: str,
     shared_access_key: str,
-    expiration_date_utc: datetime,
+    expiration_date_utc: "datetime",
     *,
     api_version: str = constants.DEFAULT_API_VERSION,
     **kwargs: Any # pylint: disable=unused-argument
