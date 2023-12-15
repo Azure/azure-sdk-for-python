@@ -703,8 +703,8 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if isinstance(image_content, str):
-            return await self._analyze_from_url( # pylint: disable=protected-access
-                image_content = _models._models.ImageUrl(url = image_content),
+            return await self._analyze_from_url(
+                image_content = _models._models.ImageUrl(url = image_content), # pylint: disable=protected-access
                 visual_features = visual_features,
                 language = language,
                 gender_neutral_caption = gender_neutral_caption,
