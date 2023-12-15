@@ -221,7 +221,7 @@ class ProductionData(RestTranslatableMixin):
             data_window=data_window,
         )
 
-    def _validate(self):
+    def _validate(self) -> None:
         if self.data_window:
             if self.data_window.window_start or self.data_window.window_end:
                 msg = "ProductionData only accepts lookback_window_size and lookback_window_offset."
@@ -268,7 +268,7 @@ class ReferenceData(RestTranslatableMixin):
         self.target_column_name = target_column_name
         self.data_window = data_window
 
-    def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
+    def _to_rest_object(self, **kwargs: Any) -> RestMonitoringInputData:
         default_data_window = kwargs.get("default_data_window")
         if self.data_window is not None:
             if self.data_window.lookback_window_size is not None:
@@ -497,7 +497,7 @@ class DataDriftSignal(DataSignal):
 
     def _to_rest_object(self, **kwargs: Any) -> RestMonitoringDataDriftSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window is None:
+        if self.production_data is not None and self.production_data.data_window is None:
             self.production_data.data_window = BaselineDataRange(lookback_window_size=default_data_window_size)
         rest_features = _to_rest_features(self.features) if self.features else None
         return RestMonitoringDataDriftSignal(
@@ -579,7 +579,7 @@ class PredictionDriftSignal(MonitoringSignal):
 
     def _to_rest_object(self, **kwargs: Any) -> RestPredictionDriftMonitoringSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window is None:
+        if self.production_data is not None and self.production_data.data_window is None:
             self.production_data.data_window = BaselineDataRange(lookback_window_size=default_data_window_size)
         return RestPredictionDriftMonitoringSignal(
             production_data=self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
@@ -588,7 +588,9 @@ class PredictionDriftSignal(MonitoringSignal):
             reference_data=self.reference_data._to_rest_object(default_data_window=default_data_window_size)
             if self.reference_data is not None
             else None,
-            metric_thresholds=self.metric_thresholds._to_rest_object(),
+            metric_thresholds=self.metric_thresholds._to_rest_object()
+            if isinstance(self.metric_thresholds, MetricThreshold)
+            else None,
             properties=self.properties,
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             model_type="classification",
@@ -661,7 +663,7 @@ class DataQualitySignal(DataSignal):
 
     def _to_rest_object(self, **kwargs: Any) -> RestMonitoringDataQualitySignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window is None:
+        if self.production_data is not None and self.production_data.data_window is None:
             self.production_data.data_window = BaselineDataRange(
                 lookback_window_size=default_data_window_size,
             )
@@ -917,7 +919,7 @@ class ModelPerformanceSignal(ModelSignal):
 
     def _to_rest_object(self, **kwargs: Any) -> RestModelPerformanceSignal:
         default_data_window_size = kwargs.get("default_data_window_size")
-        if self.production_data.data_window is None:
+        if self.production_data is not None and self.production_data.data_window is None:
             self.production_data.data_window = BaselineDataRange(
                 lookback_window_size=default_data_window_size,
             )
