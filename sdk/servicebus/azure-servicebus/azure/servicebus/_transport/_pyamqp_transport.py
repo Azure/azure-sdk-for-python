@@ -362,6 +362,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         message.application_properties = cast(  # type: ignore[misc]
             Dict[Union[str, bytes], Any], message.application_properties
         )
+        # casting from Optional to Dict above for use with setdefault
         message.application_properties.setdefault(key, value)
         return message
 
@@ -373,6 +374,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :return: Batch message encoded size.
         :rtype: int
         """
+        # casting to TypedDict with named fields to allow for unpacking with *
         message_list = cast("MessageDict", message)
         return utils.get_message_encoded_size(BatchMessage(*message_list))
 

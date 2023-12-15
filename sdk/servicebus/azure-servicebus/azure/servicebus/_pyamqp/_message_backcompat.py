@@ -74,6 +74,8 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         message: "AmqpAnnotatedMessage",
+        *,
+        to_outgoing_amqp_message: Callable,
         **kwargs: Any
     ) -> None:
         self._message: "AmqpAnnotatedMessage" = message
@@ -109,9 +111,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
             self.state = MessageState.ReceivedUnsettled
         elif self.delivery_no:
             self.state = MessageState.ReceivedSettled
-        self._to_outgoing_amqp_message: Callable = cast(Callable, kwargs.get(
-            "to_outgoing_amqp_message"
-        ))
+        self._to_outgoing_amqp_message = to_outgoing_amqp_message
 
     def __str__(self) -> str:
         return str(self._message)
@@ -135,10 +135,12 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
     def encode_message(self) -> bytes:
         output = bytearray()
         # to maintain the same behavior as uamqp, app prop values will not be decoded
-        self.application_properties = cast(
-            Dict[Union[str, bytes], Any],
-            cast(Dict[Union[str, bytes], Any], self._message.application_properties).copy()
-        )
+        if isinstance(self.application_properties, dict):
+            # casting Optional to Dict for copy
+            self.application_properties = cast(
+                Dict[Union[str, bytes], Any], self._message.application_properties).copy()
+        else:
+            self.application_properties = None
         encode_payload(output, self._to_outgoing_amqp_message(self._message))
         return bytes(output)
 

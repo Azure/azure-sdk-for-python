@@ -279,6 +279,7 @@ def decode_payload(buffer):
             message["footer"] = value
     # TODO: we can possibly swap out the Message construct with a TypedDict
     #  for both input and output so we get the best of both.
+    # casting to TypedDict with named fields to allow for unpacking with **
     message_properties = cast("MessageDict", message)
     return Message(**message_properties)
 
