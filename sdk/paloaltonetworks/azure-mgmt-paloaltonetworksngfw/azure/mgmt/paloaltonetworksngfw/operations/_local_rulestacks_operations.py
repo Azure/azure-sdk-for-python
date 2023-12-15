@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,7 +43,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,7 +54,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -69,7 +69,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -84,7 +84,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -101,7 +101,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -117,7 +117,7 @@ def build_get_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -134,7 +134,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -151,7 +151,7 @@ def build_create_or_update_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -170,7 +170,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -187,7 +187,7 @@ def build_update_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -206,7 +206,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,7 +222,7 @@ def build_delete_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -239,7 +239,7 @@ def build_commit_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -255,7 +255,7 @@ def build_commit_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -272,7 +272,7 @@ def build_get_change_log_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -288,7 +288,7 @@ def build_get_change_log_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -310,7 +310,7 @@ def build_get_support_info_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -326,7 +326,7 @@ def build_get_support_info_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -352,7 +352,7 @@ def build_list_advanced_security_objects_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -368,7 +368,7 @@ def build_list_advanced_security_objects_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -384,105 +384,13 @@ def build_list_advanced_security_objects_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_app_ids_request(
-    resource_group_name: str,
-    local_rulestack_name: str,
-    subscription_id: str,
-    *,
-    app_id_version: Optional[str] = None,
-    app_prefix: Optional[str] = None,
-    skip: Optional[str] = None,
-    top: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/listAppIds",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if app_id_version is not None:
-        _params["appIdVersion"] = _SERIALIZER.query("app_id_version", app_id_version, "str")
-    if app_prefix is not None:
-        _params["appPrefix"] = _SERIALIZER.query("app_prefix", app_prefix, "str")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_list_countries_request(
-    resource_group_name: str,
-    local_rulestack_name: str,
-    subscription_id: str,
-    *,
-    skip: Optional[str] = None,
-    top: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/listCountries",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_list_firewalls_request(
     resource_group_name: str, local_rulestack_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -498,53 +406,10 @@ def build_list_firewalls_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_list_predefined_url_categories_request(
-    resource_group_name: str,
-    local_rulestack_name: str,
-    subscription_id: str,
-    *,
-    skip: Optional[str] = None,
-    top: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/listPredefinedUrlCategories",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -565,7 +430,7 @@ def build_list_security_services_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -581,7 +446,7 @@ def build_list_security_services_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -603,7 +468,7 @@ def build_revert_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-29"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -619,7 +484,7 @@ def build_revert_request(
         "localRulestackName": _SERIALIZER.url("local_rulestack_name", local_rulestack_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1702,166 +1567,6 @@ class LocalRulestacksOperations:
     }
 
     @distributed_trace
-    def list_app_ids(
-        self,
-        resource_group_name: str,
-        local_rulestack_name: str,
-        app_id_version: Optional[str] = None,
-        app_prefix: Optional[str] = None,
-        skip: Optional[str] = None,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.ListAppIdResponse:
-        """List of AppIds for LocalRulestack ApiVersion.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param local_rulestack_name: LocalRulestack resource name. Required.
-        :type local_rulestack_name: str
-        :param app_id_version: Default value is None.
-        :type app_id_version: str
-        :param app_prefix: Default value is None.
-        :type app_prefix: str
-        :param skip: Default value is None.
-        :type skip: str
-        :param top: Default value is None.
-        :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ListAppIdResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.ListAppIdResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ListAppIdResponse] = kwargs.pop("cls", None)
-
-        request = build_list_app_ids_request(
-            resource_group_name=resource_group_name,
-            local_rulestack_name=local_rulestack_name,
-            subscription_id=self._config.subscription_id,
-            app_id_version=app_id_version,
-            app_prefix=app_prefix,
-            skip=skip,
-            top=top,
-            api_version=api_version,
-            template_url=self.list_app_ids.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("ListAppIdResponse", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    list_app_ids.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/listAppIds"
-    }
-
-    @distributed_trace
-    def list_countries(
-        self,
-        resource_group_name: str,
-        local_rulestack_name: str,
-        skip: Optional[str] = None,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.CountriesResponse:
-        """List of countries for Rulestack.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param local_rulestack_name: LocalRulestack resource name. Required.
-        :type local_rulestack_name: str
-        :param skip: Default value is None.
-        :type skip: str
-        :param top: Default value is None.
-        :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: CountriesResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.CountriesResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.CountriesResponse] = kwargs.pop("cls", None)
-
-        request = build_list_countries_request(
-            resource_group_name=resource_group_name,
-            local_rulestack_name=local_rulestack_name,
-            subscription_id=self._config.subscription_id,
-            skip=skip,
-            top=top,
-            api_version=api_version,
-            template_url=self.list_countries.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("CountriesResponse", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    list_countries.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/listCountries"
-    }
-
-    @distributed_trace
     def list_firewalls(
         self, resource_group_name: str, local_rulestack_name: str, **kwargs: Any
     ) -> _models.ListFirewallsResponse:
@@ -1924,82 +1629,6 @@ class LocalRulestacksOperations:
 
     list_firewalls.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/listFirewalls"
-    }
-
-    @distributed_trace
-    def list_predefined_url_categories(
-        self,
-        resource_group_name: str,
-        local_rulestack_name: str,
-        skip: Optional[str] = None,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> _models.PredefinedUrlCategoriesResponse:
-        """List predefined URL categories for rulestack.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param local_rulestack_name: LocalRulestack resource name. Required.
-        :type local_rulestack_name: str
-        :param skip: Default value is None.
-        :type skip: str
-        :param top: Default value is None.
-        :type top: int
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PredefinedUrlCategoriesResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.paloaltonetworksngfw.models.PredefinedUrlCategoriesResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.PredefinedUrlCategoriesResponse] = kwargs.pop("cls", None)
-
-        request = build_list_predefined_url_categories_request(
-            resource_group_name=resource_group_name,
-            local_rulestack_name=local_rulestack_name,
-            subscription_id=self._config.subscription_id,
-            skip=skip,
-            top=top,
-            api_version=api_version,
-            template_url=self.list_predefined_url_categories.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PredefinedUrlCategoriesResponse", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    list_predefined_url_categories.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/PaloAltoNetworks.Cloudngfw/localRulestacks/{localRulestackName}/listPredefinedUrlCategories"
     }
 
     @distributed_trace

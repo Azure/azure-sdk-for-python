@@ -53,12 +53,18 @@ class _StatsbeatFeature:
     AAD = 2
 
 
+class _AttachTypes:
+    MANUAL = "Manual"
+    INTEGRATED = "IntegratedAuto"
+    STANDALONE = "StandaloneAuto"
+
+
 # pylint: disable=R0902
 class _StatsbeatMetrics:
 
     _COMMON_ATTRIBUTES: Dict[str, Any] = {
         "rp": _RP_NAMES[3],
-        "attach": "sdk", # TODO: attach
+        "attach": _AttachTypes.MANUAL,
         "cikey": None,
         "runtimeVersion": platform.python_version(),
         "os": platform.system(),
@@ -97,7 +103,8 @@ class _StatsbeatMetrics:
         if has_credential:
             self._feature |= _StatsbeatFeature.AAD
         self._ikey = instrumentation_key
-        self._meter = meter_provider.get_meter(__name__)
+        self._meter_provider = meter_provider
+        self._meter = self._meter_provider.get_meter(__name__)
         self._long_interval_threshold = long_interval_threshold
         # Start internal count at the max size for initial statsbeat export
         self._long_interval_count_map = {
@@ -106,6 +113,8 @@ class _StatsbeatMetrics:
         }
         self._long_interval_lock = threading.Lock()
         _StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"] = instrumentation_key
+        if _utils._is_attach_enabled():
+            _StatsbeatMetrics._COMMON_ATTRIBUTES["attach"] = _AttachTypes.INTEGRATED
         _StatsbeatMetrics._NETWORK_ATTRIBUTES["host"] = _shorten_host(endpoint)
         _StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"] = self._feature
         _StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"] = _utils.get_instrumentations()
@@ -384,7 +393,6 @@ class _StatsbeatMetrics:
                     _REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]][code] = 0 # type: ignore
         return observations
 
-# cSpell:enable
 
 def _shorten_host(host: str) -> str:
     if not host:
@@ -393,3 +401,5 @@ def _shorten_host(host: str) -> str:
     if match:
         host = match.group(1)
     return host
+
+# cSpell:enable

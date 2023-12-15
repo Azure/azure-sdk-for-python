@@ -720,6 +720,18 @@ def _get_mfe_base_url_from_registry_discovery_service(
     return all_urls[API_URL_KEY]
 
 
+def _get_workspace_base_url(workspace_operations: Any, workspace_name: str, requests_pipeline: HttpPipeline) -> str:
+    discovery_url = workspace_operations.get(workspace_name).discovery_url
+
+    all_urls = json.loads(
+        download_text_from_url(
+            discovery_url,
+            create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
+        )
+    )
+    return all_urls[API_URL_KEY]
+
+
 def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
     return endpoint.scoring_uri.split("/subscriptions/")[0]
 
@@ -1373,6 +1385,20 @@ def get_versioned_base_directory_for_cache() -> Path:
     from azure.ai.ml._version import VERSION
 
     return get_base_directory_for_cache().joinpath(VERSION)
+
+
+# pylint: disable-next=name-too-long
+def get_resource_and_group_name_from_resource_id(armstr: str) -> str:
+    if armstr.find("/") == -1:
+        return armstr, None
+    return armstr.split("/")[-1], armstr.split("/")[-5]
+
+
+# pylint: disable-next=name-too-long
+def get_resource_group_name_from_resource_group_id(armstr: str) -> str:
+    if armstr.find("/") == -1:
+        return armstr
+    return armstr.split("/")[-1]
 
 
 def extract_name_and_version(azureml_id: str) -> Dict[str, str]:

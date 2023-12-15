@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.configurations.begin_delete(
+    client.configurations.begin_delete(
         resource_group_name="myResourceGroup",
         deployment_name="myDeployment",
         configuration_name="default",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/nginx/resource-manager/NGINX.NGINXPLUS/stable/2022-08-01/examples/Configurations_Delete.json
+# x-ms-original-file: specification/nginx/resource-manager/NGINX.NGINXPLUS/stable/2023-04-01/examples/Configurations_Delete.json
 if __name__ == "__main__":
     main()

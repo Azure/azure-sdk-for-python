@@ -29,15 +29,14 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.static_sites.delete_build_database_connection(
+    client.static_sites.delete_build_database_connection(
         resource_group_name="rg",
         name="testStaticSite0",
         environment_name="default",
         database_connection_name="default",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2022-09-01/examples/DeleteStaticSiteBuildDatabaseConnection.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-01-01/examples/DeleteStaticSiteBuildDatabaseConnection.json
 if __name__ == "__main__":
     main()

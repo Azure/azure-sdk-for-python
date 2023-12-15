@@ -2,6 +2,7 @@ from ._version import VERSION
 from ._chat_client import ChatClient
 from ._chat_thread_client import ChatThreadClient
 from ._generated.models import (
+    ChatAttachmentType,
     SendChatMessageResult,
     ChatThreadItem,
     ChatMessageType,
@@ -9,6 +10,7 @@ from ._generated.models import (
 )
 
 from ._models import (
+    ChatAttachment,
     ChatParticipant,
     ChatMessage,
     ChatThreadProperties,
@@ -42,6 +44,8 @@ __all__ = [
     'ChatThreadItem',
     'ChatParticipant',
     'ChatMessageType',
+    'ChatAttachment',
+    'ChatAttachmentType',
     'CreateChatThreadResult',
     'ChatError',
     'CommunicationTokenCredential',

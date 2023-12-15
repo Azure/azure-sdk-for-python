@@ -12,37 +12,71 @@ try:
     from enum import Enum
     from functools import lru_cache
     from typing import Dict, List, Tuple, Any, Union
-    import openai
     from collections import defaultdict
     from azure.ai.resources.entities import BaseConnection
     from azure.identity import DefaultAzureCredential
-    from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, OpsLogger
+    from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, ActivityLogger
     from azure.core.tracing.decorator import distributed_trace
 except ImportError as e:
     print("In order to use qa, please install the 'qa_generation' extra of azure-ai-generative")
     raise e
 
+try:
+    import pkg_resources
+    openai_version_str = pkg_resources.get_distribution("openai").version
+    openai_version = pkg_resources.parse_version(openai_version_str)
+    import openai
+    if openai_version >= pkg_resources.parse_version("1.0.0"):
+        _RETRY_ERRORS = (
+            openai.APIConnectionError ,
+            openai.APIError,
+            openai.APIStatusError
+        )
+    else:
+        _RETRY_ERRORS = (
+            openai.error.ServiceUnavailableError,
+            openai.error.APIError,
+            openai.error.RateLimitError,
+            openai.error.APIConnectionError,
+            openai.error.Timeout,
+        )
+        
+except ImportError as e:
+    print("In order to use qa, please install the 'qa_generation' extra of azure-ai-generative")
+    raise e
 
 _TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
-ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+activity_logger = ActivityLogger(__name__)
+logger, module_logger = activity_logger.package_logger, activity_logger.module_logger
 
 _DEFAULT_AOAI_VERSION = "2023-07-01-preview"
 _MAX_RETRIES = 7
-_RETRY_ERRORS = (
-    openai.error.ServiceUnavailableError,
-    openai.error.APIError,
-    openai.error.RateLimitError,
-    openai.error.APIConnectionError,
-    openai.error.Timeout,
-)
+
 
 
 def _completion_with_retries(*args, **kwargs):
     n = 1
     while True:
         try:
-            response = openai.ChatCompletion.create(*args, **kwargs)
+            if openai_version >= pkg_resources.parse_version("1.0.0"):
+                if kwargs["api_type"].lower() == "azure":
+                    from openai import AzureOpenAI
+                    client = AzureOpenAI(
+                        azure_endpoint = kwargs["api_base"], 
+                        api_key=kwargs["api_key"],  
+                        api_version=kwargs["api_version"]
+                    )
+                    response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
+                else:
+                    from openai import OpenAI
+                    client = OpenAI(
+                        api_key=kwargs["api_key"],  
+                    )
+                    response = client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
+                return response.choices[0].message.content, dict(response.usage)
+            else:
+                response = openai.ChatCompletion.create(*args, **kwargs)
+                return response["choices"][0].message.content, response["usage"]
         except _RETRY_ERRORS as e:
             if n > _MAX_RETRIES:
                 raise
@@ -51,14 +85,31 @@ def _completion_with_retries(*args, **kwargs):
             time.sleep(secs)
             n += 1
             continue
-        return response
 
 
 async def _completion_with_retries_async(*args, **kwargs):
     n = 1
     while True:
         try:
-            response = await openai.ChatCompletion.acreate(*args, **kwargs)
+            if openai_version >= pkg_resources.parse_version("1.0.0"):
+                if kwargs["api_type"].lower() == "azure":
+                    from openai import AsyncAzureOpenAI
+                    client = AsyncAzureOpenAI(
+                        azure_endpoint = kwargs["api_base"], 
+                        api_key=kwargs["api_key"],  
+                        api_version=kwargs["api_version"]
+                    )
+                    response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["deployment_id"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
+                else:
+                    from openai import AsyncOpenAI
+                    client = AsyncOpenAI(
+                        api_key=kwargs["api_key"],  
+                    )
+                    response = await client.chat.completions.create(messages=kwargs["messages"], model=kwargs["model"], temperature=kwargs["temperature"], max_tokens=kwargs["max_tokens"])
+                return response.choices[0].message.content, dict(response.usage)
+            else:
+                response = openai.ChatCompletion.create(*args, **kwargs)
+                return response["choices"][0].message.content, response["usage"]
         except _RETRY_ERRORS as e:
             if n > _MAX_RETRIES:
                 raise
@@ -67,8 +118,14 @@ async def _completion_with_retries_async(*args, **kwargs):
             await asyncio.sleep(secs)
             n += 1
             continue
-        return response
 
+class OutputStructure(str, Enum):
+    """OutputStructure defines what structure the QAs should be written to file in."""
+
+    PROMPTFLOW = "PROMPTFLOW"
+    """Chat history will be in format used by promptflow"""
+    CHAT_PROTOCOL = "CHAT_PROTOCOL"
+    """QAs will be in OpenAI message format"""
 
 class QAType(str, Enum):
     """QAType defines different types of QAs that can be generated."""
@@ -107,7 +164,7 @@ class QADataGenerator:
             temperature=0.0,  # don't need creativity
         )
 
-        ops_logger.update_info(kwargs)
+        activity_logger.update_info()
 
     def _validate(self, qa_type: QAType, num_questions: int):
         if qa_type == QAType.SUMMARY and num_questions is not None:
@@ -183,17 +240,20 @@ class QADataGenerator:
         return {name: count + token_usage[name] for name, count in token_usage2.items()}
 
     def _modify_conversation_questions(self, questions) -> Tuple[List[str], Dict]:
-        response = _completion_with_retries(
+        content, usage = _completion_with_retries(
             messages=self._get_messages_for_modify_conversation(questions),
             **self._chat_completion_params,
         )
-        modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
+
+        modified_questions, _ = self._parse_qa_from_response(content)
+        # Keep proper nouns in first question of conversation
+        modified_questions[0] = questions[0]
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
-        return modified_questions, response["usage"]
+        return modified_questions, usage
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.Export", ActivityType.INTERNALCALL)
-    def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]]):
+    def export_to_file(self, output_path: str, qa_type: QAType, results: Union[List, List[List]], output_format: OutputStructure = OutputStructure.PROMPTFLOW, field_mapping: Dict[str,str] = {"chat_history_key": "chat_history", "question_key": "question"}):
         """
             Writes results from QA gen to a jsonl file for Promptflow batch run
             results is either a list of questions and answers or list of list of questions and answers grouped by their chunk
@@ -204,20 +264,45 @@ class QADataGenerator:
         if not isinstance(results[0], List):
             results = [results]
         
-        for qs_and_as in results:
-            chat_history = []
-            for question, answer in qs_and_as: 
-                if qa_type == QAType.CONVERSATION:
-                    # Chat History columns:
-                    data_dict["chat_history"].append(json.dumps(chat_history))
-                    data_dict["chat_input"].append(question)
-                    chat_history.append({"inputs": {"chat_input": question}, "outputs": {"chat_output": answer}})
-                else:
-                    # QnA columns:
-                    data_dict["question"].append(question)   
+        if output_format == OutputStructure.PROMPTFLOW:
+            
+            if qa_type == QAType.CONVERSATION and not ("chat_history_key" in field_mapping and "question_key" in field_mapping):
+                raise Exception("Field mapping for Promptflow output with Conversation must contain following keys: chat_history_key, question_key")
+            # Only the question key is required in non-conversation cases, we can default to chat_history as chat_history_key
+            elif not ("question_key" in field_mapping):
+                raise Exception(f"Field mapping for Promptflow output with {qa_type} must contain following keys: question_key")
 
-                data_dict["ground_truth"].append(answer)  # Consider generated answer as the ground truth
+            question_key = field_mapping["question_key"]
+            # Set this here for parity with eval flows
+            answer_key = "ground_truth"
+            chat_history_key = field_mapping.get("chat_history_key", "chat_history")
+            for qs_and_as in results:
+                chat_history = []
+                for question, answer in qs_and_as: 
+                    data_dict[chat_history_key].append(list(chat_history))
+                    if qa_type == QAType.CONVERSATION:
+                        # Chat History columns:
+                        data_dict[question_key].append(question)
+                        chat_history.append({"inputs": {question_key: question}, "outputs": {answer_key: answer}})
+                    else:
+                        # QnA columns:
+                        data_dict[question_key].append(question)   
 
+                    data_dict[answer_key].append(answer)  # Consider generated answer as the ground truth
+        else:
+            for qs_and_as in results:
+                chat_history = []
+                for question, answer in qs_and_as: 
+                    if qa_type == QAType.CONVERSATION:
+                        print(f"Chat data dict: {data_dict['messages']}\n\n")
+                        chat_history.append({"role": "user", "content": question})
+                        chat_history.append({"role": "assistant", "content": answer})
+                        data_dict["messages"].append(list(chat_history))
+                    else:
+                        messages = []
+                        messages.append({"role": "user", "content": question})
+                        messages.append({"role": "assistant", "content": answer})
+                        data_dict["messages"].append(list(messages))
         # export to jsonl file
         try:
             import pandas as pd
@@ -232,13 +317,12 @@ class QADataGenerator:
     @monitor_with_activity(logger, "QADataGenerator.Generate", ActivityType.INTERNALCALL)
     def generate(self, text: str, qa_type: QAType, num_questions: int = None) -> Dict:
         self._validate(qa_type, num_questions)
-        response = _completion_with_retries(
+        content, token_usage = _completion_with_retries(
             messages=self._get_messages_for_qa_type(qa_type, text, num_questions),
             **self._chat_completion_params,
         )
-        questions, answers = self._parse_qa_from_response(response["choices"][0].message.content)
+        questions, answers = self._parse_qa_from_response(content)
         assert len(questions) == len(answers), self._PARSING_ERR_UNEQUAL_QA
-        token_usage = response["usage"]
         if qa_type == QAType.CONVERSATION:
             questions, token_usage2 = self._modify_conversation_questions(questions)
             token_usage = self._merge_token_usage(token_usage, token_usage2)
@@ -248,25 +332,27 @@ class QADataGenerator:
         }
 
     async def _modify_conversation_questions_async(self, questions) -> Tuple[List[str], Dict]:
-        response = await _completion_with_retries_async(
+        content, usage = await _completion_with_retries_async(
             messages=self._get_messages_for_modify_conversation(questions),
             **self._chat_completion_params,
         )
-        modified_questions, _ = self._parse_qa_from_response(response["choices"][0].message.content)
+
+        modified_questions, _ = self._parse_qa_from_response(content)
+        # Keep proper nouns in first question of conversation
+        modified_questions[0] = questions[0]
         assert len(modified_questions) == len(questions), self._PARSING_ERR_UNEQUAL_Q_AFTER_MOD
-        return modified_questions, response["usage"]
+        return modified_questions, usage
 
     @distributed_trace
     @monitor_with_activity(logger, "QADataGenerator.GenerateAsync", ActivityType.INTERNALCALL)
     async def generate_async(self, text: str, qa_type: QAType, num_questions: int = None) -> Dict:
         self._validate(qa_type, num_questions)
-        response = await _completion_with_retries_async(
+        content, token_usage = await _completion_with_retries_async(
             messages=self._get_messages_for_qa_type(qa_type, text, num_questions),
             **self._chat_completion_params,
         )
-        questions, answers = self._parse_qa_from_response(response["choices"][0].message.content)
+        questions, answers = self._parse_qa_from_response(content)
         assert len(questions) == len(answers), self._PARSING_ERR_UNEQUAL_QA
-        token_usage = response["usage"]
         if qa_type == QAType.CONVERSATION:
             questions, token_usage2 = await self._modify_conversation_questions_async(questions)
             token_usage = self._merge_token_usage(token_usage, token_usage2) 

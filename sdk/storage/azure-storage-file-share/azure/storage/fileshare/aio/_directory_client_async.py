@@ -167,7 +167,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
                 :dedent: 16
                 :caption: Gets the subdirectory client.
         """
-        directory_path = self.directory_path.rstrip('/') + "/" + directory_name
+        directory_path = directory_name
+        if self.directory_path:
+            directory_path = self.directory_path.rstrip('/') + "/" + directory_name
 
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
