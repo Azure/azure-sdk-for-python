@@ -115,6 +115,7 @@ def process_storage_error(storage_error) -> NoReturn: # type: ignore [misc] # py
                 'Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.', type(error_body))
             error_dict = {'message': str(error_body)}
 
+        # If we extracted from a Json or XML response
         # There is a chance error_dict is just a string
         if error_dict and isinstance(error_dict, dict):
             error_code = error_dict.get('code')
