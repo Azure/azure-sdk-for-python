@@ -201,7 +201,7 @@ class AMQPException(Exception):
     """
     def __init__(self, condition: bytes, **kwargs: Any):
         self.condition: Union[bytes, ErrorCondition] = condition or ErrorCondition.UnknownError
-        self.description: Union[str, bytes] = kwargs.pop("description")
+        self.description: Optional[Union[str, bytes]] = kwargs.get("description", None)
         self.info: Optional[str] = kwargs.get("info", None)
         self.message: Optional[str] = kwargs.get("message", None)
         self.inner_error: Optional[str] = kwargs.get("error", None)

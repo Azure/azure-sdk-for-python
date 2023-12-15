@@ -55,7 +55,6 @@ class BlobCheckpointStore(CheckpointStore):
     ) -> None:
         self._container_client = kwargs.pop("container_client", None)
         if not self._container_client:
-            api_version = api_version
             if api_version:
                 headers = kwargs.get("headers")
                 if headers:
