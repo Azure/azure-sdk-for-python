@@ -52,7 +52,7 @@ class BlobCheckpointStore(CheckpointStore):
         credential: Optional[Union["AsyncTokenCredential", "AzureNamedKeyCredential", "AzureSasCredential"]] = None,
         api_version: str = '2019-07-07',
         **kwargs: Any
-    ):
+    ) -> None:
         self._container_client = kwargs.pop("container_client", None)
         if not self._container_client:
             api_version = kwargs.pop("api_version", None)
