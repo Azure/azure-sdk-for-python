@@ -8,7 +8,7 @@
 import struct
 import uuid
 import logging
-from typing import List, Optional, Tuple, Dict, Callable, Any, cast, Union, TYPE_CHECKING  # pylint: disable=unused-import
+from typing import List, Optional, Tuple, Dict, Callable, Any, cast, Union, TYPE_CHECKING
 
 
 from .message import Message, Header, Properties

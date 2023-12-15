@@ -72,7 +72,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class SenderMixin(object):
+class SenderMixin:
     def _create_attribute(self, **kwargs):
         self._auth_uri = f"sb://{self.fully_qualified_namespace}/{self._entity_name}"
         self._entity_uri = f"amqps://{self.fully_qualified_namespace}/{self._entity_name}"

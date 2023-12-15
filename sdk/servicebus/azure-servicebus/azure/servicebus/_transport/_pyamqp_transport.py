@@ -211,7 +211,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def get_message_delivery_tag(
         _, frame: "TransferFrame"
-    ) -> Optional[bytes]:  # pylint: disable=unused-argument
+    ) -> Optional[bytes]:
         """
         Gets delivery tag of a Message.
         :param any _: Ignored.

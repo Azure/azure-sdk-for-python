@@ -269,7 +269,7 @@ class LegacyMessageProperties(object):  # pylint: disable=too-many-instance-attr
 
 class LegacyMessageHeader(object):
     def __init__(self, header: "AmqpMessageHeader") -> None:
-        self.delivery_count: Optional[int] = header.delivery_count or 0
+        self.delivery_count: int = header.delivery_count or 0
         self.time_to_live: Optional[int] = header.time_to_live
         self.first_acquirer: Optional[bool] = header.first_acquirer
         self.durable: Optional[bool] = header.durable
