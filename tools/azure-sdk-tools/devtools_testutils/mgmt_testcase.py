@@ -4,13 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 import inspect
-import re
-import six
 import os.path
 import zlib
 
-from azure_devtools.scenario_tests import AbstractPreparer, GeneralNameReplacer
-from azure_devtools.scenario_tests.utilities import is_text_payload
+from .preparers import AbstractPreparer
 
 
 class HttpStatusCode(object):
@@ -85,42 +82,3 @@ class AzureMgmtPreparer(AbstractPreparer):
 
     def create_mgmt_client(self, client_class, **kwargs):
         return self.test_class_instance.create_mgmt_client(client_class, **kwargs)
-
-
-class RENameReplacer(GeneralNameReplacer):
-    def __init__(self):
-        super(RENameReplacer, self).__init__()
-        self.patterns = []
-
-    def register_pattern_pair(self, expr, new):
-        self.patterns.append((expr, new))
-
-    def process_request(self, request):
-        request = super(RENameReplacer, self).process_request(request)
-        for expr, new in self.patterns:
-            if is_text_payload(request) and request.body:
-                if isinstance(request.body, dict):
-                    continue
-
-                body = six.ensure_str(request.body)
-                for old in re.findall(expr, body):
-                    request.body = body.replace(old, new)
-        return request
-
-    def process_response(self, response):
-        response = super(RENameReplacer, self).process_response(response)
-        for expr, new in self.patterns:
-            if is_text_payload(response) and response["body"]["string"]:
-                if isinstance(response["body"]["string"], bytes):
-                    body = response["body"]["string"].decode("utf8", "backslashreplace")
-                else:
-                    body = response["body"]["string"]
-
-                for old in re.findall(expr, body):
-                    body = body.replace(old, new)
-
-                if isinstance(response["body"]["string"], bytes):
-                    response["body"]["string"] = body.encode("utf8", "backslashreplace")
-                else:
-                    response["body"]["string"] = body
-        return response

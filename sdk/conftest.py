@@ -27,6 +27,7 @@ import os
 import pytest
 
 from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
+from devtools_testutils.preparers import AbstractPreparer
 
 
 def pytest_configure(config):
@@ -51,17 +52,10 @@ def pytest_runtest_setup(item):
             pytest.skip("playback test only")
 
 
-try:
-    from azure_devtools.scenario_tests import AbstractPreparer
-
-    @pytest.fixture(scope="session", autouse=True)
-    def clean_cached_resources():
-        yield
-        AbstractPreparer._perform_pending_deletes()
-
-
-except ImportError:
-    pass
+@pytest.fixture(scope="session", autouse=True)
+def clean_cached_resources():
+    yield
+    AbstractPreparer._perform_pending_deletes()
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)

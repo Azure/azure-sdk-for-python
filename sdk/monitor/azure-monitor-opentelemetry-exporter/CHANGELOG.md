@@ -11,7 +11,9 @@
 ### Other Changes
 
 - Store global instance of `StatsbeatMetric`
-    ([#33163](https://github.com/Azure/azure-sdk-for-python/pull/33163))
+    ([#33432](https://github.com/Azure/azure-sdk-for-python/pull/33432))
+- Shutdown statsbeat on customer getting 400 error code
+    ([#33489](https://github.com/Azure/azure-sdk-for-python/pull/33489))
 
 ## 1.0.0b19 (2023-11-20)
 
