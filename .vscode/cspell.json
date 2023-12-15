@@ -929,7 +929,9 @@
         "ctxt",
         "wday",
         "percentilesw",
-        "plotly"
+        "plotly",
+        "nbformat",
+        "nbconvert"
       ]
     },
     {
