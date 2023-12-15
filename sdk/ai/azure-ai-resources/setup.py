@@ -68,7 +68,7 @@ setup(
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "azure-ai-ml>=1.12.0",
         "mlflow-skinny<3",
-        "azureml-telemetry~=1.0,>=1.51.0",
+        "opencensus-ext-logging<=0.1.1",
         "azure-mgmt-resource<23.0.0,>=22.0.0",
     ],
     project_urls={
