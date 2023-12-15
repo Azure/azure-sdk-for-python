@@ -469,7 +469,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             # Even if we don't need to refresh, we should reset the timer
             self._refresh_timer.reset()
             success = True
-            return
         except (ServiceRequestError, ServiceResponseError, HttpResponseError) as e:
             # If we get an error we should retry sooner than the next refresh interval
             if self._on_refresh_error:
