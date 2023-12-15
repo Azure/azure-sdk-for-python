@@ -105,7 +105,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @abstractmethod
     def update_message_app_properties(
         message: Union[uamqp_Message, pyamqp_Message],
-        key: str, value: str
+        key: Union[str, bytes], value: str
     ) -> Union[uamqp_Message, pyamqp_Message]:
         """
         Adds the given key/value to the application properties of the message.

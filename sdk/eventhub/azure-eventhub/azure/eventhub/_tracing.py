@@ -41,9 +41,9 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-TRACE_DIAGNOSTIC_ID_PROPERTY = "Diagnostic-Id"
-TRACE_PARENT_PROPERTY = "traceparent"
-TRACE_STATE_PROPERTY = "tracestate"
+TRACE_DIAGNOSTIC_ID_PROPERTY = b"Diagnostic-Id"
+TRACE_PARENT_PROPERTY = b"traceparent"
+TRACE_STATE_PROPERTY = b"tracestate"
 TRACE_PROPERTY_ENCODING = "ascii"
 
 
