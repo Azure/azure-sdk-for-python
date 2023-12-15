@@ -167,8 +167,11 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
 
         self._task = task
 
-        if mini_batch_size is not None and not isinstance(mini_batch_size, int) and \
-                not is_data_binding_expression(mini_batch_size):
+        if (
+            mini_batch_size is not None
+            and not isinstance(mini_batch_size, int)
+            and not is_data_binding_expression(mini_batch_size)
+        ):
             """Convert str to int."""  # pylint: disable=pointless-string-statement
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(mini_batch_size):
