@@ -68,8 +68,9 @@ def sample_dense_captions_image_file():
     # corresponds to the entire image. The rest correspond to sub regions.
     print(f"Image analysis results:")
     print(f" Dense Captions:")
-    for caption in result.dense_captions.values:
-        print(f"   '{caption.text}', {caption.bounding_box}, Confidence: {caption.confidence:.4f}")
+    if result.dense_captions is not None:
+        for caption in result.dense_captions.values:
+            print(f"   '{caption.text}', {caption.bounding_box}, Confidence: {caption.confidence:.4f}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
     print(f" Model version: {result.model_version}")

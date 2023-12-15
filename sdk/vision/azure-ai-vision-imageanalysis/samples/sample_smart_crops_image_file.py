@@ -67,8 +67,9 @@ def sample_smart_crops_image_file():
     # Print smart crop analysis results to the console
     print(f"Image analysis results:")
     print(f" Smart Cropping:")
-    for smart_crop in result.smart_crops.values:
-        print(f"   Aspect ratio {smart_crop.aspect_ratio}: Smart crop {smart_crop.bounding_box}")
+    if result.smart_crops is not None:
+        for smart_crop in result.smart_crops.values:
+            print(f"   Aspect ratio {smart_crop.aspect_ratio}: Smart crop {smart_crop.bounding_box}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
     print(f" Model version: {result.model_version}")

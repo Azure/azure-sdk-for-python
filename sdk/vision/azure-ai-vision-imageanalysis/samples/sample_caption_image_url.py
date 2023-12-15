@@ -59,7 +59,8 @@ def sample_caption_image_url():
     # Print caption results to the console
     print(f"Image analysis results:")
     print(f" Caption:")
-    print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
+    if result.caption is not None:
+        print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
     # [END caption]
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")

@@ -57,8 +57,9 @@ def sample_people_image_file():
     # Print People analysis results to the console
     print(f"Image analysis results:")
     print(f" People:")
-    for person in result.people.values:
-        print(f"   {person.bounding_box}, Confidence {person.confidence:.4f}")
+    if result.people is not None:
+        for person in result.people.values:
+            print(f"   {person.bounding_box}, Confidence {person.confidence:.4f}")
     print(f" Image height: {result.metadata.height}")
     print(f" Image width: {result.metadata.width}")
     print(f" Model version: {result.model_version}")

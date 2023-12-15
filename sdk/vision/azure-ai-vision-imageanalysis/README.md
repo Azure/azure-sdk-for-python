@@ -147,7 +147,8 @@ client.close()
 # Print caption results to the console
 print(f"Image analysis results:")
 print(f" Caption:")
-print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
+if result.caption is not None:
+    print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
 ```
 
 <!-- END SNIPPET -->
@@ -172,7 +173,8 @@ client.close()
 # Print caption results to the console
 print(f"Image analysis results:")
 print(f" Caption:")
-print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
+if result.caption is not None:
+    print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
 ```
 
 <!-- END SNIPPET -->
@@ -198,10 +200,11 @@ client.close()
 # Print text (OCR) analysis results to the console
 print(f"Image analysis results:")
 print(f" Read:")
-for line in result.read.blocks[0].lines:
-    print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
-    for word in line.words:
-        print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+if result.read is not None:
+    for line in result.read.blocks[0].lines:
+        print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
+        for word in line.words:
+            print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
 ```
 
 <!-- END SNIPPET -->
@@ -226,10 +229,11 @@ client.close()
 # Print text (OCR) analysis results to the console
 print(f"Image analysis results:")
 print(f" Read:")
-for line in result.read.blocks[0].lines:
-    print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
-    for word in line.words:
-        print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
+if result.read is not None:
+    for line in result.read.blocks[0].lines:
+        print(f"   Line: '{line.text}', Bounding box {line.bounding_polygon}")
+        for word in line.words:
+            print(f"     Word: '{word.text}', Bounding polygon {word.bounding_polygon}, Confidence {word.confidence:.4f}")
 ```
 
 <!-- END SNIPPET -->
