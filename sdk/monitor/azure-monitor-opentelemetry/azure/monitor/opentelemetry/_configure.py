@@ -32,6 +32,7 @@ from azure.monitor.opentelemetry._constants import (
     _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
     _AZURE_SDK_INSTRUMENTATION_NAME,
+    _AZURE_VM_RESOURCE_DETECTOR_NAME,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -53,7 +54,7 @@ from azure.monitor.opentelemetry._util.configurations import (
 
 _SUPPORTED_RESOURCE_DETECTORS = (
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
-    # _AZURE_VM_RESOURCE_DETECTOR_NAME,
+    _AZURE_VM_RESOURCE_DETECTOR_NAME,
 )
 
 _logger = getLogger(__name__)
@@ -103,11 +104,10 @@ def configure_azure_monitor(**kwargs) -> None:
     _setup_instrumentations(configurations)
 
 def _setup_resources():
-    detectors = os.environ.get(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, "")
-    if detectors:
-        detectors = detectors + ","
-    detectors += ",".join(_SUPPORTED_RESOURCE_DETECTORS)
-    os.environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS] = detectors
+    os.environ.setdefault(
+        OTEL_EXPERIMENTAL_RESOURCE_DETECTORS,
+        ",".join(_SUPPORTED_RESOURCE_DETECTORS)
+    )
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):

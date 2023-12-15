@@ -8,7 +8,6 @@
 
 from typing import Any, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
@@ -18,9 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ConversationAnalysisClientConfiguration(  # pylint: disable=too-many-instance-attributes,name-too-long
-    Configuration
-):
+class ConversationAnalysisClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for ConversationAnalysisClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -37,7 +34,6 @@ class ConversationAnalysisClientConfiguration(  # pylint: disable=too-many-insta
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        super(ConversationAnalysisClientConfiguration, self).__init__(**kwargs)
         api_version: str = kwargs.pop("api_version", "2023-04-01")
 
         if endpoint is None:
@@ -50,6 +46,7 @@ class ConversationAnalysisClientConfiguration(  # pylint: disable=too-many-insta
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-language-conversations/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -58,9 +55,9 @@ class ConversationAnalysisClientConfiguration(  # pylint: disable=too-many-insta
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.BearerTokenCredentialPolicy(

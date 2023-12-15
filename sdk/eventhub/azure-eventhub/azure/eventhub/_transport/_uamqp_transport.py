@@ -384,12 +384,15 @@ if uamqp_installed:
                     raise producer._condition
 
         @staticmethod
-        def set_message_partition_key(message, partition_key, **kwargs):  # pylint:disable=unused-argument
-            # type: (Message, Optional[Union[bytes, str]], Any) -> Message
+        def set_message_partition_key(
+            message: Message,
+            partition_key: Optional[Union[bytes, str]] = None,
+            **kwargs: Any
+        ) -> Message:  # pylint:disable=unused-argument
             """Set the partition key as an annotation on a uamqp message.
 
             :param uamqp.Message message: The message to update.
-            :param str partition_key: The partition key value.
+            :param str or bytes or None partition_key: The partition key value.
             :returns: Message with partition key annotation set.
             :rtype: uamqp.Message
             """
@@ -618,9 +621,9 @@ if uamqp_installed:
                 **kwargs
             )
             status_code = response.application_properties[kwargs.get("status_code_field")]
-            description = response.application_properties.get(
+            description: Optional[Union[str, bytes]] = response.application_properties.get(
                 kwargs.get("description_fields")
-            )  # type: Optional[Union[str, bytes]]
+            )
             return status_code, description, response
 
         @staticmethod
