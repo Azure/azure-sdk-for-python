@@ -702,8 +702,8 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if (isinstance(image_content, str)):
-            return await self._analyze_from_url(
+        if isinstance(image_content, str):
+            return await self._analyze_from_url( # pylint: disable=protected-access
                 image_content = _models._models.ImageUrl(url = image_content),
                 visual_features = visual_features,
                 language = language,
@@ -711,12 +711,12 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
                 smart_crops_aspect_ratios = smart_crops_aspect_ratios,
                 model_version = model_version,
                 **kwargs)
-        else:
-            return await self._analyze_from_buffer(
-                image_content = image_content,
-                visual_features = visual_features,
-                language = language,
-                gender_neutral_caption = gender_neutral_caption,
-                smart_crops_aspect_ratios = smart_crops_aspect_ratios,
-                model_version = model_version,
-                **kwargs)
+
+        return await self._analyze_from_buffer(
+            image_content = image_content,
+            visual_features = visual_features,
+            language = language,
+            gender_neutral_caption = gender_neutral_caption,
+            smart_crops_aspect_ratios = smart_crops_aspect_ratios,
+            model_version = model_version,
+            **kwargs)
