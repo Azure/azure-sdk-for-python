@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Any, Union
+from typing import Any, Union, Optional
 
 from azure.core.exceptions import AzureError
 
@@ -23,7 +23,7 @@ class ServiceBusError(AzureError):
 
     def __init__(
         self,
-        message: Union[str, bytes],
+        message: Optional[Union[str, bytes]],
         *args: Any,
         **kwargs: Any
     ) -> None:

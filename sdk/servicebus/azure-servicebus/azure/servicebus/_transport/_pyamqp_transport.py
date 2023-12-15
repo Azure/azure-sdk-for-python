@@ -224,7 +224,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def get_message_delivery_id(
         _, frame: "TransferFrame"
-    ) -> Optional[int]:  # pylint: disable=unused-argument
+    ) -> Optional[int]:
         """
         Gets delivery id of a Message.
         :param any _: Ignored.
@@ -934,7 +934,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def _handle_amqp_exception_with_condition(
         logger: "Logger",
         condition: Optional[Union[bytes, "ErrorCondition"]],
-        description: Union[str, bytes],
+        description: Optional[Union[str, bytes]] = None,
         exception: Optional["AMQPException"] = None,
         status_code: Optional[str] = None,
         *,
