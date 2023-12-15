@@ -931,8 +931,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def _handle_amqp_exception_with_condition(
         logger: "Logger",
-        condition: Optional["ErrorCondition"],
-        description: str,
+        condition: Optional[Union[bytes, "ErrorCondition"]],
+        description: Union[str, bytes],
         exception: Optional["AMQPException"] = None,
         status_code: Optional[str] = None,
         *,
