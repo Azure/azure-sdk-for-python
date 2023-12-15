@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union, cast
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AccessKeyAuthTypeWorkspaceConnectionProperties,
@@ -194,7 +194,7 @@ class WorkspaceConnection(Resource):
         return self._is_shared
 
     @is_shared.setter
-    def is_shared(self, value: bool):
+    def is_shared(self, value: bool) -> None:
         """Assign the is_shared property of the connection, determining if it is shared amongst other
             lean workspaces within its parent workspace hub. Only applicable for connections created
             within a lean workspace workspace.
@@ -279,13 +279,13 @@ class WorkspaceConnection(Resource):
         if rest_kwargs["type"] == camel_to_snake(ConnectionCategory.CUSTOM_KEYS):
             rest_kwargs["type"] = WorkspaceConnectionTypes.CUSTOM
         workspace_connection = conn_class(**rest_kwargs)
-        return workspace_connection
+        return cast(Optional["WorkspaceConnection"], workspace_connection)
 
     def _validate(self) -> str:
         return str(self.name)
 
     def _to_rest_object(self) -> RestWorkspaceConnection:
-        workspace_connection_properties_class = None
+        workspace_connection_properties_class: Any = None
         auth_type = self.credentials.type if self._credentials else None
 
         if auth_type == camel_to_snake(ConnectionAuthType.PAT):

@@ -122,7 +122,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         resources: Optional[JobResourceConfiguration] = None,
         environment_variables: Optional[Dict] = None,
         identity: Optional[
-            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, Dict]
         ] = None,
         **kwargs: Any,
     ) -> None:
@@ -260,7 +260,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, Dict]]:
         """The identity that the job will use while running on compute.
 
         :return: The identity that the job will use while running on compute.
@@ -272,9 +272,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
     @identity.setter
     def identity(
         self,
-        value: Union[
-            Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
-        ],
+        value: Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None],
     ) -> None:
         """Sets the identity that the job will use while running on compute.
 
@@ -448,7 +446,9 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
                     "partition_keys": json.dumps(self.partition_keys)
                     if self.partition_keys is not None
                     else self.partition_keys,
-                    "identity": self.identity._to_dict() if self.identity else None,
+                    "identity": self.identity._to_dict()
+                    if self.identity and not isinstance(self.identity, Dict)
+                    else None,
                     "resources": get_rest_dict_for_node_attrs(self.resources),
                 }
             )
