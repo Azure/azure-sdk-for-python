@@ -1,4 +1,4 @@
-# Image Analysis client library for Python
+# Azure Image Analysis client library for Python
 
 The Image Analysis service provides AI algorithms for processing images and returning information about their content. In a single service call, you can extract one or more visual features from the image simultaneously, including getting a caption for the image, extracting text shown in the image (OCR) and detecting objects. For more information on the service and the supported visual features, see [Image Analysis overview][image_analysis_overview], and the [Concepts][image_analysis_concepts] page.
 
@@ -9,12 +9,12 @@ Use the Image Analysis client library to:
 * Get the analysis result
 
 [Product documentation][image_analysis_overview] 
-| [Samples](samples)
+| [Samples][samples]
 | [Vision Studio][vision_studio]
-| [API reference documentation](https://learn.microsoft.com/python/api/azure-ai-vision-imageanalysis)
-| [Package (Pypi)](https://pypi.org/project/azure-ai-vision-imageanalysis/)
+| [API reference documentation](https://learn.microsoft.com/python/api/azure-ai-vision) <!-- TODO: replace with https://learn.microsoft.com/python/api/azure-ai-vision-imageanalysis after ref docs are published -->
+| [Package (Pypi)](https://pypi.org/project/azure-ai-vision) <!-- TODO: replace with https://pypi.org/project/azure-ai-vision-imageanalysis/ after package ships -->
 | [Package (Conda)](https://anaconda.org/microsoft/azure-ai-vision-imageanalysis)
-| [SDK source code](azure/ai/vision/imageanalysis)
+| [SDK source code][sdk_source_code]
 
 ## Getting started
 
@@ -82,23 +82,23 @@ from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
 
 Once you've initialized an `ImageAnalysisClient`, you need to select one or more visual features to analyze. The options are specified by the enum class `VisualFeatures`. The following features are supported:
 
-1. `VisualFeatures.CAPTION` ([Examples](#generate-an-image-caption-for-an-image-file) | [Samples](samples)): Generate a human-readable sentence that describes the content of an image.
-1. `VisualFeatures.READ` ([Examples](#extract-text-from-the-image-file) | [Samples](samples)): Also known as Optical Character Recognition (OCR). Extract printed or handwritten text from images.
-1. `VisualFeatures.DENSE_CAPTIONS` ([Samples](samples)): Dense Captions provides more details by generating one-sentence captions for up to 10 different regions in the image, including one for the whole image. 
-1. `VisualFeatures.TAGS` ([Samples](samples)): Extract content tags for thousands of recognizable objects, living beings, scenery, and actions that appear in images.
-1. `VisualFeatures.OBJECTS` ([Samples](samples)): Object detection. This is similar to tagging, but focused on detecting physical objects in the image and returning their location.
-1. `VisualFeatures.SMART_CROPS` ([Samples](samples)): Used to find a representative sub-region of the image for thumbnail generation, with priority given to include faces.
-1. `VisualFeatures.PEOPLE` ([Samples](samples)): Detect people in the image and return their location.
+1. `VisualFeatures.CAPTION` ([Examples](#generate-an-image-caption-for-an-image-file) | [Samples][samples]): Generate a human-readable sentence that describes the content of an image.
+1. `VisualFeatures.READ` ([Examples](#extract-text-from-the-image-file) | [Samples][samples]): Also known as Optical Character Recognition (OCR). Extract printed or handwritten text from images.
+1. `VisualFeatures.DENSE_CAPTIONS` ([Samples][samples]): Dense Captions provides more details by generating one-sentence captions for up to 10 different regions in the image, including one for the whole image. 
+1. `VisualFeatures.TAGS` ([Samples][samples]): Extract content tags for thousands of recognizable objects, living beings, scenery, and actions that appear in images.
+1. `VisualFeatures.OBJECTS` ([Samples][samples]): Object detection. This is similar to tagging, but focused on detecting physical objects in the image and returning their location.
+1. `VisualFeatures.SMART_CROPS` ([Samples][samples]): Used to find a representative sub-region of the image for thumbnail generation, with priority given to include faces.
+1. `VisualFeatures.PEOPLE` ([Samples][samples]): Detect people in the image and return their location.
 
 For more information about these features, see [Image Analysis overview][image_analysis_overview], and the [Concepts][image_analysis_concepts] page.
 
 ### Analyze from image buffer or URL
 
-The `ImageAnalysisClient` has two methods `analyze_from_buffer` and `analyze_from_url`.
-* `analyze_from_buffer`: Analyze an image from an input [bytes](https://docs.python.org/3/library/stdtypes.html#bytes-objects) object. The client will upload the image to the service as part of the REST request. 
-* `analyze_from_url`: Analyze an image from a publicly-accessible URL, via the `ImageUrl` object. The client will send the image URL to the service. The service will download the image.
+The `ImageAnalysisClient` has two overloads for the method `analyze`:
+* Analyze an image from an input [bytes](https://docs.python.org/3/library/stdtypes.html#bytes-objects) object. The client will upload the image to the service as part of the REST request.
+* Analyze an image from a publicly-accessible URL. The client will send the image URL to the service. The service will fetch the image.
 
-The examples below show how to do both. The `analyze_from_buffer` examples populate the input `bytes` object by loading an image from a file on disk.
+The examples below show how to do both. The `analyze` from an input `bytes` object examples populate the `bytes` object by loading an image from a file on disk.
 
 ### Supported image formats
 
@@ -119,11 +119,11 @@ The following sections provide code snippets covering these common Image Analysi
 
 These snippets use the synchronous `client` from [Create and authenticate the client](#3-create-and-authenticate-the-client).
 
-See the [Samples](samples) folder for fully working samples for all visual features, including asynchronous clients.
+See the [Samples][samples] folder for fully working samples for all visual features, including asynchronous clients.
 
 ### Generate an image caption for an image file
 
-This example demonstrates how to generate a one-sentence caption for the image file [sample.jpg](sample.jpg) using the `ImageAnalysisClient`. The synchronous (blocking) `analyze_from_buffer` method call returns an `ImageAnalysisResult` object with a `caption` property of type `CaptionResult`. It contains the generated caption and its confidence score in the range [0, 1]. By default the caption may contain gender terms such as "man", "woman", or "boy", "girl". You have the option to request gender-neutral terms such as "person" or "child" by setting `gender_neutral_caption = True` when calling `analyze_from_buffer`.
+This example demonstrates how to generate a one-sentence caption for the image file `sample.jpg` using the `ImageAnalysisClient`. The synchronous (blocking) `analyze` method call returns an `ImageAnalysisResult` object with a `caption` property of type `CaptionResult`. It contains the generated caption and its confidence score in the range [0, 1]. By default the caption may contain gender terms such as "man", "woman", or "boy", "girl". You have the option to request gender-neutral terms such as "person" or "child" by setting `gender_neutral_caption = True` when calling `analyze`.
 
 Notes:
 * Caption is only available in some Azure regions. See [Prerequisites](#prerequisites).
@@ -152,11 +152,11 @@ print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
 
 <!-- END SNIPPET -->
 
-To generate captions for additional images, simply call the 'analyze_from_buffer' multiple times. You can use the same `ImageAnalysisClient` do to multiple analysis calls.
+To generate captions for additional images, simply call 'analyze' multiple times. You can use the same `ImageAnalysisClient` do to multiple analysis calls.
 
 ### Generate an image caption for an image URL
 
-This example is similar to the above, expect it calls the `analyze_from_url` method and provides a [publicly accessible image URL](https://aka.ms/azai/vision/image-analysis-sample.jpg) instead of a file name.
+This example is similar to the above, expect it calls the `analyze` method and provides a [publicly accessible image URL](https://aka.ms/azai/vision/image-analysis-sample.jpg) instead of a file name.
 
 <!-- SNIPPET:sample_caption_image_url.caption -->
 
@@ -179,7 +179,7 @@ print(f"   '{result.caption.text}', Confidence {result.caption.confidence:.4f}")
 
 ### Extract text from an image file
 
-This example demonstrates how to extract printed or hand-written text for the image file [sample.jpg](sample.jpg) using the `ImageAnalysisClient`. The synchronous (blocking) `analyze_from_buffer` method call returns an `ImageAnalysisResult` object with a `read` property of type `ReadResult`. It includes a list of text lines and a bounding polygon surrounding each text line. For each line, it also returns a list of words in the text line and a bounding polygon surrounding each word.
+This example demonstrates how to extract printed or hand-written text for the image file `sample.jpg` using the `ImageAnalysisClient`. The synchronous (blocking) `analyze` method call returns an `ImageAnalysisResult` object with a `read` property of type `ReadResult`. It includes a list of text lines and a bounding polygon surrounding each text line. For each line, it also returns a list of words in the text line and a bounding polygon surrounding each word.
 
 <!-- SNIPPET:sample_ocr_image_file.read -->
 
@@ -206,12 +206,12 @@ for line in result.read.blocks[0].lines:
 
 <!-- END SNIPPET -->
 
-To extract text for additional images, simply call the 'analyze_from_buffer' multiple times. You can use the same ImageAnalysisClient do to multiple analysis calls.
+To extract text for additional images, simply call 'analyze' multiple times. You can use the same ImageAnalysisClient do to multiple analysis calls.
 
 
 ### Extract text from an image URL
 
-This example is similar to the above, expect it calls the `analyze_from_url` method and provides a [publicly accessible image URL](https://aka.ms/azai/vision/image-analysis-sample.jpg) instead of a file name.
+This example is similar to the above, expect it calls the `analyze` method and provides a [publicly accessible image URL](https://aka.ms/azai/vision/image-analysis-sample.jpg) instead of a file name.
 
 <!-- SNIPPET:sample_ocr_image_url.read -->
 
@@ -239,11 +239,11 @@ for line in result.read.blocks[0].lines:
 
 ### Exceptions
 
-The `analyze_from_buffer` and `analyze_from_url` methods raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
+The `analyze` methods raise an [HttpResponseError](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror) exception for a non-success HTTP status code response from the service. The exception's `status_code` will be the HTTP response status code. The exception's `error.message` contains a detailed message that will allow you to diagnose the issue:
 
 ```python
 try:
-    result = client.analyze_from_url( ... )
+    result = client.analyze( ... )
 except HttpResponseError as e:
     print(f"Status code: {e.status_code}")
     print(f"Reason: {e.reason}")
@@ -294,7 +294,7 @@ handler.setFormatter(formatter)
 
 <!-- END SNIPPET -->
 
-By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Ocp-Apim-Subscription-Key` which holds the key), and the request and response payloads. To create logs without redaction, set the method argument `logging_enable = True` when you create `ImageAnalysisClient`, or when you call `analyze_from_buffer` and `analyze_from_url` on the client. 
+By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Ocp-Apim-Subscription-Key` which holds the key), and the request and response payloads. To create logs without redaction, set the method argument `logging_enable = True` when you create `ImageAnalysisClient`, or when you call `analyze` on the client. 
 
 <!-- SNIPPET:sample_analyze_all_image_file.create_client_with_logging -->
 
@@ -313,7 +313,7 @@ None redacted logs are generated for log level `logging.DEBUG` only. Be sure to 
 
 ## Next steps
 
-* Have a look at the [Samples](samples) folder, containing fully runnable Python code for Image Analysis (all visual features, synchronous and asynchronous clients, from image file or URL).
+* Have a look at the [Samples][samples] folder, containing fully runnable Python code for Image Analysis (all visual features, synchronous and asynchronous clients, from image file or URL).
 
 ## Contributing
 
@@ -336,4 +336,5 @@ additional questions or comments.
 [image_analysis_overview]: https://learn.microsoft.com/azure/ai-services/computer-vision/overview-image-analysis?tabs=4-0
 [image_analysis_concepts]: https://learn.microsoft.com/azure/ai-services/computer-vision/concept-tag-images-40
 [vision_studio]: https://portal.vision.cognitive.azure.com/gallery/imageanalysis
-
+[samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/samples)
+[sdk_source_code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis)
