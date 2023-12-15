@@ -118,7 +118,7 @@ class AIClient:
         # TODO add scoping to allow connections to:
         # - Create project-scoped connections
         # For now, connections are AI resource-scoped.
-        self._connections = ConnectionOperations(self._ai_resource_ml_client, **app_insights_handler_kwargs)
+        self._connections = ConnectionOperations(resource_ml_client=self._ai_resource_ml_client, project_ml_client=self._ml_client, **app_insights_handler_kwargs)
         self._mlindexes = MLIndexOperations(self._ml_client, **app_insights_handler_kwargs)
         self._ai_resources = AIResourceOperations(self._ml_client, **app_insights_handler_kwargs)
         self._deployments = DeploymentOperations(self._ml_client, self._connections, **app_insights_handler_kwargs)
