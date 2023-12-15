@@ -7,9 +7,7 @@ import inspect
 import os.path
 import zlib
 
-from azure_devtools.scenario_tests.config import TestConfig
-
-from .config import TEST_SETTING_FILENAME
+from .config import TEST_SETTING_FILENAME, TestConfig
 
 
 class HttpStatusCode(object):

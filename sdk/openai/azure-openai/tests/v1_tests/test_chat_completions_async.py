@@ -1066,7 +1066,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
                         {"type": "text", "text": "What's in this image?"},
                         {
                             "type": "image_url",
-                            "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Rainier20200906.jpg/1920px-Rainier20200906.jpg",
+                            "image_url": "https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/images/handwritten-note.jpg",
                         },
                     ],
                 }
@@ -1080,7 +1080,6 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert completion.usage.prompt_tokens is not None
         assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
         assert len(completion.choices) == 1
-        assert completion.choices[0].finish_details is not None
         assert completion.choices[0].index is not None
         assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role

@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added on_refresh_success callback to load method. This callback is called when the refresh method successfully refreshes the configuration.
+- Added minimum up time. This is the minimum amount of time the provider will try to be up before throwing an error. This is to prevent quick restart loops.
 
 ### Breaking Changes
 
