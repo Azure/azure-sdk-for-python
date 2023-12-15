@@ -6,9 +6,9 @@
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from typing import Any, Union, Optional
-from enum import Enum
 from collections import namedtuple
 
+from enum import Enum
 from .constants import SECURE_PORT, FIELD
 from .types import AMQPTypes, FieldDefinition
 
