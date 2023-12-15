@@ -329,7 +329,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         if not self._refresh_timer.needs_refresh():
             logging.debug("Refresh called but refresh interval not elapsed.")
             return
-        if not self._refresh_lock.acquire(blocking=False):
+        if not self._refresh_lock.acquire(blocking=False): # pylint: disable= consider-using-with
             logging.debug("Refresh called but refresh already in progress.")
             return
         success = False
