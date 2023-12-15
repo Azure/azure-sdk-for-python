@@ -3341,17 +3341,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
 
         # Arrange
-        if self.is_live:
-            from azure.identity import ClientSecretCredential
+        from azure.identity import ClientSecretCredential
 
-            # Generate an invalid credential
-            creds = ClientSecretCredential(
-                self.get_settings_value("TENANT_ID"),
-                self.get_settings_value("CLIENT_ID"),
-                self.get_settings_value("CLIENT_SECRET") + 'a',
-            )
-        else:
-            creds = self.generate_fake_token()
+        # Generate an invalid credential
+        creds = ClientSecretCredential(
+            self.get_settings_value("TENANT_ID"),
+            self.get_settings_value("CLIENT_ID"),
+            self.get_settings_value("CLIENT_SECRET") + 'a'
+        )
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=creds, retry_total=0)
         container = bsc.get_container_client('testing')
