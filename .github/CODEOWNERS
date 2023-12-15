@@ -617,6 +617,9 @@
 # ServiceLabel: %HPC Cache %Service Attention
 #/<NotInRepo>/          @romahamu @omzevall
 
+# ServiceLabel: %Image Analysis %Service Attention
+/sdk/vision/azure-ai-vision-imageanalysis/          @dargilco @rhurey
+
 # ServiceLabel: %Import Export %Service Attention
 #/<NotInRepo>/          @madhurinms
 
