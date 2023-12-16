@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import cast, Optional, NoReturn, Union, TYPE_CHECKING
+from typing import Any, cast, Optional, NoReturn, Union, TYPE_CHECKING
 
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, OAEP, PKCS1v15, PSS, MGF1
@@ -465,7 +465,7 @@ class EncryptResult:
         authenticated algorithm
     """
 
-    def __init__(self, key_id: Optional[str], algorithm: EncryptionAlgorithm, ciphertext: bytes, **kwargs) -> None:
+    def __init__(self, key_id: Optional[str], algorithm: EncryptionAlgorithm, ciphertext: bytes, **kwargs: Any) -> None:
         self.key_id = key_id
         self.algorithm = algorithm
         self.ciphertext = ciphertext

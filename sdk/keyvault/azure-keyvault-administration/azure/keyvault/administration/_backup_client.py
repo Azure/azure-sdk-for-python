@@ -139,7 +139,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller:
+    ) -> LROPoller[None]:
         ...
 
     @overload
@@ -151,11 +151,11 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> LROPoller:
+    ) -> LROPoller[None]:
         ...
 
     @distributed_trace
-    def begin_restore(self, folder_url: str, *args: str, **kwargs: Any) -> LROPoller:
+    def begin_restore(self, folder_url: str, *args: str, **kwargs: Any) -> LROPoller[None]:
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.

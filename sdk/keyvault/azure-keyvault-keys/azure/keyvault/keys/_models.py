@@ -44,7 +44,7 @@ class JsonWebKey(object):
 
     _FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         for field in self._FIELDS:
             setattr(self, field, kwargs.get(field))
 
@@ -70,7 +70,7 @@ class KeyProperties(object):
     :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy
     """
 
-    def __init__(self, key_id: str, attributes: "Optional[_models.KeyAttributes]" = None, **kwargs) -> None:
+    def __init__(self, key_id: str, attributes: "Optional[_models.KeyAttributes]" = None, **kwargs: Any) -> None:
         self._attributes = attributes
         self._id = key_id
         self._vault_id = KeyVaultKeyIdentifier(key_id)
@@ -279,7 +279,7 @@ class KeyReleasePolicy(object):
         updated after being marked immutable. Release policies are mutable by default.
     """
 
-    def __init__(self, encoded_policy: bytes, **kwargs) -> None:
+    def __init__(self, encoded_policy: bytes, **kwargs: Any) -> None:
         self.encoded_policy = encoded_policy
         self.content_type = kwargs.get("content_type", None)
         self.immutable = kwargs.get("immutable", None)
@@ -346,7 +346,7 @@ class KeyRotationPolicy(object):
     :vartype updated_on: ~datetime.datetime or None
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.id = kwargs.get("policy_id", None)
         self.lifetime_actions: List[KeyRotationLifetimeAction] = kwargs.get("lifetime_actions", [])
         self.expires_in = kwargs.get("expires_in", None)
@@ -542,7 +542,7 @@ class DeletedKey(KeyVaultKey):
         deleted_date: Optional[datetime] = None,
         recovery_id: Optional[str] = None,
         scheduled_purge_date: Optional[datetime] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super(DeletedKey, self).__init__(properties=properties, **kwargs)
         self._deleted_date = deleted_date

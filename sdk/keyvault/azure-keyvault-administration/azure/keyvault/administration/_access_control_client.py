@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Union
+from typing import Any, Union
 from uuid import UUID, uuid4
 
 from azure.core.exceptions import ResourceNotFoundError
@@ -34,7 +34,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_role_assignment(
-        self, scope: Union[str, KeyVaultRoleScope], definition_id: str, principal_id: str, **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], definition_id: str, principal_id: str, **kwargs: Any
     ) -> KeyVaultRoleAssignment:
         """Create a role assignment.
 

@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Any
+
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -29,25 +31,25 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_setting(self, name: str, **kwargs) -> KeyVaultSetting:
+    async def get_setting(self, name: str, **kwargs: Any) -> KeyVaultSetting:
         """Gets the setting with the specified name.
 
         :param str name: The name of the account setting.
 
         :returns: The account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
-        :raises: azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         result = await self._client.get_setting(vault_base_url=self._vault_url, setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
     @distributed_trace
-    def list_settings(self, **kwargs) -> AsyncItemPaged[KeyVaultSetting]:
+    def list_settings(self, **kwargs: Any) -> AsyncItemPaged[KeyVaultSetting]:
         """Lists all account settings.
 
         :returns: A paged object containing the account's settings.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultSetting]
-        :raises: azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         result = self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
 
@@ -64,7 +66,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def update_setting(self, setting: KeyVaultSetting, **kwargs) -> KeyVaultSetting:
+    async def update_setting(self, setting: KeyVaultSetting, **kwargs: Any) -> KeyVaultSetting:
         """Updates the named account setting with the provided value.
 
         :param setting: A azure.keyvault.administration.KeyVaultSetting to update. The account setting with
@@ -73,7 +75,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
 
         :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
-        :raises: azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         parameters = UpdateSettingRequest(value=setting.value)
         result = await self._client.update_setting(
