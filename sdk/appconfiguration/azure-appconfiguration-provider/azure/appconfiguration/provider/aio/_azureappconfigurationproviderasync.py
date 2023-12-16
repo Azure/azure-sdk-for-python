@@ -330,7 +330,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             or self._keyvault_client_configs is not None
             or self._secret_resolver is not None
         )
-        self._current_refresh_check = False
         self._update_lock = Lock()
         self._refresh_lock = Lock()
 
@@ -389,7 +388,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             self._refresh_lock.release()
             if not success:
                 self._refresh_timer.backoff()
-            elif success and self._on_refresh_success:
+            elif need_refresh and self._on_refresh_success:
                 await self._on_refresh_success()
 
     async def _load_all(self, **kwargs):
