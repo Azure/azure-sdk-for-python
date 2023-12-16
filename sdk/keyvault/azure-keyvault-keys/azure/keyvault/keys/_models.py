@@ -311,7 +311,7 @@ class KeyRotationLifetimeAction(object):
     :paramtype time_before_expiry: str or None
     """
 
-    def __init__(self, action: Union[KeyRotationPolicyAction, str], **kwargs) -> None:
+    def __init__(self, action: Union[KeyRotationPolicyAction, str], **kwargs: Any) -> None:
         self.action = action
         self.time_after_create: Optional[str] = kwargs.get("time_after_create", None)
         self.time_before_expiry: Optional[str] = kwargs.get("time_before_expiry", None)

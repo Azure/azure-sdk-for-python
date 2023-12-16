@@ -70,7 +70,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_role_assignment(
-        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> None:
         """Delete a role assignment.
 
@@ -92,7 +92,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_role_assignment(
-        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> KeyVaultRoleAssignment:
         """Get a role assignment.
 
@@ -112,7 +112,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_role_assignments(
-        self, scope: Union[str, KeyVaultRoleScope], **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
     ) -> AsyncItemPaged[KeyVaultRoleAssignment]:
         """List all role assignments for a scope.
 
@@ -132,7 +132,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def set_role_definition(
-        self, scope: Union[str, KeyVaultRoleScope], **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
     ) -> KeyVaultRoleDefinition:
         """Creates or updates a custom role definition.
 
@@ -190,7 +190,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def get_role_definition(
-        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> KeyVaultRoleDefinition:
         """Get the specified role definition.
 
@@ -210,7 +210,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def delete_role_definition(
-        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], name: Union[str, UUID], **kwargs: Any
     ) -> None:
         """Deletes a custom role definition.
 
@@ -232,7 +232,7 @@ class KeyVaultAccessControlClient(AsyncKeyVaultClientBase):
 
     @distributed_trace
     def list_role_definitions(
-        self, scope: Union[str, KeyVaultRoleScope], **kwargs
+        self, scope: Union[str, KeyVaultRoleScope], **kwargs: Any
     ) -> AsyncItemPaged[KeyVaultRoleDefinition]:
         """List all role definitions applicable at and above a scope.
 

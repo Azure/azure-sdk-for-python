@@ -105,7 +105,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def create_key(self, name: str, key_type: Union[str, KeyType], **kwargs) -> KeyVaultKey:
+    async def create_key(self, name: str, key_type: Union[str, KeyType], **kwargs: Any) -> KeyVaultKey:
         """Create a key or, if ``name`` is already in use, create a new version of the key.
 
         Requires keys/create permission.

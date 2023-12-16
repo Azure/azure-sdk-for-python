@@ -103,7 +103,7 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def create_key(self, name: str, key_type: Union[str, KeyType], **kwargs) -> KeyVaultKey:
+    def create_key(self, name: str, key_type: Union[str, KeyType], **kwargs: Any) -> KeyVaultKey:
         """Create a key or, if ``name`` is already in use, create a new version of the key.
 
         Requires keys/create permission.
