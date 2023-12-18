@@ -14,7 +14,7 @@ from azure.mgmt.deviceupdate import DeviceUpdateMgmtClient
     pip install azure-identity
     pip install azure-mgmt-deviceupdate
 # USAGE
-    python instances_get.py
+    python accounts_head.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.instances.get(
+    response = client.accounts.head(
         resource_group_name="test-rg",
         account_name="contoso",
-        instance_name="blue",
     )
     print(response)
 
 
-# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2022-10-01/examples/Instances/Instances_Get.json
+# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2023-07-01/examples/Accounts/Accounts_Head.json
 if __name__ == "__main__":
     main()

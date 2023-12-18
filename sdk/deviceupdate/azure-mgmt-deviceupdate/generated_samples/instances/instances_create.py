@@ -14,7 +14,7 @@ from azure.mgmt.deviceupdate import DeviceUpdateMgmtClient
     pip install azure-identity
     pip install azure-mgmt-deviceupdate
 # USAGE
-    python accounts_get.py
+    python instances_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,30 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.accounts.get(
+    response = client.instances.begin_create(
         resource_group_name="test-rg",
         account_name="contoso",
-    )
+        instance_name="blue",
+        instance={
+            "location": "westus2",
+            "properties": {
+                "diagnosticStorageProperties": {
+                    "authenticationType": "KeyBased",
+                    "connectionString": "string",
+                    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/adu-resource-group/providers/Microsoft.Storage/storageAccounts/testAccount",
+                },
+                "enableDiagnostics": False,
+                "iotHubs": [
+                    {
+                        "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Devices/IotHubs/blue-contoso-hub"
+                    }
+                ],
+            },
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2022-10-01/examples/Accounts/Accounts_Get.json
+# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2023-07-01/examples/Instances/Instances_Create.json
 if __name__ == "__main__":
     main()

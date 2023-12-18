@@ -14,7 +14,7 @@ from azure.mgmt.deviceupdate import DeviceUpdateMgmtClient
     pip install azure-identity
     pip install azure-mgmt-deviceupdate
 # USAGE
-    python instances_update.py
+    python private_endpoint_connection_proxy_list_by_account.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +29,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.instances.update(
+    response = client.private_endpoint_connection_proxies.list_by_account(
         resource_group_name="test-rg",
         account_name="contoso",
-        instance_name="blue",
-        tag_update_payload={"tags": {"tagKey": "tagValue"}},
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2022-10-01/examples/Instances/Instances_Update.json
+# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2023-07-01/examples/PrivateEndpointConnectionProxies/PrivateEndpointConnectionProxy_ListByAccount.json
 if __name__ == "__main__":
     main()
