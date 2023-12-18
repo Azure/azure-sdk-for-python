@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
+## 1.1.0b3 (2023-12-18)
 
 ### Features Added
 
@@ -8,6 +8,8 @@
 - Added minimum up time. This is the minimum amount of time the provider will try to be up before throwing an error. This is to prevent quick restart loops.
 
 ### Breaking Changes
+
+- Renamed the type `SentinelKey` to be `WatchKey`.
 
 ### Bugs Fixed
 
