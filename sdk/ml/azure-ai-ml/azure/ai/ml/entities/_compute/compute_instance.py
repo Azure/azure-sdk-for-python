@@ -217,10 +217,10 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
         self.enable_node_public_ip = enable_node_public_ip
-        self.custom_applications = custom_applications
-        self.subnet = None
         self.enable_sso = enable_sso
         self.enable_root_access = enable_root_access
+        self.custom_applications = custom_applications
+        self.subnet = None
 
     @property
     def services(self) -> List[Dict[str, str]]:
