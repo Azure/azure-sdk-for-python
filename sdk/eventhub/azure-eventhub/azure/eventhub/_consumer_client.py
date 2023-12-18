@@ -5,7 +5,7 @@
 import logging
 import threading
 import datetime
-from typing import TYPE_CHECKING, List, Union, Any, Callable, Optional, Dict, Tuple
+from typing import TYPE_CHECKING, List, Union, Any, Callable, Optional, Dict, Tuple, overload
 
 from ._client_base import ClientBase
 from ._consumer import EventHubConsumer
@@ -312,9 +312,25 @@ class EventHubConsumerClient(
         )
         return cls(**constructor_args)
 
+    @overload
     def _receive(
         self,
-        on_event: Callable[["PartitionContext", Union[Optional["EventData"], List["EventData"]]], None],
+        on_event: Callable[["PartitionContext", Optional["EventData"]], None],
+        **kwargs: Any
+    ) -> None:
+        ...
+
+    @overload
+    def _receive(
+        self,
+        on_event: Callable[["PartitionContext", List["EventData"]], None],
+        **kwargs: Any
+    ) -> None:
+        ...
+
+    def _receive(
+        self,
+        on_event,
         **kwargs: Any
     ) -> None:
         partition_id = kwargs.get("partition_id")
@@ -448,9 +464,7 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events from the EventHub.
         """
-        # Ignoring type - on_event is a callable with two parameters
-        # one of which is a union of event data and list of event data
-        self._receive(on_event, batch=False, max_batch_size=1, **kwargs) # type: ignore[arg-type]
+        self._receive(on_event, batch=False, max_batch_size=1, **kwargs)
 
     def receive_batch(
             self,
@@ -533,9 +547,7 @@ class EventHubConsumerClient(
                 :dedent: 4
                 :caption: Receive events in batches from the EventHub.
         """
-        # Ignoring type - on_event is a callable with two parameters
-        # one of which is a union of event data and list of event data
-        self._receive(on_event_batch, batch=True, **kwargs) # type: ignore[arg-type]
+        self._receive(on_event_batch, batch=True, **kwargs)
 
     def get_eventhub_properties(self) -> Dict[str, Any]:
         """Get properties of the Event Hub.
