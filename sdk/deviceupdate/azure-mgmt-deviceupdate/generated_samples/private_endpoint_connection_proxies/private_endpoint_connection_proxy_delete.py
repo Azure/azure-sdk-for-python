@@ -14,7 +14,7 @@ from azure.mgmt.deviceupdate import DeviceUpdateMgmtClient
     pip install azure-identity
     pip install azure-mgmt-deviceupdate
 # USAGE
-    python private_endpoint_connection_list_by_account.py
+    python private_endpoint_connection_proxy_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.private_endpoint_connections.list_by_account(
+    client.private_endpoint_connection_proxies.begin_delete(
         resource_group_name="test-rg",
         account_name="contoso",
-    )
-    for item in response:
-        print(item)
+        private_endpoint_connection_proxy_id="peexample01",
+    ).result()
 
 
-# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2022-10-01/examples/PrivateEndpointConnections/PrivateEndpointConnection_ListByAccount.json
+# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2023-07-01/examples/PrivateEndpointConnectionProxies/PrivateEndpointConnectionProxy_Delete.json
 if __name__ == "__main__":
     main()

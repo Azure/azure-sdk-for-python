@@ -14,7 +14,7 @@ from azure.mgmt.deviceupdate import DeviceUpdateMgmtClient
     pip install azure-identity
     pip install azure-mgmt-deviceupdate
 # USAGE
-    python private_endpoint_connection_proxy_private_endpoint_update.py
+    python private_link_resources_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,21 +29,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.private_endpoint_connection_proxies.update_private_endpoint_properties(
+    response = client.private_link_resources.get(
         resource_group_name="test-rg",
         account_name="contoso",
-        private_endpoint_connection_proxy_id="peexample01",
-        private_endpoint_update={
-            "id": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/test-rg/providers/Microsoft.Network/privateEndpoints/{peName}",
-            "immutableResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Network/privateEndpoints/{peName}",
-            "immutableSubscriptionId": "00000000-0000-0000-0000-000000000000",
-            "location": "westus2",
-            "vnetTrafficTag": "12345678",
-        },
+        group_id="adu",
     )
     print(response)
 
 
-# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2022-10-01/examples/PrivateEndpointConnectionProxies/PrivateEndpointConnectionProxy_PrivateEndpointUpdate.json
+# x-ms-original-file: specification/deviceupdate/resource-manager/Microsoft.DeviceUpdate/stable/2023-07-01/examples/PrivateLinkResources/PrivateLinkResources_Get.json
 if __name__ == "__main__":
     main()
