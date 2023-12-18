@@ -50,10 +50,12 @@ if TYPE_CHECKING:
             Message as uamqp_Message,
             AMQPClientAsync as uamqp_AMQPClientAsync,
         )
+        from uamqp.authentication import JWTTokenAsync
     except ImportError:
         uamqp_authentication = None
         uamqp_Message = None
         uamqp_AMQPClientAsync = None
+        JWTTokenAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
 
     try:
@@ -86,11 +88,11 @@ if TYPE_CHECKING:
             pass
 
         @property
-        def _handler(self) -> Union[uamqp_AMQPClientAsync, AMQPClientAsync]:
+        def _handler(self) -> Union["uamqp_AMQPClientAsync", AMQPClientAsync]:
             """The instance of SendClientAsync or ReceiveClientAsync"""
 
         @property
-        def _internal_kwargs(self) -> dict:
+        def _internal_kwargs(self) -> Dict[Any, Any]:
             """The dict with an event loop that users may pass in to wrap sync calls to async API.
             It's furthur passed to uamqp APIs
             """
@@ -104,10 +106,10 @@ if TYPE_CHECKING:
             """Whether the consumer or producer is running"""
 
         @running.setter
-        def running(self, value):
+        def running(self, value: bool) -> None:
             pass
 
-        def _create_handler(self, auth: Union[uamqp_authentication.JWTTokenAsync, JWTTokenAuthAsync]) -> None:
+        def _create_handler(self, auth: Union["JWTTokenAsync", JWTTokenAuthAsync]) -> None:
             pass
 
     _MIXIN_BASE = AbstractConsumerProducer
@@ -131,7 +133,7 @@ class EventHubSharedKeyCredential(object):
         self.token_type = b"servicebus.windows.net:sastoken"
 
     async def get_token(
-        self, *scopes, **kwargs # pylint:disable=unused-argument
+        self, *scopes: str, **kwargs: Any # pylint:disable=unused-argument
     ) -> AccessToken:
         if not scopes:
             raise ValueError("No token scope provided.")
@@ -175,8 +177,8 @@ class EventhubAzureNamedKeyTokenCredentialAsync(object): # pylint: disable=name-
     """
 
     def __init__(self, azure_named_key_credential: AzureNamedKeyCredential) -> None:
-        self._credential = azure_named_key_credential
-        self.token_type = b"servicebus.windows.net:sastoken"
+        self._credential: AzureNamedKeyCredential = azure_named_key_credential
+        self.token_type: bytes = b"servicebus.windows.net:sastoken"
 
     async def get_token(
         self, *scopes, **kwargs # pylint:disable=unused-argument
@@ -245,7 +247,7 @@ class ClientBaseAsync(ClientBase):
             **kwargs
         )
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         raise TypeError(
             "Asynchronous client must be opened with async context manager."
         )
@@ -342,7 +344,7 @@ class ClientBaseAsync(ClientBase):
                 await mgmt_client.open_async(connection=conn)
                 while not await mgmt_client.client_ready_async():
                     await asyncio.sleep(0.05)
-                mgmt_msg.application_properties[
+                cast(Dict[Union[str, bytes], Any], mgmt_msg.application_properties)[
                     "security_token"
                 ] = await self._amqp_transport.get_updated_token_async(mgmt_auth)
                 status_code, description, response = await self._amqp_transport.mgmt_client_request_async(
@@ -447,10 +449,10 @@ class ClientBaseAsync(ClientBase):
 
 
 class ConsumerProducerMixin(_MIXIN_BASE):
-    async def __aenter__(self):
+    async def __aenter__(self) -> ConsumerProducerMixin:
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         await self.close()
 
     def _check_closed(self) -> None:
