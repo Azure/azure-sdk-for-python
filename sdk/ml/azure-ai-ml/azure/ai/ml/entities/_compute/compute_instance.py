@@ -438,6 +438,12 @@ class ComputeInstance(Compute):
             if (prop.properties and prop.properties.enable_node_public_ip is not None)
             else True,
             custom_applications=custom_applications,
+            enable_sso=prop.properties.enable_sso
+            if (prop.properties and prop.properties.enable_sso is not None)
+            else True,
+            enable_root_access=prop.properties.enable_root_access
+            if (prop.properties and prop.properties.enable_root_access is not None)
+            else True,
         )
         return response
 
