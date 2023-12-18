@@ -86,10 +86,15 @@ steps:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'packages_extended'
 
+  - pwsh: |
+      $directoryExists = Test-Path -Path "$(Build.SourcesDirectory)/_docs"
+      Write-Output "##vso[task.setvariable variable=DirectoryExists]$directoryExists"
+    displayName: Check if docs directory exists
+  
   - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
     parameters:
       ArtifactPath: '$(Build.SourcesDirectory)/_docs'
-      CustomCondition: ${{ parameters.BuildDocs }}
+      CustomCondition: and(${{ parameters.BuildDocs }}, eq(variables['DirectoryExists'], 'True'))
       ArtifactName: 'documentation'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:

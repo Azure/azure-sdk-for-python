@@ -7,6 +7,7 @@
 import pytest
 import functools
 from devtools_testutils import recorded_by_proxy
+from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeDocumentRequest
 from testcase import DocumentIntelligenceTest
@@ -141,3 +142,31 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         assert layout.pages[0].barcodes[0].kind == "Code39"
         assert layout.pages[0].barcodes[0].polygon
         assert layout.pages[0].barcodes[0].confidence > 0.8
+    
+    
+    @skip_flaky_test
+    @DocumentIntelligencePreparer()
+    @recorded_by_proxy
+    def test_polling_interval(self, documentintelligence_endpoint, documentintelligence_api_key, **kwargs):
+        client = DocumentIntelligenceClient(
+            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+        )
+        assert client._config.polling_interval ==  5
+        
+        client = DocumentIntelligenceClient(
+            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key), polling_interval=7
+        )
+        assert client._config.polling_interval ==  7
+        poller = client.begin_analyze_document(
+            "prebuilt-receipt",
+            AnalyzeDocumentRequest(url_source=self.receipt_url_jpg),
+            polling_interval=6
+        )
+        poller.wait()
+        assert poller._polling_method._timeout ==  6
+        poller2 = client.begin_analyze_document(
+            "prebuilt-receipt",
+            AnalyzeDocumentRequest(url_source=self.receipt_url_jpg),
+        )
+        poller2.wait()
+        assert poller2._polling_method._timeout ==  7  # goes back to client default

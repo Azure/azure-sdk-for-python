@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -43,7 +43,7 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_conversation_authoring_list_projects_request(  # pylint: disable=name-too-long
-    *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -59,6 +59,8 @@ def build_conversation_authoring_list_projects_request(  # pylint: disable=name-
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -248,7 +250,12 @@ def build_conversation_authoring_train_request(  # pylint: disable=name-too-long
 
 
 def build_conversation_authoring_list_deployments_request(  # pylint: disable=name-too-long
-    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    project_name: str,
+    *,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -269,6 +276,8 @@ def build_conversation_authoring_list_deployments_request(  # pylint: disable=na
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -500,7 +509,12 @@ def build_conversation_authoring_get_import_project_job_status_request(  # pylin
 
 
 def build_conversation_authoring_list_trained_models_request(  # pylint: disable=name-too-long
-    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    project_name: str,
+    *,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -521,6 +535,8 @@ def build_conversation_authoring_list_trained_models_request(  # pylint: disable
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -617,6 +633,7 @@ def build_conversation_authoring_list_model_evaluation_results_request(  # pylin
     string_index_type: str,
     top: Optional[int] = None,
     skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -640,6 +657,8 @@ def build_conversation_authoring_list_model_evaluation_results_request(  # pylin
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -708,7 +727,12 @@ def build_conversation_authoring_get_load_snapshot_job_status_request(  # pylint
 
 
 def build_conversation_authoring_list_training_jobs_request(  # pylint: disable=name-too-long
-    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    project_name: str,
+    *,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -729,6 +753,8 @@ def build_conversation_authoring_list_training_jobs_request(  # pylint: disable=
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -818,7 +844,12 @@ def build_conversation_authoring_get_project_deletion_job_status_request(  # pyl
 
 
 def build_conversation_authoring_list_supported_languages_request(  # pylint: disable=name-too-long
-    *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    *,
+    project_kind: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -835,6 +866,8 @@ def build_conversation_authoring_list_supported_languages_request(  # pylint: di
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -849,6 +882,7 @@ def build_conversation_authoring_list_supported_prebuilt_entities_request(  # py
     multilingual: Optional[bool] = None,
     top: Optional[int] = None,
     skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -869,6 +903,8 @@ def build_conversation_authoring_list_supported_prebuilt_entities_request(  # py
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -878,7 +914,12 @@ def build_conversation_authoring_list_supported_prebuilt_entities_request(  # py
 
 
 def build_conversation_authoring_list_training_config_versions_request(  # pylint: disable=name-too-long
-    *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    *,
+    project_kind: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -895,6 +936,8 @@ def build_conversation_authoring_list_training_config_versions_request(  # pylin
         _params["top"] = _SERIALIZER.query("top", top, "int")
     if skip is not None:
         _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -908,6 +951,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 ):
     @distributed_trace
     def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists the existing projects.
 
         See
@@ -957,6 +1001,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -970,9 +1015,10 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_conversation_authoring_list_projects_request(
+                _request = build_conversation_authoring_list_projects_request(
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -982,7 +1028,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -994,7 +1040,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -1002,9 +1048,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -1014,11 +1060,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1036,6 +1082,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
     def create_project(
         self, project_name: str, project: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Creates a new project or updates an existing one.
 
         See
@@ -1105,8 +1152,14 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @overload
     def create_project(
-        self, project_name: str, project: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        project_name: str,
+        project: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Creates a new project or updates an existing one.
 
         See
@@ -1116,7 +1169,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param project: The project parameters. Required.
-        :type project: IO
+        :type project: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -1156,7 +1209,8 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         """
 
     @distributed_trace
-    def create_project(self, project_name: str, project: Union[JSON, IO], **kwargs: Any) -> JSON:
+    def create_project(self, project_name: str, project: Union[JSON, IO[bytes]], **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Creates a new project or updates an existing one.
 
         See
@@ -1165,8 +1219,8 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param project: The project parameters. Is either a JSON type or a IO type. Required.
-        :type project: JSON or IO
+        :param project: The project parameters. Is either a JSON type or a IO[bytes] type. Required.
+        :type project: JSON or IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
@@ -1245,7 +1299,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             _json = project
 
-        request = build_conversation_authoring_create_project_request(
+        _request = build_conversation_authoring_create_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1257,11 +1311,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1291,6 +1345,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @distributed_trace
     def get_project(self, project_name: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets the details of a project.
 
         See
@@ -1346,7 +1401,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_project_request(
+        _request = build_conversation_authoring_get_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1355,11 +1410,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1376,9 +1431,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     def _delete_project_initial(self, project_name: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {
@@ -1394,7 +1449,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_delete_project_request(
+        _request = build_conversation_authoring_delete_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1403,11 +1458,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1432,12 +1487,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Deletes a project.
 
         See
@@ -1551,13 +1607,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _export_project_initial(
         self,
@@ -1582,7 +1638,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_export_project_request(
+        _request = build_conversation_authoring_export_project_request(
             project_name=project_name,
             string_index_type=string_index_type,
             exported_project_format=exported_project_format,
@@ -1595,11 +1651,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1624,9 +1680,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_export_project(
@@ -1639,6 +1695,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         trained_model_label: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Triggers a job to export a project's data.
 
         See
@@ -1773,18 +1830,18 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _import_project_initial(
         self,
         project_name: str,
-        project: Union[JSON, IO],
+        project: Union[JSON, IO[bytes]],
         *,
         exported_project_format: Optional[str] = None,
         **kwargs: Any
@@ -1811,7 +1868,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             _json = project
 
-        request = build_conversation_authoring_import_project_request(
+        _request = build_conversation_authoring_import_project_request(
             project_name=project_name,
             exported_project_format=exported_project_format,
             content_type=content_type,
@@ -1824,11 +1881,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1853,9 +1910,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def begin_import_project(
@@ -1867,6 +1924,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -2094,12 +2152,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
     def begin_import_project(
         self,
         project_name: str,
-        project: IO,
+        project: IO[bytes],
         *,
         exported_project_format: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -2110,7 +2169,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param project: The project data to import. Required.
-        :type project: IO
+        :type project: IO[bytes]
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str
@@ -2191,11 +2250,12 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
     def begin_import_project(
         self,
         project_name: str,
-        project: Union[JSON, IO],
+        project: Union[JSON, IO[bytes]],
         *,
         exported_project_format: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
@@ -2205,8 +2265,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param project: The project data to import. Is either a JSON type or a IO type. Required.
-        :type project: JSON or IO
+        :param project: The project data to import. Is either a JSON type or a IO[bytes] type.
+         Required.
+        :type project: JSON or IO[bytes]
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str
@@ -2462,15 +2523,15 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _train_initial(self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
+    def _train_initial(self, project_name: str, configuration: Union[JSON, IO[bytes]], **kwargs: Any) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2493,7 +2554,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             _json = configuration
 
-        request = build_conversation_authoring_train_request(
+        _request = build_conversation_authoring_train_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2505,11 +2566,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2534,14 +2595,15 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def begin_train(
         self, project_name: str, configuration: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Triggers a training job for a project.
 
         See
@@ -2681,8 +2743,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @overload
     def begin_train(
-        self, project_name: str, configuration: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, configuration: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Triggers a training job for a project.
 
         See
@@ -2692,7 +2755,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param configuration: The training input parameters. Required.
-        :type configuration: IO
+        :type configuration: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2800,7 +2863,8 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         """
 
     @distributed_trace
-    def begin_train(self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
+    def begin_train(self, project_name: str, configuration: Union[JSON, IO[bytes]], **kwargs: Any) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Triggers a training job for a project.
 
         See
@@ -2809,9 +2873,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param configuration: The training input parameters. Is either a JSON type or a IO type.
+        :param configuration: The training input parameters. Is either a JSON type or a IO[bytes] type.
          Required.
-        :type configuration: JSON or IO
+        :type configuration: JSON or IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -2981,13 +3045,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_deployments(
@@ -3031,6 +3095,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -3044,10 +3109,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_conversation_authoring_list_deployments_request(
+                _request = build_conversation_authoring_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3057,7 +3123,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -3069,7 +3135,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -3077,9 +3143,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -3089,11 +3155,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3108,7 +3174,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         return ItemPaged(get_next, extract_data)
 
     def _swap_deployments_initial(
-        self, project_name: str, deployments: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, deployments: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
@@ -3132,7 +3198,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             _json = deployments
 
-        request = build_conversation_authoring_swap_deployments_request(
+        _request = build_conversation_authoring_swap_deployments_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3144,11 +3210,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3173,14 +3239,15 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def begin_swap_deployments(
         self, project_name: str, deployments: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Swaps two existing deployments with each other.
 
         See
@@ -3274,8 +3341,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @overload
     def begin_swap_deployments(
-        self, project_name: str, deployments: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, project_name: str, deployments: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Swaps two existing deployments with each other.
 
         See
@@ -3285,7 +3353,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param deployments: The job object to swap two deployments. Required.
-        :type deployments: IO
+        :type deployments: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3360,7 +3428,10 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         """
 
     @distributed_trace
-    def begin_swap_deployments(self, project_name: str, deployments: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
+    def begin_swap_deployments(
+        self, project_name: str, deployments: Union[JSON, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Swaps two existing deployments with each other.
 
         See
@@ -3369,9 +3440,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :param deployments: The job object to swap two deployments. Is either a JSON type or a IO type.
-         Required.
-        :type deployments: JSON or IO
+        :param deployments: The job object to swap two deployments. Is either a JSON type or a
+         IO[bytes] type. Required.
+        :type deployments: JSON or IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -3495,13 +3566,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> JSON:
@@ -3549,7 +3620,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_deployment_request(
+        _request = build_conversation_authoring_get_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -3559,11 +3630,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3580,12 +3651,12 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     def _deploy_project_initial(
-        self, project_name: str, deployment_name: str, deployment: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, deployment_name: str, deployment: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
@@ -3609,7 +3680,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             _json = deployment
 
-        request = build_conversation_authoring_deploy_project_request(
+        _request = build_conversation_authoring_deploy_project_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -3622,11 +3693,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3651,9 +3722,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def begin_deploy_project(
@@ -3719,7 +3790,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         self,
         project_name: str,
         deployment_name: str,
-        deployment: IO,
+        deployment: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3735,7 +3806,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :param deployment: The new deployment info. Required.
-        :type deployment: IO
+        :type deployment: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3770,7 +3841,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @distributed_trace
     def begin_deploy_project(
-        self, project_name: str, deployment_name: str, deployment: Union[JSON, IO], **kwargs: Any
+        self, project_name: str, deployment_name: str, deployment: Union[JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
@@ -3782,8 +3853,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
-        :param deployment: The new deployment info. Is either a JSON type or a IO type. Required.
-        :type deployment: JSON or IO
+        :param deployment: The new deployment info. Is either a JSON type or a IO[bytes] type.
+         Required.
+        :type deployment: JSON or IO[bytes]
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -3864,13 +3936,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _delete_deployment_initial(self, project_name: str, deployment_name: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {
@@ -3886,7 +3958,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_delete_deployment_request(
+        _request = build_conversation_authoring_delete_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -3896,11 +3968,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3925,12 +3997,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Deletes a project deployment.
 
         See
@@ -4051,16 +4124,17 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_deployment_job_status(self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets the status of an existing deployment job.
 
         See
@@ -4148,7 +4222,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_deployment_job_status_request(
+        _request = build_conversation_authoring_get_deployment_job_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -4159,11 +4233,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4180,12 +4254,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_swap_deployments_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets the status of an existing swap deployment job.
 
         See
@@ -4271,7 +4346,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_swap_deployments_job_status_request(
+        _request = build_conversation_authoring_get_swap_deployments_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4281,11 +4356,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4302,12 +4377,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_export_project_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         See
@@ -4395,7 +4471,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_export_project_job_status_request(
+        _request = build_conversation_authoring_get_export_project_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4405,11 +4481,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4426,12 +4502,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_import_project_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets the status for an import.
 
         See
@@ -4517,7 +4594,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_import_project_job_status_request(
+        _request = build_conversation_authoring_get_import_project_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4527,11 +4604,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4548,9 +4625,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def list_trained_models(
@@ -4595,6 +4672,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -4608,10 +4686,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_conversation_authoring_list_trained_models_request(
+                _request = build_conversation_authoring_list_trained_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4621,7 +4700,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -4633,7 +4712,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -4641,9 +4720,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -4653,11 +4732,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4718,7 +4797,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_trained_model_request(
+        _request = build_conversation_authoring_get_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -4728,11 +4807,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4749,9 +4828,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def delete_trained_model(  # pylint: disable=inconsistent-return-statements
@@ -4784,7 +4863,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_delete_trained_model_request(
+        _request = build_conversation_authoring_delete_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -4794,11 +4873,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4810,7 +4889,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     def _load_snapshot_initial(self, project_name: str, trained_model_label: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {
@@ -4826,7 +4905,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_load_snapshot_request(
+        _request = build_conversation_authoring_load_snapshot_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -4836,11 +4915,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4865,12 +4944,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_load_snapshot(self, project_name: str, trained_model_label: str, **kwargs: Any) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
         See
@@ -4991,13 +5071,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_model_evaluation_results(
@@ -5010,6 +5090,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         skip: Optional[int] = None,
         **kwargs: Any
     ) -> Iterable[JSON]:
+        # pylint: disable=line-too-long
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
         inference results for the data included in the evaluation process.
 
@@ -5076,6 +5157,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -5089,12 +5171,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_conversation_authoring_list_model_evaluation_results_request(
+                _request = build_conversation_authoring_list_model_evaluation_results_request(
                     project_name=project_name,
                     trained_model_label=trained_model_label,
                     string_index_type=string_index_type,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5104,7 +5187,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -5116,7 +5199,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -5124,9 +5207,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -5136,11 +5219,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5156,6 +5239,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @distributed_trace
     def get_model_evaluation_summary(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets the evaluation summary of a trained model. The summary includes high level performance
         measurements of the model e.g., F1, Precision, Recall, etc.
 
@@ -5274,7 +5358,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_model_evaluation_summary_request(
+        _request = build_conversation_authoring_get_model_evaluation_summary_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -5284,11 +5368,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5305,14 +5389,15 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_load_snapshot_job_status(
         self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
     ) -> JSON:
+        # pylint: disable=line-too-long
         """Gets the status for loading a snapshot.
 
         See
@@ -5400,7 +5485,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_load_snapshot_job_status_request(
+        _request = build_conversation_authoring_get_load_snapshot_job_status_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             job_id=job_id,
@@ -5411,11 +5496,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5432,14 +5517,15 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def list_training_jobs(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists the non-expired training jobs created for a project.
 
         See
@@ -5552,6 +5638,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -5565,10 +5652,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_conversation_authoring_list_training_jobs_request(
+                _request = build_conversation_authoring_list_training_jobs_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5578,7 +5666,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -5590,7 +5678,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -5598,9 +5686,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -5610,11 +5698,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5630,6 +5718,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
     @distributed_trace
     def get_training_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets the status for a training job.
 
         See
@@ -5748,7 +5837,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_training_job_status_request(
+        _request = build_conversation_authoring_get_training_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -5758,11 +5847,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5779,9 +5868,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     def _cancel_training_job_initial(self, project_name: str, job_id: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {
@@ -5797,7 +5886,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_cancel_training_job_request(
+        _request = build_conversation_authoring_cancel_training_job_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -5807,11 +5896,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5836,12 +5925,13 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_cancel_training_job(self, project_name: str, job_id: str, **kwargs: Any) -> LROPoller[JSON]:
+        # pylint: disable=line-too-long
         """Triggers a cancellation for a running training job.
 
         See
@@ -5995,16 +6085,17 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[JSON].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[JSON](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_project_deletion_job_status(self, job_id: str, **kwargs: Any) -> JSON:
+        # pylint: disable=line-too-long
         """Gets the status for a project deletion job.
 
         See
@@ -6088,7 +6179,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_conversation_authoring_get_project_deletion_job_status_request(
+        _request = build_conversation_authoring_get_project_deletion_job_status_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6097,11 +6188,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6118,14 +6209,15 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def list_supported_languages(
         self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
+        # pylint: disable=line-too-long
         """Lists the supported languages for the given project type.
 
         See
@@ -6159,6 +6251,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -6172,10 +6265,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_conversation_authoring_list_supported_languages_request(
+                _request = build_conversation_authoring_list_supported_languages_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6185,7 +6279,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -6197,7 +6291,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -6205,9 +6299,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -6217,11 +6311,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6281,6 +6375,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -6294,11 +6389,12 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_conversation_authoring_list_supported_prebuilt_entities_request(
+                _request = build_conversation_authoring_list_supported_prebuilt_entities_request(
                     language=language,
                     multilingual=multilingual,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6308,7 +6404,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -6320,7 +6416,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -6328,9 +6424,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -6340,11 +6436,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6395,6 +6491,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
+        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -6408,10 +6505,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_conversation_authoring_list_training_config_versions_request(
+                _request = build_conversation_authoring_list_training_config_versions_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
+                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6421,7 +6519,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -6433,7 +6531,7 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -6441,9 +6539,9 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -6453,11 +6551,11 @@ class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-pu
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

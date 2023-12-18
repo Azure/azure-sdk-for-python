@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Shutdown statsbeat on customer exporter 400 status code
+    ([#31881](https://github.com/Azure/azure-sdk-for-python/pull/31881))
+
 ## 1.1.1 (2023-12-04)
 
 ### Features Added

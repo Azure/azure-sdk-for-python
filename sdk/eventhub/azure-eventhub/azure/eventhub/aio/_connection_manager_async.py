@@ -47,7 +47,7 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
     def __init__(self, **kwargs) -> None:
         self._loop = kwargs.get("loop")
         self._lock = Lock(loop=self._loop)
-        self._conn = None
+        self._conn: Optional[Union[uamqp_ConnectionAsync, ConnectionAsync]] = None
 
         self._container_id = kwargs.get("container_id")
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")

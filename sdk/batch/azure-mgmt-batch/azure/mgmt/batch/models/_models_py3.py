@@ -918,9 +918,8 @@ class BatchAccountCreateParameters(_serialization.Model):
     :vartype auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
     :ivar pool_allocation_mode: The pool allocation mode also affects how clients may authenticate
      to the Batch Service API. If the mode is BatchService, clients may authenticate using access
-     keys or Azure Active Directory. If the mode is UserSubscription, clients must use Azure Active
-     Directory. The default is BatchService. Known values are: "BatchService" and
-     "UserSubscription".
+     keys or Microsoft Entra ID. If the mode is UserSubscription, clients must use Microsoft Entra
+     ID. The default is BatchService. Known values are: "BatchService" and "UserSubscription".
     :vartype pool_allocation_mode: str or ~azure.mgmt.batch.models.PoolAllocationMode
     :ivar key_vault_reference: A reference to the Azure key vault associated with the Batch
      account.
@@ -984,8 +983,8 @@ class BatchAccountCreateParameters(_serialization.Model):
         :paramtype auto_storage: ~azure.mgmt.batch.models.AutoStorageBaseProperties
         :keyword pool_allocation_mode: The pool allocation mode also affects how clients may
          authenticate to the Batch Service API. If the mode is BatchService, clients may authenticate
-         using access keys or Azure Active Directory. If the mode is UserSubscription, clients must use
-         Azure Active Directory. The default is BatchService. Known values are: "BatchService" and
+         using access keys or Microsoft Entra ID. If the mode is UserSubscription, clients must use
+         Microsoft Entra ID. The default is BatchService. Known values are: "BatchService" and
          "UserSubscription".
         :paramtype pool_allocation_mode: str or ~azure.mgmt.batch.models.PoolAllocationMode
         :keyword key_vault_reference: A reference to the Azure key vault associated with the Batch
@@ -2136,7 +2135,7 @@ class DataDisk(_serialization.Model):
 
       Standard_LRS - The data disk should use standard locally redundant storage.
       Premium_LRS - The data disk should use premium locally redundant storage. Known values are:
-     "Standard_LRS" and "Premium_LRS".
+     "Standard_LRS", "Premium_LRS", and "StandardSSD_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
     """
 
@@ -2181,7 +2180,7 @@ class DataDisk(_serialization.Model):
 
           Standard_LRS - The data disk should use standard locally redundant storage.
           Premium_LRS - The data disk should use premium locally redundant storage. Known values are:
-         "Standard_LRS" and "Premium_LRS".
+         "Standard_LRS", "Premium_LRS", and "StandardSSD_LRS".
         :paramtype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
         """
         super().__init__(**kwargs)
@@ -2399,8 +2398,8 @@ class DiffDiskSettings(_serialization.Model):
 
 class DiskEncryptionConfiguration(_serialization.Model):
     """The disk encryption configuration applied on compute nodes in the pool. Disk encryption
-    configuration is not supported on Linux pool created with Virtual Machine Image or Shared Image
-    Gallery Image.
+    configuration is not supported on Linux pool created with Virtual Machine Image or Azure
+    Compute Gallery Image.
 
     :ivar targets: On Linux pool, only "TemporaryDisk" is supported; on Windows pool, "OsDisk" and
      "TemporaryDisk" must be specified.
@@ -2619,7 +2618,7 @@ class FixedScaleSettings(_serialization.Model):
     def __init__(
         self,
         *,
-        resize_timeout: Optional[datetime.timedelta] = None,
+        resize_timeout: datetime.timedelta = "PT15M",
         target_dedicated_nodes: Optional[int] = None,
         target_low_priority_nodes: Optional[int] = None,
         node_deallocation_option: Optional[Union[str, "_models.ComputeNodeDeallocationOption"]] = None,
@@ -2663,8 +2662,8 @@ class ImageReference(_serialization.Model):
     :ivar version: A value of 'latest' can be specified to select the latest version of an image.
      If omitted, the default is 'latest'.
     :vartype version: str
-    :ivar id: This property is mutually exclusive with other properties. The Shared Image Gallery
-     image must have replicas in the same region as the Azure Batch account. For information about
+    :ivar id: This property is mutually exclusive with other properties. The Azure Compute Gallery
+     Image must have replicas in the same region as the Azure Batch account. For information about
      the firewall settings for the Batch node agent to communicate with the Batch service see
      https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
     :vartype id: str
@@ -2684,7 +2683,7 @@ class ImageReference(_serialization.Model):
         publisher: Optional[str] = None,
         offer: Optional[str] = None,
         sku: Optional[str] = None,
-        version: Optional[str] = None,
+        version: str = "latest",
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         **kwargs: Any
     ) -> None:
@@ -2698,8 +2697,8 @@ class ImageReference(_serialization.Model):
         :keyword version: A value of 'latest' can be specified to select the latest version of an
          image. If omitted, the default is 'latest'.
         :paramtype version: str
-        :keyword id: This property is mutually exclusive with other properties. The Shared Image
-         Gallery image must have replicas in the same region as the Azure Batch account. For information
+        :keyword id: This property is mutually exclusive with other properties. The Azure Compute
+         Gallery Image must have replicas in the same region as the Azure Batch account. For information
          about the firewall settings for the Batch node agent to communicate with the Batch service see
          https://docs.microsoft.com/en-us/azure/batch/batch-api-basics#virtual-network-vnet-and-firewall-configuration.
         :paramtype id: str
@@ -3149,6 +3148,30 @@ class ListPrivateLinkResourcesResult(_serialization.Model):
         self.next_link = next_link
 
 
+class ManagedDisk(_serialization.Model):
+    """ManagedDisk.
+
+    :ivar storage_account_type: The storage account type for use in creating data disks or OS disk.
+     Known values are: "Standard_LRS", "Premium_LRS", and "StandardSSD_LRS".
+    :vartype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
+    """
+
+    _attribute_map = {
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+    }
+
+    def __init__(
+        self, *, storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword storage_account_type: The storage account type for use in creating data disks or OS
+         disk. Known values are: "Standard_LRS", "Premium_LRS", and "StandardSSD_LRS".
+        :paramtype storage_account_type: str or ~azure.mgmt.batch.models.StorageAccountType
+        """
+        super().__init__(**kwargs)
+        self.storage_account_type = storage_account_type
+
+
 class MetadataItem(_serialization.Model):
     """The Batch service does not assign any meaning to this metadata; it is solely for the use of
     user code.
@@ -3293,7 +3316,7 @@ class NetworkConfiguration(_serialization.Model):
         self,
         *,
         subnet_id: Optional[str] = None,
-        dynamic_vnet_assignment_scope: Optional[Union[str, "_models.DynamicVNetAssignmentScope"]] = None,
+        dynamic_vnet_assignment_scope: Union[str, "_models.DynamicVNetAssignmentScope"] = "none",
         endpoint_configuration: Optional["_models.PoolEndpointConfiguration"] = None,
         public_ip_address_configuration: Optional["_models.PublicIPAddressConfiguration"] = None,
         enable_accelerated_networking: Optional[bool] = None,
@@ -3654,22 +3677,57 @@ class OSDisk(_serialization.Model):
     :ivar ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
      system disk used by the virtual machine.
     :vartype ephemeral_os_disk_settings: ~azure.mgmt.batch.models.DiffDiskSettings
+    :ivar caching: The type of caching to enable for the disk. Known values are: "None",
+     "ReadOnly", and "ReadWrite".
+    :vartype caching: str or ~azure.mgmt.batch.models.CachingType
+    :ivar managed_disk:
+    :vartype managed_disk: ~azure.mgmt.batch.models.ManagedDisk
+    :ivar disk_size_gb: The initial disk size in GB when creating new OS disk.
+    :vartype disk_size_gb: int
+    :ivar write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
+     disabled on the disk.
+    :vartype write_accelerator_enabled: bool
     """
 
     _attribute_map = {
         "ephemeral_os_disk_settings": {"key": "ephemeralOSDiskSettings", "type": "DiffDiskSettings"},
+        "caching": {"key": "caching", "type": "str"},
+        "managed_disk": {"key": "managedDisk", "type": "ManagedDisk"},
+        "disk_size_gb": {"key": "diskSizeGB", "type": "int"},
+        "write_accelerator_enabled": {"key": "writeAcceleratorEnabled", "type": "bool"},
     }
 
     def __init__(
-        self, *, ephemeral_os_disk_settings: Optional["_models.DiffDiskSettings"] = None, **kwargs: Any
+        self,
+        *,
+        ephemeral_os_disk_settings: Optional["_models.DiffDiskSettings"] = None,
+        caching: Optional[Union[str, "_models.CachingType"]] = None,
+        managed_disk: Optional["_models.ManagedDisk"] = None,
+        disk_size_gb: Optional[int] = None,
+        write_accelerator_enabled: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
          system disk used by the virtual machine.
         :paramtype ephemeral_os_disk_settings: ~azure.mgmt.batch.models.DiffDiskSettings
+        :keyword caching: The type of caching to enable for the disk. Known values are: "None",
+         "ReadOnly", and "ReadWrite".
+        :paramtype caching: str or ~azure.mgmt.batch.models.CachingType
+        :keyword managed_disk:
+        :paramtype managed_disk: ~azure.mgmt.batch.models.ManagedDisk
+        :keyword disk_size_gb: The initial disk size in GB when creating new OS disk.
+        :paramtype disk_size_gb: int
+        :keyword write_accelerator_enabled: Specifies whether writeAccelerator should be enabled or
+         disabled on the disk.
+        :paramtype write_accelerator_enabled: bool
         """
         super().__init__(**kwargs)
         self.ephemeral_os_disk_settings = ephemeral_os_disk_settings
+        self.caching = caching
+        self.managed_disk = managed_disk
+        self.disk_size_gb = disk_size_gb
+        self.write_accelerator_enabled = write_accelerator_enabled
 
 
 class OutboundEnvironmentEndpoint(_serialization.Model):
@@ -3849,6 +3907,11 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar current_node_communication_mode: Determines how a pool communicates with the Batch
      service. Known values are: "Default", "Classic", and "Simplified".
     :vartype current_node_communication_mode: str or ~azure.mgmt.batch.models.NodeCommunicationMode
+    :ivar resource_tags: The user-defined tags to be associated with the Azure Batch Pool. When
+     specified, these tags are propagated to the backing Azure resources associated with the pool.
+     This property can only be specified when the Batch account was created with the
+     poolAllocationMode property set to 'UserSubscription'.
+    :vartype resource_tags: dict[str, str]
     """
 
     _validation = {
@@ -3902,6 +3965,7 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "mount_configuration": {"key": "properties.mountConfiguration", "type": "[MountConfiguration]"},
         "target_node_communication_mode": {"key": "properties.targetNodeCommunicationMode", "type": "str"},
         "current_node_communication_mode": {"key": "properties.currentNodeCommunicationMode", "type": "str"},
+        "resource_tags": {"key": "properties.resourceTags", "type": "{str}"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3914,7 +3978,7 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         scale_settings: Optional["_models.ScaleSettings"] = None,
         inter_node_communication: Optional[Union[str, "_models.InterNodeCommunicationState"]] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
-        task_slots_per_node: Optional[int] = None,
+        task_slots_per_node: int = 1,
         task_scheduling_policy: Optional["_models.TaskSchedulingPolicy"] = None,
         user_accounts: Optional[List["_models.UserAccount"]] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
@@ -3924,6 +3988,7 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         application_licenses: Optional[List[str]] = None,
         mount_configuration: Optional[List["_models.MountConfiguration"]] = None,
         target_node_communication_mode: Optional[Union[str, "_models.NodeCommunicationMode"]] = None,
+        resource_tags: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4000,6 +4065,11 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
          are: "Default", "Classic", and "Simplified".
         :paramtype target_node_communication_mode: str or
          ~azure.mgmt.batch.models.NodeCommunicationMode
+        :keyword resource_tags: The user-defined tags to be associated with the Azure Batch Pool. When
+         specified, these tags are propagated to the backing Azure resources associated with the pool.
+         This property can only be specified when the Batch account was created with the
+         poolAllocationMode property set to 'UserSubscription'.
+        :paramtype resource_tags: dict[str, str]
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -4030,6 +4100,7 @@ class Pool(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.mount_configuration = mount_configuration
         self.target_node_communication_mode = target_node_communication_mode
         self.current_node_communication_mode = None
+        self.resource_tags = resource_tags
 
 
 class PoolEndpointConfiguration(_serialization.Model):
@@ -4565,6 +4636,84 @@ class ScaleSettings(_serialization.Model):
         self.auto_scale = auto_scale
 
 
+class SecurityProfile(_serialization.Model):
+    """Specifies the security profile settings for the virtual machine or virtual machine scale set.
+
+    :ivar security_type: Specifies the SecurityType of the virtual machine. It has to be set to any
+     specified value to enable UefiSettings. Default value is "trustedLaunch".
+    :vartype security_type: str
+    :ivar encryption_at_host: This property can be used by user in the request to enable or disable
+     the Host Encryption for the virtual machine or virtual machine scale set. This will enable the
+     encryption for all the disks including Resource/Temp disk at host itself.
+    :vartype encryption_at_host: bool
+    :ivar uefi_settings: Specifies the security settings like secure boot and vTPM used while
+     creating the virtual machine.
+    :vartype uefi_settings: ~azure.mgmt.batch.models.UefiSettings
+    """
+
+    _attribute_map = {
+        "security_type": {"key": "securityType", "type": "str"},
+        "encryption_at_host": {"key": "encryptionAtHost", "type": "bool"},
+        "uefi_settings": {"key": "uefiSettings", "type": "UefiSettings"},
+    }
+
+    def __init__(
+        self,
+        *,
+        security_type: Optional[Literal["trustedLaunch"]] = None,
+        encryption_at_host: Optional[bool] = None,
+        uefi_settings: Optional["_models.UefiSettings"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword security_type: Specifies the SecurityType of the virtual machine. It has to be set to
+         any specified value to enable UefiSettings. Default value is "trustedLaunch".
+        :paramtype security_type: str
+        :keyword encryption_at_host: This property can be used by user in the request to enable or
+         disable the Host Encryption for the virtual machine or virtual machine scale set. This will
+         enable the encryption for all the disks including Resource/Temp disk at host itself.
+        :paramtype encryption_at_host: bool
+        :keyword uefi_settings: Specifies the security settings like secure boot and vTPM used while
+         creating the virtual machine.
+        :paramtype uefi_settings: ~azure.mgmt.batch.models.UefiSettings
+        """
+        super().__init__(**kwargs)
+        self.security_type = security_type
+        self.encryption_at_host = encryption_at_host
+        self.uefi_settings = uefi_settings
+
+
+class ServiceArtifactReference(_serialization.Model):
+    """Specifies the service artifact reference id used to set same image version for all virtual
+    machines in the scale set when using 'latest' image version.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The service artifact reference id in the form of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+     Required.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The service artifact reference id in the form of
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+         Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
 class SkuCapability(_serialization.Model):
     """A SKU capability, such as the number of cores.
 
@@ -4618,7 +4767,7 @@ class StartTask(_serialization.Model):
      task once, and may then retry up to this limit. For example, if the maximum retry count is 3,
      Batch tries the task up to 4 times (one initial try and 3 retries). If the maximum retry count
      is 0, the Batch service does not retry the task. If the maximum retry count is -1, the Batch
-     service retries the task without limit.
+     service retries the task without limit. Default is 0.
     :vartype max_task_retry_count: int
     :ivar wait_for_success: If true and the start task fails on a compute node, the Batch service
      retries the start task up to its maximum retry count (maxTaskRetryCount). If the task has still
@@ -4653,7 +4802,7 @@ class StartTask(_serialization.Model):
         resource_files: Optional[List["_models.ResourceFile"]] = None,
         environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
         user_identity: Optional["_models.UserIdentity"] = None,
-        max_task_retry_count: Optional[int] = None,
+        max_task_retry_count: int = 0,
         wait_for_success: Optional[bool] = None,
         container_settings: Optional["_models.TaskContainerSettings"] = None,
         **kwargs: Any
@@ -4678,7 +4827,7 @@ class StartTask(_serialization.Model):
          the task once, and may then retry up to this limit. For example, if the maximum retry count is
          3, Batch tries the task up to 4 times (one initial try and 3 retries). If the maximum retry
          count is 0, the Batch service does not retry the task. If the maximum retry count is -1, the
-         Batch service retries the task without limit.
+         Batch service retries the task without limit. Default is 0.
         :paramtype max_task_retry_count: int
         :keyword wait_for_success: If true and the start task fails on a compute node, the Batch
          service retries the start task up to its maximum retry count (maxTaskRetryCount). If the task
@@ -4837,8 +4986,8 @@ class TaskSchedulingPolicy(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar node_fill_type: How tasks should be distributed across compute nodes. Required. Known
-     values are: "Spread" and "Pack".
+    :ivar node_fill_type: How tasks should be distributed across compute nodes. Known values are:
+     "Spread" and "Pack".
     :vartype node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
     """
 
@@ -4850,14 +4999,45 @@ class TaskSchedulingPolicy(_serialization.Model):
         "node_fill_type": {"key": "nodeFillType", "type": "str"},
     }
 
-    def __init__(self, *, node_fill_type: Union[str, "_models.ComputeNodeFillType"], **kwargs: Any) -> None:
+    def __init__(self, *, node_fill_type: Union[str, "_models.ComputeNodeFillType"] = "Spread", **kwargs: Any) -> None:
         """
-        :keyword node_fill_type: How tasks should be distributed across compute nodes. Required. Known
-         values are: "Spread" and "Pack".
+        :keyword node_fill_type: How tasks should be distributed across compute nodes. Known values
+         are: "Spread" and "Pack".
         :paramtype node_fill_type: str or ~azure.mgmt.batch.models.ComputeNodeFillType
         """
         super().__init__(**kwargs)
         self.node_fill_type = node_fill_type
+
+
+class UefiSettings(_serialization.Model):
+    """Specifies the security settings like secure boot and vTPM used while creating the virtual
+    machine.
+
+    :ivar secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
+     machine.
+    :vartype secure_boot_enabled: bool
+    :ivar v_tpm_enabled: Specifies whether vTPM should be enabled on the virtual machine.
+    :vartype v_tpm_enabled: bool
+    """
+
+    _attribute_map = {
+        "secure_boot_enabled": {"key": "secureBootEnabled", "type": "bool"},
+        "v_tpm_enabled": {"key": "vTpmEnabled", "type": "bool"},
+    }
+
+    def __init__(
+        self, *, secure_boot_enabled: Optional[bool] = None, v_tpm_enabled: Optional[bool] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword secure_boot_enabled: Specifies whether secure boot should be enabled on the virtual
+         machine.
+        :paramtype secure_boot_enabled: bool
+        :keyword v_tpm_enabled: Specifies whether vTPM should be enabled on the virtual machine.
+        :paramtype v_tpm_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.secure_boot_enabled = secure_boot_enabled
+        self.v_tpm_enabled = v_tpm_enabled
 
 
 class UserAccount(_serialization.Model):
@@ -4996,7 +5176,7 @@ class UserIdentity(_serialization.Model):
         self.auto_user = auto_user
 
 
-class VirtualMachineConfiguration(_serialization.Model):
+class VirtualMachineConfiguration(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The configuration for compute nodes in a pool based on the Azure Virtual Machines
     infrastructure.
 
@@ -5041,6 +5221,12 @@ class VirtualMachineConfiguration(_serialization.Model):
     :vartype extensions: list[~azure.mgmt.batch.models.VMExtension]
     :ivar os_disk: Contains configuration for ephemeral OSDisk settings.
     :vartype os_disk: ~azure.mgmt.batch.models.OSDisk
+    :ivar security_profile: Specifies the security profile settings for the virtual machine or
+     virtual machine scale set.
+    :vartype security_profile: ~azure.mgmt.batch.models.SecurityProfile
+    :ivar service_artifact_reference: The service artifact reference id in the form of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+    :vartype service_artifact_reference: ~azure.mgmt.batch.models.ServiceArtifactReference
     """
 
     _validation = {
@@ -5059,6 +5245,8 @@ class VirtualMachineConfiguration(_serialization.Model):
         "node_placement_configuration": {"key": "nodePlacementConfiguration", "type": "NodePlacementConfiguration"},
         "extensions": {"key": "extensions", "type": "[VMExtension]"},
         "os_disk": {"key": "osDisk", "type": "OSDisk"},
+        "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
+        "service_artifact_reference": {"key": "serviceArtifactReference", "type": "ServiceArtifactReference"},
     }
 
     def __init__(
@@ -5074,6 +5262,8 @@ class VirtualMachineConfiguration(_serialization.Model):
         node_placement_configuration: Optional["_models.NodePlacementConfiguration"] = None,
         extensions: Optional[List["_models.VMExtension"]] = None,
         os_disk: Optional["_models.OSDisk"] = None,
+        security_profile: Optional["_models.SecurityProfile"] = None,
+        service_artifact_reference: Optional["_models.ServiceArtifactReference"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5116,6 +5306,12 @@ class VirtualMachineConfiguration(_serialization.Model):
         :paramtype extensions: list[~azure.mgmt.batch.models.VMExtension]
         :keyword os_disk: Contains configuration for ephemeral OSDisk settings.
         :paramtype os_disk: ~azure.mgmt.batch.models.OSDisk
+        :keyword security_profile: Specifies the security profile settings for the virtual machine or
+         virtual machine scale set.
+        :paramtype security_profile: ~azure.mgmt.batch.models.SecurityProfile
+        :keyword service_artifact_reference: The service artifact reference id in the form of
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{galleryName}/serviceArtifacts/{serviceArtifactName}/vmArtifactsProfiles/{vmArtifactsProfilesName}.
+        :paramtype service_artifact_reference: ~azure.mgmt.batch.models.ServiceArtifactReference
         """
         super().__init__(**kwargs)
         self.image_reference = image_reference
@@ -5128,6 +5324,8 @@ class VirtualMachineConfiguration(_serialization.Model):
         self.node_placement_configuration = node_placement_configuration
         self.extensions = extensions
         self.os_disk = os_disk
+        self.security_profile = security_profile
+        self.service_artifact_reference = service_artifact_reference
 
 
 class VirtualMachineFamilyCoreQuota(_serialization.Model):

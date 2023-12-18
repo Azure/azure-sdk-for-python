@@ -6,7 +6,7 @@
 
 from typing import Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
