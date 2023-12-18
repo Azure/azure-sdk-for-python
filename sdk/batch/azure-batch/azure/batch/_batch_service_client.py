@@ -24,7 +24,7 @@ from .operations import TaskOperations
 from .operations import ComputeNodeOperations
 from .operations import ComputeNodeExtensionOperations
 from . import models
-
+from .custom.patch import patch_client
 
 class BatchServiceClient(SDKClient):
     """A client for issuing REST requests to the Azure Batch service.

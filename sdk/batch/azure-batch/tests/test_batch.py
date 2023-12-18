@@ -28,7 +28,7 @@ from devtools_testutils import (
 from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 
 
-AZURE_LOCATION = 'eastasia'
+AZURE_LOCATION = 'eastus'
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
 DEFAULT_VM_SIZE = 'standard_d2_v2'
