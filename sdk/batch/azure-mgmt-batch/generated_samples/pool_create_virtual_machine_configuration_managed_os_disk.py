@@ -14,7 +14,7 @@ from azure.mgmt.batch import BatchManagementClient
     pip install azure-identity
     pip install azure-mgmt-batch
 # USAGE
-    python pool_stop_resize.py
+    python pool_create_virtual_machine_configuration_managed_os_disk.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,36 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.pool.stop_resize(
+    response = client.pool.create(
         resource_group_name="default-azurebatch-japaneast",
         account_name="sampleacct",
         pool_name="testpool",
+        parameters={
+            "properties": {
+                "deploymentConfiguration": {
+                    "virtualMachineConfiguration": {
+                        "imageReference": {
+                            "offer": "windowsserver",
+                            "publisher": "microsoftwindowsserver",
+                            "sku": "2022-datacenter-smalldisk",
+                        },
+                        "nodeAgentSkuId": "batch.node.windows amd64",
+                        "osDisk": {
+                            "caching": "ReadWrite",
+                            "diskSizeGB": 100,
+                            "managedDisk": {"storageAccountType": "StandardSSD_LRS"},
+                            "writeAcceleratorEnabled": False,
+                        },
+                    }
+                },
+                "scaleSettings": {"fixedScale": {"targetDedicatedNodes": 1, "targetLowPriorityNodes": 0}},
+                "vmSize": "Standard_d2s_v3",
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2023-11-01/examples/PoolStopResize.json
+# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2023-11-01/examples/PoolCreate_VirtualMachineConfiguration_ManagedOSDisk.json
 if __name__ == "__main__":
     main()
