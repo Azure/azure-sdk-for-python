@@ -136,7 +136,6 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
         output = bytearray()
         # to maintain the same behavior as uamqp, app prop values will not be decoded
         if isinstance(self._message.application_properties, dict):
-            # casting Optional to Dict for copy
             self.application_properties = self._message.application_properties.copy()
         else:
             self.application_properties = None
