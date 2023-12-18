@@ -784,7 +784,7 @@ class ImageAnalysisClientOperationsMixin(ImageAnalysisClientMixinABC):
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        visual_features_impl: List[Union[str, _models.VisualFeatures]] = [feature for feature in visual_features]
+        visual_features_impl: List[Union[str, _models.VisualFeatures]] = list(visual_features)
 
         if isinstance(image_content, str):
             return self._analyze_from_url(
