@@ -26,7 +26,6 @@ class TestImageAnalysisClient(ImageAnalysisTestBase):
         self._create_client_for_standard_analysis(sync = True, **kwargs)
 
         self._do_analysis(
-            test_name = inspect.currentframe().f_code.co_name,
             image_source = self.IMAGE_URL,
             visual_features = [
                 sdk.models.VisualFeatures.TAGS,
@@ -51,24 +50,20 @@ class TestImageAnalysisClient(ImageAnalysisTestBase):
     @recorded_by_proxy
     def test_analyze_sync_single_feature_from_file(self, **kwargs):
 
-        test_name = inspect.currentframe().f_code.co_name
         self._create_client_for_standard_analysis(sync = True, get_connection_url =  True, **kwargs)
 
         self._do_analysis(
-            test_name = test_name +":caption",
             image_source = self.IMAGE_FILE,
             visual_features = [ sdk.models.VisualFeatures.CAPTION ],
             query_params = {'key1': 'value1', 'key2': 'value2'},
             **kwargs)
 
         self._do_analysis(
-            test_name = test_name + ":read",
             image_source = self.IMAGE_FILE,
             visual_features = [ sdk.models.VisualFeatures.READ ],
             **kwargs)
 
         self._do_analysis(
-            test_name = test_name + ":tags",
             image_source = self.IMAGE_FILE,
             visual_features = [ sdk.models.VisualFeatures.TAGS ],
             **kwargs)
@@ -88,7 +83,6 @@ class TestImageAnalysisClient(ImageAnalysisTestBase):
         self._create_client_for_standard_analysis(sync = True, **kwargs)
 
         self._do_analysis_with_error(
-            test_name = inspect.currentframe().f_code.co_name,
             image_source = "https://www.this.is.a.bad.url.com/for/sure.jpg",
             visual_features = [ sdk.models.VisualFeatures.CAPTION ],
             expected_status_code = 400,

@@ -38,8 +38,8 @@ ServicePreparer = functools.partial(
 # The test class name needs to start with "Test" to get collected by pytest
 class ImageAnalysisTestBase(AzureRecordedTestCase):
 
-    client: sdk.ImageAnalysisClient = None
-    connection_url: str= None
+    client: sdk.ImageAnalysisClient
+    connection_url: str
 
     # We a single image (the same one) for all error-free tests, one hosted on the web and one local
     IMAGE_URL = "https://aka.ms/azai/vision/image-analysis-sample.jpg"
@@ -81,9 +81,8 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
     def _do_analysis(
             self,
-            test_name: str,
             image_source: str,
-            visual_features: List[sdk.models.VisualFeatures] = None,
+            visual_features: List[sdk.models.VisualFeatures],
             language: str = None,
             gender_neutral_caption: bool = None,
             smart_crops_aspect_ratios: List[float] = None,
@@ -108,7 +107,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             params = query_params)
 
         # Optional: console printout of all results
-        ImageAnalysisTestBase._print_analysis_results(test_name, result)
+        ImageAnalysisTestBase._print_analysis_results(result)
 
         # Validate all results
         ImageAnalysisTestBase._validate_result(result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios)
@@ -120,9 +119,8 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
     async def _do_async_analysis(
             self,
-            test_name: str,
             image_source: str,
-            visual_features: List[sdk.models.VisualFeatures] = None,
+            visual_features: List[sdk.models.VisualFeatures],
             language: str = None,
             gender_neutral_caption: bool = None,
             smart_crops_aspect_ratios: List[float] = None,
@@ -147,7 +145,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             params = query_params)
 
         # Optional: console printout of all results
-        ImageAnalysisTestBase._print_analysis_results(test_name, result)
+        ImageAnalysisTestBase._print_analysis_results(result)
 
         # Validate all results
         ImageAnalysisTestBase._validate_result(result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios)
@@ -159,13 +157,11 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
     def _do_analysis_with_error(
             self,
-            test_name: str,
             image_source: str,
             visual_features: List[sdk.models.VisualFeatures],
             expected_status_code: int,
             expected_message_contains: str,
             **kwargs):
-        print(f"******************** TEST NAME: {test_name} ********************")
         if "http" in image_source:
             image_content = image_source
         else:
@@ -188,13 +184,11 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
     async def _do_async_analysis_with_error(
                 self,
-                test_name: str,
                 image_source: str,
                 visual_features: List[sdk.models.VisualFeatures],
                 expected_status_code: int,
                 expected_message_contains: str,
                 **kwargs):
-        print(f"******************** TEST NAME: {test_name} ********************")
         if "http" in image_source:
             image_content = image_source
         else:
@@ -510,9 +504,8 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
 
     @staticmethod
-    def _print_analysis_results(test_name: str, result: sdk.models.ImageAnalysisResult):
+    def _print_analysis_results(result: sdk.models.ImageAnalysisResult):
 
-        print(" ******************** TEST NAME: {} ******************** ".format(test_name))
         print(" Image height: {}".format(result.metadata.height))
         print(" Image width: {}".format(result.metadata.width))
         print(" Model version: {}".format(result.model_version))

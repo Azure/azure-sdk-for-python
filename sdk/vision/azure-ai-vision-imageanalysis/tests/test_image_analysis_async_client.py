@@ -25,7 +25,6 @@ class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
         self._create_client_for_standard_analysis(sync = False, **kwargs)
 
         await self._do_async_analysis(
-            test_name = inspect.currentframe().f_code.co_name,
             image_source = self.IMAGE_FILE,
             visual_features = [
                 sdk.models.VisualFeatures.TAGS,
@@ -45,38 +44,33 @@ class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
     @recorded_by_proxy_async
     async def test_analyze_async_single_feature_from_url(self, **kwargs):
 
-        test_name = inspect.currentframe().f_code.co_name
         self._create_client_for_standard_analysis(sync = False, **kwargs)
 
         await self._do_async_analysis(
-            test_name = test_name +":dense_captions",
             image_source = self.IMAGE_URL,
             visual_features = [ sdk.models.VisualFeatures.DENSE_CAPTIONS ],
             gender_neutral_caption = True,
             **kwargs)
 
         await self._do_async_analysis(
-            test_name = test_name + ":smart_crops",
             image_source = self.IMAGE_URL,
             visual_features = [ sdk.models.VisualFeatures.SMART_CROPS ],
             smart_crops_aspect_ratios = [0.9, 1.33],
             **kwargs)
 
         await self._do_async_analysis(
-            test_name = test_name + ":tags",
             image_source = self.IMAGE_URL,
             visual_features = [ sdk.models.VisualFeatures.TAGS ],
             language = "en",
             **kwargs)
 
         await self._do_async_analysis(
-            test_name = test_name + ":people",
             image_source = self.IMAGE_URL,
             visual_features = [ sdk.models.VisualFeatures.PEOPLE ],
             **kwargs)
 
         await self.client.close()
-    
+
     #**********************************************************************************
     #
     #                            ERROR TESTS
@@ -90,7 +84,6 @@ class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
         self._create_client_for_authentication_failure(sync = False, **kwargs)
 
         await self._do_async_analysis_with_error(
-            test_name = inspect.currentframe().f_code.co_name,
             image_source = self.IMAGE_URL,
             visual_features = [ sdk.models.VisualFeatures.TAGS ],
             expected_status_code = 401,
