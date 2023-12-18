@@ -1,6 +1,6 @@
 # Release History
 
-## 17.2.0 (2023-12-18)
+## 17.2.0 (2023-12-17)
 
 ### Features Added
 
