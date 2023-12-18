@@ -58,7 +58,7 @@ def get_local_timeout(now, idle_timeout, last_frame_received_time):
     return False
 
 
-class Connection(object):  # pylint:disable=too-many-instance-attributes
+class Connection:  # pylint:disable=too-many-instance-attributes
     """An AMQP Connection.
 
     :ivar str state: The connection state.
