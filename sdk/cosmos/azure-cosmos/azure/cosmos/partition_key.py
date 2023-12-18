@@ -23,6 +23,7 @@
 from io import BytesIO
 import binascii
 import struct
+from enum import Enum
 from typing import Any, List, Union, overload
 from typing_extensions import Literal
 
@@ -69,9 +70,11 @@ class PartitionKeyComponentType:
     Infinity = 0xFF
 
 
-class NonePartitionKeyValue:
-    """Represents None value for partitionKey when it's missing in a container.
-    """
+class _NonePartitionKeyValue(Enum):
+    token = 0
+
+NonePartitionKeyValue = _NonePartitionKeyValue.token
+"""Represents None value for partitionKey when it's missing in a container."""
 
 
 class _Empty:
