@@ -73,7 +73,7 @@ class UInt64:
         return UInt64(~self.value & 0xFFFFFFFFFFFFFFFF)
 
     @staticmethod
-    def encode_double_as_uint64(value: Union[int, float]) -> int:
+    def encode_double_as_uint64(value: float) -> int:
         value_in_uint64 = struct.unpack('<Q', struct.pack('<d', value))[0]
         mask = 0x8000000000000000
         return (value_in_uint64 ^ mask) if value_in_uint64 < mask else (~value_in_uint64) + 1
@@ -89,7 +89,7 @@ class UInt64:
 
 
 class UInt128:
-    def __init__(self, low: Union[int, UInt64], high: Union[int, UInt64]):
+    def __init__(self, low: Union[int, UInt64], high: Union[int, UInt64]) -> None:
         if isinstance(low, UInt64):
             self.low = low
         else:

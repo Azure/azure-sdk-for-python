@@ -11,6 +11,7 @@ from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
 
+from ..http_constants import HttpHeaders
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
@@ -24,7 +25,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :param MutableMapping[str, str] headers: The HTTP Request headers
         :param str token: The OAuth token.
         """
-        headers["Authorization"] = f"type=aad&ver=1.0&sig={token}"
+        headers[HttpHeaders.Authorization] = f"type=aad&ver=1.0&sig={token}"
 
     async def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Adds a bearer token Authorization header to request and sends request to next policy.
@@ -45,5 +46,5 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
-        super().authorize_request(request, *scopes, **kwargs)
+        await super().authorize_request(request, *scopes, **kwargs)
         self._update_headers(request.http_request.headers, self._token.token)

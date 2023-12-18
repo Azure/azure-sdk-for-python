@@ -10,6 +10,7 @@ from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest
 from azure.core.rest import HttpRequest
 
+from .http_constants import HttpHeaders
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
@@ -23,7 +24,7 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         :param MutableMapping[str, str] headers: The HTTP Request headers
         :param str token: The OAuth token.
         """
-        headers["Authorization"] = f"type=aad&ver=1.0&sig={token}"
+        headers[HttpHeaders.Authorization] = f"type=aad&ver=1.0&sig={token}"
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Called before the policy sends a request.

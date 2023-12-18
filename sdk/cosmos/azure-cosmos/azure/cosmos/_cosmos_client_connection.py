@@ -1034,7 +1034,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the database when using partitioning, otherwise link to the document collection.
         :param (str or dict) query: the query to be used
         :param dict options: The request options for the request.
-        :param str partition_key: Partition key for the query(default value None)
+        :param partition_key: Partition key for the query(default value None)
+        :type: partition_key: str or float or bool or None or list[str] or list[float] or list[bool]
         :param response_hook: A callable invoked with the response metadata.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
 
@@ -2157,7 +2158,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> None:
         """Exposes an API to delete all items with a single partition key without the user having
          to explicitly call delete on each record in the partition key.
 
@@ -2165,7 +2166,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the document collection.
         :param dict options:
             The request options for the request.
-
         :return:
             None
         :rtype:
@@ -2180,14 +2180,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         headers = base.GetHeaders(self, self.default_headers, "post", path, collection_id, "partitionkey", options)
         request_params = RequestObject("partitionkey", documents._OperationType.Delete)
-        response, self.last_response_headers = self.__Post(
+        _, self.last_response_headers = self.__Post(
             path=path,
             request_params=request_params,
             req_headers=headers,
             body=None,
             **kwargs
         )
-        return response
 
     def ReplaceTrigger(
         self,
@@ -2809,7 +2808,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         :param str path: the url to be used for the request.
         :param ~azure.cosmos._request_object.RequestObject request_params: the request parameters.
-        :param Union[str, Dict[Any, Any]] body: the request body.
+        :param Union[str, List[Dict[str, Any]], Dict[Any, Any]] body: the request body.
         :param Dict[str, Any] req_headers: the request headers.
         :return: Tuple of (result, headers).
         :rtype: tuple of (dict, dict)

@@ -26,14 +26,21 @@
 import json
 import logging
 import time
-from typing import Optional, TypeVar
+from typing import Optional, Union
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HttpLoggingPolicy
+from azure.core.rest import HttpRequest, HttpResponse, AsyncHttpResponse
+from azure.core.pipeline.transport import (
+    HttpRequest as LegacyHttpRequest,
+    HttpResponse as LegacyHttpResponse,
+    AsyncHttpResponse as LegacyAsyncHttpResponse
+)
+
 from .http_constants import HttpHeaders
 
-HTTPResponseType_co = TypeVar("HTTPResponseType_co", covariant=True)
-HTTPRequestType_co = TypeVar("HTTPRequestType_co", covariant=True)
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+HTTPResponseType = Union[LegacyHttpResponse, HttpResponse, LegacyAsyncHttpResponse, AsyncHttpResponse]
 
 
 def _format_error(payload: str) -> str:
@@ -59,15 +66,15 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
             ]
             self.allowed_header_names = set(cosmos_allow_list)
 
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         super().on_request(request)
         if self._enable_diagnostics_logging:
             request.context["start_time"] = time.time()
 
     def on_response(
-            self,
-            request: PipelineRequest[HTTPRequestType_co],
-            response: PipelineResponse[HTTPRequestType_co, HTTPResponseType_co],
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> None:
         super().on_response(request, response)
         if self._enable_diagnostics_logging:
