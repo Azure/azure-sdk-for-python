@@ -238,7 +238,17 @@ class ServiceBusReceiver(
             self
         )
 
-    def __iter__(self):
+    def __enter__(self) -> "ServiceBusReceiver":
+        if self._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )
+
+        self._open_with_retry()
+        return self
+
+    def __iter__(self) -> Iterator["ServiceBusReceivedMessage"]:
         return self._iter_contextual_wrapper()
 
     def _inner_next(
