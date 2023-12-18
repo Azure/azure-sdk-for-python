@@ -39,6 +39,7 @@ ServicePreparer = functools.partial(
 class ImageAnalysisTestBase(AzureRecordedTestCase):
 
     client: sdk.ImageAnalysisClient
+    async_client: async_sdk.ImageAnalysisClient
     connection_url: str
 
     # We a single image (the same one) for all error-free tests, one hosted on the web and one local
@@ -65,13 +66,14 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
                 credential = credential,
                 logging_enable = LOGGING_ENABLED,
                 raw_request_hook = self._raw_request_check if get_connection_url else None)
+            assert self.client is not None
         else:
-            self.client = async_sdk.ImageAnalysisClient(
+            self.async_client = async_sdk.ImageAnalysisClient(
                 endpoint = endpoint,
                 credential = credential,
                 logging_enable = LOGGING_ENABLED,
                 raw_request_hook = self._raw_request_check if get_connection_url else None)
-        assert self.client is not None
+            assert self.async_client is not None
 
 
     def _raw_request_check(self, request: PipelineRequest):
@@ -135,7 +137,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             with open(image_source, 'rb') as f:
                 image_content = bytes(f.read())
 
-        result = await self.client.analyze(
+        result = await self.async_client.analyze(
             image_content = image_content,
             visual_features = visual_features,
             language = language,
@@ -197,7 +199,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
                 image_content = bytes(f.read())
 
         try:
-            result = await self.client.analyze(
+            result = await self.async_client.analyze(
                 image_content = image_content,
                 visual_features = visual_features)
         except AzureError as e:

@@ -37,7 +37,7 @@ class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
             ],
             **kwargs)
 
-        await self.client.close()
+        await self.async_client.close()
 
     # Test some visual features, one after the other, from image URL, with relevant settings specified
     @ServicePreparer()
@@ -69,7 +69,7 @@ class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
             visual_features = [ sdk.models.VisualFeatures.PEOPLE ],
             **kwargs)
 
-        await self.client.close()
+        await self.async_client.close()
 
     #**********************************************************************************
     #
@@ -90,4 +90,4 @@ class TestImageAnalysisAsyncClient(ImageAnalysisTestBase):
             expected_message_contains = "Access denied",
             **kwargs)
 
-        await self.client.close()
+        await self.async_client.close()
