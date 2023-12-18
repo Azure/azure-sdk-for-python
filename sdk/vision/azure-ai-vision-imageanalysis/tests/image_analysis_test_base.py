@@ -8,7 +8,7 @@ import sys
 import azure.ai.vision.imageanalysis as sdk
 import azure.ai.vision.imageanalysis.aio as async_sdk
 
-from typing import List
+from typing import List, Optional, Union
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import AzureError
@@ -85,12 +85,14 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             self,
             image_source: str,
             visual_features: List[sdk.models.VisualFeatures],
-            language: str = None,
-            gender_neutral_caption: bool = None,
-            smart_crops_aspect_ratios: List[float] = None,
-            model_version: str = None,
-            query_params: dict = None,
+            language: Optional[str] = None,
+            gender_neutral_caption: Optional[bool] = None,
+            smart_crops_aspect_ratios: Optional[List[float]] = None,
+            model_version: Optional[str] = None,
+            query_params: Optional[dict] = None,
             **kwargs):
+
+        image_content: Union[str, bytes]
 
         if "http" in image_source:
             image_content = image_source
@@ -115,7 +117,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         ImageAnalysisTestBase._validate_result(result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios)
 
         # Validate that additional query parameters exists in the connection URL, if specify
-        if query_params != None:
+        if query_params is not None:
             ImageAnalysisTestBase._validate_query_parameters(query_params, self.connection_url)
 
 
@@ -123,12 +125,14 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             self,
             image_source: str,
             visual_features: List[sdk.models.VisualFeatures],
-            language: str = None,
-            gender_neutral_caption: bool = None,
-            smart_crops_aspect_ratios: List[float] = None,
-            model_version: str = None,
-            query_params: dict = None,
+            language: Optional[str] = None,
+            gender_neutral_caption: Optional[bool] = None,
+            smart_crops_aspect_ratios: Optional[List[float]] = None,
+            model_version: Optional[str] = None,
+            query_params: Optional[dict] = None,
             **kwargs):
+
+        image_content: Union[str, bytes]
 
         if "http" in image_source:
             image_content = image_source
@@ -153,7 +157,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
         ImageAnalysisTestBase._validate_result(result, visual_features, gender_neutral_caption, smart_crops_aspect_ratios)
 
         # Validate that additional query parameters exists in the connection URL, if specify
-        if query_params != None:
+        if query_params is not None:
             ImageAnalysisTestBase._validate_query_parameters(query_params, self.connection_url)
 
 
@@ -164,6 +168,9 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
             expected_status_code: int,
             expected_message_contains: str,
             **kwargs):
+
+        image_content: Union[str, bytes]
+
         if "http" in image_source:
             image_content = image_source
         else:
@@ -191,6 +198,9 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
                 expected_status_code: int,
                 expected_message_contains: str,
                 **kwargs):
+
+        image_content: Union[str, bytes]
+
         if "http" in image_source:
             image_content = image_source
         else:
@@ -225,8 +235,8 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
     def _validate_result(
             result: sdk.models.ImageAnalysisResult,
             expected_features: List[sdk.models.VisualFeatures],
-            gender_neutral_caption: bool,
-            smart_crops_aspect_ratios: List[float]):
+            gender_neutral_caption: Optional[bool] = None,
+            smart_crops_aspect_ratios: Optional[List[float]] = None):
         ImageAnalysisTestBase._validate_metadata(result)
         ImageAnalysisTestBase._validate_model_version(result)
 
@@ -280,7 +290,7 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
 
 
     @staticmethod
-    def _validate_caption(result: sdk.models.ImageAnalysisResult, gender_neutral_caption: bool):
+    def _validate_caption(result: sdk.models.ImageAnalysisResult, gender_neutral_caption: Optional[bool] = None):
         assert result.caption is not None
         assert result.caption.text is not None
         if gender_neutral_caption is not None and gender_neutral_caption:
@@ -419,11 +429,12 @@ class ImageAnalysisTestBase(AzureRecordedTestCase):
     @staticmethod
     def _validate_smart_crops(
         result: sdk.models.ImageAnalysisResult,
-        smart_crops_aspect_ratios: List[float]):
+        smart_crops_aspect_ratios: Optional[List[float]] =  None):
+
         assert result.smart_crops is not None
         crop_regions = result.smart_crops.values
 
-        if (smart_crops_aspect_ratios == None):
+        if smart_crops_aspect_ratios is None:
             assert(len(crop_regions) == 1)
             assert(crop_regions[0].aspect_ratio >= 0.5 and crop_regions[0].aspect_ratio <= 2.0)
         else:
