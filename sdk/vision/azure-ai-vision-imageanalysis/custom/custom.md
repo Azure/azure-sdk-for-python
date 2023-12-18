@@ -63,10 +63,12 @@ Add the following method to the bottom of the source file `azure\ai\vision\image
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        visual_features_impl: List[Union[str, _models.VisualFeatures]] = [feature for feature in visual_features]
+
         if isinstance(image_content, str):
             return self._analyze_from_url(
                 image_content = _models._models.ImageUrl(url = image_content), # pylint: disable=protected-access
-                visual_features = visual_features,
+                visual_features = visual_features_impl,
                 language = language,
                 gender_neutral_caption = gender_neutral_caption,
                 smart_crops_aspect_ratios = smart_crops_aspect_ratios,
@@ -75,13 +77,12 @@ Add the following method to the bottom of the source file `azure\ai\vision\image
 
         return self._analyze_from_buffer(
             image_content = image_content,
-            visual_features = visual_features,
+            visual_features = visual_features_impl,
             language = language,
             gender_neutral_caption = gender_neutral_caption,
             smart_crops_aspect_ratios = smart_crops_aspect_ratios,
             model_version = model_version,
             **kwargs)
-
 ```
 
 ## Update to the async client
@@ -144,10 +145,12 @@ Add the following method to the bottom of the source file `azure\ai\vision\image
         :rtype: ~azure.ai.vision.imageanalysis.models.ImageAnalysisResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        visual_features_impl: List[Union[str, _models.VisualFeatures]] = [feature for feature in visual_features]
+
         if isinstance(image_content, str):
             return await self._analyze_from_url(
                 image_content = _models._models.ImageUrl(url = image_content), # pylint: disable=protected-access
-                visual_features = visual_features,
+                visual_features = visual_features_impl,
                 language = language,
                 gender_neutral_caption = gender_neutral_caption,
                 smart_crops_aspect_ratios = smart_crops_aspect_ratios,
@@ -156,11 +159,10 @@ Add the following method to the bottom of the source file `azure\ai\vision\image
 
         return await self._analyze_from_buffer(
             image_content = image_content,
-            visual_features = visual_features,
+            visual_features = visual_features_impl,
             language = language,
             gender_neutral_caption = gender_neutral_caption,
             smart_crops_aspect_ratios = smart_crops_aspect_ratios,
             model_version = model_version,
             **kwargs)
-
 ```
